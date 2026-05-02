@@ -77,7 +77,7 @@ export function MessageBoard() {
             <Plus className="h-4 w-4" /> New thread
           </button>
         ) : (
-          <Link to="/auth" search={{}} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
+          <Link to="/auth" search={{ redirect: "/host-tools", mode: "signin" }} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
             Sign in to post
           </Link>
         )}
