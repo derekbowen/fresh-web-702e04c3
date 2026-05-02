@@ -236,7 +236,11 @@ function CoursePage() {
           ) : null}
 
           {/* Learning controls — enroll / mark complete / certificate */}
-          <CourseLearningControls courseSlug={course.slug} courseTitle={course.title} />
+          <CourseLearningControls
+            courseSlug={course.slug}
+            courseTitle={course.title}
+            expectedMinutes={course.duration_minutes ?? undefined}
+          />
 
           {/* Long-form content */}
           {lfc?.overview && (
