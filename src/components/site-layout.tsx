@@ -4,6 +4,16 @@ import { Link } from "@tanstack/react-router";
 // Legacy backend (signup, /s search, /p/* marketing pages) is served on the same
 // host as this app. Use root-relative hrefs so links resolve on www, custom
 // domain, and preview hosts without hardcoding the production URL.
+//
+// `rel()` prefixes Vite's BASE_URL so links keep working when the app is
+// served behind a reverse proxy under a sub-path (e.g. "/app/"). When BASE_URL
+// is "/" (the default), the path is returned unchanged.
+function rel(path: string): string {
+  if (/^([a-z]+:|\/\/|#|mailto:|tel:)/i.test(path)) return path;
+  const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+  if (!base) return path;
+  return path.startsWith("/") ? `${base}${path}` : `${base}/${path}`;
+}
 
 export function SiteHeader() {
   return (
