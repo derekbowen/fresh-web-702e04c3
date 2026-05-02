@@ -123,22 +123,35 @@ function MyLearningPage() {
             </p>
           ) : (
             <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-              {inProgress.map((r) => (
-                <li
-                  key={r.course_slug}
-                  className="rounded-2xl border border-border bg-card p-4 shadow-sm"
-                >
-                  <div className="font-semibold text-foreground">{r.course_title ?? r.course_slug}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    Enrolled {r.enrolled_at ? new Date(r.enrolled_at).toLocaleDateString() : ""}
-                  </div>
-                  <Button asChild size="sm" variant="outline" className="mt-3">
-                    <Link to="/academy/$slug" params={{ slug: r.course_slug }}>
-                      Continue course
-                    </Link>
-                  </Button>
-                </li>
-              ))}
+              {inProgress.map((r) => {
+                const p = progress.get(r.course_slug);
+                const pct = p?.progress_pct ?? 0;
+                return (
+                  <li
+                    key={r.course_slug}
+                    className="rounded-2xl border border-border bg-card p-4 shadow-sm"
+                  >
+                    <div className="font-semibold text-foreground">
+                      {r.course_title ?? r.course_slug}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Enrolled {r.enrolled_at ? new Date(r.enrolled_at).toLocaleDateString() : ""}
+                    </div>
+                    <div className="mt-3">
+                      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Progress</span>
+                        <span className="font-medium text-foreground">{pct}%</span>
+                      </div>
+                      <Progress value={pct} aria-label={`${pct}% complete`} />
+                    </div>
+                    <Button asChild size="sm" variant="outline" className="mt-3">
+                      <Link to="/academy/$slug" params={{ slug: r.course_slug }}>
+                        Continue course
+                      </Link>
+                    </Button>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
