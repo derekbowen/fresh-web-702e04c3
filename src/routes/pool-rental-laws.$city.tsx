@@ -281,7 +281,7 @@ function PoolRentalLawsPage() {
             How to legally rent your pool in {city.name} — step by step
           </h2>
           <ol className="mt-4 list-decimal space-y-3 pl-6 text-sm text-foreground marker:font-semibold marker:text-primary">
-            {complianceSteps.map((step, i) => (
+            {complianceSteps.map((step: string, i: number) => (
               <li key={i}>{step}</li>
             ))}
           </ol>
