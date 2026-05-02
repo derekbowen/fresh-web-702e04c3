@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
@@ -18,6 +19,7 @@ import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
 import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml'
 import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
@@ -34,6 +36,11 @@ const ProvidersRoute = ProvidersRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcademyRoute = AcademyRouteImport.update({
@@ -70,6 +77,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => BlogRoute,
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
 } as any)
 const ApiSitemapDotxmlRoute = ApiSitemapDotxmlRouteImport.update({
   id: '/api/sitemap.xml',
@@ -110,6 +122,7 @@ const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
@@ -117,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -127,6 +141,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
@@ -134,6 +149,7 @@ export interface FileRoutesByTo {
   '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -146,6 +162,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/academy': typeof AcademyRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
@@ -153,6 +170,7 @@ export interface FileRoutesById {
   '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -166,6 +184,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/academy'
+    | '/auth'
     | '/blog'
     | '/providers'
     | '/academy/$slug'
@@ -173,6 +192,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
+    | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
     | '/pool-rental/$city'
@@ -183,6 +203,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/blog'
     | '/providers'
     | '/academy/$slug'
@@ -190,6 +211,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
+    | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
     | '/pool-rental/$city'
@@ -201,6 +223,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/academy'
+    | '/auth'
     | '/blog'
     | '/providers'
     | '/academy/$slug'
@@ -208,6 +231,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
+    | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
     | '/pool-rental/$city'
@@ -220,6 +244,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcademyRoute: typeof AcademyRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   ProvidersRoute: typeof ProvidersRouteWithChildren
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
@@ -246,6 +271,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/academy': {
@@ -296,6 +328,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/api/sitemap.xml': {
       id: '/api/sitemap.xml'
@@ -362,6 +401,16 @@ const AcademyRouteChildren: AcademyRouteChildren = {
 const AcademyRouteWithChildren =
   AcademyRoute._addFileChildren(AcademyRouteChildren)
 
+interface AuthRouteChildren {
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 interface BlogRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
 }
@@ -387,6 +436,7 @@ const ProvidersRouteWithChildren = ProvidersRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcademyRoute: AcademyRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   ProvidersRoute: ProvidersRouteWithChildren,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
@@ -401,3 +451,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
