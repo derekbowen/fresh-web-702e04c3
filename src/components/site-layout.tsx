@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
 
-const SITE = "https://www.poolrentalnearme.com";
+// Legacy backend (signup, /s search, /p/* marketing pages) is served on the same
+// host as this app. Use root-relative hrefs so links resolve on www, custom
+// domain, and preview hosts without hardcoding the production URL.
 
 export function SiteHeader() {
   return (
