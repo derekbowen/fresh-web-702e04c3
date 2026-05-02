@@ -5,6 +5,43 @@ import { Breadcrumbs } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
 import { AutoLinkedContent, buildBlogLinkTargets } from "@/components/auto-linked-content";
 
+/** Parse "### Question\n answer paragraphs" pairs from markdown into FAQPage JSON-LD. */
+function extractFaqJsonLd(content: string) {
+  if (!content) return null;
+  // Find the FAQ section (## Frequently Asked Questions ... up to next ## or end)
+  const faqSection = content.match(
+    /##\s+(?:Frequently\s+Asked\s+Questions|FAQs?|Common\s+Questions)\b[\s\S]*?(?=\n##\s|\n#\s|$)/i,
+  );
+  if (!faqSection) return null;
+  const block = faqSection[0];
+  // Match each "### Question" followed by answer text until the next ### or end
+  const qaRegex = /###\s+(.+?)\s*\n+([\s\S]*?)(?=\n###\s|$)/g;
+  const entities: Array<{ "@type": string; name: string; acceptedAnswer: { "@type": string; text: string } }> = [];
+  let m: RegExpExecArray | null;
+  while ((m = qaRegex.exec(block)) !== null) {
+    const question = m[1].replace(/[*_`]/g, "").trim();
+    // Strip markdown formatting from the answer for plain text
+    const answer = m[2]
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links -> text
+      .replace(/[*_`>]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (question && answer) {
+      entities.push({
+        "@type": "Question",
+        name: question,
+        acceptedAnswer: { "@type": "Answer", text: answer },
+      });
+    }
+  }
+  if (entities.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: entities,
+  };
+}
+
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
     const [{ post }, linkData] = await Promise.all([
