@@ -2,6 +2,7 @@ import { createFileRoute, Link, useRouter, notFound } from "@tanstack/react-rout
 import { getProvider } from "@/server/content.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
+import { ClaimListingCTA, JoinNetworkForm } from "@/components/recruit-forms";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/providers/$slug")({
@@ -34,9 +35,13 @@ export const Route = createFileRoute("/providers/$slug")({
         address: { "@type": "PostalAddress", addressLocality: p.city, addressRegion: p.state_code, addressCountry: "US" },
       }),
     };
+    const stateCode = (p.state_code as string | null)?.toLowerCase();
+    const citySlug = (p as { city_slug?: string | null }).city_slug ?? null;
     const crumbs = breadcrumbJsonLd([
       { name: "Home", path: "/" },
-      { name: "Providers", path: "/" },
+      { name: "Pool Builders", path: "/pool-builders" },
+      ...(stateCode ? [{ name: p.state_code as string, path: `/pool-builders/${stateCode}` }] : []),
+      ...(stateCode && citySlug && p.city ? [{ name: p.city as string, path: `/pool-builders/${stateCode}/${citySlug}` }] : []),
       { name: p.name, path: `/providers/${params.slug}` },
     ]);
     return { ...meta, scripts: [ldJsonScript(business), ldJsonScript(crumbs)] };
