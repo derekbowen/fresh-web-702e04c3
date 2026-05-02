@@ -187,9 +187,9 @@ function PoolRentalLawsPage() {
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
         <Breadcrumbs
           items={[
-            { name: "Home", href: "/" },
-            { name: "Pool Rental Laws", href: "/pool-rental-laws" },
-            { name: `${city.name}, ${city.state_code}` },
+            { name: "Home", path: "/" },
+            { name: "Pool Rental Laws", path: "/pool-rental-laws" },
+            { name: `${city.name}, ${city.state_code}`, path: `/pool-rental-laws/${city.slug}` },
           ]}
         />
 
