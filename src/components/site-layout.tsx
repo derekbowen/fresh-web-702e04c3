@@ -58,7 +58,7 @@ const EXPLORE = [
   { label: "Help Center", href: "/p/help" },
   { label: "Sign a Waiver", href: "/p/waiver" },
   { label: "Store", href: "/p/store" },
-  { label: "Public Pools", href: "/p/public-pools" },
+  { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
 ];
 
 const HOSTS = [
