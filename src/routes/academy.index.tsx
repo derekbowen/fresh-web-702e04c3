@@ -200,18 +200,62 @@ function AcademyIndex() {
         </section>
 
         <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Tier navigation */}
+          <div className="mb-8">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Learning path
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" role="navigation" aria-label="Browse by learning tier">
+              <Link
+                to="/academy"
+                search={{ page: 1, lang, category: undefined, q: undefined, tier: undefined }}
+                className={`flex flex-col rounded-xl border p-4 transition ${
+                  !activeTier && !activeCat
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border bg-card hover:border-primary/50"
+                }`}
+              >
+                <span className="text-2xl">📚</span>
+                <span className="mt-2 text-sm font-semibold text-foreground">All courses</span>
+                <span className="mt-1 text-xs text-muted-foreground">Browse the entire catalog</span>
+              </Link>
+              {TIERS.map((tier) => {
+                const active = activeTier === tier.slug;
+                const count = tierCountMap.get(tier.slug) ?? 0;
+                return (
+                  <Link
+                    key={tier.slug}
+                    to="/academy"
+                    search={{ page: 1, lang, category: undefined, q: undefined, tier: tier.slug }}
+                    className={`flex flex-col rounded-xl border p-4 transition ${
+                      active
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border bg-card hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="text-2xl">{tier.emoji}</span>
+                    <span className="mt-2 text-sm font-semibold text-foreground">{tier.label}</span>
+                    <span className="mt-1 text-xs text-muted-foreground">
+                      {tier.description} · {count} {count === 1 ? "course" : "courses"}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Category pills */}
           <div className="flex flex-wrap gap-2" role="navigation" aria-label={t.browseByTopic}>
             <Link
               to="/academy"
-              search={{ page: 1, lang, category: undefined, q: undefined }}
+              search={{ page: 1, lang, category: undefined, q: undefined, tier: activeTier ?? undefined }}
               className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                 !activeCat
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-background text-foreground hover:border-primary/50"
               }`}
             >
-              {t.allCategories} ({data.total + (activeCat ? 0 : 0)})
+              {t.allCategories}
             </Link>
             {data.categories.map((c: { slug: string; count: number }) => {
               const meta = getCategoryMeta(c.slug, lang);
@@ -220,7 +264,7 @@ function AcademyIndex() {
                 <Link
                   key={c.slug}
                   to="/academy"
-                  search={{ page: 1, lang, category: c.slug, q: undefined }}
+                  search={{ page: 1, lang, category: c.slug, q: undefined, tier: activeTier ?? undefined }}
                   className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                     active
                       ? "border-primary bg-primary text-primary-foreground"
