@@ -1,14 +1,18 @@
 import { createFileRoute, Link, useRouter, notFound } from "@tanstack/react-router";
-import { getBlogPost } from "@/server/content.functions";
+import { getBlogPost, getBlogLinkTargets } from "@/server/content.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
+import { AutoLinkedContent, buildBlogLinkTargets } from "@/components/auto-linked-content";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
-    const { post } = await getBlogPost({ data: { slug: params.slug } });
+    const [{ post }, linkData] = await Promise.all([
+      getBlogPost({ data: { slug: params.slug } }),
+      getBlogLinkTargets(),
+    ]);
     if (!post) throw notFound();
-    return { post };
+    return { post, linkTargets: buildBlogLinkTargets(linkData) };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.post) return {};
