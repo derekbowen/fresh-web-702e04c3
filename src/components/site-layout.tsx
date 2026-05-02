@@ -40,6 +40,7 @@ export function SiteHeader() {
           <Link to="/category/$slug" params={{ slug: "heated-pools" }} className="text-sm font-medium text-muted-foreground hover:text-foreground">Categories</Link>
           <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">Blog</Link>
           <Link to="/providers" className="text-sm font-medium text-muted-foreground hover:text-foreground">Providers</Link>
+          <a href="https://www.poolrentalnearme.com/public-pools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Public Pools</a>
         </nav>
         <a href={rel("/signup")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
           List Your Pool
@@ -57,7 +58,7 @@ const EXPLORE = [
   { label: "Help Center", href: "/p/help" },
   { label: "Sign a Waiver", href: "/p/waiver" },
   { label: "Store", href: "/p/store" },
-  { label: "Public Pools", href: "/p/public-pools" },
+  { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
 ];
 
 const HOSTS = [
