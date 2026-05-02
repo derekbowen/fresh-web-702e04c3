@@ -2,10 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { ListingCard } from "@/components/listing-card";
+import { searchListings } from "@/server/sharetribe.server";
 import { buildMeta, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
 
 const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const [cities, categories] = await Promise.all([
+  const [cities, categories, listingsResult] = await Promise.all([
     supabaseAdmin
       .from("cities")
       .select("slug, name, state_code")
@@ -17,8 +19,13 @@ const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
       .select("slug, name, icon")
       .eq("is_published", true)
       .order("name"),
+    searchListings({ perPage: 12 }),
   ]);
-  return { cities: cities.data ?? [], categories: categories.data ?? [] };
+  return {
+    cities: cities.data ?? [],
+    categories: categories.data ?? [],
+    listings: listingsResult.listings,
+  };
 });
 
 export const Route = createFileRoute("/")({
