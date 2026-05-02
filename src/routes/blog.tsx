@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
+import { useState, useEffect } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, ldJsonScript, breadcrumbJsonLd, SITE_URL, SITE_NAME } from "@/lib/seo";
 import { listBlogPostsPaged, listBlogTopics } from "@/server/content.functions";
@@ -23,14 +24,15 @@ function topicMeta(slug: string) {
 const searchSchema = z.object({
   page: fallback(z.number().int().min(1).max(500), 1).default(1),
   topic: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional().catch(undefined),
+  q: z.string().min(1).max(120).optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/blog")({
   validateSearch: zodValidator(searchSchema),
-  loaderDeps: ({ search }) => ({ page: search.page, topic: search.topic }),
+  loaderDeps: ({ search }) => ({ page: search.page, topic: search.topic, q: search.q }),
   loader: async ({ deps }) => {
     const [posts, topicsRes] = await Promise.all([
-      listBlogPostsPaged({ data: { page: deps.page, pageSize: PAGE_SIZE, topic: deps.topic } }),
+      listBlogPostsPaged({ data: { page: deps.page, pageSize: PAGE_SIZE, topic: deps.topic, q: deps.q } }),
       listBlogTopics(),
     ]);
     return { ...posts, topics: topicsRes.topics };
@@ -102,11 +104,30 @@ export const Route = createFileRoute("/blog")({
 });
 
 function BlogIndex() {
-  const { posts, total, page, topic, topics } = Route.useLoaderData();
+  const { posts, total, page, topic, q, topics } = Route.useLoaderData();
   const navigate = useNavigate({ from: "/blog" });
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const activeTopic = topic ?? null;
+  const activeQuery = q ?? "";
   const activeMeta = activeTopic ? topicMeta(activeTopic) : null;
+
+  const [queryInput, setQueryInput] = useState(activeQuery);
+  useEffect(() => {
+    setQueryInput(activeQuery);
+  }, [activeQuery]);
+
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = queryInput.trim();
+    navigate({
+      search: (prev) => ({ ...prev, page: 1, q: trimmed.length ? trimmed : undefined }),
+    });
+  };
+
+  const clearSearch = () => {
+    setQueryInput("");
+    navigate({ search: (prev) => ({ ...prev, page: 1, q: undefined }) });
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -129,18 +150,58 @@ function BlogIndex() {
           </p>
         </header>
 
+        {/* Search bar */}
+        <form onSubmit={submitSearch} role="search" className="mt-8 flex w-full max-w-xl items-center gap-2">
+          <div className="relative flex-1">
+            <input
+              type="search"
+              value={queryInput}
+              onChange={(e) => setQueryInput(e.target.value)}
+              placeholder="Search posts (e.g., green water, leaks, pricing)…"
+              aria-label="Search blog posts"
+              className="w-full rounded-full border border-border bg-background px-5 py-2.5 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            {queryInput && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          >
+            Search
+          </button>
+        </form>
+
+        {activeQuery && (
+          <p className="mt-3 text-sm text-muted-foreground">
+            {total} result{total === 1 ? "" : "s"} for{" "}
+            <span className="font-semibold text-foreground">"{activeQuery}"</span>
+            {activeMeta ? <> in <span className="font-semibold text-foreground">{activeMeta.label}</span></> : null}
+            {" · "}
+            <button onClick={clearSearch} className="underline hover:text-foreground">clear</button>
+          </p>
+        )}
+
         {/* Topic filter pills */}
-        <div className="mt-8 flex flex-wrap gap-2" role="navigation" aria-label="Browse by topic">
+        <div className="mt-6 flex flex-wrap gap-2" role="navigation" aria-label="Browse by topic">
           <Link
             to="/blog"
-            search={{ page: 1, topic: undefined }}
+            search={(prev) => ({ ...prev, page: 1, topic: undefined })}
             className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
               !activeTopic
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-background text-foreground hover:border-primary/50"
             }`}
           >
-            All posts <span className="ml-1 opacity-70">({total + (activeTopic ? 0 : 0)})</span>
+            All posts
           </Link>
           {topics.map((t: { slug: string; count: number }) => {
             const meta = topicMeta(t.slug);
@@ -149,7 +210,7 @@ function BlogIndex() {
               <Link
                 key={t.slug}
                 to="/blog"
-                search={{ page: 1, topic: t.slug }}
+                search={(prev) => ({ ...prev, page: 1, topic: t.slug })}
                 className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                   active
                     ? "border-primary bg-primary text-primary-foreground"
@@ -161,6 +222,7 @@ function BlogIndex() {
             );
           })}
         </div>
+
 
         {/* Posts grid */}
         <section className="mt-10">
@@ -207,7 +269,7 @@ function BlogIndex() {
                           <span>·</span>
                           <Link
                             to="/blog"
-                            search={{ page: 1, topic: p.topic ?? undefined }}
+                            search={(prev) => ({ ...prev, page: 1, topic: p.topic ?? undefined })}
                             className="hover:text-primary"
                           >
                             {tMeta.label}
@@ -227,7 +289,7 @@ function BlogIndex() {
           <nav className="mt-12 flex items-center justify-between" aria-label="Pagination">
             <Link
               to="/blog"
-              search={{ page: Math.max(1, page - 1), topic: activeTopic ?? undefined }}
+              search={(prev) => ({ ...prev, page: Math.max(1, page - 1) })}
               disabled={page <= 1}
               className={`rounded-md border px-4 py-2 text-sm font-medium ${
                 page <= 1
@@ -244,7 +306,7 @@ function BlogIndex() {
             </p>
             <Link
               to="/blog"
-              search={{ page: Math.min(totalPages, page + 1), topic: activeTopic ?? undefined }}
+              search={(prev) => ({ ...prev, page: Math.min(totalPages, page + 1) })}
               disabled={page >= totalPages}
               className={`rounded-md border px-4 py-2 text-sm font-medium ${
                 page >= totalPages
