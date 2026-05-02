@@ -410,6 +410,7 @@ function CityPage() {
         {/* NEARBY CITIES — internal linking */}
         <NearbyCities
           cities={nearby as Array<{ slug: string; name: string; state: string; state_code: string; distance_km: number | null }>}
+          currentSlug={city.slug}
           currentStateCode={city.state_code}
           currentStateName={city.state}
         />

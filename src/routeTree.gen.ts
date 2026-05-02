@@ -23,6 +23,7 @@ import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
+import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
 
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
@@ -94,6 +95,11 @@ const LSlugIdRoute = LSlugIdRouteImport.update({
   path: '/l/$slug/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
+  id: '/api/public/track-city-click',
+  path: '/api/public/track-city-click',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy/': typeof AcademyIndexRoute
+  '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesByTo {
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy': typeof AcademyIndexRoute
+  '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesById {
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy/': typeof AcademyIndexRoute
+  '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRouteTypes {
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy/'
+    | '/api/public/track-city-click'
     | '/l/$slug/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy'
+    | '/api/public/track-city-click'
     | '/l/$slug/$id'
   id:
     | '__root__'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy/'
+    | '/api/public/track-city-click'
     | '/l/$slug/$id'
   fileRoutesById: FileRoutesById
 }
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
   CategorySlugRoute: typeof CategorySlugRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
+  ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   LSlugIdRoute: typeof LSlugIdRoute
 }
 
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LSlugIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/track-city-click': {
+      id: '/api/public/track-city-click'
+      path: '/api/public/track-city-click'
+      fullPath: '/api/public/track-city-click'
+      preLoaderRoute: typeof ApiPublicTrackCityClickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -354,6 +374,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
   CategorySlugRoute: CategorySlugRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
+  ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   LSlugIdRoute: LSlugIdRoute,
 }
 export const routeTree = rootRouteImport
