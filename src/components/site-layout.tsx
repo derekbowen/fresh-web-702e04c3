@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Link } from "@tanstack/react-router";
 
 const SITE = "https://www.poolrentalnearme.com";
@@ -81,7 +82,7 @@ const POPULAR_MARKETS = [
   { name: "Katy, TX", slug: "katy-tx" },
 ];
 
-const SOCIALS: Array<{ label: string; href: string; icon: JSX.Element }> = [
+const SOCIALS: Array<{ label: string; href: string; icon: React.ReactNode }> = [
   { label: "Facebook", href: "https://www.facebook.com/poolrentalnearme", icon: <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg> },
   { label: "X", href: "https://x.com/poolrentalnearme", icon: <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M18.244 2H21l-6.52 7.46L22 22h-6.79l-4.78-6.26L4.8 22H2.04l6.97-7.97L2 2h6.96l4.32 5.71L18.24 2zm-2.38 18h1.88L7.27 4H5.27l10.6 16z"/></svg> },
   { label: "YouTube", href: "https://www.youtube.com/@poolrentalnearme", icon: <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5"><path d="M23.5 6.5a3 3 0 0 0-2.1-2.1C19.4 4 12 4 12 4s-7.4 0-9.4.4A3 3 0 0 0 .5 6.5C0 8.5 0 12 0 12s0 3.5.5 5.5a3 3 0 0 0 2.1 2.1C4.6 20 12 20 12 20s7.4 0 9.4-.4a3 3 0 0 0 2.1-2.1C24 15.5 24 12 24 12s0-3.5-.5-5.5zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg> },
