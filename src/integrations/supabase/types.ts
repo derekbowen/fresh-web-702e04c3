@@ -224,6 +224,63 @@ export type Database = {
         }
         Relationships: []
       }
+      course_completions: {
+        Row: {
+          certificate_uid: string
+          completed_at: string
+          course_slug: string
+          course_title: string
+          id: string
+          learner_name: string
+          revoke_reason: string | null
+          revoked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          certificate_uid?: string
+          completed_at?: string
+          course_slug: string
+          course_title: string
+          id?: string
+          learner_name: string
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          certificate_uid?: string
+          completed_at?: string
+          course_slug?: string
+          course_title?: string
+          id?: string
+          learner_name?: string
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      course_enrollments: {
+        Row: {
+          course_slug: string
+          enrolled_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          course_slug: string
+          enrolled_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          course_slug?: string
+          enrolled_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           category: string
@@ -296,6 +353,36 @@ export type Database = {
           tier?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -427,6 +514,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_certificate_uid: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
