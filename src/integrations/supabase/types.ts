@@ -422,6 +422,170 @@ export type Database = {
         }
         Relationships: []
       }
+      host_tools: {
+        Row: {
+          category: string
+          created_at: string
+          icon: string | null
+          id: string
+          is_published: boolean
+          slug: string
+          sort_order: number
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          slug: string
+          sort_order?: number
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          slug?: string
+          sort_order?: number
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mb_likes: {
+        Row: {
+          created_at: string
+          id: string
+          reply_id: string | null
+          thread_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reply_id?: string | null
+          thread_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reply_id?: string | null
+          thread_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mb_likes_reply_id_fkey"
+            columns: ["reply_id"]
+            isOneToOne: false
+            referencedRelation: "mb_replies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mb_likes_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "mb_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mb_replies: {
+        Row: {
+          author_name: string | null
+          body: string
+          created_at: string
+          id: string
+          like_count: number
+          thread_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author_name?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          like_count?: number
+          thread_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author_name?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          like_count?: number
+          thread_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mb_replies_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "mb_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mb_threads: {
+        Row: {
+          author_name: string | null
+          body: string
+          category: string | null
+          created_at: string
+          id: string
+          is_pinned: boolean
+          last_activity_at: string
+          like_count: number
+          reply_count: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author_name?: string | null
+          body: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          last_activity_at?: string
+          like_count?: number
+          reply_count?: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author_name?: string | null
+          body?: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          last_activity_at?: string
+          like_count?: number
+          reply_count?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
