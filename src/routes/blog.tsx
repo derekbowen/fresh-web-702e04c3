@@ -269,7 +269,7 @@ function BlogIndex() {
                           <span>·</span>
                           <Link
                             to="/blog"
-                            search={{ page: 1, topic: p.topic ?? undefined }}
+                            search={(prev) => ({ ...prev, page: 1, topic: p.topic ?? undefined })}
                             className="hover:text-primary"
                           >
                             {tMeta.label}
@@ -289,7 +289,7 @@ function BlogIndex() {
           <nav className="mt-12 flex items-center justify-between" aria-label="Pagination">
             <Link
               to="/blog"
-              search={{ page: Math.max(1, page - 1), topic: activeTopic ?? undefined }}
+              search={(prev) => ({ ...prev, page: Math.max(1, page - 1) })}
               disabled={page <= 1}
               className={`rounded-md border px-4 py-2 text-sm font-medium ${
                 page <= 1
@@ -306,7 +306,7 @@ function BlogIndex() {
             </p>
             <Link
               to="/blog"
-              search={{ page: Math.min(totalPages, page + 1), topic: activeTopic ?? undefined }}
+              search={(prev) => ({ ...prev, page: Math.min(totalPages, page + 1) })}
               disabled={page >= totalPages}
               className={`rounded-md border px-4 py-2 text-sm font-medium ${
                 page >= totalPages
