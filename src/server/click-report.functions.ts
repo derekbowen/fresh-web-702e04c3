@@ -23,7 +23,8 @@ export type CityClickReport = {
   generatedAt: string;
 };
 
-async function assertAdmin(supabase: ReturnType<typeof requireSupabaseAuth> extends never ? never : any, userId: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function assertAdmin(supabase: any, userId: string) {
   const { data, error } = await supabase
     .from("user_roles")
     .select("role")
