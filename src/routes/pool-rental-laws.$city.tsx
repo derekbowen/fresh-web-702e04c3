@@ -346,7 +346,7 @@ function PoolRentalLawsPage() {
               Sources
             </h2>
             <ul className="mt-2 space-y-1 text-xs">
-              {regulation.source_urls.map((url) => (
+              {regulation.source_urls.map((url: string) => (
                 <li key={url}>
                   <a
                     href={url}
