@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
+import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
 import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
@@ -24,9 +25,11 @@ import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml
 import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
+import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
+import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
@@ -57,6 +60,11 @@ const AcademyIndexRoute = AcademyIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AcademyRoute,
+} as any)
+const VerifyUidRoute = VerifyUidRouteImport.update({
+  id: '/verify/$uid',
+  path: '/verify/$uid',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProvidersSlugRoute = ProvidersSlugRouteImport.update({
   id: '/$slug',
@@ -103,6 +111,11 @@ const AdminCitiesHeroesRoute = AdminCitiesHeroesRouteImport.update({
   path: '/admin/cities-heroes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountLearningRoute = AccountLearningRouteImport.update({
+  id: '/account/learning',
+  path: '/account/learning',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AcademySlugRoute = AcademySlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -118,6 +131,11 @@ const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
   path: '/api/public/track-city-click',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCertificatesUidPdfRoute = ApiCertificatesUidPdfRouteImport.update({
+  id: '/api/certificates/$uid/pdf',
+  path: '/api/certificates/$uid/pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -126,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
+  '/account/learning': typeof AccountLearningRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
@@ -135,9 +154,11 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
+  '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -145,6 +166,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
+  '/account/learning': typeof AccountLearningRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
@@ -154,9 +176,11 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
+  '/verify/$uid': typeof VerifyUidRoute
   '/academy': typeof AcademyIndexRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -166,6 +190,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
+  '/account/learning': typeof AccountLearningRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
@@ -175,9 +200,11 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
+  '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -188,6 +215,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/providers'
     | '/academy/$slug'
+    | '/account/learning'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/api/robots.txt'
@@ -197,9 +225,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/verify/$uid'
     | '/academy/'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
+    | '/api/certificates/$uid/pdf'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -207,6 +237,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/providers'
     | '/academy/$slug'
+    | '/account/learning'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/api/robots.txt'
@@ -216,9 +247,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/verify/$uid'
     | '/academy'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
+    | '/api/certificates/$uid/pdf'
   id:
     | '__root__'
     | '/'
@@ -227,6 +260,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/providers'
     | '/academy/$slug'
+    | '/account/learning'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/api/robots.txt'
@@ -236,9 +270,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/verify/$uid'
     | '/academy/'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
+    | '/api/certificates/$uid/pdf'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -247,14 +283,17 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   ProvidersRoute: typeof ProvidersRouteWithChildren
+  AccountLearningRoute: typeof AccountLearningRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
   ApiRobotsDottxtRoute: typeof ApiRobotsDottxtRoute
   ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
   CategorySlugRoute: typeof CategorySlugRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
+  VerifyUidRoute: typeof VerifyUidRoute
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   LSlugIdRoute: typeof LSlugIdRoute
+  ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -300,6 +339,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/academy/'
       preLoaderRoute: typeof AcademyIndexRouteImport
       parentRoute: typeof AcademyRoute
+    }
+    '/verify/$uid': {
+      id: '/verify/$uid'
+      path: '/verify/$uid'
+      fullPath: '/verify/$uid'
+      preLoaderRoute: typeof VerifyUidRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/providers/$slug': {
       id: '/providers/$slug'
@@ -364,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCitiesHeroesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/learning': {
+      id: '/account/learning'
+      path: '/account/learning'
+      fullPath: '/account/learning'
+      preLoaderRoute: typeof AccountLearningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/academy/$slug': {
       id: '/academy/$slug'
       path: '/$slug'
@@ -383,6 +436,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/track-city-click'
       fullPath: '/api/public/track-city-click'
       preLoaderRoute: typeof ApiPublicTrackCityClickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/certificates/$uid/pdf': {
+      id: '/api/certificates/$uid/pdf'
+      path: '/api/certificates/$uid/pdf'
+      fullPath: '/api/certificates/$uid/pdf'
+      preLoaderRoute: typeof ApiCertificatesUidPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -439,14 +499,17 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   ProvidersRoute: ProvidersRouteWithChildren,
+  AccountLearningRoute: AccountLearningRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClickReportRoute: AdminClickReportRoute,
   ApiRobotsDottxtRoute: ApiRobotsDottxtRoute,
   ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
   CategorySlugRoute: CategorySlugRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
+  VerifyUidRoute: VerifyUidRoute,
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   LSlugIdRoute: LSlugIdRoute,
+  ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -183,7 +183,7 @@ export const Route = createFileRoute("/api/certificates/$uid/pdf")({
           verifyUrl: `${origin}/verify/${data.certificate_uid}`,
         });
 
-        return new Response(pdf, {
+        return new Response(pdf as BlobPart as BodyInit, {
           status: 200,
           headers: {
             "content-type": "application/pdf",
