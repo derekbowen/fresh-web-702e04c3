@@ -9,20 +9,27 @@ export interface SeoMetaInput {
   title: string;
   description: string;
   path: string; // starts with /
+  canonicalPath?: string; // overrides `path` for canonical (e.g. strip query)
   image?: string | null;
   type?: "website" | "article" | "product";
   noindex?: boolean;
+  prevPath?: string | null;
+  nextPath?: string | null;
 }
 
 export function buildMeta({
   title,
   description,
   path,
+  canonicalPath,
   image,
   type = "website",
   noindex,
+  prevPath,
+  nextPath,
 }: SeoMetaInput) {
   const url = `${SITE_URL}${path}`;
+  const canonicalUrl = `${SITE_URL}${canonicalPath ?? path}`;
   const meta: Array<Record<string, string>> = [
     { title },
     { name: "description", content: description },
@@ -42,10 +49,12 @@ export function buildMeta({
   if (noindex) {
     meta.push({ name: "robots", content: "noindex, nofollow" });
   }
-  return {
-    meta,
-    links: [{ rel: "canonical", href: url }],
-  };
+  const links: Array<Record<string, string>> = [
+    { rel: "canonical", href: canonicalUrl },
+  ];
+  if (prevPath) links.push({ rel: "prev", href: `${SITE_URL}${prevPath}` });
+  if (nextPath) links.push({ rel: "next", href: `${SITE_URL}${nextPath}` });
+  return { meta, links };
 }
 
 export interface BreadcrumbItem {
