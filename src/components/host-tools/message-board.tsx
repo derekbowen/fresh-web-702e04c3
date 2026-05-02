@@ -199,7 +199,7 @@ function ThreadView({ thread, replies, user, onBack, onReply }: {
           </button>
         </div>
       ) : (
-        <Link to="/auth" className="block rounded-2xl border border-dashed border-border p-6 text-center text-sm text-primary hover:underline">
+        <Link to="/auth" search={{ redirect: "/host-tools", mode: "signin" }} className="block rounded-2xl border border-dashed border-border p-6 text-center text-sm text-primary hover:underline">
           Sign in to reply →
         </Link>
       )}
