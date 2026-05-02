@@ -6,7 +6,7 @@ import { Breadcrumbs, ListingCard } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
 import poolHeroDefault from "@/assets/pool-hero-default.jpg";
 
-const SITE = "https://www.poolrentalnearme.com";
+
 
 const OCCASIONS = [
   "Birthday party",
