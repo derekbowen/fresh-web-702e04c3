@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { buildMeta } from "@/lib/seo";
+import { buildMeta, breadcrumbJsonLd, itemListJsonLd, ldJsonScript } from "@/lib/seo";
 
 const listProviders = createServerFn({ method: "GET" }).handler(async () => {
   const { data } = await supabaseAdmin
@@ -15,11 +15,27 @@ const listProviders = createServerFn({ method: "GET" }).handler(async () => {
 
 export const Route = createFileRoute("/providers")({
   loader: () => listProviders(),
-  head: () => buildMeta({
-    title: "Pool Service Providers Directory | Pool Rental Near Me",
-    description: "Browse trusted pool builders, cleaners, and service providers across the US. Find local pros for your swimming pool.",
-    path: "/providers",
-  }),
+  head: ({ loaderData }) => {
+    const meta = buildMeta({
+      title: "Pool Service Providers Directory | Pool Rental Near Me",
+      description:
+        "Browse trusted pool builders, cleaners, and service providers across the US. Find local pros for your swimming pool.",
+      path: "/providers",
+    });
+    const crumbs = breadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Providers", path: "/providers" },
+    ]);
+    const list = itemListJsonLd(
+      (loaderData?.providers ?? []).slice(0, 50).map((p: { slug: string; name: string; logo_url: string | null }) => ({
+        name: p.name,
+        path: `/providers/${p.slug}`,
+        image: p.logo_url,
+      })),
+      "Pool Service Providers",
+    );
+    return { ...meta, scripts: [ldJsonScript(crumbs), ldJsonScript(list)] };
+  },
   component: ProvidersIndex,
 });
 
