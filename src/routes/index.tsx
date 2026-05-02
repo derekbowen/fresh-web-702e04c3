@@ -6,6 +6,36 @@ import { ListingCard } from "@/components/listing-card";
 import { searchListings } from "@/server/sharetribe.server";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import { buildMeta, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
+import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
+import heroPool from "@/assets/pool-hero-default.jpg";
+
+const FEATURED_OCCASIONS = [
+  { slug: "bachelorette-pool-party-hosting-playbook", title: "Bachelorette", img: "academy/bachelorette.jpg" },
+  { slug: "sweet-16-graduation-pool-party-hosting", title: "Sweet 16 & Graduation", img: "academy/sweet-16.jpg" },
+  { slug: "quinceanera-pool-venue-hosting", title: "Quinceañera", img: "academy/quinceanera.jpg" },
+  { slug: "family-reunion-pool-hosting", title: "Family Reunion", img: "academy/family-reunion.jpg" },
+  { slug: "baby-shower-gender-reveal-pool-venue-hosting", title: "Baby Shower & Gender Reveal", img: "academy/baby-shower.jpg" },
+  { slug: "photoshoot-content-creator-ugc-pool-hosting", title: "Photoshoot & UGC", img: "academy/photoshoot.jpg" },
+];
+
+const FAQS = [
+  {
+    q: "Is the pool host insured if a guest gets hurt?",
+    a: "Every confirmed booking on PoolRentalNearMe includes $2M liability insurance for the host, so you're protected if a guest is injured during their reservation. Hosts also get the option to add property damage protection for higher-value pools.",
+  },
+  {
+    q: "How do I contact a pool owner before booking?",
+    a: "Once you've found a pool you like, message the host directly through the listing page. Hosts typically reply within an hour. You can ask about pool depth, parking, sound rules, and bring-your-own-food policies before you confirm.",
+  },
+  {
+    q: "Can strangers really swim in my private pool safely?",
+    a: "Yes — and the data is on your side. Swimply has hosted millions of bookings without serious incident, and PRNM bookings include built-in liability coverage, ID-verified guests, security deposits, and clear house rules you set yourself. Most hosts say guests treat the pool more carefully than friends do.",
+  },
+  {
+    q: "Is it free for kids and families?",
+    a: "Pricing is set per-hour by each host, often with a per-guest fee for groups over a threshold (e.g. 6 guests). Many family-friendly hosts include kids under 12 free. Check each listing's price breakdown before booking.",
+  },
+];
 
 const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
   const [cities, categories, listingsResult] = await Promise.all([
@@ -20,7 +50,7 @@ const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
       .select("slug, name, icon")
       .eq("is_published", true)
       .order("name"),
-    searchListings({ perPage: 12 }),
+    searchListings({ perPage: 6 }),
   ]);
   return {
     cities: cities.data ?? [],
@@ -37,6 +67,7 @@ export const Route = createFileRoute("/")({
       description:
         "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
       path: "/",
+      image: heroPool,
     });
     const org = {
       "@context": "https://schema.org",
@@ -45,7 +76,16 @@ export const Route = createFileRoute("/")({
       url: SITE_URL,
       sameAs: ["https://www.poolrentalnearme.com"],
     };
-    return { ...meta, scripts: [ldJsonScript(org)] };
+    const faqLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    };
+    return { ...meta, scripts: [ldJsonScript(org), ldJsonScript(faqLd)] };
   },
   component: HomePage,
 });
@@ -57,123 +97,273 @@ function HomePage() {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="flex-1">
-        {/* Hero */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-background">
-          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Rent a private pool{" "}
-                <span className="text-primary">by the hour</span>
+        {/* Hero — split layout, copy left + photo right */}
+        <section className="relative overflow-hidden bg-primary text-primary-foreground">
+          <div className="mx-auto grid max-w-7xl items-stretch gap-8 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:py-20">
+            <div className="lg:col-span-6 lg:py-8">
+              <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+                Backyard pools,<br />
+                <span className="text-white/90">booked by the hour.</span>
               </h1>
-              <p className="mt-6 text-lg text-muted-foreground sm:text-xl">
-                Heated pools, hot tubs, and luxury backyards near you. Book
-                instantly with $2M liability insurance included on every
-                reservation.
+              <p className="mt-6 max-w-xl text-lg text-primary-foreground/85 sm:text-xl">
+                Rent a private pool near you for the day, the afternoon, or the weekend. Every booking is protected by $2M liability insurance — included, never an upsell.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
                   href="/s"
-                  className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
+                  className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                 >
-                  Find a pool near you
+                  Find a pool near you →
                 </a>
                 <a
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
+                  className="inline-flex items-center justify-center rounded-full border border-white/40 bg-transparent px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/10"
                 >
                   List your pool
                 </a>
               </div>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-primary-foreground/80">
+                <span className="flex items-center gap-2"><span aria-hidden>🛟</span> $2M insurance</span>
+                <span className="flex items-center gap-2"><span aria-hidden>⚡</span> Instant booking</span>
+                <span className="flex items-center gap-2"><span aria-hidden>✓</span> Verified hosts</span>
+              </div>
             </div>
+            <div className="relative lg:col-span-6">
+              <div className="overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/10">
+                <img
+                  src={heroPool}
+                  alt="A sunlit private backyard swimming pool ready to rent by the hour"
+                  className="h-72 w-full object-cover sm:h-96 lg:h-full"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Two-path chooser */}
+        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Two ways to make someone's day
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Pool owner or pool guest — start where you fit.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            <a
+              href="/s"
+              className="group flex items-center gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl" aria-hidden>🏊</div>
+              <div className="flex-1">
+                <div className="text-xl font-semibold text-foreground group-hover:text-primary">I want to swim</div>
+                <p className="mt-1 text-sm text-muted-foreground">Book a private pool by the hour for your group, your kids, or just for yourself.</p>
+              </div>
+              <span className="text-2xl text-muted-foreground group-hover:text-primary" aria-hidden>→</span>
+            </a>
+            <a
+              href="/signup"
+              className="group flex items-center gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl" aria-hidden>💰</div>
+              <div className="flex-1">
+                <div className="text-xl font-semibold text-foreground group-hover:text-primary">I want to host my pool</div>
+                <p className="mt-1 text-sm text-muted-foreground">Top hosts earn $3K–$10K/month. Free to list. Insurance included on every booking.</p>
+              </div>
+              <span className="text-2xl text-muted-foreground group-hover:text-primary" aria-hidden>→</span>
+            </a>
           </div>
         </section>
 
         {/* Featured Live Listings */}
         {listings.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight text-foreground">Featured pools</h2>
-                <p className="mt-2 text-muted-foreground">Live listings from hosts across the country.</p>
-              </div>
-              <a href="/s" className="hidden text-sm font-semibold text-primary hover:underline sm:inline">View all →</a>
+            <div className="flex flex-col items-center text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                Pools near you
+              </h2>
+              <p className="mt-3 max-w-xl text-muted-foreground">
+                Real backyards from real hosts. Pick one and you could be poolside this weekend.
+              </p>
             </div>
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {listings.map((l: ListingSummary) => (
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {listings.slice(0, 6).map((l: ListingSummary) => (
                 <ListingCard key={l.id} listing={l} />
               ))}
+            </div>
+            <div className="mt-10 text-center">
+              <a
+                href="/s"
+                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
+              >
+                Find a pool near you →
+              </a>
             </div>
           </section>
         )}
 
-        {/* Categories */}
-        {categories.length > 0 && (
-          <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">
-              Browse by category
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              Find the perfect pool for your occasion.
-            </p>
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-              {categories.map((c: { slug: string; name: string; icon: string | null }) => (
-                <Link
-                  key={c.slug}
-                  to="/category/$slug"
-                  params={{ slug: c.slug }}
-                  className="group rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
+        {/* Occasions block — blue panel, links to long-form Academy pages */}
+        <section className="bg-primary py-16 text-primary-foreground sm:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-4">
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                  Got an occasion to celebrate?
+                </h2>
+                <p className="mt-3 text-primary-foreground/85">
+                  Every party type has its own perfect pool — and its own hosting playbook. Tap one to learn what to expect, what it costs, and how to book it right.
+                </p>
+              </div>
+              <div className="lg:col-span-8">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {FEATURED_OCCASIONS.map((o) => (
+                    <Link
+                      key={o.slug}
+                      to="/academy/$slug"
+                      params={{ slug: o.slug }}
+                      className="group relative overflow-hidden rounded-2xl bg-white text-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-xl"
+                    >
+                      <div className="aspect-[4/3] overflow-hidden">
+                        <img
+                          src={ACADEMY_HERO_MAP[o.img]}
+                          alt={`${o.title} pool rental playbook`}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between gap-2 px-4 py-3">
+                        <span className="text-sm font-semibold">{o.title}</span>
+                        <span className="text-primary" aria-hidden>→</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-8 flex justify-center lg:justify-start">
+                  <Link
+                    to="/academy"
+                    className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
+                  >
+                    Browse all occasion playbooks →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ + simpler-in-direct CTA */}
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="grid gap-10 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                Questions? <span className="text-primary">We've thought of everything.</span>
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                The four things first-time renters and hosts ask us most.
+              </p>
+              <div className="mt-8 space-y-3">
+                {FAQS.map((f, i) => (
+                  <details key={i} className="group rounded-2xl border border-border bg-card p-5 open:shadow-md">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-foreground">
+                      {f.q}
+                      <span className="text-muted-foreground transition-transform group-open:rotate-45" aria-hidden>+</span>
+                    </summary>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+            <div className="lg:col-span-5">
+              <div className="sticky top-8 flex h-full min-h-[280px] flex-col items-start justify-center rounded-3xl bg-gradient-to-br from-primary to-primary-glow p-8 text-primary-foreground shadow-xl">
+                <h3 className="text-2xl font-bold">Talk to a real human.</h3>
+                <p className="mt-3 text-primary-foreground/85">
+                  Trying to plan a wedding-weekend takeover or a film shoot? Need a custom quote for a 30-person reunion? Skip the search — we'll help you book it.
+                </p>
+                <a
+                  href="mailto:hello@poolrentalnearme.com"
+                  className="mt-6 inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                 >
-                  {c.icon && (
-                    <div className="text-3xl" aria-hidden="true">
-                      {c.icon}
+                  Contact concierge →
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Categories (kept, secondary) */}
+        {categories.length > 0 && (
+          <section className="bg-secondary/30">
+            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                Browse by pool type
+              </h2>
+              <p className="mt-2 text-muted-foreground">
+                Heated pools, hot tubs, infinity edges — find the right vibe.
+              </p>
+              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                {categories.map((c: { slug: string; name: string; icon: string | null }) => (
+                  <Link
+                    key={c.slug}
+                    to="/category/$slug"
+                    params={{ slug: c.slug }}
+                    className="group rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    {c.icon && (
+                      <div className="text-3xl" aria-hidden="true">
+                        {c.icon}
+                      </div>
+                    )}
+                    <div className="mt-2 text-sm font-semibold text-foreground group-hover:text-primary">
+                      {c.name}
                     </div>
-                  )}
-                  <div className="mt-2 text-sm font-semibold text-foreground group-hover:text-primary">
-                    {c.name}
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
           </section>
         )}
 
         {/* Cities */}
-        <section className="bg-secondary/20">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">
-              Pool rentals by city
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              {cities.length}+ cities across the US.
-            </p>
-            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {cities.map((c: { slug: string; name: string; state_code: string }) => (
-                <Link
-                  key={c.slug}
-                  to="/pool-rental/$city"
-                  params={{ city: c.slug }}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
-                >
-                  {c.name}, {c.state_code}
-                </Link>
-              ))}
-            </div>
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Pool rentals in {cities.length}+ U.S. cities
+          </h2>
+          <p className="mt-2 text-muted-foreground">
+            Find a private pool in your zip code.
+          </p>
+          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            {cities.map((c: { slug: string; name: string; state_code: string }) => (
+              <Link
+                key={c.slug}
+                to="/pool-rental/$city"
+                params={{ city: c.slug }}
+                className="text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
+              >
+                {c.name}, {c.state_code}
+              </Link>
+            ))}
           </div>
         </section>
 
-        {/* Trust */}
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid gap-8 sm:grid-cols-3">
-            {[
-              { title: "$2M liability insurance", desc: "Every booking is covered for hosts and guests." },
-              { title: "Instant booking", desc: "No waiting — confirm your reservation in seconds." },
-              { title: "Verified hosts", desc: "Real photos, ratings, and reviews you can trust." },
-            ].map((f) => (
-              <div key={f.title} className="rounded-2xl border border-border bg-card p-6">
-                <h3 className="text-lg font-semibold text-foreground">{f.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{f.desc}</p>
-              </div>
-            ))}
+        {/* Final host CTA strip */}
+        <section className="bg-primary text-primary-foreground">
+          <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 px-4 py-14 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <div>
+              <h2 className="text-2xl font-bold sm:text-3xl">
+                Got a pool? Turn it into income.
+              </h2>
+              <p className="mt-2 max-w-2xl text-primary-foreground/85">
+                Top hosts earn $3,000–$10,000 per month renting their backyard a few hours at a time. Free to list, insured on every booking.
+              </p>
+            </div>
+            <a
+              href="/signup"
+              className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-7 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
+            >
+              List your pool →
+            </a>
           </div>
         </section>
       </main>
