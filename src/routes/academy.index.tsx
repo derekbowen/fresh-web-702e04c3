@@ -155,28 +155,31 @@ function AcademyIndex() {
             <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
               <Link to="/" className="hover:text-foreground">Home</Link>
               <span className="mx-2">/</span>
-              <span className="text-foreground">{t.academyTitle}</span>
-              {activeMeta && (<><span className="mx-2">/</span><span>{activeMeta.label}</span></>)}
+              <Link to="/academy" search={{ page: 1, lang, category: undefined, q: undefined, tier: undefined }} className="hover:text-foreground">
+                {t.academyTitle}
+              </Link>
+              {activeTierMeta && (<><span className="mx-2">/</span><span className="text-foreground">{activeTierMeta.label}</span></>)}
+              {activeMeta && (<><span className="mx-2">/</span><span className="text-foreground">{activeMeta.label}</span></>)}
             </nav>
             <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              {activeMeta ? (
+              {heroLabel ? (
                 <>
-                  <span className="mr-3">{activeMeta.emoji}</span>
-                  {activeMeta.label}
+                  {heroEmoji && <span className="mr-3">{heroEmoji}</span>}
+                  {heroLabel}
                 </>
               ) : (
                 t.academyTitle
               )}
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-              {activeMeta?.description || t.academyTagline}
+              {heroDesc}
             </p>
 
             {/* Language toggle */}
             <div className="mt-6 inline-flex rounded-full border border-border bg-background p-1 text-sm font-medium">
               <Link
                 to="/academy"
-                search={{ page: 1, lang: "en", category: undefined, q: undefined }}
+                search={{ page: 1, lang: "en", category: undefined, q: undefined, tier: activeTier ?? undefined }}
                 className={`rounded-full px-4 py-1.5 transition ${
                   lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -185,7 +188,7 @@ function AcademyIndex() {
               </Link>
               <Link
                 to="/academy"
-                search={{ page: 1, lang: "es", category: undefined, q: undefined }}
+                search={{ page: 1, lang: "es", category: undefined, q: undefined, tier: activeTier ?? undefined }}
                 className={`rounded-full px-4 py-1.5 transition ${
                   lang === "es" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
