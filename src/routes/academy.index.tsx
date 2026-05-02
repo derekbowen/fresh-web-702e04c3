@@ -143,7 +143,7 @@ function AcademyIndex() {
   const heroLabel = activeTierMeta?.label ?? activeMeta?.label ?? null;
   const heroEmoji = activeTierMeta?.emoji ?? activeMeta?.emoji ?? null;
   const heroDesc = activeTierMeta?.description ?? activeMeta?.description ?? t.academyTagline;
-  const tierCountMap = new Map(data.tiers.map((tier: { slug: string; count: number }) => [tier.slug, tier.count]));
+  const tierCountMap = new Map<string, number>(data.tiers.map((tier: { slug: string; count: number }) => [tier.slug, tier.count] as const));
 
   return (
     <div className="flex min-h-screen flex-col">
