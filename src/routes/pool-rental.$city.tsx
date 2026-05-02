@@ -4,6 +4,7 @@ import { queryListings, type ListingSummary } from "@/server/sharetribe.function
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs, ListingCard } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
+import { resolveCityHero } from "@/lib/city-hero";
 import poolHeroDefault from "@/assets/pool-hero-default.jpg";
 
 
@@ -87,7 +88,7 @@ export const Route = createFileRoute("/pool-rental/$city")({
       title,
       description,
       path: `/pool-rental/${params.city}`,
-      image: c.hero_image_url || undefined,
+      image: resolveCityHero(params.city, c.hero_image_url),
     });
     const business = {
       "@context": "https://schema.org",
@@ -167,7 +168,7 @@ function CityNotFound() {
 function CityPage() {
   const { city, listings, total, nearby, categories } = Route.useLoaderData();
   const params = Route.useParams();
-  const heroImg = city.hero_image_url || poolHeroDefault;
+  const heroImg = resolveCityHero(city.slug, city.hero_image_url);
 
   return (
     <div className="flex min-h-screen flex-col">
