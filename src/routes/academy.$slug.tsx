@@ -4,6 +4,7 @@ import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL, SITE_NAME } from "
 import { getCategoryMeta, I18N, type Lang } from "@/lib/academy";
 import { getCourse, getRelatedCourses } from "@/server/courses.functions";
 import { CourseCard, type CourseCardCourse } from "@/components/course-card";
+import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
 
 export const Route = createFileRoute("/academy/$slug")({
   loader: async ({ params }) => {
