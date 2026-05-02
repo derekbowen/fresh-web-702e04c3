@@ -1,0 +1,143 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+const STATE_NAMES: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri",
+  MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
+  NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
+  OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina",
+  SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont",
+  VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+  DC: "District of Columbia",
+};
+
+export function stateName(code: string): string {
+  return STATE_NAMES[code.toUpperCase()] ?? code;
+}
+
+const stateSlugSchema = z.object({
+  state: z.string().regex(/^[a-z]{2}$/),
+});
+
+const cityComboSchema = z.object({
+  state: z.string().regex(/^[a-z]{2}$/),
+  city: z.string().regex(/^[a-z0-9-]+$/).max(80),
+});
+
+export const listBuilderStates = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { data, error } = await supabaseAdmin
+      .from("providers")
+      .select("state_code")
+      .eq("is_published", true)
+      .not("state_code", "is", null);
+    if (error) console.error("listBuilderStates:", error);
+    const counts = new Map<string, number>();
+    for (const r of data ?? []) {
+      const sc = (r as { state_code: string | null }).state_code;
+      if (!sc) continue;
+      counts.set(sc, (counts.get(sc) ?? 0) + 1);
+    }
+    return {
+      states: Array.from(counts.entries())
+        .map(([code, count]) => ({
+          code, name: stateName(code), count, slug: code.toLowerCase(),
+        }))
+        .sort((a, b) => b.count - a.count),
+    };
+  },
+);
+
+export const getBuildersByState = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => stateSlugSchema.parse(d))
+  .handler(async ({ data }) => {
+    const code = data.state.toUpperCase();
+    const { data: providers, error } = await supabaseAdmin
+      .from("providers")
+      .select("slug, name, city, city_slug, state_code, rating, rating_count, business_type, logo_url, hero_image_url, latitude, longitude")
+      .eq("is_published", true)
+      .eq("state_code", code)
+      .order("rating", { ascending: false, nullsFirst: false })
+      .order("rating_count", { ascending: false, nullsFirst: false })
+      .limit(500);
+    if (error) console.error("getBuildersByState:", error);
+    // Aggregate cities for this state
+    const cityMap = new Map<string, { city: string; slug: string; count: number }>();
+    for (const p of providers ?? []) {
+      const row = p as { city: string | null; city_slug: string | null };
+      if (!row.city || !row.city_slug) continue;
+      const existing = cityMap.get(row.city_slug);
+      if (existing) existing.count++;
+      else cityMap.set(row.city_slug, { city: row.city, slug: row.city_slug, count: 1 });
+    }
+    const cities = Array.from(cityMap.values()).sort((a, b) => b.count - a.count);
+    return {
+      state: { code, name: stateName(code), slug: code.toLowerCase(), count: providers?.length ?? 0 },
+      providers: providers ?? [],
+      cities,
+    };
+  });
+
+export const getBuildersByCity = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => cityComboSchema.parse(d))
+  .handler(async ({ data }) => {
+    const code = data.state.toUpperCase();
+    // city slug as stored is "<city>-<state-lower>" e.g. "charlotte-nc"
+    const fullSlug = data.city.endsWith(`-${data.state}`) ? data.city : `${data.city}-${data.state}`;
+    const { data: providers, error } = await supabaseAdmin
+      .from("providers")
+      .select("slug, name, city, city_slug, state_code, rating, rating_count, business_type, address, phone, website_url, logo_url, hero_image_url, latitude, longitude, description")
+      .eq("is_published", true)
+      .eq("state_code", code)
+      .eq("city_slug", fullSlug)
+      .order("rating", { ascending: false, nullsFirst: false })
+      .order("rating_count", { ascending: false, nullsFirst: false });
+    if (error) console.error("getBuildersByCity:", error);
+    const cityName = providers?.[0]?.city ?? null;
+    return {
+      state: { code, name: stateName(code), slug: code.toLowerCase() },
+      city: cityName ? { name: cityName as string, slug: fullSlug } : null,
+      providers: providers ?? [],
+    };
+  });
+
+const leadSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  email: z.string().trim().email().max(255),
+  phone: z.string().trim().max(40).optional().or(z.literal("")),
+  company: z.string().trim().max(160).optional().or(z.literal("")),
+  website: z.string().trim().max(300).optional().or(z.literal("")),
+  city: z.string().trim().max(120).optional().or(z.literal("")),
+  state_code: z.string().trim().max(4).optional().or(z.literal("")),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
+  source_provider_slug: z.string().trim().max(120).optional().or(z.literal("")),
+  source_path: z.string().trim().max(300).optional().or(z.literal("")),
+});
+
+export const submitProviderLead = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => leadSchema.parse(d))
+  .handler(async ({ data }) => {
+    const blank = (s?: string) => (s && s.trim() ? s.trim() : null);
+    const { error } = await supabaseAdmin.from("provider_leads").insert({
+      name: data.name.trim(),
+      email: data.email.trim().toLowerCase(),
+      phone: blank(data.phone),
+      company: blank(data.company),
+      website: blank(data.website),
+      city: blank(data.city),
+      state_code: blank(data.state_code)?.toUpperCase() ?? null,
+      message: blank(data.message),
+      source_provider_slug: blank(data.source_provider_slug),
+      source_path: blank(data.source_path),
+    });
+    if (error) {
+      console.error("submitProviderLead:", error);
+      return { ok: false as const, error: "Could not submit. Please try again." };
+    }
+    return { ok: true as const };
+  });
