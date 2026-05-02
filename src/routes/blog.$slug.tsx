@@ -74,7 +74,7 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogPostPage() {
-  const { post } = Route.useLoaderData();
+  const { post, linkTargets } = Route.useLoaderData();
   const params = Route.useParams();
   return (
     <div className="flex min-h-screen flex-col">
@@ -104,9 +104,11 @@ function BlogPostPage() {
             <p className="mt-8 text-lg text-muted-foreground">{post.excerpt}</p>
           )}
           {post.content && (
-            <div className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground">
-              {post.content}
-            </div>
+            <AutoLinkedContent
+              text={post.content}
+              targets={linkTargets}
+              className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground"
+            />
           )}
         </article>
       </main>
