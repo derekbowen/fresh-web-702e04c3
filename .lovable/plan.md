@@ -1,55 +1,61 @@
 ## Goal
 
-Make the "nearby cities" section on `/pool-rental/$city` always render with real, geographically-nearest internal links — even for single-city states like AK, HI, DC, ME, ND, NH, RI, SD, VT, WV, WY — and ensure those links navigate correctly.
+Every city page should have a strong, unique hero. Pull the hero used on the corresponding source page at `poolrentalnearme.com/p/{citykey}` and store it in `cities.hero_image_url`, then render it (with a graceful fallback for the rare miss).
 
-## Why the current behavior breaks
+## What I confirmed
 
-`getNearbyCities` (`src/server/content.functions.ts`) filters by `state_code` only. In states with one published city, the result is an empty array, so the entire `{nearby.length > 0 && ...}` block in `src/routes/pool-rental.$city.tsx` is hidden. The links themselves are correct (`<Link to="/pool-rental/$city" params={{ city: n.slug }}>`), but the section never renders for those cities.
+- 355 of 358 published cities currently have `hero_image_url` null. Only LA, Miami, KC have an image set.
+- Each source page has its own banner image, but the source site is a Sharetribe SPA (poolrentalnearme.com). The hero is hydrated client-side from a Sharetribe Asset Delivery JSON keyed by a per-asset version string, so plain `curl` can't fetch it. OG meta tags on most city pages return the generic site default — not a reliable signal.
+- Source URL pattern is `/p/{citykey}` where `citykey` is the city name lowercased, no spaces or hyphens (Los Angeles → `losangeles`, San Diego → `sandiego`).
+- Firecrawl is available as a workspace connector (not yet linked to this project). It renders the page in a real browser, so it can capture the rendered hero `<img>` / `background-image`.
 
-## Approach
+## Plan
 
-Switch nearby cities from "same-state only" to "nearest by great-circle distance," with state as a tie-breaker / preferred bucket. 355 of 358 published cities have lat/lng, so distance ranking is reliable.
+### 1. Link Firecrawl to this project
+Use the existing workspace Firecrawl connection (no new key needed). After linking, `FIRECRAWL_API_KEY` is available to server functions.
 
-### Steps
+### 2. One-time backfill server function (admin-only)
+Create `src/server/cities-hero-backfill.functions.ts` with a server function that:
+1. Loads all published cities missing `hero_image_url` (or all of them, with a `force` flag).
+2. For each city, derives the source slug: lowercase the city name and strip everything except a–z (so "Los Angeles" → `losangeles`, "St. Petersburg" → `stpetersburg`). Maintain a small override map for cities where the source uses a different key.
+3. Calls Firecrawl `scrape` on `https://www.poolrentalnearme.com/p/{key}` with `formats: ['html']`, `onlyMainContent: false`, `waitFor: 2500` so the SPA hydrates.
+4. Parses the returned HTML for the first `sharetribe-assets.imgix.net/...` image in the hero `<section>` (regex on the `style="background-image:url(...)"` attribute, with a fallback to the largest matching `<img src>` above the search form).
+5. Normalizes the URL: strip imgix `&s=...` signature only if present-and-stale, keep `auto=format&fit=clip&w=1600`.
+6. Updates `cities.hero_image_url` via `supabaseAdmin`.
+7. Returns a per-city result list `{ slug, status: "ok"|"miss"|"error", url?, error? }`.
 
-1. **Database: add a SQL helper for nearest cities.**
-   - Create migration `nearby_cities_by_distance(_slug text, _limit int)` — a SECURITY DEFINER function on `public` schema returning `slug, name, state, state_code, distance_km`.
-   - Implementation: use the haversine formula in pure SQL against `public.cities` filtered by `is_published = true` and `slug <> _slug`, ordered by distance ascending, limited to `_limit`. Cities without coordinates fall back to `state_code` match with distance set to a large sentinel so they appear last.
-   - Grant `EXECUTE` to `anon` and `authenticated` so the server can call it via the admin client without issue. No RLS implications (read-only function over already-public data).
+Throttle to ~3 concurrent scrapes to stay polite and within Firecrawl rate limits. Total expected: ~358 scrapes, single one-off run.
 
-2. **Server: rewrite `getNearbyCities`.**
-   - In `src/server/content.functions.ts`, change the handler to:
-     - Look up the source city's lat/lng/state_code from `cities`.
-     - If lat/lng exist, call the new RPC `nearby_cities_by_distance` with `_slug = data.slug`, `_limit = data.limit ?? 12`.
-     - If lat/lng missing, fall back to current same-state query.
-     - Return `{ cities: [...] }` with the same shape (`slug, name, state_code`) plus an additional `state` field so the UI can show full state name when useful.
-   - Update the Zod input schema (no change needed; `state_code` becomes optional/ignored).
+### 3. Lightweight admin trigger
+Add a small admin-only page `src/routes/admin.cities-heroes.tsx` (gated by `has_role('admin')`) with two buttons: "Backfill missing only" and "Force re-scrape all", a results table, and a CSV export of misses. This makes it repeatable without me having to re-run anything.
 
-3. **Route: guarantee the section always renders.**
-   - In `src/routes/pool-rental.$city.tsx`:
-     - Remove the `{nearby.length > 0 && ...}` guard so the section renders unconditionally; render an empty-state line ("More cities coming soon") only if the array is somehow still empty.
-     - Update the heading from "Other pool rentals in {state}" to "Nearby pool rentals" since results are no longer state-scoped.
-     - Keep the existing `<Link to="/pool-rental/$city" params={{ city: n.slug }}>` usage — it's already type-safe and correct.
-     - Group the list into two visual subsections when the data has both same-state and out-of-state matches: "More in {city.state}" first, then "Nearby cities" — partition the array client-side by `n.state_code === city.state_code`.
+### 4. Render-time fallback (the per-page UX guarantee)
+In `src/routes/pool-rental.$city.tsx`, replace the current `city.hero_image_url || poolHeroDefault` with a deterministic-rotation fallback so even the misses get a varied look:
 
-4. **SEO bonus: add reciprocal link to listings.**
-   - No change required, but verify `Breadcrumbs` and the `LocalBusiness` JSON-LD still build correctly after the new data shape. (`state` is already on city; we're only adding `state` to nearby items.)
+- Build `HERO_FALLBACKS` — an array of 8 high-quality pool/backyard Unsplash URLs.
+- Pick `HERO_FALLBACKS[hashSlug(city.slug) % 8]` when `hero_image_url` is null.
+- Keep `poolHeroDefault` only as the absolute last-resort `onError` swap.
 
-5. **Verification.**
-   - Hit `/pool-rental/<one-city-state-slug>` (e.g. an AK or DC city) via `stack_modern--invoke-server-function` and confirm the rendered HTML contains nearby city anchors with `/pool-rental/...` hrefs.
-   - Hit `/pool-rental/los-angeles-ca` and confirm the list is populated with CA cities first (nearest by distance), no duplicates, no self-link.
-   - Click a couple of nearby links in the preview to confirm they navigate without 404.
-   - Check `stack_modern--server-function-logs` filtered by `getNearbyCities` for any RPC errors.
+This means the section is no longer visually identical across cities even before the backfill runs, and stays unique afterwards.
 
-## Files touched
+### 5. og:image wiring
+Where the route's `head()` builds `og:image`, use the same resolved hero URL (not the default asset) so social shares reflect the city.
 
-- New migration: `nearby_cities_by_distance(_slug, _limit)` SQL function.
-- `src/server/content.functions.ts` — rewrite `getNearbyCities` handler + extend return shape with `state`.
-- `src/routes/pool-rental.$city.tsx` — drop empty-array guard, retitle, optional grouping by state.
+## Files
 
-No changes to `Link` components are needed — the navigation contract is already correct; this fix is about (a) data availability and (b) unconditional rendering.
+- New: `src/server/cities-hero-backfill.functions.ts`
+- New: `src/server/cities-hero-backfill.server.ts` (Firecrawl SDK calls + HTML parser)
+- New: `src/routes/admin.cities-heroes.tsx`
+- Edit: `src/routes/pool-rental.$city.tsx` (rotation fallback + og:image)
+- Add dep: `@mendable/firecrawl-js`
+- Connector link: Firecrawl
 
-## Out of scope
+## Open question — answer before I start
 
-- Changing how listings are fetched.
-- Adding nearby-city sections to other surfaces (home, category, listing detail) — can be a follow-up if you want it.
+**Source-key overrides:** about 95% of city names map cleanly (`lowercase + strip non-letters`). Outliers I expect to hit: cities with state suffixes in our DB slug ("kansas-city-mo" → strip the state), saint/st abbreviations, multi-word edge cases. I'll log every miss; if more than ~20 cities miss, I'll add an override map and re-run the "force" backfill on just those slugs. Acceptable?
+
+## What this delivers
+
+- ~340+ cities get a unique, source-matched hero stored in the DB (cached, SEO-stable, og:image-friendly).
+- The remaining ~15 misses still look distinct page-to-page via the deterministic fallback rotation.
+- An admin page to re-run the backfill anytime new cities are added.
