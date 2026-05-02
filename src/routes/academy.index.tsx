@@ -320,6 +320,7 @@ function AcademyIndex() {
                   lang,
                   category: activeCat ?? undefined,
                   q: search.q,
+                  tier: activeTier ?? undefined,
                 }}
                 disabled={search.page <= 1}
                 className={`rounded-md border px-4 py-2 text-sm font-medium ${
