@@ -188,6 +188,42 @@ export type Database = {
         }
         Relationships: []
       }
+      city_link_clicks: {
+        Row: {
+          clicked_at: string
+          country: string | null
+          from_city_slug: string | null
+          id: string
+          referrer_path: string | null
+          region: string | null
+          to_city_slug: string
+          user_agent: string | null
+          visitor_hash: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          country?: string | null
+          from_city_slug?: string | null
+          id?: string
+          referrer_path?: string | null
+          region?: string | null
+          to_city_slug: string
+          user_agent?: string | null
+          visitor_hash?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          country?: string | null
+          from_city_slug?: string | null
+          id?: string
+          referrer_path?: string | null
+          region?: string | null
+          to_city_slug?: string
+          user_agent?: string | null
+          visitor_hash?: string | null
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           category: string
