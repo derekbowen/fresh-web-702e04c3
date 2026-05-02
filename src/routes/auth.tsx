@@ -10,18 +10,12 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 const SearchSchema = z.object({
-  redirect: z.string().default("/account/learning"),
-  mode: z.enum(["signin", "signup"]).default("signin"),
-}).partial();
+  redirect: z.string().optional().default("/account/learning"),
+  mode: z.enum(["signin", "signup"]).optional().default("signin"),
+});
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search): { redirect: string; mode: "signin" | "signup" } => {
-    const parsed = SearchSchema.parse(search);
-    return {
-      redirect: parsed.redirect ?? "/account/learning",
-      mode: parsed.mode ?? "signin",
-    };
-  },
+  validateSearch: (search) => SearchSchema.parse(search),
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
