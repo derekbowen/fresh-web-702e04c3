@@ -35,6 +35,43 @@ export const listBuilderStates = createServerFn({ method: "GET" }).handler(
       .from("providers")
       .select("state_code")
       .eq("is_published", true)
+      .not("state_code", "is", null)
+      .limit(5000);
+    if (error) console.error("listBuilderStates:", error);
+    const counts = new Map<string, number>();
+    for (const r of data ?? []) {
+      const sc = (r as { state_code: string | null }).state_code;
+      if (!sc) continue;
+      counts.set(sc, (counts.get(sc) ?? 0) + 1);
+    }
+    return {
+      states: Array.from(counts.entries())
+        .map(([code, count]) => ({
+          code, name: stateName(code), count, slug: code.toLowerCase(),
+        }))
+        .sort((a, b) => b.count - a.count),
+    };
+  },
+);
+
+export const listAllBuilders = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { data, error } = await supabaseAdmin
+      .from("providers")
+      .select("slug, name, city, city_slug, state_code, rating, rating_count, business_type, logo_url")
+      .eq("is_published", true)
+      .order("rating", { ascending: false, nullsFirst: false })
+      .order("rating_count", { ascending: false, nullsFirst: false })
+      .limit(1000);
+    if (error) console.error("listAllBuilders:", error);
+    return { providers: data ?? [] };
+  },
+);
+  async () => {
+    const { data, error } = await supabaseAdmin
+      .from("providers")
+      .select("state_code")
+      .eq("is_published", true)
       .not("state_code", "is", null);
     if (error) console.error("listBuilderStates:", error);
     const counts = new Map<string, number>();
