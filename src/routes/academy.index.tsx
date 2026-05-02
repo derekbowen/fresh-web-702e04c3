@@ -24,10 +24,11 @@ export const Route = createFileRoute("/academy/")({
     category: search.category,
     lang: search.lang,
     q: search.q,
+    tier: search.tier,
   }),
   loader: async ({ deps }) => {
     const language: Lang = deps.lang === "es" ? "es" : "en";
-    const [list, cats, featured] = await Promise.all([
+    const [list, cats, tiersRes, featured] = await Promise.all([
       listCourses({
         data: {
           page: deps.page,
@@ -35,16 +36,19 @@ export const Route = createFileRoute("/academy/")({
           category: deps.category,
           language,
           search: deps.q,
+          tier: deps.tier,
         },
       }),
       listCourseCategories({ data: { language } }),
-      deps.page === 1 && !deps.category && !deps.q
+      listCourseTiers({ data: { language } }),
+      deps.page === 1 && !deps.category && !deps.q && !deps.tier
         ? listFeaturedCourses({ data: { language, limit: 3 } })
         : Promise.resolve({ courses: [] as Awaited<ReturnType<typeof listFeaturedCourses>>["courses"] }),
     ]);
     return {
       ...list,
       categories: cats.categories,
+      tiers: tiersRes.tiers,
       featured: featured.courses,
       languageActive: language,
     };
