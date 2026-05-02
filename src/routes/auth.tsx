@@ -189,7 +189,7 @@ function AuthPage() {
                 {mode === "signin" && (
                   <Link
                     to="/auth/reset-password"
-                    search={{}}
+                    search={(prev) => prev}
                     className="text-xs text-muted-foreground hover:text-primary"
                   >
                     Forgot?
