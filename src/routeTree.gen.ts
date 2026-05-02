@@ -20,9 +20,11 @@ import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml'
 import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
+import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
+import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
 
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
@@ -79,6 +81,11 @@ const ApiRobotsDottxtRoute = ApiRobotsDottxtRouteImport.update({
   path: '/api/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminClickReportRoute = AdminClickReportRouteImport.update({
+  id: '/admin/click-report',
+  path: '/admin/click-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCitiesHeroesRoute = AdminCitiesHeroesRouteImport.update({
   id: '/admin/cities-heroes',
   path: '/admin/cities-heroes',
@@ -94,6 +101,11 @@ const LSlugIdRoute = LSlugIdRouteImport.update({
   path: '/l/$slug/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
+  id: '/api/public/track-city-click',
+  path: '/api/public/track-city-click',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -102,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -109,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy/': typeof AcademyIndexRoute
+  '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +131,7 @@ export interface FileRoutesByTo {
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -124,6 +139,7 @@ export interface FileRoutesByTo {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy': typeof AcademyIndexRoute
+  '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesById {
@@ -134,6 +150,7 @@ export interface FileRoutesById {
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/click-report': typeof AdminClickReportRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -141,6 +158,7 @@ export interface FileRoutesById {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy/': typeof AcademyIndexRoute
+  '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRouteTypes {
@@ -152,6 +170,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/academy/$slug'
     | '/admin/cities-heroes'
+    | '/admin/click-report'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/blog/$slug'
@@ -159,6 +178,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy/'
+    | '/api/public/track-city-click'
     | '/l/$slug/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -167,6 +187,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/academy/$slug'
     | '/admin/cities-heroes'
+    | '/admin/click-report'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/blog/$slug'
@@ -174,6 +195,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy'
+    | '/api/public/track-city-click'
     | '/l/$slug/$id'
   id:
     | '__root__'
@@ -183,6 +205,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/academy/$slug'
     | '/admin/cities-heroes'
+    | '/admin/click-report'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/blog/$slug'
@@ -190,6 +213,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy/'
+    | '/api/public/track-city-click'
     | '/l/$slug/$id'
   fileRoutesById: FileRoutesById
 }
@@ -199,10 +223,12 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   ProvidersRoute: typeof ProvidersRouteWithChildren
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
+  AdminClickReportRoute: typeof AdminClickReportRoute
   ApiRobotsDottxtRoute: typeof ApiRobotsDottxtRoute
   ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
   CategorySlugRoute: typeof CategorySlugRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
+  ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   LSlugIdRoute: typeof LSlugIdRoute
 }
 
@@ -285,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/click-report': {
+      id: '/admin/click-report'
+      path: '/admin/click-report'
+      fullPath: '/admin/click-report'
+      preLoaderRoute: typeof AdminClickReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/cities-heroes': {
       id: '/admin/cities-heroes'
       path: '/admin/cities-heroes'
@@ -304,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/l/$slug/$id'
       fullPath: '/l/$slug/$id'
       preLoaderRoute: typeof LSlugIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track-city-click': {
+      id: '/api/public/track-city-click'
+      path: '/api/public/track-city-click'
+      fullPath: '/api/public/track-city-click'
+      preLoaderRoute: typeof ApiPublicTrackCityClickRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -350,10 +390,12 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   ProvidersRoute: ProvidersRouteWithChildren,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
+  AdminClickReportRoute: AdminClickReportRoute,
   ApiRobotsDottxtRoute: ApiRobotsDottxtRoute,
   ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
   CategorySlugRoute: CategorySlugRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
+  ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   LSlugIdRoute: LSlugIdRoute,
 }
 export const routeTree = rootRouteImport

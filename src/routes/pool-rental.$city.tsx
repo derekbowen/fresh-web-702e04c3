@@ -410,6 +410,7 @@ function CityPage() {
         {/* NEARBY CITIES — internal linking */}
         <NearbyCities
           cities={nearby as Array<{ slug: string; name: string; state: string; state_code: string; distance_km: number | null }>}
+          currentSlug={city.slug}
           currentStateCode={city.state_code}
           currentStateName={city.state}
         />
@@ -453,15 +454,57 @@ type NearbyCity = {
 
 function NearbyCities({
   cities,
+  currentSlug,
   currentStateCode,
   currentStateName,
 }: {
   cities: NearbyCity[];
+  currentSlug: string;
   currentStateCode: string;
   currentStateName: string;
 }) {
   const sameState = cities.filter((c) => c.state_code === currentStateCode);
   const otherState = cities.filter((c) => c.state_code !== currentStateCode);
+
+  const trackClick = (toSlug: string) => {
+    if (typeof window === "undefined") return;
+    try {
+      const payload = JSON.stringify({
+        to_city_slug: toSlug,
+        from_city_slug: currentSlug,
+        referrer_path: window.location.pathname,
+      });
+      const url = "/api/public/track-city-click";
+      const sent =
+        typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function"
+          ? navigator.sendBeacon(url, new Blob([payload], { type: "text/plain" }))
+          : false;
+      if (!sent) {
+        // Fallback — fire-and-forget fetch with keepalive
+        void fetch(url, {
+          method: "POST",
+          body: payload,
+          headers: { "content-type": "text/plain" },
+          keepalive: true,
+        }).catch(() => undefined);
+      }
+    } catch {
+      // never block navigation
+    }
+  };
+
+  const renderItem = (n: NearbyCity) => (
+    <li key={n.slug}>
+      <Link
+        to="/pool-rental/$city"
+        params={{ city: n.slug }}
+        onClick={() => trackClick(n.slug)}
+        className="text-muted-foreground hover:text-primary hover:underline"
+      >
+        Pool rentals in {n.name}, {n.state_code}
+      </Link>
+    </li>
+  );
 
   return (
     <section className="border-t border-border bg-secondary/20">
@@ -485,17 +528,7 @@ function NearbyCities({
                   More in {currentStateName}
                 </h3>
                 <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                  {sameState.map((n) => (
-                    <li key={n.slug}>
-                      <Link
-                        to="/pool-rental/$city"
-                        params={{ city: n.slug }}
-                        className="text-muted-foreground hover:text-primary hover:underline"
-                      >
-                        Pool rentals in {n.name}, {n.state_code}
-                      </Link>
-                    </li>
-                  ))}
+                  {sameState.map(renderItem)}
                 </ul>
               </div>
             )}
@@ -506,17 +539,7 @@ function NearbyCities({
                   Nearby cities
                 </h3>
                 <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                  {otherState.map((n) => (
-                    <li key={n.slug}>
-                      <Link
-                        to="/pool-rental/$city"
-                        params={{ city: n.slug }}
-                        className="text-muted-foreground hover:text-primary hover:underline"
-                      >
-                        Pool rentals in {n.name}, {n.state_code}
-                      </Link>
-                    </li>
-                  ))}
+                  {otherState.map(renderItem)}
                 </ul>
               </div>
             )}
@@ -526,3 +549,4 @@ function NearbyCities({
     </section>
   );
 }
+
