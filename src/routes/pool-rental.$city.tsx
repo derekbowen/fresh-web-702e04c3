@@ -182,6 +182,10 @@ function CityPage() {
             width={1920}
             height={1080}
             className="absolute inset-0 -z-10 h-full w-full object-cover"
+            onError={(e) => {
+              const img = e.currentTarget;
+              if (img.src !== poolHeroDefault) img.src = poolHeroDefault;
+            }}
           />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/75 via-black/55 to-black/30" />
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
