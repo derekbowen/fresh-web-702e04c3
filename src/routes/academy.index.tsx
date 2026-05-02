@@ -59,6 +59,7 @@ export const Route = createFileRoute("/academy/")({
       category?: string;
       lang?: Lang;
       q?: string;
+      tier?: "tier-1" | "tier-2" | "tier-3";
     };
     const page = search.page ?? 1;
     const lang: Lang = (search.lang ?? "en") === "es" ? "es" : "en";
@@ -67,18 +68,22 @@ export const Route = createFileRoute("/academy/")({
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
     const catMeta = search.category ? getCategoryMeta(search.category, lang) : null;
-    const baseTitle = catMeta
-      ? `${catMeta.label} Courses — ${t.academyTitle} | ${SITE_NAME}`
+    const tierMeta = getTierMeta(search.tier);
+    const scopeLabel = tierMeta?.label ?? catMeta?.label ?? null;
+    const scopeDesc = tierMeta?.description ?? catMeta?.description ?? null;
+    const baseTitle = scopeLabel
+      ? `${scopeLabel} — ${t.academyTitle} | ${SITE_NAME}`
       : `${t.academyTitle} — Free Courses for Pool Hosts | ${SITE_NAME}`;
     const title = page > 1 ? `${baseTitle} (Page ${page})` : baseTitle;
-    const baseDesc = catMeta
-      ? `${catMeta.description} ${total} expert courses for pool rental hosts.`
+    const baseDesc = scopeDesc
+      ? `${scopeDesc} ${total} expert courses for pool rental hosts.`
       : `${t.academyTagline} ${total}+ courses on safety, marketing, legal, AI, and more.`;
     const description = page > 1 ? `${baseDesc} Page ${page} of ${totalPages}.` : baseDesc;
 
     const queryStr = (p: number) => {
       const parts: string[] = [];
       if (search.category) parts.push(`category=${search.category}`);
+      if (search.tier) parts.push(`tier=${search.tier}`);
       if (lang === "es") parts.push(`lang=es`);
       if (search.q) parts.push(`q=${encodeURIComponent(search.q)}`);
       if (p > 1) parts.push(`page=${p}`);
@@ -102,6 +107,7 @@ export const Route = createFileRoute("/academy/")({
     const breadcrumbs = breadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: t.academyTitle, path: "/academy" },
+      ...(tierMeta ? [{ name: tierMeta.label, path: `/academy?tier=${search.tier}` }] : []),
       ...(catMeta ? [{ name: catMeta.label, path: `/academy?category=${search.category}` }] : []),
     ]);
 
