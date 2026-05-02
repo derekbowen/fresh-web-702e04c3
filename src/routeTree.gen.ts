@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
 import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
@@ -30,10 +32,20 @@ const BlogRoute = BlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AcademyRoute = AcademyRouteImport.update({
+  id: '/academy',
+  path: '/academy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AcademyIndexRoute = AcademyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AcademyRoute,
 } as any)
 const ProvidersSlugRoute = ProvidersSlugRouteImport.update({
   id: '/$slug',
@@ -73,6 +85,7 @@ const LSlugIdRoute = LSlugIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/academy': typeof AcademyRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
@@ -81,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
+  '/academy/': typeof AcademyIndexRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesByTo {
@@ -93,11 +107,13 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
+  '/academy': typeof AcademyIndexRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/academy': typeof AcademyRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
@@ -106,12 +122,14 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
+  '/academy/': typeof AcademyIndexRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/academy'
     | '/blog'
     | '/providers'
     | '/api/robots.txt'
@@ -120,6 +138,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/academy/'
     | '/l/$slug/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,10 +151,12 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/academy'
     | '/l/$slug/$id'
   id:
     | '__root__'
     | '/'
+    | '/academy'
     | '/blog'
     | '/providers'
     | '/api/robots.txt'
@@ -144,11 +165,13 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/academy/'
     | '/l/$slug/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AcademyRoute: typeof AcademyRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   ProvidersRoute: typeof ProvidersRouteWithChildren
   ApiRobotsDottxtRoute: typeof ApiRobotsDottxtRoute
@@ -174,12 +197,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/academy': {
+      id: '/academy'
+      path: '/academy'
+      fullPath: '/academy'
+      preLoaderRoute: typeof AcademyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/academy/': {
+      id: '/academy/'
+      path: '/'
+      fullPath: '/academy/'
+      preLoaderRoute: typeof AcademyIndexRouteImport
+      parentRoute: typeof AcademyRoute
     }
     '/providers/$slug': {
       id: '/providers/$slug'
@@ -233,6 +270,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AcademyRouteChildren {
+  AcademyIndexRoute: typeof AcademyIndexRoute
+}
+
+const AcademyRouteChildren: AcademyRouteChildren = {
+  AcademyIndexRoute: AcademyIndexRoute,
+}
+
+const AcademyRouteWithChildren =
+  AcademyRoute._addFileChildren(AcademyRouteChildren)
+
 interface BlogRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
 }
@@ -257,6 +305,7 @@ const ProvidersRouteWithChildren = ProvidersRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AcademyRoute: AcademyRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   ProvidersRoute: ProvidersRouteWithChildren,
   ApiRobotsDottxtRoute: ApiRobotsDottxtRoute,
