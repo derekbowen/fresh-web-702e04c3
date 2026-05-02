@@ -293,7 +293,7 @@ function AcademyIndex() {
           {/* Grid */}
           <section className="mt-12">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              {activeMeta ? activeMeta.label : t.allCategories}
+              {heroLabel ?? t.allCategories}
               <span className="ml-3 text-base font-normal text-muted-foreground">
                 {data.total} {data.total === 1 ? "course" : "courses"}
               </span>
