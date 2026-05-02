@@ -1,9 +1,15 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { listMyLearning, type MyLearningRow } from "@/server/learning.functions";
+import {
+  listMyLearning,
+  listMyProgress,
+  type CourseProgress,
+  type MyLearningRow,
+} from "@/server/learning.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/account/learning")({
   beforeLoad: async ({ location }) => {
@@ -21,11 +27,20 @@ export const Route = createFileRoute("/account/learning")({
 
 function MyLearningPage() {
   const [rows, setRows] = useState<MyLearningRow[] | null>(null);
+  const [progress, setProgress] = useState<Map<string, CourseProgress>>(new Map());
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    void listMyLearning({ data: undefined as never })
-      .then((r) => setRows(r.rows))
+    void Promise.all([
+      listMyLearning({ data: undefined as never }),
+      listMyProgress({ data: undefined as never }),
+    ])
+      .then(([l, p]) => {
+        setRows(l.rows);
+        const m = new Map<string, CourseProgress>();
+        for (const r of p.rows) m.set(r.course_slug, r);
+        setProgress(m);
+      })
       .catch((e) => setErr(e instanceof Error ? e.message : String(e)));
   }, []);
 
@@ -108,22 +123,35 @@ function MyLearningPage() {
             </p>
           ) : (
             <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-              {inProgress.map((r) => (
-                <li
-                  key={r.course_slug}
-                  className="rounded-2xl border border-border bg-card p-4 shadow-sm"
-                >
-                  <div className="font-semibold text-foreground">{r.course_title ?? r.course_slug}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    Enrolled {r.enrolled_at ? new Date(r.enrolled_at).toLocaleDateString() : ""}
-                  </div>
-                  <Button asChild size="sm" variant="outline" className="mt-3">
-                    <Link to="/academy/$slug" params={{ slug: r.course_slug }}>
-                      Continue course
-                    </Link>
-                  </Button>
-                </li>
-              ))}
+              {inProgress.map((r) => {
+                const p = progress.get(r.course_slug);
+                const pct = p?.progress_pct ?? 0;
+                return (
+                  <li
+                    key={r.course_slug}
+                    className="rounded-2xl border border-border bg-card p-4 shadow-sm"
+                  >
+                    <div className="font-semibold text-foreground">
+                      {r.course_title ?? r.course_slug}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Enrolled {r.enrolled_at ? new Date(r.enrolled_at).toLocaleDateString() : ""}
+                    </div>
+                    <div className="mt-3">
+                      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Progress</span>
+                        <span className="font-medium text-foreground">{pct}%</span>
+                      </div>
+                      <Progress value={pct} aria-label={`${pct}% complete`} />
+                    </div>
+                    <Button asChild size="sm" variant="outline" className="mt-3">
+                      <Link to="/academy/$slug" params={{ slug: r.course_slug }}>
+                        Continue course
+                      </Link>
+                    </Button>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>

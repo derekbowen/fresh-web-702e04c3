@@ -281,6 +281,72 @@ export type Database = {
         }
         Relationships: []
       }
+      course_progress: {
+        Row: {
+          completed_at: string | null
+          course_slug: string
+          created_at: string
+          id: string
+          last_activity_at: string
+          progress_pct: number
+          started_at: string
+          total_seconds_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          course_slug: string
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          progress_pct?: number
+          started_at?: string
+          total_seconds_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          course_slug?: string
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          progress_pct?: number
+          started_at?: string
+          total_seconds_spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      course_progress_events: {
+        Row: {
+          course_slug: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          course_slug: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          course_slug?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           category: string
