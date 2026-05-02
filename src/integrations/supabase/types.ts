@@ -362,6 +362,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      nearby_cities_by_distance: {
+        Args: { _limit?: number; _slug: string }
+        Returns: {
+          out_distance_km: number
+          out_name: string
+          out_slug: string
+          out_state: string
+          out_state_code: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "editor" | "user"
