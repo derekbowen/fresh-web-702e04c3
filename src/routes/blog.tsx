@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
+import { useState, useEffect } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, ldJsonScript, breadcrumbJsonLd, SITE_URL, SITE_NAME } from "@/lib/seo";
 import { listBlogPostsPaged, listBlogTopics } from "@/server/content.functions";
@@ -23,14 +24,15 @@ function topicMeta(slug: string) {
 const searchSchema = z.object({
   page: fallback(z.number().int().min(1).max(500), 1).default(1),
   topic: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional().catch(undefined),
+  q: z.string().min(1).max(120).optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/blog")({
   validateSearch: zodValidator(searchSchema),
-  loaderDeps: ({ search }) => ({ page: search.page, topic: search.topic }),
+  loaderDeps: ({ search }) => ({ page: search.page, topic: search.topic, q: search.q }),
   loader: async ({ deps }) => {
     const [posts, topicsRes] = await Promise.all([
-      listBlogPostsPaged({ data: { page: deps.page, pageSize: PAGE_SIZE, topic: deps.topic } }),
+      listBlogPostsPaged({ data: { page: deps.page, pageSize: PAGE_SIZE, topic: deps.topic, q: deps.q } }),
       listBlogTopics(),
     ]);
     return { ...posts, topics: topicsRes.topics };
