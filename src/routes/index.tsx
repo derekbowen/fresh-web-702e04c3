@@ -50,7 +50,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { cities, categories } = Route.useLoaderData();
+  const { cities, categories, listings } = Route.useLoaderData();
 
   return (
     <div className="flex min-h-screen flex-col">
