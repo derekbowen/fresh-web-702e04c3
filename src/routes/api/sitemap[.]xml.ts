@@ -40,6 +40,12 @@ export const Route = createFileRoute("/api/sitemap.xml")({
         for (const c of courses.data ?? []) {
           urls.push({ loc: `${SITE_URL}/academy/${c.slug}`, lastmod: c.updated_at, priority: "0.7" });
         }
+        for (const c of helpCats.data ?? []) {
+          urls.push({ loc: `${SITE_URL}/help-center/${c.slug}`, lastmod: c.updated_at, priority: "0.7" });
+        }
+        for (const a of helpArticles.data ?? []) {
+          urls.push({ loc: `${SITE_URL}/help-center/${a.category_slug}/${a.slug}`, lastmod: a.updated_at, priority: "0.5" });
+        }
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
