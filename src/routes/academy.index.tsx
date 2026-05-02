@@ -3,8 +3,8 @@ import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
-import { getCategoryMeta, I18N, type Lang } from "@/lib/academy";
-import { listCourses, listCourseCategories, listFeaturedCourses } from "@/server/courses.functions";
+import { getCategoryMeta, getTierMeta, TIERS, I18N, type Lang } from "@/lib/academy";
+import { listCourses, listCourseCategories, listFeaturedCourses, listCourseTiers } from "@/server/courses.functions";
 import { CourseCard } from "@/components/course-card";
 
 const PAGE_SIZE = 12;
@@ -14,6 +14,7 @@ const searchSchema = z.object({
   category: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional().catch(undefined),
   lang: fallback(z.enum(["en", "es"]), "en").default("en"),
   q: z.string().min(1).max(80).optional().catch(undefined),
+  tier: z.enum(["tier-1", "tier-2", "tier-3"]).optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/academy/")({
@@ -23,10 +24,11 @@ export const Route = createFileRoute("/academy/")({
     category: search.category,
     lang: search.lang,
     q: search.q,
+    tier: search.tier,
   }),
   loader: async ({ deps }) => {
     const language: Lang = deps.lang === "es" ? "es" : "en";
-    const [list, cats, featured] = await Promise.all([
+    const [list, cats, tiersRes, featured] = await Promise.all([
       listCourses({
         data: {
           page: deps.page,
@@ -34,16 +36,19 @@ export const Route = createFileRoute("/academy/")({
           category: deps.category,
           language,
           search: deps.q,
+          tier: deps.tier,
         },
       }),
       listCourseCategories({ data: { language } }),
-      deps.page === 1 && !deps.category && !deps.q
+      listCourseTiers({ data: { language } }),
+      deps.page === 1 && !deps.category && !deps.q && !deps.tier
         ? listFeaturedCourses({ data: { language, limit: 3 } })
         : Promise.resolve({ courses: [] as Awaited<ReturnType<typeof listFeaturedCourses>>["courses"] }),
     ]);
     return {
       ...list,
       categories: cats.categories,
+      tiers: tiersRes.tiers,
       featured: featured.courses,
       languageActive: language,
     };
@@ -54,6 +59,7 @@ export const Route = createFileRoute("/academy/")({
       category?: string;
       lang?: Lang;
       q?: string;
+      tier?: "tier-1" | "tier-2" | "tier-3";
     };
     const page = search.page ?? 1;
     const lang: Lang = (search.lang ?? "en") === "es" ? "es" : "en";
@@ -62,18 +68,22 @@ export const Route = createFileRoute("/academy/")({
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
     const catMeta = search.category ? getCategoryMeta(search.category, lang) : null;
-    const baseTitle = catMeta
-      ? `${catMeta.label} Courses — ${t.academyTitle} | ${SITE_NAME}`
+    const tierMeta = getTierMeta(search.tier);
+    const scopeLabel = tierMeta?.label ?? catMeta?.label ?? null;
+    const scopeDesc = tierMeta?.description ?? catMeta?.description ?? null;
+    const baseTitle = scopeLabel
+      ? `${scopeLabel} — ${t.academyTitle} | ${SITE_NAME}`
       : `${t.academyTitle} — Free Courses for Pool Hosts | ${SITE_NAME}`;
     const title = page > 1 ? `${baseTitle} (Page ${page})` : baseTitle;
-    const baseDesc = catMeta
-      ? `${catMeta.description} ${total} expert courses for pool rental hosts.`
+    const baseDesc = scopeDesc
+      ? `${scopeDesc} ${total} expert courses for pool rental hosts.`
       : `${t.academyTagline} ${total}+ courses on safety, marketing, legal, AI, and more.`;
     const description = page > 1 ? `${baseDesc} Page ${page} of ${totalPages}.` : baseDesc;
 
     const queryStr = (p: number) => {
       const parts: string[] = [];
       if (search.category) parts.push(`category=${search.category}`);
+      if (search.tier) parts.push(`tier=${search.tier}`);
       if (lang === "es") parts.push(`lang=es`);
       if (search.q) parts.push(`q=${encodeURIComponent(search.q)}`);
       if (p > 1) parts.push(`page=${p}`);
@@ -97,6 +107,7 @@ export const Route = createFileRoute("/academy/")({
     const breadcrumbs = breadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: t.academyTitle, path: "/academy" },
+      ...(tierMeta ? [{ name: tierMeta.label, path: `/academy?tier=${search.tier}` }] : []),
       ...(catMeta ? [{ name: catMeta.label, path: `/academy?category=${search.category}` }] : []),
     ]);
 
@@ -127,6 +138,12 @@ function AcademyIndex() {
   const totalPages = Math.max(1, Math.ceil(data.total / PAGE_SIZE));
   const activeCat = search.category ?? null;
   const activeMeta = activeCat ? getCategoryMeta(activeCat, lang) : null;
+  const activeTier = search.tier ?? null;
+  const activeTierMeta = getTierMeta(activeTier);
+  const heroLabel = activeTierMeta?.label ?? activeMeta?.label ?? null;
+  const heroEmoji = activeTierMeta?.emoji ?? activeMeta?.emoji ?? null;
+  const heroDesc = activeTierMeta?.description ?? activeMeta?.description ?? t.academyTagline;
+  const tierCountMap = new Map<string, number>(data.tiers.map((tier: { slug: string; count: number }) => [tier.slug, tier.count] as const));
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -138,28 +155,31 @@ function AcademyIndex() {
             <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
               <Link to="/" className="hover:text-foreground">Home</Link>
               <span className="mx-2">/</span>
-              <span className="text-foreground">{t.academyTitle}</span>
-              {activeMeta && (<><span className="mx-2">/</span><span>{activeMeta.label}</span></>)}
+              <Link to="/academy" search={{ page: 1, lang, category: undefined, q: undefined, tier: undefined }} className="hover:text-foreground">
+                {t.academyTitle}
+              </Link>
+              {activeTierMeta && (<><span className="mx-2">/</span><span className="text-foreground">{activeTierMeta.label}</span></>)}
+              {activeMeta && (<><span className="mx-2">/</span><span className="text-foreground">{activeMeta.label}</span></>)}
             </nav>
             <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              {activeMeta ? (
+              {heroLabel ? (
                 <>
-                  <span className="mr-3">{activeMeta.emoji}</span>
-                  {activeMeta.label}
+                  {heroEmoji && <span className="mr-3">{heroEmoji}</span>}
+                  {heroLabel}
                 </>
               ) : (
                 t.academyTitle
               )}
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-              {activeMeta?.description || t.academyTagline}
+              {heroDesc}
             </p>
 
             {/* Language toggle */}
             <div className="mt-6 inline-flex rounded-full border border-border bg-background p-1 text-sm font-medium">
               <Link
                 to="/academy"
-                search={{ page: 1, lang: "en", category: undefined, q: undefined }}
+                search={{ page: 1, lang: "en", category: undefined, q: undefined, tier: activeTier ?? undefined }}
                 className={`rounded-full px-4 py-1.5 transition ${
                   lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -168,7 +188,7 @@ function AcademyIndex() {
               </Link>
               <Link
                 to="/academy"
-                search={{ page: 1, lang: "es", category: undefined, q: undefined }}
+                search={{ page: 1, lang: "es", category: undefined, q: undefined, tier: activeTier ?? undefined }}
                 className={`rounded-full px-4 py-1.5 transition ${
                   lang === "es" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -180,18 +200,62 @@ function AcademyIndex() {
         </section>
 
         <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          {/* Tier navigation */}
+          <div className="mb-8">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Learning path
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" role="navigation" aria-label="Browse by learning tier">
+              <Link
+                to="/academy"
+                search={{ page: 1, lang, category: undefined, q: undefined, tier: undefined }}
+                className={`flex flex-col rounded-xl border p-4 transition ${
+                  !activeTier && !activeCat
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border bg-card hover:border-primary/50"
+                }`}
+              >
+                <span className="text-2xl">📚</span>
+                <span className="mt-2 text-sm font-semibold text-foreground">All courses</span>
+                <span className="mt-1 text-xs text-muted-foreground">Browse the entire catalog</span>
+              </Link>
+              {TIERS.map((tier) => {
+                const active = activeTier === tier.slug;
+                const count = tierCountMap.get(tier.slug) ?? 0;
+                return (
+                  <Link
+                    key={tier.slug}
+                    to="/academy"
+                    search={{ page: 1, lang, category: undefined, q: undefined, tier: tier.slug }}
+                    className={`flex flex-col rounded-xl border p-4 transition ${
+                      active
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border bg-card hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="text-2xl">{tier.emoji}</span>
+                    <span className="mt-2 text-sm font-semibold text-foreground">{tier.label}</span>
+                    <span className="mt-1 text-xs text-muted-foreground">
+                      {tier.description} · {count} {count === 1 ? "course" : "courses"}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Category pills */}
           <div className="flex flex-wrap gap-2" role="navigation" aria-label={t.browseByTopic}>
             <Link
               to="/academy"
-              search={{ page: 1, lang, category: undefined, q: undefined }}
+              search={{ page: 1, lang, category: undefined, q: undefined, tier: activeTier ?? undefined }}
               className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                 !activeCat
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-background text-foreground hover:border-primary/50"
               }`}
             >
-              {t.allCategories} ({data.total + (activeCat ? 0 : 0)})
+              {t.allCategories}
             </Link>
             {data.categories.map((c: { slug: string; count: number }) => {
               const meta = getCategoryMeta(c.slug, lang);
@@ -200,7 +264,7 @@ function AcademyIndex() {
                 <Link
                   key={c.slug}
                   to="/academy"
-                  search={{ page: 1, lang, category: c.slug, q: undefined }}
+                  search={{ page: 1, lang, category: c.slug, q: undefined, tier: activeTier ?? undefined }}
                   className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                     active
                       ? "border-primary bg-primary text-primary-foreground"
@@ -229,7 +293,7 @@ function AcademyIndex() {
           {/* Grid */}
           <section className="mt-12">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              {activeMeta ? activeMeta.label : t.allCategories}
+              {heroLabel ?? t.allCategories}
               <span className="ml-3 text-base font-normal text-muted-foreground">
                 {data.total} {data.total === 1 ? "course" : "courses"}
               </span>
@@ -256,6 +320,7 @@ function AcademyIndex() {
                   lang,
                   category: activeCat ?? undefined,
                   q: search.q,
+                  tier: activeTier ?? undefined,
                 }}
                 disabled={search.page <= 1}
                 className={`rounded-md border px-4 py-2 text-sm font-medium ${
@@ -279,6 +344,7 @@ function AcademyIndex() {
                   lang,
                   category: activeCat ?? undefined,
                   q: search.q,
+                  tier: activeTier ?? undefined,
                 }}
                 disabled={search.page >= totalPages}
                 className={`rounded-md border px-4 py-2 text-sm font-medium ${

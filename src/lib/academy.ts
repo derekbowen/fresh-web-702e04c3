@@ -34,6 +34,49 @@ export function getCategoryMeta(slug: string, lang: Lang = "en"): CategoryMeta {
   );
 }
 
+export type Tier = "tier-1" | "tier-2" | "tier-3";
+
+export interface TierMeta {
+  slug: Tier;
+  label: string;
+  shortLabel: string;
+  description: string;
+  emoji: string;
+  badgeClass: string;
+}
+
+export const TIERS: TierMeta[] = [
+  {
+    slug: "tier-1",
+    label: "Tier 1 — Foundations",
+    shortLabel: "Foundations",
+    description: "Start here. Core skills every pool host needs on day one.",
+    emoji: "🟢",
+    badgeClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  },
+  {
+    slug: "tier-2",
+    label: "Tier 2 — Growth",
+    shortLabel: "Growth",
+    description: "Level up bookings, pricing, and guest experience.",
+    emoji: "🔵",
+    badgeClass: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
+  },
+  {
+    slug: "tier-3",
+    label: "Tier 3 — Mastery",
+    shortLabel: "Mastery",
+    description: "Advanced strategy: niches, automation, and scale.",
+    emoji: "🟣",
+    badgeClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
+  },
+];
+
+export function getTierMeta(slug: string | null | undefined): TierMeta | null {
+  if (!slug) return null;
+  return TIERS.find((t) => t.slug === slug) ?? null;
+}
+
 export const I18N: Record<Lang, {
   academyTitle: string;
   academyTagline: string;

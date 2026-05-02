@@ -4,16 +4,19 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const slugSchema = z.string().min(1).max(140).regex(/^[a-z0-9-]+$/);
 
+const tierSchema = z.enum(["tier-1", "tier-2", "tier-3"]);
+
 const listSchema = z.object({
   page: z.number().int().min(1).max(500).default(1),
   pageSize: z.number().int().min(1).max(48).default(12),
   category: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional(),
   language: z.enum(["en", "es"]).optional(),
   search: z.string().min(1).max(80).optional(),
+  tier: tierSchema.optional(),
 });
 
 const COURSE_FIELDS =
-  "slug, title, subtitle, excerpt, cover_image_url, category, language, level, duration_minutes, is_featured, published_at";
+  "slug, title, subtitle, excerpt, cover_image_url, category, language, level, duration_minutes, is_featured, published_at, tier";
 
 /** Paginated listing of published courses with optional filters. */
 export const listCourses = createServerFn({ method: "GET" })
@@ -27,6 +30,7 @@ export const listCourses = createServerFn({ method: "GET" })
       .eq("is_published", true);
     if (data.category) q = q.eq("category", data.category);
     if (data.language) q = q.eq("language", data.language);
+    if (data.tier) q = q.eq("tier", data.tier);
     if (data.search) {
       const s = data.search.replace(/[%_,]/g, " ");
       q = q.or(`title.ilike.%${s}%,excerpt.ilike.%${s}%`);
@@ -44,7 +48,34 @@ export const listCourses = createServerFn({ method: "GET" })
       category: data.category ?? null,
       language: data.language ?? null,
       search: data.search ?? null,
+      tier: data.tier ?? null,
     };
+  });
+
+/** Distinct tiers with published-course counts (optionally per language). */
+export const listCourseTiers = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) =>
+    z.object({ language: z.enum(["en", "es"]).optional() }).parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    let q = supabaseAdmin
+      .from("courses")
+      .select("tier")
+      .eq("is_published", true)
+      .not("tier", "is", null);
+    if (data.language) q = q.eq("language", data.language);
+    const { data: rows, error } = await q;
+    if (error) console.error("listCourseTiers:", error);
+    const counts = new Map<string, number>();
+    for (const row of rows ?? []) {
+      const t = (row as { tier: string | null }).tier;
+      if (!t) continue;
+      counts.set(t, (counts.get(t) ?? 0) + 1);
+    }
+    const tiers = Array.from(counts.entries())
+      .map(([slug, count]) => ({ slug, count }))
+      .sort((a, b) => a.slug.localeCompare(b.slug));
+    return { tiers };
   });
 
 /** Distinct categories with published-course counts (optionally per language). */
