@@ -3,8 +3,8 @@ import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
-import { getCategoryMeta, I18N, type Lang } from "@/lib/academy";
-import { listCourses, listCourseCategories, listFeaturedCourses } from "@/server/courses.functions";
+import { getCategoryMeta, getTierMeta, TIERS, I18N, type Lang } from "@/lib/academy";
+import { listCourses, listCourseCategories, listFeaturedCourses, listCourseTiers } from "@/server/courses.functions";
 import { CourseCard } from "@/components/course-card";
 
 const PAGE_SIZE = 12;
@@ -14,6 +14,7 @@ const searchSchema = z.object({
   category: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional().catch(undefined),
   lang: fallback(z.enum(["en", "es"]), "en").default("en"),
   q: z.string().min(1).max(80).optional().catch(undefined),
+  tier: z.enum(["tier-1", "tier-2", "tier-3"]).optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/academy/")({
