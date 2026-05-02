@@ -3,6 +3,7 @@ import { getBuildersByState } from "@/server/builders.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { JoinNetworkForm } from "@/components/recruit-forms";
+import { BuildersFilter, type BuilderRow } from "@/components/builders-filter";
 import { buildMeta, breadcrumbJsonLd, itemListJsonLd, ldJsonScript } from "@/lib/seo";
 
 export const Route = createFileRoute("/pool-builders/$state")({
