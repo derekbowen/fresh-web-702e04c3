@@ -49,10 +49,15 @@ export function CourseCard({
         </div>
       </Link>
       <div className="flex flex-1 flex-col p-5">
-        <div className="mb-2 flex items-center gap-2 text-xs font-medium">
+        <div className="mb-2 flex flex-wrap items-center gap-2 text-xs font-medium">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-primary">
             {cat.emoji} {cat.label}
           </span>
+          {tier && (
+            <span className={`rounded-full px-2.5 py-0.5 ${tier.badgeClass}`}>
+              {tier.emoji} {tier.shortLabel}
+            </span>
+          )}
           {course.language === "es" && (
             <span className="rounded-full bg-muted px-2.5 py-0.5 text-muted-foreground">ES</span>
           )}
