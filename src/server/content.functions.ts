@@ -183,9 +183,10 @@ const blogListSchema = z.object({
   page: z.number().int().min(1).max(500).default(1),
   pageSize: z.number().int().min(1).max(48).default(12),
   topic: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional(),
+  q: z.string().trim().min(1).max(120).optional(),
 });
 
-/** Paginated published blog posts, optionally filtered by topic. */
+/** Paginated published blog posts, optionally filtered by topic and/or search query. */
 export const listBlogPostsPaged = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => blogListSchema.parse(d ?? {}))
   .handler(async ({ data }) => {
@@ -196,6 +197,13 @@ export const listBlogPostsPaged = createServerFn({ method: "GET" })
       .select("slug, title, excerpt, cover_image_url, published_at, topic", { count: "exact" })
       .eq("is_published", true);
     if (data.topic) q = q.eq("topic", data.topic);
+    if (data.q) {
+      const safe = data.q.replace(/[%,()]/g, " ").trim();
+      if (safe) {
+        const pattern = `%${safe}%`;
+        q = q.or(`title.ilike.${pattern},excerpt.ilike.${pattern}`);
+      }
+    }
     const { data: rows, count, error } = await q
       .order("published_at", { ascending: false, nullsFirst: false })
       .range(from, to);
@@ -206,6 +214,7 @@ export const listBlogPostsPaged = createServerFn({ method: "GET" })
       page: data.page,
       pageSize: data.pageSize,
       topic: data.topic ?? null,
+      q: data.q ?? null,
     };
   });
 
