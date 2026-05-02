@@ -70,7 +70,7 @@ Write the full long-form course content for the PRNM Learning Academy. Total pro
       method: "POST",
       headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
+        model: "google/gemini-2.5-flash",
         messages: [{ role: "system", content: SYSTEM }, { role: "user", content: userPrompt }],
         tools: [TOOL],
         tool_choice: { type: "function", function: { name: "emit_course_content" } },
