@@ -150,18 +150,58 @@ function BlogIndex() {
           </p>
         </header>
 
+        {/* Search bar */}
+        <form onSubmit={submitSearch} role="search" className="mt-8 flex w-full max-w-xl items-center gap-2">
+          <div className="relative flex-1">
+            <input
+              type="search"
+              value={queryInput}
+              onChange={(e) => setQueryInput(e.target.value)}
+              placeholder="Search posts (e.g., green water, leaks, pricing)…"
+              aria-label="Search blog posts"
+              className="w-full rounded-full border border-border bg-background px-5 py-2.5 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            {queryInput && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          >
+            Search
+          </button>
+        </form>
+
+        {activeQuery && (
+          <p className="mt-3 text-sm text-muted-foreground">
+            {total} result{total === 1 ? "" : "s"} for{" "}
+            <span className="font-semibold text-foreground">"{activeQuery}"</span>
+            {activeMeta ? <> in <span className="font-semibold text-foreground">{activeMeta.label}</span></> : null}
+            {" · "}
+            <button onClick={clearSearch} className="underline hover:text-foreground">clear</button>
+          </p>
+        )}
+
         {/* Topic filter pills */}
-        <div className="mt-8 flex flex-wrap gap-2" role="navigation" aria-label="Browse by topic">
+        <div className="mt-6 flex flex-wrap gap-2" role="navigation" aria-label="Browse by topic">
           <Link
             to="/blog"
-            search={{ page: 1, topic: undefined }}
+            search={(prev) => ({ ...prev, page: 1, topic: undefined })}
             className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
               !activeTopic
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-background text-foreground hover:border-primary/50"
             }`}
           >
-            All posts <span className="ml-1 opacity-70">({total + (activeTopic ? 0 : 0)})</span>
+            All posts
           </Link>
           {topics.map((t: { slug: string; count: number }) => {
             const meta = topicMeta(t.slug);
@@ -170,7 +210,7 @@ function BlogIndex() {
               <Link
                 key={t.slug}
                 to="/blog"
-                search={{ page: 1, topic: t.slug }}
+                search={(prev) => ({ ...prev, page: 1, topic: t.slug })}
                 className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                   active
                     ? "border-primary bg-primary text-primary-foreground"
@@ -182,6 +222,7 @@ function BlogIndex() {
             );
           })}
         </div>
+
 
         {/* Posts grid */}
         <section className="mt-10">
