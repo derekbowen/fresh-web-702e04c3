@@ -1,5 +1,6 @@
-import { createFileRoute, Link, useRouter, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter, notFound, redirect } from "@tanstack/react-router";
 import { getBlogPost, getBlogLinkTargets } from "@/server/content.functions";
+import { resolveSlug } from "@/lib/blog-slugs";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
