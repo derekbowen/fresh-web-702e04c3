@@ -108,30 +108,13 @@ function StateBuildersPage() {
 
         <section className="mt-12">
           <h2 className="text-xl font-semibold text-foreground">All builders ({providers.length})</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {providers.map((p) => (
-              <Link
-                key={p.slug as string}
-                to="/providers/$slug"
-                params={{ slug: p.slug as string }}
-                className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-md"
-              >
-                {p.logo_url ? (
-                  <img src={p.logo_url as string} alt="" className="h-14 w-14 rounded-lg object-cover" loading="lazy"/>
-                ) : (
-                  <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10 font-bold text-primary">
-                    {(p.name as string).charAt(0)}
-                  </div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate font-semibold text-foreground">{p.name as string}</h3>
-                  {p.city && <p className="text-sm text-muted-foreground">{p.city as string}, {state.code}</p>}
-                  {typeof p.rating === "number" && (
-                    <p className="mt-1 text-xs text-muted-foreground">★ {p.rating} {p.rating_count ? `(${p.rating_count})` : ""}</p>
-                  )}
-                </div>
-              </Link>
-            ))}
+          <p className="mt-1 text-sm text-muted-foreground">Filter by city, rating, or category to find the right pro.</p>
+          <div className="mt-4">
+            <BuildersFilter
+              providers={providers as unknown as BuilderRow[]}
+              showCityFilter
+              fallbackStateCode={state.code}
+            />
           </div>
         </section>
 
