@@ -10,10 +10,17 @@
 type TokenCache = { token: string; expiresAt: number } | null;
 let tokenCache: TokenCache = null;
 
-function getMarketplaceUrl(): string {
-  const url = process.env.SHARETRIBE_MARKETPLACE_URL;
-  if (!url) throw new Error("SHARETRIBE_MARKETPLACE_URL is not configured");
-  return url.replace(/\/$/, "");
+// Sharetribe Flex Marketplace API base. Always this host — the per-marketplace
+// scope is determined by the Client ID, not the URL.
+const FLEX_API_BASE = "https://flex-api.sharetribe.com";
+
+function getApiBase(): string {
+  const raw = process.env.SHARETRIBE_MARKETPLACE_URL?.trim();
+  if (!raw) return FLEX_API_BASE;
+  // Accept either a full URL (https://flex-api.sharetribe.com) or a bare
+  // marketplace ident like "poolrentalnearme" — fall back to the canonical base.
+  if (/^https?:\/\//i.test(raw)) return raw.replace(/\/$/, "");
+  return FLEX_API_BASE;
 }
 
 function getClientId(): string {
@@ -32,7 +39,7 @@ async function getAnonymousToken(): Promise<string> {
     return tokenCache.token;
   }
 
-  const baseUrl = getMarketplaceUrl();
+  const baseUrl = getApiBase();
   const clientId = getClientId();
 
   const body = new URLSearchParams({
@@ -70,7 +77,7 @@ async function marketplaceGet<T = unknown>(
   path: string,
   query: Record<string, string | number | boolean | undefined> = {},
 ): Promise<T> {
-  const baseUrl = getMarketplaceUrl();
+  const baseUrl = getApiBase();
   const token = await getAnonymousToken();
 
   const params = new URLSearchParams();
