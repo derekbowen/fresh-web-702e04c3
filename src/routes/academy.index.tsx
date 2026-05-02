@@ -138,6 +138,12 @@ function AcademyIndex() {
   const totalPages = Math.max(1, Math.ceil(data.total / PAGE_SIZE));
   const activeCat = search.category ?? null;
   const activeMeta = activeCat ? getCategoryMeta(activeCat, lang) : null;
+  const activeTier = search.tier ?? null;
+  const activeTierMeta = getTierMeta(activeTier);
+  const heroLabel = activeTierMeta?.label ?? activeMeta?.label ?? null;
+  const heroEmoji = activeTierMeta?.emoji ?? activeMeta?.emoji ?? null;
+  const heroDesc = activeTierMeta?.description ?? activeMeta?.description ?? t.academyTagline;
+  const tierCountMap = new Map(data.tiers.map((tier) => [tier.slug, tier.count]));
 
   return (
     <div className="flex min-h-screen flex-col">
