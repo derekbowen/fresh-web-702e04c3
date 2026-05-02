@@ -37,26 +37,29 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Pool Rental Near Me — Rent a Private Pool by the Hour" },
-      {
-        name: "description",
-        content:
-          "Find and book private pool rentals near you. Hourly bookings, $2M liability insurance included. Backyard pools, heated pools, hot tubs, and more.",
-      },
-      { name: "author", content: "Pool Rental Near Me" },
-      { property: "og:site_name", content: "Pool Rental Near Me" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico" },
-    ],
-  }),
+  head: () => {
+    const meta = buildMeta({
+      title: `${SITE_NAME} — Rent a Private Pool by the Hour`,
+      description:
+        "Find and book private pool rentals near you. Hourly bookings, $2M liability insurance included. Backyard pools, heated pools, hot tubs, and more.",
+      path: "/",
+    });
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "author", content: SITE_NAME },
+        { name: "theme-color", content: "#0ea5e9" },
+        ...meta.meta,
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.ico" },
+        ...meta.links,
+      ],
+      scripts: [ldJsonScript(organizationJsonLd()), ldJsonScript(websiteJsonLd())],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
