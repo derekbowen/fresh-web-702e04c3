@@ -126,11 +126,39 @@ export const Route = createFileRoute("/academy/$slug")({
   component: CoursePage,
 });
 
+interface LongFormContent {
+  overview?: string;
+  who_its_for?: string;
+  learning_outcomes?: string[];
+  modules?: Array<{ title: string; content: string }>;
+  host_playbook?: string;
+  pricing_tactics?: string;
+  common_mistakes?: string[];
+  faq?: Array<{ question: string; answer: string }>;
+  related_topics?: string[];
+}
+
+function Paragraphs({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/\n\n+/).map((p, i) => (
+        <p key={i} className="mb-4 text-base leading-relaxed text-muted-foreground">
+          {p}
+        </p>
+      ))}
+    </>
+  );
+}
+
 function CoursePage() {
   const { course, related, lang } = Route.useLoaderData();
   const safeLang: Lang = lang === "es" ? "es" : "en";
   const t = I18N[safeLang];
   const cat = getCategoryMeta(course.category, safeLang);
+  const lfc = (course.long_form_content ?? null) as LongFormContent | null;
+  const hero = (course as any).cover_image_url
+    ? ACADEMY_HERO_MAP[(course as any).cover_image_url] ?? (course as any).cover_image_url
+    : null;
 
   return (
     <div className="flex min-h-screen flex-col">
