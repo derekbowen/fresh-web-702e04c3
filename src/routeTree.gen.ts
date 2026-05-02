@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HostToolsIndexRouteImport } from './routes/host-tools.index'
+import { Route as HelpCenterIndexRouteImport } from './routes/help-center.index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
@@ -32,7 +33,9 @@ import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-her
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
+import { Route as HelpCenterCategoryIndexRouteImport } from './routes/help-center.$category.index'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
+import { Route as HelpCenterCategorySlugRouteImport } from './routes/help-center.$category.$slug'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
@@ -65,6 +68,11 @@ const IndexRoute = IndexRouteImport.update({
 const HostToolsIndexRoute = HostToolsIndexRouteImport.update({
   id: '/host-tools/',
   path: '/host-tools/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpCenterIndexRoute = HelpCenterIndexRouteImport.update({
+  id: '/help-center/',
+  path: '/help-center/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcademyIndexRoute = AcademyIndexRouteImport.update({
@@ -152,9 +160,19 @@ const AcademySlugRoute = AcademySlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => AcademyRoute,
 } as any)
+const HelpCenterCategoryIndexRoute = HelpCenterCategoryIndexRouteImport.update({
+  id: '/help-center/$category/',
+  path: '/help-center/$category/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LSlugIdRoute = LSlugIdRouteImport.update({
   id: '/l/$slug/$id',
   path: '/l/$slug/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpCenterCategorySlugRoute = HelpCenterCategorySlugRouteImport.update({
+  id: '/help-center/$category/$slug',
+  path: '/help-center/$category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
@@ -196,10 +214,13 @@ export interface FileRoutesByFullPath {
   '/providers/$slug': typeof ProvidersSlugRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
+  '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
 }
 export interface FileRoutesByTo {
@@ -224,10 +245,13 @@ export interface FileRoutesByTo {
   '/providers/$slug': typeof ProvidersSlugRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy': typeof AcademyIndexRoute
+  '/help-center': typeof HelpCenterIndexRoute
   '/host-tools': typeof HostToolsIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
+  '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/help-center/$category': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
 }
 export interface FileRoutesById {
@@ -254,10 +278,13 @@ export interface FileRoutesById {
   '/providers/$slug': typeof ProvidersSlugRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
+  '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
 }
 export interface FileRouteTypes {
@@ -285,10 +312,13 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/help-center/'
     | '/host-tools/'
     | '/admin/learning/$userId'
     | '/api/public/track-city-click'
+    | '/help-center/$category/$slug'
     | '/l/$slug/$id'
+    | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -313,10 +343,13 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy'
+    | '/help-center'
     | '/host-tools'
     | '/admin/learning/$userId'
     | '/api/public/track-city-click'
+    | '/help-center/$category/$slug'
     | '/l/$slug/$id'
+    | '/help-center/$category'
     | '/api/certificates/$uid/pdf'
   id:
     | '__root__'
@@ -342,10 +375,13 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/help-center/'
     | '/host-tools/'
     | '/admin/learning/$userId'
     | '/api/public/track-city-click'
+    | '/help-center/$category/$slug'
     | '/l/$slug/$id'
+    | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
   fileRoutesById: FileRoutesById
 }
@@ -367,9 +403,12 @@ export interface RootRouteChildren {
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
   VerifyUidRoute: typeof VerifyUidRoute
+  HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
+  HelpCenterCategorySlugRoute: typeof HelpCenterCategorySlugRoute
   LSlugIdRoute: typeof LSlugIdRoute
+  HelpCenterCategoryIndexRoute: typeof HelpCenterCategoryIndexRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
 }
 
@@ -415,6 +454,13 @@ declare module '@tanstack/react-router' {
       path: '/host-tools'
       fullPath: '/host-tools/'
       preLoaderRoute: typeof HostToolsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help-center/': {
+      id: '/help-center/'
+      path: '/help-center'
+      fullPath: '/help-center/'
+      preLoaderRoute: typeof HelpCenterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/academy/': {
@@ -536,11 +582,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademySlugRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/help-center/$category/': {
+      id: '/help-center/$category/'
+      path: '/help-center/$category'
+      fullPath: '/help-center/$category/'
+      preLoaderRoute: typeof HelpCenterCategoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/l/$slug/$id': {
       id: '/l/$slug/$id'
       path: '/l/$slug/$id'
       fullPath: '/l/$slug/$id'
       preLoaderRoute: typeof LSlugIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help-center/$category/$slug': {
+      id: '/help-center/$category/$slug'
+      path: '/help-center/$category/$slug'
+      fullPath: '/help-center/$category/$slug'
+      preLoaderRoute: typeof HelpCenterCategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/track-city-click': {
@@ -642,9 +702,12 @@ const rootRouteChildren: RootRouteChildren = {
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
   VerifyUidRoute: VerifyUidRoute,
+  HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
+  HelpCenterCategorySlugRoute: HelpCenterCategorySlugRoute,
   LSlugIdRoute: LSlugIdRoute,
+  HelpCenterCategoryIndexRoute: HelpCenterCategoryIndexRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
 }
 export const routeTree = rootRouteImport

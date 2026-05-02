@@ -6,12 +6,14 @@ export const Route = createFileRoute("/api/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const [cities, categories, providers, posts, courses] = await Promise.all([
+        const [cities, categories, providers, posts, courses, helpCats, helpArticles] = await Promise.all([
           supabaseAdmin.from("cities").select("slug, updated_at").eq("is_published", true),
           supabaseAdmin.from("categories").select("slug, updated_at").eq("is_published", true),
           supabaseAdmin.from("providers").select("slug, updated_at").eq("is_published", true),
           supabaseAdmin.from("blog_posts").select("slug, updated_at").eq("is_published", true),
           supabaseAdmin.from("courses").select("slug, updated_at").eq("is_published", true),
+          supabaseAdmin.from("help_categories").select("slug, updated_at").eq("is_published", true),
+          supabaseAdmin.from("help_articles").select("slug, category_slug, updated_at").eq("is_published", true),
         ]);
 
         const urls: Array<{ loc: string; lastmod?: string; priority?: string }> = [
@@ -19,6 +21,7 @@ export const Route = createFileRoute("/api/sitemap.xml")({
           { loc: `${SITE_URL}/blog`, priority: "0.7" },
           { loc: `${SITE_URL}/providers`, priority: "0.7" },
           { loc: `${SITE_URL}/academy`, priority: "0.8" },
+          { loc: `${SITE_URL}/help-center`, priority: "0.8" },
         ];
 
         for (const c of cities.data ?? []) {
@@ -36,6 +39,12 @@ export const Route = createFileRoute("/api/sitemap.xml")({
         }
         for (const c of courses.data ?? []) {
           urls.push({ loc: `${SITE_URL}/academy/${c.slug}`, lastmod: c.updated_at, priority: "0.7" });
+        }
+        for (const c of helpCats.data ?? []) {
+          urls.push({ loc: `${SITE_URL}/help-center/${c.slug}`, lastmod: c.updated_at, priority: "0.7" });
+        }
+        for (const a of helpArticles.data ?? []) {
+          urls.push({ loc: `${SITE_URL}/help-center/${a.category_slug}/${a.slug}`, lastmod: a.updated_at, priority: "0.5" });
         }
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>

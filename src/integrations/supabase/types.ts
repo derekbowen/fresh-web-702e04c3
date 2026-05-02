@@ -422,6 +422,110 @@ export type Database = {
         }
         Relationships: []
       }
+      help_articles: {
+        Row: {
+          category_slug: string
+          content: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_popular: boolean
+          is_published: boolean
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          category_slug: string
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_popular?: boolean
+          is_published?: boolean
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          category_slug?: string
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_popular?: boolean
+          is_published?: boolean
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_articles_category_slug_fkey"
+            columns: ["category_slug"]
+            isOneToOne: false
+            referencedRelation: "help_categories"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      help_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          hero_image_url: string | null
+          icon: string | null
+          id: string
+          is_published: boolean
+          name: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          name: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean
+          name?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       host_tools: {
         Row: {
           category: string
