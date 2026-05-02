@@ -4,6 +4,16 @@ import { Link } from "@tanstack/react-router";
 // Legacy backend (signup, /s search, /p/* marketing pages) is served on the same
 // host as this app. Use root-relative hrefs so links resolve on www, custom
 // domain, and preview hosts without hardcoding the production URL.
+//
+// `rel()` prefixes Vite's BASE_URL so links keep working when the app is
+// served behind a reverse proxy under a sub-path (e.g. "/app/"). When BASE_URL
+// is "/" (the default), the path is returned unchanged.
+function rel(path: string): string {
+  if (/^([a-z]+:|\/\/|#|mailto:|tel:)/i.test(path)) return path;
+  const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+  if (!base) return path;
+  return path.startsWith("/") ? `${base}${path}` : `${base}/${path}`;
+}
 
 export function SiteHeader() {
   return (
@@ -31,7 +41,7 @@ export function SiteHeader() {
           <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">Blog</Link>
           <Link to="/providers" className="text-sm font-medium text-muted-foreground hover:text-foreground">Providers</Link>
         </nav>
-        <a href={"/signup"} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
+        <a href={rel("/signup")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
           List Your Pool
         </a>
       </div>
@@ -152,7 +162,7 @@ export function SiteFooter() {
                 </li>
               ))}
               <li>
-                <a href={"/s"} className="hover:text-primary">All Locations</a>
+                <a href={rel("/s")} className="hover:text-primary">All Locations</a>
               </li>
             </ul>
           </div>
@@ -182,7 +192,7 @@ function FooterColumn({
             {it.internal ? (
               <Link to={it.href} className="hover:text-primary">{it.label}</Link>
             ) : (
-              <a href={it.href} className="hover:text-primary">{it.label}</a>
+              <a href={rel(it.href)} className="hover:text-primary">{it.label}</a>
             )}
           </li>
         ))}
