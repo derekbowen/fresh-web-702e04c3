@@ -18,7 +18,7 @@ export const Route = createFileRoute("/admin/cities-heroes")({
 type Result = {
   slug: string;
   name: string;
-  source_url: string;
+  source_url: string | null;
   status: "ok" | "miss" | "error" | "skipped";
   hero_url?: string;
   error?: string;
@@ -169,14 +169,18 @@ function AdminHeroBackfillPage() {
                       </div>
                     </td>
                     <td className="px-3 py-2 text-xs">
-                      <a
-                        href={r.source_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        {r.source_url.replace("https://www.", "")}
-                      </a>
+                      {r.source_url ? (
+                        <a
+                          href={r.source_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          {r.source_url.replace("https://www.", "")}
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-xs">
                       {r.hero_url ? (
