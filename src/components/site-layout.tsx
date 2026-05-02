@@ -57,7 +57,7 @@ const EXPLORE = [
   { label: "How It Works", href: "/p/how-it-works" },
   { label: "Start a Business", href: "/p/start-a-pool-rental-business" },
   { label: "Swimply Alternative", href: "/p/swimply-alternative" },
-  { label: "Help Center", href: "/p/help" },
+  { label: "Help Center", href: "/help-center" },
   { label: "Sign a Waiver", href: "/p/waiver" },
   { label: "Store", href: "/p/store" },
   { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
