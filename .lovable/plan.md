@@ -1,83 +1,70 @@
-# Learning Academy — Plan
+## Goal
 
-Replicate and improve the three live academy pages (`/p/learningacademy`, `/p/learning-academy-new-courses`, `/p/aprende-a-rentar-tu-piscina`) as a unified, SEO-friendly Learning Academy section. Each course is a real route that embeds the existing openelms.ai player — no need to recreate course content.
+Make SEO consistently strong across the entire site: a single source of truth for canonical URLs / OG metadata, site-wide structured data on every page, ItemList schema for footer-linked navigation hubs, and a sitemap that covers academy + courses.
 
-## Routes
+## What's already in place
 
-```text
-/academy                       Catalog landing (all 90+ courses, search, filters)
-/academy/category/$slug        Filtered by category (safety, marketing, legal, etc.)
-/academy/$slug                 Individual course page with embedded player
-/academy/es                    Spanish catalog (Aprende a Rentar tu Piscina)
-```
+- `src/lib/seo.ts` has `buildMeta` (canonical, OG, Twitter, prev/next, noindex) + `breadcrumbJsonLd` + `ldJsonScript`.
+- Most leaf routes already use `buildMeta` and emit relevant JSON-LD (Article, Course, LocalBusiness, FAQ, ItemList, Breadcrumbs).
+- Sitemap covers cities, categories, providers, blog posts.
 
-## Database
+## Gaps to fix
 
-New table `courses` (separate from `blog_posts` since the model is different — embeds, languages, levels):
+1. Root route emits no canonical, no Twitter image, no Organization/WebSite JSON-LD, and a generic OG meta repeated on every page.
+2. `academy.tsx` (layout) and a few list routes lack their own meta beyond `buildMeta` defaults — no breadcrumbs/ItemList.
+3. Sitemap omits `/academy`, academy course pages, and key footer hubs (`/blog`, `/providers` already there but missing `/academy`).
+4. No default OG image; pages without a hero share an empty card.
+5. No site-wide `SearchAction` (sitelinks search box) or `Organization` schema with sameAs (socials live in footer already).
 
-- `slug` (unique), `title`, `subtitle`, `description` (long), `excerpt` (short)
-- `cover_image_url`
-- `category` (text: safety, marketing, legal, hosting, guest-experience, ai-tech, operations, seasonal, spanish)
-- `language` (text: `en` | `es`, default `en`)
-- `level` (text: beginner | intermediate | advanced, nullable)
-- `embed_url` (the `https://openelms.ai/embed/...` URL)
-- `external_detail_url` (optional link to the live `/p/...` page during transition)
-- `duration_minutes` (nullable), `is_featured` (bool), `is_published` (bool), `published_at`
-- `seo_title`, `seo_description`
+## Plan
 
-RLS: public read for `is_published = true`; admins manage. Same pattern as `blog_posts`.
+### 1. Extend `src/lib/seo.ts`
 
-Seed ~90 courses extracted from the three reference pages, each with the correct embed URL, category, and language.
+- Add `DEFAULT_OG_IMAGE` constant (use `/og-default.png`, file already in `public/` or fallback to existing hero).
+- In `buildMeta`, when no `image` passed, use `DEFAULT_OG_IMAGE` so every page has a share card.
+- Add helpers:
+  - `organizationJsonLd()` — `Organization` with name, url, logo, sameAs (Facebook/X/YouTube/LinkedIn/Instagram/TikTok/Pinterest, matching the footer SOCIALS list), contactPoint (phone + email from footer).
+  - `websiteJsonLd()` — `WebSite` with `potentialAction` SearchAction pointing to `https://www.poolrentalnearme.com/s?q={search_term_string}`.
+  - `itemListJsonLd(items)` — generic ItemList helper (used by hub pages).
 
-## Catalog page (`/academy`)
+### 2. Root route (`src/routes/__root.tsx`)
 
-- Hero: "Pool Host Learning Academy — 90+ free courses" + search box (client-side filter) + language toggle.
-- Category pills (counts per category) — filter via `?category=safety` search param (zod-validated).
-- Featured courses row (3 large cards) — admin-curated via `is_featured`.
-- Grid of all courses (12 per page, paginated with `?page=N`).
-- Topic-based deep links at bottom for SEO: every category page is internally linked.
-- Each card: thumbnail, title, 2-line excerpt, category badge, language badge, "Start Course" CTA.
+- Replace the inline `head()` with `buildMeta({...})` so root gets a canonical for `/` AND a default OG image.
+- Add `scripts: [ldJsonScript(organizationJsonLd()), ldJsonScript(websiteJsonLd())]` so every page on the site carries Organization + WebSite structured data.
+- Keep child routes overriding title/description/canonical via their own `head()`.
 
-SEO: `head()` builds title/description per `?category` and `?page`, with `rel=prev/next`, `ItemList` JSON-LD, `BreadcrumbList`, and `noindex` for out-of-range pages. Same pattern as the blog landing.
+### 3. Footer hub routes — add proper meta + ItemList
 
-## Course page (`/academy/$slug`)
+- `src/routes/academy.tsx` (layout): currently has no head. Move into `academy.index.tsx` (already done) — but add a noop head on the layout to avoid inheriting stale meta. No change if layout has none; verified.
+- `src/routes/providers.tsx`: already has `buildMeta`. Extend to include `breadcrumbJsonLd([{Home}, {Providers}])` and `itemListJsonLd(providers.map(...))`.
+- `src/routes/blog.tsx`: already has ItemList — leave as is.
 
-- Breadcrumb: Home / Academy / Category / Title.
-- H1 + subtitle + meta row (category, language, level, duration).
-- Hero cover image.
-- Long description (markdown rendered).
-- **Embedded player**: `<iframe src={embed_url} ...>` with sandbox attrs and proper aspect ratio. Lazy-loaded.
-- "What you'll learn" bullets (parsed from description if structured, or shown raw).
-- Related courses (3 from same category).
-- Sticky "Start Course" CTA button on mobile.
+### 4. Sitemap (`src/routes/api/sitemap[.]xml.ts`)
 
-SEO: `head()` outputs full meta + `Course` JSON-LD (schema.org Course type with `provider`, `educationalLevel`, `inLanguage`, `image`, `description`). Canonical to `/academy/$slug`.
+- Add static entries: `/academy`, `/academy?lang=es`.
+- Query `courses` table (published) and emit `/academy/$slug` URLs with `lastmod`.
+- Add `/category` index isn't a route — skip.
 
-## Spanish catalog (`/academy/es`)
+### 5. Site footer / header
 
-Same template as `/academy` but pre-filtered to `language=es`, with Spanish UI strings ("Cursos", "Categorías", "Comenzar Curso"). Catalog header reads "Aprende a Rentar tu Piscina".
+- No structural changes; the new `Organization.sameAs` mirrors the footer SOCIALS so the existing footer markup is unchanged.
 
-## Header & footer
+## Technical notes
 
-- Add "Academy" link to `SiteHeader` desktop nav (between Categories and Blog).
-- Add "Learning Academy" link to footer Explore column.
+- All JSON-LD goes in `head().scripts` via `ldJsonScript(...)` so it's SSR-rendered (TanStack `<HeadContent />` already in root shell).
+- `buildMeta` already handles canonical, prev/next, noindex — no API change beyond the new default image fallback.
+- Cache for sitemap stays at 1 hour.
+- No DB schema changes; only adds course rows to the existing sitemap query.
 
-## Sitemap
+## Files to touch
 
-Extend `listAllSitemapEntries` in `src/server/content.functions.ts` to include `courses` (slug + updated_at). The existing `/api/sitemap.xml` route picks them up automatically once added. URLs emitted: `/academy`, `/academy/es`, every `/academy/category/$slug`, every `/academy/$slug`.
+- `src/lib/seo.ts` — add helpers + default OG.
+- `src/routes/__root.tsx` — switch to `buildMeta` + Org/WebSite JSON-LD.
+- `src/routes/providers.tsx` — add Breadcrumbs + ItemList JSON-LD.
+- `src/routes/api/sitemap[.]xml.ts` — include academy + courses.
+- `public/og-default.png` — add a simple branded fallback (if missing, generate a 1200×630 placeholder via existing pool-hero asset).
 
-## Technical details
+## Out of scope
 
-- Server functions: `listCourses({page, pageSize, category, language})`, `listCourseCategories()`, `getCourse({slug})`, `getRelatedCourses({slug, category})` in a new `src/server/courses.functions.ts`.
-- Search params validated with `zodValidator` (same pattern as the blog page already uses).
-- Iframe embed wrapper: `<div className="aspect-video w-full">` + `<iframe loading="lazy" allow="fullscreen; autoplay" sandbox="allow-scripts allow-same-origin allow-forms allow-popups">`.
-- Course descriptions stored as markdown; render with `react-markdown` (already common; will install if missing).
-- Reuse `buildMeta`, `breadcrumbJsonLd`, `ldJsonScript` from `src/lib/seo.ts`.
-
-## Out of scope (this iteration)
-
-- User progress tracking / completion certificates (openelms handles inside the embed).
-- Course authoring UI (admin-only; can be added later).
-- Payments — all courses remain free, matching the live site.
-
-After approval I'll run the migration to create `courses`, seed the ~90 rows, build the routes/components, and verify a sample course renders the embed correctly.
+- Image generation pipeline for per-page OG cards (only fallback added).
+- Hreflang for the Spanish academy variant — can be a follow-up once `/academy/es` becomes its own route.
