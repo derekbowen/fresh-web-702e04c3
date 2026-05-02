@@ -175,7 +175,7 @@ function FooterColumn({
 }) {
   return (
     <div className="lg:col-span-2">
-      <h4 className="text-sm font-semibold text-foreground">{title}</h4>
+      <h4 className="text-base font-semibold text-foreground">{title}</h4>
       <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
         {items.map((it) => (
           <li key={it.label}>
