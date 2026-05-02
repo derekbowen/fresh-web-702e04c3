@@ -91,20 +91,46 @@ const nearbyInputSchema = z.object({
   limit: z.number().int().min(1).max(24).optional(),
 });
 
-/** Get other published cities in the same state (excluding the current one). */
+/**
+ * Get the geographically nearest published cities to the given slug.
+ * Falls back to same-state results when coordinates aren't available.
+ */
 export const getNearbyCities = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => nearbyInputSchema.parse(d))
   .handler(async ({ data }) => {
-    let q = supabaseAdmin
-      .from("cities")
-      .select("slug, name, state_code")
-      .eq("is_published", true)
-      .neq("slug", data.slug)
-      .limit(data.limit ?? 12);
-    if (data.state_code) q = q.eq("state_code", data.state_code);
-    const { data: rows, error } = await q;
-    if (error) console.error("getNearbyCities:", error);
-    return { cities: rows ?? [] };
+    const limit = data.limit ?? 12;
+    const { data: rows, error } = await supabaseAdmin.rpc(
+      "nearby_cities_by_distance",
+      { _slug: data.slug, _limit: limit },
+    );
+    if (error) {
+      console.error("getNearbyCities rpc:", error);
+      // Fallback: same-state cities
+      let q = supabaseAdmin
+        .from("cities")
+        .select("slug, name, state, state_code")
+        .eq("is_published", true)
+        .neq("slug", data.slug)
+        .limit(limit);
+      if (data.state_code) q = q.eq("state_code", data.state_code);
+      const { data: fb } = await q;
+      return { cities: (fb ?? []).map((c) => ({ ...c, distance_km: null })) };
+    }
+    type Row = {
+      out_slug: string;
+      out_name: string;
+      out_state: string;
+      out_state_code: string;
+      out_distance_km: number | null;
+    };
+    const cities = ((rows ?? []) as Row[]).map((r) => ({
+      slug: r.out_slug,
+      name: r.out_name,
+      state: r.out_state,
+      state_code: r.out_state_code,
+      distance_km: r.out_distance_km,
+    }));
+    return { cities };
   });
 
 /** All published categories (slug, name, icon). */
