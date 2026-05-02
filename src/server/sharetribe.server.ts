@@ -1,27 +1,25 @@
 /**
- * Sharetribe Flex Marketplace API client (server-only).
+ * Sharetribe Integration API client (server-only).
  *
- * Uses the public Marketplace API for read-only listing data (no secret required
- * for public reads, just the Client ID). Auth via client_credentials when needed.
+ * The configured Sharetribe app for this project is an Integration API
+ * application (client_id + client_secret). Marketplace API "public-read"
+ * does NOT work with this client_id, so we use the Integration API host:
  *
- * Docs: https://www.sharetribe.com/api-reference/marketplace.html
+ *   POST https://flex-integ-api.sharetribe.com/v1/auth/token
+ *        grant_type=client_credentials, scope=integ
+ *
+ *   GET  https://flex-integ-api.sharetribe.com/v1/integration_api/listings/{query|show}
+ *
+ * Integration API returns ALL listings (draft, pending-approval, published,
+ * closed). For public-facing surfaces we filter to `states=published`.
+ *
+ * Docs: https://www.sharetribe.com/api-reference/integration.html
  */
+
+const INTEG_API_BASE = "https://flex-integ-api.sharetribe.com";
 
 type TokenCache = { token: string; expiresAt: number } | null;
 let tokenCache: TokenCache = null;
-
-// Sharetribe Flex Marketplace API base. Always this host — the per-marketplace
-// scope is determined by the Client ID, not the URL.
-const FLEX_API_BASE = "https://flex-api.sharetribe.com";
-
-function getApiBase(): string {
-  const raw = process.env.SHARETRIBE_MARKETPLACE_URL?.trim();
-  if (!raw) return FLEX_API_BASE;
-  // Accept either a full URL (https://flex-api.sharetribe.com) or a bare
-  // marketplace ident like "poolrentalnearme" — fall back to the canonical base.
-  if (/^https?:\/\//i.test(raw)) return raw.replace(/\/$/, "");
-  return FLEX_API_BASE;
-}
 
 function getClientId(): string {
   const id = process.env.SHARETRIBE_CLIENT_ID;
@@ -29,26 +27,30 @@ function getClientId(): string {
   return id;
 }
 
+function getClientSecret(): string {
+  const s = process.env.SHARETRIBE_CLIENT_SECRET;
+  if (!s) throw new Error("SHARETRIBE_CLIENT_SECRET is not configured");
+  return s;
+}
+
 /**
- * Get an anonymous (public) access token for the Marketplace API.
- * Cached in-memory for the lifetime of the worker instance.
+ * Get an Integration API access token (scope=integ). Cached in-memory for the
+ * lifetime of the worker instance.
  */
-async function getAnonymousToken(): Promise<string> {
+async function getIntegToken(): Promise<string> {
   const now = Date.now();
   if (tokenCache && tokenCache.expiresAt > now + 30_000) {
     return tokenCache.token;
   }
 
-  const baseUrl = getApiBase();
-  const clientId = getClientId();
-
   const body = new URLSearchParams({
-    client_id: clientId,
+    client_id: getClientId(),
+    client_secret: getClientSecret(),
     grant_type: "client_credentials",
-    scope: "public-read",
+    scope: "integ",
   });
 
-  const res = await fetch(`${baseUrl}/v1/auth/token`, {
+  const res = await fetch(`${INTEG_API_BASE}/v1/auth/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
@@ -68,17 +70,16 @@ async function getAnonymousToken(): Promise<string> {
 
   tokenCache = {
     token: json.access_token,
-    expiresAt: now + json.expires_in * 1000,
+    expiresAt: now + (json.expires_in ?? 3600) * 1000,
   };
   return json.access_token;
 }
 
-async function marketplaceGet<T = unknown>(
+async function integGet<T = unknown>(
   path: string,
   query: Record<string, string | number | boolean | undefined> = {},
 ): Promise<T> {
-  const baseUrl = getApiBase();
-  const token = await getAnonymousToken();
+  const token = await getIntegToken();
 
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(query)) {
@@ -87,7 +88,7 @@ async function marketplaceGet<T = unknown>(
     }
   }
 
-  const url = `${baseUrl}/v1/api${path}${params.size ? `?${params}` : ""}`;
+  const url = `${INTEG_API_BASE}/v1/integration_api${path}${params.size ? `?${params}` : ""}`;
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -123,8 +124,8 @@ export interface STListing {
   attributes: {
     title: string;
     description: string;
-    geolocation?: { lat: number; lng: number };
-    price?: { amount: number; currency: string };
+    geolocation?: { lat: number; lng: number } | null;
+    price?: { amount: number; currency: string } | null;
     publicData?: Record<string, unknown>;
     metadata?: Record<string, unknown>;
     state: string;
@@ -163,11 +164,13 @@ export interface ListingSummary {
 }
 
 function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 80);
+  return (
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 80) || "pool"
+  );
 }
 
 function pickImage(
@@ -194,10 +197,24 @@ function summarize(
   listing: STListing,
   included: STResponse<unknown>["included"],
 ): ListingSummary {
-  const pd = listing.attributes.publicData ?? {};
+  const pd = (listing.attributes.publicData ?? {}) as Record<string, unknown>;
   const location = (pd.location as Record<string, unknown> | undefined) ?? {};
-  const city = (location.city as string) ?? (pd.city as string) ?? null;
-  const state = (location.state as string) ?? (pd.state as string) ?? null;
+  const addressStr =
+    typeof pd.address === "string"
+      ? pd.address
+      : typeof (pd.location as Record<string, unknown> | undefined)?.address === "string"
+        ? ((pd.location as Record<string, unknown>).address as string)
+        : "";
+  const city =
+    (location.city as string) ||
+    (pd.city as string) ||
+    (addressStr ? addressStr.split(",")[0]?.trim() : "") ||
+    null;
+  const state =
+    (location.state as string) ||
+    (pd.state as string) ||
+    (pd.state_code as string) ||
+    null;
   const slug = slugify(listing.attributes.title || "pool");
   return {
     id: listing.id,
@@ -205,8 +222,8 @@ function summarize(
     title: listing.attributes.title,
     description: listing.attributes.description ?? "",
     price: listing.attributes.price ?? null,
-    city,
-    state,
+    city: city || null,
+    state: state || null,
     imageUrl: pickImage(listing, included),
     url: `/l/${slug}/${listing.id}`,
     geolocation: listing.attributes.geolocation ?? null,
@@ -224,12 +241,14 @@ export async function fetchListing(id: string): Promise<{
   raw: STListing;
 } | null> {
   try {
-    const res = await marketplaceGet<STResponse<STListing | STListing[]>>(
+    const res = await integGet<STResponse<STListing | STListing[]>>(
       `/listings/show`,
       { id, ...IMAGE_VARIANT_PARAMS },
     );
     const data = Array.isArray(res.data) ? res.data[0] : res.data;
     if (!data) return null;
+    // Don't expose draft / closed listings publicly.
+    if (data.attributes.state !== "published") return null;
     return { listing: summarize(data, res.included), raw: data };
   } catch (err) {
     console.error("fetchListing error:", err);
@@ -254,18 +273,16 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
   totalPages: number;
 }> {
   try {
-    const res = await marketplaceGet<STResponse<STListing[]>>(
-      `/listings/query`,
-      {
-        page: opts.page ?? 1,
-        perPage: opts.perPage ?? 24,
-        keywords: opts.keywords,
-        origin: opts.origin,
-        bounds: opts.bounds,
-        pub_category: opts.pub_category,
-        ...IMAGE_VARIANT_PARAMS,
-      },
-    );
+    const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
+      page: opts.page ?? 1,
+      perPage: opts.perPage ?? 24,
+      states: "published",
+      keywords: opts.keywords,
+      origin: opts.origin,
+      bounds: opts.bounds,
+      pub_category: opts.pub_category,
+      ...IMAGE_VARIANT_PARAMS,
+    });
     return {
       listings: (res.data ?? []).map((l) => summarize(l, res.included)),
       total: res.meta?.totalItems ?? 0,
