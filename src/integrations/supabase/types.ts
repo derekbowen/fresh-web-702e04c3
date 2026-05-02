@@ -203,11 +203,13 @@ export type Database = {
           is_published: boolean
           language: string
           level: string | null
+          long_form_content: Json | null
           published_at: string | null
           seo_description: string | null
           seo_title: string | null
           slug: string
           subtitle: string | null
+          tier: string | null
           title: string
           updated_at: string
         }
@@ -225,11 +227,13 @@ export type Database = {
           is_published?: boolean
           language?: string
           level?: string | null
+          long_form_content?: Json | null
           published_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug: string
           subtitle?: string | null
+          tier?: string | null
           title: string
           updated_at?: string
         }
@@ -247,11 +251,13 @@ export type Database = {
           is_published?: boolean
           language?: string
           level?: string | null
+          long_form_content?: Json | null
           published_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string
           subtitle?: string | null
+          tier?: string | null
           title?: string
           updated_at?: string
         }
