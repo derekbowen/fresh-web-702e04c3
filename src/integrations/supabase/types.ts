@@ -720,19 +720,84 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_leads: {
+        Row: {
+          city: string | null
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          source_path: string | null
+          source_provider_slug: string | null
+          state_code: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+          website: string | null
+        }
+        Insert: {
+          city?: string | null
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          source_path?: string | null
+          source_provider_slug?: string | null
+          state_code?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Update: {
+          city?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          source_path?: string | null
+          source_provider_slug?: string | null
+          state_code?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       providers: {
         Row: {
+          address: string | null
+          ai_enriched_at: string | null
           business_type: string | null
           city: string | null
+          city_slug: string | null
+          claimed_at: string | null
+          claimed_by: string | null
           created_at: string
           description: string | null
           email: string | null
+          google_category: string | null
+          google_cid: string | null
           hero_image_url: string | null
           id: string
           is_published: boolean
+          latitude: number | null
           logo_url: string | null
+          longitude: number | null
           name: string
           phone: string | null
+          rating: number | null
+          rating_count: number | null
           seo_description: string | null
           seo_title: string | null
           services: string[] | null
@@ -742,17 +807,28 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          address?: string | null
+          ai_enriched_at?: string | null
           business_type?: string | null
           city?: string | null
+          city_slug?: string | null
+          claimed_at?: string | null
+          claimed_by?: string | null
           created_at?: string
           description?: string | null
           email?: string | null
+          google_category?: string | null
+          google_cid?: string | null
           hero_image_url?: string | null
           id?: string
           is_published?: boolean
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
           name: string
           phone?: string | null
+          rating?: number | null
+          rating_count?: number | null
           seo_description?: string | null
           seo_title?: string | null
           services?: string[] | null
@@ -762,17 +838,28 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          address?: string | null
+          ai_enriched_at?: string | null
           business_type?: string | null
           city?: string | null
+          city_slug?: string | null
+          claimed_at?: string | null
+          claimed_by?: string | null
           created_at?: string
           description?: string | null
           email?: string | null
+          google_category?: string | null
+          google_cid?: string | null
           hero_image_url?: string | null
           id?: string
           is_published?: boolean
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
           name?: string
           phone?: string | null
+          rating?: number | null
+          rating_count?: number | null
           seo_description?: string | null
           seo_title?: string | null
           services?: string[] | null
