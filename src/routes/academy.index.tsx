@@ -39,7 +39,7 @@ export const Route = createFileRoute("/academy/")({
       listCourseCategories({ data: { language } }),
       deps.page === 1 && !deps.category && !deps.q
         ? listFeaturedCourses({ data: { language, limit: 3 } })
-        : Promise.resolve({ courses: [] }),
+        : Promise.resolve({ courses: [] as Awaited<ReturnType<typeof listFeaturedCourses>>["courses"] }),
     ]);
     return {
       ...list,
