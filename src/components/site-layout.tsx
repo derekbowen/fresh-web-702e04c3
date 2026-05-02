@@ -31,7 +31,7 @@ export function SiteHeader() {
           <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">Blog</Link>
           <Link to="/providers" className="text-sm font-medium text-muted-foreground hover:text-foreground">Providers</Link>
         </nav>
-        <a href={`${SITE}/signup`} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
+        <a href={"/signup"} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
           List Your Pool
         </a>
       </div>
@@ -40,37 +40,37 @@ export function SiteHeader() {
 }
 
 const EXPLORE = [
-  { label: "Search Listings", href: `${SITE}/s` },
-  { label: "How It Works", href: `${SITE}/p/how-it-works` },
-  { label: "Start a Business", href: `${SITE}/p/start-a-pool-rental-business` },
-  { label: "Swimply Alternative", href: `${SITE}/p/swimply-alternative` },
-  { label: "Help Center", href: `${SITE}/p/help` },
-  { label: "Sign a Waiver", href: `${SITE}/p/waiver` },
-  { label: "Store", href: `${SITE}/p/store` },
-  { label: "Public Pools", href: `${SITE}/p/public-pools` },
+  { label: "Search Listings", href: "/s" },
+  { label: "How It Works", href: "/p/how-it-works" },
+  { label: "Start a Business", href: "/p/start-a-pool-rental-business" },
+  { label: "Swimply Alternative", href: "/p/swimply-alternative" },
+  { label: "Help Center", href: "/p/help" },
+  { label: "Sign a Waiver", href: "/p/waiver" },
+  { label: "Store", href: "/p/store" },
+  { label: "Public Pools", href: "/p/public-pools" },
 ];
 
 const HOSTS = [
-  { label: "List Your Pool for Free", href: `${SITE}/signup` },
-  { label: "How Hosting Works", href: `${SITE}/p/how-hosting-works` },
-  { label: "Find Locations Near You", href: `${SITE}/p/locations` },
-  { label: "Earnings Calculator", href: `${SITE}/p/earnings-calculator` },
-  { label: "Host Pro Tools", href: `${SITE}/p/host-pro-tools` },
-  { label: "Learning Academy", href: `${SITE}/p/learning-academy` },
-  { label: "Host Connect", href: `${SITE}/p/host-connect` },
-  { label: "HOA Defense Kit", href: `${SITE}/p/hoa-defense-kit` },
-  { label: "Host Make More $$$", href: `${SITE}/p/make-more-money` },
+  { label: "List Your Pool for Free", href: "/signup" },
+  { label: "How Hosting Works", href: "/p/how-hosting-works" },
+  { label: "Find Locations Near You", href: "/p/locations" },
+  { label: "Earnings Calculator", href: "/p/earnings-calculator" },
+  { label: "Host Pro Tools", href: "/p/host-pro-tools" },
+  { label: "Learning Academy", href: "/p/learning-academy" },
+  { label: "Host Connect", href: "/p/host-connect" },
+  { label: "HOA Defense Kit", href: "/p/hoa-defense-kit" },
+  { label: "Host Make More $$$", href: "/p/make-more-money" },
 ];
 
 const COMPANY = [
-  { label: "About", href: `${SITE}/p/about` },
+  { label: "About", href: "/p/about" },
   { label: "Blog", href: "/blog", internal: true },
-  { label: "Careers", href: `${SITE}/p/careers` },
-  { label: "Investors", href: `${SITE}/p/investors` },
-  { label: "Terms", href: `${SITE}/terms-of-service` },
-  { label: "Privacy", href: `${SITE}/privacy-policy` },
-  { label: "Video Chat Support", href: `${SITE}/p/video-chat-support` },
-  { label: "Refer Pool Owners", href: `${SITE}/p/refer` },
+  { label: "Careers", href: "/p/careers" },
+  { label: "Investors", href: "/p/investors" },
+  { label: "Terms", href: "/terms-of-service" },
+  { label: "Privacy", href: "/privacy-policy" },
+  { label: "Video Chat Support", href: "/p/video-chat-support" },
+  { label: "Refer Pool Owners", href: "/p/refer" },
 ];
 
 const POPULAR_MARKETS = [
@@ -153,7 +153,7 @@ export function SiteFooter() {
                 </li>
               ))}
               <li>
-                <a href={`${SITE}/s`} className="hover:text-primary">All Locations</a>
+                <a href={"/s"} className="hover:text-primary">All Locations</a>
               </li>
             </ul>
           </div>
