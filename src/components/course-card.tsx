@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { getCategoryMeta, I18N, type Lang } from "@/lib/academy";
+import { getCategoryMeta, getTierMeta, I18N, type Lang } from "@/lib/academy";
 
 export interface CourseCardCourse {
   slug: string;
@@ -11,6 +11,7 @@ export interface CourseCardCourse {
   language: string;
   level?: string | null;
   duration_minutes?: number | null;
+  tier?: string | null;
 }
 
 export function CourseCard({
