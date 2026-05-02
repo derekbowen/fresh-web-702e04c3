@@ -2,3 +2,6 @@ project_id = "ptfjspcphskifoseidut"
 
 [functions.generate-course-content]
 verify_jwt = false
+
+[functions.generate-help-article]
+verify_jwt = false
