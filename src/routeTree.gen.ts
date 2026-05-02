@@ -20,9 +20,9 @@ import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml'
 import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
-import { Route as ApiSharetribeCheckRouteImport } from './routes/api/_sharetribe-check'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
+import { Route as ApiPublicSharetribeCheckRouteImport } from './routes/api/public/_sharetribe-check'
 
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
@@ -79,11 +79,6 @@ const ApiRobotsDottxtRoute = ApiRobotsDottxtRouteImport.update({
   path: '/api/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSharetribeCheckRoute = ApiSharetribeCheckRouteImport.update({
-  id: '/api/_sharetribe-check',
-  path: '/api',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AcademySlugRoute = AcademySlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -94,6 +89,12 @@ const LSlugIdRoute = LSlugIdRouteImport.update({
   path: '/l/$slug/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSharetribeCheckRoute =
+  ApiPublicSharetribeCheckRouteImport.update({
+    id: '/api/public/_sharetribe-check',
+    path: '/api/public',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,7 +102,6 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
-  '/api': typeof ApiSharetribeCheckRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -109,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy/': typeof AcademyIndexRoute
+  '/api/public': typeof ApiPublicSharetribeCheckRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesByTo {
@@ -116,7 +117,6 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
-  '/api': typeof ApiSharetribeCheckRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -124,6 +124,7 @@ export interface FileRoutesByTo {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy': typeof AcademyIndexRoute
+  '/api/public': typeof ApiPublicSharetribeCheckRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRoutesById {
@@ -133,7 +134,6 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
-  '/api/_sharetribe-check': typeof ApiSharetribeCheckRoute
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -141,6 +141,7 @@ export interface FileRoutesById {
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRoute
   '/academy/': typeof AcademyIndexRoute
+  '/api/public/_sharetribe-check': typeof ApiPublicSharetribeCheckRoute
   '/l/$slug/$id': typeof LSlugIdRoute
 }
 export interface FileRouteTypes {
@@ -151,7 +152,6 @@ export interface FileRouteTypes {
     | '/blog'
     | '/providers'
     | '/academy/$slug'
-    | '/api'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/blog/$slug'
@@ -159,6 +159,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy/'
+    | '/api/public'
     | '/l/$slug/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -166,7 +167,6 @@ export interface FileRouteTypes {
     | '/blog'
     | '/providers'
     | '/academy/$slug'
-    | '/api'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/blog/$slug'
@@ -174,6 +174,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy'
+    | '/api/public'
     | '/l/$slug/$id'
   id:
     | '__root__'
@@ -182,7 +183,6 @@ export interface FileRouteTypes {
     | '/blog'
     | '/providers'
     | '/academy/$slug'
-    | '/api/_sharetribe-check'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/blog/$slug'
@@ -190,6 +190,7 @@ export interface FileRouteTypes {
     | '/pool-rental/$city'
     | '/providers/$slug'
     | '/academy/'
+    | '/api/public/_sharetribe-check'
     | '/l/$slug/$id'
   fileRoutesById: FileRoutesById
 }
@@ -198,11 +199,11 @@ export interface RootRouteChildren {
   AcademyRoute: typeof AcademyRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   ProvidersRoute: typeof ProvidersRouteWithChildren
-  ApiSharetribeCheckRoute: typeof ApiSharetribeCheckRoute
   ApiRobotsDottxtRoute: typeof ApiRobotsDottxtRoute
   ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
   CategorySlugRoute: typeof CategorySlugRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
+  ApiPublicSharetribeCheckRoute: typeof ApiPublicSharetribeCheckRoute
   LSlugIdRoute: typeof LSlugIdRoute
 }
 
@@ -285,13 +286,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/_sharetribe-check': {
-      id: '/api/_sharetribe-check'
-      path: '/api'
-      fullPath: '/api'
-      preLoaderRoute: typeof ApiSharetribeCheckRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/academy/$slug': {
       id: '/academy/$slug'
       path: '/$slug'
@@ -304,6 +298,13 @@ declare module '@tanstack/react-router' {
       path: '/l/$slug/$id'
       fullPath: '/l/$slug/$id'
       preLoaderRoute: typeof LSlugIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/_sharetribe-check': {
+      id: '/api/public/_sharetribe-check'
+      path: '/api/public'
+      fullPath: '/api/public'
+      preLoaderRoute: typeof ApiPublicSharetribeCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -349,13 +350,22 @@ const rootRouteChildren: RootRouteChildren = {
   AcademyRoute: AcademyRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   ProvidersRoute: ProvidersRouteWithChildren,
-  ApiSharetribeCheckRoute: ApiSharetribeCheckRoute,
   ApiRobotsDottxtRoute: ApiRobotsDottxtRoute,
   ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
   CategorySlugRoute: CategorySlugRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
+  ApiPublicSharetribeCheckRoute: ApiPublicSharetribeCheckRoute,
   LSlugIdRoute: LSlugIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
