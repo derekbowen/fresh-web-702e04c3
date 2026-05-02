@@ -440,7 +440,7 @@ export type AdminLearnerDetail = {
     id: string;
     course_slug: string;
     event_type: string;
-    metadata: Record<string, unknown> | null;
+    metadata: { [x: string]: {} } | null;
     created_at: string;
   }>;
   completions: Array<{
