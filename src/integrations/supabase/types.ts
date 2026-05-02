@@ -158,6 +158,75 @@ export type Database = {
         }
         Relationships: []
       }
+      courses: {
+        Row: {
+          category: string
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          embed_url: string | null
+          excerpt: string | null
+          external_detail_url: string | null
+          id: string
+          is_featured: boolean
+          is_published: boolean
+          language: string
+          level: string | null
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          embed_url?: string | null
+          excerpt?: string | null
+          external_detail_url?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          language?: string
+          level?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          embed_url?: string | null
+          excerpt?: string | null
+          external_detail_url?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          language?: string
+          level?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       providers: {
         Row: {
           business_type: string | null

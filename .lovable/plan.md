@@ -1,89 +1,83 @@
+# Learning Academy — Plan
 
-# SEO Page System for poolrentalnearme.com
+Replicate and improve the three live academy pages (`/p/learningacademy`, `/p/learning-academy-new-courses`, `/p/aprende-a-rentar-tu-piscina`) as a unified, SEO-friendly Learning Academy section. Each course is a real route that embeds the existing openelms.ai player — no need to recreate course content.
 
-Build a server-rendered page-template system that pulls live data from your Sharetribe Flex marketplace, mirrors the current URL structure (so your reverse proxy can swap in cleanly), and gives every page proper SEO foundations — unique titles, descriptions, OG tags, JSON-LD schema, clean internal linking, and fast page loads.
-
-## What we're building
-
-A flexible template framework that can grow from ~1,800 pages today to 20k–30k as you add providers, builders, locations, and content. **Phase 1** ships the template system and one reference page per type. **Phase 2+** populates them and tackles your GSC issues.
-
-### Page types (templates)
+## Routes
 
 ```text
-/                           Home
-/l/:slug/:id                Pool listing (live from Sharetribe)
-/pool-rental/:city-state    Location page (e.g. /pool-rental/austin-tx)
-/category/:slug             Category/feature (heated, hot-tub, pet-friendly…)
-/providers/:slug            Service providers / pool builders
-/blog/:slug                 Long-form content
-/sitemap.xml                Auto-generated from all data sources
-/robots.txt                 With sitemap reference
+/academy                       Catalog landing (all 90+ courses, search, filters)
+/academy/category/$slug        Filtered by category (safety, marketing, legal, etc.)
+/academy/$slug                 Individual course page with embedded player
+/academy/es                    Spanish catalog (Aprende a Rentar tu Piscina)
 ```
 
-All page routes are real TanStack Start routes (not hash anchors) — each gets its own SSR HTML, unique `<title>`, meta description, OG tags, and canonical URL. That alone fixes a big class of GSC issues.
+## Database
 
-## How data flows
+New table `courses` (separate from `blog_posts` since the model is different — embeds, languages, levels):
 
-```text
-Sharetribe Flex API (live)
-        ↓
-  Server function (cached 5–15 min in-memory + edge cache headers)
-        ↓
-  Route loader (SSR) → fully-rendered HTML to Google
-        ↓
-  Reverse proxy on poolrentalnearme.com → this app
-```
+- `slug` (unique), `title`, `subtitle`, `description` (long), `excerpt` (short)
+- `cover_image_url`
+- `category` (text: safety, marketing, legal, hosting, guest-experience, ai-tech, operations, seasonal, spanish)
+- `language` (text: `en` | `es`, default `en`)
+- `level` (text: beginner | intermediate | advanced, nullable)
+- `embed_url` (the `https://openelms.ai/embed/...` URL)
+- `external_detail_url` (optional link to the live `/p/...` page during transition)
+- `duration_minutes` (nullable), `is_featured` (bool), `is_published` (bool), `published_at`
+- `seo_title`, `seo_description`
 
-- Listings, search, and location aggregations are fetched live from Sharetribe via server functions.
-- Static-ish content (city descriptions, category copy, blog posts, provider profiles) lives in our own database so we can edit it directly without touching markdown files.
+RLS: public read for `is_published = true`; admins manage. Same pattern as `blog_posts`.
 
-## SEO foundations on every page
+Seed ~90 courses extracted from the three reference pages, each with the correct embed URL, category, and language.
 
-- Unique `<title>` and meta description templated from the page's data
-- OG image, OG title, OG description, Twitter card
-- Canonical URL
-- JSON-LD structured data: `LocalBusiness` for listings, `Place` for cities, `Article` for blog, `BreadcrumbList` everywhere
-- Working internal links between related pages (listing → city → category → provider)
-- Clean breadcrumbs
-- Auto-generated XML sitemap, split into chunks (Google's 50k URL limit)
-- Image `alt` text, lazy loading, proper heading hierarchy (one H1 per page)
-- No broken links — internal link checker built into the build
+## Catalog page (`/academy`)
 
-## Design
+- Hero: "Pool Host Learning Academy — 90+ free courses" + search box (client-side filter) + language toggle.
+- Category pills (counts per category) — filter via `?category=safety` search param (zod-validated).
+- Featured courses row (3 large cards) — admin-curated via `is_featured`.
+- Grid of all courses (12 per page, paginated with `?page=N`).
+- Topic-based deep links at bottom for SEO: every category page is internally linked.
+- Each card: thumbnail, title, 2-line excerpt, category badge, language badge, "Start Course" CTA.
 
-Match the current poolrentalnearme.com look: white background, blue primary (the teal/blue accent from your existing site), big hero imagery, friendly sans-serif. Goal is the proxy swap is invisible — users shouldn't notice.
+SEO: `head()` builds title/description per `?category` and `?page`, with `rel=prev/next`, `ItemList` JSON-LD, `BreadcrumbList`, and `noindex` for out-of-range pages. Same pattern as the blog landing.
 
-## Phase 1 — Foundation (this build)
+## Course page (`/academy/$slug`)
 
-1. Connect Sharetribe Flex API (you'll provide Client ID + Secret as secrets).
-2. Build the data layer: typed server functions for `getListing`, `searchListings`, `listingsByCity`, `listingsByCategory`.
-3. Set up Lovable Cloud with tables for: `cities`, `categories`, `providers`, `blog_posts`, `seo_overrides` (for hand-tuned title/description per URL).
-4. Build the 5 route templates with full SEO meta + JSON-LD + breadcrumbs.
-5. Build one fully-populated reference page per template so you can see and approve the look.
-6. Sitemap + robots.txt generation.
-7. Shared header/footer matching the current site.
+- Breadcrumb: Home / Academy / Category / Title.
+- H1 + subtitle + meta row (category, language, level, duration).
+- Hero cover image.
+- Long description (markdown rendered).
+- **Embedded player**: `<iframe src={embed_url} ...>` with sandbox attrs and proper aspect ratio. Lazy-loaded.
+- "What you'll learn" bullets (parsed from description if structured, or shown raw).
+- Related courses (3 from same category).
+- Sticky "Start Course" CTA button on mobile.
 
-## Phase 2+ (future turns, after you approve Phase 1)
+SEO: `head()` outputs full meta + `Course` JSON-LD (schema.org Course type with `provider`, `educationalLevel`, `inLanguage`, `image`, `description`). Canonical to `/academy/$slug`.
 
-- Paste your GSC issue export → I fix them systematically.
-- Bulk-populate city pages (top US metros first).
-- Bulk-populate category pages.
-- Add provider/builder profile pages.
-- Blog editor for ongoing content.
-- Tell me the proxy URL pattern when you're ready and we'll do a final URL audit.
+## Spanish catalog (`/academy/es`)
 
-## What I need from you
+Same template as `/academy` but pre-filtered to `language=es`, with Spanish UI strings ("Cursos", "Categorías", "Comenzar Curso"). Catalog header reads "Aprende a Rentar tu Piscina".
 
-1. **Sharetribe Flex Client ID + Client Secret** — I'll request these as secrets after you approve the plan. Get them from Sharetribe Console → Build → Applications.
-2. **Logo file** for the header (you can upload it after approval).
-3. **Confirmation on the brand color** — the bright blue from the current site, or do you want to refresh it?
+## Header & footer
 
-After Phase 1 is live, paste your GSC issues whenever you're ready and we'll knock them out one by one.
+- Add "Academy" link to `SiteHeader` desktop nav (between Categories and Blog).
+- Add "Learning Academy" link to footer Explore column.
 
-## Technical notes
+## Sitemap
 
-- TanStack Start with SSR (every page is server-rendered HTML — critical for SEO).
-- Sharetribe Flex SDK calls happen in `createServerFn` handlers; results cached with `Cache-Control` headers so the edge can serve repeat hits without re-hitting Sharetribe.
-- Lovable Cloud (Postgres) for our own content (cities, categories, providers, blog, SEO overrides).
-- Sitemap is generated on-demand from a server route, paginated into 50k-URL chunks.
-- All routes typed end-to-end; no hash-anchor "single-page" anti-patterns.
+Extend `listAllSitemapEntries` in `src/server/content.functions.ts` to include `courses` (slug + updated_at). The existing `/api/sitemap.xml` route picks them up automatically once added. URLs emitted: `/academy`, `/academy/es`, every `/academy/category/$slug`, every `/academy/$slug`.
+
+## Technical details
+
+- Server functions: `listCourses({page, pageSize, category, language})`, `listCourseCategories()`, `getCourse({slug})`, `getRelatedCourses({slug, category})` in a new `src/server/courses.functions.ts`.
+- Search params validated with `zodValidator` (same pattern as the blog page already uses).
+- Iframe embed wrapper: `<div className="aspect-video w-full">` + `<iframe loading="lazy" allow="fullscreen; autoplay" sandbox="allow-scripts allow-same-origin allow-forms allow-popups">`.
+- Course descriptions stored as markdown; render with `react-markdown` (already common; will install if missing).
+- Reuse `buildMeta`, `breadcrumbJsonLd`, `ldJsonScript` from `src/lib/seo.ts`.
+
+## Out of scope (this iteration)
+
+- User progress tracking / completion certificates (openelms handles inside the embed).
+- Course authoring UI (admin-only; can be added later).
+- Payments — all courses remain free, matching the live site.
+
+After approval I'll run the migration to create `courses`, seed the ~90 rows, build the routes/components, and verify a sample course renders the embed correctly.
