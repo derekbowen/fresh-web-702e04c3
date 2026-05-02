@@ -41,6 +41,7 @@ export function SiteHeader() {
           <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">Blog</Link>
           <Link to="/host-tools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Host Tools</Link>
           <Link to="/providers" className="text-sm font-medium text-muted-foreground hover:text-foreground">Providers</Link>
+          <Link to="/help-center" className="text-sm font-medium text-muted-foreground hover:text-foreground">Help</Link>
           <a href="https://www.poolrentalnearme.com/public-pools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Public Pools</a>
         </nav>
         <a href={rel("/signup")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">

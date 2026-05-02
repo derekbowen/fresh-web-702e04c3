@@ -35,6 +35,7 @@ import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as HelpCenterCategoryIndexRouteImport } from './routes/help-center.$category.index'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
+import { Route as HelpCenterCategorySlugRouteImport } from './routes/help-center.$category.$slug'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
@@ -169,6 +170,11 @@ const LSlugIdRoute = LSlugIdRouteImport.update({
   path: '/l/$slug/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HelpCenterCategorySlugRoute = HelpCenterCategorySlugRouteImport.update({
+  id: '/help-center/$category/$slug',
+  path: '/help-center/$category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
   id: '/api/public/track-city-click',
   path: '/api/public/track-city-click',
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/host-tools/': typeof HostToolsIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
+  '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -242,6 +249,7 @@ export interface FileRoutesByTo {
   '/host-tools': typeof HostToolsIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
+  '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/help-center/$category': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -274,6 +282,7 @@ export interface FileRoutesById {
   '/host-tools/': typeof HostToolsIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
+  '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -307,6 +316,7 @@ export interface FileRouteTypes {
     | '/host-tools/'
     | '/admin/learning/$userId'
     | '/api/public/track-city-click'
+    | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/host-tools'
     | '/admin/learning/$userId'
     | '/api/public/track-city-click'
+    | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/help-center/$category'
     | '/api/certificates/$uid/pdf'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/host-tools/'
     | '/admin/learning/$userId'
     | '/api/public/track-city-click'
+    | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
+  HelpCenterCategorySlugRoute: typeof HelpCenterCategorySlugRoute
   LSlugIdRoute: typeof LSlugIdRoute
   HelpCenterCategoryIndexRoute: typeof HelpCenterCategoryIndexRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
@@ -583,6 +596,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LSlugIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/help-center/$category/$slug': {
+      id: '/help-center/$category/$slug'
+      path: '/help-center/$category/$slug'
+      fullPath: '/help-center/$category/$slug'
+      preLoaderRoute: typeof HelpCenterCategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/track-city-click': {
       id: '/api/public/track-city-click'
       path: '/api/public/track-city-click'
@@ -685,6 +705,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
+  HelpCenterCategorySlugRoute: HelpCenterCategorySlugRoute,
   LSlugIdRoute: LSlugIdRoute,
   HelpCenterCategoryIndexRoute: HelpCenterCategoryIndexRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
