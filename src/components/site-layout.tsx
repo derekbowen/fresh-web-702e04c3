@@ -56,7 +56,7 @@ const HOSTS = [
   { label: "Find Locations Near You", href: "/p/locations" },
   { label: "Earnings Calculator", href: "/p/earnings-calculator" },
   { label: "Host Pro Tools", href: "/p/host-pro-tools" },
-  { label: "Learning Academy", href: "/p/learning-academy" },
+  { label: "Learning Academy", href: "/academy", internal: true },
   { label: "Host Connect", href: "/p/host-connect" },
   { label: "HOA Defense Kit", href: "/p/hoa-defense-kit" },
   { label: "Host Make More $$$", href: "/p/make-more-money" },
