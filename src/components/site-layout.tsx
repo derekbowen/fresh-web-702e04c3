@@ -192,7 +192,7 @@ function FooterColumn({
             {it.internal ? (
               <Link to={it.href} className="hover:text-primary">{it.label}</Link>
             ) : (
-              <a href={it.href} className="hover:text-primary">{it.label}</a>
+              <a href={rel(it.href)} className="hover:text-primary">{it.label}</a>
             )}
           </li>
         ))}
