@@ -27,6 +27,7 @@ import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
+import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
@@ -124,6 +125,11 @@ const AdminCitiesHeroesRoute = AdminCitiesHeroesRouteImport.update({
   path: '/admin/cities-heroes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminBlogRoute = AdminBlogRouteImport.update({
+  id: '/admin/blog',
+  path: '/admin/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountLearningRoute = AccountLearningRouteImport.update({
   id: '/account/learning',
   path: '/account/learning',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
@@ -215,6 +223,7 @@ export interface FileRoutesById {
   '/providers': typeof ProvidersRouteWithChildren
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/academy/$slug'
     | '/account/learning'
+    | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/learning'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/academy/$slug'
     | '/account/learning'
+    | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/learning'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/providers'
     | '/academy/$slug'
     | '/account/learning'
+    | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/learning'
@@ -320,6 +332,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   ProvidersRoute: typeof ProvidersRouteWithChildren
   AccountLearningRoute: typeof AccountLearningRoute
+  AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
@@ -462,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCitiesHeroesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/blog': {
+      id: '/admin/blog'
+      path: '/admin/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AdminBlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account/learning': {
       id: '/account/learning'
       path: '/account/learning'
@@ -571,6 +591,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   ProvidersRoute: ProvidersRouteWithChildren,
   AccountLearningRoute: AccountLearningRoute,
+  AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClickReportRoute: AdminClickReportRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
