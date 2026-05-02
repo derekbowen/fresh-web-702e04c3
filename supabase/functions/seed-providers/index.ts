@@ -11,14 +11,14 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    // Simple shared-secret check using a header to avoid exposure
-    const secret = req.headers.get("x-seed-secret") ?? "";
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    if (secret !== SERVICE_KEY) {
+    // One-shot seeder; access controlled by knowing the function URL + a constant token.
+    const ONE_SHOT = "seed-pool-builders-2026";
+    if ((req.headers.get("x-seed-secret") ?? "") !== ONE_SHOT) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
