@@ -202,7 +202,7 @@ function CityPage() {
                 `Discover private pool rentals for your next swim, gathering, or party in ${city.name}. Book by the hour with $2M liability insurance included.`}
             </p>
             <form
-              action={`${SITE}/s`}
+              action={`/s`}
               method="get"
               className="mt-8 flex max-w-xl items-center gap-2 rounded-full bg-white p-2 shadow-lg ring-1 ring-black/5"
             >
@@ -266,7 +266,7 @@ function CityPage() {
               )}
             </div>
             <a
-              href={`${SITE}/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`}
+              href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`}
               className="hidden text-sm font-semibold text-primary hover:underline sm:inline"
             >
               See all pools in {city.name} →
@@ -282,7 +282,7 @@ function CityPage() {
                 Be the first to list your pool and start earning.
               </p>
               <a
-                href={`${SITE}/signup`}
+                href={`/signup`}
                 className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
               >
                 List your pool
@@ -392,7 +392,7 @@ function CityPage() {
             {OCCASIONS.map((occ) => (
               <li key={occ}>
                 <a
-                  href={`${SITE}/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}&pub_occasions=${encodeURIComponent(occ)}`}
+                  href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}&pub_occasions=${encodeURIComponent(occ)}`}
                   className="text-muted-foreground hover:text-primary hover:underline"
                 >
                   {occ} venues in {city.name}
@@ -440,7 +440,7 @@ function CityPage() {
               </div>
               <div className="md:text-right">
                 <a
-                  href={`${SITE}/signup`}
+                  href={`/signup`}
                   className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-md transition-transform hover:scale-105"
                 >
                   List your pool free
