@@ -293,7 +293,7 @@ function PoolRentalLawsPage() {
             {city.name} pool rental FAQ
           </h2>
           <div className="mt-4 space-y-4">
-            {faqs.map((f, i) => (
+            {faqs.map((f: { q: string; a: string }, i: number) => (
               <div key={i} className="rounded-xl border border-border bg-card p-4">
                 <h3 className="text-base font-semibold text-foreground">{f.q}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{f.a}</p>
