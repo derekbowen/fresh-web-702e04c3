@@ -162,7 +162,7 @@ export function SiteFooter() {
                 </li>
               ))}
               <li>
-                <a href={"/s"} className="hover:text-primary">All Locations</a>
+                <a href={rel("/s")} className="hover:text-primary">All Locations</a>
               </li>
             </ul>
           </div>
