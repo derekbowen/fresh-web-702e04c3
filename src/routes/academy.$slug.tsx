@@ -53,6 +53,10 @@ export const Route = createFileRoute("/academy/$slug")({
       { name: c.title, path },
     ]);
 
+    const lfc = (c.long_form_content ?? null) as null | {
+      faq?: Array<{ question: string; answer: string }>;
+    };
+
     const courseLd = {
       "@context": "https://schema.org",
       "@type": "Course",
@@ -66,7 +70,7 @@ export const Route = createFileRoute("/academy/$slug")({
       inLanguage: lang === "es" ? "es" : "en",
       educationalLevel: c.level ?? "All levels",
       isAccessibleForFree: true,
-      ...(c.cover_image_url ? { image: c.cover_image_url } : {}),
+      ...(heroUrl ? { image: heroUrl } : {}),
       hasCourseInstance: [
         {
           "@type": "CourseInstance",
@@ -76,10 +80,22 @@ export const Route = createFileRoute("/academy/$slug")({
       ],
     };
 
-    return {
-      ...meta,
-      scripts: [ldJsonScript(breadcrumbs), ldJsonScript(courseLd)],
-    };
+    const scripts = [ldJsonScript(breadcrumbs), ldJsonScript(courseLd)];
+    if (lfc?.faq && lfc.faq.length > 0) {
+      scripts.push(
+        ldJsonScript({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: lfc.faq.map((q) => ({
+            "@type": "Question",
+            name: q.question,
+            acceptedAnswer: { "@type": "Answer", text: q.answer },
+          })),
+        }),
+      );
+    }
+
+    return { ...meta, scripts };
   },
   errorComponent: ({ error }) => (
     <div className="flex min-h-screen flex-col">
