@@ -197,3 +197,63 @@ export const listBlogTopics = createServerFn({ method: "GET" }).handler(
     return { topics };
   },
 );
+
+const stateCodeSchema = z.object({
+  state_code: z.string().length(2).regex(/^[A-Z]{2}$/),
+});
+
+export type StatePoolRegulation = {
+  state_code: string;
+  state_name: string;
+  legality_status: "legal" | "conditional" | "prohibited" | "unknown";
+  summary: string | null;
+  zoning_summary: string | null;
+  permit_name: string | null;
+  permit_fee_min_usd: number | null;
+  permit_fee_max_usd: number | null;
+  authority_name: string | null;
+  authority_url: string | null;
+  enforcement_notes: string | null;
+  compliance_steps: string[];
+  faqs: Array<{ q: string; a: string }>;
+  source_urls: string[];
+  last_verified_at: string | null;
+};
+
+export const getStateRegulation = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => stateCodeSchema.parse(d))
+  .handler(async ({ data }): Promise<{ regulation: StatePoolRegulation | null }> => {
+    const { data: row, error } = await supabaseAdmin
+      .from("state_pool_regulations")
+      .select("*")
+      .eq("state_code", data.state_code)
+      .maybeSingle();
+    if (error) {
+      console.error("getStateRegulation:", error);
+      return { regulation: null };
+    }
+    if (!row) return { regulation: null };
+    return {
+      regulation: {
+        state_code: row.state_code as string,
+        state_name: row.state_name as string,
+        legality_status: row.legality_status as StatePoolRegulation["legality_status"],
+        summary: (row.summary as string | null) ?? null,
+        zoning_summary: (row.zoning_summary as string | null) ?? null,
+        permit_name: (row.permit_name as string | null) ?? null,
+        permit_fee_min_usd: (row.permit_fee_min_usd as number | null) ?? null,
+        permit_fee_max_usd: (row.permit_fee_max_usd as number | null) ?? null,
+        authority_name: (row.authority_name as string | null) ?? null,
+        authority_url: (row.authority_url as string | null) ?? null,
+        enforcement_notes: (row.enforcement_notes as string | null) ?? null,
+        compliance_steps: Array.isArray(row.compliance_steps)
+          ? (row.compliance_steps as string[])
+          : [],
+        faqs: Array.isArray(row.faqs)
+          ? (row.faqs as Array<{ q: string; a: string }>)
+          : [],
+        source_urls: (row.source_urls as string[] | null) ?? [],
+        last_verified_at: (row.last_verified_at as string | null) ?? null,
+      },
+    };
+  });

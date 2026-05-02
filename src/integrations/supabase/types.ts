@@ -554,6 +554,69 @@ export type Database = {
         }
         Relationships: []
       }
+      state_pool_regulations: {
+        Row: {
+          authority_name: string | null
+          authority_url: string | null
+          compliance_steps: Json
+          created_at: string
+          enforcement_notes: string | null
+          faqs: Json
+          id: string
+          last_verified_at: string | null
+          legality_status: string
+          permit_fee_max_usd: number | null
+          permit_fee_min_usd: number | null
+          permit_name: string | null
+          source_urls: string[]
+          state_code: string
+          state_name: string
+          summary: string | null
+          updated_at: string
+          zoning_summary: string | null
+        }
+        Insert: {
+          authority_name?: string | null
+          authority_url?: string | null
+          compliance_steps?: Json
+          created_at?: string
+          enforcement_notes?: string | null
+          faqs?: Json
+          id?: string
+          last_verified_at?: string | null
+          legality_status?: string
+          permit_fee_max_usd?: number | null
+          permit_fee_min_usd?: number | null
+          permit_name?: string | null
+          source_urls?: string[]
+          state_code: string
+          state_name: string
+          summary?: string | null
+          updated_at?: string
+          zoning_summary?: string | null
+        }
+        Update: {
+          authority_name?: string | null
+          authority_url?: string | null
+          compliance_steps?: Json
+          created_at?: string
+          enforcement_notes?: string | null
+          faqs?: Json
+          id?: string
+          last_verified_at?: string | null
+          legality_status?: string
+          permit_fee_max_usd?: number | null
+          permit_fee_min_usd?: number | null
+          permit_name?: string | null
+          source_urls?: string[]
+          state_code?: string
+          state_name?: string
+          summary?: string | null
+          updated_at?: string
+          zoning_summary?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

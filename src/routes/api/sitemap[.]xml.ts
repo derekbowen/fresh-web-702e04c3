@@ -23,6 +23,7 @@ export const Route = createFileRoute("/api/sitemap.xml")({
 
         for (const c of cities.data ?? []) {
           urls.push({ loc: `${SITE_URL}/pool-rental/${c.slug}`, lastmod: c.updated_at, priority: "0.9" });
+          urls.push({ loc: `${SITE_URL}/pool-rental-laws/${c.slug}`, lastmod: c.updated_at, priority: "0.8" });
         }
         for (const c of categories.data ?? []) {
           urls.push({ loc: `${SITE_URL}/category/${c.slug}`, lastmod: c.updated_at, priority: "0.8" });
