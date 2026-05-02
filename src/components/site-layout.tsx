@@ -101,17 +101,16 @@ export function SiteFooter() {
         <div className="grid gap-10 lg:grid-cols-12">
           {/* Brand + contact + social */}
           <div className="lg:col-span-3">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+            <Link to="/" aria-label="Pool Rental Near Me" className="inline-flex">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7" aria-hidden="true">
                   <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1v3c-1.5 0-2.5 1-4 1s-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1v-3z" />
                 </svg>
               </div>
-              <span className="text-base font-bold text-foreground">Pool Rental Near Me</span>
             </Link>
-            <p className="mt-4 text-sm text-foreground">
+            <p className="mt-5 text-sm text-foreground">
               <a href="tel:18889404247" className="hover:text-primary">Call us 888-940-4247</a>
-              <span className="block text-muted-foreground">10am - 5pm PST</span>
+              <span className="text-muted-foreground"> 10am - 5pm PST</span>
             </p>
             <p className="mt-2 text-sm">
               <a href="mailto:support@poolrentalnearme.com" className="text-foreground hover:text-primary">
