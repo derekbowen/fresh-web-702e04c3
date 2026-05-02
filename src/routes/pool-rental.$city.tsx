@@ -403,28 +403,11 @@ function CityPage() {
         </section>
 
         {/* NEARBY CITIES — internal linking */}
-        {nearby.length > 0 && (
-          <section className="border-t border-border bg-secondary/20">
-            <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                Other pool rentals in {city.state}
-              </h2>
-              <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                {nearby.map((n: { slug: string; name: string; state_code: string }) => (
-                  <li key={n.slug}>
-                    <Link
-                      to="/pool-rental/$city"
-                      params={{ city: n.slug }}
-                      className="text-muted-foreground hover:text-primary hover:underline"
-                    >
-                      Pool rentals in {n.name}, {n.state_code}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-        )}
+        <NearbyCities
+          cities={nearby as Array<{ slug: string; name: string; state: string; state_code: string; distance_km: number | null }>}
+          currentStateCode={city.state_code}
+          currentStateName={city.state}
+        />
 
         {/* HOST CTA */}
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
