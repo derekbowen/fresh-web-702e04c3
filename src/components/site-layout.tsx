@@ -40,7 +40,7 @@ export function SiteHeader() {
           <Link to="/category/$slug" params={{ slug: "heated-pools" }} className="text-sm font-medium text-muted-foreground hover:text-foreground">Categories</Link>
           <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">Blog</Link>
           <Link to="/host-tools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Host Tools</Link>
-          <Link to="/providers" className="text-sm font-medium text-muted-foreground hover:text-foreground">Providers</Link>
+          <Link to="/pool-builders" className="text-sm font-medium text-muted-foreground hover:text-foreground">Pool Builders</Link>
           <Link to="/help-center" className="text-sm font-medium text-muted-foreground hover:text-foreground">Help</Link>
           <a href="https://www.poolrentalnearme.com/public-pools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Public Pools</a>
         </nav>
