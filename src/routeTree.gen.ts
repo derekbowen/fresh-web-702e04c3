@@ -23,12 +23,14 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml'
 import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
+import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
+import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
 const ProvidersRoute = ProvidersRouteImport.update({
@@ -101,6 +103,11 @@ const ApiRobotsDottxtRoute = ApiRobotsDottxtRouteImport.update({
   path: '/api/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLearningRoute = AdminLearningRouteImport.update({
+  id: '/admin/learning',
+  path: '/admin/learning',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminClickReportRoute = AdminClickReportRouteImport.update({
   id: '/admin/click-report',
   path: '/admin/click-report',
@@ -131,6 +138,11 @@ const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
   path: '/api/public/track-city-click',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLearningUserIdRoute = AdminLearningUserIdRouteImport.update({
+  id: '/$userId',
+  path: '/$userId',
+  getParentRoute: () => AdminLearningRoute,
+} as any)
 const ApiCertificatesUidPdfRoute = ApiCertificatesUidPdfRouteImport.update({
   id: '/api/certificates/$uid/pdf',
   path: '/api/certificates/$uid/pdf',
@@ -147,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/account/learning': typeof AccountLearningRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/learning': typeof AdminLearningRouteWithChildren
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -156,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/providers/$slug': typeof ProvidersSlugRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -169,6 +183,7 @@ export interface FileRoutesByTo {
   '/account/learning': typeof AccountLearningRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/learning': typeof AdminLearningRouteWithChildren
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -178,6 +193,7 @@ export interface FileRoutesByTo {
   '/providers/$slug': typeof ProvidersSlugRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy': typeof AcademyIndexRoute
+  '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -193,6 +209,7 @@ export interface FileRoutesById {
   '/account/learning': typeof AccountLearningRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/learning': typeof AdminLearningRouteWithChildren
   '/api/robots.txt': typeof ApiRobotsDottxtRoute
   '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -202,6 +219,7 @@ export interface FileRoutesById {
   '/providers/$slug': typeof ProvidersSlugRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -218,6 +236,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/cities-heroes'
     | '/admin/click-report'
+    | '/admin/learning'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/auth/reset-password'
@@ -227,6 +246,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/admin/learning/$userId'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/api/certificates/$uid/pdf'
@@ -240,6 +260,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/cities-heroes'
     | '/admin/click-report'
+    | '/admin/learning'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/auth/reset-password'
@@ -249,6 +270,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy'
+    | '/admin/learning/$userId'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/api/certificates/$uid/pdf'
@@ -263,6 +285,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/cities-heroes'
     | '/admin/click-report'
+    | '/admin/learning'
     | '/api/robots.txt'
     | '/api/sitemap.xml'
     | '/auth/reset-password'
@@ -272,6 +295,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/admin/learning/$userId'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/api/certificates/$uid/pdf'
@@ -286,6 +310,7 @@ export interface RootRouteChildren {
   AccountLearningRoute: typeof AccountLearningRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
+  AdminLearningRoute: typeof AdminLearningRouteWithChildren
   ApiRobotsDottxtRoute: typeof ApiRobotsDottxtRoute
   ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
   CategorySlugRoute: typeof CategorySlugRoute
@@ -396,6 +421,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/learning': {
+      id: '/admin/learning'
+      path: '/admin/learning'
+      fullPath: '/admin/learning'
+      preLoaderRoute: typeof AdminLearningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/click-report': {
       id: '/admin/click-report'
       path: '/admin/click-report'
@@ -437,6 +469,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/track-city-click'
       preLoaderRoute: typeof ApiPublicTrackCityClickRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/learning/$userId': {
+      id: '/admin/learning/$userId'
+      path: '/$userId'
+      fullPath: '/admin/learning/$userId'
+      preLoaderRoute: typeof AdminLearningUserIdRouteImport
+      parentRoute: typeof AdminLearningRoute
     }
     '/api/certificates/$uid/pdf': {
       id: '/api/certificates/$uid/pdf'
@@ -493,6 +532,18 @@ const ProvidersRouteWithChildren = ProvidersRoute._addFileChildren(
   ProvidersRouteChildren,
 )
 
+interface AdminLearningRouteChildren {
+  AdminLearningUserIdRoute: typeof AdminLearningUserIdRoute
+}
+
+const AdminLearningRouteChildren: AdminLearningRouteChildren = {
+  AdminLearningUserIdRoute: AdminLearningUserIdRoute,
+}
+
+const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
+  AdminLearningRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcademyRoute: AcademyRouteWithChildren,
@@ -502,6 +553,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountLearningRoute: AccountLearningRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClickReportRoute: AdminClickReportRoute,
+  AdminLearningRoute: AdminLearningRouteWithChildren,
   ApiRobotsDottxtRoute: ApiRobotsDottxtRoute,
   ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
   CategorySlugRoute: CategorySlugRoute,
@@ -514,3 +566,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
