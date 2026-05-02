@@ -504,7 +504,13 @@ export const adminGetLearnerDetail = createServerFn({ method: "POST" })
         completed_at: r.completed_at,
         course_title: titleMap.get(r.course_slug) ?? null,
       })),
-      events: (evRes.data ?? []) as AdminLearnerDetail["events"],
+      events: (evRes.data ?? []).map((e: any) => ({
+        id: e.id as string,
+        course_slug: e.course_slug as string,
+        event_type: e.event_type as string,
+        metadata: (e.metadata ?? null) as { [x: string]: unknown } | null,
+        created_at: e.created_at as string,
+      })),
       completions: (compRes.data ?? []) as AdminLearnerDetail["completions"],
     };
   });
