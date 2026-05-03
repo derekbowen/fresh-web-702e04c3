@@ -66,92 +66,146 @@ export function HomePageContent({ data }: { data: HomeData | undefined | null })
       <SiteHeader />
       <main className="flex-1">
         <section className="relative overflow-hidden bg-primary text-primary-foreground">
-          <div className="mx-auto grid max-w-7xl items-stretch gap-8 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:py-20">
-            <div className="lg:col-span-6 lg:py-8">
-              {nearby.count > 0 && nearbyLabel && (
-                <a
-                  href={searchHref}
-                  className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 backdrop-blur transition-colors hover:bg-white/25"
-                >
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-                  </span>
-                  {nearby.count} {nearby.count === 1 ? "pool" : "pools"} available near {nearbyLabel}
-                </a>
-              )}
-              <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-                Backyard pools,<br />
-                <span className="text-white/90">booked by the hour.</span>
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-primary-foreground/85 sm:text-xl">
-                Rent a private pool near you for the day, the afternoon, or the weekend. Every booking is protected by $2M liability insurance — included, never an upsell.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href={searchHref}
-                  className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
-                >
-                  {nearbyLabel ? `Find a pool in ${nearbyLabel} →` : "Find a pool near you →"}
-                </a>
-                <a
-                  href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
-                  className="inline-flex items-center justify-center rounded-full border border-white/40 bg-transparent px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/10"
-                >
-                  List your pool
-                </a>
-              </div>
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-primary-foreground/80">
-                <span className="flex items-center gap-2"><span aria-hidden>🛟</span> $2M insurance</span>
-                <span className="flex items-center gap-2"><span aria-hidden>⚡</span> Instant booking</span>
-                <span className="flex items-center gap-2"><span aria-hidden>✓</span> Verified hosts</span>
-              </div>
-            </div>
-            <div className="relative lg:col-span-6">
-              <div className="overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/10">
-                <img
-                  src={heroPool}
-                  alt="A sunlit private backyard swimming pool ready to rent by the hour"
-                  className="h-72 w-full object-cover sm:h-96 lg:h-full"
-                  loading="eager"
+          <div className="absolute inset-0 -z-0">
+            <img
+              src={heroPool}
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full object-cover opacity-30"
+              loading="eager"
+              fetchPriority="high"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/75 to-primary" />
+          </div>
+          <div className="relative mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 lg:py-24">
+            {nearby.count > 0 && nearbyLabel && (
+              <a
+                href={searchHref}
+                className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 backdrop-blur transition-colors hover:bg-white/25"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                </span>
+                {nearby.count} {nearby.count === 1 ? "pool" : "pools"} available near {nearbyLabel}
+              </a>
+            )}
+            <h1 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+              Private backyard pools, booked by the hour.
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-primary-foreground/90 sm:text-xl">
+              Lower fees. $2M coverage. 40+ states.
+            </p>
+
+            {/* Search widget */}
+            <form
+              action="/s"
+              method="get"
+              className="mx-auto mt-8 flex max-w-3xl flex-col gap-2 rounded-2xl bg-white p-2 text-foreground shadow-2xl ring-1 ring-black/5 sm:flex-row sm:items-center sm:gap-0 sm:rounded-full"
+            >
+              <label className="flex flex-1 items-center gap-2 rounded-xl px-4 py-2 sm:rounded-l-full">
+                <span aria-hidden className="text-muted-foreground">📍</span>
+                <input
+                  name="address"
+                  type="text"
+                  defaultValue={nearbyLabel ?? ""}
+                  placeholder="Where? (city or zip)"
+                  aria-label="Location"
+                  className="w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
-              </div>
+              </label>
+              <div className="hidden h-8 w-px bg-border sm:block" />
+              <label className="flex items-center gap-2 rounded-xl px-4 py-2">
+                <span aria-hidden className="text-muted-foreground">📅</span>
+                <input
+                  name="date"
+                  type="date"
+                  aria-label="Date"
+                  className="bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+                />
+              </label>
+              <div className="hidden h-8 w-px bg-border sm:block" />
+              <label className="flex items-center gap-2 rounded-xl px-4 py-2">
+                <span aria-hidden className="text-muted-foreground">👥</span>
+                <select
+                  name="guests"
+                  aria-label="Guests"
+                  defaultValue=""
+                  className="bg-transparent text-base text-foreground focus:outline-none"
+                >
+                  <option value="">Guests</option>
+                  <option value="2">1–2 guests</option>
+                  <option value="6">3–6 guests</option>
+                  <option value="12">7–12 guests</option>
+                  <option value="20">13–20 guests</option>
+                  <option value="30">20+ guests</option>
+                </select>
+              </label>
+              <button
+                type="submit"
+                className="mt-1 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] sm:mt-0 sm:rounded-full"
+              >
+                Search pools
+              </button>
+            </form>
+
+            {/* Quantified social proof inline */}
+            <p className="mt-5 text-sm text-primary-foreground/90">
+              ★ 4.8 average rating · 50,000+ guests booked · 40+ states · $2M insurance included
+            </p>
+          </div>
+        </section>
+
+        {/* Comparative trust strip */}
+        <section aria-label="Why book with Pool Rental Near Me" className="border-b border-border bg-secondary/30">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 text-center sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+            <div>
+              <div className="text-2xl font-bold text-primary">$2M</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">Insurance per booking</div>
+              <div className="mt-1 text-xs text-muted-foreground">2× the industry standard</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-primary">10%</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">Flat guest fee</div>
+              <div className="mt-1 text-xs text-muted-foreground">Lowest of any pool platform</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-primary">40+</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">U.S. states</div>
+              <div className="mt-1 text-xs text-muted-foreground">From Austin to Albany</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-primary">24/7</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">Live human support</div>
+              <div className="mt-1 text-xs text-muted-foreground">Before, during & after</div>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Two ways to make someone's day
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Pool owner or pool guest — start where you fit.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2">
-            <a
-              href="/s"
-              className="group flex items-center gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-            >
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl" aria-hidden>🏊</div>
-              <div className="flex-1">
-                <div className="text-xl font-semibold text-foreground group-hover:text-primary">I want to swim</div>
-                <p className="mt-1 text-sm text-muted-foreground">Book a private pool by the hour for your group, your kids, or just for yourself.</p>
-              </div>
-              <span className="text-2xl text-muted-foreground group-hover:text-primary" aria-hidden>→</span>
-            </a>
-            <a
-              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
-              className="group flex items-center gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-            >
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl" aria-hidden>💰</div>
-              <div className="flex-1">
-                <div className="text-xl font-semibold text-foreground group-hover:text-primary">I want to host my pool</div>
-                <p className="mt-1 text-sm text-muted-foreground">Top hosts earn $3K–$10K/month. Free to list. Insurance included on every booking.</p>
-              </div>
-              <span className="text-2xl text-muted-foreground group-hover:text-primary" aria-hidden>→</span>
-            </a>
+        {/* As Seen In media strip */}
+        <section aria-label="Press" className="border-b border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">As featured in</span>
+              <a
+                href="https://www.einpresswire.com/article/823456000/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              >
+                EIN Presswire
+              </a>
+              <a
+                href="https://natlawreview.com/press-releases/two-truck-drivers-built-national-pool-rental-marketplace-their-hours"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              >
+                National Law Review
+              </a>
+              <span className="font-serif text-base font-semibold text-foreground/80">Digital Journal</span>
+              <span className="font-serif text-base font-semibold text-foreground/80">WRAL Financial</span>
+            </div>
           </div>
         </section>
 
