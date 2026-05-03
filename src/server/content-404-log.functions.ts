@@ -23,6 +23,17 @@ export const log404 = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     try {
+      // Capture request headers server-side if not provided by caller.
+      let referrer = data.referrer ?? null;
+      let userAgent = data.userAgent ?? null;
+      try {
+        const { getRequestHeader } = await import("@tanstack/react-start/server");
+        if (!referrer) referrer = getRequestHeader("referer") ?? null;
+        if (!userAgent) userAgent = getRequestHeader("user-agent") ?? null;
+      } catch {
+        // headers unavailable; continue without
+      }
+
       // Upsert: if row exists for this url_path, bump hit_count + last_seen_at.
       const { data: existing } = await (supabaseAdmin as any)
         .from("content_404_log")
