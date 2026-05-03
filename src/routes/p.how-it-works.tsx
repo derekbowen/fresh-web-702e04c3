@@ -89,7 +89,7 @@ const FAQS = [
   },
 ];
 
-export const Route = createFileRoute("/p/how-it-works")({
+export const Route = createFileRoute("/p/how-it-works" as any)({
   head: () => {
     const meta = buildMeta({
       title: TITLE,
