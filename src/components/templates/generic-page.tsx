@@ -15,25 +15,25 @@ export function GenericPageTemplate({ page }: { page: ContentPage }) {
       <SiteHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          {page.title}
+          {page.title || page.seo_title || page.slug}
         </h1>
         {page.description && (
           <p className="mt-4 text-lg text-muted-foreground">{page.description}</p>
         )}
-        {page.cover_image_url && (
+        {(page.cover_image_url || page.hero_image_url) && (
           <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
             <img
-              src={page.cover_image_url}
-              alt={page.title}
+              src={(page.cover_image_url || page.hero_image_url) as string}
+              alt={page.title || ""}
               className="h-full w-full object-cover"
               loading="eager"
               fetchPriority="high"
             />
           </div>
         )}
-        {page.content && (
+        {(page.content || page.body_markdown) && (
           <AutoLinkedContent
-            text={page.content}
+            text={(page.content || page.body_markdown) as string}
             targets={[]}
             className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground"
           />

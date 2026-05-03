@@ -81,16 +81,16 @@ export const scrapeContentPage = createServerFn({ method: "POST" })
     );
 
     const meta = (metadata ?? {}) as { title?: string; description?: string };
-    const update: Record<string, unknown> = {
+    const update = {
       raw_html: html,
       body_markdown: markdown,
       scraped_at: new Date().toISOString(),
       status: "scraped",
+      ...(!(row as any).title && meta.title ? { title: meta.title } : {}),
+      ...(meta.description ? { seo_description: meta.description } : {}),
     };
-    if (!(row as any).title && meta.title) update.title = meta.title;
-    if (meta.description) update.seo_description = meta.description;
 
-    const { data: updated, error: upErr } = await supabaseAdmin
+    const { data: updated, error: upErr } = await (supabaseAdmin as any)
       .from("content_pages")
       .update(update)
       .eq("id", data.id)

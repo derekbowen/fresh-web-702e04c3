@@ -18,12 +18,12 @@ export function ResourceArticleTemplate({ page }: { page: ContentPage }) {
         <Breadcrumbs
           items={[
             { name: "Home", path: "/" },
-            { name: page.title, path: `/p/${page.slug}` },
+            { name: page.title || page.slug || "", path: page.url_path },
           ]}
         />
         <article className="mt-6">
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            {page.title}
+            {page.title || page.seo_title || page.slug}
           </h1>
           <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
             {page.author && <span>By {page.author}</span>}
@@ -37,11 +37,11 @@ export function ResourceArticleTemplate({ page }: { page: ContentPage }) {
               </time>
             )}
           </div>
-          {page.cover_image_url && (
+          {(page.cover_image_url || page.hero_image_url) && (
             <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
               <img
-                src={page.cover_image_url}
-                alt={page.title}
+                src={(page.cover_image_url || page.hero_image_url) as string}
+                alt={page.title || ""}
                 className="h-full w-full object-cover"
                 loading="eager"
                 fetchPriority="high"
@@ -51,9 +51,9 @@ export function ResourceArticleTemplate({ page }: { page: ContentPage }) {
           {page.description && (
             <p className="mt-8 text-lg text-muted-foreground">{page.description}</p>
           )}
-          {page.content && (
+          {(page.content || page.body_markdown) && (
             <AutoLinkedContent
-              text={page.content}
+              text={(page.content || page.body_markdown) as string}
               targets={[]}
               className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground"
             />

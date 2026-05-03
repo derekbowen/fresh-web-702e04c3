@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+// no-op import removed
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { AutoLinkedContent } from "@/components/auto-linked-content";
@@ -54,12 +54,12 @@ export function HostAcqCityTemplate({ page }: { page: ContentPage }) {
               steady income stream. Free to list, no upfront cost, you set
               your own price.
             </p>
-            <Link
-              to="/auth"
+            <a
+              href="/auth"
               className="mt-5 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
             >
               Apply to host →
-            </Link>
+            </a>
           </div>
 
           {body ? (
