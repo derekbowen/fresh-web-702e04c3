@@ -20,6 +20,7 @@ function corsHeaders(origin: string | null) {
 }
 
 Deno.serve(async (req) => {
+  const cors = corsHeaders(req.headers.get("origin"));
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   try {
     const url = Deno.env.get("SUPABASE_URL")!;
