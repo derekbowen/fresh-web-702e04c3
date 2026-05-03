@@ -27,6 +27,12 @@ export interface SeoMetaInput {
   noindex?: boolean;
   prevPath?: string | null;
   nextPath?: string | null;
+  /**
+   * Bidirectional hreflang links. When set, emits <link rel="alternate"
+   * hreflang="..."> tags for each entry. Always include x-default. Each `href`
+   * must be an absolute URL.
+   */
+  hreflang?: Array<{ lang: string; href: string }>;
 }
 
 export function buildMeta({
@@ -39,6 +45,7 @@ export function buildMeta({
   noindex,
   prevPath,
   nextPath,
+  hreflang,
 }: SeoMetaInput) {
   const url = `${SITE_URL}${path}`;
   const canonicalUrl = `${SITE_URL}${canonicalPath ?? path}`;
@@ -69,6 +76,11 @@ export function buildMeta({
   ];
   if (prevPath) links.push({ rel: "prev", href: `${SITE_URL}${prevPath}` });
   if (nextPath) links.push({ rel: "next", href: `${SITE_URL}${nextPath}` });
+  if (hreflang?.length) {
+    for (const h of hreflang) {
+      links.push({ rel: "alternate", hrefLang: h.lang, href: h.href });
+    }
+  }
   return { meta, links };
 }
 
