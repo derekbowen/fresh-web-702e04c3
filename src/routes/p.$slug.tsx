@@ -9,6 +9,7 @@ import {
   lookupContentPage,
   type ContentPage,
 } from "@/server/content-pages.functions";
+import { log404 } from "@/server/content-404-log.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
   buildMeta,
