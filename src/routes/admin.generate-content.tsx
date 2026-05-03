@@ -20,37 +20,76 @@ export const Route = createFileRoute("/admin/generate-content" as never)({
 });
 
 function GenerateContentPage() {
-  const [count, setCount] = React.useState(5);
+  const [count, setCount] = React.useState(10);
   const [tier, setTier] = React.useState<string>("T1 (200k+)");
   const [stateCode, setStateCode] = React.useState("");
   const [warmOnly, setWarmOnly] = React.useState(false);
   const [model, setModel] = React.useState("google/gemini-2.5-pro");
   const [busy, setBusy] = React.useState(false);
   const [dryRun, setDryRun] = React.useState(false);
+  const [autoLoop, setAutoLoop] = React.useState(false);
+  const [maxBatches, setMaxBatches] = React.useState(20);
   const [result, setResult] = React.useState<any>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [progress, setProgress] = React.useState<{
+    batch: number;
+    inserted: number;
+    failed: number;
+    pages: Array<{ slug: string; title: string }>;
+  }>({ batch: 0, inserted: 0, failed: 0, pages: [] });
+  const stopRef = React.useRef(false);
+
+  const runOnce = async () => {
+    return await generateContentBatch({
+      data: {
+        count,
+        tier: tier || undefined,
+        stateCode: stateCode.trim() || undefined,
+        warmOnly,
+        model,
+        dryRun,
+      } as any,
+    });
+  };
 
   const run = async () => {
     setBusy(true);
     setError(null);
     setResult(null);
+    setProgress({ batch: 0, inserted: 0, failed: 0, pages: [] });
+    stopRef.current = false;
     try {
-      const res = await generateContentBatch({
-        data: {
-          count,
-          tier: tier || undefined,
-          stateCode: stateCode.trim() || undefined,
-          warmOnly,
-          model,
-          dryRun,
-        } as any,
-      });
-      setResult(res);
+      if (!autoLoop) {
+        const res = await runOnce();
+        setResult(res);
+      } else {
+        let totalInserted = 0;
+        let totalFailed = 0;
+        const allPages: Array<{ slug: string; title: string }> = [];
+        for (let i = 1; i <= maxBatches; i++) {
+          if (stopRef.current) break;
+          const res: any = await runOnce();
+          totalInserted += res?.inserted ?? 0;
+          totalFailed += (res?.attempted ?? 0) - (res?.inserted ?? 0);
+          if (res?.pages) allPages.push(...res.pages);
+          setProgress({
+            batch: i,
+            inserted: totalInserted,
+            failed: totalFailed,
+            pages: allPages.slice(-50),
+          });
+          if (!res?.attempted) break; // queue empty
+        }
+      }
     } catch (e: any) {
       setError(e?.message ?? String(e));
     } finally {
       setBusy(false);
     }
+  };
+
+  const stop = () => {
+    stopRef.current = true;
   };
 
   return (
