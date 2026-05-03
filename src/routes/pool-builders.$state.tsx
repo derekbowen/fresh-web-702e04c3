@@ -91,7 +91,7 @@ function StateBuildersPage() {
           <section className="mt-10">
             <h2 className="text-xl font-semibold text-foreground">Top cities</h2>
             <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {cities.slice(0, 30).map((c) => (
+              {cities.slice(0, 30).map((c: { slug: string; city: string; count: number }) => (
                 <Link
                   key={c.slug}
                   to="/pool-builders/$state/$city"
