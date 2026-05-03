@@ -18,6 +18,7 @@ export type HomeCategory = {
 
 export type HomeData = {
   cities: HomeCity[];
+  cityCount: number;
   categories: HomeCategory[];
   listings: ListingSummary[];
   nearby: {
@@ -33,6 +34,7 @@ const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
 
 const EMPTY_HOME_DATA: HomeData = {
   cities: [],
+  cityCount: 0,
   categories: [],
   listings: [],
   nearby: { city: null, region: null, count: 0, nearestMiles: null },
@@ -81,7 +83,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, categories, listingsResult, nearbyResult] = await Promise.all([
+    const [cities, cityCountRes, categories, listingsResult, nearbyResult] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -93,6 +95,16 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         ),
         "cities query",
         { data: [] as HomeCity[] } as { data: HomeCity[] | null },
+      ),
+      safe(
+        Promise.resolve(
+          supabaseAdmin
+            .from("cities")
+            .select("*", { count: "exact", head: true })
+            .eq("is_published", true),
+        ),
+        "city count query",
+        { count: 0 } as { count: number | null },
       ),
       safe(
         Promise.resolve(
@@ -123,8 +135,10 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
+    const cityList = (cities.data ?? []) as HomeCity[];
     return {
-      cities: (cities.data ?? []) as HomeCity[],
+      cities: cityList,
+      cityCount: cityCountRes.count ?? cityList.length,
       categories: (categories.data ?? []) as HomeCategory[],
       listings: listingsResult.listings,
       nearby: {
