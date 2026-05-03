@@ -47,8 +47,11 @@ export function buildMeta({
   nextPath,
   hreflang,
 }: SeoMetaInput) {
-  const url = `${SITE_URL}${path}`;
   const canonicalUrl = `${SITE_URL}${canonicalPath ?? path}`;
+  // og:url and twitter URLs should reflect the canonical location, not the
+  // (potentially legacy) request path. This keeps social shares deduplicated
+  // when a page is reachable via multiple URLs that 301 to one canonical.
+  const url = canonicalUrl;
   const resolvedImage = image === null ? null : image ?? DEFAULT_OG_IMAGE;
   const meta: Array<Record<string, string>> = [
     { title },
