@@ -224,6 +224,84 @@ export type Database = {
         }
         Relationships: []
       }
+      content_pages: {
+        Row: {
+          body_markdown: string | null
+          category: string
+          created_at: string
+          hero_image_url: string | null
+          hreflang_group: string | null
+          id: string
+          in_sitemap: boolean
+          locale: string
+          migrated_at: string | null
+          priority: number
+          raw_html: string | null
+          redirect_to: string | null
+          scraped_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          sitemap_source: string | null
+          slug: string | null
+          source_url: string
+          status: string
+          template_type: string | null
+          title: string | null
+          updated_at: string
+          url_path: string
+        }
+        Insert: {
+          body_markdown?: string | null
+          category: string
+          created_at?: string
+          hero_image_url?: string | null
+          hreflang_group?: string | null
+          id?: string
+          in_sitemap?: boolean
+          locale?: string
+          migrated_at?: string | null
+          priority?: number
+          raw_html?: string | null
+          redirect_to?: string | null
+          scraped_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          sitemap_source?: string | null
+          slug?: string | null
+          source_url: string
+          status?: string
+          template_type?: string | null
+          title?: string | null
+          updated_at?: string
+          url_path: string
+        }
+        Update: {
+          body_markdown?: string | null
+          category?: string
+          created_at?: string
+          hero_image_url?: string | null
+          hreflang_group?: string | null
+          id?: string
+          in_sitemap?: boolean
+          locale?: string
+          migrated_at?: string | null
+          priority?: number
+          raw_html?: string | null
+          redirect_to?: string | null
+          scraped_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          sitemap_source?: string | null
+          slug?: string | null
+          source_url?: string
+          status?: string
+          template_type?: string | null
+          title?: string | null
+          updated_at?: string
+          url_path?: string
+        }
+        Relationships: []
+      }
       course_completions: {
         Row: {
           certificate_uid: string
