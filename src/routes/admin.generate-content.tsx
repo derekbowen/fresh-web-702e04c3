@@ -1,5 +1,6 @@
 import * as React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+// route: /admin/generate-content
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { generateContentBatch } from "@/server/generate-content-batch.functions";
