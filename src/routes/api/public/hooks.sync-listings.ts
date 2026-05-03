@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { runListingSync } from "@/server/listing-sync.server";
 
-export const Route = createFileRoute("/api/public/hooks/sync-listings")({
+export const Route = createFileRoute("/api/public/hooks/sync-listings" as never)({
   server: {
     handlers: {
       POST: async () => {
