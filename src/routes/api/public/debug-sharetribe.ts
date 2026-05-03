@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/api/debug-sharetribe")({
+export const Route = createFileRoute("/api/public/debug-sharetribe")({
   server: {
     handlers: {
       GET: async () => {
