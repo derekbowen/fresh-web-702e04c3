@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { runBackfillContentPages } from "@/server/backfill-content-pages.functions";
+import { runBackfillContentPages } from "@/server/backfill-content-pages.server";
 
 /**
  * POST /api/public/backfill-content-pages
