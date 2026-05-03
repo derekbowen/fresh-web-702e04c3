@@ -3,10 +3,21 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const cors = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = new Set([
+  "https://fresh-web.lovable.app",
+  "https://www.poolrentalnearme.com",
+  "https://poolrentalnearme.com",
+]);
+
+function corsHeaders(origin: string | null) {
+  const allow = origin && ALLOWED_ORIGINS.has(origin) ? origin : "https://fresh-web.lovable.app";
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+}
 
 const SYSTEM = `You are a senior pSEO content strategist for PoolRentalNearMe (PRNM), a U.S. marketplace where homeowners rent their pools by the hour. Write expert-level, original long-form course content for pool hosts. Be concrete, U.S.-focused, with real numbers (typical hourly rates $40-150/hr, deposit norms, common city ranges). Never copy boilerplate. Avoid fluff. Use second person ("you"). Write like a founder mentor talking to a host who wants to make $3K-$10K/month from their backyard pool.`;
 
@@ -54,6 +65,7 @@ const TOOL = {
 };
 
 Deno.serve(async (req) => {
+  const cors = corsHeaders(req.headers.get("origin"));
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   try {
     // Require admin auth
