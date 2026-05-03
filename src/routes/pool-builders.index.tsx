@@ -35,7 +35,7 @@ export const Route = createFileRoute("/pool-builders/")({
 
 function PoolBuildersIndex() {
   const { states, providers } = Route.useLoaderData();
-  const total = states.reduce((sum, s) => sum + s.count, 0);
+  const total = states.reduce((sum: number, s: { count: number }) => sum + s.count, 0);
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
@@ -60,7 +60,7 @@ function PoolBuildersIndex() {
         <section className="mt-16">
           <h2 className="text-xl font-semibold text-foreground">Browse by state</h2>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {states.map((s) => (
+            {states.map((s: { code: string; slug: string; name: string; count: number }) => (
               <Link
                 key={s.code}
                 to="/pool-builders/$state"

@@ -100,7 +100,7 @@ function CityBuildersPage() {
 
         <section className="mt-10">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {providers.map((p) => (
+            {providers.map((p: Record<string, unknown>) => (
               <Link
                 key={p.slug as string}
                 to="/providers/$slug"
