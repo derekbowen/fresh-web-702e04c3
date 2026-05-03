@@ -867,6 +867,7 @@ export interface RootRouteChildren {
   PSlugRoute: typeof PSlugRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
   PHostingRoute: typeof PHostingRoute
+  PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
