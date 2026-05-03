@@ -58,20 +58,25 @@ export const getThread = createServerFn({ method: "GET" })
 const createThreadSchema = z.object({
   title: z.string().min(3).max(200),
   body: z.string().min(5).max(10000),
-  user_id: z.string().uuid(),
-  author_name: z.string().min(1).max(100),
 });
 
 export const createThread = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => createThreadSchema.parse(d))
-  .handler(async ({ data }) => {
-    const { data: thread, error } = await supabaseAdmin
+  .handler(async ({ data, context }) => {
+    const { data: profile } = await context.supabase
+      .from("profiles")
+      .select("display_name, full_name")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    const author_name = profile?.display_name || profile?.full_name || "Pool Host";
+    const { data: thread, error } = await context.supabase
       .from("mb_threads")
       .insert({
         title: data.title,
         body: data.body,
-        user_id: data.user_id,
-        author_name: data.author_name,
+        user_id: context.userId,
+        author_name,
       })
       .select()
       .single();
@@ -82,20 +87,25 @@ export const createThread = createServerFn({ method: "POST" })
 const createReplySchema = z.object({
   thread_id: z.string().uuid(),
   body: z.string().min(2).max(10000),
-  user_id: z.string().uuid(),
-  author_name: z.string().min(1).max(100),
 });
 
 export const createReply = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => createReplySchema.parse(d))
-  .handler(async ({ data }) => {
-    const { data: reply, error } = await supabaseAdmin
+  .handler(async ({ data, context }) => {
+    const { data: profile } = await context.supabase
+      .from("profiles")
+      .select("display_name, full_name")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    const author_name = profile?.display_name || profile?.full_name || "Pool Host";
+    const { data: reply, error } = await context.supabase
       .from("mb_replies")
       .insert({
         thread_id: data.thread_id,
         body: data.body,
-        user_id: data.user_id,
-        author_name: data.author_name,
+        user_id: context.userId,
+        author_name,
       })
       .select()
       .single();
