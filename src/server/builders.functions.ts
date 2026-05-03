@@ -4,14 +4,8 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { stateName } from "@/lib/states";
 
 
-const stateSlugSchema = z.object({
-  state: z.string().regex(/^[a-z]{2}$/),
-});
 
-const cityComboSchema = z.object({
-  state: z.string().regex(/^[a-z]{2}$/),
-  city: z.string().regex(/^[a-z0-9-]+$/).max(80),
-});
+
 
 export const listBuilderStates = createServerFn({ method: "GET" }).handler(
   async () => {
