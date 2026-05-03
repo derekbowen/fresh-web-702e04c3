@@ -31,12 +31,19 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
             {[listing.city, listing.state].filter(Boolean).join(", ")}
           </p>
         )}
-        {listing.price && (
-          <p className="mt-2 text-sm font-semibold text-foreground">
-            ${(listing.price.amount / 100).toFixed(0)}{" "}
-            <span className="font-normal text-muted-foreground">/ hour</span>
-          </p>
-        )}
+        <div className="mt-3 flex items-center justify-between gap-3">
+          {listing.price ? (
+            <p className="text-sm font-semibold text-foreground">
+              ${(listing.price.amount / 100).toFixed(0)}{" "}
+              <span className="font-normal text-muted-foreground">/ hour</span>
+            </p>
+          ) : (
+            <span />
+          )}
+          <span className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
+            Book now →
+          </span>
+        </div>
       </div>
     </Link>
   );
