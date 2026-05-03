@@ -28,6 +28,7 @@ import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 import { PublicPoolTemplate } from "@/components/templates/public-pool";
 import { EventGuideTemplate } from "@/components/templates/event-guide";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
+import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 
 /**
  * Dispatcher route for /p/{slug}.
