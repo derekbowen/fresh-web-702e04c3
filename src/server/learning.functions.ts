@@ -287,16 +287,8 @@ export const listMyProgress = createServerFn({ method: "POST" })
 // Admin: aggregate + per-user drilldown
 // ============================================================
 
-async function requireAdmin(userId: string) {
-  const { data, error } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Forbidden: admin only");
-}
+// requireAdmin moved to ./learning.server
+
 
 export type AdminCourseSummary = {
   course_slug: string;
