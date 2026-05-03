@@ -35,8 +35,17 @@ export const HOMEPAGE_FAQS = [
 
 export const HOMEPAGE_HERO_IMAGE = heroPool;
 
-export function HomePageContent({ data }: { data: HomeData }) {
-  const { cities, categories, listings, nearby } = data;
+export function HomePageContent({ data }: { data: HomeData | undefined | null }) {
+  const safe = data ?? {
+    cities: [],
+    categories: [],
+    listings: [],
+    nearby: { city: null, region: null, count: 0 },
+  };
+  const cities = safe.cities ?? [];
+  const categories = safe.categories ?? [];
+  const listings = safe.listings ?? [];
+  const nearby = safe.nearby ?? { city: null, region: null, count: 0 };
   const nearbyLabel = nearby.city
     ? `${nearby.city}${nearby.region ? `, ${nearby.region}` : ""}`
     : null;
