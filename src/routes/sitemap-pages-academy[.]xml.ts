@@ -8,7 +8,7 @@ export const Route = createFileRoute("/sitemap-pages-academy.xml")({
   server: {
     handlers: {
       GET: async ({ request }) =>
-        buildContentPagesSitemap(request, ["academy_article"], "/p", supabaseAdmin, SITE_URL),
+        buildContentPagesSitemap(request, ["elearning"], "/p", supabaseAdmin, SITE_URL),
     },
   },
 });

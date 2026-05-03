@@ -8,7 +8,7 @@ export const Route = createFileRoute("/sitemap-pages-event-guides.xml")({
   server: {
     handlers: {
       GET: async ({ request }) =>
-        buildContentPagesSitemap(request, ["event_city_guide"], "/p", supabaseAdmin, SITE_URL),
+        buildContentPagesSitemap(request, ["event_guide"], "/p", supabaseAdmin, SITE_URL),
     },
   },
 });

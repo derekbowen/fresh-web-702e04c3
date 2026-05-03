@@ -10,7 +10,7 @@ export const Route = createFileRoute("/sitemap-pages-spanish.xml")({
       GET: async ({ request }) =>
         buildContentPagesSitemap(
           request,
-          ["spanish_host_acquisition", "spanish_resource"],
+          ["spanish_host_acq", "spanish_resource"],
           "/p",
           supabaseAdmin,
           SITE_URL,
