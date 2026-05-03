@@ -5,14 +5,15 @@ import { buildMeta, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/p/all-locations")({
   loader: () => getAllLocations(),
-  head: ({ loaderData }) => ({
-    meta: buildMeta({
+  head: ({ loaderData }) => {
+    const meta = buildMeta({
       title: `All Locations & Pages — ${loaderData?.totalUrls.toLocaleString() ?? ""} URLs | PRNM`,
       description:
         "Complete directory of every pool rental city, host guide, event guide, course, and resource on PoolRentalNearMe. Browse the full sitemap.",
-      canonical: `${SITE_URL}/p/all-locations`,
-    }),
-  }),
+      path: "/p/all-locations",
+    });
+    return { meta: meta.meta, links: meta.links };
+  },
   component: AllLocationsPage,
 });
 
