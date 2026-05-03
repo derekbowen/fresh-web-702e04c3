@@ -1,10 +1,21 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = new Set([
+  "https://fresh-web.lovable.app",
+  "https://www.poolrentalnearme.com",
+  "https://poolrentalnearme.com",
+]);
+
+function buildCorsHeaders(origin: string | null) {
+  const allow = origin && ALLOWED_ORIGINS.has(origin) ? origin : "https://fresh-web.lovable.app";
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+}
 
 const SYSTEM = `You are a senior SEO content writer for PoolRentalNearMe.com, a peer-to-peer pool rental marketplace (similar to Swimply). You write practical, friendly, expert help-center articles for pool hosts and guests in the United States.
 
