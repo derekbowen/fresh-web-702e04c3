@@ -54,7 +54,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     const { slug } = data;
 
     // 1. Canonical lookup
-    const { data: page } = await supabaseAdmin
+    const { data: page } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("*")
       .eq("slug", slug)
