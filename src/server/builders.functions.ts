@@ -99,21 +99,21 @@ export const getBuildersByCity = createServerFn({ method: "GET" })
     };
   });
 
-const leadSchema = z.object({
-  name: z.string().trim().min(1).max(120),
-  email: z.string().trim().email().max(255),
-  phone: z.string().trim().max(40).optional().or(z.literal("")),
-  company: z.string().trim().max(160).optional().or(z.literal("")),
-  website: z.string().trim().max(300).optional().or(z.literal("")),
-  city: z.string().trim().max(120).optional().or(z.literal("")),
-  state_code: z.string().trim().max(4).optional().or(z.literal("")),
-  message: z.string().trim().max(2000).optional().or(z.literal("")),
-  source_provider_slug: z.string().trim().max(120).optional().or(z.literal("")),
-  source_path: z.string().trim().max(300).optional().or(z.literal("")),
-});
-
 export const submitProviderLead = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => leadSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({
+      name: z.string().trim().min(1).max(120),
+      email: z.string().trim().email().max(255),
+      phone: z.string().trim().max(40).optional().or(z.literal("")),
+      company: z.string().trim().max(160).optional().or(z.literal("")),
+      website: z.string().trim().max(300).optional().or(z.literal("")),
+      city: z.string().trim().max(120).optional().or(z.literal("")),
+      state_code: z.string().trim().max(4).optional().or(z.literal("")),
+      message: z.string().trim().max(2000).optional().or(z.literal("")),
+      source_provider_slug: z.string().trim().max(120).optional().or(z.literal("")),
+      source_path: z.string().trim().max(300).optional().or(z.literal("")),
+    }).parse(d),
+  )
   .handler(async ({ data }) => {
     const blank = (s?: string) => (s && s.trim() ? s.trim() : null);
     const { error } = await supabaseAdmin.from("provider_leads").insert({
