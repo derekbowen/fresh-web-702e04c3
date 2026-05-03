@@ -259,6 +259,82 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
+        {/* Free Pool Host Academy — unique e-learning differentiator */}
+        <section className="relative overflow-hidden border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/10">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+            <div className="grid items-center gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-7">
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                  🎓 Free · Only on PRNM
+                </span>
+                <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                  The only Pool Host Academy on the internet.
+                </h2>
+                <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+                  100+ free courses on safety, pricing, marketing, AI tools, guest experience, and the highest-paying booking niches. No other platform teaches you how to host — we wrote the playbook.
+                </p>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {[
+                    { e: "🛟", t: "Safety & Rescue" },
+                    { e: "📈", t: "Marketing & Pricing" },
+                    { e: "🤖", t: "AI & Automation" },
+                    { e: "🎉", t: "Occasion Playbooks" },
+                    { e: "⚖️", t: "Legal & Insurance" },
+                    { e: "🚀", t: "Switch from Swimply" },
+                  ].map((i) => (
+                    <div key={i.t} className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-2.5">
+                      <span className="text-xl" aria-hidden>{i.e}</span>
+                      <span className="text-sm font-medium text-foreground">{i.t}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <a
+                    href="/academy"
+                    className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
+                  >
+                    Browse 100+ free courses →
+                  </a>
+                  <a
+                    href="/academy"
+                    className="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
+                  >
+                    Earn certifications
+                  </a>
+                </div>
+                <p className="mt-4 text-xs text-muted-foreground">
+                  100% free · English & Español · Earn shareable host certificates
+                </p>
+              </div>
+              <div className="lg:col-span-5">
+                <div className="grid grid-cols-2 gap-3">
+                  {FEATURED_OCCASIONS.slice(0, 4).map((o, idx) => (
+                    <a
+                      key={o.slug}
+                      href={`/academy/${o.slug}`}
+                      className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
+                    >
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          src={ACADEMY_HERO_MAP[o.img]}
+                          alt={`${o.title} hosting course`}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 p-3">
+                        <div className="text-xs font-semibold uppercase tracking-wider text-white/80">Course</div>
+                        <div className="text-sm font-bold text-white">{o.title}</div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {showWaitlist ? (
           <ErrorBoundary name="PoolWaitlistForm" silent>
             <PoolWaitlistForm
