@@ -2,9 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const slugSchema = z.object({
-  slug: z.string().min(1).max(160).regex(/^[a-z0-9-]+$/),
-});
+
+
 
 export const listHelpCategories = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabaseAdmin
