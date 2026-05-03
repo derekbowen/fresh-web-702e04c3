@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-
+import { slugSchema, listSchema, COURSE_FIELDS } from "./courses.server";
 
 
 
