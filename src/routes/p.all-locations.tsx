@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getAllLocations } from "@/server/all-locations.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { buildMeta, SITE_URL } from "@/lib/seo";
+import { buildMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/p/all-locations")({
   loader: () => getAllLocations(),
