@@ -21,6 +21,7 @@ import { ResourceArticleTemplate } from "@/components/templates/resource-article
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 import { PublicPoolTemplate } from "@/components/templates/public-pool";
+import { EventGuideTemplate } from "@/components/templates/event-guide";
 
 /**
  * Dispatcher route for /p/{slug}.
@@ -178,6 +179,8 @@ function ContentPageDispatcher() {
       return <HostAcqCityTemplate page={page} />;
     case "public_pool":
       return <PublicPoolTemplate page={page} />;
+    case "event_guide":
+      return <EventGuideTemplate page={page} />;
     case "resource":
       return <ResourceArticleTemplate page={page} />;
     default:
