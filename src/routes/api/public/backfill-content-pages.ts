@@ -6,7 +6,6 @@ import { backfillContentPages } from "@/server/backfill-content-pages.functions"
  * Body: { adminToken, limit?, model?, dryRun? }
  * adminToken must equal BACKFILL_ADMIN_TOKEN (or SUPABASE_SERVICE_ROLE_KEY fallback).
  */
-// @ts-expect-error route added; types regenerate after build
 export const Route = createFileRoute("/api/public/backfill-content-pages")({
   server: {
     handlers: {
