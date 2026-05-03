@@ -40,10 +40,11 @@ function NotFoundComponent() {
 export const Route = createRootRoute({
   head: () => {
     const meta = buildMeta({
-      title: `${SITE_NAME} — Rent a Private Pool by the Hour`,
+      title: "Pool Rental Near Me - Starting at $25 hour - Rent a pool now",
       description:
-        "Find and book private pool rentals near you. Hourly bookings, $2M liability insurance included. Backyard pools, heated pools, hot tubs, and more.",
+        "Rent a private pool by the hour or become a pool host. 10% flat fee, $2M liability coverage, 5,100+ pages across the US.",
       path: "/",
+      image: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c756e8fe-7c1e-4f71-8c20-05980f90b6f7",
     });
     return {
       meta: [
@@ -52,16 +53,6 @@ export const Route = createRootRoute({
         { name: "author", content: SITE_NAME },
         { name: "theme-color", content: "#0ea5e9" },
         ...meta.meta,
-        { title: "Pool Rental Near Me - Starting at $25 hour - Rent a pool now" },
-        { property: "og:title", content: "Pool Rental Near Me - Starting at $25 hour - Rent a pool now" },
-        { name: "twitter:title", content: "Pool Rental Near Me - Starting at $25 hour - Rent a pool now" },
-        { name: "description", content: "Rent a private pool by the hour or become a pool host. 10% flat fee, $2M liability coverage, 5,100+ pages across the US." },
-        { property: "og:description", content: "Rent a private pool by the hour or become a pool host. 10% flat fee, $2M liability coverage, 5,100+ pages across the US." },
-        { name: "twitter:description", content: "Rent a private pool by the hour or become a pool host. 10% flat fee, $2M liability coverage, 5,100+ pages across the US." },
-        { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c756e8fe-7c1e-4f71-8c20-05980f90b6f7" },
-        { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c756e8fe-7c1e-4f71-8c20-05980f90b6f7" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { property: "og:type", content: "website" },
       ],
       links: [
         { rel: "stylesheet", href: appCss },
