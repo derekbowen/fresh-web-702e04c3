@@ -6,4 +6,15 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+export default defineConfig({
+  tanstackStart: {
+    importProtection: {
+      behavior: "error",
+      client: {
+        // Allow `.functions.ts(x)` files under src/server to be imported from
+        // client code — they are transformed into RPC stubs at build time.
+        excludeFiles: ["**/server/**/*.functions.ts", "**/server/**/*.functions.tsx"],
+      },
+    },
+  },
+});
