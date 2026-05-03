@@ -97,7 +97,7 @@ const FAQS = [
   },
 ];
 
-export const Route = createFileRoute("/p/hosting")({
+export const Route = createFileRoute("/p/hosting" as any)({
   head: () => {
     const meta = buildMeta({
       title: TITLE,
