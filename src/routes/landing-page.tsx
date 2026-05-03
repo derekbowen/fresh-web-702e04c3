@@ -4,6 +4,11 @@ import { getHomeData } from "@/server/home-data.functions";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
 
 export const Route = createFileRoute("/landing-page")({
+  // This route is served via an nginx reverse proxy at https://www.poolrentalnearme.com/.
+  // The browser URL is `/` but the upstream HTML is for `/landing-page`, which causes
+  // a router hydration mismatch (React error #418). Disabling SSR for this route makes
+  // the client render fresh from the visible URL — head() metadata still SSRs for SEO.
+  ssr: false,
   loader: () => getHomeData(),
   head: () => {
     const meta = buildMeta({
