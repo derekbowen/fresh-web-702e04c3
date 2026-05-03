@@ -83,6 +83,8 @@ export function PublicPoolTemplate({
             slugPrefix=""
             heading="Nearby cities"
           />
+
+          <FaqBlock faqs={faqs} />
         </article>
       </main>
       <SiteFooter />
