@@ -2,10 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const slugSchema = z.object({ slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/) });
-
 export const getCity = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => slugSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/) }).parse(d),
+  )
   .handler(async ({ data }) => {
     const { data: city, error } = await supabaseAdmin
       .from("cities")
@@ -18,7 +18,9 @@ export const getCity = createServerFn({ method: "GET" })
   });
 
 export const getCategory = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => slugSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/) }).parse(d),
+  )
   .handler(async ({ data }) => {
     const { data: category, error } = await supabaseAdmin
       .from("categories")
@@ -31,7 +33,9 @@ export const getCategory = createServerFn({ method: "GET" })
   });
 
 export const getProvider = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => slugSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/) }).parse(d),
+  )
   .handler(async ({ data }) => {
     const { data: provider, error } = await supabaseAdmin
       .from("providers")
@@ -44,7 +48,9 @@ export const getProvider = createServerFn({ method: "GET" })
   });
 
 export const getBlogPost = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => slugSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/) }).parse(d),
+  )
   .handler(async ({ data }) => {
     const { data: post, error } = await supabaseAdmin
       .from("blog_posts")
@@ -56,8 +62,6 @@ export const getBlogPost = createServerFn({ method: "GET" })
     return { post: post ?? null };
   });
 
-// Returns a curated set of internal-link targets used to auto-link blog posts
-// to pool rental city pages, permits/laws articles, and maintenance content.
 export const getBlogLinkTargets = createServerFn({ method: "GET" }).handler(
   async () => {
     const [cities, helpArticles, tools] = await Promise.all([
@@ -118,18 +122,16 @@ export const listAllSitemapEntries = createServerFn({ method: "GET" }).handler(
   },
 );
 
-const nearbyInputSchema = z.object({
-  slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/),
-  state_code: z.string().length(2).optional(),
-  limit: z.number().int().min(1).max(24).optional(),
-});
-
-/**
- * Get the geographically nearest published cities to the given slug.
- * Falls back to same-state results when coordinates aren't available.
- */
 export const getNearbyCities = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => nearbyInputSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/),
+        state_code: z.string().length(2).optional(),
+        limit: z.number().int().min(1).max(24).optional(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data }) => {
     const limit = data.limit ?? 12;
     const { data: rows, error } = await supabaseAdmin.rpc(
@@ -138,7 +140,6 @@ export const getNearbyCities = createServerFn({ method: "GET" })
     );
     if (error) {
       console.error("getNearbyCities rpc:", error);
-      // Fallback: same-state cities
       let q = supabaseAdmin
         .from("cities")
         .select("slug, name, state, state_code")
@@ -166,7 +167,6 @@ export const getNearbyCities = createServerFn({ method: "GET" })
     return { cities };
   });
 
-/** All published categories (slug, name, icon). */
 export const listCategories = createServerFn({ method: "GET" }).handler(
   async () => {
     const { data, error } = await supabaseAdmin
@@ -179,16 +179,17 @@ export const listCategories = createServerFn({ method: "GET" }).handler(
   },
 );
 
-const blogListSchema = z.object({
-  page: z.number().int().min(1).max(500).default(1),
-  pageSize: z.number().int().min(1).max(48).default(12),
-  topic: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional(),
-  q: z.string().trim().min(1).max(120).optional(),
-});
-
-/** Paginated published blog posts, optionally filtered by topic and/or search query. */
 export const listBlogPostsPaged = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => blogListSchema.parse(d ?? {}))
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        page: z.number().int().min(1).max(500).default(1),
+        pageSize: z.number().int().min(1).max(48).default(12),
+        topic: z.string().min(1).max(48).regex(/^[a-z0-9-]+$/).optional(),
+        q: z.string().trim().min(1).max(120).optional(),
+      })
+      .parse(d ?? {}),
+  )
   .handler(async ({ data }) => {
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
@@ -218,7 +219,6 @@ export const listBlogPostsPaged = createServerFn({ method: "GET" })
     };
   });
 
-/** Distinct topics with post counts (published only). */
 export const listBlogTopics = createServerFn({ method: "GET" }).handler(
   async () => {
     const { data, error } = await supabaseAdmin
@@ -240,10 +240,6 @@ export const listBlogTopics = createServerFn({ method: "GET" }).handler(
   },
 );
 
-const stateCodeSchema = z.object({
-  state_code: z.string().length(2).regex(/^[A-Z]{2}$/),
-});
-
 export type StatePoolRegulation = {
   state_code: string;
   state_name: string;
@@ -263,7 +259,9 @@ export type StatePoolRegulation = {
 };
 
 export const getStateRegulation = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => stateCodeSchema.parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ state_code: z.string().length(2).regex(/^[A-Z]{2}$/) }).parse(d),
+  )
   .handler(async ({ data }): Promise<{ regulation: StatePoolRegulation | null }> => {
     const { data: row, error } = await supabaseAdmin
       .from("state_pool_regulations")
