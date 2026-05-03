@@ -682,6 +682,45 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_sync_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          failed_count: number
+          finished_at: string | null
+          id: string
+          inserted_count: number
+          started_at: string
+          status: string
+          total_processed: number
+          updated_count: number
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          failed_count?: number
+          finished_at?: string | null
+          id?: string
+          inserted_count?: number
+          started_at?: string
+          status?: string
+          total_processed?: number
+          updated_count?: number
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          failed_count?: number
+          finished_at?: string | null
+          id?: string
+          inserted_count?: number
+          started_at?: string
+          status?: string
+          total_processed?: number
+          updated_count?: number
+        }
+        Relationships: []
+      }
       mb_likes: {
         Row: {
           created_at: string
@@ -1086,6 +1125,96 @@ export type Database = {
           summary?: string | null
           updated_at?: string
           zoning_summary?: string | null
+        }
+        Relationships: []
+      }
+      synced_listings: {
+        Row: {
+          address: string | null
+          amenities: string[]
+          author_id: string | null
+          capacity: number | null
+          category: string | null
+          city: string | null
+          city_slug: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_urls: string[]
+          is_deleted: boolean
+          last_synced_at: string
+          latitude: number | null
+          longitude: number | null
+          metadata: Json
+          price_amount: number | null
+          price_currency: string | null
+          primary_image_url: string | null
+          public_data: Json
+          sharetribe_id: string
+          slug: string
+          st_created_at: string | null
+          state: string
+          state_code: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          amenities?: string[]
+          author_id?: string | null
+          capacity?: number | null
+          category?: string | null
+          city?: string | null
+          city_slug?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_urls?: string[]
+          is_deleted?: boolean
+          last_synced_at?: string
+          latitude?: number | null
+          longitude?: number | null
+          metadata?: Json
+          price_amount?: number | null
+          price_currency?: string | null
+          primary_image_url?: string | null
+          public_data?: Json
+          sharetribe_id: string
+          slug: string
+          st_created_at?: string | null
+          state?: string
+          state_code?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          amenities?: string[]
+          author_id?: string | null
+          capacity?: number | null
+          category?: string | null
+          city?: string | null
+          city_slug?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_urls?: string[]
+          is_deleted?: boolean
+          last_synced_at?: string
+          latitude?: number | null
+          longitude?: number | null
+          metadata?: Json
+          price_amount?: number | null
+          price_currency?: string | null
+          primary_image_url?: string | null
+          public_data?: Json
+          sharetribe_id?: string
+          slug?: string
+          st_created_at?: string | null
+          state?: string
+          state_code?: string | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
