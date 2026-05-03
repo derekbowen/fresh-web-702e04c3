@@ -19,7 +19,7 @@ export const listCourses = createServerFn({ method: "GET" })
     if (data.language) q = q.eq("language", data.language);
     if (data.tier) q = q.eq("tier", data.tier);
     if (data.search) {
-      const s = data.search.replace(/[%_,]/g, " ");
+      const s = data.search.replace(/[%_,()]/g, " ");
       q = q.or(`title.ilike.%${s}%,excerpt.ilike.%${s}%`);
     }
     const { data: rows, count, error } = await q

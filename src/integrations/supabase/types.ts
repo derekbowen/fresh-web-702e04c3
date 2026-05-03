@@ -1016,6 +1016,18 @@ export type Database = {
           out_state_code: string
         }[]
       }
+      verify_certificate: {
+        Args: { _uid: string }
+        Returns: {
+          certificate_uid: string
+          completed_at: string
+          course_slug: string
+          course_title: string
+          learner_name: string
+          revoke_reason: string
+          revoked_at: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "editor" | "user"

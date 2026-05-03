@@ -130,7 +130,7 @@ function ComposeThread({ user, onCreated }: { user: { id: string; name: string }
     setSubmitting(true);
     setErr(null);
     try {
-      await createThread({ data: { title, body, user_id: user.id, author_name: user.name } });
+      await createThread({ data: { title, body } });
       setTitle(""); setBody("");
       onCreated();
     } catch (e) {
@@ -163,7 +163,7 @@ function ThreadView({ thread, replies, user, onBack, onReply }: {
     if (!user || body.trim().length < 2) return;
     setSubmitting(true);
     try {
-      await createReply({ data: { thread_id: thread.id, body, user_id: user.id, author_name: user.name } });
+      await createReply({ data: { thread_id: thread.id, body } });
       setBody("");
       onReply();
     } finally {
