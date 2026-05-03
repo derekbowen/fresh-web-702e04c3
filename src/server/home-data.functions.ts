@@ -107,9 +107,21 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       ),
       safe(searchListings({ perPage: 6 }), "searchListings (featured)", emptyListingResult),
       origin
-        ? safe(searchListings({ perPage: 1, origin }), "searchListings (nearby)", emptyListingResult)
+        ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
         : Promise.resolve(emptyListingResult),
     ]);
+
+    let nearestMiles: number | null = null;
+    if (cf.latitude && cf.longitude && nearbyResult.listings.length > 0) {
+      const lat = Number(cf.latitude);
+      const lng = Number(cf.longitude);
+      for (const l of nearbyResult.listings) {
+        if (l.geolocation) {
+          const d = haversineMiles(lat, lng, l.geolocation.lat, l.geolocation.lng);
+          if (nearestMiles === null || d < nearestMiles) nearestMiles = d;
+        }
+      }
+    }
 
     return {
       cities: (cities.data ?? []) as HomeCity[],
@@ -119,6 +131,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         city: visitorCity,
         region: visitorRegion,
         count: origin ? nearbyResult.total : 0,
+        nearestMiles,
       },
     };
   } catch (err) {
