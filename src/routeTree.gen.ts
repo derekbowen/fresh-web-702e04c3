@@ -67,7 +67,6 @@ import { Route as PoolBuildersStateCityRouteImport } from './routes/pool-builder
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as HelpCenterCategorySlugRouteImport } from './routes/help-center.$category.$slug'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
-import { Route as ApiPublicDebugSharetribeRouteImport } from './routes/api/public/debug-sharetribe'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
@@ -370,12 +369,6 @@ const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
   path: '/api/public/track-city-click',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicDebugSharetribeRoute =
-  ApiPublicDebugSharetribeRouteImport.update({
-    id: '/api/public/debug-sharetribe',
-    path: '/api/public/debug-sharetribe',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AdminLearningUserIdRoute = AdminLearningUserIdRouteImport.update({
   id: '/$userId',
   path: '/$userId',
@@ -442,7 +435,6 @@ export interface FileRoutesByFullPath {
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
-  '/api/public/debug-sharetribe': typeof ApiPublicDebugSharetribeRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
@@ -504,7 +496,6 @@ export interface FileRoutesByTo {
   '/host-tools': typeof HostToolsIndexRoute
   '/pool-builders': typeof PoolBuildersIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
-  '/api/public/debug-sharetribe': typeof ApiPublicDebugSharetribeRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
@@ -568,7 +559,6 @@ export interface FileRoutesById {
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
-  '/api/public/debug-sharetribe': typeof ApiPublicDebugSharetribeRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
@@ -633,7 +623,6 @@ export interface FileRouteTypes {
     | '/host-tools/'
     | '/pool-builders/'
     | '/admin/learning/$userId'
-    | '/api/public/debug-sharetribe'
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
@@ -695,7 +684,6 @@ export interface FileRouteTypes {
     | '/host-tools'
     | '/pool-builders'
     | '/admin/learning/$userId'
-    | '/api/public/debug-sharetribe'
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
@@ -758,7 +746,6 @@ export interface FileRouteTypes {
     | '/host-tools/'
     | '/pool-builders/'
     | '/admin/learning/$userId'
-    | '/api/public/debug-sharetribe'
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
@@ -816,7 +803,6 @@ export interface RootRouteChildren {
   HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
   PoolBuildersIndexRoute: typeof PoolBuildersIndexRoute
-  ApiPublicDebugSharetribeRoute: typeof ApiPublicDebugSharetribeRoute
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   HelpCenterCategorySlugRoute: typeof HelpCenterCategorySlugRoute
   LSlugIdRoute: typeof LSlugIdRoute
@@ -1232,13 +1218,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackCityClickRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/debug-sharetribe': {
-      id: '/api/public/debug-sharetribe'
-      path: '/api/public/debug-sharetribe'
-      fullPath: '/api/public/debug-sharetribe'
-      preLoaderRoute: typeof ApiPublicDebugSharetribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/learning/$userId': {
       id: '/admin/learning/$userId'
       path: '/$userId'
@@ -1374,7 +1353,6 @@ const rootRouteChildren: RootRouteChildren = {
   HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
   PoolBuildersIndexRoute: PoolBuildersIndexRoute,
-  ApiPublicDebugSharetribeRoute: ApiPublicDebugSharetribeRoute,
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   HelpCenterCategorySlugRoute: HelpCenterCategorySlugRoute,
   LSlugIdRoute: LSlugIdRoute,
