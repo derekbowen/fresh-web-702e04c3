@@ -54,6 +54,7 @@ import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as ApiDebugSharetribeRouteImport } from './routes/api/debug-sharetribe'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
@@ -304,6 +305,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const ApiDebugSharetribeRoute = ApiDebugSharetribeRouteImport.update({
+  id: '/api/debug-sharetribe',
+  path: '/api/debug-sharetribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
   id: '/admin/missing-pages',
   path: '/admin/missing-pages',
@@ -419,6 +425,7 @@ export interface FileRoutesByFullPath {
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/api/debug-sharetribe': typeof ApiDebugSharetribeRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -480,6 +487,7 @@ export interface FileRoutesByTo {
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/api/debug-sharetribe': typeof ApiDebugSharetribeRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -543,6 +551,7 @@ export interface FileRoutesById {
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/api/debug-sharetribe': typeof ApiDebugSharetribeRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -607,6 +616,7 @@ export interface FileRouteTypes {
     | '/admin/content-migration'
     | '/admin/learning'
     | '/admin/missing-pages'
+    | '/api/debug-sharetribe'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -668,6 +678,7 @@ export interface FileRouteTypes {
     | '/admin/content-migration'
     | '/admin/learning'
     | '/admin/missing-pages'
+    | '/api/debug-sharetribe'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -730,6 +741,7 @@ export interface FileRouteTypes {
     | '/admin/content-migration'
     | '/admin/learning'
     | '/admin/missing-pages'
+    | '/api/debug-sharetribe'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -792,6 +804,7 @@ export interface RootRouteChildren {
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
+  ApiDebugSharetribeRoute: typeof ApiDebugSharetribeRoute
   CategorySlugRoute: typeof CategorySlugRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
   PSplatRoute: typeof PSplatRoute
@@ -1127,6 +1140,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/api/debug-sharetribe': {
+      id: '/api/debug-sharetribe'
+      path: '/api/debug-sharetribe'
+      fullPath: '/api/debug-sharetribe'
+      preLoaderRoute: typeof ApiDebugSharetribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/missing-pages': {
       id: '/admin/missing-pages'
       path: '/admin/missing-pages'
@@ -1342,6 +1362,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
+  ApiDebugSharetribeRoute: ApiDebugSharetribeRoute,
   CategorySlugRoute: CategorySlugRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
   PSplatRoute: PSplatRoute,
