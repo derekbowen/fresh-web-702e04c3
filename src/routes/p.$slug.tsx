@@ -60,8 +60,23 @@ export const Route = createFileRoute("/p/$slug")({
     // Pass the loaded page through to the loader to avoid a second query
     return { page: result.page };
   },
-  loader: ({ context }) => {
-    return { page: (context as { page: ContentPage }).page };
+  loader: async ({ context }) => {
+    const page = (context as { page: ContentPage }).page;
+    let nearbyCities: NearbyCity[] = [];
+    if (
+      page.template_type === "host_acq_city" ||
+      page.template_type === "public_pool_city" ||
+      page.template_type === "spanish_host_acq"
+    ) {
+      try {
+        nearbyCities = await getNearbyCitiesForPage({
+          data: { templateType: page.template_type, slug: page.slug, limit: 6 },
+        });
+      } catch {
+        nearbyCities = [];
+      }
+    }
+    return { page, nearbyCities };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
