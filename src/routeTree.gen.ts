@@ -807,6 +807,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   LandingPageRoute: typeof LandingPageRoute
+  ReferralRoute: typeof ReferralRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   ProvidersRoute: typeof ProvidersRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -1387,6 +1388,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   LandingPageRoute: LandingPageRoute,
+  ReferralRoute: ReferralRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   ProvidersRoute: ProvidersRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
