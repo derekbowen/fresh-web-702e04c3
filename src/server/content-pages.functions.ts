@@ -66,15 +66,23 @@ export const lookupContentPage = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<ContentPageLookupResult> => {
     const { slug } = data;
 
-    const { data: page } = await (supabaseAdmin as any)
+    // Prefer canonical /p/{slug} url_path; multiple rows may share a slug
+    // (e.g. nested legacy paths like /p/foo/become-a-pool-host-...)
+    const canonicalPath = `/p/${slug}`;
+    const { data: rows } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("*")
       .eq("slug", slug)
       .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
-      .maybeSingle();
+      .order("priority", { ascending: false })
+      .limit(5);
+
+    const list = (rows ?? []) as ContentPage[];
+    const page =
+      list.find((r) => r.url_path === canonicalPath) ?? list[0] ?? null;
 
     if (page) {
-      return { kind: "found", page: page as unknown as ContentPage };
+      return { kind: "found", page };
     }
     return { kind: "not_found" };
   });
