@@ -43,12 +43,17 @@ export function HomePageContent({ data }: { data: HomeData | undefined | null })
     cities: [],
     categories: [],
     listings: [],
-    nearby: { city: null, region: null, count: 0 },
+    nearby: { city: null, region: null, count: 0, nearestMiles: null },
   };
   const cities = safe.cities ?? [];
   const categories = safe.categories ?? [];
   const listings = safe.listings ?? [];
-  const nearby = safe.nearby ?? { city: null, region: null, count: 0 };
+  const nearby = safe.nearby ?? { city: null, region: null, count: 0, nearestMiles: null };
+  const hasNearbyPools =
+    nearby.nearestMiles !== null && nearby.nearestMiles <= NEARBY_RADIUS_MILES;
+  const showWaitlist =
+    nearby.city !== null &&
+    (nearby.nearestMiles === null || nearby.nearestMiles > NEARBY_RADIUS_MILES);
   const nearbyLabel = nearby.city
     ? `${nearby.city}${nearby.region ? `, ${nearby.region}` : ""}`
     : null;
