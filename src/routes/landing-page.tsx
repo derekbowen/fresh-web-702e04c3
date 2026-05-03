@@ -356,7 +356,7 @@ function HomePage() {
               </p>
             </div>
             <a
-              href="/signup"
+              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
               className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-7 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
             >
               List your pool →
