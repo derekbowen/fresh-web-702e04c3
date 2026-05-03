@@ -6,6 +6,7 @@ import {
   adminExpandBlogPost,
   type AdminBlogRow,
 } from "@/server/admin-blog.functions";
+import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/admin/blog")({
         search: { redirect: location.pathname, mode: "signin" },
       });
     }
+    const { isAdmin } = await checkAdminRole();
+    if (!isAdmin) throw redirect({ to: "/" });
   },
   component: AdminBlogPage,
   head: () => ({ meta: [{ title: "Blog admin — Pool Rental Near Me" }] }),

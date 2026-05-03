@@ -2,6 +2,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { runHeroBackfill } from "@/server/cities-hero-backfill.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
 export const Route = createFileRoute("/admin/cities-heroes")({
@@ -10,6 +11,8 @@ export const Route = createFileRoute("/admin/cities-heroes")({
     if (error || !data.user) {
       throw redirect({ to: "/auth" as never });
     }
+    const { isAdmin } = await checkAdminRole();
+    if (!isAdmin) throw redirect({ to: "/" });
   },
   component: AdminHeroBackfillPage,
   head: () => ({ meta: [{ title: "Backfill city heroes — Admin" }] }),

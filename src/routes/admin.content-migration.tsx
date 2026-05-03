@@ -5,12 +5,15 @@ import {
   nextPendingPage,
   scrapeContentPage,
 } from "@/server/content-scrape.functions";
+import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
 export const Route = createFileRoute("/admin/content-migration")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/content-migration", mode: "signin" } });
+    const { isAdmin } = await checkAdminRole();
+    if (!isAdmin) throw redirect({ to: "/" });
   },
   component: AdminContentMigration,
 });

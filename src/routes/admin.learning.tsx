@@ -7,6 +7,7 @@ import {
   type AdminCourseSummary,
   type AdminLearnerRow,
 } from "@/server/learning.functions";
+import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Progress } from "@/components/ui/progress";
 
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/admin/learning")({
         search: { redirect: location.pathname, mode: "signin" },
       });
     }
+    const { isAdmin } = await checkAdminRole();
+    if (!isAdmin) throw redirect({ to: "/" });
   },
   component: AdminLearningPage,
   head: () => ({ meta: [{ title: "Learning admin — Pool Rental Near Me" }] }),
