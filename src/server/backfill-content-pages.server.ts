@@ -326,7 +326,7 @@ export async function runBackfillContentPages(input: BackfillInput) {
           .eq("id", row.id);
         if (upErr) throw new Error(upErr.message);
         results.push({
-          url_path: row.url_path,
+          url_path: row.url_path ?? "",
           ok: true,
           words: gen.body_markdown.split(/\s+/).length,
         });
