@@ -5,7 +5,6 @@ import { createStart, createMiddleware } from "@tanstack/react-start";
 // course iframes, and inline styles used by the design system — but blocks unknown
 // script origins so any future XSS cannot exfiltrate to attacker-controlled hosts.
 const SECURITY_HEADERS: Record<string, string> = {
-  "X-Frame-Options": "SAMEORIGIN",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(self)",
@@ -13,7 +12,7 @@ const SECURITY_HEADERS: Record<string, string> = {
   "Content-Security-Policy": [
     "default-src 'self'",
     "base-uri 'self'",
-    "frame-ancestors 'self'",
+    "frame-ancestors 'self' https://lovable.dev https://*.lovable.dev https://gptengineer.app https://*.gptengineer.app https://*.lovableproject.com https://*.lovable.app",
     "object-src 'none'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data: https:",
