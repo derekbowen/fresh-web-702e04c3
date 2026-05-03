@@ -1,3 +1,18 @@
+/**
+ * content_pages access contract (SECURITY)
+ * ----------------------------------------
+ * - The table has NO public/anon SELECT RLS policy. The only policy is
+ *   "Admins manage content pages" (ALL, has_role admin).
+ * - Table-level grants for `anon` and `authenticated` are REVOKED
+ *   (migration 20260503_content_pages_revoke_grants). Defense-in-depth:
+ *   even if a permissive policy is later added, PostgREST still rejects
+ *   the request at the grant layer.
+ * - Therefore content_pages MUST be queried server-side using
+ *   `supabaseAdmin` (service role bypasses RLS + grants).
+ * - NEVER import this table via the browser `@/integrations/supabase/client`.
+ *   Public /p/{slug} pages render SSR through `lookupContentPage` below;
+ *   sitemap routes use `supabaseAdmin` directly.
+ */
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
