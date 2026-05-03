@@ -164,7 +164,7 @@ function HomePage() {
               <span className="text-2xl text-muted-foreground group-hover:text-primary" aria-hidden>→</span>
             </a>
             <a
-              href="/signup"
+              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
               className="group flex items-center gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl" aria-hidden>💰</div>
