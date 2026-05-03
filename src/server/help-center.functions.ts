@@ -28,7 +28,7 @@ export const listPopularHelpArticles = createServerFn({ method: "GET" }).handler
 });
 
 export const getHelpCategoryWithArticles = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => slugSchema.parse(d))
+  .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(160).regex(/^[a-z0-9-]+$/) }).parse(d))
   .handler(async ({ data }) => {
     const [{ data: category }, { data: articles }] = await Promise.all([
       supabaseAdmin
