@@ -1,12 +1,11 @@
 import * as React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-// route: /admin/generate-content (v2)
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { generateContentBatch } from "@/server/generate-content-batch.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
-export const Route = createFileRoute("/admin/generate-content")({
+export const Route = createFileRoute("/admin/generate-content" as never)({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user)
@@ -21,7 +20,10 @@ export const Route = createFileRoute("/admin/generate-content")({
 });
 
 function GenerateContentPage() {
-  const [theme, setTheme] = React.useState("");
+  const [count, setCount] = React.useState(5);
+  const [tier, setTier] = React.useState<string>("T1 (200k+)");
+  const [stateCode, setStateCode] = React.useState("");
+  const [warmOnly, setWarmOnly] = React.useState(false);
   const [model, setModel] = React.useState("google/gemini-2.5-pro");
   const [busy, setBusy] = React.useState(false);
   const [dryRun, setDryRun] = React.useState(false);
@@ -34,7 +36,14 @@ function GenerateContentPage() {
     setResult(null);
     try {
       const res = await generateContentBatch({
-        data: { theme: theme || undefined, model, dryRun },
+        data: {
+          count,
+          tier: tier || undefined,
+          stateCode: stateCode.trim() || undefined,
+          warmOnly,
+          model,
+          dryRun,
+        } as any,
       });
       setResult(res);
     } catch (e: any) {
@@ -48,53 +57,94 @@ function GenerateContentPage() {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
-        <h1 className="text-3xl font-bold">Generate Content Batch</h1>
+        <h1 className="text-3xl font-bold">Generate from Content Plan</h1>
         <p className="mt-2 text-muted-foreground">
-          Generates 10 unique, long-form, internally-linked PRNM pages via Gemini
-          and inserts them into <code>content_pages</code>. No SQL copy-paste.
+          Pulls pending rows from <code>content_plan</code> (3,286 prioritized
+          pages), generates each one with Gemini using its own H1, keywords, and
+          uniqueness angle, validates internal links + FAQ, then inserts into{" "}
+          <code>content_pages</code>. No SQL copy-paste, no doorway pages.
         </p>
 
         <div className="mt-6 space-y-4 rounded-lg border border-border bg-card p-6">
-          <div>
-            <label className="block text-sm font-medium">
-              Theme (optional)
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium">Pages this run</label>
+              <input
+                type="number"
+                min={1}
+                max={10}
+                value={count}
+                onChange={(e) => setCount(Number(e.target.value) || 1)}
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium">Priority tier</label>
+              <select
+                value={tier}
+                onChange={(e) => setTier(e.target.value)}
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              >
+                <option value="">Any</option>
+                <option value="T1 (200k+)">T1 — 200k+ (128 pending)</option>
+                <option value="T2 (75k–199k)">T2 — 75k–199k</option>
+                <option value="T3 (25k–74k)">T3 — 25k–74k</option>
+                <option value="T4 (10k–24k)">T4 — 10k–24k</option>
+                <option value="longtail">Long-tails (host/trust)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium">
+                State code (optional)
+              </label>
+              <input
+                type="text"
+                maxLength={2}
+                value={stateCode}
+                onChange={(e) => setStateCode(e.target.value.toUpperCase())}
+                placeholder="TX"
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm uppercase"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium">Model</label>
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              >
+                <option value="google/gemini-2.5-pro">Gemini 2.5 Pro</option>
+                <option value="google/gemini-3.1-pro-preview">
+                  Gemini 3.1 Pro Preview
+                </option>
+                <option value="google/gemini-2.5-flash">
+                  Gemini 2.5 Flash
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={warmOnly}
+                onChange={(e) => setWarmOnly(e.target.checked)}
+              />
+              Warm-climate cities only
             </label>
-            <input
-              type="text"
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              placeholder="e.g. Texas summer events, bachelorette parties, host pricing strategies"
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            />
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={dryRun}
+                onChange={(e) => setDryRun(e.target.checked)}
+              />
+              Dry run (validate only)
+            </label>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium">Model</label>
-            <select
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="google/gemini-2.5-pro">
-                Gemini 2.5 Pro (best quality)
-              </option>
-              <option value="google/gemini-3.1-pro-preview">
-                Gemini 3.1 Pro Preview
-              </option>
-              <option value="google/gemini-2.5-flash">
-                Gemini 2.5 Flash (faster)
-              </option>
-            </select>
-          </div>
-
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={dryRun}
-              onChange={(e) => setDryRun(e.target.checked)}
-            />
-            Dry run (validate only, do not insert)
-          </label>
 
           <button
             onClick={run}
@@ -104,8 +154,8 @@ function GenerateContentPage() {
             {busy
               ? "Generating… (60–120s)"
               : dryRun
-                ? "Generate & Validate"
-                : "Generate & Insert 10 Pages"}
+                ? `Generate & Validate ${count} page(s)`
+                : `Generate & Insert ${count} page(s)`}
           </button>
 
           {error && (

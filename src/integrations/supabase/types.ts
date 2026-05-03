@@ -350,6 +350,96 @@ export type Database = {
         }
         Relationships: []
       }
+      content_plan: {
+        Row: {
+          city: string | null
+          created_at: string
+          generated_at: string | null
+          generated_page_slug: string | null
+          h1: string | null
+          id: string
+          internal_links: string | null
+          last_error: string | null
+          meta_description: string | null
+          meta_title: string | null
+          notes: string | null
+          population_2024: number | null
+          primary_keyword: string | null
+          priority_score: number | null
+          priority_tier: string | null
+          schema_suggestions: string | null
+          search_intent: string | null
+          slug: string
+          source_type: string
+          source_url: string | null
+          state: string | null
+          state_code: string | null
+          status: string
+          supporting_keywords: string | null
+          uniqueness_angle: string | null
+          updated_at: string
+          warm_climate: boolean | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          generated_at?: string | null
+          generated_page_slug?: string | null
+          h1?: string | null
+          id?: string
+          internal_links?: string | null
+          last_error?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          notes?: string | null
+          population_2024?: number | null
+          primary_keyword?: string | null
+          priority_score?: number | null
+          priority_tier?: string | null
+          schema_suggestions?: string | null
+          search_intent?: string | null
+          slug: string
+          source_type?: string
+          source_url?: string | null
+          state?: string | null
+          state_code?: string | null
+          status?: string
+          supporting_keywords?: string | null
+          uniqueness_angle?: string | null
+          updated_at?: string
+          warm_climate?: boolean | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          generated_at?: string | null
+          generated_page_slug?: string | null
+          h1?: string | null
+          id?: string
+          internal_links?: string | null
+          last_error?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          notes?: string | null
+          population_2024?: number | null
+          primary_keyword?: string | null
+          priority_score?: number | null
+          priority_tier?: string | null
+          schema_suggestions?: string | null
+          search_intent?: string | null
+          slug?: string
+          source_type?: string
+          source_url?: string | null
+          state?: string | null
+          state_code?: string | null
+          status?: string
+          supporting_keywords?: string | null
+          uniqueness_angle?: string | null
+          updated_at?: string
+          warm_climate?: boolean | null
+        }
+        Relationships: []
+      }
       course_completions: {
         Row: {
           certificate_uid: string
