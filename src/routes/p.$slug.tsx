@@ -135,6 +135,12 @@ export const Route = createFileRoute("/p/$slug")({
       scripts.push(ldJsonScript(article));
     }
 
+    // FAQPage JSON-LD — synthesized from template_type + city/state slug
+    const faqs = faqsForContentPage(p);
+    if (faqs.length > 0) {
+      scripts.push(ldJsonScript(faqPageJsonLd(faqs)));
+    }
+
     return { ...meta, scripts };
   },
   component: ContentPageDispatcher,
