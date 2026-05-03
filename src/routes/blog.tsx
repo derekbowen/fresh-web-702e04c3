@@ -120,13 +120,13 @@ function BlogIndex() {
     e.preventDefault();
     const trimmed = queryInput.trim();
     navigate({
-      search: (prev: Record<string, unknown>) => ({ ...prev, page: 1, q: trimmed.length ? trimmed : undefined }),
+      search: (prev: any) => ({ ...prev, page: 1, q: trimmed.length ? trimmed : undefined }),
     });
   };
 
   const clearSearch = () => {
     setQueryInput("");
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, page: 1, q: undefined }) });
+    navigate({ search: (prev: any) => ({ ...prev, page: 1, q: undefined }) });
   };
 
   return (
@@ -194,7 +194,7 @@ function BlogIndex() {
         <div className="mt-6 flex flex-wrap gap-2" role="navigation" aria-label="Browse by topic">
           <Link
             to="/blog"
-            search={(prev: Record<string, unknown>) => ({ ...prev, page: 1, topic: undefined })}
+            search={(prev: any) => ({ ...prev, page: 1, topic: undefined })}
             className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
               !activeTopic
                 ? "border-primary bg-primary text-primary-foreground"
@@ -210,7 +210,7 @@ function BlogIndex() {
               <Link
                 key={t.slug}
                 to="/blog"
-                search={(prev: Record<string, unknown>) => ({ ...prev, page: 1, topic: t.slug })}
+                search={(prev: any) => ({ ...prev, page: 1, topic: t.slug })}
                 className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                   active
                     ? "border-primary bg-primary text-primary-foreground"
@@ -269,7 +269,7 @@ function BlogIndex() {
                           <span>·</span>
                           <Link
                             to="/blog"
-                            search={(prev: Record<string, unknown>) => ({ ...prev, page: 1, topic: p.topic ?? undefined })}
+                            search={(prev: any) => ({ ...prev, page: 1, topic: p.topic ?? undefined })}
                             className="hover:text-primary"
                           >
                             {tMeta.label}
@@ -289,7 +289,7 @@ function BlogIndex() {
           <nav className="mt-12 flex items-center justify-between" aria-label="Pagination">
             <Link
               to="/blog"
-              search={(prev: Record<string, unknown>) => ({ ...prev, page: Math.max(1, page - 1) })}
+              search={(prev: any) => ({ ...prev, page: Math.max(1, page - 1) })}
               disabled={page <= 1}
               className={`rounded-md border px-4 py-2 text-sm font-medium ${
                 page <= 1
@@ -306,7 +306,7 @@ function BlogIndex() {
             </p>
             <Link
               to="/blog"
-              search={(prev: Record<string, unknown>) => ({ ...prev, page: Math.min(totalPages, page + 1) })}
+              search={(prev: any) => ({ ...prev, page: Math.min(totalPages, page + 1) })}
               disabled={page >= totalPages}
               className={`rounded-md border px-4 py-2 text-sm font-medium ${
                 page >= totalPages
