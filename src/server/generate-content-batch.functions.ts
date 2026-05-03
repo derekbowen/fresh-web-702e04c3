@@ -189,7 +189,7 @@ ${planLines}`;
 }
 
 const InputSchema = z.object({
-  count: z.number().int().min(1).max(10).default(5),
+  count: z.number().int().min(1).max(25).default(5),
   tier: z
     .enum(["T1 (200k+)", "T2 (75k–199k)", "T3 (25k–74k)", "T4 (10k–24k)", "longtail"])
     .optional(),
