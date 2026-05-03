@@ -32,10 +32,10 @@ import { Route as SitemapIndexDotxmlRouteImport } from './routes/sitemap-index[.
 import { Route as SitemapHubDotxmlRouteImport } from './routes/sitemap-hub[.]xml'
 import { Route as SitemapDefaultDotxmlRouteImport } from './routes/sitemap-default[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
-import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AcademyRouteImport } from './routes/academy'
@@ -60,6 +60,7 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
+import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
@@ -199,6 +200,11 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReferralRoute = ReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
   path: '/providers',
@@ -213,11 +219,6 @@ const PoolsDirectorySitemapDotxmlRoute =
 const LandingPageRoute = LandingPageRouteImport.update({
   id: '/landing-page',
   path: '/landing-page',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReferralRoute = ReferralRouteImport.update({
-  id: '/referral',
-  path: '/referral',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -285,6 +286,11 @@ const PoolBuildersStateRoute = PoolBuildersStateRouteImport.update({
   path: '/pool-builders/$state',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PHowItWorksRoute = PHowItWorksRouteImport.update({
+  id: '/p/how-it-works',
+  path: '/p/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PHostingRoute = PHostingRouteImport.update({
   id: '/p/hosting',
   path: '/p/hosting',
@@ -293,11 +299,6 @@ const PHostingRoute = PHostingRouteImport.update({
 const PFreeHostToolsRoute = PFreeHostToolsRouteImport.update({
   id: '/p/free-host-tools',
   path: '/p/free-host-tools',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PHowItWorksRoute = PHowItWorksRouteImport.update({
-  id: '/p/how-it-works',
-  path: '/p/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PSlugRoute = PSlugRouteImport.update({
@@ -338,6 +339,11 @@ const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
 const AdminLearningRoute = AdminLearningRouteImport.update({
   id: '/admin/learning',
   path: '/admin/learning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
+  id: '/admin/generate-content',
+  path: '/admin/generate-content',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminContentMigrationRoute = AdminContentMigrationRouteImport.update({
@@ -424,9 +430,9 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
-  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
+  '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -456,6 +462,7 @@ export interface FileRoutesByFullPath {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
+  '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -464,9 +471,9 @@ export interface FileRoutesByFullPath {
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
-  '/p/how-it-works': typeof PHowItWorksRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
+  '/p/how-it-works': typeof PHowItWorksRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -491,9 +498,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
-  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
+  '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -523,6 +530,7 @@ export interface FileRoutesByTo {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
+  '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -531,9 +539,9 @@ export interface FileRoutesByTo {
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
-  '/p/how-it-works': typeof PHowItWorksRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
+  '/p/how-it-works': typeof PHowItWorksRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -560,9 +568,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
-  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
+  '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -592,6 +600,7 @@ export interface FileRoutesById {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
+  '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -600,9 +609,9 @@ export interface FileRoutesById {
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
-  '/p/how-it-works': typeof PHowItWorksRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
+  '/p/how-it-works': typeof PHowItWorksRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -630,9 +639,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog'
     | '/landing-page'
-    | '/referral'
     | '/pools-directory-sitemap.xml'
     | '/providers'
+    | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
     | '/sitemap-hub.xml'
@@ -662,6 +671,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/content-migration'
+    | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
     | '/auth/reset-password'
@@ -670,9 +680,9 @@ export interface FileRouteTypes {
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
-    | '/p/how-it-works'
     | '/p/free-host-tools'
     | '/p/hosting'
+    | '/p/how-it-works'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -697,9 +707,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog'
     | '/landing-page'
-    | '/referral'
     | '/pools-directory-sitemap.xml'
     | '/providers'
+    | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
     | '/sitemap-hub.xml'
@@ -729,6 +739,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/content-migration'
+    | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
     | '/auth/reset-password'
@@ -737,9 +748,9 @@ export interface FileRouteTypes {
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
-    | '/p/how-it-works'
     | '/p/free-host-tools'
     | '/p/hosting'
+    | '/p/how-it-works'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -765,9 +776,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog'
     | '/landing-page'
-    | '/referral'
     | '/pools-directory-sitemap.xml'
     | '/providers'
+    | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
     | '/sitemap-hub.xml'
@@ -797,6 +808,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/content-migration'
+    | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
     | '/auth/reset-password'
@@ -805,9 +817,9 @@ export interface FileRouteTypes {
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
-    | '/p/how-it-works'
     | '/p/free-host-tools'
     | '/p/hosting'
+    | '/p/how-it-works'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -834,9 +846,9 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   LandingPageRoute: typeof LandingPageRoute
-  ReferralRoute: typeof ReferralRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   ProvidersRoute: typeof ProvidersRouteWithChildren
+  ReferralRoute: typeof ReferralRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDefaultDotxmlRoute: typeof SitemapDefaultDotxmlRoute
   SitemapHubDotxmlRoute: typeof SitemapHubDotxmlRoute
@@ -865,15 +877,16 @@ export interface RootRouteChildren {
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
+  AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   CategorySlugRoute: typeof CategorySlugRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
-  PHowItWorksRoute: typeof PHowItWorksRoute
-  PHostingRoute: typeof PHostingRoute
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
+  PHostingRoute: typeof PHostingRoute
+  PHowItWorksRoute: typeof PHowItWorksRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
@@ -1053,6 +1066,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/referral': {
+      id: '/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof ReferralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/providers': {
       id: '/providers'
       path: '/providers'
@@ -1072,13 +1092,6 @@ declare module '@tanstack/react-router' {
       path: '/landing-page'
       fullPath: '/landing-page'
       preLoaderRoute: typeof LandingPageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/referral': {
-      id: '/referral'
-      path: '/referral'
-      fullPath: '/referral'
-      preLoaderRoute: typeof ReferralRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -1179,18 +1192,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PHowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/free-host-tools': {
-      id: '/p/free-host-tools'
-      path: '/p/free-host-tools'
-      fullPath: '/p/free-host-tools'
-      preLoaderRoute: typeof PFreeHostToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/p/hosting': {
       id: '/p/hosting'
       path: '/p/hosting'
       fullPath: '/p/hosting'
       preLoaderRoute: typeof PHostingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/free-host-tools': {
+      id: '/p/free-host-tools'
+      path: '/p/free-host-tools'
+      fullPath: '/p/free-host-tools'
+      preLoaderRoute: typeof PFreeHostToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$slug': {
@@ -1247,6 +1260,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/learning'
       fullPath: '/admin/learning'
       preLoaderRoute: typeof AdminLearningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/generate-content': {
+      id: '/admin/generate-content'
+      path: '/admin/generate-content'
+      fullPath: '/admin/generate-content'
+      preLoaderRoute: typeof AdminGenerateContentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/content-migration': {
@@ -1431,9 +1451,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   LandingPageRoute: LandingPageRoute,
-  ReferralRoute: ReferralRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   ProvidersRoute: ProvidersRouteWithChildren,
+  ReferralRoute: ReferralRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDefaultDotxmlRoute: SitemapDefaultDotxmlRoute,
   SitemapHubDotxmlRoute: SitemapHubDotxmlRoute,
@@ -1463,15 +1483,16 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClickReportRoute: AdminClickReportRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
+  AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   CategorySlugRoute: CategorySlugRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
-  PHowItWorksRoute: PHowItWorksRoute,
-  PHostingRoute: PHostingRoute,
   PFreeHostToolsRoute: PFreeHostToolsRoute,
+  PHostingRoute: PHostingRoute,
+  PHowItWorksRoute: PHowItWorksRoute,
   PoolBuildersStateRoute: PoolBuildersStateRouteWithChildren,
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,

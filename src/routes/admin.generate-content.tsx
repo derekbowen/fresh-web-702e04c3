@@ -5,7 +5,7 @@ import { checkAdminRole } from "@/server/admin-auth.functions";
 import { generateContentBatch } from "@/server/generate-content-batch.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
-export const Route = createFileRoute("/admin/generate-content" as never)({
+export const Route = createFileRoute("/admin/generate-content")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user)
