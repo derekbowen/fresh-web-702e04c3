@@ -37,12 +37,10 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
           <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "text-foreground" }}>Home</Link>
-          <Link to="/category/$slug" params={{ slug: "heated-pools" }} className="text-sm font-medium text-muted-foreground hover:text-foreground">Categories</Link>
-          <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">Blog</Link>
-          <Link to="/host-tools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Host Tools</Link>
-          <Link to="/pool-builders" className="text-sm font-medium text-muted-foreground hover:text-foreground">Pool Builders</Link>
-          <Link to="/help-center" className="text-sm font-medium text-muted-foreground hover:text-foreground">Help</Link>
           <a href="https://www.poolrentalnearme.com/public-pools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Public Pools</a>
+          <a href="https://www.poolrentalnearme.com/amenities" className="text-sm font-medium text-muted-foreground hover:text-foreground">Amenities</a>
+          <a href={rel("/p/how-it-works")} className="text-sm font-medium text-muted-foreground hover:text-foreground">How It Works</a>
+          <a href={rel("/s")} className="text-sm font-medium text-muted-foreground hover:text-foreground">Search</a>
         </nav>
         <a href={rel("/signup")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
           List Your Pool
