@@ -111,7 +111,7 @@ function GenerateContentPage() {
               <input
                 type="number"
                 min={1}
-                max={10}
+                max={25}
                 value={count}
                 onChange={(e) => setCount(Number(e.target.value) || 1)}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
