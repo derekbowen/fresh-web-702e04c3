@@ -89,6 +89,8 @@ export function HostAcqCityTemplate({
             slugPrefix="become-a-swimming-pool-host-"
             heading="Become a host in nearby cities"
           />
+
+          <FaqBlock faqs={faqs} />
         </article>
       </main>
       <SiteFooter />
