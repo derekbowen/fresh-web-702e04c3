@@ -277,14 +277,22 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
 
         <section className="bg-primary py-16 text-primary-foreground sm:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-12">
-              <div className="lg:col-span-4">
+            <div className="grid items-start gap-10 lg:grid-cols-12">
+              <div className="lg:sticky lg:top-8 lg:col-span-4">
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                   Got an occasion to celebrate?
                 </h2>
                 <p className="mt-3 text-primary-foreground/85">
                   Every party type has its own perfect pool — and its own hosting playbook. Tap one to learn what to expect, what it costs, and how to book it right.
                 </p>
+                <div className="mt-6 hidden lg:block">
+                  <a
+                    href="/s"
+                    className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
+                  >
+                    Browse all pools →
+                  </a>
+                </div>
               </div>
               <div className="lg:col-span-8">
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -309,7 +317,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                     </a>
                   ))}
                 </div>
-                <div className="mt-8 flex justify-center lg:justify-start">
+                <div className="mt-8 flex justify-center lg:hidden">
                   <a
                     href="/s"
                     className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
