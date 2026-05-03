@@ -6,6 +6,7 @@ import {
   resolve404,
   type Content404Row,
 } from "@/server/content-404-log.functions";
+import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
 export const Route = createFileRoute("/admin/missing-pages")({
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/admin/missing-pages")({
         search: { redirect: "/admin/missing-pages", mode: "signin" },
       });
     }
+    const { isAdmin } = await checkAdminRole();
+    if (!isAdmin) throw redirect({ to: "/" });
   },
   head: () => ({
     meta: [
