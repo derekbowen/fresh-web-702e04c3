@@ -18,6 +18,7 @@ export type HomeCategory = {
 
 export type HomeData = {
   cities: HomeCity[];
+  cityCount: number;
   categories: HomeCategory[];
   listings: ListingSummary[];
   nearby: {
@@ -33,6 +34,7 @@ const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
 
 const EMPTY_HOME_DATA: HomeData = {
   cities: [],
+  cityCount: 0,
   categories: [],
   listings: [],
   nearby: { city: null, region: null, count: 0, nearestMiles: null },
