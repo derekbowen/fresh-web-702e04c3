@@ -9,8 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
+// Allow only same-origin internal paths: must start with "/" and not "//" or "/\".
+// Rejects "//evil.com", "/\\evil.com", and any value containing "://".
+const SAFE_PATH = /^\/(?!\/|\\)[^\s]*$/;
+const safeRedirect = (v: unknown): string => {
+  if (typeof v !== "string") return "/account/learning";
+  if (!SAFE_PATH.test(v) || v.includes("://")) return "/account/learning";
+  return v;
+};
+
 const SearchSchema = z.object({
-  redirect: z.string().optional().default("/account/learning"),
+  redirect: z.preprocess(safeRedirect, z.string()).default("/account/learning"),
   mode: z.enum(["signin", "signup"]).optional().default("signin"),
 });
 

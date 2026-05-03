@@ -81,7 +81,8 @@ const searchSchema = z.object({ q: z.string().min(1).max(120) });
 export const searchHelpArticles = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => searchSchema.parse(d))
   .handler(async ({ data }) => {
-    const term = data.q.trim();
+    // Strip PostgREST filter metacharacters before interpolating into .or()
+    const term = data.q.replace(/[%,()]/g, " ").trim();
     if (!term) return { results: [] };
     const { data: results } = await supabaseAdmin
       .from("help_articles")
