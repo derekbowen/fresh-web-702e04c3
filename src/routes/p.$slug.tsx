@@ -9,6 +9,10 @@ import {
   lookupContentPage,
   type ContentPage,
 } from "@/server/content-pages.functions";
+import {
+  getNearbyCitiesForPage,
+  type NearbyCity,
+} from "@/server/nearby-cities.functions";
 import { log404 } from "@/server/content-404-log.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
