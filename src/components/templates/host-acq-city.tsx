@@ -80,6 +80,12 @@ export function HostAcqCityTemplate({
               Detailed local guide coming soon.
             </p>
           )}
+
+          <NearbyCities
+            cities={nearbyCities}
+            slugPrefix="become-a-swimming-pool-host-"
+            heading="Become a host in nearby cities"
+          />
         </article>
       </main>
       <SiteFooter />
