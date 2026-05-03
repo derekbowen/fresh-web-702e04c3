@@ -6,7 +6,7 @@ import { backfillContentPages } from "@/server/backfill-content-pages.functions"
  * Body: { adminToken, limit?, model?, dryRun? }
  * adminToken must equal BACKFILL_ADMIN_TOKEN (or SUPABASE_SERVICE_ROLE_KEY fallback).
  */
-export const Route = createFileRoute("/api/public/backfill-content-pages")({
+export const Route = createFileRoute("/api/public/backfill-content-pages" as any)({
   server: {
     handlers: {
       POST: async ({ request }) => {
