@@ -35,6 +35,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
+import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AcademyRouteImport } from './routes/academy'
@@ -210,6 +211,11 @@ const PoolsDirectorySitemapDotxmlRoute =
 const LandingPageRoute = LandingPageRouteImport.update({
   id: '/landing-page',
   path: '/landing-page',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferralRoute = ReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -406,6 +412,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
+  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
@@ -470,6 +477,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
+  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
@@ -536,6 +544,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
+  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
@@ -603,6 +612,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog'
     | '/landing-page'
+    | '/referral'
     | '/pools-directory-sitemap.xml'
     | '/providers'
     | '/robots.txt'
@@ -667,6 +677,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog'
     | '/landing-page'
+    | '/referral'
     | '/pools-directory-sitemap.xml'
     | '/providers'
     | '/robots.txt'
@@ -732,6 +743,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blog'
     | '/landing-page'
+    | '/referral'
     | '/pools-directory-sitemap.xml'
     | '/providers'
     | '/robots.txt'
@@ -798,6 +810,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   LandingPageRoute: typeof LandingPageRoute
+  ReferralRoute: typeof ReferralRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   ProvidersRoute: typeof ProvidersRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -1033,6 +1046,13 @@ declare module '@tanstack/react-router' {
       path: '/landing-page'
       fullPath: '/landing-page'
       preLoaderRoute: typeof LandingPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/referral': {
+      id: '/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof ReferralRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -1371,6 +1391,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   LandingPageRoute: LandingPageRoute,
+  ReferralRoute: ReferralRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   ProvidersRoute: ProvidersRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
