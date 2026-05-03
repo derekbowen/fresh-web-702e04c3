@@ -386,8 +386,8 @@ function HowItWorksPage() {
                 Search the full marketplace by city, date, and amenities.
               </p>
             </a>
-            <Link
-              to="/amenities"
+            <a
+              href="/amenities"
               className="group rounded-2xl border border-border p-5 transition hover:border-primary hover:shadow-sm"
             >
               <h3 className="text-base font-semibold text-foreground group-hover:text-primary">
