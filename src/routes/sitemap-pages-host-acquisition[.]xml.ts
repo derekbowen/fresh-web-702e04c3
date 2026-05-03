@@ -11,7 +11,7 @@ export const Route = createFileRoute("/sitemap-pages-host-acquisition.xml")({
   server: {
     handlers: {
       GET: async ({ request }) =>
-        buildContentPagesSitemap(request, ["host_acq_city"], "/p", supabaseAdmin, SITE_URL),
+        buildContentPagesSitemap(request, ["host_acq_city", "host_acq_hub"], "/p", supabaseAdmin, SITE_URL),
     },
   },
 });

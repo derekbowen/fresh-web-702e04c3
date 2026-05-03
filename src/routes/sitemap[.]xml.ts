@@ -10,29 +10,28 @@ import {
 
 /**
  * Parent sitemap index. Lists Lovable-served sub-sitemaps + the Sharetribe
- * passthrough listing sitemap. See migration-plan/04-sitemap-structure.md.
+ * passthrough listing sitemap.
  *
- * Sharetribe owns /sitemap-recent-listings.xml — the reverse proxy passes that
- * URL through to Sharetribe origin. We just reference it from the parent index
- * so Google discovers it.
+ * Eligibility for content_pages: `in_sitemap = true` AND `slug IS NOT NULL`.
+ * We do NOT filter on `status` here because the importer leaves rows as
+ * 'pending' until they're scraped, but `in_sitemap=true` is the canonical
+ * "this URL should be advertised" flag.
  */
 
 interface TemplateGroup {
-  templateType: string;
-  basePath: string; // e.g. "/sitemap-pages-host-acquisition.xml"
+  basePath: string;
+  templateTypes: string[];
 }
 
 const TEMPLATE_GROUPS: TemplateGroup[] = [
-  { templateType: "money_page", basePath: "/sitemap-pages-money.xml" },
-  { templateType: "city_main", basePath: "/sitemap-pages-cities.xml" },
-  { templateType: "host_acquisition_city", basePath: "/sitemap-pages-host-acquisition.xml" },
-  { templateType: "event_city_guide", basePath: "/sitemap-pages-event-guides.xml" },
-  { templateType: "resource_article", basePath: "/sitemap-pages-articles.xml" },
-  { templateType: "academy_article", basePath: "/sitemap-pages-academy.xml" },
-  { templateType: "host_advocacy", basePath: "/sitemap-pages-advocacy.xml" },
-  { templateType: "state_advocacy_guide", basePath: "/sitemap-pages-advocacy.xml" }, // co-located
-  { templateType: "spanish_host_acquisition", basePath: "/sitemap-pages-spanish.xml" },
-  { templateType: "spanish_resource", basePath: "/sitemap-pages-spanish.xml" }, // co-located
+  { basePath: "/sitemap-pages-money.xml", templateTypes: ["money_page"] },
+  { basePath: "/sitemap-pages-cities.xml", templateTypes: ["city_main", "public_pool_city", "public_pool_state"] },
+  { basePath: "/sitemap-pages-host-acquisition.xml", templateTypes: ["host_acq_city", "host_acq_hub"] },
+  { basePath: "/sitemap-pages-event-guides.xml", templateTypes: ["event_guide"] },
+  { basePath: "/sitemap-pages-articles.xml", templateTypes: ["resource", "other"] },
+  { basePath: "/sitemap-pages-academy.xml", templateTypes: ["elearning"] },
+  { basePath: "/sitemap-pages-advocacy.xml", templateTypes: ["host_advocacy_hub", "host_advocacy_state"] },
+  { basePath: "/sitemap-pages-spanish.xml", templateTypes: ["spanish_host_acq", "spanish_resource"] },
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({
@@ -41,35 +40,33 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const entries: SitemapIndexEntry[] = [];
 
-        // 1. Static sub-sitemap (always present; lastmod = build/deploy time)
+        // 1. Static sub-sitemap
         entries.push({
           loc: `${SITE_URL}/sitemap-static.xml`,
           lastmod: new Date(),
         });
 
         // 2. Per-template-type content_pages sub-sitemaps (with auto-pagination)
-        const seen = new Set<string>();
         for (const group of TEMPLATE_GROUPS) {
-          if (seen.has(group.basePath)) continue;
-          // For co-located groups (advocacy, spanish), aggregate count across types
-          const types = TEMPLATE_GROUPS
-            .filter((g) => g.basePath === group.basePath)
-            .map((g) => g.templateType);
-
           const { count, error } = await (supabaseAdmin as any)
             .from("content_pages")
             .select("*", { count: "exact", head: true })
-            .eq("is_published", true)
-            .in("template_type", types);
+            .in("template_type", group.templateTypes)
+            .eq("in_sitemap", true)
+            .not("slug", "is", null);
 
-          if (error || !count) continue;
+          if (error) {
+            console.error(`[sitemap] count error for ${group.basePath}`, error);
+            continue;
+          }
+          if (!count) continue;
 
-          // Latest lastmod for the group
           const { data: latest } = await (supabaseAdmin as any)
             .from("content_pages")
             .select("updated_at")
-            .eq("is_published", true)
-            .in("template_type", types)
+            .in("template_type", group.templateTypes)
+            .eq("in_sitemap", true)
+            .not("slug", "is", null)
             .order("updated_at", { ascending: false })
             .limit(1)
             .maybeSingle();
@@ -80,49 +77,9 @@ export const Route = createFileRoute("/sitemap.xml")({
               p === 1 ? `${SITE_URL}${group.basePath}` : `${SITE_URL}${group.basePath}?page=${p}`;
             entries.push({ loc, lastmod: latest?.updated_at });
           }
-          seen.add(group.basePath);
         }
 
-        // 3. Amenities (renamed from /category to match Sharetribe /amenity URLs)
-        const { count: amenityCount } = await (supabaseAdmin as any)
-          .from("amenities")
-          .select("*", { count: "exact", head: true })
-          .eq("is_published", true);
-        if (amenityCount && amenityCount > 0) {
-          const { data: latest } = await (supabaseAdmin as any)
-            .from("amenities")
-            .select("updated_at")
-            .eq("is_published", true)
-            .order("updated_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          entries.push({
-            loc: `${SITE_URL}/sitemap-amenities.xml`,
-            lastmod: latest?.updated_at,
-          });
-        }
-
-        // 4. Public pools (sub-index — referenced even if its sub-sitemaps are still empty)
-        entries.push({
-          loc: `${SITE_URL}/sitemap-public-pools.xml`,
-          lastmod: new Date(),
-        });
-
-        // 5. Host profiles (optional — /u/{uuid})
-        const { count: hostCount } = await (supabaseAdmin as any)
-          .from("host_profiles")
-          .select("*", { count: "exact", head: true })
-          .eq("is_published", true);
-        if (hostCount && hostCount > 0) {
-          entries.push({
-            loc: `${SITE_URL}/sitemap-hosts.xml`,
-            lastmod: new Date(),
-          });
-        }
-
-        // 6. Sharetribe-served listing sub-sitemap — passthrough.
-        // No lastmod here: Lovable can't reliably know when Sharetribe
-        // last regenerated this. Google handles missing lastmod fine.
+        // 3. Sharetribe-served listing sub-sitemap — passthrough
         entries.push({ loc: `${SITE_URL}/sitemap-recent-listings.xml` });
 
         return sitemapResponse(buildSitemapIndexXml(entries));
