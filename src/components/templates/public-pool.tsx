@@ -2,6 +2,8 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { AutoLinkedContent } from "@/components/auto-linked-content";
 import { NearbyCities } from "@/components/nearby-cities";
+import { FaqBlock } from "@/components/faq-block";
+import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 
@@ -20,6 +22,7 @@ export function PublicPoolTemplate({
   const title = page.title || page.seo_title || "Public pool";
   const description = page.seo_description || page.description || null;
   const body = page.body_markdown || page.content || null;
+  const faqs = faqsForContentPage(page);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -80,6 +83,8 @@ export function PublicPoolTemplate({
             slugPrefix=""
             heading="Nearby cities"
           />
+
+          <FaqBlock faqs={faqs} />
         </article>
       </main>
       <SiteFooter />

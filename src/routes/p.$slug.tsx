@@ -27,6 +27,7 @@ import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 import { PublicPoolTemplate } from "@/components/templates/public-pool";
 import { EventGuideTemplate } from "@/components/templates/event-guide";
+import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 
 /**
  * Dispatcher route for /p/{slug}.
@@ -132,6 +133,12 @@ export const Route = createFileRoute("/p/$slug")({
         inLanguage: p.language,
       };
       scripts.push(ldJsonScript(article));
+    }
+
+    // FAQPage JSON-LD — synthesized from template_type + city/state slug
+    const faqs = faqsForContentPage(p);
+    if (faqs.length > 0) {
+      scripts.push(ldJsonScript(faqPageJsonLd(faqs)));
     }
 
     return { ...meta, scripts };
