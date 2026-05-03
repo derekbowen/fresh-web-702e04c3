@@ -412,6 +412,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
+  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
@@ -476,6 +477,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
+  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
@@ -542,6 +544,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
+  '/referral': typeof ReferralRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
