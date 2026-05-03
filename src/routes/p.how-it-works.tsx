@@ -8,6 +8,7 @@ import {
   SITE_NAME,
   SITE_URL,
 } from "@/lib/seo";
+import heroImage from "@/assets/how-it-works-hero.jpg";
 
 /**
  * Dedicated /p/how-it-works route. Hand-authored, SEO-optimized landing page
@@ -179,18 +180,28 @@ function HowItWorksPage() {
       <SiteHeader />
       <main className="flex-1">
         {/* Hero */}
-        <section className="border-b border-border bg-gradient-to-b from-primary/5 to-transparent">
-          <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-            <Breadcrumbs
-              items={[
-                { name: "Home", path: "/" },
-                { name: "How It Works", path: PATH },
-              ]}
-            />
-            <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+        <section className="relative overflow-hidden border-b border-border">
+          <img
+            src={heroImage}
+            alt="Private backyard pool with rock waterfall, slide, and grotto at sunset"
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+            fetchPriority="high"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+          <div className="relative mx-auto w-full max-w-5xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+            <div className="[&_*]:!text-white/90">
+              <Breadcrumbs
+                items={[
+                  { name: "Home", path: "/" },
+                  { name: "How It Works", path: PATH },
+                ]}
+              />
+            </div>
+            <h1 className="mt-6 text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl lg:text-6xl">
               How Pool Rental Near Me Works
             </h1>
-            <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+            <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/90 drop-shadow sm:text-xl">
               Book a private backyard pool by the hour for a birthday, family
               swim, photoshoot, or quiet afternoon — or turn your own pool into
               a stream of income. Every booking is paid securely and protected
@@ -199,13 +210,13 @@ function HowItWorksPage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href="/s"
-                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
               >
                 Find a pool near you
               </a>
               <a
                 href="/p/become-a-pool-host"
-                className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-base font-semibold text-foreground transition hover:bg-muted"
+                className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/10 px-6 py-3 text-base font-semibold text-white backdrop-blur transition hover:bg-white/20"
               >
                 List your pool
               </a>
