@@ -1458,6 +1458,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSlugRoute: PSlugRoute,
   PHowItWorksRoute: PHowItWorksRoute,
   PHostingRoute: PHostingRoute,
+  PFreeHostToolsRoute: PFreeHostToolsRoute,
   PoolBuildersStateRoute: PoolBuildersStateRouteWithChildren,
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
