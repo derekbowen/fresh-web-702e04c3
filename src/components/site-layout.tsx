@@ -42,7 +42,7 @@ export function SiteHeader() {
           <a href={rel("/p/how-it-works")} className="text-sm font-medium text-muted-foreground hover:text-foreground">How It Works</a>
           <a href={rel("/s")} className="text-sm font-medium text-muted-foreground hover:text-foreground">Search</a>
         </nav>
-        <a href={rel("/signup")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
+        <a href={rel("/l/draft/00000000-0000-0000-0000-000000000000/new/details")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
           List Your Pool
         </a>
       </div>
@@ -53,22 +53,21 @@ export function SiteHeader() {
 const EXPLORE = [
   { label: "Search Listings", href: "/s" },
   { label: "How It Works", href: "/p/how-it-works" },
-  { label: "Start a Business", href: "/p/start-a-pool-rental-business" },
+  { label: "Start a Business", href: "/p/hosting" },
   { label: "Swimply Alternative", href: "/p/swimply-alternative" },
-  { label: "Sign a Waiver", href: "/p/waiver" },
-  { label: "Store", href: "/p/store" },
+  { label: "Sign a Waiver", href: "/p/sign-a-waiver" },
   { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
 ];
 
 const HOSTS = [
-  { label: "List Your Pool for Free", href: "/signup" },
-  { label: "How Hosting Works", href: "/p/how-hosting-works" },
-  { label: "Find Locations Near You", href: "/p/locations" },
+  { label: "List Your Pool for Free", href: "/l/draft/00000000-0000-0000-0000-000000000000/new/details" },
+  { label: "How Hosting Works", href: "/p/hosting" },
+  { label: "Find Locations Near You", href: "/p/all-locations" },
   { label: "Earnings Calculator", href: "/p/earnings-calculator" },
-  { label: "Host Pro Tools", href: "/p/host-pro-tools" },
-  { label: "Host Connect", href: "/p/host-connect" },
-  { label: "HOA Defense Kit", href: "/p/hoa-defense-kit" },
-  { label: "Host Make More $$$", href: "/p/make-more-money" },
+  { label: "Host Pro Tools", href: "/p/free-host-tools" },
+  { label: "Host Connect", href: "https://connect.poolrentalnearme.com" },
+  { label: "HOA Defense Kit", href: "/p/hoa-pool-rental-defense-kit" },
+  { label: "Host Make More $$$", href: "/p/hosting" },
 ];
 
 const COMPANY = [
@@ -77,8 +76,8 @@ const COMPANY = [
   { label: "Investors", href: "/p/investors" },
   { label: "Terms", href: "/terms-of-service" },
   { label: "Privacy", href: "/privacy-policy" },
-  { label: "Video Chat Support", href: "/p/video-chat-support" },
-  { label: "Refer Pool Owners", href: "/p/refer" },
+  { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
+  { label: "Refer Pool Owners", href: "/referral" },
 ];
 
 const POPULAR_MARKETS = [
@@ -160,7 +159,7 @@ export function SiteFooter() {
                 </li>
               ))}
               <li>
-                <a href={rel("/s")} className="hover:text-primary">All Locations</a>
+                <a href={rel("/p/all-locations")} className="hover:text-primary">All Locations</a>
               </li>
             </ul>
           </div>

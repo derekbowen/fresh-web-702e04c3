@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
@@ -116,7 +116,7 @@ function HomePage() {
                   Find a pool near you →
                 </a>
                 <a
-                  href="/signup"
+                  href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                   className="inline-flex items-center justify-center rounded-full border border-white/40 bg-transparent px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/10"
                 >
                   List your pool
@@ -164,7 +164,7 @@ function HomePage() {
               <span className="text-2xl text-muted-foreground group-hover:text-primary" aria-hidden>→</span>
             </a>
             <a
-              href="/signup"
+              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
               className="group flex items-center gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl" aria-hidden>💰</div>
@@ -219,16 +219,15 @@ function HomePage() {
               <div className="lg:col-span-8">
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {FEATURED_OCCASIONS.map((o) => (
-                    <Link
+                    <a
                       key={o.slug}
-                      to="/academy/$slug"
-                      params={{ slug: o.slug }}
+                      href={`/s?keywords=${encodeURIComponent(o.title)}`}
                       className="group relative overflow-hidden rounded-2xl bg-white text-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-xl"
                     >
                       <div className="aspect-[4/3] overflow-hidden">
                         <img
                           src={ACADEMY_HERO_MAP[o.img]}
-                          alt={`${o.title} pool rental playbook`}
+                          alt={`${o.title} pool rental`}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
                         />
@@ -237,16 +236,16 @@ function HomePage() {
                         <span className="text-sm font-semibold">{o.title}</span>
                         <span className="text-primary" aria-hidden>→</span>
                       </div>
-                    </Link>
+                    </a>
                   ))}
                 </div>
                 <div className="mt-8 flex justify-center lg:justify-start">
-                  <Link
-                    to="/academy"
+                  <a
+                    href="/s"
                     className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                   >
-                    Browse all occasion playbooks →
-                  </Link>
+                    Browse all pools →
+                  </a>
                 </div>
               </div>
             </div>
@@ -304,10 +303,9 @@ function HomePage() {
               </p>
               <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                 {categories.map((c: { slug: string; name: string; icon: string | null }) => (
-                  <Link
+                  <a
                     key={c.slug}
-                    to="/category/$slug"
-                    params={{ slug: c.slug }}
+                    href={`/s?pub_category=${encodeURIComponent(c.slug)}`}
                     className="group rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
                   >
                     {c.icon && (
@@ -318,7 +316,7 @@ function HomePage() {
                     <div className="mt-2 text-sm font-semibold text-foreground group-hover:text-primary">
                       {c.name}
                     </div>
-                  </Link>
+                  </a>
                 ))}
               </div>
             </div>
@@ -335,14 +333,13 @@ function HomePage() {
           </p>
           <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {cities.map((c: { slug: string; name: string; state_code: string }) => (
-              <Link
+              <a
                 key={c.slug}
-                to="/pool-rental/$city"
-                params={{ city: c.slug }}
+                href={`/s?address=${encodeURIComponent(`${c.name}, ${c.state_code}`)}`}
                 className="text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
               >
                 {c.name}, {c.state_code}
-              </Link>
+              </a>
             ))}
           </div>
         </section>
@@ -359,7 +356,7 @@ function HomePage() {
               </p>
             </div>
             <a
-              href="/signup"
+              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
               className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-7 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
             >
               List your pool →
