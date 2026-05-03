@@ -9,6 +9,10 @@ import {
   lookupContentPage,
   type ContentPage,
 } from "@/server/content-pages.functions";
+import {
+  getNearbyCitiesForPage,
+  type NearbyCity,
+} from "@/server/nearby-cities.functions";
 import { log404 } from "@/server/content-404-log.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
@@ -56,8 +60,23 @@ export const Route = createFileRoute("/p/$slug")({
     // Pass the loaded page through to the loader to avoid a second query
     return { page: result.page };
   },
-  loader: ({ context }) => {
-    return { page: (context as { page: ContentPage }).page };
+  loader: async ({ context }) => {
+    const page = (context as { page: ContentPage }).page;
+    let nearbyCities: NearbyCity[] = [];
+    if (
+      page.template_type === "host_acq_city" ||
+      page.template_type === "public_pool_city" ||
+      page.template_type === "spanish_host_acq"
+    ) {
+      try {
+        nearbyCities = await getNearbyCitiesForPage({
+          data: { templateType: page.template_type, slug: page.slug, limit: 6 },
+        });
+      } catch {
+        nearbyCities = [];
+      }
+    }
+    return { page, nearbyCities };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -176,13 +195,15 @@ function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string
 }
 
 function ContentPageDispatcher() {
-  const { page } = Route.useLoaderData();
+  const { page, nearbyCities } = Route.useLoaderData();
 
   switch (page.template_type) {
     case "host_acq_city":
-      return <HostAcqCityTemplate page={page} />;
+      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} />;
     case "public_pool":
       return <PublicPoolTemplate page={page} />;
+    case "public_pool_city":
+      return <PublicPoolTemplate page={page} nearbyCities={nearbyCities} />;
     case "event_guide":
       return <EventGuideTemplate page={page} />;
     case "resource":

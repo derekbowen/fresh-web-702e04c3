@@ -1,8 +1,9 @@
-// no-op import removed
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { AutoLinkedContent } from "@/components/auto-linked-content";
+import { NearbyCities } from "@/components/nearby-cities";
 import type { ContentPage } from "@/server/content-pages.functions";
+import type { NearbyCity } from "@/server/nearby-cities.functions";
 
 /**
  * Template for /p/become-a-pool-host-{city}-{state} pages
@@ -10,7 +11,13 @@ import type { ContentPage } from "@/server/content-pages.functions";
  * pool hosts in specific U.S. cities. Renders title, hero, optional scraped
  * markdown body, plus a strong "Apply to host" CTA.
  */
-export function HostAcqCityTemplate({ page }: { page: ContentPage }) {
+export function HostAcqCityTemplate({
+  page,
+  nearbyCities = [],
+}: {
+  page: ContentPage;
+  nearbyCities?: NearbyCity[];
+}) {
   const title = page.title || page.seo_title || "Become a pool host";
   const description = page.seo_description || page.description || null;
   const body = page.body_markdown || page.content || null;
@@ -73,6 +80,12 @@ export function HostAcqCityTemplate({ page }: { page: ContentPage }) {
               Detailed local guide coming soon.
             </p>
           )}
+
+          <NearbyCities
+            cities={nearbyCities}
+            slugPrefix="become-a-swimming-pool-host-"
+            heading="Become a host in nearby cities"
+          />
         </article>
       </main>
       <SiteFooter />

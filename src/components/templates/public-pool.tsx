@@ -1,16 +1,22 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { AutoLinkedContent } from "@/components/auto-linked-content";
+import { NearbyCities } from "@/components/nearby-cities";
 import type { ContentPage } from "@/server/content-pages.functions";
+import type { NearbyCity } from "@/server/nearby-cities.functions";
 
 /**
- * Template for /p/{slug} pages where template_type = "public_pool".
- * ~895 individual public-pool listings sourced from the legacy
- * /public-pools/{state}/{city}/{pool-slug} URLs. Each page introduces a single
- * municipal/community pool and points visitors toward private Swimply rentals
- * nearby when the public pool is closed, crowded, or not a fit.
+ * Template for /p/{slug} pages where template_type = "public_pool" or
+ * "public_pool_city". Public_pool_city pages additionally render a
+ * "nearby cities" block for internal linking / SEO.
  */
-export function PublicPoolTemplate({ page }: { page: ContentPage }) {
+export function PublicPoolTemplate({
+  page,
+  nearbyCities = [],
+}: {
+  page: ContentPage;
+  nearbyCities?: NearbyCity[];
+}) {
   const title = page.title || page.seo_title || "Public pool";
   const description = page.seo_description || page.description || null;
   const body = page.body_markdown || page.content || null;
@@ -68,6 +74,12 @@ export function PublicPoolTemplate({ page }: { page: ContentPage }) {
               Find a private pool
             </a>
           </aside>
+
+          <NearbyCities
+            cities={nearbyCities}
+            slugPrefix=""
+            heading="Nearby cities"
+          />
         </article>
       </main>
       <SiteFooter />
