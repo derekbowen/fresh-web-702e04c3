@@ -74,6 +74,12 @@ export function PublicPoolTemplate({
               Find a private pool
             </a>
           </aside>
+
+          <NearbyCities
+            cities={nearbyCities}
+            slugPrefix=""
+            heading="Nearby cities"
+          />
         </article>
       </main>
       <SiteFooter />
