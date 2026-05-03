@@ -34,6 +34,7 @@ Rules:
 - Never invent fake URLs. Only use the internal links provided in the user prompt.`;
 
 serve(async (req) => {
+  const corsHeaders = buildCorsHeaders(req.headers.get("origin"));
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
