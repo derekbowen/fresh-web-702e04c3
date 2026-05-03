@@ -1,22 +1,23 @@
 /**
- * Sharetribe Integration API client (server-only).
+ * Sharetribe Marketplace API client (server-only).
  *
- * The configured Sharetribe app for this project is an Integration API
- * application (client_id + client_secret). Marketplace API "public-read"
- * does NOT work with this client_id, so we use the Integration API host:
+ * The configured Sharetribe app for this project only has the `public-read`
+ * scope (Marketplace API), not Integration API. Even when requesting
+ * `scope=integ`, Sharetribe returns a public-read token, which gets 403 on
+ * Integration endpoints. So we use the Marketplace API host:
  *
- *   POST https://flex-integ-api.sharetribe.com/v1/auth/token
- *        grant_type=client_credentials, scope=integ
+ *   POST https://flex-api.sharetribe.com/v1/auth/token
+ *        client_id, grant_type=client_credentials, scope=public-read
  *
- *   GET  https://flex-integ-api.sharetribe.com/v1/integration_api/listings/{query|show}
+ *   GET  https://flex-api.sharetribe.com/v1/api/listings/{query|show}
  *
- * Integration API returns ALL listings (draft, pending-approval, published,
- * closed). For public-facing surfaces we filter to `states=published`.
+ * Marketplace API public-read returns only published listings. The `states`
+ * filter is not supported on this scope.
  *
- * Docs: https://www.sharetribe.com/api-reference/integration.html
+ * Docs: https://www.sharetribe.com/api-reference/marketplace.html
  */
 
-const INTEG_API_BASE = "https://flex-integ-api.sharetribe.com";
+const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
 
 type TokenCache = { token: string; expiresAt: number } | null;
 let tokenCache: TokenCache = null;
@@ -27,17 +28,12 @@ function getClientId(): string {
   return id;
 }
 
-function getClientSecret(): string {
-  const s = process.env.SHARETRIBE_CLIENT_SECRET;
-  if (!s) throw new Error("SHARETRIBE_CLIENT_SECRET is not configured");
-  return s;
-}
-
 /**
- * Get an Integration API access token (scope=integ). Cached in-memory for the
- * lifetime of the worker instance.
+ * Get a Marketplace API access token (scope=public-read). Cached in-memory
+ * for the lifetime of the worker instance. The public-read flow is
+ * client_id-only — no client_secret required.
  */
-async function getIntegToken(): Promise<string> {
+async function getPublicReadToken(): Promise<string> {
   const now = Date.now();
   if (tokenCache && tokenCache.expiresAt > now + 30_000) {
     return tokenCache.token;
@@ -45,12 +41,11 @@ async function getIntegToken(): Promise<string> {
 
   const body = new URLSearchParams({
     client_id: getClientId(),
-    client_secret: getClientSecret(),
     grant_type: "client_credentials",
-    scope: "integ",
+    scope: "public-read",
   });
 
-  const res = await fetch(`${INTEG_API_BASE}/v1/auth/token`, {
+  const res = await fetch(`${MARKETPLACE_API_BASE}/v1/auth/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
@@ -79,16 +74,19 @@ async function integGet<T = unknown>(
   path: string,
   query: Record<string, string | number | boolean | undefined> = {},
 ): Promise<T> {
-  const token = await getIntegToken();
+  const token = await getPublicReadToken();
 
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(query)) {
     if (v !== undefined && v !== null && v !== "") {
+      // Marketplace API public-read does not support `states` filter
+      // (only published listings are returned).
+      if (k === "states") continue;
       params.set(k, String(v));
     }
   }
 
-  const url = `${INTEG_API_BASE}/v1/integration_api${path}${params.size ? `?${params}` : ""}`;
+  const url = `${MARKETPLACE_API_BASE}/v1/api${path}${params.size ? `?${params}` : ""}`;
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
