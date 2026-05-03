@@ -1,15 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { buildMeta, ldJsonScript, SITE_NAME, SITE_URL } from "@/lib/seo";
-import { getHomeData } from "@/server/home-data.functions";
+import { getHomeData, type HomeData } from "@/server/home-data.functions";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
 
+const EMPTY_HOME_DATA: HomeData = {
+  cities: [],
+  cityCount: 0,
+  categories: [],
+  listings: [],
+  nearby: { city: null, region: null, count: 0, nearestMiles: null },
+};
+
 export const Route = createFileRoute("/landing-page")({
-  // This route is served via an nginx reverse proxy at https://www.poolrentalnearme.com/.
-  // The browser URL is `/` but the upstream HTML is for `/landing-page`, which causes
-  // a router hydration mismatch (React error #418). Disabling SSR for this route makes
-  // the client render fresh from the visible URL — head() metadata still SSRs for SEO.
-  ssr: false,
-  loader: () => getHomeData(),
+  // This route is reverse-proxied at https://www.poolrentalnearme.com/.
+  // The browser URL is `/` while the upstream HTML is for `/landing-page`,
+  // which makes any data-driven first render risk a hydration mismatch.
+  // We render a deterministic empty shell on both server and first client
+  // render, then fetch live data in an effect post-hydration.
   head: () => {
     const meta = buildMeta({
       title: "Pool Rental Near Me — Rent a Private Pool by the Hour",
@@ -40,6 +49,22 @@ export const Route = createFileRoute("/landing-page")({
 });
 
 function LandingPage() {
-  const data = Route.useLoaderData();
+  const fetchHome = useServerFn(getHomeData);
+  const [data, setData] = useState<HomeData>(EMPTY_HOME_DATA);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchHome()
+      .then((d) => {
+        if (!cancelled && d) setData(d);
+      })
+      .catch((err) => {
+        console.error("landing-page getHomeData failed:", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchHome]);
+
   return <HomePageContent data={data} />;
 }
