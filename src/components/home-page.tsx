@@ -188,7 +188,7 @@ export function HomePageContent({ data }: { data: HomeData | undefined | null })
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">As featured in</span>
               <a
-                href="https://www.einpresswire.com/article/823456000/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours"
+                href="https://realestate.einnews.com/pr_news/908834379/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
@@ -203,8 +203,22 @@ export function HomePageContent({ data }: { data: HomeData | undefined | null })
               >
                 National Law Review
               </a>
-              <span className="font-serif text-base font-semibold text-foreground/80">Digital Journal</span>
-              <span className="font-serif text-base font-semibold text-foreground/80">WRAL Financial</span>
+              <a
+                href="https://lifestyle.myeaglecountry.com/story/194280/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              >
+                Eagle Country
+              </a>
+              <a
+                href="https://lifestyle.kbew98country.com/story/194285/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              >
+                KBEW
+              </a>
             </div>
           </div>
         </section>
