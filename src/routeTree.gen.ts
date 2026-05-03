@@ -50,6 +50,7 @@ import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as PoolRentalLawsCityRouteImport } from './routes/pool-rental-laws.$city'
 import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$state'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
+import { Route as PHostingRouteImport } from './routes/p.hosting'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
@@ -283,6 +284,11 @@ const PoolBuildersStateRoute = PoolBuildersStateRouteImport.update({
   path: '/pool-builders/$state',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PHostingRoute = PHostingRouteImport.update({
+  id: '/p/hosting',
+  path: '/p/hosting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PHowItWorksRoute = PHowItWorksRouteImport.update({
   id: '/p/how-it-works',
   path: '/p/how-it-works',
@@ -453,6 +459,7 @@ export interface FileRoutesByFullPath {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/hosting': typeof PHostingRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -518,6 +525,7 @@ export interface FileRoutesByTo {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/hosting': typeof PHostingRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -585,6 +593,7 @@ export interface FileRoutesById {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/hosting': typeof PHostingRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -653,6 +662,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/how-it-works'
+    | '/p/hosting'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -718,6 +728,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/how-it-works'
+    | '/p/hosting'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -784,6 +795,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/how-it-works'
+    | '/p/hosting'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -848,6 +860,7 @@ export interface RootRouteChildren {
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
+  PHostingRoute: typeof PHostingRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
@@ -1153,6 +1166,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PHowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/hosting': {
+      id: '/p/hosting'
+      path: '/p/hosting'
+      fullPath: '/p/hosting'
+      preLoaderRoute: typeof PHostingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$slug': {
       id: '/p/$slug'
       path: '/p/$slug'
@@ -1430,6 +1450,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
   PHowItWorksRoute: PHowItWorksRoute,
+  PHostingRoute: PHostingRoute,
   PoolBuildersStateRoute: PoolBuildersStateRouteWithChildren,
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
