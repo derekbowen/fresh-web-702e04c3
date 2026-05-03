@@ -67,6 +67,7 @@ export const Route = createFileRoute("/p/$slug")({
   loader: async ({ context }) => {
     const page = (context as { page: ContentPage }).page;
     let nearbyCities: NearbyCity[] = [];
+    let city: CityRow | null = null;
     if (
       page.template_type === "host_acq_city" ||
       page.template_type === "public_pool_city" ||
@@ -79,8 +80,16 @@ export const Route = createFileRoute("/p/$slug")({
       } catch {
         nearbyCities = [];
       }
+      const citySlug = cityForContentPage(page.template_type, page.slug);
+      if (citySlug) {
+        try {
+          city = await getCityBySlug({ data: { slug: citySlug } });
+        } catch {
+          city = null;
+        }
+      }
     }
-    return { page, nearbyCities };
+    return { page, nearbyCities, city };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
