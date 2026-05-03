@@ -52,6 +52,7 @@ import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$s
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
+import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
@@ -301,6 +302,11 @@ const PFreeHostToolsRoute = PFreeHostToolsRouteImport.update({
   path: '/p/free-host-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PAllLocationsRoute = PAllLocationsRouteImport.update({
+  id: '/p/all-locations',
+  path: '/p/all-locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PSlugRoute = PSlugRouteImport.update({
   id: '/p/$slug',
   path: '/p/$slug',
@@ -471,6 +477,7 @@ export interface FileRoutesByFullPath {
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
+  '/p/all-locations': typeof PAllLocationsRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
@@ -539,6 +546,7 @@ export interface FileRoutesByTo {
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
+  '/p/all-locations': typeof PAllLocationsRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
@@ -609,6 +617,7 @@ export interface FileRoutesById {
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
+  '/p/all-locations': typeof PAllLocationsRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
@@ -680,6 +689,7 @@ export interface FileRouteTypes {
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
+    | '/p/all-locations'
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
@@ -748,6 +758,7 @@ export interface FileRouteTypes {
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
+    | '/p/all-locations'
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
@@ -817,6 +828,7 @@ export interface FileRouteTypes {
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
+    | '/p/all-locations'
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
@@ -884,6 +896,7 @@ export interface RootRouteChildren {
   HostToolsSlugRoute: typeof HostToolsSlugRoute
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
+  PAllLocationsRoute: typeof PAllLocationsRoute
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
@@ -1206,6 +1219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PFreeHostToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/all-locations': {
+      id: '/p/all-locations'
+      path: '/p/all-locations'
+      fullPath: '/p/all-locations'
+      preLoaderRoute: typeof PAllLocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$slug': {
       id: '/p/$slug'
       path: '/p/$slug'
@@ -1490,6 +1510,7 @@ const rootRouteChildren: RootRouteChildren = {
   HostToolsSlugRoute: HostToolsSlugRoute,
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
+  PAllLocationsRoute: PAllLocationsRoute,
   PFreeHostToolsRoute: PFreeHostToolsRoute,
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
