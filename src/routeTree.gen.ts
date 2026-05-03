@@ -51,6 +51,7 @@ import { Route as PoolRentalLawsCityRouteImport } from './routes/pool-rental-law
 import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$state'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
+import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
