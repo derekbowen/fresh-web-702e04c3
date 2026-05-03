@@ -9,7 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SmAmenitiesDotxmlRouteImport } from './routes/sm-amenities[.]xml'
+import { Route as Sm74buq58vDotxmlRouteImport } from './routes/sm-74buq58v[.]xml'
+import { Route as Sm74buq58vLsDotxmlRouteImport } from './routes/sm-74buq58v-ls[.]xml'
+import { Route as Sm74buq58vHoDotxmlRouteImport } from './routes/sm-74buq58v-ho[.]xml'
+import { Route as Sm74buq58vEvDotxmlRouteImport } from './routes/sm-74buq58v-ev[.]xml'
+import { Route as Sm74buq58vCrDotxmlRouteImport } from './routes/sm-74buq58v-cr[.]xml'
+import { Route as Sm74buq58vCnDotxmlRouteImport } from './routes/sm-74buq58v-cn[.]xml'
+import { Route as Sm74buq58vAdDotxmlRouteImport } from './routes/sm-74buq58v-ad[.]xml'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapStaticDotxmlRouteImport } from './routes/sitemap-static[.]xml'
+import { Route as SitemapRecentPagesDotxmlRouteImport } from './routes/sitemap-recent-pages[.]xml'
+import { Route as SitemapPagesSpanishDotxmlRouteImport } from './routes/sitemap-pages-spanish[.]xml'
+import { Route as SitemapPagesMoneyDotxmlRouteImport } from './routes/sitemap-pages-money[.]xml'
+import { Route as SitemapPagesHostAcquisitionDotxmlRouteImport } from './routes/sitemap-pages-host-acquisition[.]xml'
+import { Route as SitemapPagesEventGuidesDotxmlRouteImport } from './routes/sitemap-pages-event-guides[.]xml'
+import { Route as SitemapPagesCitiesDotxmlRouteImport } from './routes/sitemap-pages-cities[.]xml'
+import { Route as SitemapPagesArticlesDotxmlRouteImport } from './routes/sitemap-pages-articles[.]xml'
+import { Route as SitemapPagesAdvocacyDotxmlRouteImport } from './routes/sitemap-pages-advocacy[.]xml'
+import { Route as SitemapPagesAcademyDotxmlRouteImport } from './routes/sitemap-pages-academy[.]xml'
+import { Route as SitemapIndexDotxmlRouteImport } from './routes/sitemap-index[.]xml'
+import { Route as SitemapHubDotxmlRouteImport } from './routes/sitemap-hub[.]xml'
+import { Route as SitemapDefaultDotxmlRouteImport } from './routes/sitemap-default[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ProvidersRouteImport } from './routes/providers'
+import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AcademyRouteImport } from './routes/academy'
@@ -23,12 +47,11 @@ import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
 import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as PoolRentalLawsCityRouteImport } from './routes/pool-rental-laws.$city'
 import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$state'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
-import { Route as ApiSitemapDotxmlRouteImport } from './routes/api/sitemap[.]xml'
-import { Route as ApiRobotsDottxtRouteImport } from './routes/api/robots[.]txt'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
@@ -43,11 +66,140 @@ import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
+const SmAmenitiesDotxmlRoute = SmAmenitiesDotxmlRouteImport.update({
+  id: '/sm-amenities.xml',
+  path: '/sm-amenities.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Sm74buq58vDotxmlRoute = Sm74buq58vDotxmlRouteImport.update({
+  id: '/sm-74buq58v.xml',
+  path: '/sm-74buq58v.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Sm74buq58vLsDotxmlRoute = Sm74buq58vLsDotxmlRouteImport.update({
+  id: '/sm-74buq58v-ls.xml',
+  path: '/sm-74buq58v-ls.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Sm74buq58vHoDotxmlRoute = Sm74buq58vHoDotxmlRouteImport.update({
+  id: '/sm-74buq58v-ho.xml',
+  path: '/sm-74buq58v-ho.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Sm74buq58vEvDotxmlRoute = Sm74buq58vEvDotxmlRouteImport.update({
+  id: '/sm-74buq58v-ev.xml',
+  path: '/sm-74buq58v-ev.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Sm74buq58vCrDotxmlRoute = Sm74buq58vCrDotxmlRouteImport.update({
+  id: '/sm-74buq58v-cr.xml',
+  path: '/sm-74buq58v-cr.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Sm74buq58vCnDotxmlRoute = Sm74buq58vCnDotxmlRouteImport.update({
+  id: '/sm-74buq58v-cn.xml',
+  path: '/sm-74buq58v-cn.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Sm74buq58vAdDotxmlRoute = Sm74buq58vAdDotxmlRouteImport.update({
+  id: '/sm-74buq58v-ad.xml',
+  path: '/sm-74buq58v-ad.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapStaticDotxmlRoute = SitemapStaticDotxmlRouteImport.update({
+  id: '/sitemap-static.xml',
+  path: '/sitemap-static.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapRecentPagesDotxmlRoute =
+  SitemapRecentPagesDotxmlRouteImport.update({
+    id: '/sitemap-recent-pages.xml',
+    path: '/sitemap-recent-pages.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesSpanishDotxmlRoute =
+  SitemapPagesSpanishDotxmlRouteImport.update({
+    id: '/sitemap-pages-spanish.xml',
+    path: '/sitemap-pages-spanish.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesMoneyDotxmlRoute = SitemapPagesMoneyDotxmlRouteImport.update({
+  id: '/sitemap-pages-money.xml',
+  path: '/sitemap-pages-money.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesHostAcquisitionDotxmlRoute =
+  SitemapPagesHostAcquisitionDotxmlRouteImport.update({
+    id: '/sitemap-pages-host-acquisition.xml',
+    path: '/sitemap-pages-host-acquisition.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesEventGuidesDotxmlRoute =
+  SitemapPagesEventGuidesDotxmlRouteImport.update({
+    id: '/sitemap-pages-event-guides.xml',
+    path: '/sitemap-pages-event-guides.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesCitiesDotxmlRoute =
+  SitemapPagesCitiesDotxmlRouteImport.update({
+    id: '/sitemap-pages-cities.xml',
+    path: '/sitemap-pages-cities.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesArticlesDotxmlRoute =
+  SitemapPagesArticlesDotxmlRouteImport.update({
+    id: '/sitemap-pages-articles.xml',
+    path: '/sitemap-pages-articles.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesAdvocacyDotxmlRoute =
+  SitemapPagesAdvocacyDotxmlRouteImport.update({
+    id: '/sitemap-pages-advocacy.xml',
+    path: '/sitemap-pages-advocacy.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesAcademyDotxmlRoute =
+  SitemapPagesAcademyDotxmlRouteImport.update({
+    id: '/sitemap-pages-academy.xml',
+    path: '/sitemap-pages-academy.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapIndexDotxmlRoute = SitemapIndexDotxmlRouteImport.update({
+  id: '/sitemap-index.xml',
+  path: '/sitemap-index.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapHubDotxmlRoute = SitemapHubDotxmlRouteImport.update({
+  id: '/sitemap-hub.xml',
+  path: '/sitemap-hub.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDefaultDotxmlRoute = SitemapDefaultDotxmlRouteImport.update({
+  id: '/sitemap-default.xml',
+  path: '/sitemap-default.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
   path: '/providers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PoolsDirectorySitemapDotxmlRoute =
+  PoolsDirectorySitemapDotxmlRouteImport.update({
+    id: '/pools-directory-sitemap.xml',
+    path: '/pools-directory-sitemap.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
@@ -113,6 +265,11 @@ const PoolBuildersStateRoute = PoolBuildersStateRouteImport.update({
   path: '/pool-builders/$state',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HostToolsSlugRoute = HostToolsSlugRouteImport.update({
   id: '/host-tools/$slug',
   path: '/host-tools/$slug',
@@ -132,16 +289,6 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
-} as any)
-const ApiSitemapDotxmlRoute = ApiSitemapDotxmlRouteImport.update({
-  id: '/api/sitemap.xml',
-  path: '/api/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiRobotsDottxtRoute = ApiRobotsDottxtRouteImport.update({
-  id: '/api/robots.txt',
-  path: '/api/robots.txt',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLearningRoute = AdminLearningRouteImport.update({
   id: '/admin/learning',
@@ -214,19 +361,42 @@ export interface FileRoutesByFullPath {
   '/academy': typeof AcademyRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
+  '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
+  '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
+  '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
+  '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
+  '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
+  '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
+  '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
+  '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
+  '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
+  '/sitemap-pages-spanish.xml': typeof SitemapPagesSpanishDotxmlRoute
+  '/sitemap-recent-pages.xml': typeof SitemapRecentPagesDotxmlRoute
+  '/sitemap-static.xml': typeof SitemapStaticDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sm-74buq58v-ad.xml': typeof Sm74buq58vAdDotxmlRoute
+  '/sm-74buq58v-cn.xml': typeof Sm74buq58vCnDotxmlRoute
+  '/sm-74buq58v-cr.xml': typeof Sm74buq58vCrDotxmlRoute
+  '/sm-74buq58v-ev.xml': typeof Sm74buq58vEvDotxmlRoute
+  '/sm-74buq58v-ho.xml': typeof Sm74buq58vHoDotxmlRoute
+  '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
+  '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
+  '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
-  '/api/robots.txt': typeof ApiRobotsDottxtRoute
-  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
+  '/p/$slug': typeof PSlugRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -248,19 +418,42 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
+  '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
+  '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
+  '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
+  '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
+  '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
+  '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
+  '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
+  '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
+  '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
+  '/sitemap-pages-spanish.xml': typeof SitemapPagesSpanishDotxmlRoute
+  '/sitemap-recent-pages.xml': typeof SitemapRecentPagesDotxmlRoute
+  '/sitemap-static.xml': typeof SitemapStaticDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sm-74buq58v-ad.xml': typeof Sm74buq58vAdDotxmlRoute
+  '/sm-74buq58v-cn.xml': typeof Sm74buq58vCnDotxmlRoute
+  '/sm-74buq58v-cr.xml': typeof Sm74buq58vCrDotxmlRoute
+  '/sm-74buq58v-ev.xml': typeof Sm74buq58vEvDotxmlRoute
+  '/sm-74buq58v-ho.xml': typeof Sm74buq58vHoDotxmlRoute
+  '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
+  '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
+  '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
-  '/api/robots.txt': typeof ApiRobotsDottxtRoute
-  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
+  '/p/$slug': typeof PSlugRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -284,19 +477,42 @@ export interface FileRoutesById {
   '/academy': typeof AcademyRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/providers': typeof ProvidersRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
+  '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
+  '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
+  '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
+  '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
+  '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
+  '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
+  '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
+  '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
+  '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
+  '/sitemap-pages-spanish.xml': typeof SitemapPagesSpanishDotxmlRoute
+  '/sitemap-recent-pages.xml': typeof SitemapRecentPagesDotxmlRoute
+  '/sitemap-static.xml': typeof SitemapStaticDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sm-74buq58v-ad.xml': typeof Sm74buq58vAdDotxmlRoute
+  '/sm-74buq58v-cn.xml': typeof Sm74buq58vCnDotxmlRoute
+  '/sm-74buq58v-cr.xml': typeof Sm74buq58vCrDotxmlRoute
+  '/sm-74buq58v-ev.xml': typeof Sm74buq58vEvDotxmlRoute
+  '/sm-74buq58v-ho.xml': typeof Sm74buq58vHoDotxmlRoute
+  '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
+  '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
+  '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
-  '/api/robots.txt': typeof ApiRobotsDottxtRoute
-  '/api/sitemap.xml': typeof ApiSitemapDotxmlRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
+  '/p/$slug': typeof PSlugRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -321,19 +537,42 @@ export interface FileRouteTypes {
     | '/academy'
     | '/auth'
     | '/blog'
+    | '/pools-directory-sitemap.xml'
     | '/providers'
+    | '/robots.txt'
+    | '/sitemap-default.xml'
+    | '/sitemap-hub.xml'
+    | '/sitemap-index.xml'
+    | '/sitemap-pages-academy.xml'
+    | '/sitemap-pages-advocacy.xml'
+    | '/sitemap-pages-articles.xml'
+    | '/sitemap-pages-cities.xml'
+    | '/sitemap-pages-event-guides.xml'
+    | '/sitemap-pages-host-acquisition.xml'
+    | '/sitemap-pages-money.xml'
+    | '/sitemap-pages-spanish.xml'
+    | '/sitemap-recent-pages.xml'
+    | '/sitemap-static.xml'
+    | '/sitemap.xml'
+    | '/sm-74buq58v-ad.xml'
+    | '/sm-74buq58v-cn.xml'
+    | '/sm-74buq58v-cr.xml'
+    | '/sm-74buq58v-ev.xml'
+    | '/sm-74buq58v-ho.xml'
+    | '/sm-74buq58v-ls.xml'
+    | '/sm-74buq58v.xml'
+    | '/sm-amenities.xml'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/learning'
-    | '/api/robots.txt'
-    | '/api/sitemap.xml'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
     | '/host-tools/$slug'
+    | '/p/$slug'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -355,19 +594,42 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/blog'
+    | '/pools-directory-sitemap.xml'
     | '/providers'
+    | '/robots.txt'
+    | '/sitemap-default.xml'
+    | '/sitemap-hub.xml'
+    | '/sitemap-index.xml'
+    | '/sitemap-pages-academy.xml'
+    | '/sitemap-pages-advocacy.xml'
+    | '/sitemap-pages-articles.xml'
+    | '/sitemap-pages-cities.xml'
+    | '/sitemap-pages-event-guides.xml'
+    | '/sitemap-pages-host-acquisition.xml'
+    | '/sitemap-pages-money.xml'
+    | '/sitemap-pages-spanish.xml'
+    | '/sitemap-recent-pages.xml'
+    | '/sitemap-static.xml'
+    | '/sitemap.xml'
+    | '/sm-74buq58v-ad.xml'
+    | '/sm-74buq58v-cn.xml'
+    | '/sm-74buq58v-cr.xml'
+    | '/sm-74buq58v-ev.xml'
+    | '/sm-74buq58v-ho.xml'
+    | '/sm-74buq58v-ls.xml'
+    | '/sm-74buq58v.xml'
+    | '/sm-amenities.xml'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/learning'
-    | '/api/robots.txt'
-    | '/api/sitemap.xml'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
     | '/host-tools/$slug'
+    | '/p/$slug'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -390,19 +652,42 @@ export interface FileRouteTypes {
     | '/academy'
     | '/auth'
     | '/blog'
+    | '/pools-directory-sitemap.xml'
     | '/providers'
+    | '/robots.txt'
+    | '/sitemap-default.xml'
+    | '/sitemap-hub.xml'
+    | '/sitemap-index.xml'
+    | '/sitemap-pages-academy.xml'
+    | '/sitemap-pages-advocacy.xml'
+    | '/sitemap-pages-articles.xml'
+    | '/sitemap-pages-cities.xml'
+    | '/sitemap-pages-event-guides.xml'
+    | '/sitemap-pages-host-acquisition.xml'
+    | '/sitemap-pages-money.xml'
+    | '/sitemap-pages-spanish.xml'
+    | '/sitemap-recent-pages.xml'
+    | '/sitemap-static.xml'
+    | '/sitemap.xml'
+    | '/sm-74buq58v-ad.xml'
+    | '/sm-74buq58v-cn.xml'
+    | '/sm-74buq58v-cr.xml'
+    | '/sm-74buq58v-ev.xml'
+    | '/sm-74buq58v-ho.xml'
+    | '/sm-74buq58v-ls.xml'
+    | '/sm-74buq58v.xml'
+    | '/sm-amenities.xml'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
     | '/admin/learning'
-    | '/api/robots.txt'
-    | '/api/sitemap.xml'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
     | '/host-tools/$slug'
+    | '/p/$slug'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -426,16 +711,39 @@ export interface RootRouteChildren {
   AcademyRoute: typeof AcademyRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
+  PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   ProvidersRoute: typeof ProvidersRouteWithChildren
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDefaultDotxmlRoute: typeof SitemapDefaultDotxmlRoute
+  SitemapHubDotxmlRoute: typeof SitemapHubDotxmlRoute
+  SitemapIndexDotxmlRoute: typeof SitemapIndexDotxmlRoute
+  SitemapPagesAcademyDotxmlRoute: typeof SitemapPagesAcademyDotxmlRoute
+  SitemapPagesAdvocacyDotxmlRoute: typeof SitemapPagesAdvocacyDotxmlRoute
+  SitemapPagesArticlesDotxmlRoute: typeof SitemapPagesArticlesDotxmlRoute
+  SitemapPagesCitiesDotxmlRoute: typeof SitemapPagesCitiesDotxmlRoute
+  SitemapPagesEventGuidesDotxmlRoute: typeof SitemapPagesEventGuidesDotxmlRoute
+  SitemapPagesHostAcquisitionDotxmlRoute: typeof SitemapPagesHostAcquisitionDotxmlRoute
+  SitemapPagesMoneyDotxmlRoute: typeof SitemapPagesMoneyDotxmlRoute
+  SitemapPagesSpanishDotxmlRoute: typeof SitemapPagesSpanishDotxmlRoute
+  SitemapRecentPagesDotxmlRoute: typeof SitemapRecentPagesDotxmlRoute
+  SitemapStaticDotxmlRoute: typeof SitemapStaticDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  Sm74buq58vAdDotxmlRoute: typeof Sm74buq58vAdDotxmlRoute
+  Sm74buq58vCnDotxmlRoute: typeof Sm74buq58vCnDotxmlRoute
+  Sm74buq58vCrDotxmlRoute: typeof Sm74buq58vCrDotxmlRoute
+  Sm74buq58vEvDotxmlRoute: typeof Sm74buq58vEvDotxmlRoute
+  Sm74buq58vHoDotxmlRoute: typeof Sm74buq58vHoDotxmlRoute
+  Sm74buq58vLsDotxmlRoute: typeof Sm74buq58vLsDotxmlRoute
+  Sm74buq58vDotxmlRoute: typeof Sm74buq58vDotxmlRoute
+  SmAmenitiesDotxmlRoute: typeof SmAmenitiesDotxmlRoute
   AccountLearningRoute: typeof AccountLearningRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
-  ApiRobotsDottxtRoute: typeof ApiRobotsDottxtRoute
-  ApiSitemapDotxmlRoute: typeof ApiSitemapDotxmlRoute
   CategorySlugRoute: typeof CategorySlugRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
+  PSlugRoute: typeof PSlugRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
@@ -452,11 +760,179 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sm-amenities.xml': {
+      id: '/sm-amenities.xml'
+      path: '/sm-amenities.xml'
+      fullPath: '/sm-amenities.xml'
+      preLoaderRoute: typeof SmAmenitiesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sm-74buq58v.xml': {
+      id: '/sm-74buq58v.xml'
+      path: '/sm-74buq58v.xml'
+      fullPath: '/sm-74buq58v.xml'
+      preLoaderRoute: typeof Sm74buq58vDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sm-74buq58v-ls.xml': {
+      id: '/sm-74buq58v-ls.xml'
+      path: '/sm-74buq58v-ls.xml'
+      fullPath: '/sm-74buq58v-ls.xml'
+      preLoaderRoute: typeof Sm74buq58vLsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sm-74buq58v-ho.xml': {
+      id: '/sm-74buq58v-ho.xml'
+      path: '/sm-74buq58v-ho.xml'
+      fullPath: '/sm-74buq58v-ho.xml'
+      preLoaderRoute: typeof Sm74buq58vHoDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sm-74buq58v-ev.xml': {
+      id: '/sm-74buq58v-ev.xml'
+      path: '/sm-74buq58v-ev.xml'
+      fullPath: '/sm-74buq58v-ev.xml'
+      preLoaderRoute: typeof Sm74buq58vEvDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sm-74buq58v-cr.xml': {
+      id: '/sm-74buq58v-cr.xml'
+      path: '/sm-74buq58v-cr.xml'
+      fullPath: '/sm-74buq58v-cr.xml'
+      preLoaderRoute: typeof Sm74buq58vCrDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sm-74buq58v-cn.xml': {
+      id: '/sm-74buq58v-cn.xml'
+      path: '/sm-74buq58v-cn.xml'
+      fullPath: '/sm-74buq58v-cn.xml'
+      preLoaderRoute: typeof Sm74buq58vCnDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sm-74buq58v-ad.xml': {
+      id: '/sm-74buq58v-ad.xml'
+      path: '/sm-74buq58v-ad.xml'
+      fullPath: '/sm-74buq58v-ad.xml'
+      preLoaderRoute: typeof Sm74buq58vAdDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-static.xml': {
+      id: '/sitemap-static.xml'
+      path: '/sitemap-static.xml'
+      fullPath: '/sitemap-static.xml'
+      preLoaderRoute: typeof SitemapStaticDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-recent-pages.xml': {
+      id: '/sitemap-recent-pages.xml'
+      path: '/sitemap-recent-pages.xml'
+      fullPath: '/sitemap-recent-pages.xml'
+      preLoaderRoute: typeof SitemapRecentPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-spanish.xml': {
+      id: '/sitemap-pages-spanish.xml'
+      path: '/sitemap-pages-spanish.xml'
+      fullPath: '/sitemap-pages-spanish.xml'
+      preLoaderRoute: typeof SitemapPagesSpanishDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-money.xml': {
+      id: '/sitemap-pages-money.xml'
+      path: '/sitemap-pages-money.xml'
+      fullPath: '/sitemap-pages-money.xml'
+      preLoaderRoute: typeof SitemapPagesMoneyDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-host-acquisition.xml': {
+      id: '/sitemap-pages-host-acquisition.xml'
+      path: '/sitemap-pages-host-acquisition.xml'
+      fullPath: '/sitemap-pages-host-acquisition.xml'
+      preLoaderRoute: typeof SitemapPagesHostAcquisitionDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-event-guides.xml': {
+      id: '/sitemap-pages-event-guides.xml'
+      path: '/sitemap-pages-event-guides.xml'
+      fullPath: '/sitemap-pages-event-guides.xml'
+      preLoaderRoute: typeof SitemapPagesEventGuidesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-cities.xml': {
+      id: '/sitemap-pages-cities.xml'
+      path: '/sitemap-pages-cities.xml'
+      fullPath: '/sitemap-pages-cities.xml'
+      preLoaderRoute: typeof SitemapPagesCitiesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-articles.xml': {
+      id: '/sitemap-pages-articles.xml'
+      path: '/sitemap-pages-articles.xml'
+      fullPath: '/sitemap-pages-articles.xml'
+      preLoaderRoute: typeof SitemapPagesArticlesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-advocacy.xml': {
+      id: '/sitemap-pages-advocacy.xml'
+      path: '/sitemap-pages-advocacy.xml'
+      fullPath: '/sitemap-pages-advocacy.xml'
+      preLoaderRoute: typeof SitemapPagesAdvocacyDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-academy.xml': {
+      id: '/sitemap-pages-academy.xml'
+      path: '/sitemap-pages-academy.xml'
+      fullPath: '/sitemap-pages-academy.xml'
+      preLoaderRoute: typeof SitemapPagesAcademyDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-index.xml': {
+      id: '/sitemap-index.xml'
+      path: '/sitemap-index.xml'
+      fullPath: '/sitemap-index.xml'
+      preLoaderRoute: typeof SitemapIndexDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-hub.xml': {
+      id: '/sitemap-hub.xml'
+      path: '/sitemap-hub.xml'
+      fullPath: '/sitemap-hub.xml'
+      preLoaderRoute: typeof SitemapHubDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-default.xml': {
+      id: '/sitemap-default.xml'
+      path: '/sitemap-default.xml'
+      fullPath: '/sitemap-default.xml'
+      preLoaderRoute: typeof SitemapDefaultDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/providers': {
       id: '/providers'
       path: '/providers'
       fullPath: '/providers'
       preLoaderRoute: typeof ProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pools-directory-sitemap.xml': {
+      id: '/pools-directory-sitemap.xml'
+      path: '/pools-directory-sitemap.xml'
+      fullPath: '/pools-directory-sitemap.xml'
+      preLoaderRoute: typeof PoolsDirectorySitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -550,6 +1026,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoolBuildersStateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/host-tools/$slug': {
       id: '/host-tools/$slug'
       path: '/host-tools/$slug'
@@ -577,20 +1060,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/reset-password'
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
-    }
-    '/api/sitemap.xml': {
-      id: '/api/sitemap.xml'
-      path: '/api/sitemap.xml'
-      fullPath: '/api/sitemap.xml'
-      preLoaderRoute: typeof ApiSitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/robots.txt': {
-      id: '/api/robots.txt'
-      path: '/api/robots.txt'
-      fullPath: '/api/robots.txt'
-      preLoaderRoute: typeof ApiRobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/admin/learning': {
       id: '/admin/learning'
@@ -759,16 +1228,40 @@ const rootRouteChildren: RootRouteChildren = {
   AcademyRoute: AcademyRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
+  PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   ProvidersRoute: ProvidersRouteWithChildren,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDefaultDotxmlRoute: SitemapDefaultDotxmlRoute,
+  SitemapHubDotxmlRoute: SitemapHubDotxmlRoute,
+  SitemapIndexDotxmlRoute: SitemapIndexDotxmlRoute,
+  SitemapPagesAcademyDotxmlRoute: SitemapPagesAcademyDotxmlRoute,
+  SitemapPagesAdvocacyDotxmlRoute: SitemapPagesAdvocacyDotxmlRoute,
+  SitemapPagesArticlesDotxmlRoute: SitemapPagesArticlesDotxmlRoute,
+  SitemapPagesCitiesDotxmlRoute: SitemapPagesCitiesDotxmlRoute,
+  SitemapPagesEventGuidesDotxmlRoute: SitemapPagesEventGuidesDotxmlRoute,
+  SitemapPagesHostAcquisitionDotxmlRoute:
+    SitemapPagesHostAcquisitionDotxmlRoute,
+  SitemapPagesMoneyDotxmlRoute: SitemapPagesMoneyDotxmlRoute,
+  SitemapPagesSpanishDotxmlRoute: SitemapPagesSpanishDotxmlRoute,
+  SitemapRecentPagesDotxmlRoute: SitemapRecentPagesDotxmlRoute,
+  SitemapStaticDotxmlRoute: SitemapStaticDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  Sm74buq58vAdDotxmlRoute: Sm74buq58vAdDotxmlRoute,
+  Sm74buq58vCnDotxmlRoute: Sm74buq58vCnDotxmlRoute,
+  Sm74buq58vCrDotxmlRoute: Sm74buq58vCrDotxmlRoute,
+  Sm74buq58vEvDotxmlRoute: Sm74buq58vEvDotxmlRoute,
+  Sm74buq58vHoDotxmlRoute: Sm74buq58vHoDotxmlRoute,
+  Sm74buq58vLsDotxmlRoute: Sm74buq58vLsDotxmlRoute,
+  Sm74buq58vDotxmlRoute: Sm74buq58vDotxmlRoute,
+  SmAmenitiesDotxmlRoute: SmAmenitiesDotxmlRoute,
   AccountLearningRoute: AccountLearningRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClickReportRoute: AdminClickReportRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
-  ApiRobotsDottxtRoute: ApiRobotsDottxtRoute,
-  ApiSitemapDotxmlRoute: ApiSitemapDotxmlRoute,
   CategorySlugRoute: CategorySlugRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
+  PSlugRoute: PSlugRoute,
   PoolBuildersStateRoute: PoolBuildersStateRouteWithChildren,
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
