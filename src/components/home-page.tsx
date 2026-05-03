@@ -1,9 +1,12 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ListingCard } from "@/components/listing-card";
+import { PoolWaitlistForm } from "@/components/pool-waitlist-form";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
 import heroPool from "@/assets/pool-hero-default.jpg";
+
+const NEARBY_RADIUS_MILES = 500;
 
 const FEATURED_OCCASIONS = [
   { slug: "bachelorette-pool-party-hosting-playbook", title: "Bachelorette", img: "academy/bachelorette.jpg" },
