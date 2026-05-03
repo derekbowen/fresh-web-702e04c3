@@ -13,7 +13,12 @@ export default defineConfig({
       client: {
         // Allow `.functions.ts(x)` files under src/server to be imported from
         // client code — they are transformed into RPC stubs at build time.
-        excludeFiles: ["**/server/**/*.functions.ts", "**/server/**/*.functions.tsx"],
+        excludeFiles: [
+          "**/server/*.functions.ts",
+          "**/server/*.functions.tsx",
+          "**/server/**/*.functions.ts",
+          "**/server/**/*.functions.tsx",
+        ],
       },
     },
   },
