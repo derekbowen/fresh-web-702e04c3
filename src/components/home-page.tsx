@@ -379,23 +379,27 @@ export function HomePageContent({ data }: { data: HomeData | undefined | null })
 
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Pool rentals in {cities.length}+ U.S. cities
-          </h2>
-          <p className="mt-2 text-muted-foreground">
-            Find a private pool in your zip code.
-          </p>
-          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {cities.map((c: HomeCity) => (
-              <a
-                key={c.slug}
-                href={`/s?address=${encodeURIComponent(`${c.name}, ${c.state_code}`)}`}
-                className="text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
-              >
-                {c.name}, {c.state_code}
-              </a>
-            ))}
-          </div>
-        </section>
+        {cities.length > 0 && (
+          <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Pool rentals in {cityCount.toLocaleString()}+ U.S. cities
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              Find a private pool in your zip code.
+            </p>
+            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              {cities.map((c: HomeCity) => (
+                <a
+                  key={c.slug}
+                  href={`/s?address=${encodeURIComponent(`${c.name}, ${c.state_code}`)}`}
+                  className="text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
+                >
+                  {c.name}, {c.state_code}
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="bg-primary text-primary-foreground">
           <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 px-4 py-14 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
