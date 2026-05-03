@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useRouter, notFound } from "@tanstack/react-router";
-import { getBuildersByCity, stateName } from "@/server/builders.functions";
+import { getBuildersByCity } from "@/server/builders.functions";
+import { stateName } from "@/lib/states";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { JoinNetworkForm } from "@/components/recruit-forms";
