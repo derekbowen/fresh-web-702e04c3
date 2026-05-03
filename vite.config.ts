@@ -22,4 +22,12 @@ export default defineConfig({
       },
     },
   },
+  vite: {
+    build: {
+      // Serve built JS/CSS under /fw-assets/ instead of the default /assets/
+      // so the EC2 nginx reverse proxy can route this app's static assets
+      // without colliding with other Lovable apps on the same domain.
+      assetsDir: "fw-assets",
+    },
+  },
 });
