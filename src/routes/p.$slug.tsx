@@ -20,6 +20,7 @@ import {
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
+import { PublicPoolTemplate } from "@/components/templates/public-pool";
 
 /**
  * Dispatcher route for /p/{slug}.
@@ -175,6 +176,8 @@ function ContentPageDispatcher() {
   switch (page.template_type) {
     case "host_acq_city":
       return <HostAcqCityTemplate page={page} />;
+    case "public_pool":
+      return <PublicPoolTemplate page={page} />;
     case "resource":
       return <ResourceArticleTemplate page={page} />;
     default:

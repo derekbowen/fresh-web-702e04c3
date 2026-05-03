@@ -25,9 +25,11 @@ export const Route = createFileRoute("/sitemap-pages-articles.xml")({
 
         const { data, error } = await (supabaseAdmin as any)
           .from("content_pages")
-          .select("slug, updated_at, cover_image_url")
-          .eq("template_type", "resource_article")
-          .eq("is_published", true)
+          .select("slug, updated_at, hero_image_url")
+          .eq("template_type", "resource")
+          .eq("in_sitemap", true)
+          .eq("status", "published")
+          .not("slug", "is", null)
           .order("slug")
           .range(offset, offset + SITEMAP_PAGE_SIZE - 1);
 
@@ -41,8 +43,8 @@ export const Route = createFileRoute("/sitemap-pages-articles.xml")({
             loc: `${SITE_URL}/p/${row.slug}`,
             lastmod: row.updated_at,
           };
-          if (row.cover_image_url) {
-            sitemapUrl.images = [{ loc: row.cover_image_url }];
+          if (row.hero_image_url) {
+            sitemapUrl.images = [{ loc: row.hero_image_url }];
           }
           return sitemapUrl;
         });

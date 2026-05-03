@@ -10,7 +10,7 @@ export const Route = createFileRoute("/sitemap-pages-advocacy.xml")({
       GET: async ({ request }) =>
         buildContentPagesSitemap(
           request,
-          ["host_advocacy", "state_advocacy_guide"],
+          ["host_advocacy_hub", "host_advocacy_state"],
           "/p",
           supabaseAdmin,
           SITE_URL,

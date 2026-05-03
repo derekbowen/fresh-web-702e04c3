@@ -144,9 +144,11 @@ export async function buildContentPagesSitemap(
 
   const { data, error } = await supabase
     .from("content_pages")
-    .select("slug, updated_at, cover_image_url")
+    .select("slug, updated_at, hero_image_url")
     .in("template_type", templateTypes)
-    .eq("is_published", true)
+    .eq("in_sitemap", true)
+    .eq("status", "published")
+    .not("slug", "is", null)
     .order("slug")
     .range(offset, offset + SITEMAP_PAGE_SIZE - 1);
 
@@ -160,8 +162,8 @@ export async function buildContentPagesSitemap(
       loc: `${siteUrl}${pathPrefix}/${row.slug}`,
       lastmod: row.updated_at,
     };
-    if (row.cover_image_url) {
-      sitemapUrl.images = [{ loc: row.cover_image_url }];
+    if (row.hero_image_url) {
+      sitemapUrl.images = [{ loc: row.hero_image_url }];
     }
     return sitemapUrl;
   });
