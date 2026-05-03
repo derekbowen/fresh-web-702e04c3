@@ -251,22 +251,28 @@ const CATEGORY_ORDER: Record<string, number> = {
   "Event/City Guide": 4,
 };
 
-export const backfillContentPages = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) =>
-    z
-      .object({
-        adminToken: z.string().min(8),
-        limit: z.number().int().min(1).max(50).default(10),
-        model: z.string().default("openai/gpt-5"),
-        dryRun: z.boolean().default(false),
-      })
-      .parse(data),
-  )
-  .handler(async ({ data }) => {
-    const expected = process.env.BACKFILL_ADMIN_TOKEN || process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!expected || data.adminToken !== expected) {
-      throw new Error("Unauthorized");
-    }
+export type BackfillInput = {
+  adminToken: string;
+  limit?: number;
+  model?: string;
+  dryRun?: boolean;
+};
+
+export async function runBackfillContentPages(input: BackfillInput) {
+  const data = z
+    .object({
+      adminToken: z.string().min(8),
+      limit: z.number().int().min(1).max(50).default(10),
+      model: z.string().default("openai/gpt-5"),
+      dryRun: z.boolean().default(false),
+    })
+    .parse(input);
+
+  const expected = process.env.BACKFILL_ADMIN_TOKEN || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!expected || data.adminToken !== expected) {
+    throw new Error("Unauthorized");
+  }
+  {
 
     // Pull a wider candidate set, sort in JS by our composite rank.
     const { data: rows, error } = await supabaseAdmin
