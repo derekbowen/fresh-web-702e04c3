@@ -143,6 +143,7 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 };
 
 export const runAiTool = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => aiSchema.parse(d))
   .handler(async ({ data }) => {
     const apiKey = process.env.LOVABLE_API_KEY;
