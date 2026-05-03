@@ -432,7 +432,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {cities.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Pool rentals in {cityCount.toLocaleString()}+ U.S. cities
+              Pool rentals in {cityCount.toLocaleString("en-US")}+ U.S. cities
             </h2>
             <p className="mt-2 text-muted-foreground">
               Find a private pool in your zip code.
