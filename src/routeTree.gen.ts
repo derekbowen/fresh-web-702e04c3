@@ -68,6 +68,7 @@ import { Route as PoolBuildersStateCityRouteImport } from './routes/pool-builder
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as HelpCenterCategorySlugRouteImport } from './routes/help-center.$category.$slug'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
+import { Route as ApiPublicBackfillContentPagesRouteImport } from './routes/api/public/backfill-content-pages'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
@@ -376,6 +377,12 @@ const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
   path: '/api/public/track-city-click',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBackfillContentPagesRoute =
+  ApiPublicBackfillContentPagesRouteImport.update({
+    id: '/api/public/backfill-content-pages',
+    path: '/api/public/backfill-content-pages',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminLearningUserIdRoute = AdminLearningUserIdRouteImport.update({
   id: '/$userId',
   path: '/$userId',
@@ -449,6 +456,7 @@ export interface FileRoutesByFullPath {
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
+  '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
@@ -512,6 +520,7 @@ export interface FileRoutesByTo {
   '/host-tools': typeof HostToolsIndexRoute
   '/pool-builders': typeof PoolBuildersIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
+  '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
@@ -577,6 +586,7 @@ export interface FileRoutesById {
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
+  '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
@@ -643,6 +653,7 @@ export interface FileRouteTypes {
     | '/host-tools/'
     | '/pool-builders/'
     | '/admin/learning/$userId'
+    | '/api/public/backfill-content-pages'
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
@@ -706,6 +717,7 @@ export interface FileRouteTypes {
     | '/host-tools'
     | '/pool-builders'
     | '/admin/learning/$userId'
+    | '/api/public/backfill-content-pages'
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
@@ -770,6 +782,7 @@ export interface FileRouteTypes {
     | '/host-tools/'
     | '/pool-builders/'
     | '/admin/learning/$userId'
+    | '/api/public/backfill-content-pages'
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
@@ -829,6 +842,7 @@ export interface RootRouteChildren {
   HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
   PoolBuildersIndexRoute: typeof PoolBuildersIndexRoute
+  ApiPublicBackfillContentPagesRoute: typeof ApiPublicBackfillContentPagesRoute
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   HelpCenterCategorySlugRoute: typeof HelpCenterCategorySlugRoute
   LSlugIdRoute: typeof LSlugIdRoute
@@ -1252,6 +1266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackCityClickRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/backfill-content-pages': {
+      id: '/api/public/backfill-content-pages'
+      path: '/api/public/backfill-content-pages'
+      fullPath: '/api/public/backfill-content-pages'
+      preLoaderRoute: typeof ApiPublicBackfillContentPagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/learning/$userId': {
       id: '/admin/learning/$userId'
       path: '/$userId'
@@ -1395,6 +1416,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
   PoolBuildersIndexRoute: PoolBuildersIndexRoute,
+  ApiPublicBackfillContentPagesRoute: ApiPublicBackfillContentPagesRoute,
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   HelpCenterCategorySlugRoute: HelpCenterCategorySlugRoute,
   LSlugIdRoute: LSlugIdRoute,
@@ -1405,3 +1427,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
