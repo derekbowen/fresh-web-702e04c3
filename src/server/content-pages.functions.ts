@@ -41,15 +41,13 @@ export type ContentPageLookupResult =
   | { kind: "redirect"; canonicalSlug: string }
   | { kind: "not_found" };
 
-const lookupSchema = z.object({ slug: z.string().min(1) });
-
 /**
  * Looks up a content page by slug. If the slug is in another row's
  * `legacy_slugs[]` array, returns a redirect descriptor pointing at the
  * canonical slug. Caller is responsible for issuing the 301.
  */
 export const lookupContentPage = createServerFn({ method: "GET" })
-  .inputValidator((data: unknown) => lookupSchema.parse(data))
+  .inputValidator((data: unknown) => z.object({ slug: z.string().min(1) }).parse(data))
   .handler(async ({ data }): Promise<ContentPageLookupResult> => {
     const { slug } = data;
 
