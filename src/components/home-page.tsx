@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ListingCard } from "@/components/listing-card";
 import { PoolWaitlistForm } from "@/components/pool-waitlist-form";
@@ -48,6 +49,18 @@ export function HomePageContent({ data }: { data: HomeData | undefined | null })
 }
 
 function HomePageInner({ data }: { data: HomeData | undefined | null }) {
+  // Geolocation-driven UI (the "X pools near {city}" badge, the waitlist
+  // form, the personalized "Pools near {city}" heading, and the prefilled
+  // search address) depends on Cloudflare request headers that exist only
+  // on the server. Rendering them during SSR — but not during the first
+  // client render — causes a hydration mismatch (React #418). We render
+  // a neutral, location-free shell first, then reveal location-aware
+  // content after hydration.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
   const safe: HomeData = (data && typeof data === "object" ? data : null) ?? {
     cities: [],
     cityCount: 0,
@@ -59,15 +72,22 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   const categories = Array.isArray(safe.categories) ? safe.categories : [];
   const listings = Array.isArray(safe.listings) ? safe.listings : [];
-  const nearby = (safe.nearby && typeof safe.nearby === "object" ? safe.nearby : null) ?? {
+  const rawNearby = (safe.nearby && typeof safe.nearby === "object" ? safe.nearby : null) ?? {
     city: null,
     region: null,
     count: 0,
     nearestMiles: null,
   };
+  // Until hydrated, pretend we have no location signal at all so the
+  // markup is identical regardless of where the request originated.
+  const nearby = hydrated
+    ? rawNearby
+    : { city: null, region: null, count: 0, nearestMiles: null };
+
   const hasNearbyPools =
     nearby.nearestMiles !== null && nearby.nearestMiles <= NEARBY_RADIUS_MILES;
   const showWaitlist =
+    hydrated &&
     nearby.city !== null &&
     (nearby.nearestMiles === null || nearby.nearestMiles > NEARBY_RADIUS_MILES);
   const nearbyLabel = nearby.city
@@ -124,8 +144,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <input
                   name="address"
                   type="text"
-                  defaultValue={nearbyLabel ?? ""}
-                  placeholder="Where? (city or zip)"
+                  defaultValue=""
+                  placeholder={hydrated && nearbyLabel ? nearbyLabel : "Where? (city or zip)"}
                   aria-label="Location"
                   className="w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
