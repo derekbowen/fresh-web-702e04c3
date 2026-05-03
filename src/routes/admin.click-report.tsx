@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { getCityClickReport, type CityClickReport } from "@/server/click-report.functions";
 
@@ -10,6 +11,8 @@ export const Route = createFileRoute("/admin/click-report")({
     if (error || !data.user) {
       throw redirect({ to: "/auth" as never });
     }
+    const { isAdmin } = await checkAdminRole();
+    if (!isAdmin) throw redirect({ to: "/" });
   },
   component: ClickReportPage,
   head: () => ({ meta: [{ title: "Nearby-city click report — Admin" }] }),
