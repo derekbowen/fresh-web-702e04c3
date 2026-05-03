@@ -19,6 +19,7 @@ import {
 } from "@/lib/seo";
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
+import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 
 /**
  * Dispatcher route for /p/{slug}.
@@ -56,8 +57,9 @@ export const Route = createFileRoute("/p/$slug")({
     if (!loaderData?.page) return {};
     const p = loaderData.page;
     const path = `/p/${params.slug}`;
-    const title = p.seo_title || `${p.title} | ${SITE_NAME}`;
-    const description = (p.seo_description || p.description || p.title).slice(0, 160);
+    const titleBase = p.title || p.seo_title || params.slug;
+    const title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
+    const description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
 
     // Hreflang — emit only when this page is part of an EN↔ES pair.
     // The other-language slug is fetched in the loader so we always have it
@@ -68,7 +70,7 @@ export const Route = createFileRoute("/p/$slug")({
       title,
       description,
       path,
-      image: p.cover_image_url,
+      image: p.cover_image_url || p.hero_image_url || undefined,
       type: isArticleType(p.template_type) ? "article" : "website",
       hreflang,
     });
@@ -80,7 +82,7 @@ export const Route = createFileRoute("/p/$slug")({
       ldJsonScript(
         breadcrumbJsonLd([
           { name: "Home", path: "/" },
-          { name: p.title, path },
+          { name: titleBase || path, path },
         ]),
       ),
     );
@@ -154,19 +156,16 @@ export const Route = createFileRoute("/p/$slug")({
 
 function isArticleType(t: ContentPage["template_type"]): boolean {
   return (
-    t === "resource_article" ||
-    t === "academy_article" ||
-    t === "event_city_guide" ||
-    t === "host_advocacy" ||
-    t === "state_advocacy_guide" ||
+    t === "resource" ||
+    t === "elearning" ||
+    t === "event_guide" ||
+    t === "host_advocacy_hub" ||
+    t === "host_advocacy_state" ||
     t === "spanish_resource"
   );
 }
 
 function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string }> | undefined {
-  // Wired in once the EN↔ES sibling lookup is available in the loader. For now
-  // emit nothing rather than half-correct hreflang. Spanish content_pages will
-  // populate hreflang_alt -> sibling slug in their seed data.
   return undefined;
 }
 
@@ -174,16 +173,10 @@ function ContentPageDispatcher() {
   const { page } = Route.useLoaderData();
 
   switch (page.template_type) {
-    case "resource_article":
+    case "host_acq_city":
+      return <HostAcqCityTemplate page={page} />;
+    case "resource":
       return <ResourceArticleTemplate page={page} />;
-    // Specialized templates land here as they ship:
-    //   case "host_acquisition_city":   return <HostAcquisitionCityTemplate page={page} />;
-    //   case "event_city_guide":        return <EventCityGuideTemplate page={page} />;
-    //   case "city_main":               return <CityMainTemplate page={page} />;
-    //   case "spanish_host_acquisition": return <SpanishHostAcquisitionTemplate page={page} />;
-    //   case "host_advocacy":           return <HostAdvocacyTemplate page={page} />;
-    //   case "academy_article":         return <AcademyArticleTemplate page={page} />;
-    //   case "money_page":              return <MoneyPageTemplate page={page} />;
     default:
       return <GenericPageTemplate page={page} />;
   }
