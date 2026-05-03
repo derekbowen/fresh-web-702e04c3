@@ -28,6 +28,7 @@ import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 import { PublicPoolTemplate } from "@/components/templates/public-pool";
 import { EventGuideTemplate } from "@/components/templates/event-guide";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
+import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 
 /**
  * Dispatcher route for /p/{slug}.
@@ -139,6 +140,12 @@ export const Route = createFileRoute("/p/$slug")({
     const faqs = faqsForContentPage(p);
     if (faqs.length > 0) {
       scripts.push(ldJsonScript(faqPageJsonLd(faqs)));
+    }
+
+    // LocalBusiness/Service JSON-LD — city-scoped templates only
+    const localBiz = localBusinessForContentPage(p);
+    if (localBiz) {
+      scripts.push(ldJsonScript(localBiz));
     }
 
     return { ...meta, scripts };

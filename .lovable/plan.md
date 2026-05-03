@@ -1,32 +1,48 @@
-## Verify & lock down `content_pages` access
+## LocalBusiness JSON-LD for city templates
 
-### Findings (verified)
-- **RLS:** only one policy on `content_pages` — `Admins manage content pages` (ALL, `has_role admin`). No public/anon SELECT policy. ✅
-- **Code paths** that read the table all use `supabaseAdmin` (service role, server-only):
-  - `src/server/content-pages.functions.ts` → `lookupContentPage` (SSR for `/p/{slug}`)
-  - `src/server/content-scrape.functions.ts` (admin-gated)
-  - `src/lib/sitemap.ts` + all `sitemap-pages-*.xml.ts` + `sitemap.xml.ts`
-  - Offline `scripts/*` (service role via env)
-- No browser-side import of the table. `client.server.ts` import-protection prevents accidental client bundling.
+Add `LocalBusiness` (subtype `Service`) structured data to `/p/{slug}` pages whose `template_type` is city-scoped, so Google can associate the marketplace offering with each city.
 
-**Conclusion:** the access path is already correct. Two improvements to harden it against future drift.
+### Scope
+Applies to: `host_acq_city`, `public_pool_city`, `spanish_host_acq`.
 
-### Changes
+### Implementation
 
-**1. Migration — revoke table grants (defense-in-depth)**
-```sql
-REVOKE ALL ON TABLE public.content_pages FROM anon, authenticated;
-COMMENT ON TABLE public.content_pages IS
-  'Server-only access. Reads MUST go through supabaseAdmin in server functions. No public SELECT policy; anon/authenticated grants revoked.';
-```
-Even if someone later adds a permissive SELECT policy by mistake, PostgREST will still reject `anon`/`authenticated` requests at the grant layer. `service_role` is unaffected and `supabaseAdmin` continues to work.
+1. **New helper `src/lib/page-localbusiness.ts`**
+   - `localBusinessForContentPage(page)` returns a JSON-LD object or `null`.
+   - Resolves city/state from the page slug using the same prefix-stripping logic already in `nearby-cities.functions.ts` (extract & share via a small `src/lib/city-slug.ts` util to avoid duplication).
+   - Shape:
+     ```json
+     {
+       "@context": "https://schema.org",
+       "@type": "Service",
+       "serviceType": "Pool rental marketplace",
+       "provider": {
+         "@type": "Organization",
+         "name": "Pool Rental Near Me",
+         "url": "https://poolrentalnearme.com"
+       },
+       "areaServed": {
+         "@type": "City",
+         "name": "<City>",
+         "containedInPlace": { "@type": "State", "name": "<State>" }
+       },
+       "url": "<canonical>",
+       "inLanguage": "<en|es>"
+     }
+     ```
+   - Returns `null` when city cannot be resolved (so we don't emit junk schema).
 
-**2. Code comment** at the top of `src/server/content-pages.functions.ts` documenting the access contract (no public SELECT, must use `supabaseAdmin`, never query from the browser client).
+2. **Wire into `src/routes/p.$slug.tsx` `head()`**
+   - After the FAQPage block, call the helper and push `ldJsonScript(...)` when non-null.
 
-**3. Memory**
-- New `mem://security/content-pages-access.md` with full RLS/grant/allowed-paths documentation.
-- Add Core rule to `mem://index.md`: *"content_pages: server-only via supabaseAdmin. No public RLS SELECT; anon/authenticated grants revoked. Never query from browser client."*
+3. **Refactor**
+   - Extract `cityForContentPage` (currently in `nearby-cities.functions.ts`) into `src/lib/city-slug.ts` (pure, no server deps) so both the nearby-cities server fn and the new LocalBusiness helper can share it. Update the existing import.
+
+### Files
+- New: `src/lib/city-slug.ts`, `src/lib/page-localbusiness.ts`
+- Edit: `src/server/nearby-cities.functions.ts` (import shared helper), `src/routes/p.$slug.tsx` (emit JSON-LD)
 
 ### Out of scope
-- No column or schema changes
-- No changes to existing server function logic or routes
+- No DB schema changes.
+- No visible UI changes.
+- No `LocalBusiness` for non-city templates (resources, academy, generic) — those don't represent a localized offering.
