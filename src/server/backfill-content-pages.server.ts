@@ -285,7 +285,7 @@ export async function runBackfillContentPages(input: BackfillInput) {
     if (error) throw new Error(`select failed: ${error.message}`);
 
     const candidates = (rows || [])
-      .filter((r) => !r.body_markdown || (r.body_markdown as string).length < 200)
+      .filter((r) => !!r.url_path && (!r.body_markdown || (r.body_markdown as string).length < 200))
       .sort((a, b) => {
         const pa = (a.priority as number) ?? 0;
         const pb = (b.priority as number) ?? 0;
@@ -293,7 +293,7 @@ export async function runBackfillContentPages(input: BackfillInput) {
         const ca = CATEGORY_ORDER[a.category] ?? 99;
         const cb = CATEGORY_ORDER[b.category] ?? 99;
         if (ca !== cb) return ca - cb;
-        return a.url_path.localeCompare(b.url_path);
+        return (a.url_path ?? "").localeCompare(b.url_path ?? "");
       })
       .slice(0, data.limit);
 
@@ -302,9 +302,9 @@ export async function runBackfillContentPages(input: BackfillInput) {
         dryRun: true,
         count: candidates.length,
         slugs: candidates.map((r) => ({
-          url_path: r.url_path,
+          url_path: r.url_path ?? "",
           category: r.category,
-          classified: classify(r.slug || r.url_path.replace(/^\/p\//, "")).kind,
+          classified: classify(r.slug || (r.url_path ?? "").replace(/^\/p\//, "")).kind,
         })),
       };
     }
