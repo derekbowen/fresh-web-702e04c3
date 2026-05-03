@@ -224,6 +224,45 @@ export type Database = {
         }
         Relationships: []
       }
+      content_404_log: {
+        Row: {
+          first_seen_at: string
+          hit_count: number
+          id: string
+          last_seen_at: string
+          referrer: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          slug: string | null
+          url_path: string
+          user_agent: string | null
+        }
+        Insert: {
+          first_seen_at?: string
+          hit_count?: number
+          id?: string
+          last_seen_at?: string
+          referrer?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          slug?: string | null
+          url_path: string
+          user_agent?: string | null
+        }
+        Update: {
+          first_seen_at?: string
+          hit_count?: number
+          id?: string
+          last_seen_at?: string
+          referrer?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          slug?: string | null
+          url_path?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       content_pages: {
         Row: {
           body_markdown: string | null

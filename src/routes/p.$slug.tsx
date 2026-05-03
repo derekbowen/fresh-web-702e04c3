@@ -9,6 +9,7 @@ import {
   lookupContentPage,
   type ContentPage,
 } from "@/server/content-pages.functions";
+import { log404 } from "@/server/content-404-log.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
   buildMeta,
@@ -47,6 +48,24 @@ export const Route = createFileRoute("/p/$slug")({
       });
     }
     if (result.kind === "not_found") {
+      // Fire-and-forget: log the missing slug for admin review. Don't await
+      // because we don't want logging latency or failures to slow the 404.
+      try {
+        const { getRequestHeader } = await import("@tanstack/react-start/server");
+        const referrer = getRequestHeader("referer") ?? null;
+        const userAgent = getRequestHeader("user-agent") ?? null;
+        void log404({
+          data: {
+            urlPath: `/p/${params.slug}`,
+            slug: params.slug,
+            referrer,
+            userAgent,
+          },
+        });
+      } catch {
+        // Header utilities only available server-side; ignore on client.
+        void log404({ data: { urlPath: `/p/${params.slug}`, slug: params.slug } });
+      }
       throw notFound();
     }
     // Pass the loaded page through to the loader to avoid a second query

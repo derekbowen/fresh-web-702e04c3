@@ -53,6 +53,7 @@ import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
@@ -297,6 +298,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
+  id: '/admin/missing-pages',
+  path: '/admin/missing-pages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLearningRoute = AdminLearningRouteImport.update({
   id: '/admin/learning',
   path: '/admin/learning',
@@ -405,6 +411,7 @@ export interface FileRoutesByFullPath {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -464,6 +471,7 @@ export interface FileRoutesByTo {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -525,6 +533,7 @@ export interface FileRoutesById {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -587,6 +596,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/learning'
+    | '/admin/missing-pages'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -646,6 +656,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/learning'
+    | '/admin/missing-pages'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -706,6 +717,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/learning'
+    | '/admin/missing-pages'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -766,6 +778,7 @@ export interface RootRouteChildren {
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
+  AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   CategorySlugRoute: typeof CategorySlugRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
   PSplatRoute: typeof PSplatRoute
@@ -1094,6 +1107,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/missing-pages': {
+      id: '/admin/missing-pages'
+      path: '/admin/missing-pages'
+      fullPath: '/admin/missing-pages'
+      preLoaderRoute: typeof AdminMissingPagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/learning': {
       id: '/admin/learning'
       path: '/admin/learning'
@@ -1300,6 +1320,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClickReportRoute: AdminClickReportRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
+  AdminMissingPagesRoute: AdminMissingPagesRoute,
   CategorySlugRoute: CategorySlugRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
   PSplatRoute: PSplatRoute,
