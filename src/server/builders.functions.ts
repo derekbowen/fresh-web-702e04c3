@@ -4,14 +4,8 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { stateName } from "@/lib/states";
 
 
-const stateSlugSchema = z.object({
-  state: z.string().regex(/^[a-z]{2}$/),
-});
 
-const cityComboSchema = z.object({
-  state: z.string().regex(/^[a-z]{2}$/),
-  city: z.string().regex(/^[a-z0-9-]+$/).max(80),
-});
+
 
 export const listBuilderStates = createServerFn({ method: "GET" }).handler(
   async () => {
@@ -53,7 +47,7 @@ export const listAllBuilders = createServerFn({ method: "GET" }).handler(
 );
 
 export const getBuildersByState = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => stateSlugSchema.parse(d))
+  .inputValidator((d: unknown) => z.object({ state: z.string().regex(/^[a-z]{2}$/) }).parse(d))
   .handler(async ({ data }) => {
     const code = data.state.toUpperCase();
     const { data: providers, error } = await supabaseAdmin
@@ -83,7 +77,7 @@ export const getBuildersByState = createServerFn({ method: "GET" })
   });
 
 export const getBuildersByCity = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => cityComboSchema.parse(d))
+  .inputValidator((d: unknown) => z.object({ state: z.string().regex(/^[a-z]{2}$/), city: z.string().regex(/^[a-z0-9-]+$/).max(80) }).parse(d))
   .handler(async ({ data }) => {
     const code = data.state.toUpperCase();
     // city slug as stored is "<city>-<state-lower>" e.g. "charlotte-nc"

@@ -2,9 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const slugSchema = z.object({
-  slug: z.string().min(1).max(160).regex(/^[a-z0-9-]+$/),
-});
+
+
 
 export const listHelpCategories = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabaseAdmin
@@ -29,7 +28,7 @@ export const listPopularHelpArticles = createServerFn({ method: "GET" }).handler
 });
 
 export const getHelpCategoryWithArticles = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => slugSchema.parse(d))
+  .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(160).regex(/^[a-z0-9-]+$/) }).parse(d))
   .handler(async ({ data }) => {
     const [{ data: category }, { data: articles }] = await Promise.all([
       supabaseAdmin
@@ -49,7 +48,7 @@ export const getHelpCategoryWithArticles = createServerFn({ method: "GET" })
   });
 
 export const getHelpArticle = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => slugSchema.parse(d))
+  .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(160).regex(/^[a-z0-9-]+$/) }).parse(d))
   .handler(async ({ data }) => {
     const { data: article } = await supabaseAdmin
       .from("help_articles")

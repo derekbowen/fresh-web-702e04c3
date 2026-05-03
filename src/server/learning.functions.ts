@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireAdmin } from "./learning.server";
 
 const SlugInput = z.object({ course_slug: z.string().min(1).max(120) });
 
@@ -286,16 +287,8 @@ export const listMyProgress = createServerFn({ method: "POST" })
 // Admin: aggregate + per-user drilldown
 // ============================================================
 
-async function requireAdmin(userId: string) {
-  const { data, error } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Forbidden: admin only");
-}
+// requireAdmin moved to ./learning.server
+
 
 export type AdminCourseSummary = {
   course_slug: string;
