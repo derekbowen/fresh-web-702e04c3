@@ -3,37 +3,52 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 
 export type ContentPageTemplateType =
-  | "city_main"
-  | "host_acquisition_city"
-  | "event_city_guide"
-  | "spanish_host_acquisition"
+  | "host_acq_city"
+  | "public_pool"
+  | "public_pool_city"
+  | "public_pool_state"
+  | "event_guide"
+  | "resource"
+  | "amenity"
+  | "amenity_hub"
+  | "elearning"
+  | "listing"
+  | "host_advocacy_hub"
+  | "host_advocacy_state"
+  | "spanish_host_acq"
   | "spanish_resource"
-  | "host_advocacy"
-  | "state_advocacy_guide"
-  | "academy_article"
-  | "money_page"
-  | "resource_article";
+  | "homepage"
+  | "host_acq_hub"
+  | "account_legal"
+  | "other";
 
 export interface ContentPage {
   id: string;
-  slug: string;
-  template_type: ContentPageTemplateType;
-  title: string;
-  description: string | null;
-  content: string | null;
+  slug: string | null;
+  url_path: string;
+  source_url: string;
+  template_type: ContentPageTemplateType | null;
+  category: string;
+  locale: string;
+  title: string | null;
   seo_title: string | null;
   seo_description: string | null;
-  cover_image_url: string | null;
-  city_id: string | null;
-  state_code: string | null;
-  amenity_id: string | null;
-  language: "en" | "es";
-  hreflang_alt: string | null;
-  author: string | null;
-  published_at: string | null;
+  hero_image_url: string | null;
+  body_markdown: string | null;
+  raw_html: string | null;
+  status: string;
+  scraped_at: string | null;
   updated_at: string;
-  is_published: boolean;
-  legacy_slugs: string[];
+  // Compatibility aliases used by older templates
+  description?: string | null;
+  content?: string | null;
+  cover_image_url?: string | null;
+  language?: string;
+  author?: string | null;
+  published_at?: string | null;
+  is_published?: boolean;
+  legacy_slugs?: string[];
+  hreflang_alt?: string | null;
 }
 
 export type ContentPageLookupResult =
