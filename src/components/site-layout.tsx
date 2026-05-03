@@ -210,7 +210,7 @@ export function SiteFooter() {
             </div>
           </div>
           <div className="mt-8 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} PRNM CORP Riverside, Ca 92509
+            © {FOOTER_YEAR} PRNM CORP Riverside, Ca 92509
           </div>
         </div>
       </div>
