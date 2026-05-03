@@ -39,7 +39,17 @@ const FAQS = [
 ];
 
 const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const [cities, categories, listingsResult] = await Promise.all([
+  // Cloudflare Workers expose visitor geo on request.cf — use it for "near you" inventory.
+  const req = getRequest() as Request & {
+    cf?: { city?: string; region?: string; latitude?: string; longitude?: string };
+  };
+  const cf = req.cf ?? {};
+  const visitorCity = cf.city ?? null;
+  const visitorRegion = cf.region ?? null;
+  const origin =
+    cf.latitude && cf.longitude ? `${cf.latitude},${cf.longitude}` : undefined;
+
+  const [cities, categories, listingsResult, nearbyResult] = await Promise.all([
     supabaseAdmin
       .from("cities")
       .select("slug, name, state_code")
@@ -52,11 +62,20 @@ const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
       .eq("is_published", true)
       .order("name"),
     searchListings({ perPage: 6 }),
+    origin
+      ? searchListings({ perPage: 1, origin })
+      : Promise.resolve({ total: 0, listings: [], page: 1, totalPages: 0 }),
   ]);
+
   return {
     cities: cities.data ?? [],
     categories: categories.data ?? [],
     listings: listingsResult.listings,
+    nearby: {
+      city: visitorCity,
+      region: visitorRegion,
+      count: origin ? nearbyResult.total : 0,
+    },
   };
 });
 
