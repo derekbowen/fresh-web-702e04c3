@@ -61,9 +61,15 @@ const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
       .select("slug, name, icon")
       .eq("is_published", true)
       .order("name"),
-    searchListings({ perPage: 6 }),
+    searchListings({ perPage: 6 }).catch((err) => {
+      console.error("landing-page searchListings (featured) failed:", err);
+      return { total: 0, listings: [], page: 1, totalPages: 0 };
+    }),
     origin
-      ? searchListings({ perPage: 1, origin })
+      ? searchListings({ perPage: 1, origin }).catch((err) => {
+          console.error("landing-page searchListings (nearby) failed:", err);
+          return { total: 0, listings: [], page: 1, totalPages: 0 };
+        })
       : Promise.resolve({ total: 0, listings: [], page: 1, totalPages: 0 }),
   ]);
 
