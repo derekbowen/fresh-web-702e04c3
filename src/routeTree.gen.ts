@@ -53,6 +53,7 @@ import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
+import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
@@ -295,6 +296,11 @@ const AdminLearningRoute = AdminLearningRouteImport.update({
   path: '/admin/learning',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminContentMigrationRoute = AdminContentMigrationRouteImport.update({
+  id: '/admin/content-migration',
+  path: '/admin/content-migration',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminClickReportRoute = AdminClickReportRouteImport.update({
   id: '/admin/click-report',
   path: '/admin/click-report',
@@ -391,6 +397,7 @@ export interface FileRoutesByFullPath {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -448,6 +455,7 @@ export interface FileRoutesByTo {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -507,6 +515,7 @@ export interface FileRoutesById {
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -567,6 +576,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
+    | '/admin/content-migration'
     | '/admin/learning'
     | '/auth/reset-password'
     | '/blog/$slug'
@@ -624,6 +634,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
+    | '/admin/content-migration'
     | '/admin/learning'
     | '/auth/reset-password'
     | '/blog/$slug'
@@ -682,6 +693,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/click-report'
+    | '/admin/content-migration'
     | '/admin/learning'
     | '/auth/reset-password'
     | '/blog/$slug'
@@ -740,6 +752,7 @@ export interface RootRouteChildren {
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
+  AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   CategorySlugRoute: typeof CategorySlugRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
@@ -1068,6 +1081,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLearningRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/content-migration': {
+      id: '/admin/content-migration'
+      path: '/admin/content-migration'
+      fullPath: '/admin/content-migration'
+      preLoaderRoute: typeof AdminContentMigrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/click-report': {
       id: '/admin/click-report'
       path: '/admin/click-report'
@@ -1258,6 +1278,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClickReportRoute: AdminClickReportRoute,
+  AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   CategorySlugRoute: CategorySlugRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,

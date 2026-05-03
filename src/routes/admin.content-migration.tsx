@@ -10,7 +10,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 export const Route = createFileRoute("/admin/content-migration")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
+    if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/content-migration" } });
   },
   component: AdminContentMigration,
 });
