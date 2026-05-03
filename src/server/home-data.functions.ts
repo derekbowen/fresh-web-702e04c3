@@ -83,7 +83,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, categories, listingsResult, nearbyResult] = await Promise.all([
+    const [cities, cityCountRes, categories, listingsResult, nearbyResult] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -95,6 +95,16 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         ),
         "cities query",
         { data: [] as HomeCity[] } as { data: HomeCity[] | null },
+      ),
+      safe(
+        Promise.resolve(
+          supabaseAdmin
+            .from("cities")
+            .select("*", { count: "exact", head: true })
+            .eq("is_published", true),
+        ),
+        "city count query",
+        { count: 0 } as { count: number | null },
       ),
       safe(
         Promise.resolve(
