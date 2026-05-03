@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 
 import appCss from "../styles.css?url";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { HydrationDebug } from "@/components/hydration-debug";
 import {
   buildMeta,
   ldJsonScript,
