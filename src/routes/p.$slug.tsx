@@ -20,6 +20,7 @@ import {
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
+import { PublicPoolTemplate } from "@/components/templates/public-pool";
 
 /**
  * Dispatcher route for /p/{slug}.
