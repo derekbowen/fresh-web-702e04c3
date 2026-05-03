@@ -485,14 +485,32 @@ export const generateContentBatch = createServerFn({ method: "POST" })
 
     // Determine template_type/category from source_type
     const rows = okPages.map(({ plan, body }) => {
-      const isCity = plan.source_type === "city";
+      const t = plan.source_type;
+      const isCity = t === "city";
+      const isEvent = t === "event_guide";
+      const isEs = t === "hosting_es";
+      const template_type = isCity
+        ? "host_acq_city"
+        : isEvent
+        ? "event_guide"
+        : isEs
+        ? "host_acq_city_es"
+        : "resource";
+      const category = isCity
+        ? "Host/City Acquisition"
+        : isEvent
+        ? "Event Guide"
+        : isEs
+        ? "Host/City Acquisition (ES)"
+        : "Resource/Article Page";
       return {
         slug: plan.slug,
         url_path: `/p/${plan.slug}`,
-        template_type: isCity ? "host_acq_city" : "resource",
-        category: isCity ? "Host/City Acquisition" : "Resource/Article Page",
-        locale: "en",
+        template_type,
+        category,
+        locale: isEs ? "es" : "en",
         status: "published",
+        in_sitemap: true,
         title: plan.h1 ?? plan.meta_title ?? plan.slug,
         description: plan.meta_description ?? "",
         content: body,
