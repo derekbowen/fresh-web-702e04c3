@@ -1,46 +1,62 @@
 /**
- * Sharetribe Marketplace API client (server-only).
+ * Sharetribe API client (server-only).
  *
- * The configured Sharetribe app for this project only has the `public-read`
- * scope (Marketplace API), not Integration API. Even when requesting
- * `scope=integ`, Sharetribe returns a public-read token, which gets 403 on
- * Integration endpoints. So we use the Marketplace API host:
+ * Two clients are configured:
  *
- *   POST https://flex-api.sharetribe.com/v1/auth/token
- *        client_id, grant_type=client_credentials, scope=public-read
+ * 1. Marketplace API (public-read) — for public-facing listing browsing.
+ *    Uses SHARETRIBE_CLIENT_ID. Returns only published listings.
+ *      POST https://flex-api.sharetribe.com/v1/auth/token
+ *           client_id, grant_type=client_credentials, scope=public-read
+ *      GET  https://flex-api.sharetribe.com/v1/api/listings/{query|show}
  *
- *   GET  https://flex-api.sharetribe.com/v1/api/listings/{query|show}
+ * 2. Integration API (integ) — for admin / write / all-states reads.
+ *    Uses SHARETRIBE_INTEG_CLIENT_ID + SHARETRIBE_INTEG_CLIENT_SECRET.
+ *    Returns ALL listings including draft/pending/closed.
+ *      POST https://flex-integ-api.sharetribe.com/v1/auth/token
+ *           client_id, client_secret, grant_type=client_credentials, scope=integ
+ *      GET  https://flex-integ-api.sharetribe.com/v1/integration_api/...
  *
- * Marketplace API public-read returns only published listings. The `states`
- * filter is not supported on this scope.
- *
- * Docs: https://www.sharetribe.com/api-reference/marketplace.html
+ * Default for public reads (`integGet`) uses the public-read client.
+ * Use `integrationGet` / `integrationPost` for Integration API calls.
  */
 
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
+const INTEGRATION_API_BASE = "https://flex-integ-api.sharetribe.com";
 
 type TokenCache = { token: string; expiresAt: number } | null;
-let tokenCache: TokenCache = null;
+let publicTokenCache: TokenCache = null;
+let integTokenCache: TokenCache = null;
 
-function getClientId(): string {
+function getPublicClientId(): string {
   const id = process.env.SHARETRIBE_CLIENT_ID;
   if (!id) throw new Error("SHARETRIBE_CLIENT_ID is not configured");
   return id;
 }
 
+function getIntegClientId(): string {
+  const id = process.env.SHARETRIBE_INTEG_CLIENT_ID;
+  if (!id) throw new Error("SHARETRIBE_INTEG_CLIENT_ID is not configured");
+  return id;
+}
+
+function getIntegClientSecret(): string {
+  const s = process.env.SHARETRIBE_INTEG_CLIENT_SECRET;
+  if (!s) throw new Error("SHARETRIBE_INTEG_CLIENT_SECRET is not configured");
+  return s;
+}
+
 /**
- * Get a Marketplace API access token (scope=public-read). Cached in-memory
- * for the lifetime of the worker instance. The public-read flow is
- * client_id-only — no client_secret required.
+ * Get a Marketplace API access token (scope=public-read). Cached in-memory.
+ * The public-read flow is client_id-only — no client_secret required.
  */
 async function getPublicReadToken(): Promise<string> {
   const now = Date.now();
-  if (tokenCache && tokenCache.expiresAt > now + 30_000) {
-    return tokenCache.token;
+  if (publicTokenCache && publicTokenCache.expiresAt > now + 30_000) {
+    return publicTokenCache.token;
   }
 
   const body = new URLSearchParams({
-    client_id: getClientId(),
+    client_id: getPublicClientId(),
     grant_type: "client_credentials",
     scope: "public-read",
   });
@@ -54,22 +70,56 @@ async function getPublicReadToken(): Promise<string> {
   if (!res.ok) {
     const text = await res.text();
     throw new Error(
-      `Sharetribe auth failed [${res.status}]: ${text.slice(0, 200)}`,
+      `Sharetribe public-read auth failed [${res.status}]: ${text.slice(0, 200)}`,
     );
   }
 
-  const json = (await res.json()) as {
-    access_token: string;
-    expires_in: number;
-  };
-
-  tokenCache = {
+  const json = (await res.json()) as { access_token: string; expires_in: number };
+  publicTokenCache = {
     token: json.access_token,
     expiresAt: now + (json.expires_in ?? 3600) * 1000,
   };
   return json.access_token;
 }
 
+/**
+ * Get an Integration API access token (scope=integ). Cached in-memory.
+ */
+async function getIntegrationToken(): Promise<string> {
+  const now = Date.now();
+  if (integTokenCache && integTokenCache.expiresAt > now + 30_000) {
+    return integTokenCache.token;
+  }
+
+  const body = new URLSearchParams({
+    client_id: getIntegClientId(),
+    client_secret: getIntegClientSecret(),
+    grant_type: "client_credentials",
+    scope: "integ",
+  });
+
+  const res = await fetch(`${INTEGRATION_API_BASE}/v1/auth/token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `Sharetribe integ auth failed [${res.status}]: ${text.slice(0, 200)}`,
+    );
+  }
+
+  const json = (await res.json()) as { access_token: string; expires_in: number };
+  integTokenCache = {
+    token: json.access_token,
+    expiresAt: now + (json.expires_in ?? 3600) * 1000,
+  };
+  return json.access_token;
+}
+
+/** Marketplace API GET (public-read scope). Used by public listing browse. */
 async function integGet<T = unknown>(
   path: string,
   query: Record<string, string | number | boolean | undefined> = {},
@@ -88,16 +138,67 @@ async function integGet<T = unknown>(
 
   const url = `${MARKETPLACE_API_BASE}/v1/api${path}${params.size ? `?${params}` : ""}`;
   const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-    },
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
   });
 
   if (!res.ok) {
     const text = await res.text();
     throw new Error(
       `Sharetribe ${path} failed [${res.status}]: ${text.slice(0, 200)}`,
+    );
+  }
+  return (await res.json()) as T;
+}
+
+/** Integration API GET (integ scope). For admin reads incl. all states. */
+export async function integrationGet<T = unknown>(
+  path: string,
+  query: Record<string, string | number | boolean | undefined> = {},
+): Promise<T> {
+  const token = await getIntegrationToken();
+
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(query)) {
+    if (v !== undefined && v !== null && v !== "") {
+      params.set(k, String(v));
+    }
+  }
+
+  const url = `${INTEGRATION_API_BASE}/v1/integration_api${path}${params.size ? `?${params}` : ""}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `Sharetribe integ ${path} failed [${res.status}]: ${text.slice(0, 200)}`,
+    );
+  }
+  return (await res.json()) as T;
+}
+
+/** Integration API POST (integ scope). For admin writes / transitions. */
+export async function integrationPost<T = unknown>(
+  path: string,
+  body: Record<string, unknown>,
+): Promise<T> {
+  const token = await getIntegrationToken();
+  const url = `${INTEGRATION_API_BASE}/v1/integration_api${path}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+      "Content-Type": "application/transit+json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `Sharetribe integ POST ${path} failed [${res.status}]: ${text.slice(0, 200)}`,
     );
   }
   return (await res.json()) as T;
