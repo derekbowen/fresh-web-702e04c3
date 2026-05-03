@@ -66,7 +66,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     }
 
     // 2. Legacy slug alias lookup
-    const { data: aliased } = await supabaseAdmin
+    const { data: aliased } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("slug")
       .contains("legacy_slugs", [slug])
