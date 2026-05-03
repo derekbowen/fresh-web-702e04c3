@@ -37,7 +37,7 @@ const PER_PAGE_TOOL = {
               body_markdown: {
                 type: "string",
                 description:
-                  "FULL article in markdown, 1100-1700 words. Use ## and ### headings. Real paragraphs (not bullet stubs). Cite specific neighborhoods, ordinances, season patterns, dollar ranges. Include the requested internal links as markdown links. Include a UNIQUE-TO-THIS-PAGE section reflecting the uniqueness_angle. End with ## Frequently asked questions (5 ### questions) and a final CTA paragraph.",
+                  "FULL article in markdown, 2,500–3,500 words, following the 9-section VA template exactly (H1, Intro, Main Educational Content with 4–6 H2s + at least one markdown table + one numbered process, Mid-Page Earnings Callout blockquote, '## How This Affects Pool Rental Hosts', '## Offset Your [TOPIC] Costs With Pool Rental Income', '## Frequently Asked Questions' with 5–7 ### Q: questions, '## Related Pool Owner Guides' with the required internal links, and the exact Final CTA block). Topic-specific only — never generic.",
               },
             },
             required: ["plan_slug", "body_markdown"],
@@ -72,22 +72,89 @@ type PlanRow = {
 };
 
 function buildPrompt(rows: PlanRow[]) {
-  const system = `You write SEO long-form content for Pool Rental Near Me (PRNM), a marketplace where homeowners rent out private pools by the hour.
+  const system = `You are an expert SEO content writer and pool care specialist writing for Pool Rental Near Me (poolrentalnearme.com) — a marketplace where homeowners rent out private pools by the hour to earn passive income ($3,000–$15,000/year).
 
-Brand differentiators (weave in naturally — never list all on one page):
+Your content serves two audiences simultaneously:
+1. Pool owners who need accurate, actionable information about the page's topic
+2. Pool owners who could earn money renting their pool on PRNM
+
+BRAND DIFFERENTIATORS (weave in naturally — never list all on one page):
 - 10% flat host fee (vs Swimply's 15%+)
-- $2M liability insurance included for hosts
-- Fast payouts, real human host support
+- $2M liability insurance included on every booking
+- Payouts within 24 hours
+- Free to list, full host control over guests and schedule
 
-HARD RULES (every page):
-1. 1100–1700 words of REAL content. No filler, no "in this article", no bullet-stub paragraphs.
-2. Match the page's PRIMARY KEYWORD intent. Use the SUPPORTING KEYWORDS naturally across H2/H3 and prose. Do not keyword-stuff.
-3. Include a section that DIRECTLY EXECUTES the UNIQUENESS ANGLE provided — this is what prevents doorway-page cannibalization. Make it concrete (numbers, neighborhood names, ordinance citations, real seasonality).
-4. Include EVERY internal link listed in INTERNAL LINKS as a contextual markdown link with varied anchor text. Format: [anchor](/p/{slug-or-path}). If the listed path starts with "/", use it as-is.
-5. End with "## Frequently asked questions" containing 5 "### question" subheadings, each answered in 2–4 sentences.
-6. End with a final CTA paragraph encouraging the reader to list their pool, linking to /l/draft/00000000-0000-0000-0000-000000000000/new/details
-7. Each page in the batch MUST be structurally different from the others (different H2 patterns, different opening hook, different ordering). Do not template across pages.
-8. For city pages: cite 3–5 real neighborhoods, mention typical swim-season length for that climate, give realistic hourly price ranges ($45–$95+ depending on metro).
+ABSOLUTE RULES — these override everything else:
+🚫 NEVER copy or closely paraphrase any other pool website. All content must be original.
+🚫 NEVER use AI-obvious phrases: "In conclusion", "It is worth noting", "It is important to", "Dive into", "In this guide", "In this article".
+🚫 NEVER pad with generic filler — every paragraph must teach the reader something real.
+🚫 NEVER skip a section. NEVER stop before 2,500 words.
+✅ Write as a pool professional with 10+ years experience talking to a knowledgeable neighbor.
+
+MANDATORY 9-SECTION STRUCTURE (in this exact order, with these exact H2 wordings):
+
+## SECTION 1 — H1
+Use: # {H1} (must match the provided H1 exactly, no markdown bold)
+
+## SECTION 2 — Introduction (150–200 words)
+- Open with a relatable pain point or question a real pool owner has
+- Use the PRIMARY KEYWORD naturally in the first 100 words
+- Promise what the reader will learn
+- Do NOT mention pool rentals here — pure education
+
+## SECTION 3 — Main Educational Content (1,000–1,500 words, 4–6 H2 subsections)
+- Specific numbers, measurements, chemical ratios, timeframes, dollar ranges
+- At least 1 markdown comparison/data table
+- At least 1 numbered step-by-step process
+- Common mistakes + pro tips that show real expertise
+- Each H2 must add unique value — no filler
+
+## SECTION 4 — Mid-Page Callout (REQUIRED, exact blockquote)
+Insert this exact blockquote after Section 3:
+> 💰 **Did you know?** Pool owners on Pool Rental Near Me earn an average of
+> **$500–$1,500/month** renting their pool by the hour. That's enough to cover
+> your entire annual pool maintenance budget — often with money to spare.
+> [See how much your pool could earn →](/p/hosting)
+
+## SECTION 5 — How This Affects Pool Rental Hosts (300–400 words)
+H2 must be exactly: ## How This Affects Pool Rental Hosts
+- Connect THIS page's specific topic to hosting on PRNM
+- Why proper handling of this topic earns better reviews
+- Cite a concrete standard hosts should meet
+- Sound like a successful host, not a sales pitch
+
+## SECTION 6 — Offset Your {TOPIC} Costs With Pool Rental Income (400–500 words)
+H2 must be exactly: ## Offset Your {TOPIC} Costs With Pool Rental Income
+(replace {TOPIC} with this page's actual topic — e.g. "Chlorine", "Pool Heating", "Quinceañera Venue")
+- Open with the real annual cost of THIS topic
+- Contrast with realistic PRNM rental earnings ($3,000–$15,000/year by city)
+- Briefly explain the model (list, set price, approve bookings, 10% fee, $2M coverage)
+- Give a specific city earnings example (e.g. "A host in Phoenix renting 3 hrs/day, 4 days/week at $45/hr earns ~$2,800/month")
+- Close with: [Calculate what your pool could earn →](/p/hosting)
+
+## SECTION 7 — FAQ (5–7 questions, 60–100 words each)
+H2 must be exactly: ## Frequently Asked Questions
+Format every question as: ### Q: {question}
+Questions must be UNIQUE to this page's topic — not interchangeable with any other page.
+
+## SECTION 8 — Related Pool Owner Guides (REQUIRED)
+H2 must be exactly: ## Related Pool Owner Guides
+Write a 2-sentence intro, then list EVERY internal link provided as natural-anchor markdown bullets.
+Never use "click here", "read more", or bare URLs.
+
+## SECTION 9 — Final CTA (REQUIRED, exact block)
+End with this exact markdown block, unchanged:
+---
+## Ready to Turn Your Pool Into Income?
+You already do the work to keep your pool perfect. Now let it pay you back.
+Pool owners in your area are earning $500–$2,000/month renting their pool by the hour to swimmers, families, and fitness enthusiasts — with full control over their schedule.
+**[→ List Your Pool for Free on Pool Rental Near Me](/p/hosting)**
+**[→ See How Much Your Pool Could Earn](/p/hosting#calculator)**
+---
+
+CITY-PAGE EXTRAS: When the page is for a city, cite 3–5 real neighborhoods, mention the local swim-season length, give realistic local hourly price ranges ($45–$95+ depending on metro), and execute the UNIQUENESS ANGLE concretely (numbers, neighborhoods, ordinances, real seasonality).
+
+EACH PAGE in a batch must be structurally distinct (different opening hook, different H2 ordering inside Section 3, different table topic). Do not template across pages.
 
 Return ONLY by calling the write_pages tool with one entry per planned page. Match plan_slug exactly.`;
 
@@ -258,8 +325,8 @@ export const generateContentBatch = createServerFn({ method: "POST" })
       }
       const body = gen.body_markdown ?? "";
       const words = body.split(/\s+/).filter(Boolean).length;
-      if (words < 900) {
-        errors.push(`${plan.slug}: too short (${words} words)`);
+      if (words < 2200) {
+        errors.push(`${plan.slug}: too short (${words} words, need 2,500+)`);
         continue;
       }
       const requiredLinks = (plan.internal_links ?? "")
@@ -273,8 +340,19 @@ export const generateContentBatch = createServerFn({ method: "POST" })
         );
         continue;
       }
-      if (!/##\s*Frequently asked questions/i.test(body)) {
-        errors.push(`${plan.slug}: missing FAQ section`);
+      const requiredSections: Array<[RegExp, string]> = [
+        [/##\s*How This Affects Pool Rental Hosts/i, "Section 5 (How This Affects Hosts)"],
+        [/##\s*Offset Your .+ Costs With Pool Rental Income/i, "Section 6 (Offset Costs)"],
+        [/##\s*Frequently Asked Questions/i, "Section 7 (FAQ)"],
+        [/##\s*Related Pool Owner Guides/i, "Section 8 (Related Guides)"],
+        [/##\s*Ready to Turn Your Pool Into Income\?/i, "Section 9 (Final CTA)"],
+        [/💰\s*\*\*Did you know\?\*\*/, "Section 4 (Mid-page Callout)"],
+      ];
+      const missingSections = requiredSections
+        .filter(([re]) => !re.test(body))
+        .map(([, label]) => label);
+      if (missingSections.length > 0) {
+        errors.push(`${plan.slug}: missing ${missingSections.join(", ")}`);
         continue;
       }
       okPages.push({ plan, body });
