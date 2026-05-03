@@ -11,8 +11,10 @@ import {
 } from "@/server/content-pages.functions";
 import {
   getNearbyCitiesForPage,
+  cityForContentPage,
   type NearbyCity,
 } from "@/server/nearby-cities.functions";
+import { getCityBySlug, type CityRow } from "@/server/cities.functions";
 import { log404 } from "@/server/content-404-log.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
@@ -65,6 +67,7 @@ export const Route = createFileRoute("/p/$slug")({
   loader: async ({ context }) => {
     const page = (context as { page: ContentPage }).page;
     let nearbyCities: NearbyCity[] = [];
+    let city: CityRow | null = null;
     if (
       page.template_type === "host_acq_city" ||
       page.template_type === "public_pool_city" ||
@@ -77,8 +80,16 @@ export const Route = createFileRoute("/p/$slug")({
       } catch {
         nearbyCities = [];
       }
+      const citySlug = cityForContentPage(page.template_type, page.slug);
+      if (citySlug) {
+        try {
+          city = await getCityBySlug({ data: { slug: citySlug } });
+        } catch {
+          city = null;
+        }
+      }
     }
-    return { page, nearbyCities };
+    return { page, nearbyCities, city };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -209,11 +220,11 @@ function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities } = Route.useLoaderData();
+  const { page, nearbyCities, city } = Route.useLoaderData();
 
   switch (page.template_type) {
     case "host_acq_city":
-      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} />;
+      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} />;
     case "public_pool":
       return <PublicPoolTemplate page={page} />;
     case "public_pool_city":

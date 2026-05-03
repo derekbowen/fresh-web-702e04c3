@@ -3,27 +3,35 @@ import { Breadcrumbs } from "@/components/listing-card";
 import { AutoLinkedContent } from "@/components/auto-linked-content";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
+import { EarningsCalculator } from "@/components/earnings-calculator";
 import { faqsForContentPage } from "@/lib/page-faqs";
+import { buildHostCityGuide } from "@/lib/host-city-guide";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
+import type { CityRow } from "@/server/cities.functions";
 
 /**
  * Template for /p/become-a-pool-host-{city}-{state} pages
  * (template_type = "host_acq_city"). ~1,267 pSEO pages targeting prospective
- * pool hosts in specific U.S. cities. Renders title, hero, optional scraped
- * markdown body, plus a strong "Apply to host" CTA.
+ * pool hosts. Renders title + hero + CTA, then either the scraped body or a
+ * deterministic ~1,000-word local guide built from the matching cities row,
+ * an interactive earnings calculator, nearby-city links, and FAQs.
  */
 export function HostAcqCityTemplate({
   page,
   nearbyCities = [],
+  city = null,
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
+  city?: CityRow | null;
 }) {
   const title = page.title || page.seo_title || "Become a pool host";
   const description = page.seo_description || page.description || null;
   const body = page.body_markdown || page.content || null;
   const faqs = faqsForContentPage(page);
+  const guide = city ? buildHostCityGuide(city) : null;
+  const cityName = city?.name || "your city";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -78,11 +86,37 @@ export function HostAcqCityTemplate({
               targets={[]}
               className="prose prose-lg mt-10 max-w-none whitespace-pre-line text-foreground"
             />
+          ) : guide ? (
+            <section className="mt-10">
+              <p className="text-lg leading-relaxed text-foreground">
+                {guide.intro}
+              </p>
+              {guide.sections.map((s) => (
+                <div key={s.heading} className="mt-8">
+                  <h2 className="text-2xl font-semibold text-foreground">
+                    {s.heading}
+                  </h2>
+                  {s.paragraphs.map((p, i) => (
+                    <p
+                      key={i}
+                      className="mt-3 text-base leading-relaxed text-foreground"
+                    >
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              ))}
+            </section>
           ) : (
             <p className="mt-10 text-sm text-muted-foreground">
               Detailed local guide coming soon.
             </p>
           )}
+
+          <EarningsCalculator
+            cityName={cityName}
+            defaultHourlyRate={guide?.defaultHourlyRate ?? 75}
+          />
 
           <NearbyCities
             cities={nearbyCities}
