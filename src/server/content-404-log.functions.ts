@@ -1,6 +1,18 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+
+async function assertAdmin(userId: string) {
+  const { data, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Forbidden: admin only");
+}
 
 /**
  * Records a 404 hit on a /p/{slug} URL. Upserts on `url_path` so repeat hits
@@ -81,7 +93,8 @@ export interface Content404Row {
 }
 
 /** Admin: list recent 404s, optionally filtered to unresolved only. */
-export const list404s = createServerFn({ method: "GET" })
+export const list404s = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
     z
       .object({
@@ -90,7 +103,10 @@ export const list404s = createServerFn({ method: "GET" })
       })
       .parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<{ rows: Content404Row[] }> => {
+  .handler(async ({ data, context }): Promise<{ rows: Content404Row[] }> => {
+    const { userId } = context as { userId: string };
+    await assertAdmin(userId);
+
     let q = (supabaseAdmin as any)
       .from("content_404_log")
       .select("*")
@@ -107,6 +123,7 @@ export const list404s = createServerFn({ method: "GET" })
 
 /** Admin: mark a 404 row as resolved (e.g., after redirecting or creating the page). */
 export const resolve404 = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
     z
       .object({
@@ -115,7 +132,10 @@ export const resolve404 = createServerFn({ method: "POST" })
       })
       .parse(data),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await assertAdmin(userId);
+
     const { error } = await (supabaseAdmin as any)
       .from("content_404_log")
       .update({

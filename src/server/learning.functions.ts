@@ -113,7 +113,10 @@ export const markCourseComplete = createServerFn({ method: "POST" })
         { onConflict: "user_id,course_slug", ignoreDuplicates: true },
       );
 
-    const { data: inserted, error: insertErr } = await supabase
+    // Insert via service role: the user-facing INSERT RLS policy was removed
+    // to prevent certificate forgery. The course existence + published check
+    // above is the only gate, so this insert must run as the trusted server.
+    const { data: inserted, error: insertErr } = await supabaseAdmin
       .from("course_completions")
       .insert({
         user_id: userId,
