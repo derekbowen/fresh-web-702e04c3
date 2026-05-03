@@ -56,7 +56,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             .filter((g) => g.basePath === group.basePath)
             .map((g) => g.templateType);
 
-          const { count, error } = await supabaseAdmin
+          const { count, error } = await (supabaseAdmin as any)
             .from("content_pages")
             .select("*", { count: "exact", head: true })
             .eq("is_published", true)
@@ -65,7 +65,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           if (error || !count) continue;
 
           // Latest lastmod for the group
-          const { data: latest } = await supabaseAdmin
+          const { data: latest } = await (supabaseAdmin as any)
             .from("content_pages")
             .select("updated_at")
             .eq("is_published", true)
@@ -84,12 +84,12 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         // 3. Amenities (renamed from /category to match Sharetribe /amenity URLs)
-        const { count: amenityCount } = await supabaseAdmin
+        const { count: amenityCount } = await (supabaseAdmin as any)
           .from("amenities")
           .select("*", { count: "exact", head: true })
           .eq("is_published", true);
         if (amenityCount && amenityCount > 0) {
-          const { data: latest } = await supabaseAdmin
+          const { data: latest } = await (supabaseAdmin as any)
             .from("amenities")
             .select("updated_at")
             .eq("is_published", true)
@@ -109,7 +109,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         });
 
         // 5. Host profiles (optional — /u/{uuid})
-        const { count: hostCount } = await supabaseAdmin
+        const { count: hostCount } = await (supabaseAdmin as any)
           .from("host_profiles")
           .select("*", { count: "exact", head: true })
           .eq("is_published", true);

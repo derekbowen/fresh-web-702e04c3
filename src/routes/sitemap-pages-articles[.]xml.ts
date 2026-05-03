@@ -23,7 +23,7 @@ export const Route = createFileRoute("/sitemap-pages-articles.xml")({
         const page = Math.max(1, Number(url.searchParams.get("page") ?? 1));
         const offset = (page - 1) * SITEMAP_PAGE_SIZE;
 
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await (supabaseAdmin as any)
           .from("content_pages")
           .select("slug, updated_at, cover_image_url")
           .eq("template_type", "resource_article")
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/sitemap-pages-articles.xml")({
           return sitemapResponse(buildUrlsetXml([]));
         }
 
-        const urls: SitemapUrl[] = (data ?? []).map((row) => {
+        const urls: SitemapUrl[] = ((data ?? []) as any[]).map((row) => {
           const sitemapUrl: SitemapUrl = {
             loc: `${SITE_URL}/p/${row.slug}`,
             lastmod: row.updated_at,

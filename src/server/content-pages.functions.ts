@@ -54,7 +54,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     const { slug } = data;
 
     // 1. Canonical lookup
-    const { data: page } = await supabaseAdmin
+    const { data: page } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("*")
       .eq("slug", slug)
@@ -66,7 +66,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     }
 
     // 2. Legacy slug alias lookup
-    const { data: aliased } = await supabaseAdmin
+    const { data: aliased } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("slug")
       .contains("legacy_slugs", [slug])
@@ -89,7 +89,7 @@ const hreflangSchema = z.object({ pageId: z.string().uuid() });
 export const getHreflangSibling = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => hreflangSchema.parse(data))
   .handler(async ({ data }) => {
-    const { data: row } = await supabaseAdmin
+    const { data: row } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("slug, language")
       .eq("id", data.pageId)
