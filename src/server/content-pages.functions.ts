@@ -66,45 +66,21 @@ export const lookupContentPage = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<ContentPageLookupResult> => {
     const { slug } = data;
 
-    // 1. Canonical lookup
     const { data: page } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("*")
       .eq("slug", slug)
-      .eq("is_published", true)
+      .in("status", ["drafted", "migrated", "published"])
       .maybeSingle();
 
     if (page) {
       return { kind: "found", page: page as unknown as ContentPage };
     }
-
-    // 2. Legacy slug alias lookup
-    const { data: aliased } = await (supabaseAdmin as any)
-      .from("content_pages")
-      .select("slug")
-      .contains("legacy_slugs", [slug])
-      .eq("is_published", true)
-      .maybeSingle();
-
-    if (aliased) {
-      return { kind: "redirect", canonicalSlug: aliased.slug };
-    }
-
     return { kind: "not_found" };
   });
 
-/**
- * Returns the EN↔ES sibling for a page if hreflang_alt is set. Used by the
- * dispatcher to emit hreflang link tags pointing both ways.
- */
 export const getHreflangSibling = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ pageId: z.string().uuid() }).parse(data))
-  .handler(async ({ data }) => {
-    const { data: row } = await (supabaseAdmin as any)
-      .from("content_pages")
-      .select("slug, language")
-      .eq("id", data.pageId)
-      .eq("is_published", true)
-      .maybeSingle();
-    return { sibling: row };
+  .handler(async () => {
+    return { sibling: null as null | { slug: string; language: string } };
   });
