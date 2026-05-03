@@ -29,48 +29,79 @@ export type HomeData = {
 
 const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
 
+const EMPTY_HOME_DATA: HomeData = {
+  cities: [],
+  categories: [],
+  listings: [],
+  nearby: { city: null, region: null, count: 0 },
+};
+
 export const getHomeData = createServerFn({ method: "GET" }).handler(async (): Promise<HomeData> => {
-  const req = getRequest() as Request & {
-    cf?: { city?: string; region?: string; latitude?: string; longitude?: string };
-  };
-  const cf = req.cf ?? {};
-  const visitorCity = cf.city ?? null;
-  const visitorRegion = cf.region ?? null;
-  const origin =
-    cf.latitude && cf.longitude ? `${cf.latitude},${cf.longitude}` : undefined;
+  try {
+    let cf: { city?: string; region?: string; latitude?: string; longitude?: string } = {};
+    try {
+      const req = getRequest() as Request & {
+        cf?: { city?: string; region?: string; latitude?: string; longitude?: string };
+      };
+      cf = req.cf ?? {};
+    } catch (err) {
+      console.error("homepage getRequest failed:", err);
+    }
 
-  const [cities, categories, listingsResult, nearbyResult] = await Promise.all([
-    supabaseAdmin
-      .from("cities")
-      .select("slug, name, state_code")
-      .eq("is_published", true)
-      .order("name")
-      .limit(60),
-    supabaseAdmin
-      .from("categories")
-      .select("slug, name, icon")
-      .eq("is_published", true)
-      .order("name"),
-    searchListings({ perPage: 6 }).catch((err) => {
-      console.error("homepage searchListings (featured) failed:", err);
-      return emptyListingResult;
-    }),
-    origin
-      ? searchListings({ perPage: 1, origin }).catch((err) => {
-          console.error("homepage searchListings (nearby) failed:", err);
-          return emptyListingResult;
-        })
-      : Promise.resolve(emptyListingResult),
-  ]);
+    const visitorCity = cf.city ?? null;
+    const visitorRegion = cf.region ?? null;
+    const origin =
+      cf.latitude && cf.longitude ? `${cf.latitude},${cf.longitude}` : undefined;
 
-  return {
-    cities: (cities.data ?? []) as HomeCity[],
-    categories: (categories.data ?? []) as HomeCategory[],
-    listings: listingsResult.listings,
-    nearby: {
-      city: visitorCity,
-      region: visitorRegion,
-      count: origin ? nearbyResult.total : 0,
-    },
-  };
+    const safe = async <T>(p: Promise<T>, label: string, fallback: T): Promise<T> => {
+      try {
+        return await p;
+      } catch (err) {
+        console.error(`homepage ${label} failed:`, err);
+        return fallback;
+      }
+    };
+
+    const [cities, categories, listingsResult, nearbyResult] = await Promise.all([
+      safe(
+        supabaseAdmin
+          .from("cities")
+          .select("slug, name, state_code")
+          .eq("is_published", true)
+          .order("name")
+          .limit(60)
+          .then((r) => r),
+        "cities query",
+        { data: [] as HomeCity[] } as { data: HomeCity[] | null },
+      ),
+      safe(
+        supabaseAdmin
+          .from("categories")
+          .select("slug, name, icon")
+          .eq("is_published", true)
+          .order("name")
+          .then((r) => r),
+        "categories query",
+        { data: [] as HomeCategory[] } as { data: HomeCategory[] | null },
+      ),
+      safe(searchListings({ perPage: 6 }), "searchListings (featured)", emptyListingResult),
+      origin
+        ? safe(searchListings({ perPage: 1, origin }), "searchListings (nearby)", emptyListingResult)
+        : Promise.resolve(emptyListingResult),
+    ]);
+
+    return {
+      cities: (cities.data ?? []) as HomeCity[],
+      categories: (categories.data ?? []) as HomeCategory[],
+      listings: listingsResult.listings,
+      nearby: {
+        city: visitorCity,
+        region: visitorRegion,
+        count: origin ? nearbyResult.total : 0,
+      },
+    };
+  } catch (err) {
+    console.error("homepage getHomeData fatal failure, returning empty data:", err);
+    return EMPTY_HOME_DATA;
+  }
 });
