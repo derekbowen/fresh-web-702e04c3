@@ -176,6 +176,8 @@ function ContentPageDispatcher() {
   switch (page.template_type) {
     case "host_acq_city":
       return <HostAcqCityTemplate page={page} />;
+    case "public_pool":
+      return <PublicPoolTemplate page={page} />;
     case "resource":
       return <ResourceArticleTemplate page={page} />;
     default:
