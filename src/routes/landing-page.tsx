@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ListingCard } from "@/components/listing-card";
@@ -38,7 +39,17 @@ const FAQS = [
 ];
 
 const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const [cities, categories, listingsResult] = await Promise.all([
+  // Cloudflare Workers expose visitor geo on request.cf — use it for "near you" inventory.
+  const req = getRequest() as Request & {
+    cf?: { city?: string; region?: string; latitude?: string; longitude?: string };
+  };
+  const cf = req.cf ?? {};
+  const visitorCity = cf.city ?? null;
+  const visitorRegion = cf.region ?? null;
+  const origin =
+    cf.latitude && cf.longitude ? `${cf.latitude},${cf.longitude}` : undefined;
+
+  const [cities, categories, listingsResult, nearbyResult] = await Promise.all([
     supabaseAdmin
       .from("cities")
       .select("slug, name, state_code")
@@ -51,11 +62,20 @@ const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
       .eq("is_published", true)
       .order("name"),
     searchListings({ perPage: 6 }),
+    origin
+      ? searchListings({ perPage: 1, origin })
+      : Promise.resolve({ total: 0, listings: [], page: 1, totalPages: 0 }),
   ]);
+
   return {
     cities: cities.data ?? [],
     categories: categories.data ?? [],
     listings: listingsResult.listings,
+    nearby: {
+      city: visitorCity,
+      region: visitorRegion,
+      count: origin ? nearbyResult.total : 0,
+    },
   };
 });
 
@@ -91,7 +111,13 @@ export const Route = createFileRoute("/landing-page")({
 });
 
 function HomePage() {
-  const { cities, categories, listings } = Route.useLoaderData();
+  const { cities, categories, listings, nearby } = Route.useLoaderData();
+  const nearbyLabel = nearby.city
+    ? `${nearby.city}${nearby.region ? `, ${nearby.region}` : ""}`
+    : null;
+  const searchHref = nearbyLabel
+    ? `/s?address=${encodeURIComponent(nearbyLabel)}`
+    : "/s";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -101,6 +127,18 @@ function HomePage() {
         <section className="relative overflow-hidden bg-primary text-primary-foreground">
           <div className="mx-auto grid max-w-7xl items-stretch gap-8 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:py-20">
             <div className="lg:col-span-6 lg:py-8">
+              {nearby.count > 0 && nearbyLabel && (
+                <a
+                  href={searchHref}
+                  className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 backdrop-blur transition-colors hover:bg-white/25"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                  </span>
+                  {nearby.count} {nearby.count === 1 ? "pool" : "pools"} available near {nearbyLabel}
+                </a>
+              )}
               <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
                 Backyard pools,<br />
                 <span className="text-white/90">booked by the hour.</span>
@@ -110,10 +148,10 @@ function HomePage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="/s"
+                  href={searchHref}
                   className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                 >
-                  Find a pool near you →
+                  {nearbyLabel ? `Find a pool in ${nearbyLabel} →` : "Find a pool near you →"}
                 </a>
                 <a
                   href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
