@@ -49,7 +49,7 @@ const TOOLS = [
   },
 ];
 
-export const Route = createFileRoute("/p/free-host-tools" as any)({
+export const Route = createFileRoute("/p/free-host-tools")({
   head: () => {
     const meta = buildMeta({
       title: TITLE,

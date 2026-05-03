@@ -465,6 +465,7 @@ export interface FileRoutesByFullPath {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
@@ -531,6 +532,7 @@ export interface FileRoutesByTo {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
@@ -599,6 +601,7 @@ export interface FileRoutesById {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
@@ -668,6 +671,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/how-it-works'
+    | '/p/free-host-tools'
     | '/p/hosting'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
@@ -734,6 +738,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/how-it-works'
+    | '/p/free-host-tools'
     | '/p/hosting'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
@@ -801,6 +806,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/how-it-works'
+    | '/p/free-host-tools'
     | '/p/hosting'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
@@ -1171,6 +1177,13 @@ declare module '@tanstack/react-router' {
       path: '/p/how-it-works'
       fullPath: '/p/how-it-works'
       preLoaderRoute: typeof PHowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/free-host-tools': {
+      id: '/p/free-host-tools'
+      path: '/p/free-host-tools'
+      fullPath: '/p/free-host-tools'
+      preLoaderRoute: typeof PFreeHostToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/hosting': {
