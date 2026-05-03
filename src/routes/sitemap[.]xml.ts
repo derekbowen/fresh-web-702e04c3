@@ -84,12 +84,12 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
 
         // 3. Amenities (renamed from /category to match Sharetribe /amenity URLs)
-        const { count: amenityCount } = await supabaseAdmin
+        const { count: amenityCount } = await (supabaseAdmin as any)
           .from("amenities")
           .select("*", { count: "exact", head: true })
           .eq("is_published", true);
         if (amenityCount && amenityCount > 0) {
-          const { data: latest } = await supabaseAdmin
+          const { data: latest } = await (supabaseAdmin as any)
             .from("amenities")
             .select("updated_at")
             .eq("is_published", true)
