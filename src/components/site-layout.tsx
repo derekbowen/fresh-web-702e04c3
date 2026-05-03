@@ -171,20 +171,20 @@ export function SiteFooter() {
               <h4 className="text-lg font-semibold text-foreground">Get the Pool Rental Near Me app</h4>
               <p className="mt-1 text-sm text-muted-foreground">Book pools, message hosts, and manage trips on the go.</p>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4">
               <a
                 href="https://apps.apple.com/app/pool-rental-near-me/id6502249246"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Download on the App Store"
-                className="inline-flex h-16 items-center gap-3 rounded-2xl bg-foreground px-6 text-background shadow-sm transition-transform hover:scale-[1.03]"
+                className="inline-flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-foreground px-5 text-background shadow-sm transition-transform hover:scale-[1.03] sm:h-16 sm:w-auto sm:justify-start sm:gap-3 sm:rounded-2xl sm:px-6"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-9 w-9" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7 sm:h-9 sm:w-9" aria-hidden="true">
                   <path d="M16.365 1.43c0 1.14-.42 2.22-1.18 3.04-.83.9-2.16 1.6-3.27 1.51-.14-1.12.4-2.27 1.16-3.06.83-.86 2.27-1.5 3.29-1.49zM20.5 17.36c-.56 1.29-.83 1.87-1.55 3.01-1 1.59-2.41 3.57-4.16 3.59-1.55.01-1.95-1.01-4.06-1-2.11.01-2.55 1.02-4.1 1-1.75-.02-3.09-1.81-4.09-3.4C0 17.86-.34 13.61 1.4 11.27c1.23-1.66 3.18-2.63 5-2.63 1.86 0 3.03 1.02 4.57 1.02 1.5 0 2.41-1.02 4.56-1.02 1.62 0 3.34.88 4.56 2.41-4.01 2.2-3.36 7.93.41 9.31z" />
                 </svg>
                 <div className="flex flex-col leading-tight text-left">
                   <span className="text-[10px] uppercase tracking-wide opacity-80">Download on the</span>
-                  <span className="text-xl font-semibold">App Store</span>
+                  <span className="text-base font-semibold sm:text-xl">App Store</span>
                 </div>
               </a>
               <a
@@ -192,9 +192,9 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Get it on Google Play"
-                className="inline-flex h-16 items-center gap-3 rounded-2xl bg-foreground px-6 text-background shadow-sm transition-transform hover:scale-[1.03]"
+                className="inline-flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-foreground px-5 text-background shadow-sm transition-transform hover:scale-[1.03] sm:h-16 sm:w-auto sm:justify-start sm:gap-3 sm:rounded-2xl sm:px-6"
               >
-                <svg viewBox="0 0 24 24" className="h-9 w-9" aria-hidden="true">
+                <svg viewBox="0 0 24 24" className="h-7 w-7 sm:h-9 sm:w-9" aria-hidden="true">
                   <path d="M3.6 1.6c-.4.3-.6.8-.6 1.5v17.8c0 .7.2 1.2.6 1.5l10.1-10.4L3.6 1.6z" fill="#34A853" />
                   <path d="M17.5 8.6 13.7 12l3.8 3.4 4.5-2.6c1.3-.7 1.3-2.7 0-3.4l-4.5-2.8z" fill="#FBBC04" />
                   <path d="m3.6 22.4 10.1-10.4L17.5 15.4 5.4 22.7c-.7.4-1.4.2-1.8-.3z" fill="#EA4335" />
@@ -202,7 +202,7 @@ export function SiteFooter() {
                 </svg>
                 <div className="flex flex-col leading-tight text-left">
                   <span className="text-[10px] uppercase tracking-wide opacity-80">GET IT ON</span>
-                  <span className="text-xl font-semibold">Google Play</span>
+                  <span className="text-base font-semibold sm:text-xl">Google Play</span>
                 </div>
               </a>
             </div>
