@@ -1,9 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildMeta, ldJsonScript, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { getHomeData } from "@/server/home-data.functions";
+import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
 
-// The "/" route on poolrentalnearme.com is served by Sharetribe via the
-// reverse proxy. The fresh-web app should never render or redirect here —
-// keeping this route as a no-op prevents a client-side redirect loop on
-// the production domain.
 export const Route = createFileRoute("/")({
-  component: () => null,
+  loader: () => getHomeData(),
+  head: () => {
+    const meta = buildMeta({
+      title: "Pool Rental Near Me — Rent a Private Pool by the Hour",
+      description:
+        "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
+      path: "/",
+      image: HOMEPAGE_HERO_IMAGE,
+    });
+    const org = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+      sameAs: ["https://www.poolrentalnearme.com"],
+    };
+    const faqLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: HOMEPAGE_FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    };
+    return { ...meta, scripts: [ldJsonScript(org), ldJsonScript(faqLd)] };
+  },
+  component: HomePage,
 });
+
+function HomePage() {
+  const data = Route.useLoaderData();
+  return <HomePageContent data={data} />;
+}
