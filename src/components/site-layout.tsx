@@ -55,7 +55,6 @@ const EXPLORE = [
   { label: "How It Works", href: "/p/how-it-works" },
   { label: "Start a Business", href: "/p/start-a-pool-rental-business" },
   { label: "Swimply Alternative", href: "/p/swimply-alternative" },
-  { label: "Help Center", href: "/help-center" },
   { label: "Sign a Waiver", href: "/p/waiver" },
   { label: "Store", href: "/p/store" },
   { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
@@ -67,7 +66,6 @@ const HOSTS = [
   { label: "Find Locations Near You", href: "/p/locations" },
   { label: "Earnings Calculator", href: "/p/earnings-calculator" },
   { label: "Host Pro Tools", href: "/p/host-pro-tools" },
-  { label: "Learning Academy", href: "/academy", internal: true },
   { label: "Host Connect", href: "/p/host-connect" },
   { label: "HOA Defense Kit", href: "/p/hoa-defense-kit" },
   { label: "Host Make More $$$", href: "/p/make-more-money" },
@@ -75,7 +73,6 @@ const HOSTS = [
 
 const COMPANY = [
   { label: "About", href: "/p/about" },
-  { label: "Blog", href: "/blog", internal: true },
   { label: "Careers", href: "/p/careers" },
   { label: "Investors", href: "/p/investors" },
   { label: "Terms", href: "/terms-of-service" },
