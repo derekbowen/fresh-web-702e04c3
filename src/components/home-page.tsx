@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ListingCard } from "@/components/listing-card";
 import { PoolWaitlistForm } from "@/components/pool-waitlist-form";
+import { FeatureRequestForm } from "@/components/feature-request-form";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
