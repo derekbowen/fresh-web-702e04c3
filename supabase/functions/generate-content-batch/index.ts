@@ -47,7 +47,7 @@ type PlanRow = {
 };
 
 type Input = {
-  action?: "start" | "status";
+  action?: "start" | "status" | "preflight";
   count?: number;
   tier?: string;
   stateCode?: string;
@@ -240,7 +240,7 @@ function parseInput(value: unknown): Required<Input> {
     : "";
   const tier = typeof input.tier === "string" ? input.tier : "";
   return {
-    action: input.action === "status" ? "status" : "start",
+    action: input.action === "status" ? "status" : input.action === "preflight" ? "preflight" : "start",
     count,
     tier,
     stateCode,
@@ -517,6 +517,46 @@ Deno.serve(async (req) => {
     }
 
     const data = parseInput(await req.json().catch(() => ({})));
+
+    if (data.action === "preflight") {
+      // Reachable + admin + env all confirmed by getting here. Probe AI gateway.
+      let aiOk = false;
+      let aiError: string | null = null;
+      try {
+        const probe = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-lite",
+            messages: [{ role: "user", content: "ping" }],
+            max_tokens: 5,
+          }),
+        });
+        if (probe.ok) {
+          aiOk = true;
+        } else {
+          const t = await probe.text().catch(() => "");
+          aiError = `AI gateway ${probe.status}: ${t.slice(0, 200)}`;
+        }
+      } catch (e) {
+        aiError = `AI gateway unreachable: ${errorMessage(e)}`;
+      }
+
+      const { count: pendingCount } = await supabase
+        .from("content_plan")
+        .select("slug", { count: "exact", head: true })
+        .eq("status", "pending");
+
+      return new Response(JSON.stringify({
+        ok: aiOk,
+        edgeFunction: "reachable",
+        adminAuth: "ok",
+        lovableApiKey: "configured",
+        aiGateway: aiOk ? "ok" : "failed",
+        aiError,
+        pendingPlanRows: pendingCount ?? 0,
+      }), { headers: { ...cors, "Content-Type": "application/json" } });
+    }
 
     if (data.action === "status") {
       return new Response(JSON.stringify(await readGenerationStatus(supabase, data.slugs)), {

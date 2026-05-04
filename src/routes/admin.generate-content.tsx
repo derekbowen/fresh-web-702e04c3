@@ -67,6 +67,10 @@ function GenerateContentPageInner() {
   const [maxBatches, setMaxBatches] = React.useState(20);
   const [result, setResult] = React.useState<any>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [preflight, setPreflight] = React.useState<{
+    status: "idle" | "checking" | "ok" | "failed";
+    details: any;
+  }>({ status: "idle", details: null });
   const [progress, setProgress] = React.useState<{
     batch: number;
     inserted: number;
@@ -116,7 +120,32 @@ function GenerateContentPageInner() {
     }, 5000);
   };
 
+  const runPreflight = React.useCallback(async () => {
+    setPreflight({ status: "checking", details: null });
+    setError(null);
+    try {
+      const res: any = await generateContentBatch({ data: { action: "preflight" } as any });
+      setPreflight({ status: res?.ok ? "ok" : "failed", details: res });
+      return Boolean(res?.ok);
+    } catch (e: any) {
+      setPreflight({
+        status: "failed",
+        details: { error: e?.message ?? String(e) },
+      });
+      setError(e?.message ?? String(e));
+      return false;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    runPreflight();
+  }, [runPreflight]);
+
   const run = async () => {
+    if (preflight.status !== "ok") {
+      const ok = await runPreflight();
+      if (!ok) return;
+    }
     setBusy(true);
     setError(null);
     setResult(null);
@@ -287,11 +316,85 @@ function GenerateContentPageInner() {
             )}
           </div>
 
+          <div className="rounded-md border border-border bg-muted/30 p-4 text-sm">
+            <div className="flex items-center justify-between gap-3">
+              <div className="font-medium">
+                Setup check:{" "}
+                {preflight.status === "checking" && (
+                  <span className="text-muted-foreground">Verifying backend…</span>
+                )}
+                {preflight.status === "ok" && (
+                  <span className="text-green-600">✓ Ready to generate</span>
+                )}
+                {preflight.status === "failed" && (
+                  <span className="text-destructive">✗ Not ready</span>
+                )}
+                {preflight.status === "idle" && (
+                  <span className="text-muted-foreground">Not run yet</span>
+                )}
+              </div>
+              <button
+                onClick={runPreflight}
+                disabled={preflight.status === "checking" || busy}
+                className="rounded-md border border-input px-3 py-1.5 text-xs font-medium disabled:opacity-50"
+              >
+                {preflight.status === "checking" ? "Checking…" : "Re-check setup"}
+              </button>
+            </div>
+            {preflight.details && (
+              <ul className="mt-3 space-y-1 text-xs text-muted-foreground">
+                <li>
+                  Edge function:{" "}
+                  <span className="font-mono">
+                    {preflight.details.edgeFunction ?? "unreachable"}
+                  </span>
+                </li>
+                <li>
+                  Admin auth:{" "}
+                  <span className="font-mono">
+                    {preflight.details.adminAuth ?? "unknown"}
+                  </span>
+                </li>
+                <li>
+                  LOVABLE_API_KEY:{" "}
+                  <span className="font-mono">
+                    {preflight.details.lovableApiKey ?? "missing"}
+                  </span>
+                </li>
+                <li>
+                  AI gateway:{" "}
+                  <span className="font-mono">
+                    {preflight.details.aiGateway ?? "unknown"}
+                  </span>
+                  {preflight.details.aiError && (
+                    <span className="ml-1 text-destructive">
+                      — {preflight.details.aiError}
+                    </span>
+                  )}
+                </li>
+                <li>
+                  Pending plan rows:{" "}
+                  <span className="font-mono">
+                    {preflight.details.pendingPlanRows ?? "?"}
+                  </span>
+                </li>
+                {preflight.details.error && (
+                  <li className="text-destructive">{preflight.details.error}</li>
+                )}
+              </ul>
+            )}
+          </div>
+
           <div className="flex gap-2">
             <button
               onClick={run}
-              disabled={busy}
+              disabled={busy || preflight.status !== "ok"}
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+              title={
+                preflight.status !== "ok"
+                  ? "Run the setup check first"
+                  : undefined
+              }
             >
               {busy
                 ? autoLoop
