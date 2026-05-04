@@ -59,9 +59,7 @@ export const Route = createFileRoute("/pool-rental/$city")({
 
     const [search, nearby, cats] = await Promise.all([
       queryListings({
-        data: city.latitude && city.longitude
-          ? { origin: `${city.latitude},${city.longitude}`, perPage: 24 }
-          : { keywords: city.name, perPage: 24 },
+        data: { citySlug: city.slug, city: city.name, perPage: 24 },
       }),
       getNearbyCities({
         data: { slug: city.slug, state_code: city.state_code, limit: 12 },
