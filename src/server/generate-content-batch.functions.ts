@@ -341,7 +341,10 @@ export const generateContentBatch = createServerFn({ method: "POST" })
           body: JSON.stringify({
             model: data.model,
             messages: [
-              { role: "system", content: system },
+              {
+                role: "system",
+                content: `${system}\n\nOVERRIDE OUTPUT FORMAT: Do not call tools. Return only valid JSON in the requested shape.`,
+              },
               {
                 role: "user",
                 content: `${user}\n\nReturn valid JSON only in this exact shape: {"pages":[{"plan_slug":"${plan.slug}","body_markdown":"..."}]}`,
