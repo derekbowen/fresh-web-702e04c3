@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { getCategoryMeta, getTierMeta, I18N, type Lang } from "@/lib/academy";
+import { resolveAcademyHero } from "@/lib/academy-images";
 
 export interface CourseCardCourse {
   slug: string;
