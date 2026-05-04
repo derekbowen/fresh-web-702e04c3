@@ -272,7 +272,7 @@ async function readGenerationStatus(supabase: ReturnType<typeof createClient>, s
   const planRows = plans ?? [];
   const finished = new Set(pageRows.map((p: any) => p.slug));
   const pendingSlugs = planRows
-    .filter((p: any) => !finished.has(p.slug) && ["generating", "pending"].includes(p.status))
+    .filter((p: any) => !finished.has(p.slug) && p.status === "generating")
     .map((p: any) => p.slug);
   const validationErrors = planRows
     .filter((p: any) => p.last_error && !finished.has(p.slug))
