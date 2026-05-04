@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InputSchema = z.object({
   action: z.enum(["start", "status"]).default("start"),
-  count: z.number().int().min(1).max(5).default(1),
+  count: z.number().int().min(1).max(1).default(1),
   tier: z
     .enum(["T1 (200k+)", "T2 (75k–199k)", "T3 (25k–74k)", "T4 (10k–24k)", "longtail"])
     .optional(),
