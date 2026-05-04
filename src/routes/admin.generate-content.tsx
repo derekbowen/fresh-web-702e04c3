@@ -120,7 +120,32 @@ function GenerateContentPageInner() {
     }, 5000);
   };
 
+  const runPreflight = React.useCallback(async () => {
+    setPreflight({ status: "checking", details: null });
+    setError(null);
+    try {
+      const res: any = await generateContentBatch({ data: { action: "preflight" } as any });
+      setPreflight({ status: res?.ok ? "ok" : "failed", details: res });
+      return Boolean(res?.ok);
+    } catch (e: any) {
+      setPreflight({
+        status: "failed",
+        details: { error: e?.message ?? String(e) },
+      });
+      setError(e?.message ?? String(e));
+      return false;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    runPreflight();
+  }, [runPreflight]);
+
   const run = async () => {
+    if (preflight.status !== "ok") {
+      const ok = await runPreflight();
+      if (!ok) return;
+    }
     setBusy(true);
     setError(null);
     setResult(null);
