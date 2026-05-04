@@ -50,6 +50,7 @@ import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
 import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as PoolRentalLawsCityRouteImport } from './routes/pool-rental-laws.$city'
 import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$state'
+import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
@@ -294,6 +295,12 @@ const PoolBuildersStateRoute = PoolBuildersStateRouteImport.update({
   path: '/pool-builders/$state',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PSwimplyAlternativeVsPoolRentalNearMeRoute =
+  PSwimplyAlternativeVsPoolRentalNearMeRouteImport.update({
+    id: '/p/swimply-alternative-vs-pool-rental-near-me',
+    path: '/p/swimply-alternative-vs-pool-rental-near-me',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PHowItWorksRoute = PHowItWorksRouteImport.update({
   id: '/p/how-it-works',
   path: '/p/how-it-works',
@@ -495,6 +502,7 @@ export interface FileRoutesByFullPath {
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -566,6 +574,7 @@ export interface FileRoutesByTo {
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -639,6 +648,7 @@ export interface FileRoutesById {
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
@@ -713,6 +723,7 @@ export interface FileRouteTypes {
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
+    | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -784,6 +795,7 @@ export interface FileRouteTypes {
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
+    | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -856,6 +868,7 @@ export interface FileRouteTypes {
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
+    | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
@@ -926,6 +939,7 @@ export interface RootRouteChildren {
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
+  PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
@@ -1229,6 +1243,13 @@ declare module '@tanstack/react-router' {
       path: '/pool-builders/$state'
       fullPath: '/pool-builders/$state'
       preLoaderRoute: typeof PoolBuildersStateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/swimply-alternative-vs-pool-rental-near-me': {
+      id: '/p/swimply-alternative-vs-pool-rental-near-me'
+      path: '/p/swimply-alternative-vs-pool-rental-near-me'
+      fullPath: '/p/swimply-alternative-vs-pool-rental-near-me'
+      preLoaderRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/how-it-works': {
@@ -1556,6 +1577,8 @@ const rootRouteChildren: RootRouteChildren = {
   PFreeHostToolsRoute: PFreeHostToolsRoute,
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
+  PSwimplyAlternativeVsPoolRentalNearMeRoute:
+    PSwimplyAlternativeVsPoolRentalNearMeRoute,
   PoolBuildersStateRoute: PoolBuildersStateRouteWithChildren,
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
