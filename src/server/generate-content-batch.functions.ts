@@ -320,63 +320,55 @@ export const generateContentBatch = createServerFn({ method: "POST" })
         );
     }
 
-    const { system, user } = buildPrompt(planRows as PlanRow[]);
-
-    const aiResp = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: data.model,
-          messages: [
-            { role: "system", content: system },
-            { role: "user", content: user },
-          ],
-          tools: [PER_PAGE_TOOL],
-          tool_choice: { type: "function", function: { name: "write_pages" } },
-        }),
-      },
-    );
-
-    if (aiResp.status === 429) {
-      await supabaseAdmin
-        .from("content_plan")
-        .update({ status: "pending" })
-        .in("slug", planRows.map((r) => r.slug));
-      throw new Error("Rate limited by AI gateway. Try again in a minute.");
-    }
-    if (aiResp.status === 402) {
-      await supabaseAdmin
-        .from("content_plan")
-        .update({ status: "pending" })
-        .in("slug", planRows.map((r) => r.slug));
-      throw new Error("AI credits exhausted. Add funds in Workspace → Usage.");
-    }
-    if (!aiResp.ok) {
-      const t = await aiResp.text();
-      await supabaseAdmin
-        .from("content_plan")
-        .update({ status: "pending", last_error: `AI ${aiResp.status}` })
-        .in("slug", planRows.map((r) => r.slug));
-      throw new Error(`AI gateway ${aiResp.status}: ${t.slice(0, 400)}`);
+    // Generate ONE page per AI call, in parallel. Asking for many long pages
+    // in a single call causes the model to truncate after the first page.
+    async function generateOne(plan: PlanRow): Promise<GeneratedPage | null> {
+      const { system, user } = buildPrompt([plan]);
+      try {
+        const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: data.model,
+            messages: [
+              { role: "system", content: system },
+              { role: "user", content: user },
+            ],
+            tools: [PER_PAGE_TOOL],
+            tool_choice: { type: "function", function: { name: "write_pages" } },
+          }),
+        });
+        if (!resp.ok) {
+          console.error(`[gen ${plan.slug}] AI ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+          return null;
+        }
+        const j = await resp.json();
+        const args = j?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
+        if (!args) return null;
+        const parsed = JSON.parse(args) as { pages?: GeneratedPage[] };
+        const page = parsed.pages?.[0];
+        if (!page) return null;
+        // Force slug match — the model sometimes reformats it
+        return { plan_slug: plan.slug, body_markdown: page.body_markdown };
+      } catch (e) {
+        console.error(`[gen ${plan.slug}] error:`, e);
+        return null;
+      }
     }
 
-    const aiJson = await aiResp.json();
-    const toolCall = aiJson?.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall?.function?.arguments)
-      throw new Error("AI did not return a tool call");
-
-    let parsed: { pages: GeneratedPage[] };
-    try {
-      parsed = JSON.parse(toolCall.function.arguments);
-    } catch {
-      throw new Error("Failed to parse AI tool arguments as JSON");
+    // Concurrency limiter — 4 in-flight at a time
+    const CONC = 4;
+    const generated: GeneratedPage[] = [];
+    let cursor = 0;
+    async function worker() {
+      while (cursor < planRows.length) {
+        const idx = cursor++;
+        const result = await generateOne(planRows[idx] as PlanRow);
+        if (result) generated.push(result);
+      }
     }
-    const generated = parsed.pages ?? [];
+    await Promise.all(Array.from({ length: Math.min(CONC, planRows.length) }, worker));
+
     const bySlug = new Map(generated.map((g) => [g.plan_slug, g]));
 
     // Validate each plan row's generated body
