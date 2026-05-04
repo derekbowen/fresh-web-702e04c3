@@ -34,6 +34,7 @@ import { Route as SitemapDefaultDotxmlRouteImport } from './routes/sitemap-defau
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as ProvidersRouteImport } from './routes/providers'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -210,6 +211,11 @@ const ReferralRoute = ReferralRouteImport.update({
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
   path: '/providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoolsDirectorySitemapDotxmlRoute =
@@ -443,6 +449,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -513,6 +520,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -585,6 +593,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/providers': typeof ProvidersRouteWithChildren
   '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -658,6 +667,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
+    | '/privacy-policy'
     | '/providers'
     | '/referral'
     | '/robots.txt'
@@ -728,6 +738,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
+    | '/privacy-policy'
     | '/providers'
     | '/referral'
     | '/robots.txt'
@@ -799,6 +810,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
+    | '/privacy-policy'
     | '/providers'
     | '/referral'
     | '/robots.txt'
@@ -871,6 +883,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProvidersRoute: typeof ProvidersRouteWithChildren
   ReferralRoute: typeof ReferralRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -1104,6 +1117,13 @@ declare module '@tanstack/react-router' {
       path: '/providers'
       fullPath: '/providers'
       preLoaderRoute: typeof ProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pools-directory-sitemap.xml': {
@@ -1492,6 +1512,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProvidersRoute: ProvidersRouteWithChildren,
   ReferralRoute: ReferralRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
