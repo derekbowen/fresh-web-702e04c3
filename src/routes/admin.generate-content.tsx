@@ -64,7 +64,7 @@ function GenerateContentPageInner() {
   const [busy, setBusy] = React.useState(false);
   const [dryRun, setDryRun] = React.useState(false);
   const [autoLoop, setAutoLoop] = React.useState(false);
-  const [maxBatches, setMaxBatches] = React.useState(20);
+  const [maxBatches, setMaxBatches] = React.useState(10);
   const [result, setResult] = React.useState<any>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [preflight, setPreflight] = React.useState<{
@@ -412,7 +412,7 @@ function GenerateContentPageInner() {
                 checked={autoLoop}
                 onChange={(e) => setAutoLoop(e.target.checked)}
               />
-              Auto-loop until queue empty
+              Auto-loop up to 100 pages
             </label>
             {autoLoop && (
               <div>
@@ -420,9 +420,9 @@ function GenerateContentPageInner() {
                 <input
                   type="number"
                   min={1}
-                  max={500}
+                  max={10}
                   value={maxBatches}
-                  onChange={(e) => setMaxBatches(Number(e.target.value) || 1)}
+                  onChange={(e) => setMaxBatches(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                   className="mt-1 w-24 rounded-md border border-input bg-background px-3 py-2 text-sm"
                 />
               </div>
