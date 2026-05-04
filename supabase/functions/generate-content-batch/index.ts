@@ -337,6 +337,144 @@ async function generateOne(plan: PlanRow, model: string, apiKey: string): Promis
   }
 }
 
+async function processGeneration(
+  supabase: ReturnType<typeof createClient>,
+  planRows: PlanRow[],
+  model: string,
+  apiKey: string,
+  dryRun: boolean,
+) {
+  const generated: GeneratedPage[] = [];
+  const errors: string[] = [];
+
+  for (const row of planRows) {
+    const result = await generateOne(row, model, apiKey);
+    if (result) generated.push(result);
+  }
+
+  const bySlug = new Map(generated.map((g) => [g.plan_slug, g]));
+  const okPages: Array<{ plan: PlanRow; body: string }> = [];
+
+  for (const plan of planRows) {
+    const gen = bySlug.get(plan.slug);
+    if (!gen) {
+      errors.push(`${plan.slug}: AI did not return a body`);
+      continue;
+    }
+    const body = gen.body_markdown ?? "";
+    const words = body.split(/\s+/).filter(Boolean).length;
+    const isEvent = plan.source_type === "event_guide";
+    const isEs = plan.source_type === "hosting_es";
+    const minWords = isEvent ? 3500 : isEs ? 1600 : 2200;
+    if (words < minWords) {
+      errors.push(`${plan.slug}: too short (${words} words, need ${minWords}+)`);
+      continue;
+    }
+
+    const requiredLinks = (plan.internal_links ?? "")
+      .split(/\n|,/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const missing = requiredLinks.filter((l) => !body.includes(l));
+    if (missing.length > requiredLinks.length / 2) {
+      errors.push(`${plan.slug}: missing ${missing.length}/${requiredLinks.length} required internal links`);
+      continue;
+    }
+
+    let requiredSections: Array<[RegExp, string]> = [];
+    if (isEvent) {
+      requiredSections = [
+        [/##\s*Section\s*1\b.*Why\b/i, "Section 1 (Why City)"],
+        [/##\s*Section\s*3\b.*Planning Guide/i, "Section 3 (Planning Guide)"],
+        [/##\s*Section\s*5\b.*Neighborhoods/i, "Section 5 (Neighborhoods)"],
+        [/##\s*Section\s*9\b.*Do You Own/i, "Section 9 (Host Flip)"],
+        [/##\s*Section\s*10\b.*Frequently Asked/i, "Section 10 (20 FAQs)"],
+        [/\*\*20\.\*\*/, "20 numbered FAQs"],
+      ];
+    } else if (isEs) {
+      requiredSections = [
+        [/##\s*¿Por Qué Rentar Tu Piscina/i, "¿Por Qué Rentar?"],
+        [/##\s*Cuánto Puedes Ganar/i, "Cuánto Puedes Ganar"],
+        [/##\s*Preguntas Frecuentes/i, "Preguntas Frecuentes"],
+        [/##\s*¿Listo Para Empezar\?/i, "¿Listo Para Empezar?"],
+        [/\*\*15\.\*\*/, "15 numbered FAQs"],
+      ];
+    } else {
+      requiredSections = [
+        [/##\s*How This Affects Pool Rental Hosts/i, "Section 5 (How This Affects Hosts)"],
+        [/##\s*Offset Your .+ Costs With Pool Rental Income/i, "Section 6 (Offset Costs)"],
+        [/##\s*Frequently Asked Questions/i, "Section 7 (FAQ)"],
+        [/##\s*Related Pool Owner Guides/i, "Section 8 (Related Guides)"],
+        [/##\s*Ready to Turn Your Pool Into Income\?/i, "Section 9 (Final CTA)"],
+        [/💰\s*\*\*Did you know\?\*\*/, "Section 4 (Mid-page Callout)"],
+      ];
+    }
+    const missingSections = requiredSections.filter(([re]) => !re.test(body)).map(([, label]) => label);
+    if (missingSections.length > 0) {
+      errors.push(`${plan.slug}: missing ${missingSections.join(", ")}`);
+      continue;
+    }
+    okPages.push({ plan, body });
+  }
+
+  if (dryRun) {
+    await supabase.from("content_plan").update({ status: "pending" }).in("slug", planRows.map((r) => r.slug));
+    return;
+  }
+
+  if (okPages.length === 0) {
+    await supabase
+      .from("content_plan")
+      .update({ status: "pending", last_error: errors.join("; ").slice(0, 500) })
+      .in("slug", planRows.map((r) => r.slug));
+    return;
+  }
+
+  const rows = okPages.map(({ plan, body }) => {
+    const isCity = plan.source_type === "city";
+    const isEvent = plan.source_type === "event_guide";
+    const isEs = plan.source_type === "hosting_es";
+    const template_type = isCity ? "host_acq_city" : isEvent ? "event_guide" : isEs ? "host_acq_city_es" : "resource";
+    const category = isCity ? "Host/City Acquisition" : isEvent ? "Event Guide" : isEs ? "Host/City Acquisition (ES)" : "Resource/Article Page";
+    return {
+      slug: plan.slug,
+      url_path: `/p/${plan.slug}`,
+      template_type,
+      category,
+      locale: isEs ? "es" : "en",
+      status: "published",
+      in_sitemap: true,
+      title: plan.h1 ?? plan.meta_title ?? plan.slug,
+      description: plan.meta_description ?? "",
+      content: body,
+      body_markdown: body,
+      seo_title: (plan.meta_title ?? plan.h1 ?? "").slice(0, 70),
+      seo_description: (plan.meta_description ?? "").slice(0, 160),
+      legacy_slugs: [],
+      updated_at: new Date().toISOString(),
+    };
+  });
+
+  const { error: upErr } = await supabase
+    .from("content_pages")
+    .upsert(rows, { onConflict: "url_path" });
+  if (upErr) throw new Error(`upsert failed: ${upErr.message}`);
+
+  const generatedSlugs = okPages.map((p) => p.plan.slug);
+  const failedSlugs = planRows.map((r) => r.slug).filter((s) => !generatedSlugs.includes(s));
+  await supabase.from("content_plan").update({
+    status: "generated",
+    generated_at: new Date().toISOString(),
+    last_error: null,
+  }).in("slug", generatedSlugs);
+  if (failedSlugs.length > 0) {
+    await supabase.from("content_plan").update({
+      status: "pending",
+      last_error: errors.join("; ").slice(0, 500),
+    }).in("slug", failedSlugs);
+  }
+}
+
 Deno.serve(async (req) => {
   const cors = corsHeaders(req.headers.get("origin"));
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
