@@ -538,10 +538,11 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Driver-secret bypass for unattended/server-to-server runs
-    const driverSecret = Deno.env.get("DRIVER_SECRET");
+    // Driver-secret bypass for unattended/server-to-server runs.
+    // Uses the service-role key (already known only to the backend operator)
+    // so we don't need a new secret.
     const providedDriver = req.headers.get("x-driver-secret");
-    const isDriver = !!driverSecret && providedDriver === driverSecret;
+    const isDriver = !!providedDriver && providedDriver === serviceKey;
 
     if (!isDriver) {
       const authHeader = req.headers.get("Authorization") ?? "";
