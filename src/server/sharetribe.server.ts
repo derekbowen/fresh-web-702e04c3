@@ -363,6 +363,8 @@ export interface SearchOptions {
   bounds?: string; // "neLat,neLng,swLat,swLng"
   pub_category?: string;
   address?: string;
+  citySlug?: string;
+  city?: string;
 }
 
 export async function searchListings(opts: SearchOptions = {}): Promise<{
@@ -372,6 +374,11 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
   totalPages: number;
 }> {
   try {
+    if (opts.citySlug || opts.city) {
+      const byCity = await searchSyncedListings(opts);
+      if (byCity) return byCity;
+    }
+
     const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
       page: opts.page ?? 1,
       perPage: opts.perPage ?? 24,
@@ -391,5 +398,58 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
   } catch (err) {
     console.error("searchListings error:", err);
     return { listings: [], total: 0, page: 1, totalPages: 0 };
+  }
+}
+
+async function searchSyncedListings(opts: SearchOptions): Promise<{
+  listings: ListingSummary[];
+  total: number;
+  page: number;
+  totalPages: number;
+} | null> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const page = opts.page ?? 1;
+    const perPage = opts.perPage ?? 24;
+    const from = (page - 1) * perPage;
+    const to = from + perPage - 1;
+    let query = supabaseAdmin
+      .from("synced_listings")
+      .select("sharetribe_id, slug, title, description, price_amount, price_currency, city, state_code, primary_image_url, latitude, longitude", { count: "exact" })
+      .eq("state", "published")
+      .eq("is_deleted", false);
+    if (opts.citySlug) query = query.eq("city_slug", opts.citySlug);
+    else if (opts.city) query = query.ilike("city", opts.city);
+
+    const { data, count, error } = await query
+      .order("updated_at", { ascending: false })
+      .range(from, to);
+    if (error) throw error;
+
+    const rows = data ?? [];
+    return {
+      listings: rows.map((row) => ({
+        id: row.sharetribe_id,
+        slug: row.slug,
+        title: row.title,
+        description: row.description ?? "",
+        price: row.price_amount && row.price_currency
+          ? { amount: row.price_amount, currency: row.price_currency }
+          : null,
+        city: row.city ?? null,
+        state: row.state_code ?? null,
+        imageUrl: row.primary_image_url ?? null,
+        url: `/l/${row.slug}/${row.sharetribe_id}`,
+        geolocation: row.latitude && row.longitude
+          ? { lat: Number(row.latitude), lng: Number(row.longitude) }
+          : null,
+      })),
+      total: count ?? rows.length,
+      page,
+      totalPages: Math.max(1, Math.ceil((count ?? rows.length) / perPage)),
+    };
+  } catch (err) {
+    console.error("searchSyncedListings error:", err);
+    return null;
   }
 }
