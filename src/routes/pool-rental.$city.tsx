@@ -280,19 +280,23 @@ function CityPage() {
           </div>
 
           {listings.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-12 text-center">
-              <h3 className="text-xl font-semibold text-foreground">
-                No pools listed in {city.name} yet
-              </h3>
-              <p className="mt-2 text-muted-foreground">
-                Be the first to list your pool and start earning.
-              </p>
-              <a
-                href={`/signup`}
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
-              >
-                List your pool
-              </a>
+            <div className="mt-8">
+              <PoolWaitlistForm
+                nearestMiles={null}
+                city={city.name}
+                region={city.state_code}
+              />
+              <div className="mt-6 rounded-2xl border border-dashed border-border bg-card p-6 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Have a pool in {city.name}? List it free and start earning.
+                </p>
+                <a
+                  href={`/l/draft/00000000-0000-0000-0000-000000000000/new/details`}
+                  className="mt-3 inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+                >
+                  List your pool
+                </a>
+              </div>
             </div>
           ) : (
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
