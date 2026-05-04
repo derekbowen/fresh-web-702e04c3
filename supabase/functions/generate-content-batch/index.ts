@@ -47,12 +47,14 @@ type PlanRow = {
 };
 
 type Input = {
+  action?: "start" | "status";
   count?: number;
   tier?: string;
   stateCode?: string;
   warmOnly?: boolean;
   model?: string;
   dryRun?: boolean;
+  slugs?: string[];
 };
 
 const SYSTEM_VA = `You are an expert SEO content writer and pool care specialist writing for Pool Rental Near Me (poolrentalnearme.com) — a marketplace where homeowners rent out private pools by the hour to earn passive income ($3,000–$15,000/year).
@@ -111,7 +113,7 @@ Pool owners in your area are earning $500–$2,000/month renting their pool by t
 **[→ See How Much Your Pool Could Earn](/p/hosting#calculator)**
 ---
 
-Return ONLY valid JSON with this exact shape: {"pages":[{"plan_slug":"...","body_markdown":"..."}]}. Match plan_slug exactly.`;
+Return ONLY the final markdown body for this one page. Do not wrap it in JSON. Do not use code fences.`;
 
 const SYSTEM_EVENT_GUIDE = `You are a Senior Local Editor and SEO Strategist for Pool Rental Near Me (poolrentalnearme.com). Write 4,000-word, locally authoritative Michelin-Guide-quality articles for renting a pool for an EVENT TYPE in a specific CITY/STATE.
 
@@ -155,7 +157,7 @@ MANDATORY STRUCTURE (use these exact H2s — replace [CITY] / [GUIDE_TYPE] with 
 
 OUTPUT TARGETS: 4,000+ words (HARD MIN 3,800), 5+ city-specific blockquotes, 20 city-localized FAQs, [📸 IMAGE: ...] placeholders, App Store + Google Play markdown in Section 8, encoded search URL in Sections 4 and 8, 100% original.
 
-Return ONLY valid JSON with this exact shape: {"pages":[{"plan_slug":"...","body_markdown":"..."}]}. Match plan_slug exactly.`;
+Return ONLY the final markdown body for this one page. Do not wrap it in JSON. Do not use code fences.`;
 
 const SYSTEM_HOSTING_ES = `Eres un editor SEO senior escribiendo en ESPAÑOL NEUTRO para Pool Rental Near Me. Genera una página única "Conviértete en Anfitrión de Piscina" para una ciudad de EE. UU. con población hispana significativa.
 
@@ -193,7 +195,7 @@ ESTRUCTURA OBLIGATORIA:
 
 ## ¿Listo Para Empezar? 🚀 (CTA final con /p/hosting y https://earn.poolrentalnearme.com)
 
-Devuelve SOLO JSON válido con esta forma exacta: {"pages":[{"plan_slug":"...","body_markdown":"..."}]}. Coincide exactamente con plan_slug.`;
+Devuelve SOLO el cuerpo final en markdown para esta página. No uses JSON. No uses bloques de código.`;
 
 function pickSystem(row: PlanRow): string {
   if (row.source_type === "event_guide") return SYSTEM_EVENT_GUIDE;
@@ -224,7 +226,7 @@ ${row.warm_climate === true ? "climate: warm/long swim season" : row.warm_climat
 ${row.search_intent ? `search_intent: ${row.search_intent}` : ""}
 ${row.notes ? `notes: ${row.notes}` : ""}
 
-Return valid JSON only in this exact shape: {"pages":[{"plan_slug":"${row.slug}","body_markdown":"..."}]}`;
+Return only the final markdown body for plan_slug ${row.slug}. Start with the exact H1. Do not wrap the answer in JSON or code fences.`;
 
   return { system: pickSystem(row), user };
 }
@@ -232,34 +234,65 @@ Return valid JSON only in this exact shape: {"pages":[{"plan_slug":"${row.slug}"
 function parseInput(value: unknown): Required<Input> {
   const input = (value && typeof value === "object" ? value : {}) as Input;
   const countRaw = Number(input.count ?? 1);
-  const count = Number.isFinite(countRaw) ? Math.min(5, Math.max(1, Math.trunc(countRaw))) : 1;
+  const count = Number.isFinite(countRaw) ? Math.min(1, Math.max(1, Math.trunc(countRaw))) : 1;
   const stateCode = typeof input.stateCode === "string" && input.stateCode.trim()
     ? input.stateCode.trim().toUpperCase().slice(0, 2)
     : "";
   const tier = typeof input.tier === "string" ? input.tier : "";
   return {
+    action: input.action === "status" ? "status" : "start",
     count,
     tier,
     stateCode,
     warmOnly: Boolean(input.warmOnly),
-    model: typeof input.model === "string" && input.model ? input.model : "google/gemini-2.5-pro",
+    model: typeof input.model === "string" && input.model ? input.model : "google/gemini-3-flash-preview",
     dryRun: Boolean(input.dryRun),
+    slugs: Array.isArray(input.slugs) ? input.slugs.filter((s) => typeof s === "string" && s) : [],
   };
-}
-
-function extractJson(text: string): { pages?: GeneratedPage[] } {
-  const trimmed = text.trim().replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
-  return JSON.parse(trimmed);
 }
 
 function errorMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
 
+async function readGenerationStatus(supabase: ReturnType<typeof createClient>, slugs: string[]) {
+  const cleanSlugs = [...new Set(slugs)].filter(Boolean).slice(0, 25);
+  if (cleanSlugs.length === 0) {
+    return { ok: true, queued: false, inserted: 0, attempted: 0, pendingSlugs: [], validationErrors: [], pages: [] };
+  }
+
+  const [{ data: plans, error: planErr }, { data: pages, error: pageErr }] = await Promise.all([
+    supabase.from("content_plan").select("slug, status, h1, last_error").in("slug", cleanSlugs),
+    supabase.from("content_pages").select("slug, url_path, title").in("slug", cleanSlugs),
+  ]);
+  if (planErr) throw new Error(`status query failed: ${planErr.message}`);
+  if (pageErr) throw new Error(`page status query failed: ${pageErr.message}`);
+
+  const pageRows = pages ?? [];
+  const planRows = plans ?? [];
+  const finished = new Set(pageRows.map((p: any) => p.slug));
+  const pendingSlugs = planRows
+    .filter((p: any) => !finished.has(p.slug) && p.status === "generating")
+    .map((p: any) => p.slug);
+  const validationErrors = planRows
+    .filter((p: any) => p.last_error && !finished.has(p.slug))
+    .map((p: any) => `${p.slug}: ${p.last_error}`);
+
+  return {
+    ok: pendingSlugs.length === 0 && validationErrors.length === 0,
+    queued: pendingSlugs.length > 0,
+    inserted: pageRows.length,
+    attempted: cleanSlugs.length,
+    pendingSlugs,
+    validationErrors,
+    pages: pageRows.map((p: any) => ({ slug: p.slug, url_path: p.url_path, title: p.title })),
+  };
+}
+
 async function generateOne(plan: PlanRow, model: string, apiKey: string): Promise<GeneratedPage | null> {
   const { system, user } = buildPrompt(plan);
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 145_000);
+  const timeout = setTimeout(() => controller.abort(), 115_000);
   try {
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -271,7 +304,6 @@ async function generateOne(plan: PlanRow, model: string, apiKey: string): Promis
           { role: "system", content: system },
           { role: "user", content: user },
         ],
-        response_format: { type: "json_object" },
         max_tokens: plan.source_type === "event_guide" ? 12000 : 8500,
       }),
     });
@@ -285,17 +317,153 @@ async function generateOne(plan: PlanRow, model: string, apiKey: string): Promis
 
     const payload = await resp.json();
     const message = payload?.choices?.[0]?.message;
-    const raw = message?.content ?? message?.tool_calls?.[0]?.function?.arguments;
+    const raw = message?.content;
     if (!raw || typeof raw !== "string") throw new Error("AI returned an empty response");
-    const parsed = extractJson(raw);
-    const page = parsed.pages?.[0];
-    if (!page?.body_markdown) throw new Error("AI returned JSON without body_markdown");
-    return { plan_slug: plan.slug, body_markdown: page.body_markdown };
+    const body = raw.trim().replace(/^```markdown\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+    return { plan_slug: plan.slug, body_markdown: body };
   } catch (e) {
     console.error(`[generate-content-batch:${plan.slug}] ${errorMessage(e)}`);
     return null;
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+async function processGeneration(
+  supabase: ReturnType<typeof createClient>,
+  planRows: PlanRow[],
+  model: string,
+  apiKey: string,
+  dryRun: boolean,
+) {
+  const generated: GeneratedPage[] = [];
+  const errors: string[] = [];
+
+  for (const row of planRows) {
+    const result = await generateOne(row, model, apiKey);
+    if (result) generated.push(result);
+  }
+
+  const bySlug = new Map(generated.map((g) => [g.plan_slug, g]));
+  const okPages: Array<{ plan: PlanRow; body: string }> = [];
+
+  for (const plan of planRows) {
+    const gen = bySlug.get(plan.slug);
+    if (!gen) {
+      errors.push(`${plan.slug}: AI did not return a body`);
+      continue;
+    }
+    const body = gen.body_markdown ?? "";
+    const words = body.split(/\s+/).filter(Boolean).length;
+    const isEvent = plan.source_type === "event_guide";
+    const isEs = plan.source_type === "hosting_es";
+    const minWords = isEvent ? 3500 : isEs ? 1600 : 2200;
+    if (words < minWords) {
+      errors.push(`${plan.slug}: too short (${words} words, need ${minWords}+)`);
+      continue;
+    }
+
+    const requiredLinks = (plan.internal_links ?? "")
+      .split(/\n|,/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const missing = requiredLinks.filter((l) => !body.includes(l));
+    if (missing.length > requiredLinks.length / 2) {
+      errors.push(`${plan.slug}: missing ${missing.length}/${requiredLinks.length} required internal links`);
+      continue;
+    }
+
+    let requiredSections: Array<[RegExp, string]> = [];
+    if (isEvent) {
+      requiredSections = [
+        [/##\s*Section\s*1\b.*Why\b/i, "Section 1 (Why City)"],
+        [/##\s*Section\s*3\b.*Planning Guide/i, "Section 3 (Planning Guide)"],
+        [/##\s*Section\s*5\b.*Neighborhoods/i, "Section 5 (Neighborhoods)"],
+        [/##\s*Section\s*9\b.*Do You Own/i, "Section 9 (Host Flip)"],
+        [/##\s*Section\s*10\b.*Frequently Asked/i, "Section 10 (20 FAQs)"],
+        [/\*\*20\.\*\*/, "20 numbered FAQs"],
+      ];
+    } else if (isEs) {
+      requiredSections = [
+        [/##\s*¿Por Qué Rentar Tu Piscina/i, "¿Por Qué Rentar?"],
+        [/##\s*Cuánto Puedes Ganar/i, "Cuánto Puedes Ganar"],
+        [/##\s*Preguntas Frecuentes/i, "Preguntas Frecuentes"],
+        [/##\s*¿Listo Para Empezar\?/i, "¿Listo Para Empezar?"],
+        [/\*\*15\.\*\*/, "15 numbered FAQs"],
+      ];
+    } else {
+      requiredSections = [
+        [/##\s*How This Affects Pool Rental Hosts/i, "Section 5 (How This Affects Hosts)"],
+        [/##\s*Offset Your .+ Costs With Pool Rental Income/i, "Section 6 (Offset Costs)"],
+        [/##\s*Frequently Asked Questions/i, "Section 7 (FAQ)"],
+        [/##\s*Related Pool Owner Guides/i, "Section 8 (Related Guides)"],
+        [/##\s*Ready to Turn Your Pool Into Income\?/i, "Section 9 (Final CTA)"],
+        [/💰\s*\*\*Did you know\?\*\*/, "Section 4 (Mid-page Callout)"],
+      ];
+    }
+    const missingSections = requiredSections.filter(([re]) => !re.test(body)).map(([, label]) => label);
+    if (missingSections.length > 0) {
+      errors.push(`${plan.slug}: missing ${missingSections.join(", ")}`);
+      continue;
+    }
+    okPages.push({ plan, body });
+  }
+
+  if (dryRun) {
+    await supabase.from("content_plan").update({ status: "pending" }).in("slug", planRows.map((r) => r.slug));
+    return;
+  }
+
+  if (okPages.length === 0) {
+    await supabase
+      .from("content_plan")
+      .update({ status: "pending", last_error: errors.join("; ").slice(0, 500) })
+      .in("slug", planRows.map((r) => r.slug));
+    return;
+  }
+
+  const rows = okPages.map(({ plan, body }) => {
+    const isCity = plan.source_type === "city";
+    const isEvent = plan.source_type === "event_guide";
+    const isEs = plan.source_type === "hosting_es";
+    const template_type = isCity ? "host_acq_city" : isEvent ? "event_guide" : isEs ? "host_acq_city_es" : "resource";
+    const category = isCity ? "Host/City Acquisition" : isEvent ? "Event Guide" : isEs ? "Host/City Acquisition (ES)" : "Resource/Article Page";
+    return {
+      slug: plan.slug,
+      url_path: `/p/${plan.slug}`,
+      template_type,
+      category,
+      locale: isEs ? "es" : "en",
+      status: "published",
+      in_sitemap: true,
+      title: plan.h1 ?? plan.meta_title ?? plan.slug,
+      description: plan.meta_description ?? "",
+      content: body,
+      body_markdown: body,
+      seo_title: (plan.meta_title ?? plan.h1 ?? "").slice(0, 70),
+      seo_description: (plan.meta_description ?? "").slice(0, 160),
+      legacy_slugs: [],
+      updated_at: new Date().toISOString(),
+    };
+  });
+
+  const { error: upErr } = await supabase
+    .from("content_pages")
+    .upsert(rows, { onConflict: "url_path" });
+  if (upErr) throw new Error(`upsert failed: ${upErr.message}`);
+
+  const generatedSlugs = okPages.map((p) => p.plan.slug);
+  const failedSlugs = planRows.map((r) => r.slug).filter((s) => !generatedSlugs.includes(s));
+  await supabase.from("content_plan").update({
+    status: "generated",
+    generated_at: new Date().toISOString(),
+    last_error: null,
+  }).in("slug", generatedSlugs);
+  if (failedSlugs.length > 0) {
+    await supabase.from("content_plan").update({
+      status: "pending",
+      last_error: errors.join("; ").slice(0, 500),
+    }).in("slug", failedSlugs);
   }
 }
 
@@ -350,6 +518,12 @@ Deno.serve(async (req) => {
 
     const data = parseInput(await req.json().catch(() => ({})));
 
+    if (data.action === "status") {
+      return new Response(JSON.stringify(await readGenerationStatus(supabase, data.slugs)), {
+        headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
     await supabase
       .from("content_plan")
       .update({ status: "pending", last_error: "Released from interrupted generation run" })
@@ -388,160 +562,25 @@ Deno.serve(async (req) => {
         .in("slug", planRows.map((r) => r.slug));
     }
 
-    const generated: GeneratedPage[] = [];
-    for (const row of planRows) {
-      const result = await generateOne(row, data.model, apiKey);
-      if (result) generated.push(result);
-    }
-
-    const bySlug = new Map(generated.map((g) => [g.plan_slug, g]));
-    const errors: string[] = [];
-    const okPages: Array<{ plan: PlanRow; body: string }> = [];
-
-    for (const plan of planRows) {
-      const gen = bySlug.get(plan.slug);
-      if (!gen) {
-        errors.push(`${plan.slug}: AI did not return a body`);
-        continue;
-      }
-      const body = gen.body_markdown ?? "";
-      const words = body.split(/\s+/).filter(Boolean).length;
-      const isEvent = plan.source_type === "event_guide";
-      const isEs = plan.source_type === "hosting_es";
-      const minWords = isEvent ? 3500 : isEs ? 1600 : 2200;
-      if (words < minWords) {
-        errors.push(`${plan.slug}: too short (${words} words, need ${minWords}+)`);
-        continue;
-      }
-
-      const requiredLinks = (plan.internal_links ?? "")
-        .split(/\n|,/)
-        .map((s) => s.trim())
-        .filter(Boolean);
-      const missing = requiredLinks.filter((l) => !body.includes(l));
-      if (missing.length > requiredLinks.length / 2) {
-        errors.push(`${plan.slug}: missing ${missing.length}/${requiredLinks.length} required internal links`);
-        continue;
-      }
-
-      let requiredSections: Array<[RegExp, string]> = [];
-      if (isEvent) {
-        requiredSections = [
-          [/##\s*Section\s*1\b.*Why\b/i, "Section 1 (Why City)"],
-          [/##\s*Section\s*3\b.*Planning Guide/i, "Section 3 (Planning Guide)"],
-          [/##\s*Section\s*5\b.*Neighborhoods/i, "Section 5 (Neighborhoods)"],
-          [/##\s*Section\s*9\b.*Do You Own/i, "Section 9 (Host Flip)"],
-          [/##\s*Section\s*10\b.*Frequently Asked/i, "Section 10 (20 FAQs)"],
-          [/\*\*20\.\*\*/, "20 numbered FAQs"],
-        ];
-      } else if (isEs) {
-        requiredSections = [
-          [/##\s*¿Por Qué Rentar Tu Piscina/i, "¿Por Qué Rentar?"],
-          [/##\s*Cuánto Puedes Ganar/i, "Cuánto Puedes Ganar"],
-          [/##\s*Preguntas Frecuentes/i, "Preguntas Frecuentes"],
-          [/##\s*¿Listo Para Empezar\?/i, "¿Listo Para Empezar?"],
-          [/\*\*15\.\*\*/, "15 numbered FAQs"],
-        ];
-      } else {
-        requiredSections = [
-          [/##\s*How This Affects Pool Rental Hosts/i, "Section 5 (How This Affects Hosts)"],
-          [/##\s*Offset Your .+ Costs With Pool Rental Income/i, "Section 6 (Offset Costs)"],
-          [/##\s*Frequently Asked Questions/i, "Section 7 (FAQ)"],
-          [/##\s*Related Pool Owner Guides/i, "Section 8 (Related Guides)"],
-          [/##\s*Ready to Turn Your Pool Into Income\?/i, "Section 9 (Final CTA)"],
-          [/💰\s*\*\*Did you know\?\*\*/, "Section 4 (Mid-page Callout)"],
-        ];
-      }
-      const missingSections = requiredSections.filter(([re]) => !re.test(body)).map(([, label]) => label);
-      if (missingSections.length > 0) {
-        errors.push(`${plan.slug}: missing ${missingSections.join(", ")}`);
-        continue;
-      }
-      okPages.push({ plan, body });
-    }
-
-    if (data.dryRun) {
-      await supabase.from("content_plan").update({ status: "pending" }).in("slug", planRows.map((r) => r.slug));
-      return new Response(JSON.stringify({
-        ok: errors.length === 0,
-        dryRun: true,
-        attempted: planRows.length,
-        validationErrors: errors,
-        pages: okPages.map(({ plan, body }) => ({
-          slug: plan.slug,
-          title: plan.h1,
-          words: body.split(/\s+/).filter(Boolean).length,
-        })),
-      }), { headers: { ...cors, "Content-Type": "application/json" } });
-    }
-
-    if (okPages.length === 0) {
-      await supabase
-        .from("content_plan")
-        .update({ status: "pending", last_error: errors.join("; ").slice(0, 500) })
-        .in("slug", planRows.map((r) => r.slug));
-      return new Response(JSON.stringify({
-        ok: false,
-        inserted: 0,
-        attempted: planRows.length,
-        validationErrors: errors,
-        pages: [],
-      }), { headers: { ...cors, "Content-Type": "application/json" } });
-    }
-
-    const rows = okPages.map(({ plan, body }) => {
-      const isCity = plan.source_type === "city";
-      const isEvent = plan.source_type === "event_guide";
-      const isEs = plan.source_type === "hosting_es";
-      const template_type = isCity ? "host_acq_city" : isEvent ? "event_guide" : isEs ? "host_acq_city_es" : "resource";
-      const category = isCity ? "Host/City Acquisition" : isEvent ? "Event Guide" : isEs ? "Host/City Acquisition (ES)" : "Resource/Article Page";
-      return {
-        slug: plan.slug,
-        url_path: `/p/${plan.slug}`,
-        template_type,
-        category,
-        locale: isEs ? "es" : "en",
-        status: "published",
-        in_sitemap: true,
-        title: plan.h1 ?? plan.meta_title ?? plan.slug,
-        description: plan.meta_description ?? "",
-        content: body,
-        body_markdown: body,
-        seo_title: (plan.meta_title ?? plan.h1 ?? "").slice(0, 70),
-        seo_description: (plan.meta_description ?? "").slice(0, 160),
-        legacy_slugs: [],
-        updated_at: new Date().toISOString(),
-      };
-    });
-
-    const { error: upErr, count } = await supabase
-      .from("content_pages")
-      .upsert(rows, { onConflict: "url_path", count: "exact" });
-    if (upErr) throw new Error(`upsert failed: ${upErr.message}`);
-
-    const generatedSlugs = okPages.map((p) => p.plan.slug);
-    const failedSlugs = planRows.map((r) => r.slug).filter((s) => !generatedSlugs.includes(s));
-
-    if (generatedSlugs.length > 0) {
-      await supabase.from("content_plan").update({
-        status: "generated",
-        generated_at: new Date().toISOString(),
-        last_error: null,
-      }).in("slug", generatedSlugs);
-    }
-    if (failedSlugs.length > 0) {
-      await supabase.from("content_plan").update({
-        status: "pending",
-        last_error: errors.join("; ").slice(0, 500),
-      }).in("slug", failedSlugs);
-    }
+    const pendingSlugs = planRows.map((r) => r.slug);
+    const generation = processGeneration(supabase, planRows, data.model, apiKey, data.dryRun)
+      .catch(async (e) => {
+        console.error("[generate-content-batch:background]", e);
+        await supabase
+          .from("content_plan")
+          .update({ status: "pending", last_error: errorMessage(e).slice(0, 500) })
+          .in("slug", pendingSlugs);
+      });
+    (globalThis as any).EdgeRuntime?.waitUntil?.(generation);
 
     return new Response(JSON.stringify({
       ok: true,
-      inserted: count ?? rows.length,
+      queued: true,
+      inserted: 0,
       attempted: planRows.length,
-      validationErrors: errors,
-      pages: rows.map((r) => ({ slug: r.slug, url_path: r.url_path, title: r.title })),
+      pendingSlugs,
+      validationErrors: ["Generation started. This page will poll status instead of waiting for the request to time out."],
+      pages: [],
     }), { headers: { ...cors, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("[generate-content-batch]", e);

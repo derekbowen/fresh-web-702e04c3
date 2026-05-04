@@ -60,7 +60,7 @@ function GenerateContentPageInner() {
   const [tier, setTier] = React.useState<string>("T1 (200k+)");
   const [stateCode, setStateCode] = React.useState("");
   const [warmOnly, setWarmOnly] = React.useState(false);
-  const [model, setModel] = React.useState("google/gemini-2.5-pro");
+  const [model, setModel] = React.useState("google/gemini-3-flash-preview");
   const [busy, setBusy] = React.useState(false);
   const [dryRun, setDryRun] = React.useState(false);
   const [autoLoop, setAutoLoop] = React.useState(false);
@@ -73,19 +73,47 @@ function GenerateContentPageInner() {
     failed: number;
     pages: Array<{ slug: string; title: string }>;
   }>({ batch: 0, inserted: 0, failed: 0, pages: [] });
+  const pollTimerRef = React.useRef<number | null>(null);
   const stopRef = React.useRef(false);
 
-  const runOnce = async () => {
+  React.useEffect(() => {
+    return () => {
+      if (pollTimerRef.current) window.clearTimeout(pollTimerRef.current);
+    };
+  }, []);
+
+  const runOnce = async (action: "start" | "status" = "start", slugs?: string[]) => {
     return await generateContentBatch({
       data: {
+        action,
         count,
         tier: tier || undefined,
         stateCode: stateCode.trim() || undefined,
         warmOnly,
         model,
         dryRun,
+        slugs,
       } as any,
     });
+  };
+
+  const scheduleStatusPoll = (slugs: string[]) => {
+    if (pollTimerRef.current) window.clearTimeout(pollTimerRef.current);
+    pollTimerRef.current = window.setTimeout(async () => {
+      try {
+        const status: any = await runOnce("status", slugs);
+        setResult(status);
+        const pending = status?.pendingSlugs ?? [];
+        if (pending.length > 0 && !stopRef.current) {
+          scheduleStatusPoll(pending);
+        } else {
+          setBusy(false);
+        }
+      } catch (e: any) {
+        setError(e?.message ?? String(e));
+        setBusy(false);
+      }
+    }, 5000);
   };
 
   const run = async () => {
@@ -94,10 +122,16 @@ function GenerateContentPageInner() {
     setResult(null);
     setProgress({ batch: 0, inserted: 0, failed: 0, pages: [] });
     stopRef.current = false;
+    let keepsPolling = false;
     try {
       if (!autoLoop) {
         const res = await runOnce();
         setResult(res);
+        if (res?.queued && res?.pendingSlugs?.length) {
+          keepsPolling = true;
+          scheduleStatusPoll(res.pendingSlugs);
+          return;
+        }
       } else {
         let totalInserted = 0;
         let totalFailed = 0;
@@ -108,6 +142,11 @@ function GenerateContentPageInner() {
           totalInserted += res?.inserted ?? 0;
           totalFailed += (res?.attempted ?? 0) - (res?.inserted ?? 0);
           if (res?.pages) allPages.push(...res.pages);
+          if (res?.queued && res?.pendingSlugs?.length) {
+            keepsPolling = true;
+            scheduleStatusPoll(res.pendingSlugs);
+            break;
+          }
           setProgress({
             batch: i,
             inserted: totalInserted,
@@ -120,7 +159,7 @@ function GenerateContentPageInner() {
     } catch (e: any) {
       setError(e?.message ?? String(e));
     } finally {
-      setBusy(false);
+      if (!keepsPolling) setBusy(false);
     }
   };
 
@@ -147,9 +186,9 @@ function GenerateContentPageInner() {
               <input
                 type="number"
                 min={1}
-                max={5}
+                max={1}
                 value={count}
-                onChange={(e) => setCount(Math.min(5, Math.max(1, Number(e.target.value) || 1)))}
+                onChange={(e) => setCount(Math.min(1, Math.max(1, Number(e.target.value) || 1)))}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -191,6 +230,9 @@ function GenerateContentPageInner() {
                 onChange={(e) => setModel(e.target.value)}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
+                <option value="google/gemini-3-flash-preview">
+                  Gemini 3 Flash Preview
+                </option>
                 <option value="google/gemini-2.5-pro">Gemini 2.5 Pro</option>
                 <option value="google/gemini-3.1-pro-preview">
                   Gemini 3.1 Pro Preview
@@ -254,7 +296,9 @@ function GenerateContentPageInner() {
               {busy
                 ? autoLoop
                   ? `Looping… batch ${progress.batch}/${maxBatches}`
-                  : "Generating… (60–120s)"
+                  : result?.queued
+                    ? "Generating in background…"
+                    : "Starting generation…"
                 : autoLoop
                   ? `Auto-generate up to ${count * maxBatches} pages`
                   : dryRun

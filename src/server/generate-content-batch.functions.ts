@@ -3,14 +3,16 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InputSchema = z.object({
-  count: z.number().int().min(1).max(5).default(1),
+  action: z.enum(["start", "status"]).default("start"),
+  count: z.number().int().min(1).max(1).default(1),
   tier: z
     .enum(["T1 (200k+)", "T2 (75k–199k)", "T3 (25k–74k)", "T4 (10k–24k)", "longtail"])
     .optional(),
   stateCode: z.string().length(2).optional(),
   warmOnly: z.boolean().default(false),
-  model: z.string().default("google/gemini-2.5-pro"),
+  model: z.string().default("google/gemini-3-flash-preview"),
   dryRun: z.boolean().default(false),
+  slugs: z.array(z.string()).optional(),
 });
 
 type FunctionInvokeResult = {
