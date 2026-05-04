@@ -233,8 +233,8 @@ Return only the final markdown body for plan_slug ${row.slug}. Start with the ex
 
 function parseInput(value: unknown): Required<Input> {
   const input = (value && typeof value === "object" ? value : {}) as Input;
-  const countRaw = Number(input.count ?? 1);
-  const count = Number.isFinite(countRaw) ? Math.min(1, Math.max(1, Math.trunc(countRaw))) : 1;
+  const countRaw = Number(input.count ?? 10);
+  const count = Number.isFinite(countRaw) ? Math.min(10, Math.max(1, Math.trunc(countRaw))) : 10;
   const stateCode = typeof input.stateCode === "string" && input.stateCode.trim()
     ? input.stateCode.trim().toUpperCase().slice(0, 2)
     : "";
@@ -256,7 +256,7 @@ function errorMessage(e: unknown): string {
 }
 
 async function readGenerationStatus(supabase: ReturnType<typeof createClient>, slugs: string[]) {
-  const cleanSlugs = [...new Set(slugs)].filter(Boolean).slice(0, 25);
+  const cleanSlugs = [...new Set(slugs)].filter(Boolean).slice(0, 100);
   if (cleanSlugs.length === 0) {
     return { ok: true, queued: false, inserted: 0, attempted: 0, pendingSlugs: [], validationErrors: [], pages: [] };
   }
