@@ -230,6 +230,9 @@ function GenerateContentPageInner() {
                 onChange={(e) => setModel(e.target.value)}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
+                <option value="google/gemini-3-flash-preview">
+                  Gemini 3 Flash Preview
+                </option>
                 <option value="google/gemini-2.5-pro">Gemini 2.5 Pro</option>
                 <option value="google/gemini-3.1-pro-preview">
                   Gemini 3.1 Pro Preview
