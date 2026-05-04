@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ListingCard } from "@/components/listing-card";
 import { PoolWaitlistForm } from "@/components/pool-waitlist-form";
+import { FeatureRequestForm } from "@/components/feature-request-form";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
@@ -189,6 +190,31 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <p className="mt-5 text-sm text-primary-foreground/90">
               ★ 4.8 average rating · 50,000+ guests booked · 40+ states · $2M insurance included
             </p>
+          </div>
+        </section>
+
+        {/* Feature request lead-capture */}
+        <section
+          aria-labelledby="feature-request-heading"
+          className="border-b border-border bg-background"
+        >
+          <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
+            <div className="text-center">
+              <h2
+                id="feature-request-heading"
+                className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+              >
+                Tell us what to build for your pool business.
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Our new AI tooling lets us ship custom features the same day. Tell us what you need and we'll follow up to scope it.
+              </p>
+            </div>
+            <div className="mt-6">
+              <ErrorBoundary name="FeatureRequestForm" silent>
+                <FeatureRequestForm />
+              </ErrorBoundary>
+            </div>
           </div>
         </section>
 

@@ -638,6 +638,54 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_requests: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          referrer_path: string | null
+          region: string | null
+          request_text: string
+          status: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string | null
+          referrer_path?: string | null
+          region?: string | null
+          request_text: string
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string | null
+          referrer_path?: string | null
+          region?: string | null
+          request_text?: string
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       help_articles: {
         Row: {
           category_slug: string
