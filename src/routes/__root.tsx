@@ -1,8 +1,9 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { HydrationDebug } from "@/components/hydration-debug";
+import { IntercomWidget } from "@/components/intercom-widget";
 import {
   buildMeta,
   ldJsonScript,
@@ -82,10 +83,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const showIntercom = pathname === "/" || pathname.startsWith("/admin");
   return (
     <>
       <HydrationDebug />
       <Outlet />
+      {showIntercom && <IntercomWidget />}
     </>
   );
 }
