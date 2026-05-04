@@ -1,23 +1,43 @@
 import * as React from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { generateContentBatch } from "@/server/generate-content-batch.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
 export const Route = createFileRoute("/admin/generate-content")({
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user)
-      throw redirect({
-        to: "/auth",
-        search: { redirect: "/admin/generate-content", mode: "signin" },
-      });
-    const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
-  },
   component: GenerateContentPage,
 });
+
+function useAdminGate() {
+  const navigate = useNavigate();
+  const [ready, setReady] = React.useState(false);
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (cancelled) return;
+      if (!data.user) {
+        navigate({
+          to: "/auth",
+          search: { redirect: "/admin/generate-content", mode: "signin" },
+        });
+        return;
+      }
+      const { isAdmin } = await checkAdminRole();
+      if (cancelled) return;
+      if (!isAdmin) {
+        navigate({ to: "/" });
+        return;
+      }
+      setReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+  return ready;
+}
 
 function GenerateContentPage() {
   const [count, setCount] = React.useState(10);
