@@ -28,6 +28,8 @@ export const queryListings = createServerFn({ method: "GET" })
           .optional(),
         bounds: z.string().max(200).optional(),
         pub_category: z.string().max(100).optional(),
+        citySlug: z.string().max(120).regex(/^[a-z0-9-]+$/).optional(),
+        city: z.string().max(120).optional(),
       })
       .parse(data),
   )
