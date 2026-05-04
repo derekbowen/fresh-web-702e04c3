@@ -130,7 +130,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               You'll love hosting with us.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-primary-foreground/90 sm:text-xl">
-              Our new technology can build features to help you run your business more efficiently. Just give us a call — we love to hear from you.
+              Our new AI technology can build the features you ask for — same day. Just give us a call, we love to hear from you.
             </p>
 
             {/* Search widget */}
