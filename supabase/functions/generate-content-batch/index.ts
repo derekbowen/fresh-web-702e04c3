@@ -17,7 +17,7 @@ function corsHeaders(origin: string | null) {
     "Access-Control-Allow-Origin": allowed && origin ? origin : "https://fresh-web.lovable.app",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Vary": "Origin",
+    Vary: "Origin",
   };
 }
 
@@ -235,17 +235,22 @@ function parseInput(value: unknown): Required<Input> {
   const input = (value && typeof value === "object" ? value : {}) as Input;
   const countRaw = Number(input.count ?? 10);
   const count = Number.isFinite(countRaw) ? Math.min(10, Math.max(1, Math.trunc(countRaw))) : 10;
-  const stateCode = typeof input.stateCode === "string" && input.stateCode.trim()
-    ? input.stateCode.trim().toUpperCase().slice(0, 2)
-    : "";
+  const stateCode =
+    typeof input.stateCode === "string" && input.stateCode.trim()
+      ? input.stateCode.trim().toUpperCase().slice(0, 2)
+      : "";
   const tier = typeof input.tier === "string" ? input.tier : "";
   return {
-    action: input.action === "status" ? "status" : input.action === "preflight" ? "preflight" : "start",
+    action:
+      input.action === "status" ? "status" : input.action === "preflight" ? "preflight" : "start",
     count,
     tier,
     stateCode,
     warmOnly: Boolean(input.warmOnly),
-    model: typeof input.model === "string" && input.model ? input.model : "google/gemini-3-flash-preview",
+    model:
+      typeof input.model === "string" && input.model
+        ? input.model
+        : "google/gemini-3-flash-preview",
     dryRun: Boolean(input.dryRun),
     slugs: Array.isArray(input.slugs) ? input.slugs.filter((s) => typeof s === "string" && s) : [],
   };
@@ -258,7 +263,15 @@ function errorMessage(e: unknown): string {
 async function readGenerationStatus(supabase: ReturnType<typeof createClient>, slugs: string[]) {
   const cleanSlugs = [...new Set(slugs)].filter(Boolean).slice(0, 100);
   if (cleanSlugs.length === 0) {
-    return { ok: true, queued: false, inserted: 0, attempted: 0, pendingSlugs: [], validationErrors: [], pages: [] };
+    return {
+      ok: true,
+      queued: false,
+      inserted: 0,
+      attempted: 0,
+      pendingSlugs: [],
+      validationErrors: [],
+      pages: [],
+    };
   }
 
   const [{ data: plans, error: planErr }, { data: pages, error: pageErr }] = await Promise.all([
@@ -289,7 +302,11 @@ async function readGenerationStatus(supabase: ReturnType<typeof createClient>, s
   };
 }
 
-async function generateOne(plan: PlanRow, model: string, apiKey: string): Promise<GeneratedPage | null> {
+async function generateOne(
+  plan: PlanRow,
+  model: string,
+  apiKey: string,
+): Promise<GeneratedPage | null> {
   const { system, user } = buildPrompt(plan);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 115_000);
@@ -309,7 +326,8 @@ async function generateOne(plan: PlanRow, model: string, apiKey: string): Promis
     });
 
     if (resp.status === 429) throw new Error("Rate limited by AI gateway. Try again in a minute.");
-    if (resp.status === 402) throw new Error("AI credits exhausted. Add funds in Workspace > Usage.");
+    if (resp.status === 402)
+      throw new Error("AI credits exhausted. Add funds in Workspace > Usage.");
     if (!resp.ok) {
       const text = await resp.text().catch(() => "");
       throw new Error(`AI gateway error ${resp.status}: ${text.slice(0, 300)}`);
@@ -319,7 +337,12 @@ async function generateOne(plan: PlanRow, model: string, apiKey: string): Promis
     const message = payload?.choices?.[0]?.message;
     const raw = message?.content;
     if (!raw || typeof raw !== "string") throw new Error("AI returned an empty response");
-    const body = raw.trim().replace(/^```markdown\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+    const body = raw
+      .trim()
+      .replace(/^```markdown\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/```$/i, "")
+      .trim();
     return { plan_slug: plan.slug, body_markdown: body };
   } catch (e) {
     console.error(`[generate-content-batch:${plan.slug}] ${errorMessage(e)}`);
@@ -338,9 +361,9 @@ async function processGeneration(
 ) {
   const errors: string[] = [];
 
-  const generated = (await Promise.all(
-    planRows.map((row) => generateOne(row, model, apiKey)),
-  )).filter((page): page is GeneratedPage => Boolean(page));
+  const generated = (
+    await Promise.all(planRows.map((row) => generateOne(row, model, apiKey)))
+  ).filter((page): page is GeneratedPage => Boolean(page));
 
   const bySlug = new Map(generated.map((g) => [g.plan_slug, g]));
   const okPages: Array<{ plan: PlanRow; body: string }> = [];
@@ -367,7 +390,9 @@ async function processGeneration(
       .filter(Boolean);
     const missing = requiredLinks.filter((l) => !body.includes(l));
     if (missing.length > requiredLinks.length / 2) {
-      errors.push(`${plan.slug}: missing ${missing.length}/${requiredLinks.length} required internal links`);
+      errors.push(
+        `${plan.slug}: missing ${missing.length}/${requiredLinks.length} required internal links`,
+      );
       continue;
     }
 
@@ -399,7 +424,9 @@ async function processGeneration(
         [/💰\s*\*\*Did you know\?\*\*/, "Section 4 (Mid-page Callout)"],
       ];
     }
-    const missingSections = requiredSections.filter(([re]) => !re.test(body)).map(([, label]) => label);
+    const missingSections = requiredSections
+      .filter(([re]) => !re.test(body))
+      .map(([, label]) => label);
     if (missingSections.length > 0) {
       errors.push(`${plan.slug}: missing ${missingSections.join(", ")}`);
       continue;
@@ -408,7 +435,13 @@ async function processGeneration(
   }
 
   if (dryRun) {
-    await supabase.from("content_plan").update({ status: "pending" }).in("slug", planRows.map((r) => r.slug));
+    await supabase
+      .from("content_plan")
+      .update({ status: "pending" })
+      .in(
+        "slug",
+        planRows.map((r) => r.slug),
+      );
     return;
   }
 
@@ -416,7 +449,10 @@ async function processGeneration(
     await supabase
       .from("content_plan")
       .update({ status: "pending", last_error: errors.join("; ").slice(0, 500) })
-      .in("slug", planRows.map((r) => r.slug));
+      .in(
+        "slug",
+        planRows.map((r) => r.slug),
+      );
     return;
   }
 
@@ -424,8 +460,20 @@ async function processGeneration(
     const isCity = plan.source_type === "city";
     const isEvent = plan.source_type === "event_guide";
     const isEs = plan.source_type === "hosting_es";
-    const template_type = isCity ? "host_acq_city" : isEvent ? "event_guide" : isEs ? "host_acq_city_es" : "resource";
-    const category = isCity ? "Host/City Acquisition" : isEvent ? "Event Guide" : isEs ? "Host/City Acquisition (ES)" : "Resource/Article Page";
+    const template_type = isCity
+      ? "host_acq_city"
+      : isEvent
+        ? "event_guide"
+        : isEs
+          ? "host_acq_city_es"
+          : "resource";
+    const category = isCity
+      ? "Host/City Acquisition"
+      : isEvent
+        ? "Event Guide"
+        : isEs
+          ? "Host/City Acquisition (ES)"
+          : "Resource/Article Page";
     return {
       slug: plan.slug,
       url_path: `/p/${plan.slug}`,
@@ -452,16 +500,22 @@ async function processGeneration(
 
   const generatedSlugs = okPages.map((p) => p.plan.slug);
   const failedSlugs = planRows.map((r) => r.slug).filter((s) => !generatedSlugs.includes(s));
-  await supabase.from("content_plan").update({
-    status: "generated",
-    generated_at: new Date().toISOString(),
-    last_error: null,
-  }).in("slug", generatedSlugs);
+  await supabase
+    .from("content_plan")
+    .update({
+      status: "generated",
+      generated_at: new Date().toISOString(),
+      last_error: null,
+    })
+    .in("slug", generatedSlugs);
   if (failedSlugs.length > 0) {
-    await supabase.from("content_plan").update({
-      status: "pending",
-      last_error: errors.join("; ").slice(0, 500),
-    }).in("slug", failedSlugs);
+    await supabase
+      .from("content_plan")
+      .update({
+        status: "pending",
+        last_error: errors.join("; ").slice(0, 500),
+      })
+      .in("slug", failedSlugs);
   }
 }
 
@@ -545,15 +599,18 @@ Deno.serve(async (req) => {
         .select("slug", { count: "exact", head: true })
         .eq("status", "pending");
 
-      return new Response(JSON.stringify({
-        ok: aiOk,
-        edgeFunction: "reachable",
-        adminAuth: "ok",
-        lovableApiKey: "configured",
-        aiGateway: aiOk ? "ok" : "failed",
-        aiError,
-        pendingPlanRows: pendingCount ?? 0,
-      }), { headers: { ...cors, "Content-Type": "application/json" } });
+      return new Response(
+        JSON.stringify({
+          ok: aiOk,
+          edgeFunction: "reachable",
+          adminAuth: "ok",
+          lovableApiKey: "configured",
+          aiGateway: aiOk ? "ok" : "failed",
+          aiError,
+          pendingPlanRows: pendingCount ?? 0,
+        }),
+        { headers: { ...cors, "Content-Type": "application/json" } },
+      );
     }
 
     if (data.action === "status") {
@@ -570,7 +627,9 @@ Deno.serve(async (req) => {
 
     let query = supabase
       .from("content_plan")
-      .select("slug, source_type, city, state, state_code, population_2024, warm_climate, h1, meta_title, meta_description, primary_keyword, supporting_keywords, uniqueness_angle, internal_links, schema_suggestions, notes, search_intent")
+      .select(
+        "slug, source_type, city, state, state_code, population_2024, warm_climate, h1, meta_title, meta_description, primary_keyword, supporting_keywords, uniqueness_angle, internal_links, schema_suggestions, notes, search_intent",
+      )
       .eq("status", "pending")
       .order("priority_score", { ascending: false, nullsFirst: false })
       .limit(data.count);
@@ -584,42 +643,54 @@ Deno.serve(async (req) => {
     if (planErr) throw new Error(`plan query failed: ${planErr.message}`);
     const planRows = (planRowsRaw ?? []) as PlanRow[];
     if (planRows.length === 0) {
-      return new Response(JSON.stringify({
-        ok: false,
-        inserted: 0,
-        attempted: 0,
-        validationErrors: ["No pending plan rows match those filters."],
-        pages: [],
-      }), { headers: { ...cors, "Content-Type": "application/json" } });
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          inserted: 0,
+          attempted: 0,
+          validationErrors: ["No pending plan rows match those filters."],
+          pages: [],
+        }),
+        { headers: { ...cors, "Content-Type": "application/json" } },
+      );
     }
 
     if (!data.dryRun) {
       await supabase
         .from("content_plan")
         .update({ status: "generating" })
-        .in("slug", planRows.map((r) => r.slug));
+        .in(
+          "slug",
+          planRows.map((r) => r.slug),
+        );
     }
 
     const pendingSlugs = planRows.map((r) => r.slug);
-    const generation = processGeneration(supabase, planRows, data.model, apiKey, data.dryRun)
-      .catch(async (e) => {
+    const generation = processGeneration(supabase, planRows, data.model, apiKey, data.dryRun).catch(
+      async (e) => {
         console.error("[generate-content-batch:background]", e);
         await supabase
           .from("content_plan")
           .update({ status: "pending", last_error: errorMessage(e).slice(0, 500) })
           .in("slug", pendingSlugs);
-      });
+      },
+    );
     (globalThis as any).EdgeRuntime?.waitUntil?.(generation);
 
-    return new Response(JSON.stringify({
-      ok: true,
-      queued: true,
-      inserted: 0,
-      attempted: planRows.length,
-      pendingSlugs,
-      validationErrors: ["Generation started. This page will poll status instead of waiting for the request to time out."],
-      pages: [],
-    }), { headers: { ...cors, "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        queued: true,
+        inserted: 0,
+        attempted: planRows.length,
+        pendingSlugs,
+        validationErrors: [
+          "Generation started. This page will poll status instead of waiting for the request to time out.",
+        ],
+        pages: [],
+      }),
+      { headers: { ...cors, "Content-Type": "application/json" } },
+    );
   } catch (e) {
     console.error("[generate-content-batch]", e);
     return new Response(JSON.stringify({ error: errorMessage(e) }), {

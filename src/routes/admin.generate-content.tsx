@@ -73,7 +73,7 @@ function GenerateContentPageInner() {
     pendingPlanRows?: number;
     error?: string;
   };
-  const getErrorMessage = (e: unknown) => e instanceof Error ? e.message : String(e);
+  const getErrorMessage = (e: unknown) => (e instanceof Error ? e.message : String(e));
   const [count, setCount] = React.useState(10);
   const [tier, setTier] = React.useState<string>("T1 (200k+)");
   const [stateCode, setStateCode] = React.useState("");
@@ -135,62 +135,65 @@ function GenerateContentPageInner() {
     );
   }, []);
 
-  const callEdge = React.useCallback(async (
-    action: "preflight" | "start" | "status",
-    extra?: { slugs?: string[] },
-  ): Promise<GenerateResponse> => {
-    const started = performance.now();
-    try {
-      const res = await generateContentBatch({
-        data: {
+  const callEdge = React.useCallback(
+    async (
+      action: "preflight" | "start" | "status",
+      extra?: { slugs?: string[] },
+    ): Promise<GenerateResponse> => {
+      const started = performance.now();
+      try {
+        const res = await generateContentBatch({
+          data: {
+            action,
+            count,
+            tier: tier || undefined,
+            stateCode: stateCode.trim() || undefined,
+            warmOnly,
+            model,
+            dryRun,
+            slugs: extra?.slugs,
+          },
+        });
+        const response = res as GenerateResponse;
+        const durationMs = Math.round(performance.now() - started);
+        const summary =
+          action === "preflight"
+            ? response.ok
+              ? "Setup verified"
+              : `Preflight failed: ${response.aiError ?? "see details"}`
+            : action === "status"
+              ? `Status: ${response.pendingSlugs?.length ?? 0} pending, ${response.inserted ?? 0} inserted`
+              : response.queued
+                ? `Queued ${response.attempted ?? 0} page(s) for background generation`
+                : `Returned ${response.inserted ?? 0}/${response.attempted ?? 0} inserted`;
+        appendLog({
           action,
-          count,
-          tier: tier || undefined,
-          stateCode: stateCode.trim() || undefined,
-          warmOnly,
-          model,
-          dryRun,
-          slugs: extra?.slugs,
-        },
-      });
-      const response = res as GenerateResponse;
-      const durationMs = Math.round(performance.now() - started);
-      const summary =
-        action === "preflight"
-          ? response.ok
-            ? "Setup verified"
-            : `Preflight failed: ${response.aiError ?? "see details"}`
-          : action === "status"
-            ? `Status: ${response.pendingSlugs?.length ?? 0} pending, ${response.inserted ?? 0} inserted`
-            : response.queued
-              ? `Queued ${response.attempted ?? 0} page(s) for background generation`
-              : `Returned ${response.inserted ?? 0}/${response.attempted ?? 0} inserted`;
-      appendLog({
-        action,
-        endpoint: ENDPOINT,
-        durationMs,
-        ok: Boolean(response.ok ?? response.queued),
-        httpStatus: 200,
-        summary,
-        response,
-      });
-      return response;
-    } catch (e: unknown) {
-      const durationMs = Math.round(performance.now() - started);
-      const message = getErrorMessage(e);
-      const statusMatch = message.match(/(\b[45]\d{2}\b)/);
-      appendLog({
-        action,
-        endpoint: ENDPOINT,
-        durationMs,
-        ok: false,
-        httpStatus: statusMatch ? Number(statusMatch[1]) : undefined,
-        summary: `Failure: ${message.slice(0, 200)}`,
-        error: message,
-      });
-      throw e;
-    }
-  }, [appendLog, count, dryRun, model, stateCode, tier, warmOnly]);
+          endpoint: ENDPOINT,
+          durationMs,
+          ok: Boolean(response.ok ?? response.queued),
+          httpStatus: 200,
+          summary,
+          response,
+        });
+        return response;
+      } catch (e: unknown) {
+        const durationMs = Math.round(performance.now() - started);
+        const message = getErrorMessage(e);
+        const statusMatch = message.match(/(\b[45]\d{2}\b)/);
+        appendLog({
+          action,
+          endpoint: ENDPOINT,
+          durationMs,
+          ok: false,
+          httpStatus: statusMatch ? Number(statusMatch[1]) : undefined,
+          summary: `Failure: ${message.slice(0, 200)}`,
+          error: message,
+        });
+        throw e;
+      }
+    },
+    [appendLog, count, dryRun, model, stateCode, tier, warmOnly],
+  );
   React.useEffect(() => {
     return () => {
       if (pollTimerRef.current) window.clearTimeout(pollTimerRef.current);
@@ -332,10 +335,10 @@ function GenerateContentPageInner() {
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
         <h1 className="text-3xl font-bold">Generate from Content Plan</h1>
         <p className="mt-2 text-muted-foreground">
-          Pulls pending rows from <code>content_plan</code> (3,286 prioritized
-          pages), generates each one with Gemini using its own H1, keywords, and
-          uniqueness angle, validates internal links + FAQ, then inserts into{" "}
-          <code>content_pages</code>. No SQL copy-paste, no doorway pages.
+          Pulls pending rows from <code>content_plan</code> (3,286 prioritized pages), generates
+          each one with Gemini using its own H1, keywords, and uniqueness angle, validates internal
+          links + FAQ, then inserts into <code>content_pages</code>. No SQL copy-paste, no doorway
+          pages.
         </p>
 
         <div className="mt-6 space-y-4 rounded-lg border border-border bg-card p-6">
@@ -369,9 +372,7 @@ function GenerateContentPageInner() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium">
-                State code (optional)
-              </label>
+              <label className="block text-sm font-medium">State code (optional)</label>
               <input
                 type="text"
                 maxLength={2}
@@ -389,16 +390,10 @@ function GenerateContentPageInner() {
                 onChange={(e) => setModel(e.target.value)}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="google/gemini-3-flash-preview">
-                  Gemini 3 Flash Preview
-                </option>
+                <option value="google/gemini-3-flash-preview">Gemini 3 Flash Preview</option>
                 <option value="google/gemini-2.5-pro">Gemini 2.5 Pro</option>
-                <option value="google/gemini-3.1-pro-preview">
-                  Gemini 3.1 Pro Preview
-                </option>
-                <option value="google/gemini-2.5-flash">
-                  Gemini 2.5 Flash
-                </option>
+                <option value="google/gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+                <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
               </select>
             </div>
           </div>
@@ -439,7 +434,9 @@ function GenerateContentPageInner() {
                   min={1}
                   max={10}
                   value={maxBatches}
-                  onChange={(e) => setMaxBatches(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
+                  onChange={(e) =>
+                    setMaxBatches(Math.min(10, Math.max(1, Number(e.target.value) || 1)))
+                  }
                   className="mt-1 w-24 rounded-md border border-input bg-background px-3 py-2 text-sm"
                 />
               </div>
@@ -481,32 +478,22 @@ function GenerateContentPageInner() {
                 </li>
                 <li>
                   Admin auth:{" "}
-                  <span className="font-mono">
-                    {preflight.details.adminAuth ?? "unknown"}
-                  </span>
+                  <span className="font-mono">{preflight.details.adminAuth ?? "unknown"}</span>
                 </li>
                 <li>
                   LOVABLE_API_KEY:{" "}
-                  <span className="font-mono">
-                    {preflight.details.lovableApiKey ?? "missing"}
-                  </span>
+                  <span className="font-mono">{preflight.details.lovableApiKey ?? "missing"}</span>
                 </li>
                 <li>
                   AI gateway:{" "}
-                  <span className="font-mono">
-                    {preflight.details.aiGateway ?? "unknown"}
-                  </span>
+                  <span className="font-mono">{preflight.details.aiGateway ?? "unknown"}</span>
                   {preflight.details.aiError && (
-                    <span className="ml-1 text-destructive">
-                      — {preflight.details.aiError}
-                    </span>
+                    <span className="ml-1 text-destructive">— {preflight.details.aiError}</span>
                   )}
                 </li>
                 <li>
                   Pending plan rows:{" "}
-                  <span className="font-mono">
-                    {preflight.details.pendingPlanRows ?? "?"}
-                  </span>
+                  <span className="font-mono">{preflight.details.pendingPlanRows ?? "?"}</span>
                 </li>
                 {preflight.details.error && (
                   <li className="text-destructive">{preflight.details.error}</li>
@@ -520,11 +507,7 @@ function GenerateContentPageInner() {
               onClick={run}
               disabled={busy || preflight.status !== "ok"}
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
-              title={
-                preflight.status !== "ok"
-                  ? "Run the setup check first"
-                  : undefined
-              }
+              title={preflight.status !== "ok" ? "Run the setup check first" : undefined}
             >
               {busy
                 ? autoLoop
@@ -560,8 +543,7 @@ function GenerateContentPageInner() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Auto-loop progress</h2>
               <div className="text-sm text-muted-foreground">
-                Batch {progress.batch} · {progress.inserted} inserted ·{" "}
-                {progress.failed} failed
+                Batch {progress.batch} · {progress.inserted} inserted · {progress.failed} failed
               </div>
             </div>
             <ul className="mt-4 max-h-96 space-y-1 overflow-auto text-xs">
@@ -586,7 +568,9 @@ function GenerateContentPageInner() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Run log</h2>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span>{log.length} entr{log.length === 1 ? "y" : "ies"}</span>
+              <span>
+                {log.length} entr{log.length === 1 ? "y" : "ies"}
+              </span>
               <button
                 onClick={() => setLog([])}
                 disabled={log.length === 0}
@@ -609,9 +593,7 @@ function GenerateContentPageInner() {
                 <li
                   key={e.id}
                   className={`rounded-md border p-3 text-sm ${
-                    e.ok
-                      ? "border-border bg-background"
-                      : "border-destructive/40 bg-destructive/5"
+                    e.ok ? "border-border bg-background" : "border-destructive/40 bg-destructive/5"
                   }`}
                 >
                   <div className="flex flex-wrap items-center gap-2">
@@ -642,7 +624,7 @@ function GenerateContentPageInner() {
                       {e.error ? "Error details" : "Response payload"}
                     </summary>
                     <pre className="mt-2 max-h-64 overflow-auto rounded bg-muted/50 p-2 text-xs">
-{e.error ? e.error : JSON.stringify(e.response ?? null, null, 2)}
+                      {e.error ? e.error : JSON.stringify(e.response ?? null, null, 2)}
                     </pre>
                   </details>
                 </li>
@@ -651,49 +633,48 @@ function GenerateContentPageInner() {
           )}
         </div>
 
-        {result && (() => {
-          const validationErrors = result.validationErrors ?? [];
-          const pages = result.pages ?? [];
-          return (
-          <div className="mt-6 rounded-lg border border-border bg-card p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">
-                {result.ok ? "✓ Success" : "✗ Issues"}
-              </h2>
-              <div className="text-sm text-muted-foreground">
-                {result.inserted ?? 0} inserted / {result.attempted} attempted
-              </div>
-            </div>
-            {validationErrors.length > 0 && (
-              <details className="mt-3">
-                <summary className="cursor-pointer text-sm font-medium">
-                  {validationErrors.length} validation note(s)
-                </summary>
-                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {validationErrors.map((e, i) => (
-                    <li key={i}>• {e}</li>
+        {result &&
+          (() => {
+            const validationErrors = result.validationErrors ?? [];
+            const pages = result.pages ?? [];
+            return (
+              <div className="mt-6 rounded-lg border border-border bg-card p-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">{result.ok ? "✓ Success" : "✗ Issues"}</h2>
+                  <div className="text-sm text-muted-foreground">
+                    {result.inserted ?? 0} inserted / {result.attempted} attempted
+                  </div>
+                </div>
+                {validationErrors.length > 0 && (
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-sm font-medium">
+                      {validationErrors.length} validation note(s)
+                    </summary>
+                    <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                      {validationErrors.map((e, i) => (
+                        <li key={i}>• {e}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+                <ul className="mt-4 space-y-2">
+                  {pages.map((p) => (
+                    <li key={p.slug} className="text-sm">
+                      <a
+                        href={`/p/${p.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        /p/{p.slug}
+                      </a>
+                      <span className="ml-2 text-muted-foreground">{p.title}</span>
+                    </li>
                   ))}
                 </ul>
-              </details>
-            )}
-            <ul className="mt-4 space-y-2">
-              {pages.map((p) => (
-                <li key={p.slug} className="text-sm">
-                  <a
-                    href={`/p/${p.slug}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    /p/{p.slug}
-                  </a>
-                  <span className="ml-2 text-muted-foreground">{p.title}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          );
-        })()}
+              </div>
+            );
+          })()}
       </main>
       <SiteFooter />
     </div>
