@@ -105,8 +105,6 @@ const STATIC_GROUP: DirectoryGroup = {
     { href: "/academy", label: "Host Academy" },
     { href: "/blog", label: "Blog" },
     { href: "/help", label: "Help Center" },
-    { href: "/pool-builders", label: "Pool Builder Directory" },
-    { href: "/providers", label: "Service Provider Directory" },
   ],
 };
 
@@ -189,28 +187,7 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
       }
     }
 
-    // 3. service providers
-    {
-      const { data } = await supabaseAdmin
-        .from("providers")
-        .select("slug, name, city, state_code")
-        .eq("is_published", true)
-        .order("name", { ascending: true })
-        .limit(1000);
-      if (data && data.length > 0) {
-        groups.push({
-          id: "providers",
-          title: "Pool Service Providers",
-          description: "Local cleaners, builders, and maintenance companies.",
-          links: data.map((p) => ({
-            href: `/providers/${p.slug}`,
-            label: p.name,
-            sub: [p.city, p.state_code].filter(Boolean).join(", ") || null,
-          })),
-        });
-        total += data.length;
-      }
-    }
+    // 3. service providers — intentionally excluded from the directory.
 
     // 4. live listings (synced)
     {
