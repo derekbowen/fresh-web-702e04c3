@@ -67,6 +67,10 @@ function GenerateContentPageInner() {
   const [maxBatches, setMaxBatches] = React.useState(20);
   const [result, setResult] = React.useState<any>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [preflight, setPreflight] = React.useState<{
+    status: "idle" | "checking" | "ok" | "failed";
+    details: any;
+  }>({ status: "idle", details: null });
   const [progress, setProgress] = React.useState<{
     batch: number;
     inserted: number;
