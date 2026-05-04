@@ -22,10 +22,18 @@ export const Route = createFileRoute("/api/public/backfill-content-pages")({
           });
         }
         try {
-          const adminToken =
-            body?.adminToken ||
-            process.env.BACKFILL_ADMIN_TOKEN ||
-            process.env.SUPABASE_SERVICE_ROLE_KEY;
+          // Require an explicit admin token from the caller. Accept either the
+          // request body's `adminToken` field or an `x-admin-token` header.
+          // Never fall back to server-side env vars — that would let any
+          // unauthenticated caller pass the equality check inside the handler.
+          const headerToken = request.headers.get("x-admin-token") || undefined;
+          const adminToken: string | undefined = body?.adminToken || headerToken;
+          if (!adminToken || typeof adminToken !== "string") {
+            return new Response(JSON.stringify({ error: "Unauthorized" }), {
+              status: 401,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
           const result = await runBackfillContentPages({ ...body, adminToken });
           return new Response(JSON.stringify(result, null, 2), {
             status: 200,
