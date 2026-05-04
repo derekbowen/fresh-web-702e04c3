@@ -186,9 +186,9 @@ function GenerateContentPageInner() {
               <input
                 type="number"
                 min={1}
-                max={5}
+                max={1}
                 value={count}
-                onChange={(e) => setCount(Math.min(5, Math.max(1, Number(e.target.value) || 1)))}
+                onChange={(e) => setCount(Math.min(1, Math.max(1, Number(e.target.value) || 1)))}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -296,7 +296,9 @@ function GenerateContentPageInner() {
               {busy
                 ? autoLoop
                   ? `Looping… batch ${progress.batch}/${maxBatches}`
-                  : "Generating… (60–120s)"
+                  : result?.queued
+                    ? "Generating in background…"
+                    : "Starting generation…"
                 : autoLoop
                   ? `Auto-generate up to ${count * maxBatches} pages`
                   : dryRun
