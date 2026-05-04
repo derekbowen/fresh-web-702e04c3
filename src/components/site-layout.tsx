@@ -57,7 +57,9 @@ const EXPLORE = [
   { label: "Search Listings", href: "/s" },
   { label: "How It Works", href: "/p/how-it-works" },
   { label: "Start a Business", href: "/p/hosting" },
-  { label: "Swimply Alternative", href: "/p/swimply-alternative" },
+  { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
+  { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
+  { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
   { label: "Sign a Waiver", href: "/p/sign-a-waiver" },
   { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
 ];
