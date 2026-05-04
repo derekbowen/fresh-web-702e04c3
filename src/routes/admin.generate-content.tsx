@@ -40,6 +40,22 @@ function useAdminGate() {
 }
 
 function GenerateContentPage() {
+  const ready = useAdminGate();
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader />
+        <main className="mx-auto flex w-full max-w-3xl flex-1 items-center justify-center px-4 py-12">
+          <p className="text-sm text-muted-foreground">Checking admin access…</p>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+  return <GenerateContentPageInner />;
+}
+
+function GenerateContentPageInner() {
   const [count, setCount] = React.useState(10);
   const [tier, setTier] = React.useState<string>("T1 (200k+)");
   const [stateCode, setStateCode] = React.useState("");
