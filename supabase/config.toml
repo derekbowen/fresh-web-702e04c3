@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.seed-blog-posts]
 verify_jwt = false
+
+[functions.drive-content-generation]
+verify_jwt = false
