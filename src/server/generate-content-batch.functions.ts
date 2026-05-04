@@ -29,7 +29,9 @@ type FunctionInvoker = {
   };
 };
 
-export type GenerateContentBatchResult = Record<string, unknown>;
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+export type GenerateContentBatchResult = { [key: string]: JsonValue };
 
 async function getFunctionErrorMessage(error: FunctionInvokeResult["error"]) {
   if (!error) return "Unknown generation error";
