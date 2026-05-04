@@ -527,6 +527,75 @@ function GenerateContentPageInner() {
           </div>
         )}
 
+        <div className="mt-6 rounded-lg border border-border bg-card p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Run log</h2>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span>{log.length} entr{log.length === 1 ? "y" : "ies"}</span>
+              <button
+                onClick={() => setLog([])}
+                disabled={log.length === 0}
+                className="rounded-md border border-input px-2 py-1 disabled:opacity-50"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground break-all">
+            Endpoint: <code>{ENDPOINT}</code>
+          </p>
+          {log.length === 0 ? (
+            <p className="mt-4 text-sm text-muted-foreground">
+              No calls yet. Run the setup check or start a generation to see entries here.
+            </p>
+          ) : (
+            <ul className="mt-4 space-y-3">
+              {log.map((e) => (
+                <li
+                  key={e.id}
+                  className={`rounded-md border p-3 text-sm ${
+                    e.ok
+                      ? "border-border bg-background"
+                      : "border-destructive/40 bg-destructive/5"
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`rounded px-2 py-0.5 text-xs font-mono ${
+                        e.ok
+                          ? "bg-green-500/10 text-green-700"
+                          : "bg-destructive/10 text-destructive"
+                      }`}
+                    >
+                      {e.ok ? "OK" : "FAIL"}
+                    </span>
+                    <span className="rounded bg-muted px-2 py-0.5 text-xs font-mono uppercase">
+                      {e.action}
+                    </span>
+                    {typeof e.httpStatus === "number" && (
+                      <span className="rounded bg-muted px-2 py-0.5 text-xs font-mono">
+                        HTTP {e.httpStatus}
+                      </span>
+                    )}
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(e.at).toLocaleTimeString()} · {e.durationMs}ms
+                    </span>
+                  </div>
+                  <p className="mt-2">{e.summary}</p>
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-xs text-muted-foreground">
+                      {e.error ? "Error details" : "Response payload"}
+                    </summary>
+                    <pre className="mt-2 max-h-64 overflow-auto rounded bg-muted/50 p-2 text-xs">
+{e.error ? e.error : JSON.stringify(e.response ?? null, null, 2)}
+                    </pre>
+                  </details>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         {result && (
           <div className="mt-6 rounded-lg border border-border bg-card p-6">
             <div className="flex items-center justify-between">
