@@ -199,7 +199,7 @@ function GenerateContentPageInner() {
     setPreflight({ status: "checking", details: null });
     setError(null);
     try {
-      const res: any = await generateContentBatch({ data: { action: "preflight" } as any });
+      const res: any = await callEdge("preflight");
       setPreflight({ status: res?.ok ? "ok" : "failed", details: res });
       return Boolean(res?.ok);
     } catch (e: any) {
