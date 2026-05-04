@@ -173,18 +173,7 @@ function GenerateContentPageInner() {
   }, []);
 
   const runOnce = async (action: "start" | "status" = "start", slugs?: string[]) => {
-    return await generateContentBatch({
-      data: {
-        action,
-        count,
-        tier: tier || undefined,
-        stateCode: stateCode.trim() || undefined,
-        warmOnly,
-        model,
-        dryRun,
-        slugs,
-      } as any,
-    });
+    return await callEdge(action, { slugs });
   };
 
   const scheduleStatusPoll = (slugs: string[]) => {
