@@ -517,7 +517,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               {cities.map((c: HomeCity) => (
                 <a
                   key={c.slug}
-                  href={`/s?address=${encodeURIComponent(`${c.name}, ${c.state_code}`)}`}
+                  href={`/pool-rental/${c.slug}`}
                   className="text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
                 >
                   {c.name}, {c.state_code}
