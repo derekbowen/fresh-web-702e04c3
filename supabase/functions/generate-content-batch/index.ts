@@ -234,7 +234,7 @@ Return valid JSON only in this exact shape: {"pages":[{"plan_slug":"${row.slug}"
 function parseInput(value: unknown): Required<Input> {
   const input = (value && typeof value === "object" ? value : {}) as Input;
   const countRaw = Number(input.count ?? 1);
-  const count = Number.isFinite(countRaw) ? Math.min(5, Math.max(1, Math.trunc(countRaw))) : 1;
+  const count = Number.isFinite(countRaw) ? Math.min(1, Math.max(1, Math.trunc(countRaw))) : 1;
   const stateCode = typeof input.stateCode === "string" && input.stateCode.trim()
     ? input.stateCode.trim().toUpperCase().slice(0, 2)
     : "";
