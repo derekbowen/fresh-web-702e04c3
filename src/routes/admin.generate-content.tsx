@@ -268,6 +268,14 @@ function GenerateContentPageInner() {
     setResult(null);
     setProgress({ batch: 0, inserted: 0, failed: 0, pages: [] });
     stopRef.current = false;
+    autoRunRef.current = {
+      active: autoLoop,
+      nextBatch: 1,
+      maxBatches,
+      totalInserted: 0,
+      totalFailed: 0,
+      pages: [],
+    };
     let keepsPolling = false;
     try {
       if (!autoLoop) {
@@ -279,28 +287,16 @@ function GenerateContentPageInner() {
           return;
         }
       } else {
-        let totalInserted = 0;
-        let totalFailed = 0;
-        const allPages: Array<{ slug: string; title: string }> = [];
-        for (let i = 1; i <= maxBatches; i++) {
-          if (stopRef.current) break;
-          const res: any = await runOnce();
-          totalInserted += res?.inserted ?? 0;
-          totalFailed += (res?.attempted ?? 0) - (res?.inserted ?? 0);
-          if (res?.pages) allPages.push(...res.pages);
-          if (res?.queued && res?.pendingSlugs?.length) {
-            keepsPolling = true;
-            scheduleStatusPoll(res.pendingSlugs);
-            break;
-          }
-          setProgress({
-            batch: i,
-            inserted: totalInserted,
-            failed: totalFailed,
-            pages: allPages.slice(-50),
-          });
-          if (!res?.attempted) break; // queue empty
+        const res: any = await runOnce();
+        setResult(res);
+        autoRunRef.current.nextBatch = 2;
+        if (res?.queued && res?.pendingSlugs?.length) {
+          keepsPolling = true;
+          scheduleStatusPoll(res.pendingSlugs);
+          return;
         }
+        keepsPolling = true;
+        await finishAutoBatch(res);
       }
     } catch (e: any) {
       setError(e?.message ?? String(e));
@@ -332,9 +328,9 @@ function GenerateContentPageInner() {
               <input
                 type="number"
                 min={1}
-                max={1}
+                max={10}
                 value={count}
-                onChange={(e) => setCount(Math.min(1, Math.max(1, Number(e.target.value) || 1)))}
+                onChange={(e) => setCount(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>
