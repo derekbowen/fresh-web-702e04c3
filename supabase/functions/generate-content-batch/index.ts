@@ -251,11 +251,6 @@ function parseInput(value: unknown): Required<Input> {
   };
 }
 
-function extractJson(text: string): { pages?: GeneratedPage[] } {
-  const trimmed = text.trim().replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
-  return JSON.parse(trimmed);
-}
-
 function errorMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
