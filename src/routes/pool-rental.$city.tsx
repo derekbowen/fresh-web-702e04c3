@@ -424,10 +424,10 @@ function CityPage() {
             <div className="grid items-center gap-6 md:grid-cols-3">
               <div className="md:col-span-2">
                 <h2 className="text-2xl font-bold sm:text-3xl">
-                  Own a pool in {city.name}? Earn $1,200–$5,000+ per month.
+                  You'll love hosting with us in {city.name}.
                 </h2>
                 <p className="mt-3 text-primary-foreground/90">
-                  List your pool free in 10 minutes. Set your own price and schedule. $2M liability insurance is included on every booking.
+                  Our new platform is built on cutting-edge tech — tell us exactly what features you want and we'll build them. List free in 10 minutes, set your own price, and every booking includes $2M liability insurance.
                 </p>
               </div>
               <div className="md:text-right">
