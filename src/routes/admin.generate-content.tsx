@@ -651,7 +651,10 @@ function GenerateContentPageInner() {
           )}
         </div>
 
-        {result && (
+        {result && (() => {
+          const validationErrors = result.validationErrors ?? [];
+          const pages = result.pages ?? [];
+          return (
           <div className="mt-6 rounded-lg border border-border bg-card p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">
@@ -661,20 +664,20 @@ function GenerateContentPageInner() {
                 {result.inserted ?? 0} inserted / {result.attempted} attempted
               </div>
             </div>
-            {result.validationErrors?.length > 0 && (
+            {validationErrors.length > 0 && (
               <details className="mt-3">
                 <summary className="cursor-pointer text-sm font-medium">
-                  {result.validationErrors.length} validation note(s)
+                  {validationErrors.length} validation note(s)
                 </summary>
                 <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {result.validationErrors.map((e: string, i: number) => (
+                  {validationErrors.map((e, i) => (
                     <li key={i}>• {e}</li>
                   ))}
                 </ul>
               </details>
             )}
             <ul className="mt-4 space-y-2">
-              {result.pages?.map((p: any) => (
+              {pages.map((p) => (
                 <li key={p.slug} className="text-sm">
                   <a
                     href={`/p/${p.slug}`}
@@ -689,7 +692,8 @@ function GenerateContentPageInner() {
               ))}
             </ul>
           </div>
-        )}
+          );
+        })()}
       </main>
       <SiteFooter />
     </div>
