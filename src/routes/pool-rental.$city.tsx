@@ -3,6 +3,7 @@ import { getCity, getNearbyCities, listCategories } from "@/server/content.funct
 import { queryListings, type ListingSummary } from "@/server/sharetribe.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs, ListingCard } from "@/components/listing-card";
+import { PoolWaitlistForm } from "@/components/pool-waitlist-form";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
 import { resolveCityHero } from "@/lib/city-hero";
 import poolHeroDefault from "@/assets/pool-hero-default.jpg";
