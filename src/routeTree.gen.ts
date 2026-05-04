@@ -64,6 +64,7 @@ import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
@@ -371,6 +372,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
+  id: '/admin/quick-page',
+  path: '/admin/quick-page',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
   id: '/admin/missing-pages',
   path: '/admin/missing-pages',
@@ -512,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/admin/quick-page': typeof AdminQuickPageRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -587,6 +594,7 @@ export interface FileRoutesByTo {
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/admin/quick-page': typeof AdminQuickPageRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -664,6 +672,7 @@ export interface FileRoutesById {
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/admin/quick-page': typeof AdminQuickPageRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -742,6 +751,7 @@ export interface FileRouteTypes {
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
+    | '/admin/quick-page'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -817,6 +827,7 @@ export interface FileRouteTypes {
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
+    | '/admin/quick-page'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -893,6 +904,7 @@ export interface FileRouteTypes {
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
+    | '/admin/quick-page'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -969,6 +981,7 @@ export interface RootRouteChildren {
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
+  AdminQuickPageRoute: typeof AdminQuickPageRoute
   CategorySlugRoute: typeof CategorySlugRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
   PSplatRoute: typeof PSplatRoute
@@ -1384,6 +1397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/quick-page': {
+      id: '/admin/quick-page'
+      path: '/admin/quick-page'
+      fullPath: '/admin/quick-page'
+      preLoaderRoute: typeof AdminQuickPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/missing-pages': {
       id: '/admin/missing-pages'
       path: '/admin/missing-pages'
@@ -1631,6 +1651,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
+  AdminQuickPageRoute: AdminQuickPageRoute,
   CategorySlugRoute: CategorySlugRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
   PSplatRoute: PSplatRoute,

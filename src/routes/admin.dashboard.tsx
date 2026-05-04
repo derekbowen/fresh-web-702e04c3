@@ -175,6 +175,7 @@ function AdminDashboard() {
 
             {/* Quick links */}
             <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <AdminLink to="/admin/quick-page" label="Quick page builder" />
               <AdminLink to="/admin/generate-content" label="Generate content" />
               <AdminLink to="/admin/content-migration" label="Content migration" />
               <AdminLink to="/admin/missing-pages" label="Missing pages (404s)" />
