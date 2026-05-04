@@ -193,6 +193,31 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
+        {/* Feature request lead-capture */}
+        <section
+          aria-labelledby="feature-request-heading"
+          className="border-b border-border bg-background"
+        >
+          <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
+            <div className="text-center">
+              <h2
+                id="feature-request-heading"
+                className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+              >
+                Tell us what to build for your pool business.
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Our new AI tooling lets us ship custom features the same day. Tell us what you need and we'll follow up to scope it.
+              </p>
+            </div>
+            <div className="mt-6">
+              <ErrorBoundary name="FeatureRequestForm" silent>
+                <FeatureRequestForm />
+              </ErrorBoundary>
+            </div>
+          </div>
+        </section>
+
         {/* Comparative trust strip */}
         <section aria-label="Why book with Pool Rental Near Me" className="border-b border-border bg-secondary/30">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 text-center sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
