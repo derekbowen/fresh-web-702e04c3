@@ -255,7 +255,7 @@ ${planLines}`;
 }
 
 const InputSchema = z.object({
-  count: z.number().int().min(1).max(25).default(5),
+  count: z.number().int().min(1).max(5).default(1),
   tier: z
     .enum(["T1 (200k+)", "T2 (75k–199k)", "T3 (25k–74k)", "T4 (10k–24k)", "longtail"])
     .optional(),
@@ -281,6 +281,13 @@ export const generateContentBatch = createServerFn({ method: "POST" })
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
+
+    // Release rows from interrupted runs so the queue cannot stay stuck forever.
+    await supabaseAdmin
+      .from("content_plan")
+      .update({ status: "pending", last_error: "Released from interrupted generation run" })
+      .eq("status", "generating")
+      .lt("updated_at", new Date(Date.now() - 10 * 60 * 1000).toISOString());
 
     // Pull pending plan rows
     let q = supabaseAdmin
@@ -324,18 +331,23 @@ export const generateContentBatch = createServerFn({ method: "POST" })
     // in a single call causes the model to truncate after the first page.
     async function generateOne(plan: PlanRow): Promise<GeneratedPage | null> {
       const { system, user } = buildPrompt([plan]);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 120_000);
       try {
         const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          signal: controller.signal,
           body: JSON.stringify({
             model: data.model,
             messages: [
               { role: "system", content: system },
-              { role: "user", content: user },
+              {
+                role: "user",
+                content: `${user}\n\nReturn valid JSON only in this exact shape: {"pages":[{"plan_slug":"${plan.slug}","body_markdown":"..."}]}`,
+              },
             ],
-            tools: [PER_PAGE_TOOL],
-            tool_choice: { type: "function", function: { name: "write_pages" } },
+            response_format: { type: "json_object" },
           }),
         });
         if (!resp.ok) {
@@ -343,7 +355,8 @@ export const generateContentBatch = createServerFn({ method: "POST" })
           return null;
         }
         const j = await resp.json();
-        const args = j?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
+        const message = j?.choices?.[0]?.message;
+        const args = message?.tool_calls?.[0]?.function?.arguments ?? message?.content;
         if (!args) return null;
         const parsed = JSON.parse(args) as { pages?: GeneratedPage[] };
         const page = parsed.pages?.[0];
@@ -353,11 +366,13 @@ export const generateContentBatch = createServerFn({ method: "POST" })
       } catch (e) {
         console.error(`[gen ${plan.slug}] error:`, e);
         return null;
+      } finally {
+        clearTimeout(timeout);
       }
     }
 
-    // Concurrency limiter — 4 in-flight at a time
-    const CONC = 4;
+    // Keep runs short enough to finish reliably in the server runtime.
+    const CONC = 1;
     const generated: GeneratedPage[] = [];
     const rowsArr = planRows as PlanRow[];
     let cursor = 0;
