@@ -47,7 +47,7 @@ type PlanRow = {
 };
 
 type Input = {
-  action?: "start" | "status";
+  action?: "start" | "status" | "preflight";
   count?: number;
   tier?: string;
   stateCode?: string;
