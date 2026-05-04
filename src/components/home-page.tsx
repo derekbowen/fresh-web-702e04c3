@@ -127,10 +127,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </a>
             )}
             <h1 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-              Private backyard pools, booked by the hour.
+              You'll love hosting with us.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-primary-foreground/90 sm:text-xl">
-              Lower fees. $2M coverage. 40+ states.
+              Our new technology can build features to help you run your business more efficiently. Just give us a call — we love to hear from you.
             </p>
 
             {/* Search widget */}
