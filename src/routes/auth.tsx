@@ -55,6 +55,20 @@ function AuthPage() {
 
   useEffect(() => setMode(search.mode), [search.mode]);
 
+  useEffect(() => {
+    let active = true;
+    void supabase.auth.getSession().then(({ data }) => {
+      if (active && data.session) navigate({ to: search.redirect as never });
+    });
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) navigate({ to: search.redirect as never });
+    });
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
+  }, [navigate, search.redirect]);
+
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
@@ -96,11 +110,19 @@ function AuthPage() {
     if (busy) return;
     setBusy(true);
     try {
+      const callbackUrl = new URL("/auth", window.location.origin);
+      callbackUrl.searchParams.set("redirect", search.redirect);
+      callbackUrl.searchParams.set("mode", "signin");
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}${search.redirect}`,
+        redirect_uri: callbackUrl.toString(),
       });
       if ("error" in result && result.error) {
         toast.error(result.error.message ?? "Google sign-in failed.");
+        return;
+      }
+      if (!result.redirected) {
+        toast.success("Signed in.");
+        navigate({ to: search.redirect as never });
       }
     } finally {
       setBusy(false);
