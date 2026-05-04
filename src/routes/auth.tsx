@@ -101,6 +101,11 @@ function AuthPage() {
       });
       if ("error" in result && result.error) {
         toast.error(result.error.message ?? "Google sign-in failed.");
+        return;
+      }
+      if (!result.redirected) {
+        toast.success("Signed in.");
+        navigate({ to: search.redirect as never });
       }
     } finally {
       setBusy(false);
