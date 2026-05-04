@@ -260,6 +260,40 @@ function errorMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
 
+async function readGenerationStatus(supabase: ReturnType<typeof createClient>, slugs: string[]) {
+  const cleanSlugs = [...new Set(slugs)].filter(Boolean).slice(0, 25);
+  if (cleanSlugs.length === 0) {
+    return { ok: true, queued: false, inserted: 0, attempted: 0, pendingSlugs: [], validationErrors: [], pages: [] };
+  }
+
+  const [{ data: plans, error: planErr }, { data: pages, error: pageErr }] = await Promise.all([
+    supabase.from("content_plan").select("slug, status, h1, last_error").in("slug", cleanSlugs),
+    supabase.from("content_pages").select("slug, url_path, title").in("slug", cleanSlugs),
+  ]);
+  if (planErr) throw new Error(`status query failed: ${planErr.message}`);
+  if (pageErr) throw new Error(`page status query failed: ${pageErr.message}`);
+
+  const pageRows = pages ?? [];
+  const planRows = plans ?? [];
+  const finished = new Set(pageRows.map((p: any) => p.slug));
+  const pendingSlugs = planRows
+    .filter((p: any) => !finished.has(p.slug) && ["generating", "pending"].includes(p.status))
+    .map((p: any) => p.slug);
+  const validationErrors = planRows
+    .filter((p: any) => p.last_error && !finished.has(p.slug))
+    .map((p: any) => `${p.slug}: ${p.last_error}`);
+
+  return {
+    ok: pendingSlugs.length === 0 && validationErrors.length === 0,
+    queued: pendingSlugs.length > 0,
+    inserted: pageRows.length,
+    attempted: cleanSlugs.length,
+    pendingSlugs,
+    validationErrors,
+    pages: pageRows.map((p: any) => ({ slug: p.slug, url_path: p.url_path, title: p.title })),
+  };
+}
+
 async function generateOne(plan: PlanRow, model: string, apiKey: string): Promise<GeneratedPage | null> {
   const { system, user } = buildPrompt(plan);
   const controller = new AbortController();
