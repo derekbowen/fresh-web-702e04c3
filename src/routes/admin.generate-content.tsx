@@ -63,7 +63,7 @@ function GenerateContentPageInner() {
   const [model, setModel] = React.useState("google/gemini-3-flash-preview");
   const [busy, setBusy] = React.useState(false);
   const [dryRun, setDryRun] = React.useState(false);
-  const [autoLoop, setAutoLoop] = React.useState(false);
+  const [autoLoop, setAutoLoop] = React.useState(true);
   const [maxBatches, setMaxBatches] = React.useState(10);
   const [result, setResult] = React.useState<any>(null);
   const [error, setError] = React.useState<string | null>(null);
