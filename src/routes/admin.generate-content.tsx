@@ -56,29 +56,55 @@ function GenerateContentPage() {
 }
 
 function GenerateContentPageInner() {
-  const [count, setCount] = React.useState(1);
+  type PageSummary = { slug: string; url_path?: string; title?: string | null };
+  type GenerateResponse = {
+    ok?: boolean;
+    queued?: boolean;
+    inserted?: number;
+    attempted?: number;
+    pendingSlugs?: string[];
+    validationErrors?: string[];
+    pages?: PageSummary[];
+    edgeFunction?: string;
+    adminAuth?: string;
+    lovableApiKey?: string;
+    aiGateway?: string;
+    aiError?: string | null;
+    pendingPlanRows?: number;
+    error?: string;
+  };
+  const getErrorMessage = (e: unknown) => (e instanceof Error ? e.message : String(e));
+  const [count, setCount] = React.useState(10);
   const [tier, setTier] = React.useState<string>("T1 (200k+)");
   const [stateCode, setStateCode] = React.useState("");
   const [warmOnly, setWarmOnly] = React.useState(false);
   const [model, setModel] = React.useState("google/gemini-3-flash-preview");
   const [busy, setBusy] = React.useState(false);
   const [dryRun, setDryRun] = React.useState(false);
-  const [autoLoop, setAutoLoop] = React.useState(false);
-  const [maxBatches, setMaxBatches] = React.useState(20);
-  const [result, setResult] = React.useState<any>(null);
+  const [autoLoop, setAutoLoop] = React.useState(true);
+  const [maxBatches, setMaxBatches] = React.useState(10);
+  const [result, setResult] = React.useState<GenerateResponse | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [preflight, setPreflight] = React.useState<{
     status: "idle" | "checking" | "ok" | "failed";
-    details: any;
+    details: GenerateResponse | null;
   }>({ status: "idle", details: null });
   const [progress, setProgress] = React.useState<{
     batch: number;
     inserted: number;
     failed: number;
-    pages: Array<{ slug: string; title: string }>;
+    pages: PageSummary[];
   }>({ batch: 0, inserted: 0, failed: 0, pages: [] });
   const pollTimerRef = React.useRef<number | null>(null);
   const stopRef = React.useRef(false);
+  const autoRunRef = React.useRef<{
+    active: boolean;
+    nextBatch: number;
+    maxBatches: number;
+    totalInserted: number;
+    totalFailed: number;
+    pages: PageSummary[];
+  }>({ active: false, nextBatch: 1, maxBatches: 0, totalInserted: 0, totalFailed: 0, pages: [] });
 
   type LogEntry = {
     id: number;
@@ -89,14 +115,14 @@ function GenerateContentPageInner() {
     ok: boolean;
     httpStatus?: number;
     summary: string;
-    response?: any;
+    response?: unknown;
     error?: string;
   };
   const [log, setLog] = React.useState<LogEntry[]>([]);
   const logIdRef = React.useRef(0);
   const ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL ?? ""}/functions/v1/generate-content-batch`;
 
-  const appendLog = (entry: Omit<LogEntry, "id" | "at">) => {
+  const appendLog = React.useCallback((entry: Omit<LogEntry, "id" | "at">) => {
     setLog((prev) =>
       [
         {
@@ -107,65 +133,67 @@ function GenerateContentPageInner() {
         ...prev,
       ].slice(0, 50),
     );
-  };
+  }, []);
 
-  const callEdge = async (
-    action: "preflight" | "start" | "status",
-    extra?: { slugs?: string[] },
-  ) => {
-    const started = performance.now();
-    try {
-      const res: any = await generateContentBatch({
-        data: {
+  const callEdge = React.useCallback(
+    async (
+      action: "preflight" | "start" | "status",
+      extra?: { slugs?: string[] },
+    ): Promise<GenerateResponse> => {
+      const started = performance.now();
+      try {
+        const res = await generateContentBatch({
+          data: {
+            action,
+            count,
+            tier: tier || undefined,
+            stateCode: stateCode.trim() || undefined,
+            warmOnly,
+            model,
+            dryRun,
+            slugs: extra?.slugs,
+          },
+        });
+        const response = res as GenerateResponse;
+        const durationMs = Math.round(performance.now() - started);
+        const summary =
+          action === "preflight"
+            ? response.ok
+              ? "Setup verified"
+              : `Preflight failed: ${response.aiError ?? "see details"}`
+            : action === "status"
+              ? `Status: ${response.pendingSlugs?.length ?? 0} pending, ${response.inserted ?? 0} inserted`
+              : response.queued
+                ? `Queued ${response.attempted ?? 0} page(s) for background generation`
+                : `Returned ${response.inserted ?? 0}/${response.attempted ?? 0} inserted`;
+        appendLog({
           action,
-          count,
-          tier: tier || undefined,
-          stateCode: stateCode.trim() || undefined,
-          warmOnly,
-          model,
-          dryRun,
-          slugs: extra?.slugs,
-        } as any,
-      });
-      const durationMs = Math.round(performance.now() - started);
-      const summary =
-        action === "preflight"
-          ? res?.ok
-            ? "Setup verified"
-            : `Preflight failed: ${res?.aiError ?? "see details"}`
-          : action === "status"
-            ? `Status: ${res?.pendingSlugs?.length ?? 0} pending, ${res?.inserted ?? 0} inserted`
-            : res?.queued
-              ? `Queued ${res?.attempted ?? 0} page(s) for background generation`
-              : `Returned ${res?.inserted ?? 0}/${res?.attempted ?? 0} inserted`;
-      appendLog({
-        action,
-        endpoint: ENDPOINT,
-        durationMs,
-        ok: Boolean(res?.ok ?? res?.queued),
-        httpStatus: 200,
-        summary,
-        response: res,
-      });
-      return res;
-    } catch (e: any) {
-      const durationMs = Math.round(performance.now() - started);
-      const message = e?.message ?? String(e);
-      const statusMatch = message.match(/(\b[45]\d{2}\b)/);
-      appendLog({
-        action,
-        endpoint: ENDPOINT,
-        durationMs,
-        ok: false,
-        httpStatus: statusMatch ? Number(statusMatch[1]) : undefined,
-        summary: `Failure: ${message.slice(0, 200)}`,
-        error: message,
-      });
-      throw e;
-    }
-  };
-
-
+          endpoint: ENDPOINT,
+          durationMs,
+          ok: Boolean(response.ok ?? response.queued),
+          httpStatus: 200,
+          summary,
+          response,
+        });
+        return response;
+      } catch (e: unknown) {
+        const durationMs = Math.round(performance.now() - started);
+        const message = getErrorMessage(e);
+        const statusMatch = message.match(/(\b[45]\d{2}\b)/);
+        appendLog({
+          action,
+          endpoint: ENDPOINT,
+          durationMs,
+          ok: false,
+          httpStatus: statusMatch ? Number(statusMatch[1]) : undefined,
+          summary: `Failure: ${message.slice(0, 200)}`,
+          error: message,
+        });
+        throw e;
+      }
+    },
+    [ENDPOINT, appendLog, count, dryRun, model, stateCode, tier, warmOnly],
+  );
   React.useEffect(() => {
     return () => {
       if (pollTimerRef.current) window.clearTimeout(pollTimerRef.current);
@@ -176,20 +204,54 @@ function GenerateContentPageInner() {
     return await callEdge(action, { slugs });
   };
 
+  const finishAutoBatch = async (status: GenerateResponse) => {
+    const runState = autoRunRef.current;
+    const inserted = status?.inserted ?? 0;
+    const attempted = status?.attempted ?? 0;
+    const failed = Math.max(0, attempted - inserted);
+    const nextPages = [...runState.pages, ...(status?.pages ?? [])].slice(-100);
+    runState.totalInserted += inserted;
+    runState.totalFailed += failed;
+    runState.pages = nextPages;
+    setProgress({
+      batch: Math.max(0, runState.nextBatch - 1),
+      inserted: runState.totalInserted,
+      failed: runState.totalFailed,
+      pages: nextPages,
+    });
+
+    if (stopRef.current || runState.nextBatch > runState.maxBatches || attempted === 0) {
+      runState.active = false;
+      setBusy(false);
+      return;
+    }
+
+    const res = await runOnce("start");
+    setResult(res);
+    runState.nextBatch += 1;
+    if (res?.queued && res?.pendingSlugs?.length) {
+      scheduleStatusPoll(res.pendingSlugs);
+      return;
+    }
+    await finishAutoBatch(res);
+  };
+
   const scheduleStatusPoll = (slugs: string[]) => {
     if (pollTimerRef.current) window.clearTimeout(pollTimerRef.current);
     pollTimerRef.current = window.setTimeout(async () => {
       try {
-        const status: any = await runOnce("status", slugs);
+        const status = await runOnce("status", slugs);
         setResult(status);
         const pending = status?.pendingSlugs ?? [];
         if (pending.length > 0 && !stopRef.current) {
           scheduleStatusPoll(pending);
+        } else if (autoRunRef.current.active) {
+          await finishAutoBatch(status);
         } else {
           setBusy(false);
         }
-      } catch (e: any) {
-        setError(e?.message ?? String(e));
+      } catch (e: unknown) {
+        setError(getErrorMessage(e));
         setBusy(false);
       }
     }, 5000);
@@ -199,18 +261,18 @@ function GenerateContentPageInner() {
     setPreflight({ status: "checking", details: null });
     setError(null);
     try {
-      const res: any = await callEdge("preflight");
+      const res = await callEdge("preflight");
       setPreflight({ status: res?.ok ? "ok" : "failed", details: res });
       return Boolean(res?.ok);
-    } catch (e: any) {
+    } catch (e: unknown) {
       setPreflight({
         status: "failed",
-        details: { error: e?.message ?? String(e) },
+        details: { error: getErrorMessage(e) },
       });
-      setError(e?.message ?? String(e));
+      setError(getErrorMessage(e));
       return false;
     }
-  }, []);
+  }, [callEdge]);
 
   React.useEffect(() => {
     runPreflight();
@@ -226,6 +288,14 @@ function GenerateContentPageInner() {
     setResult(null);
     setProgress({ batch: 0, inserted: 0, failed: 0, pages: [] });
     stopRef.current = false;
+    autoRunRef.current = {
+      active: autoLoop,
+      nextBatch: 1,
+      maxBatches,
+      totalInserted: 0,
+      totalFailed: 0,
+      pages: [],
+    };
     let keepsPolling = false;
     try {
       if (!autoLoop) {
@@ -237,31 +307,19 @@ function GenerateContentPageInner() {
           return;
         }
       } else {
-        let totalInserted = 0;
-        let totalFailed = 0;
-        const allPages: Array<{ slug: string; title: string }> = [];
-        for (let i = 1; i <= maxBatches; i++) {
-          if (stopRef.current) break;
-          const res: any = await runOnce();
-          totalInserted += res?.inserted ?? 0;
-          totalFailed += (res?.attempted ?? 0) - (res?.inserted ?? 0);
-          if (res?.pages) allPages.push(...res.pages);
-          if (res?.queued && res?.pendingSlugs?.length) {
-            keepsPolling = true;
-            scheduleStatusPoll(res.pendingSlugs);
-            break;
-          }
-          setProgress({
-            batch: i,
-            inserted: totalInserted,
-            failed: totalFailed,
-            pages: allPages.slice(-50),
-          });
-          if (!res?.attempted) break; // queue empty
+        const res = await runOnce();
+        setResult(res);
+        autoRunRef.current.nextBatch = 2;
+        if (res?.queued && res?.pendingSlugs?.length) {
+          keepsPolling = true;
+          scheduleStatusPoll(res.pendingSlugs);
+          return;
         }
+        keepsPolling = true;
+        await finishAutoBatch(res);
       }
-    } catch (e: any) {
-      setError(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setError(getErrorMessage(e));
     } finally {
       if (!keepsPolling) setBusy(false);
     }
@@ -277,10 +335,10 @@ function GenerateContentPageInner() {
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
         <h1 className="text-3xl font-bold">Generate from Content Plan</h1>
         <p className="mt-2 text-muted-foreground">
-          Pulls pending rows from <code>content_plan</code> (3,286 prioritized
-          pages), generates each one with Gemini using its own H1, keywords, and
-          uniqueness angle, validates internal links + FAQ, then inserts into{" "}
-          <code>content_pages</code>. No SQL copy-paste, no doorway pages.
+          Pulls pending rows from <code>content_plan</code> (3,286 prioritized pages), generates
+          each one with Gemini using its own H1, keywords, and uniqueness angle, validates internal
+          links + FAQ, then inserts into <code>content_pages</code>. No SQL copy-paste, no doorway
+          pages.
         </p>
 
         <div className="mt-6 space-y-4 rounded-lg border border-border bg-card p-6">
@@ -290,9 +348,9 @@ function GenerateContentPageInner() {
               <input
                 type="number"
                 min={1}
-                max={1}
+                max={10}
                 value={count}
-                onChange={(e) => setCount(Math.min(1, Math.max(1, Number(e.target.value) || 1)))}
+                onChange={(e) => setCount(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>
@@ -314,9 +372,7 @@ function GenerateContentPageInner() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium">
-                State code (optional)
-              </label>
+              <label className="block text-sm font-medium">State code (optional)</label>
               <input
                 type="text"
                 maxLength={2}
@@ -334,16 +390,10 @@ function GenerateContentPageInner() {
                 onChange={(e) => setModel(e.target.value)}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="google/gemini-3-flash-preview">
-                  Gemini 3 Flash Preview
-                </option>
+                <option value="google/gemini-3-flash-preview">Gemini 3 Flash Preview</option>
                 <option value="google/gemini-2.5-pro">Gemini 2.5 Pro</option>
-                <option value="google/gemini-3.1-pro-preview">
-                  Gemini 3.1 Pro Preview
-                </option>
-                <option value="google/gemini-2.5-flash">
-                  Gemini 2.5 Flash
-                </option>
+                <option value="google/gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+                <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
               </select>
             </div>
           </div>
@@ -374,7 +424,7 @@ function GenerateContentPageInner() {
                 checked={autoLoop}
                 onChange={(e) => setAutoLoop(e.target.checked)}
               />
-              Auto-loop until queue empty
+              Auto-loop up to 100 pages
             </label>
             {autoLoop && (
               <div>
@@ -382,9 +432,11 @@ function GenerateContentPageInner() {
                 <input
                   type="number"
                   min={1}
-                  max={500}
+                  max={10}
                   value={maxBatches}
-                  onChange={(e) => setMaxBatches(Number(e.target.value) || 1)}
+                  onChange={(e) =>
+                    setMaxBatches(Math.min(10, Math.max(1, Number(e.target.value) || 1)))
+                  }
                   className="mt-1 w-24 rounded-md border border-input bg-background px-3 py-2 text-sm"
                 />
               </div>
@@ -426,32 +478,22 @@ function GenerateContentPageInner() {
                 </li>
                 <li>
                   Admin auth:{" "}
-                  <span className="font-mono">
-                    {preflight.details.adminAuth ?? "unknown"}
-                  </span>
+                  <span className="font-mono">{preflight.details.adminAuth ?? "unknown"}</span>
                 </li>
                 <li>
                   LOVABLE_API_KEY:{" "}
-                  <span className="font-mono">
-                    {preflight.details.lovableApiKey ?? "missing"}
-                  </span>
+                  <span className="font-mono">{preflight.details.lovableApiKey ?? "missing"}</span>
                 </li>
                 <li>
                   AI gateway:{" "}
-                  <span className="font-mono">
-                    {preflight.details.aiGateway ?? "unknown"}
-                  </span>
+                  <span className="font-mono">{preflight.details.aiGateway ?? "unknown"}</span>
                   {preflight.details.aiError && (
-                    <span className="ml-1 text-destructive">
-                      — {preflight.details.aiError}
-                    </span>
+                    <span className="ml-1 text-destructive">— {preflight.details.aiError}</span>
                   )}
                 </li>
                 <li>
                   Pending plan rows:{" "}
-                  <span className="font-mono">
-                    {preflight.details.pendingPlanRows ?? "?"}
-                  </span>
+                  <span className="font-mono">{preflight.details.pendingPlanRows ?? "?"}</span>
                 </li>
                 {preflight.details.error && (
                   <li className="text-destructive">{preflight.details.error}</li>
@@ -465,11 +507,7 @@ function GenerateContentPageInner() {
               onClick={run}
               disabled={busy || preflight.status !== "ok"}
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
-              title={
-                preflight.status !== "ok"
-                  ? "Run the setup check first"
-                  : undefined
-              }
+              title={preflight.status !== "ok" ? "Run the setup check first" : undefined}
             >
               {busy
                 ? autoLoop
@@ -505,8 +543,7 @@ function GenerateContentPageInner() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Auto-loop progress</h2>
               <div className="text-sm text-muted-foreground">
-                Batch {progress.batch} · {progress.inserted} inserted ·{" "}
-                {progress.failed} failed
+                Batch {progress.batch} · {progress.inserted} inserted · {progress.failed} failed
               </div>
             </div>
             <ul className="mt-4 max-h-96 space-y-1 overflow-auto text-xs">
@@ -531,7 +568,9 @@ function GenerateContentPageInner() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Run log</h2>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span>{log.length} entr{log.length === 1 ? "y" : "ies"}</span>
+              <span>
+                {log.length} entr{log.length === 1 ? "y" : "ies"}
+              </span>
               <button
                 onClick={() => setLog([])}
                 disabled={log.length === 0}
@@ -554,9 +593,7 @@ function GenerateContentPageInner() {
                 <li
                   key={e.id}
                   className={`rounded-md border p-3 text-sm ${
-                    e.ok
-                      ? "border-border bg-background"
-                      : "border-destructive/40 bg-destructive/5"
+                    e.ok ? "border-border bg-background" : "border-destructive/40 bg-destructive/5"
                   }`}
                 >
                   <div className="flex flex-wrap items-center gap-2">
@@ -587,7 +624,7 @@ function GenerateContentPageInner() {
                       {e.error ? "Error details" : "Response payload"}
                     </summary>
                     <pre className="mt-2 max-h-64 overflow-auto rounded bg-muted/50 p-2 text-xs">
-{e.error ? e.error : JSON.stringify(e.response ?? null, null, 2)}
+                      {e.error ? e.error : JSON.stringify(e.response ?? null, null, 2)}
                     </pre>
                   </details>
                 </li>
@@ -596,45 +633,48 @@ function GenerateContentPageInner() {
           )}
         </div>
 
-        {result && (
-          <div className="mt-6 rounded-lg border border-border bg-card p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">
-                {result.ok ? "✓ Success" : "✗ Issues"}
-              </h2>
-              <div className="text-sm text-muted-foreground">
-                {result.inserted ?? 0} inserted / {result.attempted} attempted
-              </div>
-            </div>
-            {result.validationErrors?.length > 0 && (
-              <details className="mt-3">
-                <summary className="cursor-pointer text-sm font-medium">
-                  {result.validationErrors.length} validation note(s)
-                </summary>
-                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {result.validationErrors.map((e: string, i: number) => (
-                    <li key={i}>• {e}</li>
+        {result &&
+          (() => {
+            const validationErrors = result.validationErrors ?? [];
+            const pages = result.pages ?? [];
+            return (
+              <div className="mt-6 rounded-lg border border-border bg-card p-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">{result.ok ? "✓ Success" : "✗ Issues"}</h2>
+                  <div className="text-sm text-muted-foreground">
+                    {result.inserted ?? 0} inserted / {result.attempted} attempted
+                  </div>
+                </div>
+                {validationErrors.length > 0 && (
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-sm font-medium">
+                      {validationErrors.length} validation note(s)
+                    </summary>
+                    <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                      {validationErrors.map((e, i) => (
+                        <li key={i}>• {e}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+                <ul className="mt-4 space-y-2">
+                  {pages.map((p) => (
+                    <li key={p.slug} className="text-sm">
+                      <a
+                        href={`/p/${p.slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        /p/{p.slug}
+                      </a>
+                      <span className="ml-2 text-muted-foreground">{p.title}</span>
+                    </li>
                   ))}
                 </ul>
-              </details>
-            )}
-            <ul className="mt-4 space-y-2">
-              {result.pages?.map((p: any) => (
-                <li key={p.slug} className="text-sm">
-                  <a
-                    href={`/p/${p.slug}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    /p/{p.slug}
-                  </a>
-                  <span className="ml-2 text-muted-foreground">{p.title}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+              </div>
+            );
+          })()}
       </main>
       <SiteFooter />
     </div>

@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InputSchema = z.object({
   action: z.enum(["start", "status", "preflight"]).default("start"),
-  count: z.number().int().min(1).max(1).default(1),
+  count: z.number().int().min(1).max(10).default(10),
   tier: z
     .enum(["T1 (200k+)", "T2 (75k–199k)", "T3 (25k–74k)", "T4 (10k–24k)", "longtail"])
     .optional(),
@@ -29,6 +29,10 @@ type FunctionInvoker = {
   };
 };
 
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+export type GenerateContentBatchResult = { [key: string]: JsonValue };
+
 async function getFunctionErrorMessage(error: FunctionInvokeResult["error"]) {
   if (!error) return "Unknown generation error";
   const response = error.context;
@@ -49,7 +53,7 @@ async function getFunctionErrorMessage(error: FunctionInvokeResult["error"]) {
 export const generateContentBatch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => InputSchema.parse(data))
-  .handler(async ({ context, data }): Promise<any> => {
+  .handler(async ({ context, data }): Promise<GenerateContentBatchResult> => {
     const { supabase } = context as { supabase: FunctionInvoker };
     const { data: result, error } = await supabase.functions.invoke("generate-content-batch", {
       body: data,
@@ -59,5 +63,5 @@ export const generateContentBatch = createServerFn({ method: "POST" })
       throw new Error(await getFunctionErrorMessage(error));
     }
 
-    return result as any;
+    return (result ?? {}) as GenerateContentBatchResult;
   });
