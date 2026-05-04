@@ -52,6 +52,7 @@ import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$s
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
+import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-calculator'
 import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
@@ -302,6 +303,11 @@ const PFreeHostToolsRoute = PFreeHostToolsRouteImport.update({
   path: '/p/free-host-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PEarningsCalculatorRoute = PEarningsCalculatorRouteImport.update({
+  id: '/p/earnings-calculator',
+  path: '/p/earnings-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PAllLocationsRoute = PAllLocationsRouteImport.update({
   id: '/p/all-locations',
   path: '/p/all-locations',
@@ -478,6 +484,7 @@ export interface FileRoutesByFullPath {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
+  '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
@@ -547,6 +554,7 @@ export interface FileRoutesByTo {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
+  '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
@@ -618,6 +626,7 @@ export interface FileRoutesById {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
+  '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
@@ -690,6 +699,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/all-locations'
+    | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
@@ -759,6 +769,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/all-locations'
+    | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
@@ -829,6 +840,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/all-locations'
+    | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/hosting'
     | '/p/how-it-works'
@@ -897,6 +909,7 @@ export interface RootRouteChildren {
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
   PAllLocationsRoute: typeof PAllLocationsRoute
+  PEarningsCalculatorRoute: typeof PEarningsCalculatorRoute
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
@@ -1219,6 +1232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PFreeHostToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/earnings-calculator': {
+      id: '/p/earnings-calculator'
+      path: '/p/earnings-calculator'
+      fullPath: '/p/earnings-calculator'
+      preLoaderRoute: typeof PEarningsCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/all-locations': {
       id: '/p/all-locations'
       path: '/p/all-locations'
@@ -1511,6 +1531,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
   PAllLocationsRoute: PAllLocationsRoute,
+  PEarningsCalculatorRoute: PEarningsCalculatorRoute,
   PFreeHostToolsRoute: PFreeHostToolsRoute,
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
