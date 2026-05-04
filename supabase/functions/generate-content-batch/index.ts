@@ -113,7 +113,7 @@ Pool owners in your area are earning $500–$2,000/month renting their pool by t
 **[→ See How Much Your Pool Could Earn](/p/hosting#calculator)**
 ---
 
-Return ONLY valid JSON with this exact shape: {"pages":[{"plan_slug":"...","body_markdown":"..."}]}. Match plan_slug exactly.`;
+Return ONLY the final markdown body for this one page. Do not wrap it in JSON. Do not use code fences.`;
 
 const SYSTEM_EVENT_GUIDE = `You are a Senior Local Editor and SEO Strategist for Pool Rental Near Me (poolrentalnearme.com). Write 4,000-word, locally authoritative Michelin-Guide-quality articles for renting a pool for an EVENT TYPE in a specific CITY/STATE.
 
@@ -157,7 +157,7 @@ MANDATORY STRUCTURE (use these exact H2s — replace [CITY] / [GUIDE_TYPE] with 
 
 OUTPUT TARGETS: 4,000+ words (HARD MIN 3,800), 5+ city-specific blockquotes, 20 city-localized FAQs, [📸 IMAGE: ...] placeholders, App Store + Google Play markdown in Section 8, encoded search URL in Sections 4 and 8, 100% original.
 
-Return ONLY valid JSON with this exact shape: {"pages":[{"plan_slug":"...","body_markdown":"..."}]}. Match plan_slug exactly.`;
+Return ONLY the final markdown body for this one page. Do not wrap it in JSON. Do not use code fences.`;
 
 const SYSTEM_HOSTING_ES = `Eres un editor SEO senior escribiendo en ESPAÑOL NEUTRO para Pool Rental Near Me. Genera una página única "Conviértete en Anfitrión de Piscina" para una ciudad de EE. UU. con población hispana significativa.
 
@@ -195,7 +195,7 @@ ESTRUCTURA OBLIGATORIA:
 
 ## ¿Listo Para Empezar? 🚀 (CTA final con /p/hosting y https://earn.poolrentalnearme.com)
 
-Devuelve SOLO JSON válido con esta forma exacta: {"pages":[{"plan_slug":"...","body_markdown":"..."}]}. Coincide exactamente con plan_slug.`;
+Devuelve SOLO el cuerpo final en markdown para esta página. No uses JSON. No uses bloques de código.`;
 
 function pickSystem(row: PlanRow): string {
   if (row.source_type === "event_guide") return SYSTEM_EVENT_GUIDE;
@@ -226,7 +226,7 @@ ${row.warm_climate === true ? "climate: warm/long swim season" : row.warm_climat
 ${row.search_intent ? `search_intent: ${row.search_intent}` : ""}
 ${row.notes ? `notes: ${row.notes}` : ""}
 
-Return valid JSON only in this exact shape: {"pages":[{"plan_slug":"${row.slug}","body_markdown":"..."}]}`;
+Return only the final markdown body for plan_slug ${row.slug}. Start with the exact H1. Do not wrap the answer in JSON or code fences.`;
 
   return { system: pickSystem(row), user };
 }
