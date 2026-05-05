@@ -196,9 +196,22 @@ function AdminDirectory() {
                   </span>
                 )}
               </div>
-              {!bulkRunning && bulkResults.length > 0 && (
-                <button onClick={() => { setBulkResults([]); setBulkDone(0); setBulkTotal(0); }} className="text-xs text-muted-foreground hover:underline">Clear</button>
-              )}
+              <div className="flex items-center gap-3">
+                {!bulkRunning && bulkResults.some(r => !r.ok) && (
+                  <button
+                    onClick={() => {
+                      const failed = bulkResults.filter(r => !r.ok).map(r => ({ id: r.id, name: r.name }));
+                      void runBulk(failed);
+                    }}
+                    className="rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold"
+                  >
+                    ↻ Retry failed ({bulkResults.filter(r => !r.ok).length})
+                  </button>
+                )}
+                {!bulkRunning && bulkResults.length > 0 && (
+                  <button onClick={() => { setBulkResults([]); setBulkDone(0); setBulkTotal(0); }} className="text-xs text-muted-foreground hover:underline">Clear</button>
+                )}
+              </div>
             </div>
             <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
               <div
