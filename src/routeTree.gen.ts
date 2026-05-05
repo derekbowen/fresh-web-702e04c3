@@ -79,6 +79,7 @@ import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-imp
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
+import { Route as AdminLinkCheckerRouteImport } from './routes/admin.link-checker'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
@@ -478,6 +479,11 @@ const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
   path: '/admin/missing-pages',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLinkCheckerRoute = AdminLinkCheckerRouteImport.update({
+  id: '/admin/link-checker',
+  path: '/admin/link-checker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLearningRoute = AdminLearningRouteImport.update({
   id: '/admin/learning',
   path: '/admin/learning',
@@ -698,6 +704,7 @@ export interface FileRoutesByFullPath {
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
@@ -801,6 +808,7 @@ export interface FileRoutesByTo {
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
@@ -906,6 +914,7 @@ export interface FileRoutesById {
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
@@ -1012,6 +1021,7 @@ export interface FileRouteTypes {
     | '/admin/indexing'
     | '/admin/leads'
     | '/admin/learning'
+    | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
@@ -1115,6 +1125,7 @@ export interface FileRouteTypes {
     | '/admin/indexing'
     | '/admin/leads'
     | '/admin/learning'
+    | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
@@ -1219,6 +1230,7 @@ export interface FileRouteTypes {
     | '/admin/indexing'
     | '/admin/leads'
     | '/admin/learning'
+    | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
@@ -1323,6 +1335,7 @@ export interface RootRouteChildren {
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
+  AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
@@ -1855,6 +1868,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMissingPagesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/link-checker': {
+      id: '/admin/link-checker'
+      path: '/admin/link-checker'
+      fullPath: '/admin/link-checker'
+      preLoaderRoute: typeof AdminLinkCheckerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/learning': {
       id: '/admin/learning'
       path: '/admin/learning'
@@ -2256,6 +2276,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexingRoute: AdminIndexingRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
+  AdminLinkCheckerRoute: AdminLinkCheckerRoute,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,

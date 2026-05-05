@@ -3,7 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
-  CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home,
+  CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
