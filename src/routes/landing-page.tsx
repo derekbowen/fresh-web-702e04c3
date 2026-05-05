@@ -25,6 +25,10 @@ export const Route = createFileRoute("/landing-page")({
       description:
         "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
       path: "/landing-page",
+      // Reverse proxy serves this upstream at https://www.poolrentalnearme.com/.
+      // Canonicalize to the root so Google never indexes /landing-page as a
+      // separate page competing with /.
+      canonicalPath: "/",
       image: HOMEPAGE_HERO_IMAGE,
     });
     const org = {
