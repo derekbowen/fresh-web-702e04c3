@@ -26,7 +26,11 @@ const SECURITY_HEADERS: Record<string, string> = {
   ].join("; "),
 };
 
-const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
+const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const url = new URL(request.url);
+  if (url.pathname.startsWith("/lovable/")) {
+    return next();
+  }
   const result = await next();
   // The Worker runtime returns a Response — attach headers if available.
   const response = (result as { response?: Response }).response;
