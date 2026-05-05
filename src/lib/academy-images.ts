@@ -18,6 +18,8 @@ import taxes from "@/assets/academy/taxes.jpg";
 import difficultGuests from "@/assets/academy/difficult-guests.jpg";
 import hoa from "@/assets/academy/hoa.jpg";
 import neighborComplaints from "@/assets/academy/neighbor-complaints.jpg";
+
+export const ACADEMY_HERO_MAP: Record<string, string> = {
   "academy/bachelorette.jpg": bachelorette,
   "academy/quinceanera.jpg": quinceanera,
   "academy/photoshoot.jpg": photoshoot,
