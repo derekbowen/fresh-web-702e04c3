@@ -130,3 +130,46 @@ export const nextPendingPage = createServerFn({ method: "GET" })
 
     return { page: row };
   });
+
+/**
+ * Counts of pending vs scraped rows for a given template_type so the admin
+ * UI can show a live progress bar during a scrape run.
+ */
+export const scrapeProgress = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({ template_type: z.string().default("host_acq_city") })
+      .parse(data ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+
+    const base = supabaseAdmin
+      .from("content_pages")
+      .select("id", { count: "exact", head: true })
+      .eq("template_type", data.template_type);
+
+    const [pendingRes, scrapedRes, totalRes] = await Promise.all([
+      base.eq("status", "pending"),
+      supabaseAdmin
+        .from("content_pages")
+        .select("id", { count: "exact", head: true })
+        .eq("template_type", data.template_type)
+        .eq("status", "scraped"),
+      supabaseAdmin
+        .from("content_pages")
+        .select("id", { count: "exact", head: true })
+        .eq("template_type", data.template_type),
+    ]);
+
+    if (pendingRes.error) throw new Error(pendingRes.error.message);
+    if (scrapedRes.error) throw new Error(scrapedRes.error.message);
+    if (totalRes.error) throw new Error(totalRes.error.message);
+
+    return {
+      pending: pendingRes.count ?? 0,
+      scraped: scrapedRes.count ?? 0,
+      total: totalRes.count ?? 0,
+    };
+  });
