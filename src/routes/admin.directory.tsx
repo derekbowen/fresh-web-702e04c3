@@ -80,7 +80,7 @@ function AdminDirectory() {
 
   const now = Date.now();
   const visible = React.useMemo(() => {
-    let list = rows.filter((r) => filter === "all" ? true : r.submission_status === filter);
+    let list = rows;
     if (planFilter !== "all") {
       list = list.filter((r) => {
         if (planFilter === "expiring_soon") {
@@ -91,13 +91,6 @@ function AdminDirectory() {
         }
         return planBucket(r) === planFilter;
       });
-    }
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter((r) =>
-        [r.name, r.slug, r.city, r.state_code, r.email, r.submitter_email]
-          .filter(Boolean).some((v: string) => v.toLowerCase().includes(q)),
-      );
     }
     const cmp: Record<SortKey, (a: any, b: any) => number> = {
       newest: (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
@@ -110,26 +103,9 @@ function AdminDirectory() {
         (a.featured_until ? new Date(a.featured_until).getTime() : 0),
     };
     return [...list].sort(cmp[sort]);
-  }, [rows, filter, planFilter, sort, search, now]);
+  }, [rows, planFilter, sort, now]);
 
-  const planCounts = React.useMemo(() => {
-    const buckets = ["all","featured_active","paid_active","expiring_soon","expired","free"] as const;
-    const out: Record<string, number> = {};
-    for (const b of buckets) {
-      if (b === "all") { out[b] = rows.length; continue; }
-      if (b === "expiring_soon") {
-        out[b] = rows.filter((r) => {
-          const f = r.featured_until ? new Date(r.featured_until).getTime() : 0;
-          const p = r.listing_paid_until ? new Date(r.listing_paid_until).getTime() : 0;
-          const soon = (t: number) => t > now && t - now < 30 * DAY;
-          return soon(f) || soon(p);
-        }).length;
-      } else {
-        out[b] = rows.filter((r) => planBucket(r) === b).length;
-      }
-    }
-    return out;
-  }, [rows, now]);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="flex min-h-screen flex-col">
