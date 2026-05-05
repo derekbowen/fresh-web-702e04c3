@@ -62,6 +62,17 @@ function AdminContentMigration() {
     void loadProgress();
   }, [loadNext, loadProgress]);
 
+  // Periodic progress refresh — poll every 3s while a scrape run is active
+  // (auto-running or a single scrape in flight) so the bar stays accurate
+  // even if individual scrapes take a while.
+  React.useEffect(() => {
+    if (!autoRun && !busy) return;
+    const id = setInterval(() => {
+      void loadProgress();
+    }, 3000);
+    return () => clearInterval(id);
+  }, [autoRun, busy, loadProgress]);
+
   const runScrape = React.useCallback(async () => {
     if (!next?.id) return;
     setError(null);
