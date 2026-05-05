@@ -60,18 +60,40 @@ export const scanBrokenLinks = createServerFn({ method: "POST" })
     z.object({
       offset: z.number().int().min(0).default(0),
       batchSize: z.number().int().min(10).max(500).default(200),
+      urlPrefix: z.string().trim().max(200).optional(),
+      urlContains: z.string().trim().max(200).optional(),
+      pageIds: z.array(z.string().uuid()).max(2000).optional(),
+      onlyMissingPPage: z.boolean().optional(),
+      rangeStart: z.string().trim().max(200).optional(),
+      rangeEnd: z.string().trim().max(200).optional(),
     }).parse(d ?? {}),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin((context as any).userId);
     const sb = supabaseAdmin as any;
 
-    // Load batch of published /p/* pages
-    const { data: pages, count } = await sb
+    // Build filtered query of published /p/* pages
+    let q = sb
       .from("content_pages")
       .select("id, url_path, title, body_markdown", { count: "exact" })
-      .eq("status", "published")
-      .like("url_path", "/p/%")
+      .eq("status", "published");
+
+    if (data.pageIds && data.pageIds.length) {
+      q = q.in("id", data.pageIds);
+    } else {
+      // Always restrict to /p/* unless caller pinned page IDs
+      const prefix = (data.urlPrefix || "/p/").trim();
+      const safePrefix = prefix.startsWith("/p/") || prefix === "/p" ? prefix : "/p/";
+      q = q.like("url_path", `${safePrefix}${safePrefix.endsWith("%") ? "" : "%"}`);
+      if (data.urlContains) {
+        const c = data.urlContains.replace(/[%_]/g, "");
+        if (c) q = q.ilike("url_path", `%${c}%`);
+      }
+      if (data.rangeStart) q = q.gte("url_path", data.rangeStart);
+      if (data.rangeEnd) q = q.lte("url_path", data.rangeEnd);
+    }
+
+    const { data: pages, count } = await q
       .order("url_path", { ascending: true })
       .range(data.offset, data.offset + data.batchSize - 1);
 
@@ -125,6 +147,11 @@ export const scanBrokenLinks = createServerFn({ method: "POST" })
         }
       }
     }
+
+    // Optional post-filter: only return missing_p_page issues
+    const filteredBroken = data.onlyMissingPPage ? broken.filter((b) => b.reason === "missing_p_page") : broken;
+    broken.length = 0;
+    broken.push(...filteredBroken);
 
     // Suggest replacements for missing /p/ pages by fuzzy slug match (legacy_slugs first, then ilike)
     const missingSlugs = Array.from(new Set(

@@ -34,15 +34,54 @@ function LinkChecker() {
   const [editHref, setEditHref] = React.useState<Record<string, string>>({});
   const abortRef = React.useRef(false);
 
+  // Scan filters
+  const [showFilters, setShowFilters] = React.useState(false);
+  const [fUrlPrefix, setFUrlPrefix] = React.useState("/p/");
+  const [fUrlContains, setFUrlContains] = React.useState("");
+  const [fRangeStart, setFRangeStart] = React.useState("");
+  const [fRangeEnd, setFRangeEnd] = React.useState("");
+  const [fPageIdsRaw, setFPageIdsRaw] = React.useState("");
+  const [fOnlyMissing, setFOnlyMissing] = React.useState(false);
+
   function key(b: BrokenLink) { return `${b.page_id}::${b.href}`; }
+
+  function buildScanFilters() {
+    const pageIds = fPageIdsRaw
+      .split(/[\s,]+/)
+      .map((s) => s.trim())
+      .filter((s) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s));
+    return {
+      urlPrefix: fUrlPrefix.trim() || undefined,
+      urlContains: fUrlContains.trim() || undefined,
+      rangeStart: fRangeStart.trim() || undefined,
+      rangeEnd: fRangeEnd.trim() || undefined,
+      pageIds: pageIds.length ? pageIds : undefined,
+      onlyMissingPPage: fOnlyMissing || undefined,
+    };
+  }
+
+  function resetFilters() {
+    setFUrlPrefix("/p/"); setFUrlContains(""); setFRangeStart(""); setFRangeEnd("");
+    setFPageIdsRaw(""); setFOnlyMissing(false);
+  }
+
+  const activeFilterCount =
+    (fUrlPrefix.trim() && fUrlPrefix.trim() !== "/p/" ? 1 : 0) +
+    (fUrlContains.trim() ? 1 : 0) +
+    (fRangeStart.trim() ? 1 : 0) +
+    (fRangeEnd.trim() ? 1 : 0) +
+    (fPageIdsRaw.trim() ? 1 : 0) +
+    (fOnlyMissing ? 1 : 0);
 
   async function startScan() {
     setRows([]); setState({}); setEditHref({}); setScanning(true); abortRef.current = false;
     let offset = 0;
     const batchSize = 200;
+    const filters = buildScanFilters();
+    if (fOnlyMissing) setFilter("missing_p_page");
     try {
       while (!abortRef.current) {
-        const r = await scanBrokenLinks({ data: { offset, batchSize } });
+        const r = await scanBrokenLinks({ data: { offset, batchSize, ...filters } });
         setRows((prev) => [...prev, ...r.broken]);
         setProgress({ done: r.nextOffset, total: r.total });
         if (r.done) break;
@@ -130,6 +169,12 @@ function LinkChecker() {
           </p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={() => setShowFilters((v) => !v)}
+            className={`rounded-full border px-4 py-2 text-sm font-semibold ${activeFilterCount ? "border-primary text-primary" : "border-border"}`}
+          >
+            Filters{activeFilterCount ? ` (${activeFilterCount})` : ""}
+          </button>
           {scanning ? (
             <button onClick={() => { abortRef.current = true; }} className="rounded-full border border-border px-4 py-2 text-sm font-semibold">Stop</button>
           ) : (
@@ -139,6 +184,75 @@ function LinkChecker() {
           )}
         </div>
       </div>
+
+      {showFilters && (
+        <div className="mt-4 rounded-lg border border-border bg-card p-4">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">URL prefix</span>
+              <input
+                value={fUrlPrefix}
+                onChange={(e) => setFUrlPrefix(e.target.value)}
+                placeholder="/p/ or /p/austin-tx-"
+                className="w-full rounded border border-border bg-background px-2 py-1.5 text-sm"
+              />
+              <span className="mt-1 block text-[11px] text-muted-foreground">Must start with <code>/p/</code>. Limits scan to URLs starting with this.</span>
+            </label>
+            <label className="block text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">URL contains</span>
+              <input
+                value={fUrlContains}
+                onChange={(e) => setFUrlContains(e.target.value)}
+                placeholder="austin"
+                className="w-full rounded border border-border bg-background px-2 py-1.5 text-sm"
+              />
+              <span className="mt-1 block text-[11px] text-muted-foreground">Substring match on the URL path (case-insensitive).</span>
+            </label>
+            <label className="block text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">Range start</span>
+              <input
+                value={fRangeStart}
+                onChange={(e) => setFRangeStart(e.target.value)}
+                placeholder="/p/a"
+                className="w-full rounded border border-border bg-background px-2 py-1.5 text-sm"
+              />
+            </label>
+            <label className="block text-xs">
+              <span className="mb-1 block font-medium text-muted-foreground">Range end</span>
+              <input
+                value={fRangeEnd}
+                onChange={(e) => setFRangeEnd(e.target.value)}
+                placeholder="/p/m"
+                className="w-full rounded border border-border bg-background px-2 py-1.5 text-sm"
+              />
+            </label>
+            <label className="block text-xs sm:col-span-2">
+              <span className="mb-1 block font-medium text-muted-foreground">Page IDs (overrides URL filters)</span>
+              <textarea
+                value={fPageIdsRaw}
+                onChange={(e) => setFPageIdsRaw(e.target.value)}
+                rows={2}
+                placeholder="UUIDs separated by spaces, commas, or newlines"
+                className="w-full rounded border border-border bg-background px-2 py-1.5 font-mono text-xs"
+              />
+            </label>
+            <label className="flex items-center gap-2 sm:col-span-2">
+              <input
+                type="checkbox"
+                checked={fOnlyMissing}
+                onChange={(e) => setFOnlyMissing(e.target.checked)}
+                className="h-4 w-4"
+              />
+              <span className="text-sm">Only report <code>/p/</code> missing-target issues</span>
+            </label>
+          </div>
+          <div className="mt-3 flex justify-end gap-2">
+            <button onClick={resetFilters} className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted">
+              Reset
+            </button>
+          </div>
+        </div>
+      )}
 
       {(scanning || progress.total > 0) && (
         <div className="mt-4">
