@@ -3,7 +3,10 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { listSeoIssues, aiFixContentPage, type SeoIssueRow } from "@/server/admin-tools.functions";
+import {
+  listSeoIssues, aiFixContentPage, enqueueSeoFixJobs, getSeoJobStatus, cancelQueuedSeoJobs,
+  type SeoIssueRow, type SeoJobRow,
+} from "@/server/admin-tools.functions";
 
 export const Route = createFileRoute("/admin/seo-health")({
   beforeLoad: async () => {
