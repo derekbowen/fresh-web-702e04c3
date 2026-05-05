@@ -82,6 +82,7 @@ import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
+import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
@@ -484,6 +485,11 @@ const AdminClickReportRoute = AdminClickReportRouteImport.update({
   path: '/admin/click-report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminClaimsRoute = AdminClaimsRouteImport.update({
+  id: '/admin/claims',
+  path: '/admin/claims',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCitiesHeroesRoute = AdminCitiesHeroesRouteImport.update({
   id: '/admin/cities-heroes',
   path: '/admin/cities-heroes',
@@ -633,6 +639,7 @@ export interface FileRoutesByFullPath {
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -727,6 +734,7 @@ export interface FileRoutesByTo {
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -823,6 +831,7 @@ export interface FileRoutesById {
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -920,6 +929,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
+    | '/admin/claims'
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
@@ -1014,6 +1024,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
+    | '/admin/claims'
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
@@ -1109,6 +1120,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
+    | '/admin/claims'
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
@@ -1204,6 +1216,7 @@ export interface RootRouteChildren {
   AccountLearningRoute: typeof AccountLearningRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
+  AdminClaimsRoute: typeof AdminClaimsRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
@@ -1760,6 +1773,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClickReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/claims': {
+      id: '/admin/claims'
+      path: '/admin/claims'
+      fullPath: '/admin/claims'
+      preLoaderRoute: typeof AdminClaimsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/cities-heroes': {
       id: '/admin/cities-heroes'
       path: '/admin/cities-heroes'
@@ -2064,6 +2084,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountLearningRoute: AccountLearningRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
+  AdminClaimsRoute: AdminClaimsRoute,
   AdminClickReportRoute: AdminClickReportRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminDashboardRoute: AdminDashboardRoute,
