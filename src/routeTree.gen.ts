@@ -85,6 +85,7 @@ import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
+import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentPagesRouteImport } from './routes/admin.content-pages'
@@ -512,6 +513,11 @@ const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
   path: '/admin/generate-content',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEmailBrandingRoute = AdminEmailBrandingRouteImport.update({
+  id: '/admin/email-branding',
+  path: '/admin/email-branding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
   id: '/admin/directory',
   path: '/admin/directory',
@@ -718,6 +724,7 @@ export interface FileRoutesByFullPath {
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/directory': typeof AdminDirectoryRoute
+  '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/indexing': typeof AdminIndexingRoute
@@ -825,6 +832,7 @@ export interface FileRoutesByTo {
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/directory': typeof AdminDirectoryRoute
+  '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/indexing': typeof AdminIndexingRoute
@@ -934,6 +942,7 @@ export interface FileRoutesById {
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/directory': typeof AdminDirectoryRoute
+  '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/indexing': typeof AdminIndexingRoute
@@ -1044,6 +1053,7 @@ export interface FileRouteTypes {
     | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/directory'
+    | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/indexing'
@@ -1151,6 +1161,7 @@ export interface FileRouteTypes {
     | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/directory'
+    | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/indexing'
@@ -1259,6 +1270,7 @@ export interface FileRouteTypes {
     | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/directory'
+    | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/indexing'
@@ -1367,6 +1379,7 @@ export interface RootRouteChildren {
   AdminContentPagesRoute: typeof AdminContentPagesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDirectoryRoute: typeof AdminDirectoryRoute
+  AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
@@ -1950,6 +1963,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGenerateContentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/email-branding': {
+      id: '/admin/email-branding'
+      path: '/admin/email-branding'
+      fullPath: '/admin/email-branding'
+      preLoaderRoute: typeof AdminEmailBrandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/directory': {
       id: '/admin/directory'
       path: '/admin/directory'
@@ -2332,6 +2352,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminContentPagesRoute: AdminContentPagesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDirectoryRoute: AdminDirectoryRoute,
+  AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
   AdminIndexingRoute: AdminIndexingRoute,
