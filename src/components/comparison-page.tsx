@@ -181,3 +181,86 @@ export function FAQList({ faqs }: { faqs: { q: string; a: React.ReactNode }[] })
     </>
   );
 }
+
+export function ComparisonTable({
+  competitor,
+  rows,
+}: {
+  competitor: string;
+  rows: { label: string; prnm: React.ReactNode; competitor: React.ReactNode }[];
+}) {
+  return (
+    <div className="not-prose my-8 overflow-x-auto rounded-2xl border border-border">
+      <table className="w-full text-sm">
+        <thead className="bg-muted/60 text-foreground">
+          <tr>
+            <th className="px-4 py-3 text-left font-semibold">Feature</th>
+            <th className="px-4 py-3 text-left font-semibold text-primary">Pool Rental Near Me</th>
+            <th className="px-4 py-3 text-left font-semibold">{competitor}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i} className="border-t border-border align-top">
+              <td className="px-4 py-3 font-medium text-foreground">{r.label}</td>
+              <td className="px-4 py-3 text-foreground">{r.prnm}</td>
+              <td className="px-4 py-3 text-muted-foreground">{r.competitor}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export function articleJsonLd(opts: {
+  slug: string;
+  title: string;
+  description: string;
+  datePublished?: string;
+  dateModified?: string;
+}) {
+  const url = `https://www.poolrentalnearme.com/p/${opts.slug}`;
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: opts.title,
+      description: opts.description,
+      author: {
+        "@type": "Person",
+        name: "Derek Bowen",
+        url: "https://www.linkedin.com/in/derekcbowen/",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Pool Rental Near Me",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://www.poolrentalnearme.com/favicon.ico",
+        },
+      },
+      datePublished: opts.datePublished ?? "2026-01-15",
+      dateModified: opts.dateModified ?? "2026-05-01",
+      mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    }),
+  };
+}
+
+export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: items.map((it, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: it.name,
+        item: it.url,
+      })),
+    }),
+  };
+}
+
