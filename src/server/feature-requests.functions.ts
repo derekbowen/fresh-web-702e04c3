@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest, getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { sendTransactionalEmailServer } from "./transactional-email.server";
 
 const schema = z.object({
   email: z.string().trim().email().max(255),
@@ -51,5 +52,26 @@ export const submitFeatureRequest = createServerFn({ method: "POST" })
       console.error("submitFeatureRequest insert failed:", error);
       throw new Error("Could not submit your request. Please try again.");
     }
+
+    // Internal notification to the team — fire-and-forget.
+    try {
+      await sendTransactionalEmailServer({
+        templateName: "internal-lead-notification",
+        recipientEmail: "hello@poolrentalnearme.com",
+        idempotencyKey: `feature-req-notify-${data.email.toLowerCase()}-${Date.now()}`,
+        templateData: {
+          formType: "Feature request",
+          submitterEmail: data.email,
+          submitterName: data.name ?? null,
+          city,
+          region,
+          message: data.requestText,
+          referrerPath: data.referrerPath ?? null,
+        },
+      });
+    } catch (notifyErr) {
+      console.error("feature request internal notification failed:", notifyErr);
+    }
+
     return { ok: true };
   });

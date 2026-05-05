@@ -63,5 +63,23 @@ export const joinPoolWaitlist = createServerFn({ method: "POST" })
       console.error("waitlist confirmation email failed:", emailErr);
     }
 
+    // Internal notification to the team.
+    try {
+      await sendTransactionalEmailServer({
+        templateName: "internal-lead-notification",
+        recipientEmail: "hello@poolrentalnearme.com",
+        idempotencyKey: `waitlist-notify-${data.email.toLowerCase()}-${Date.now()}`,
+        templateData: {
+          formType: "Pool waitlist signup",
+          submitterEmail: data.email,
+          city: data.city ?? city,
+          region: data.region ?? region,
+          nearestMiles: data.nearestMiles ?? null,
+        },
+      });
+    } catch (notifyErr) {
+      console.error("waitlist internal notification failed:", notifyErr);
+    }
+
     return { ok: true };
   });
