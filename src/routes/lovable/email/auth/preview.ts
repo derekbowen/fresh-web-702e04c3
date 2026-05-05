@@ -100,7 +100,16 @@ export const Route = createFileRoute("/lovable/email/auth/preview")({
           )
         }
 
-        const sampleData = SAMPLE_DATA[type] || {}
+        const brandingRow = await loadEmailBranding()
+        const branding = {
+          siteName: brandingRow.site_name,
+          senderName: brandingRow.sender_name,
+          logoUrl: brandingRow.logo_url,
+          primaryColor: brandingRow.primary_color,
+          primaryTextColor: brandingRow.primary_text_color,
+          footerText: brandingRow.footer_text,
+        }
+        const sampleData = { ...(SAMPLE_DATA[type] || {}), siteName: branding.siteName, branding }
         const html = await render(React.createElement(EmailTemplate, sampleData))
 
         return new Response(html, {
