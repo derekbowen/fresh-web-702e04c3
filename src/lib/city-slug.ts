@@ -23,6 +23,11 @@ export function cityForContentPage(
       }
       return null;
     }
+    case "swim_instructor_city": {
+      const p = "swim-instructor-pool-rental-";
+      if (slug.startsWith(p)) return slug.slice(p.length);
+      return null;
+    }
     case "spanish_host_acq": {
       if (slug.startsWith(SPANISH_HOST_ACQ_PREFIX)) {
         return slug.slice(SPANISH_HOST_ACQ_PREFIX.length);

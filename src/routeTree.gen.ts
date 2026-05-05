@@ -21,6 +21,7 @@ import { Route as Sm74buq58vAdDotxmlRouteImport } from './routes/sm-74buq58v-ad[
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapStaticDotxmlRouteImport } from './routes/sitemap-static[.]xml'
 import { Route as SitemapRecentPagesDotxmlRouteImport } from './routes/sitemap-recent-pages[.]xml'
+import { Route as SitemapPagesSwimInstructorDotxmlRouteImport } from './routes/sitemap-pages-swim-instructor[.]xml'
 import { Route as SitemapPagesSpanishDotxmlRouteImport } from './routes/sitemap-pages-spanish[.]xml'
 import { Route as SitemapPagesMoneyDotxmlRouteImport } from './routes/sitemap-pages-money[.]xml'
 import { Route as SitemapPagesHostAcquisitionDotxmlRouteImport } from './routes/sitemap-pages-host-acquisition[.]xml'
@@ -150,6 +151,12 @@ const SitemapRecentPagesDotxmlRoute =
   SitemapRecentPagesDotxmlRouteImport.update({
     id: '/sitemap-recent-pages.xml',
     path: '/sitemap-recent-pages.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesSwimInstructorDotxmlRoute =
+  SitemapPagesSwimInstructorDotxmlRouteImport.update({
+    id: '/sitemap-pages-swim-instructor.xml',
+    path: '/sitemap-pages-swim-instructor.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
 const SitemapPagesSpanishDotxmlRoute =
@@ -536,6 +543,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
   '/sitemap-pages-spanish.xml': typeof SitemapPagesSpanishDotxmlRoute
+  '/sitemap-pages-swim-instructor.xml': typeof SitemapPagesSwimInstructorDotxmlRoute
   '/sitemap-recent-pages.xml': typeof SitemapRecentPagesDotxmlRoute
   '/sitemap-static.xml': typeof SitemapStaticDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -618,6 +626,7 @@ export interface FileRoutesByTo {
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
   '/sitemap-pages-spanish.xml': typeof SitemapPagesSpanishDotxmlRoute
+  '/sitemap-pages-swim-instructor.xml': typeof SitemapPagesSwimInstructorDotxmlRoute
   '/sitemap-recent-pages.xml': typeof SitemapRecentPagesDotxmlRoute
   '/sitemap-static.xml': typeof SitemapStaticDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -702,6 +711,7 @@ export interface FileRoutesById {
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
   '/sitemap-pages-spanish.xml': typeof SitemapPagesSpanishDotxmlRoute
+  '/sitemap-pages-swim-instructor.xml': typeof SitemapPagesSwimInstructorDotxmlRoute
   '/sitemap-recent-pages.xml': typeof SitemapRecentPagesDotxmlRoute
   '/sitemap-static.xml': typeof SitemapStaticDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -787,6 +797,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
     | '/sitemap-pages-spanish.xml'
+    | '/sitemap-pages-swim-instructor.xml'
     | '/sitemap-recent-pages.xml'
     | '/sitemap-static.xml'
     | '/sitemap.xml'
@@ -869,6 +880,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
     | '/sitemap-pages-spanish.xml'
+    | '/sitemap-pages-swim-instructor.xml'
     | '/sitemap-recent-pages.xml'
     | '/sitemap-static.xml'
     | '/sitemap.xml'
@@ -952,6 +964,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
     | '/sitemap-pages-spanish.xml'
+    | '/sitemap-pages-swim-instructor.xml'
     | '/sitemap-recent-pages.xml'
     | '/sitemap-static.xml'
     | '/sitemap.xml'
@@ -1036,6 +1049,7 @@ export interface RootRouteChildren {
   SitemapPagesHostAcquisitionDotxmlRoute: typeof SitemapPagesHostAcquisitionDotxmlRoute
   SitemapPagesMoneyDotxmlRoute: typeof SitemapPagesMoneyDotxmlRoute
   SitemapPagesSpanishDotxmlRoute: typeof SitemapPagesSpanishDotxmlRoute
+  SitemapPagesSwimInstructorDotxmlRoute: typeof SitemapPagesSwimInstructorDotxmlRoute
   SitemapRecentPagesDotxmlRoute: typeof SitemapRecentPagesDotxmlRoute
   SitemapStaticDotxmlRoute: typeof SitemapStaticDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -1175,6 +1189,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-recent-pages.xml'
       fullPath: '/sitemap-recent-pages.xml'
       preLoaderRoute: typeof SitemapRecentPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-swim-instructor.xml': {
+      id: '/sitemap-pages-swim-instructor.xml'
+      path: '/sitemap-pages-swim-instructor.xml'
+      fullPath: '/sitemap-pages-swim-instructor.xml'
+      preLoaderRoute: typeof SitemapPagesSwimInstructorDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-pages-spanish.xml': {
@@ -1754,6 +1775,7 @@ const rootRouteChildren: RootRouteChildren = {
     SitemapPagesHostAcquisitionDotxmlRoute,
   SitemapPagesMoneyDotxmlRoute: SitemapPagesMoneyDotxmlRoute,
   SitemapPagesSpanishDotxmlRoute: SitemapPagesSpanishDotxmlRoute,
+  SitemapPagesSwimInstructorDotxmlRoute: SitemapPagesSwimInstructorDotxmlRoute,
   SitemapRecentPagesDotxmlRoute: SitemapRecentPagesDotxmlRoute,
   SitemapStaticDotxmlRoute: SitemapStaticDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
