@@ -123,9 +123,11 @@ function AdminDirectory() {
           {(["pending","approved","rejected","all"] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${filter === f ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
-              {f} ({rows.filter((r) => f === "all" ? true : r.submission_status === f).length})
+              {f}
             </button>
           ))}
+          <Link to="/admin/scrape-import" className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold hover:bg-secondary">+ Scrape URL</Link>
+          <Link to="/admin/gsc-import" className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold hover:bg-secondary">↑ Import GSC</Link>
           <button onClick={load} className="ml-auto rounded-full bg-card border border-border px-3 py-1 text-xs">Refresh</button>
         </div>
 
@@ -141,7 +143,7 @@ function AdminDirectory() {
           ] as [PlanFilter, string][]).map(([key, label]) => (
             <button key={key} onClick={() => setPlanFilter(key)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${planFilter === key ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
-              {label} ({planCounts[key] ?? 0})
+              {label}
             </button>
           ))}
         </div>
