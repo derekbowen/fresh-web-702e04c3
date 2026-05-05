@@ -107,7 +107,7 @@ function CategoryPage() {
           <section className="mt-10">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-primary">Featured</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {featured.map((p) => <ProviderCard key={p.slug} p={p} featured />)}
+              {featured.map((p: any) => <ProviderCard key={p.slug} p={p} featured />)}
             </div>
           </section>
         )}
