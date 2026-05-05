@@ -95,8 +95,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     ? `${nearby.city}${nearby.region ? `, ${nearby.region}` : ""}`
     : null;
   const searchHref = nearbyLabel
-    ? `/s?address=${encodeURIComponent(nearbyLabel)}`
-    : "/s";
+    ? `https://www.poolrentalnearme.com/s?address=${encodeURIComponent(nearbyLabel)}`
+    : "https://www.poolrentalnearme.com/s";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -419,7 +419,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 </p>
                 <div className="mt-6 hidden lg:block">
                   <a
-                    href="/s"
+                    href="https://www.poolrentalnearme.com/s"
                     className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                   >
                     Browse all pools →
@@ -431,7 +431,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   {FEATURED_OCCASIONS.map((o) => (
                     <a
                       key={o.slug}
-                      href={`/s?keywords=${encodeURIComponent(o.title)}`}
+                      href={`https://www.poolrentalnearme.com/s?keywords=${encodeURIComponent(o.title)}`}
                       className="group relative overflow-hidden rounded-2xl bg-white text-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-xl"
                     >
                       <div className="aspect-[4/3] overflow-hidden">
@@ -451,7 +451,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 </div>
                 <div className="mt-8 flex justify-center lg:hidden">
                   <a
-                    href="/s"
+                    href="https://www.poolrentalnearme.com/s"
                     className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                   >
                     Browse all pools →
@@ -513,7 +513,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 {categories.map((c: HomeCategory) => (
                   <a
                     key={c.slug}
-                    href={`/s?pub_category=${encodeURIComponent(c.slug)}`}
+                    href={`https://www.poolrentalnearme.com/s?pub_category=${encodeURIComponent(c.slug)}`}
                     className="group rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
                   >
                     {c.icon && (
@@ -564,7 +564,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </p>
             </div>
             <a
-              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+              href="https://www.poolrentalnearme.com/l/draft/00000000-0000-0000-0000-000000000000/new/details"
               className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-7 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
             >
               List your pool →
