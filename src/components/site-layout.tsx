@@ -43,7 +43,7 @@ export function SiteHeader() {
           <a href="https://www.poolrentalnearme.com/public-pools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Public Pools</a>
           <a href="https://www.poolrentalnearme.com/amenities" className="text-sm font-medium text-muted-foreground hover:text-foreground">Amenities</a>
           <a href={rel("/p/how-it-works")} className="text-sm font-medium text-muted-foreground hover:text-foreground">How It Works</a>
-          <a href={rel("/s")} className="text-sm font-medium text-muted-foreground hover:text-foreground">Search</a>
+          <a href="https://www.poolrentalnearme.com/s" className="text-sm font-medium text-muted-foreground hover:text-foreground">Search</a>
         </nav>
         <a href={rel("/l/draft/00000000-0000-0000-0000-000000000000/new/details")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">
           List Your Pool
