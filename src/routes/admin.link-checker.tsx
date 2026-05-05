@@ -108,6 +108,8 @@ function LinkChecker() {
     } finally {
       setBulkRunning(false);
     }
+  }
+
 
   const filtered = rows.filter((r) => filter === "all" || r.reason === filter);
   const counts = {
