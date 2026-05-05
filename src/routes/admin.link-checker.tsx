@@ -34,15 +34,54 @@ function LinkChecker() {
   const [editHref, setEditHref] = React.useState<Record<string, string>>({});
   const abortRef = React.useRef(false);
 
+  // Scan filters
+  const [showFilters, setShowFilters] = React.useState(false);
+  const [fUrlPrefix, setFUrlPrefix] = React.useState("/p/");
+  const [fUrlContains, setFUrlContains] = React.useState("");
+  const [fRangeStart, setFRangeStart] = React.useState("");
+  const [fRangeEnd, setFRangeEnd] = React.useState("");
+  const [fPageIdsRaw, setFPageIdsRaw] = React.useState("");
+  const [fOnlyMissing, setFOnlyMissing] = React.useState(false);
+
   function key(b: BrokenLink) { return `${b.page_id}::${b.href}`; }
+
+  function buildScanFilters() {
+    const pageIds = fPageIdsRaw
+      .split(/[\s,]+/)
+      .map((s) => s.trim())
+      .filter((s) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s));
+    return {
+      urlPrefix: fUrlPrefix.trim() || undefined,
+      urlContains: fUrlContains.trim() || undefined,
+      rangeStart: fRangeStart.trim() || undefined,
+      rangeEnd: fRangeEnd.trim() || undefined,
+      pageIds: pageIds.length ? pageIds : undefined,
+      onlyMissingPPage: fOnlyMissing || undefined,
+    };
+  }
+
+  function resetFilters() {
+    setFUrlPrefix("/p/"); setFUrlContains(""); setFRangeStart(""); setFRangeEnd("");
+    setFPageIdsRaw(""); setFOnlyMissing(false);
+  }
+
+  const activeFilterCount =
+    (fUrlPrefix.trim() && fUrlPrefix.trim() !== "/p/" ? 1 : 0) +
+    (fUrlContains.trim() ? 1 : 0) +
+    (fRangeStart.trim() ? 1 : 0) +
+    (fRangeEnd.trim() ? 1 : 0) +
+    (fPageIdsRaw.trim() ? 1 : 0) +
+    (fOnlyMissing ? 1 : 0);
 
   async function startScan() {
     setRows([]); setState({}); setEditHref({}); setScanning(true); abortRef.current = false;
     let offset = 0;
     const batchSize = 200;
+    const filters = buildScanFilters();
+    if (fOnlyMissing) setFilter("missing_p_page");
     try {
       while (!abortRef.current) {
-        const r = await scanBrokenLinks({ data: { offset, batchSize } });
+        const r = await scanBrokenLinks({ data: { offset, batchSize, ...filters } });
         setRows((prev) => [...prev, ...r.broken]);
         setProgress({ done: r.nextOffset, total: r.total });
         if (r.done) break;
