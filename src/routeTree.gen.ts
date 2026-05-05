@@ -68,6 +68,7 @@ import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as DirectoryListRouteImport } from './routes/directory.list'
 import { Route as DirectoryCategoryRouteImport } from './routes/directory.$category'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -408,6 +409,11 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DirectoryListRoute = DirectoryListRouteImport.update({
+  id: '/list',
+  path: '/list',
+  getParentRoute: () => DirectoryRoute,
+} as any)
 const DirectoryCategoryRoute = DirectoryCategoryRouteImport.update({
   id: '/$category',
   path: '/$category',
@@ -606,6 +612,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/directory/$category': typeof DirectoryCategoryRoute
+  '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -694,6 +701,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/directory/$category': typeof DirectoryCategoryRoute
+  '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -784,6 +792,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/directory/$category': typeof DirectoryCategoryRoute
+  '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -875,6 +884,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/category/$slug'
     | '/directory/$category'
+    | '/directory/list'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -963,6 +973,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/category/$slug'
     | '/directory/$category'
+    | '/directory/list'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -1052,6 +1063,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/category/$slug'
     | '/directory/$category'
+    | '/directory/list'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -1587,6 +1599,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/directory/list': {
+      id: '/directory/list'
+      path: '/list'
+      fullPath: '/directory/list'
+      preLoaderRoute: typeof DirectoryListRouteImport
+      parentRoute: typeof DirectoryRoute
+    }
     '/directory/$category': {
       id: '/directory/$category'
       path: '/$category'
@@ -1821,10 +1840,12 @@ const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface DirectoryRouteChildren {
   DirectoryCategoryRoute: typeof DirectoryCategoryRoute
+  DirectoryListRoute: typeof DirectoryListRoute
 }
 
 const DirectoryRouteChildren: DirectoryRouteChildren = {
   DirectoryCategoryRoute: DirectoryCategoryRoute,
+  DirectoryListRoute: DirectoryListRoute,
 }
 
 const DirectoryRouteWithChildren = DirectoryRoute._addFileChildren(
