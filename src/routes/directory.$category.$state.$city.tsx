@@ -94,11 +94,10 @@ function CityCategoryPage() {
               ? `We don't have ${category!.plural_name.toLowerCase()} listed in ${cityName} yet.`
               : `${providers.length} ${providers.length === 1 ? "pro" : "pros"} serving ${cityName} and the surrounding area.`}
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-5">
             <Link to="/directory/list" className="inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
-              List your business
+              List your business in {cityName}
             </Link>
-            <a href={`${SITE_URL}${window?.location?.pathname ?? ""}`} className="hidden" />
           </div>
         </header>
 
