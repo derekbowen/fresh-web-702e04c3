@@ -88,7 +88,15 @@ function RootComponent() {
   return (
     <>
       <HydrationDebug />
-      <Outlet />
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader />
+        <div className="flex flex-1 flex-col">
+          <GlobalChromeProvider>
+            <Outlet />
+          </GlobalChromeProvider>
+        </div>
+        <SiteFooter />
+      </div>
       {showIntercom && <IntercomWidget />}
     </>
   );
