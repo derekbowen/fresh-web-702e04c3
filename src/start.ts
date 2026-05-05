@@ -26,6 +26,26 @@ const SECURITY_HEADERS: Record<string, string> = {
   ].join("; "),
 };
 
+// Production is served through the EC2 nginx reverse proxy on
+// poolrentalnearme.com. The Lovable preview / published mirrors
+// (*.lovable.app, *.lovable.dev, *.lovableproject.com, *.gptengineer.app) are
+// internal-only and must NEVER be indexed — otherwise Google sees duplicate
+// content competing with prod. We send X-Robots-Tag: noindex, nofollow on
+// every response when the request host is not the canonical production host.
+// nginx is configured to forward the original Host as X-Forwarded-Host, so
+// requests proxied through prod will have the canonical host and stay
+// indexable.
+const PRODUCTION_HOSTS = new Set([
+  "poolrentalnearme.com",
+  "www.poolrentalnearme.com",
+]);
+
+function isNonProductionHost(hostHeader: string | null): boolean {
+  if (!hostHeader) return true; // unknown -> safer to noindex
+  const host = hostHeader.split(":")[0]!.toLowerCase();
+  return !PRODUCTION_HOSTS.has(host);
+}
+
 const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
   if (url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe") {
@@ -37,6 +57,12 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
   if (response && typeof response.headers?.set === "function") {
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
       if (!response.headers.has(k)) response.headers.set(k, v);
+    }
+    // Forwarded host wins (set by EC2 nginx); fall back to direct Host header.
+    const forwardedHost = request.headers.get("x-forwarded-host");
+    const host = forwardedHost ?? request.headers.get("host");
+    if (isNonProductionHost(host)) {
+      response.headers.set("X-Robots-Tag", "noindex, nofollow");
     }
   }
   return result;
