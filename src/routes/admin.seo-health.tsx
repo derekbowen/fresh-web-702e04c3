@@ -40,12 +40,40 @@ function SeoHealth() {
   const [progress, setProgress] = React.useState({ done: 0, total: 0, current: "" });
   const abortRef = React.useRef(false);
 
+  // Background queue state
+  const [batchId, setBatchId] = React.useState<string | null>(null);
+  const [jobs, setJobs] = React.useState<Record<string, SeoJobRow>>({}); // page_id -> job
+  const [summary, setSummary] = React.useState({ queued: 0, processing: 0, done: 0, failed: 0, cancelled: 0 });
+
   const load = React.useCallback(async () => {
     setLoading(true);
     try { const r = await listSeoIssues({ data: { kind: kindId, limit: 200 } }); setRows(r.rows); setSelected(new Set()); }
     finally { setLoading(false); }
   }, [kindId]);
   React.useEffect(() => { void load(); }, [load]);
+
+  // Poll job status while there is anything queued/processing for visible rows
+  React.useEffect(() => {
+    if (!batchId && rows.length === 0) return;
+    let cancelled = false;
+    let timer: any;
+    const tick = async () => {
+      const pageIds = rows.map((r) => r.id);
+      try {
+        const r = await getSeoJobStatus({ data: batchId ? { batchId } : { pageIds } });
+        if (cancelled) return;
+        const map: Record<string, SeoJobRow> = {};
+        for (const j of r.jobs) map[j.page_id] = j;
+        setJobs(map);
+        setSummary(r.summary);
+      } catch {/* ignore polling errors */}
+      const stillRunning = Object.values(jobs).some((j) => j.status === "queued" || j.status === "processing");
+      timer = setTimeout(tick, stillRunning || batchId ? 3000 : 8000);
+    };
+    void tick();
+    return () => { cancelled = true; clearTimeout(timer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batchId, rows.length]);
 
   function toggle(id: string) {
     setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
@@ -64,29 +92,31 @@ function SeoHealth() {
     }
   }
 
-  async function runBatch(targets: SeoIssueRow[]) {
+  async function enqueueBatch(targets: SeoIssueRow[]) {
     if (!targets.length) return;
-    abortRef.current = false;
-    setRunning(true);
-    setProgress({ done: 0, total: targets.length, current: "" });
-    setResults({});
-    for (let i = 0; i < targets.length; i++) {
-      if (abortRef.current) break;
-      const row = targets[i];
-      setProgress({ done: i, total: targets.length, current: row.url_path || row.title || row.id });
-      const r = await fixOne(row);
-      setResults((prev) => ({ ...prev, [row.id]: r }));
-      setProgress({ done: i + 1, total: targets.length, current: row.url_path || "" });
-      // gentle pacing to avoid rate limits
-      if (i < targets.length - 1) await new Promise((res) => setTimeout(res, 600));
+    const res = await enqueueSeoFixJobs({ data: { pageIds: targets.map((t) => t.id), mode: kind.fixMode } });
+    if (res.ok) {
+      setBatchId(res.batchId);
+      // optimistic: mark visible targets as queued
+      setJobs((prev) => {
+        const next = { ...prev };
+        for (const t of targets) {
+          next[t.id] = {
+            id: "pending", page_id: t.id, mode: kind.fixMode, status: "queued",
+            attempts: 0, result: null, error: null, batch_id: res.batchId,
+            created_at: new Date().toISOString(), finished_at: null,
+          };
+        }
+        return next;
+      });
     }
-    setRunning(false);
-    // refresh list to reflect fixes
-    void load();
   }
 
-  const selectedRows = rows.filter((r) => selected.has(r.id));
-  const failedResults = Object.values(results).filter((r) => !r.ok);
+  async function cancelBatch() {
+    if (!batchId) return;
+    await cancelQueuedSeoJobs({ data: { batchId } });
+    setBatchId(null);
+  }
 
   return (
     <AdminLayout title="SEO Health">
