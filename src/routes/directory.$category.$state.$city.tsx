@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getCategoryCityProviders } from "@/server/directory.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { buildMeta, breadcrumbJsonLd, itemListJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
+import { buildMeta, breadcrumbJsonLd, itemListJsonLd, ldJsonScript } from "@/lib/seo";
 
 export const Route = createFileRoute("/directory/$category/$state/$city")({
   loader: async ({ params }) => {
