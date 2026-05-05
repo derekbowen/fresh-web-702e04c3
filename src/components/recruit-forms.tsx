@@ -141,12 +141,20 @@ export function ClaimListingCTA({ providerSlug, providerName }: ClaimProps) {
         <p className="text-sm font-semibold text-foreground">Is this your business?</p>
         <p className="text-xs text-muted-foreground">Claim {providerName} to update your profile, add photos, and get referral leads.</p>
       </div>
-      <a
-        href={`/providers/${encodeURIComponent(providerSlug)}/claim`}
-        className="inline-flex h-10 shrink-0 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow"
-      >
-        Claim this listing
-      </a>
+      <div className="flex shrink-0 gap-2">
+        <a
+          href={`/providers/${encodeURIComponent(providerSlug)}/claim`}
+          className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow"
+        >
+          Claim this listing
+        </a>
+        <a
+          href={`/providers/${encodeURIComponent(providerSlug)}/manage`}
+          className="inline-flex h-10 items-center justify-center rounded-full border border-primary/40 px-5 text-sm font-semibold text-primary transition-all hover:bg-primary/10"
+        >
+          Manage
+        </a>
+      </div>
     </div>
   );
 }
