@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { buildMeta, ldJsonScript, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { getHomeData, type HomeData } from "@/server/home-data.functions";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
@@ -14,22 +12,20 @@ const EMPTY_HOME_DATA: HomeData = {
 };
 
 export const Route = createFileRoute("/")({
-  // The production site is reverse-proxied: upstream HTML is generated for
-  // `/landing-page` while the browser URL is `/`. To avoid React #418
-  // hydration mismatches, render the SAME deterministic empty shell here as
-  // /landing-page does, then fetch live data post-hydration.
+  loader: async (): Promise<HomeData> => {
+    try {
+      return (await getHomeData()) ?? EMPTY_HOME_DATA;
+    } catch (err) {
+      console.error("index loader failed:", err);
+      return EMPTY_HOME_DATA;
+    }
+  },
   head: () => {
     const meta = buildMeta({
       title: "Pool Rental Near Me — Rent a Private Pool by the Hour",
       description:
         "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
       path: "/",
-      // The PRODUCTION homepage is served by the EC2 reverse proxy, which
-      // upstreams /landing-page from Lovable and serves it at
-      // https://www.poolrentalnearme.com/. The bare /landing-page route is
-      // the canonical source. This /-route only renders inside the Lovable
-      // preview / lovable.app published mirror, which must NOT compete with
-      // production in the index — canonicalize to prod root and noindex.
       noindex: true,
       image: HOMEPAGE_HERO_IMAGE,
     });
@@ -55,22 +51,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const fetchHome = useServerFn(getHomeData);
-  const [data, setData] = useState<HomeData>(EMPTY_HOME_DATA);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchHome()
-      .then((d) => {
-        if (!cancelled && d) setData(d);
-      })
-      .catch((err) => {
-        console.error("index getHomeData failed:", err);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [fetchHome]);
-
+  const data = Route.useLoaderData();
   return <HomePageContent data={data} />;
 }
