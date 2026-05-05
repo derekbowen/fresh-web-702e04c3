@@ -1728,6 +1728,51 @@ export type Database = {
         }
         Relationships: []
       }
+      site_footer_settings: {
+        Row: {
+          bottom_text: string | null
+          company_links: Json
+          contact_email: string | null
+          contact_phone: string | null
+          contact_phone_hours: string | null
+          contact_phone_label: string | null
+          explore_links: Json
+          host_links: Json
+          id: number
+          popular_markets: Json
+          socials: Json
+          updated_at: string
+        }
+        Insert: {
+          bottom_text?: string | null
+          company_links?: Json
+          contact_email?: string | null
+          contact_phone?: string | null
+          contact_phone_hours?: string | null
+          contact_phone_label?: string | null
+          explore_links?: Json
+          host_links?: Json
+          id?: number
+          popular_markets?: Json
+          socials?: Json
+          updated_at?: string
+        }
+        Update: {
+          bottom_text?: string | null
+          company_links?: Json
+          contact_email?: string | null
+          contact_phone?: string | null
+          contact_phone_hours?: string | null
+          contact_phone_label?: string | null
+          explore_links?: Json
+          host_links?: Json
+          id?: number
+          popular_markets?: Json
+          socials?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       state_pool_regulations: {
         Row: {
           authority_name: string | null

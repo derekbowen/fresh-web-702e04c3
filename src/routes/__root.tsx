@@ -1,9 +1,10 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { SiteHeader, SiteFooter, GlobalChromeProvider } from "@/components/site-layout";
+import { SiteHeader, SiteFooter, GlobalChromeProvider, FooterDataProvider } from "@/components/site-layout";
 import { HydrationDebug } from "@/components/hydration-debug";
 import { IntercomWidget } from "@/components/intercom-widget";
+import { getSiteFooter } from "@/server/site-footer.functions";
 import {
   buildMeta,
   ldJsonScript,
@@ -39,6 +40,14 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
+  loader: async () => {
+    try {
+      const footer = await getSiteFooter();
+      return { footer };
+    } catch {
+      return { footer: null };
+    }
+  },
   head: () => {
     const meta = buildMeta({
       title: "Pool Rental Near Me - Starting at $25 hour - Rent a pool now",
@@ -84,8 +93,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const data = Route.useLoaderData();
   const showIntercom = pathname === "/" || pathname.startsWith("/admin");
-  return (
+  const footer = data?.footer;
+  const content = (
     <>
       <HydrationDebug />
       <div className="flex min-h-screen flex-col">
@@ -100,5 +111,8 @@ function RootComponent() {
       {showIntercom && <IntercomWidget />}
     </>
   );
+  if (footer) {
+    return <FooterDataProvider value={footer}>{content}</FooterDataProvider>;
+  }
+  return content;
 }
-
