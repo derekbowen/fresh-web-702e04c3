@@ -29,7 +29,7 @@ export const Route = createFileRoute("/directory/$category/$state")({
       { name: sn, path: `/directory/${params.category}/${params.state.toLowerCase()}` },
     ]);
     const list = itemListJsonLd(
-      (loaderData.cities ?? []).slice(0, 50).map((city) => ({
+      (loaderData.cities ?? []).slice(0, 50).map((city: { name: string; slug: string }) => ({
         name: `${c.plural_name} in ${city.name}, ${loaderData.stateCode}`,
         path: `/directory/${params.category}/${params.state.toLowerCase()}/${city.slug}`,
       })),
