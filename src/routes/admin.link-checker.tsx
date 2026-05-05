@@ -73,12 +73,17 @@ function LinkChecker() {
     (fPageIdsRaw.trim() ? 1 : 0) +
     (fOnlyMissing ? 1 : 0);
 
+  const [scanCompletedAt, setScanCompletedAt] = React.useState<Date | null>(null);
+  const [scanDurationMs, setScanDurationMs] = React.useState<number | null>(null);
+
   async function startScan() {
     setRows([]); setState({}); setEditHref({}); setScanning(true); abortRef.current = false;
+    setScanCompletedAt(null); setScanDurationMs(null);
     let offset = 0;
     const batchSize = 200;
     const filters = buildScanFilters();
     if (fOnlyMissing) setFilter("missing_p_page");
+    const startedAt = Date.now();
     try {
       while (!abortRef.current) {
         const r = await scanBrokenLinks({ data: { offset, batchSize, ...filters } });
@@ -89,6 +94,8 @@ function LinkChecker() {
       }
     } finally {
       setScanning(false);
+      setScanCompletedAt(new Date());
+      setScanDurationMs(Date.now() - startedAt);
     }
   }
 
