@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   nextPendingPage,
   scrapeContentPage,
+  scrapeProgress,
 } from "@/server/content-scrape.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
