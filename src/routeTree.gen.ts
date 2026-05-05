@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as SmAmenitiesDotxmlRouteImport } from './routes/sm-amenities[.]xml'
 import { Route as Sm74buq58vDotxmlRouteImport } from './routes/sm-74buq58v[.]xml'
 import { Route as Sm74buq58vLsDotxmlRouteImport } from './routes/sm-74buq58v-ls[.]xml'
@@ -61,6 +62,7 @@ import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
@@ -77,15 +79,23 @@ import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as AcademySlugRouteImport } from './routes/academy.$slug'
 import { Route as HelpCenterCategoryIndexRouteImport } from './routes/help-center.$category.index'
 import { Route as PoolBuildersStateCityRouteImport } from './routes/pool-builders.$state.$city'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as HelpCenterCategorySlugRouteImport } from './routes/help-center.$category.$slug'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
 import { Route as ApiPublicBackfillContentPagesRouteImport } from './routes/api/public/backfill-content-pages'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SmAmenitiesDotxmlRoute = SmAmenitiesDotxmlRouteImport.update({
   id: '/sm-amenities.xml',
   path: '/sm-amenities.xml',
@@ -358,6 +368,11 @@ const HostToolsSlugRoute = HostToolsSlugRouteImport.update({
   path: '/host-tools/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -438,6 +453,11 @@ const PoolBuildersStateCityRoute = PoolBuildersStateCityRouteImport.update({
   path: '/$city',
   getParentRoute: () => PoolBuildersStateRoute,
 } as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LSlugIdRoute = LSlugIdRouteImport.update({
   id: '/l/$slug/$id',
   path: '/l/$slug/$id',
@@ -464,6 +484,18 @@ const AdminLearningUserIdRoute = AdminLearningUserIdRouteImport.update({
   path: '/$userId',
   getParentRoute: () => AdminLearningRoute,
 } as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -515,6 +547,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -529,6 +562,7 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
@@ -554,11 +588,14 @@ export interface FileRoutesByFullPath {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -592,6 +629,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -606,6 +644,7 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
@@ -631,11 +670,14 @@ export interface FileRoutesByTo {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/help-center/$category': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -671,6 +713,7 @@ export interface FileRoutesById {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -685,6 +728,7 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
@@ -710,11 +754,14 @@ export interface FileRoutesById {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -751,6 +798,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/sm-amenities.xml'
+    | '/unsubscribe'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
@@ -765,6 +813,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
@@ -790,11 +839,14 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
+    | '/lovable/email/suppression'
     | '/pool-builders/$state/$city'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/sync-listings'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -828,6 +880,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/sm-amenities.xml'
+    | '/unsubscribe'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
@@ -842,6 +895,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
@@ -867,11 +921,14 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
+    | '/lovable/email/suppression'
     | '/pool-builders/$state/$city'
     | '/help-center/$category'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/sync-listings'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   id:
     | '__root__'
     | '/'
@@ -906,6 +963,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/sm-amenities.xml'
+    | '/unsubscribe'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
@@ -920,6 +978,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
     | '/p/$slug'
@@ -945,11 +1004,14 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
+    | '/lovable/email/suppression'
     | '/pool-builders/$state/$city'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/sync-listings'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -985,6 +1047,7 @@ export interface RootRouteChildren {
   Sm74buq58vLsDotxmlRoute: typeof Sm74buq58vLsDotxmlRoute
   Sm74buq58vDotxmlRoute: typeof Sm74buq58vDotxmlRoute
   SmAmenitiesDotxmlRoute: typeof SmAmenitiesDotxmlRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   AccountLearningRoute: typeof AccountLearningRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
@@ -996,6 +1059,7 @@ export interface RootRouteChildren {
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   CategorySlugRoute: typeof CategorySlugRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
@@ -1018,14 +1082,24 @@ export interface RootRouteChildren {
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   HelpCenterCategorySlugRoute: typeof HelpCenterCategorySlugRoute
   LSlugIdRoute: typeof LSlugIdRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   HelpCenterCategoryIndexRoute: typeof HelpCenterCategoryIndexRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sm-amenities.xml': {
       id: '/sm-amenities.xml'
       path: '/sm-amenities.xml'
@@ -1390,6 +1464,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HostToolsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/category/$slug': {
       id: '/category/$slug'
       path: '/category/$slug'
@@ -1502,6 +1583,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoolBuildersStateCityRouteImport
       parentRoute: typeof PoolBuildersStateRoute
     }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/l/$slug/$id': {
       id: '/l/$slug/$id'
       path: '/l/$slug/$id'
@@ -1536,6 +1624,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/learning/$userId'
       preLoaderRoute: typeof AdminLearningUserIdRouteImport
       parentRoute: typeof AdminLearningRoute
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -1663,6 +1765,7 @@ const rootRouteChildren: RootRouteChildren = {
   Sm74buq58vLsDotxmlRoute: Sm74buq58vLsDotxmlRoute,
   Sm74buq58vDotxmlRoute: Sm74buq58vDotxmlRoute,
   SmAmenitiesDotxmlRoute: SmAmenitiesDotxmlRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   AccountLearningRoute: AccountLearningRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
@@ -1674,6 +1777,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   CategorySlugRoute: CategorySlugRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
@@ -1697,10 +1801,13 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   HelpCenterCategorySlugRoute: HelpCenterCategorySlugRoute,
   LSlugIdRoute: LSlugIdRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   HelpCenterCategoryIndexRoute: HelpCenterCategoryIndexRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
