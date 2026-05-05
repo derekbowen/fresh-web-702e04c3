@@ -1535,7 +1535,93 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      page_quality: {
+        Row: {
+          body_markdown: string | null
+          created_at: string | null
+          id: string | null
+          missing_meta: boolean | null
+          missing_schema: boolean | null
+          no_internal_links: boolean | null
+          quality: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string | null
+          status: string | null
+          template_type: string | null
+          title: string | null
+          title_is_slug: boolean | null
+          updated_at: string | null
+          url_path: string | null
+          word_count: number | null
+        }
+        Insert: {
+          body_markdown?: string | null
+          created_at?: string | null
+          id?: string | null
+          missing_meta?: never
+          missing_schema?: never
+          no_internal_links?: never
+          quality?: never
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
+          status?: string | null
+          template_type?: string | null
+          title?: string | null
+          title_is_slug?: never
+          updated_at?: string | null
+          url_path?: string | null
+          word_count?: never
+        }
+        Update: {
+          body_markdown?: string | null
+          created_at?: string | null
+          id?: string | null
+          missing_meta?: never
+          missing_schema?: never
+          no_internal_links?: never
+          quality?: never
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
+          status?: string | null
+          template_type?: string | null
+          title?: string | null
+          title_is_slug?: never
+          updated_at?: string | null
+          url_path?: string | null
+          word_count?: never
+        }
+        Relationships: []
+      }
+      site_issues: {
+        Row: {
+          empty_published_total: number | null
+          missing_meta_published: number | null
+          missing_schema_published: number | null
+          no_links_published: number | null
+          thin_published_total: number | null
+          title_is_slug_published: number | null
+        }
+        Relationships: []
+      }
+      template_quality_breakdown: {
+        Row: {
+          avg_words_published: number | null
+          oldest_pending: string | null
+          pending: number | null
+          published: number | null
+          published_empty: number | null
+          published_healthy: number | null
+          published_last_7d: number | null
+          published_medium: number | null
+          published_thin: number | null
+          template_type: string | null
+          total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       delete_email: {
