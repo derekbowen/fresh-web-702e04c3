@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { buildMeta, ldJsonScript, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { getHomeData, type HomeData } from "@/server/home-data.functions";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
@@ -14,6 +12,14 @@ const EMPTY_HOME_DATA: HomeData = {
 };
 
 export const Route = createFileRoute("/landing-page")({
+  loader: async (): Promise<HomeData> => {
+    try {
+      return (await getHomeData()) ?? EMPTY_HOME_DATA;
+    } catch (err) {
+      console.error("landing-page loader failed:", err);
+      return EMPTY_HOME_DATA;
+    }
+  },
   // This route is reverse-proxied at https://www.poolrentalnearme.com/.
   // The browser URL is `/` while the upstream HTML is for `/landing-page`,
   // which makes any data-driven first render risk a hydration mismatch.
