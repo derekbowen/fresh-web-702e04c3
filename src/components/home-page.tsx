@@ -12,11 +12,11 @@ import heroPool from "@/assets/pool-hero-default.jpg";
 const NEARBY_RADIUS_MILES = 500;
 
 const FEATURED_OCCASIONS = [
+  { slug: "tax-implications-for-pool-rental-income", title: "Taxes & Pool Rental Income", img: "academy/taxes.jpg" },
+  { slug: "dealing-with-difficult-guest-scenarios", title: "Difficult Guest Scenarios", img: "academy/difficult-guests.jpg" },
+  { slug: "hoa-warfare-bypass-restrictions-rent-your-pool", title: "HOA Warfare", img: "academy/hoa.jpg" },
+  { slug: "dealing-with-neighbor-complaints-in-real-time", title: "Neighbor Complaints", img: "academy/neighbor-complaints.jpg" },
   { slug: "bachelorette-pool-party-hosting-playbook", title: "Bachelorette", img: "academy/bachelorette.jpg" },
-  { slug: "sweet-16-graduation-pool-party-hosting", title: "Sweet 16 & Graduation", img: "academy/sweet-16.jpg" },
-  { slug: "quinceanera-pool-venue-hosting", title: "Quinceañera", img: "academy/quinceanera.jpg" },
-  { slug: "family-reunion-pool-hosting", title: "Family Reunion", img: "academy/family-reunion.jpg" },
-  { slug: "baby-shower-gender-reveal-pool-venue-hosting", title: "Baby Shower & Gender Reveal", img: "academy/baby-shower.jpg" },
   { slug: "photoshoot-content-creator-ugc-pool-hosting", title: "Photoshoot & UGC", img: "academy/photoshoot.jpg" },
 ];
 
