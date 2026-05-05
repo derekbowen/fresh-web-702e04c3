@@ -77,6 +77,7 @@ import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
+import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
@@ -454,6 +455,11 @@ const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
   path: '/admin/generate-content',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
+  id: '/admin/directory',
+  path: '/admin/directory',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
@@ -604,6 +610,7 @@ export interface FileRoutesByFullPath {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
@@ -693,6 +700,7 @@ export interface FileRoutesByTo {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
@@ -784,6 +792,7 @@ export interface FileRoutesById {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
@@ -876,6 +885,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
+    | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
@@ -965,6 +975,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
+    | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
@@ -1055,6 +1066,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
+    | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
@@ -1145,6 +1157,7 @@ export interface RootRouteChildren {
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDirectoryRoute: typeof AdminDirectoryRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
@@ -1662,6 +1675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGenerateContentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/directory': {
+      id: '/admin/directory'
+      path: '/admin/directory'
+      fullPath: '/admin/directory'
+      preLoaderRoute: typeof AdminDirectoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/admin/dashboard'
@@ -1931,6 +1951,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClickReportRoute: AdminClickReportRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminDirectoryRoute: AdminDirectoryRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
