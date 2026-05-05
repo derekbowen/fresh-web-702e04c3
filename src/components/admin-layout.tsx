@@ -30,6 +30,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     label: "SEO",
     items: [
       { to: "/admin/seo-health", label: "SEO health", icon: Activity },
+      { to: "/admin/link-checker", label: "Link checker", icon: LinkIcon },
       { to: "/admin/missing-pages", label: "Missing pages (404s)", icon: AlertTriangle },
       { to: "/admin/indexing", label: "Sitemap & indexing", icon: Search },
       { to: "/admin/gsc-import", label: "GSC import", icon: Search },
