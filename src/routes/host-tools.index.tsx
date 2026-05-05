@@ -57,7 +57,7 @@ function HostToolsIndex() {
               <Link to="/host-tools/$slug" params={{ slug: "message-board" }} className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary">
                 <MessageSquare className="h-4 w-4" /> Message Board
               </Link>
-              <a href="/signup" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-glow px-5 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
+              <a href="https://www.poolrentalnearme.com/signup" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary-glow px-5 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
                 <Star className="h-4 w-4" /> Become a Host
               </a>
             </div>

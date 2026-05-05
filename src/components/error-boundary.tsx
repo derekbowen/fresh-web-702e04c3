@@ -50,7 +50,7 @@ export class ErrorBoundary extends Component<Props, State> {
             moment.
           </p>
           <a
-            href="/s"
+            href="https://www.poolrentalnearme.com/s" target="_blank" rel="noopener noreferrer"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground"
           >
             Browse pools →
