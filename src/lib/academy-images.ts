@@ -14,6 +14,10 @@ import migrate from "@/assets/academy/migrate.jpg";
 import multiPlatform from "@/assets/academy/multi-platform.jpg";
 import income from "@/assets/academy/income.jpg";
 import holiday from "@/assets/academy/holiday.jpg";
+import taxes from "@/assets/academy/taxes.jpg";
+import difficultGuests from "@/assets/academy/difficult-guests.jpg";
+import hoa from "@/assets/academy/hoa.jpg";
+import neighborComplaints from "@/assets/academy/neighbor-complaints.jpg";
 
 export const ACADEMY_HERO_MAP: Record<string, string> = {
   "academy/bachelorette.jpg": bachelorette,
@@ -31,6 +35,10 @@ export const ACADEMY_HERO_MAP: Record<string, string> = {
   "academy/multi-platform.jpg": multiPlatform,
   "academy/income.jpg": income,
   "academy/holiday.jpg": holiday,
+  "academy/taxes.jpg": taxes,
+  "academy/difficult-guests.jpg": difficultGuests,
+  "academy/hoa.jpg": hoa,
+  "academy/neighbor-complaints.jpg": neighborComplaints,
 };
 
 /** Resolve a stored cover_image_url to a usable URL. */
