@@ -73,7 +73,7 @@ function LinkChecker() {
     const targets = filtered;
     if (!targets.length) return;
     if (action === "replace") {
-      const missingSuggestion = targets.filter((b) => !(editHref[key(b)] ?? b.suggestion?.href || "").trim());
+      const missingSuggestion = targets.filter((b) => !((editHref[key(b)] ?? b.suggestion?.href) || "").trim());
       if (missingSuggestion.length === targets.length) {
         setBulkResult("No suggestions/edits available to replace with. Use Unlink or Remove instead.");
         return;
