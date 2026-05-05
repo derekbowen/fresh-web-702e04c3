@@ -26,6 +26,7 @@ import { Route as SitemapPagesSpanishDotxmlRouteImport } from './routes/sitemap-
 import { Route as SitemapPagesMoneyDotxmlRouteImport } from './routes/sitemap-pages-money[.]xml'
 import { Route as SitemapPagesHostAcquisitionDotxmlRouteImport } from './routes/sitemap-pages-host-acquisition[.]xml'
 import { Route as SitemapPagesEventGuidesDotxmlRouteImport } from './routes/sitemap-pages-event-guides[.]xml'
+import { Route as SitemapPagesComparisonsDotxmlRouteImport } from './routes/sitemap-pages-comparisons[.]xml'
 import { Route as SitemapPagesCitiesDotxmlRouteImport } from './routes/sitemap-pages-cities[.]xml'
 import { Route as SitemapPagesArticlesDotxmlRouteImport } from './routes/sitemap-pages-articles[.]xml'
 import { Route as SitemapPagesAdvocacyDotxmlRouteImport } from './routes/sitemap-pages-advocacy[.]xml'
@@ -57,6 +58,7 @@ import { Route as PPeerspaceVsPoolRentalNearMeInCityRouteImport } from './routes
 import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
+import { Route as PGiggsterVsPoolRentalNearMeInCityRouteImport } from './routes/p.giggster-vs-pool-rental-near-me-in-$city'
 import { Route as PGiggsterVsPoolRentalNearMeRouteImport } from './routes/p.giggster-vs-pool-rental-near-me'
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
 import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-calculator'
@@ -181,6 +183,12 @@ const SitemapPagesEventGuidesDotxmlRoute =
   SitemapPagesEventGuidesDotxmlRouteImport.update({
     id: '/sitemap-pages-event-guides.xml',
     path: '/sitemap-pages-event-guides.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapPagesComparisonsDotxmlRoute =
+  SitemapPagesComparisonsDotxmlRouteImport.update({
+    id: '/sitemap-pages-comparisons.xml',
+    path: '/sitemap-pages-comparisons.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
 const SitemapPagesCitiesDotxmlRoute =
@@ -346,6 +354,12 @@ const PHostingRoute = PHostingRouteImport.update({
   path: '/p/hosting',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PGiggsterVsPoolRentalNearMeInCityRoute =
+  PGiggsterVsPoolRentalNearMeInCityRouteImport.update({
+    id: '/p/giggster-vs-pool-rental-near-me-in-$city',
+    path: '/p/giggster-vs-pool-rental-near-me-in-$city',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PGiggsterVsPoolRentalNearMeRoute =
   PGiggsterVsPoolRentalNearMeRouteImport.update({
     id: '/p/giggster-vs-pool-rental-near-me',
@@ -546,6 +560,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
+  '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
@@ -585,6 +600,7 @@ export interface FileRoutesByFullPath {
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
+  '/p/giggster-vs-pool-rental-near-me-in-$city': typeof PGiggsterVsPoolRentalNearMeInCityRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
@@ -630,6 +646,7 @@ export interface FileRoutesByTo {
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
+  '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
@@ -669,6 +686,7 @@ export interface FileRoutesByTo {
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
+  '/p/giggster-vs-pool-rental-near-me-in-$city': typeof PGiggsterVsPoolRentalNearMeInCityRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
@@ -716,6 +734,7 @@ export interface FileRoutesById {
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
+  '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
@@ -755,6 +774,7 @@ export interface FileRoutesById {
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
+  '/p/giggster-vs-pool-rental-near-me-in-$city': typeof PGiggsterVsPoolRentalNearMeInCityRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
@@ -803,6 +823,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
     | '/sitemap-pages-cities.xml'
+    | '/sitemap-pages-comparisons.xml'
     | '/sitemap-pages-event-guides.xml'
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
@@ -842,6 +863,7 @@ export interface FileRouteTypes {
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
+    | '/p/giggster-vs-pool-rental-near-me-in-$city'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
@@ -887,6 +909,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
     | '/sitemap-pages-cities.xml'
+    | '/sitemap-pages-comparisons.xml'
     | '/sitemap-pages-event-guides.xml'
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
@@ -926,6 +949,7 @@ export interface FileRouteTypes {
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
+    | '/p/giggster-vs-pool-rental-near-me-in-$city'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
@@ -972,6 +996,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
     | '/sitemap-pages-cities.xml'
+    | '/sitemap-pages-comparisons.xml'
     | '/sitemap-pages-event-guides.xml'
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
@@ -1011,6 +1036,7 @@ export interface FileRouteTypes {
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
+    | '/p/giggster-vs-pool-rental-near-me-in-$city'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
@@ -1058,6 +1084,7 @@ export interface RootRouteChildren {
   SitemapPagesAdvocacyDotxmlRoute: typeof SitemapPagesAdvocacyDotxmlRoute
   SitemapPagesArticlesDotxmlRoute: typeof SitemapPagesArticlesDotxmlRoute
   SitemapPagesCitiesDotxmlRoute: typeof SitemapPagesCitiesDotxmlRoute
+  SitemapPagesComparisonsDotxmlRoute: typeof SitemapPagesComparisonsDotxmlRoute
   SitemapPagesEventGuidesDotxmlRoute: typeof SitemapPagesEventGuidesDotxmlRoute
   SitemapPagesHostAcquisitionDotxmlRoute: typeof SitemapPagesHostAcquisitionDotxmlRoute
   SitemapPagesMoneyDotxmlRoute: typeof SitemapPagesMoneyDotxmlRoute
@@ -1094,6 +1121,7 @@ export interface RootRouteChildren {
   PEarningsCalculatorRoute: typeof PEarningsCalculatorRoute
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PGiggsterVsPoolRentalNearMeRoute: typeof PGiggsterVsPoolRentalNearMeRoute
+  PGiggsterVsPoolRentalNearMeInCityRoute: typeof PGiggsterVsPoolRentalNearMeInCityRoute
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
@@ -1238,6 +1266,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-pages-event-guides.xml'
       fullPath: '/sitemap-pages-event-guides.xml'
       preLoaderRoute: typeof SitemapPagesEventGuidesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-comparisons.xml': {
+      id: '/sitemap-pages-comparisons.xml'
+      path: '/sitemap-pages-comparisons.xml'
+      fullPath: '/sitemap-pages-comparisons.xml'
+      preLoaderRoute: typeof SitemapPagesComparisonsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-pages-cities.xml': {
@@ -1455,6 +1490,13 @@ declare module '@tanstack/react-router' {
       path: '/p/hosting'
       fullPath: '/p/hosting'
       preLoaderRoute: typeof PHostingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/giggster-vs-pool-rental-near-me-in-$city': {
+      id: '/p/giggster-vs-pool-rental-near-me-in-$city'
+      path: '/p/giggster-vs-pool-rental-near-me-in-$city'
+      fullPath: '/p/giggster-vs-pool-rental-near-me-in-$city'
+      preLoaderRoute: typeof PGiggsterVsPoolRentalNearMeInCityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/giggster-vs-pool-rental-near-me': {
@@ -1791,6 +1833,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapPagesAdvocacyDotxmlRoute: SitemapPagesAdvocacyDotxmlRoute,
   SitemapPagesArticlesDotxmlRoute: SitemapPagesArticlesDotxmlRoute,
   SitemapPagesCitiesDotxmlRoute: SitemapPagesCitiesDotxmlRoute,
+  SitemapPagesComparisonsDotxmlRoute: SitemapPagesComparisonsDotxmlRoute,
   SitemapPagesEventGuidesDotxmlRoute: SitemapPagesEventGuidesDotxmlRoute,
   SitemapPagesHostAcquisitionDotxmlRoute:
     SitemapPagesHostAcquisitionDotxmlRoute,
@@ -1828,6 +1871,8 @@ const rootRouteChildren: RootRouteChildren = {
   PEarningsCalculatorRoute: PEarningsCalculatorRoute,
   PFreeHostToolsRoute: PFreeHostToolsRoute,
   PGiggsterVsPoolRentalNearMeRoute: PGiggsterVsPoolRentalNearMeRoute,
+  PGiggsterVsPoolRentalNearMeInCityRoute:
+    PGiggsterVsPoolRentalNearMeInCityRoute,
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
   PPeerspaceVsPoolRentalNearMeRoute: PPeerspaceVsPoolRentalNearMeRoute,

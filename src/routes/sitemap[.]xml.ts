@@ -47,6 +47,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           lastmod: new Date(),
         });
 
+        // 1b. Comparison pages (pillar + city variants)
+        entries.push({
+          loc: `${SITE_URL}/sitemap-pages-comparisons.xml`,
+          lastmod: new Date(),
+        });
+
         // 2. Per-template-type content_pages sub-sitemaps (with auto-pagination)
         for (const group of TEMPLATE_GROUPS) {
           const { count, error } = await (supabaseAdmin as any)
