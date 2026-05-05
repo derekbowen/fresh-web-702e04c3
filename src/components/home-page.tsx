@@ -513,7 +513,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 {categories.map((c: HomeCategory) => (
                   <a
                     key={c.slug}
-                    href={`/s?pub_category=${encodeURIComponent(c.slug)}`}
+                    href={`https://www.poolrentalnearme.com/s?pub_category=${encodeURIComponent(c.slug)}`}
                     className="group rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
                   >
                     {c.icon && (
