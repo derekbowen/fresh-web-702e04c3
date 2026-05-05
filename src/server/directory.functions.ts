@@ -458,7 +458,7 @@ export const adminListProvidersMissingAI = createServerFn({ method: "GET" })
     return { providers: rows ?? [] };
   });
 
-
+export const adminBulkGenerateProviderContent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ limit: z.number().int().min(1).max(50).default(10), onlyMissing: z.boolean().default(true) }).parse(d))
   .handler(async ({ context, data }) => {
