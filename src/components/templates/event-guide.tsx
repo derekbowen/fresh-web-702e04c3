@@ -55,7 +55,7 @@ export function EventGuideTemplate({ page }: { page: ContentPage }) {
               book instantly.
             </p>
             <a
-              href="/s"
+              href="https://www.poolrentalnearme.com/s" target="_blank" rel="noopener noreferrer"
               className="mt-5 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
             >
               Find a pool near you
