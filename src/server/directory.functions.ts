@@ -302,3 +302,153 @@ export const adminUpdateProvider = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ============= Provider Claims =============
+
+const SubmitClaimInput = z.object({
+  provider_slug: z.string().min(1).max(120),
+  claimer_name: z.string().min(2).max(120),
+  claimer_email: z.string().email().max(160),
+  claimer_phone: z.string().max(40).optional().or(z.literal("")),
+  claimer_role: z.string().max(80).optional().or(z.literal("")),
+  business_email: z.string().email().max(160).optional().or(z.literal("")),
+  business_phone: z.string().max(40).optional().or(z.literal("")),
+  business_website: z.string().url().max(300).optional().or(z.literal("")),
+  verification_notes: z.string().max(2000).optional().or(z.literal("")),
+  proposed_name: z.string().max(120).optional().or(z.literal("")),
+  proposed_description: z.string().max(3000).optional().or(z.literal("")),
+  proposed_address: z.string().max(300).optional().or(z.literal("")),
+  proposed_services: z.array(z.string().max(60)).max(20).optional(),
+  source_path: z.string().max(300).optional().or(z.literal("")),
+});
+
+export const submitProviderClaim = createServerFn({ method: "POST" })
+  .inputValidator((d) => SubmitClaimInput.parse(d))
+  .handler(async ({ data }) => {
+    const { data: prov } = await supabaseAdmin
+      .from("providers")
+      .select("id, slug, claim_status")
+      .eq("slug", data.provider_slug)
+      .maybeSingle();
+    if (!prov) throw new Error("Listing not found");
+    if (prov.claim_status === "claimed") {
+      throw new Error("This listing has already been claimed.");
+    }
+
+    const proposed: Record<string, unknown> = {};
+    if (data.proposed_name) proposed.name = data.proposed_name;
+    if (data.proposed_description) proposed.description = data.proposed_description;
+    if (data.proposed_address) proposed.address = data.proposed_address;
+    if (data.proposed_services?.length) proposed.services = data.proposed_services;
+    if (data.business_email) proposed.email = data.business_email;
+    if (data.business_phone) proposed.phone = data.business_phone;
+    if (data.business_website) proposed.website_url = data.business_website;
+
+    const { error } = await supabaseAdmin.from("provider_claims").insert({
+      provider_id: prov.id,
+      provider_slug: prov.slug,
+      claimer_name: data.claimer_name.trim(),
+      claimer_email: data.claimer_email,
+      claimer_phone: data.claimer_phone || null,
+      claimer_role: data.claimer_role || null,
+      business_email: data.business_email || null,
+      business_phone: data.business_phone || null,
+      business_website: data.business_website || null,
+      verification_notes: data.verification_notes || null,
+      proposed_updates: proposed,
+      source_path: data.source_path || null,
+    });
+    if (error) throw new Error(error.message);
+
+    // Mark provider claim_status as pending if currently unclaimed
+    if (prov.claim_status === "unclaimed") {
+      await (supabaseAdmin.from("providers") as any)
+        .update({ claim_status: "pending" })
+        .eq("id", prov.id);
+    }
+    return { ok: true };
+  });
+
+export const adminListProviderClaims = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context as { userId: string };
+    await requireAdmin(userId);
+    const { data } = await supabaseAdmin
+      .from("provider_claims")
+      .select("*")
+      .order("status", { ascending: true })
+      .order("created_at", { ascending: false })
+      .limit(200);
+    return { claims: data ?? [] };
+  });
+
+export const adminReviewProviderClaim = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        action: z.enum(["approve", "reject", "delete"]),
+        admin_notes: z.string().max(2000).optional(),
+        apply_proposed: z.boolean().optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await requireAdmin(userId);
+
+    const { data: claim } = await supabaseAdmin
+      .from("provider_claims")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!claim) throw new Error("Claim not found");
+
+    if (data.action === "delete") {
+      const { error } = await supabaseAdmin.from("provider_claims").delete().eq("id", data.id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    const newStatus = data.action === "approve" ? "approved" : "rejected";
+    const { error: updErr } = await (supabaseAdmin.from("provider_claims") as any)
+      .update({
+        status: newStatus,
+        admin_notes: data.admin_notes ?? null,
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: userId,
+      })
+      .eq("id", data.id);
+    if (updErr) throw new Error(updErr.message);
+
+    if (data.action === "approve") {
+      const patch: Record<string, unknown> = {
+        claim_status: "claimed",
+        claimed_at: new Date().toISOString(),
+      };
+      if (data.apply_proposed && claim.proposed_updates && typeof claim.proposed_updates === "object") {
+        Object.assign(patch, claim.proposed_updates as Record<string, unknown>);
+      }
+      const { error: provErr } = await (supabaseAdmin.from("providers") as any)
+        .update(patch)
+        .eq("id", claim.provider_id);
+      if (provErr) throw new Error(provErr.message);
+    } else if (data.action === "reject") {
+      // If no other pending claims, reset provider claim_status to unclaimed
+      const { count } = await (supabaseAdmin as any)
+        .from("provider_claims")
+        .select("id", { count: "exact", head: true })
+        .eq("provider_id", claim.provider_id)
+        .eq("status", "pending");
+      if (!count) {
+        await (supabaseAdmin.from("providers") as any)
+          .update({ claim_status: "unclaimed" })
+          .eq("id", claim.provider_id)
+          .eq("claim_status", "pending");
+      }
+    }
+
+    return { ok: true };
+  });
