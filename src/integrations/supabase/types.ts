@@ -1277,6 +1277,69 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_plan_requests: {
+        Row: {
+          admin_notes: string | null
+          amount_usd: number | null
+          created_at: string
+          id: string
+          notes: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          provider_id: string
+          provider_slug: string
+          requested_plan: string
+          requester_email: string
+          requester_name: string
+          requester_phone: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_path: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount_usd?: number | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          provider_id: string
+          provider_slug: string
+          requested_plan: string
+          requester_email: string
+          requester_name: string
+          requester_phone?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_path?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount_usd?: number | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          provider_id?: string
+          provider_slug?: string
+          requested_plan?: string
+          requester_email?: string
+          requester_name?: string
+          requester_phone?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_path?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       providers: {
         Row: {
           address: string | null
