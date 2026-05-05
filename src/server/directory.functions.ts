@@ -453,10 +453,6 @@ function guessSourceType(url: string): string {
   return "web";
 }
 
-function slugify(s: string) {
-  return s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || `provider-${Date.now()}`;
-}
 
 export const adminUpdateProvider = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
