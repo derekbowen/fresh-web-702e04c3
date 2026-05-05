@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { getEmailBranding, updateEmailBranding } from "@/server/email-branding.functions";
+import { getEmailBranding, updateEmailBranding, previewAuthEmail } from "@/server/email-branding.functions";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -91,22 +91,10 @@ function EmailBrandingPage() {
     setPreviewLoading(true);
     setPreviewHtml("");
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch("/lovable/email/auth/preview", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-        },
-        body: JSON.stringify({ type }),
-      });
-      if (!res.ok) {
-        setPreviewHtml(`<p style="padding:24px;font-family:sans-serif;color:#888">Preview unavailable (${res.status}). The preview endpoint requires LOVABLE_API_KEY.</p>`);
-        return;
-      }
-      setPreviewHtml(await res.text());
-    } catch {
-      setPreviewHtml(`<p style="padding:24px;font-family:sans-serif;color:#888">Preview unavailable.</p>`);
+      const { html } = await previewAuthEmail({ data: { type } } as any);
+      setPreviewHtml(html);
+    } catch (e: any) {
+      setPreviewHtml(`<p style="padding:24px;font-family:sans-serif;color:#888">Preview unavailable: ${e?.message || "error"}</p>`);
     } finally {
       setPreviewLoading(false);
     }
