@@ -317,6 +317,74 @@ function LinkChecker() {
         </div>
       )}
 
+      {!scanning && report && (
+        <div className="mt-6 rounded-lg border border-border bg-card p-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-lg font-semibold">Scan summary</h2>
+            <span className="text-xs text-muted-foreground">
+              {scanCompletedAt ? scanCompletedAt.toLocaleString() : ""}
+              {scanDurationMs != null ? ` · ${(scanDurationMs / 1000).toFixed(1)}s` : ""}
+            </span>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-5">
+            {[
+              ["Pages scanned", progress.done.toLocaleString()],
+              ["Broken links", rows.length.toLocaleString()],
+              ["Affected pages", report.affectedPages.toLocaleString()],
+              ["With suggestion", report.withSuggestions.toLocaleString()],
+              ["Missing /p/", counts.missing_p_page.toLocaleString()],
+            ].map(([label, val]) => (
+              <div key={label} className="rounded-md border border-border bg-background p-3">
+                <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</div>
+                <div className="mt-1 text-xl font-semibold">{val}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <div>
+              <h3 className="text-sm font-semibold">Top broken targets</h3>
+              <p className="text-xs text-muted-foreground">Links broken in the most places.</p>
+              <ol className="mt-2 space-y-1.5">
+                {report.topTargets.length === 0 && <li className="text-xs text-muted-foreground">None.</li>}
+                {report.topTargets.map((t) => (
+                  <li key={t.href} className="flex items-center justify-between gap-2 rounded border border-border bg-background px-2 py-1.5">
+                    <code className="truncate text-xs" title={t.href}>{t.href}</code>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {t.count}× · {t.pageCount} page{t.pageCount === 1 ? "" : "s"}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold">Fastest fixes by impact</h3>
+              <p className="text-xs text-muted-foreground">Targets with a suggested replacement, ordered by occurrences fixed.</p>
+              <ol className="mt-2 space-y-1.5">
+                {report.fastestFixes.length === 0 && <li className="text-xs text-muted-foreground">No suggestions available yet.</li>}
+                {report.fastestFixes.map((t) => (
+                  <li key={t.href} className="rounded border border-border bg-background px-2 py-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <code className="truncate text-xs" title={t.href}>{t.href}</code>
+                      <span className="shrink-0 text-xs text-muted-foreground">{t.count}× · {t.pageCount} pg</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between gap-2">
+                      <div className="truncate text-[11px] text-muted-foreground">→ <code>{t.suggestion}</code></div>
+                      <button
+                        disabled={bulkRunning}
+                        onClick={() => fixAllOf(t.href, t.suggestion!)}
+                        className="shrink-0 rounded bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground disabled:opacity-50"
+                      >Fix all</button>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </div>
+      )}
+
       {rows.length > 0 && (
         <div className="mt-6 flex flex-wrap gap-2">
           {([
