@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest, getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { sendTransactionalEmailServer } from "./transactional-email.server";
 
 const schema = z.object({
   email: z.string().trim().email().max(255),
@@ -45,5 +46,22 @@ export const joinPoolWaitlist = createServerFn({ method: "POST" })
       console.error("joinPoolWaitlist insert failed:", error);
       throw new Error("Could not save your email. Please try again.");
     }
+
+    // Fire-and-forget confirmation email; never block the user response on it.
+    try {
+      await sendTransactionalEmailServer({
+        templateName: "pool-waitlist-confirmation",
+        recipientEmail: data.email,
+        idempotencyKey: `pool-waitlist-${data.email.toLowerCase()}`,
+        templateData: {
+          city: data.city ?? city,
+          region: data.region ?? region,
+          nearestMiles: data.nearestMiles ?? null,
+        },
+      });
+    } catch (emailErr) {
+      console.error("waitlist confirmation email failed:", emailErr);
+    }
+
     return { ok: true };
   });
