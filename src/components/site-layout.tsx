@@ -4,6 +4,21 @@ import { Link } from "@tanstack/react-router";
 // Stable across SSR + hydration. Bumped at build time, not at request time.
 const FOOTER_YEAR = 2026;
 
+// When the root layout renders a single global header + footer, per-page
+// instances of <SiteHeader /> / <SiteFooter /> become no-ops. This avoids
+// editing every existing page while still guaranteeing one global chrome.
+const GlobalChromeContext = React.createContext(false);
+
+export function GlobalChromeProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <GlobalChromeContext.Provider value={true}>{children}</GlobalChromeContext.Provider>
+  );
+}
+
+function useSuppressChrome() {
+  return React.useContext(GlobalChromeContext);
+}
+
 // Legacy backend (signup, /s search, /p/* marketing pages) is served on the same
 // host as this app. Use root-relative hrefs so links resolve on www, custom
 // domain, and preview hosts without hardcoding the production URL.
