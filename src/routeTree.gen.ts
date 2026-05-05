@@ -33,6 +33,7 @@ import { Route as SitemapPagesAdvocacyDotxmlRouteImport } from './routes/sitemap
 import { Route as SitemapPagesAcademyDotxmlRouteImport } from './routes/sitemap-pages-academy[.]xml'
 import { Route as SitemapIndexDotxmlRouteImport } from './routes/sitemap-index[.]xml'
 import { Route as SitemapHubDotxmlRouteImport } from './routes/sitemap-hub[.]xml'
+import { Route as SitemapDirectoryDotxmlRouteImport } from './routes/sitemap-directory[.]xml'
 import { Route as SitemapDefaultDotxmlRouteImport } from './routes/sitemap-default[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ReferralRouteImport } from './routes/referral'
@@ -227,6 +228,11 @@ const SitemapIndexDotxmlRoute = SitemapIndexDotxmlRouteImport.update({
 const SitemapHubDotxmlRoute = SitemapHubDotxmlRouteImport.update({
   id: '/sitemap-hub.xml',
   path: '/sitemap-hub.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDirectoryDotxmlRoute = SitemapDirectoryDotxmlRouteImport.update({
+  id: '/sitemap-directory.xml',
+  path: '/sitemap-directory.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDefaultDotxmlRoute = SitemapDefaultDotxmlRouteImport.update({
@@ -579,6 +585,7 @@ export interface FileRoutesByFullPath {
   '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
+  '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
   '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
@@ -669,6 +676,7 @@ export interface FileRoutesByTo {
   '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
+  '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
   '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
@@ -761,6 +769,7 @@ export interface FileRoutesById {
   '/referral': typeof ReferralRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
+  '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
   '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
@@ -854,6 +863,7 @@ export interface FileRouteTypes {
     | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
+    | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
     | '/sitemap-index.xml'
     | '/sitemap-pages-academy.xml'
@@ -944,6 +954,7 @@ export interface FileRouteTypes {
     | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
+    | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
     | '/sitemap-index.xml'
     | '/sitemap-pages-academy.xml'
@@ -1035,6 +1046,7 @@ export interface FileRouteTypes {
     | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
+    | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
     | '/sitemap-index.xml'
     | '/sitemap-pages-academy.xml'
@@ -1127,6 +1139,7 @@ export interface RootRouteChildren {
   ReferralRoute: typeof ReferralRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDefaultDotxmlRoute: typeof SitemapDefaultDotxmlRoute
+  SitemapDirectoryDotxmlRoute: typeof SitemapDirectoryDotxmlRoute
   SitemapHubDotxmlRoute: typeof SitemapHubDotxmlRoute
   SitemapIndexDotxmlRoute: typeof SitemapIndexDotxmlRoute
   SitemapPagesAcademyDotxmlRoute: typeof SitemapPagesAcademyDotxmlRoute
@@ -1365,6 +1378,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-hub.xml'
       fullPath: '/sitemap-hub.xml'
       preLoaderRoute: typeof SitemapHubDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-directory.xml': {
+      id: '/sitemap-directory.xml'
+      path: '/sitemap-directory.xml'
+      fullPath: '/sitemap-directory.xml'
+      preLoaderRoute: typeof SitemapDirectoryDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-default.xml': {
@@ -1920,6 +1940,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReferralRoute: ReferralRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDefaultDotxmlRoute: SitemapDefaultDotxmlRoute,
+  SitemapDirectoryDotxmlRoute: SitemapDirectoryDotxmlRoute,
   SitemapHubDotxmlRoute: SitemapHubDotxmlRoute,
   SitemapIndexDotxmlRoute: SitemapIndexDotxmlRoute,
   SitemapPagesAcademyDotxmlRoute: SitemapPagesAcademyDotxmlRoute,
