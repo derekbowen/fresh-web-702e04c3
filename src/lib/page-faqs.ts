@@ -111,6 +111,53 @@ function hostAdvocacyFaqs(stateCode: string): FaqItem[] {
   ];
 }
 
+function swimInstructorCityFaqs(city: string, stateCode: string | null): FaqItem[] {
+  const where = stateCode ? `${city}, ${stateCode}` : city;
+  return [
+    {
+      question: `Can I rent a private pool to teach swim lessons in ${where}?`,
+      answer: `Yes. Pool Rental Near Me lets certified swim instructors book private backyard pools in ${where} by the hour — perfect for private and small-group lessons without the overhead of a public facility.`,
+    },
+    {
+      question: `How much does it cost to rent a pool for swim lessons in ${where}?`,
+      answer: `Pool rentals in ${where} typically run $40–$120 per hour. Most instructors price private lessons at $60–$100 and group lessons at $25–$40 per swimmer to clear a healthy margin after the rental fee.`,
+    },
+    {
+      question: `Do I need lifeguard or swim instructor certification to teach in a rented pool?`,
+      answer: `Hosts generally expect instructors to carry current Red Cross WSI, ASCA, or equivalent certification, plus CPR/First Aid. We recommend showing certifications to the host before booking.`,
+    },
+    {
+      question: `Am I covered by insurance when teaching lessons in a rented ${where} pool?`,
+      answer: `Pool Rental Near Me bookings include $2M in property liability for the host. Instructors should carry their own professional liability policy (commonly through K&K or a swim-school carrier) to cover the lessons themselves.`,
+    },
+    {
+      question: `How do I find pools in ${where} that allow swim instruction?`,
+      answer: `Search ${where} on Pool Rental Near Me, filter for shallow-end depth and pool size that fits your students, and message hosts to confirm they're comfortable with paid lessons on-site.`,
+    },
+  ];
+}
+
+function swimInstructorHubFaqs(): FaqItem[] {
+  return [
+    {
+      question: `Can swim instructors rent private pools to teach lessons?`,
+      answer: `Yes. Pool Rental Near Me is one of the most popular ways for independent swim instructors and small swim schools to access private backyard pools by the hour, without signing a long-term lease.`,
+    },
+    {
+      question: `What does a swim instructor typically pay to rent a pool?`,
+      answer: `Most instructors pay $40–$120 per hour for a backyard pool, depending on size, location, and amenities. Many hosts offer recurring weekly discounts for ongoing lesson schedules.`,
+    },
+    {
+      question: `What certifications do swim instructors need?`,
+      answer: `Hosts generally expect Red Cross Water Safety Instructor (WSI), ASCA Level 1+, or equivalent, plus current CPR and First Aid. Some hosts may also ask for proof of liability insurance.`,
+    },
+    {
+      question: `Is there liability coverage when teaching in a rented pool?`,
+      answer: `Each booking includes $2M in property liability for the host. Instructors should carry their own professional liability insurance for the lessons themselves.`,
+    },
+  ];
+}
+
 /**
  * Returns FAQs for a content page, or [] if the template type doesn't get FAQs.
  */
@@ -127,6 +174,15 @@ export function faqsForContentPage(page: ContentPage): FaqItem[] {
     if (!citySlug) return [];
     const { city, stateCode } = parseCitySlug(citySlug);
     return publicPoolCityFaqs(city, stateCode);
+  }
+  if (t === "swim_instructor_city") {
+    const citySlug = cityForContentPage(t, page.slug);
+    if (!citySlug) return [];
+    const { city, stateCode } = parseCitySlug(citySlug);
+    return swimInstructorCityFaqs(city, stateCode);
+  }
+  if (t === "swim_instructor_hub") {
+    return swimInstructorHubFaqs();
   }
   if (t === "host_advocacy_state" && page.slug) {
     const m = page.slug.match(/-([a-z]{2})$/i);

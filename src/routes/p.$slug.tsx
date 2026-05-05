@@ -29,6 +29,8 @@ import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 import { PublicPoolTemplate } from "@/components/templates/public-pool";
 import { EventGuideTemplate } from "@/components/templates/event-guide";
+import { SwimInstructorCityTemplate } from "@/components/templates/swim-instructor-city";
+import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 
@@ -71,7 +73,8 @@ export const Route = createFileRoute("/p/$slug")({
     if (
       page.template_type === "host_acq_city" ||
       page.template_type === "public_pool_city" ||
-      page.template_type === "spanish_host_acq"
+      page.template_type === "spanish_host_acq" ||
+      page.template_type === "swim_instructor_city"
     ) {
       try {
         nearbyCities = await getNearbyCitiesForPage({
@@ -231,6 +234,10 @@ function ContentPageDispatcher() {
       return <PublicPoolTemplate page={page} nearbyCities={nearbyCities} />;
     case "event_guide":
       return <EventGuideTemplate page={page} />;
+    case "swim_instructor_city":
+      return <SwimInstructorCityTemplate page={page} nearbyCities={nearbyCities} />;
+    case "swim_instructor_hub":
+      return <SwimInstructorHubTemplate page={page} />;
     case "resource":
       return <ResourceArticleTemplate page={page} />;
     default:

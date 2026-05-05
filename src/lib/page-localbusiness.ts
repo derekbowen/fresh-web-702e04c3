@@ -10,6 +10,7 @@ const CITY_TEMPLATE_TYPES = new Set([
   "host_acq_city",
   "public_pool_city",
   "spanish_host_acq",
+  "swim_instructor_city",
 ]);
 
 export function localBusinessForContentPage(

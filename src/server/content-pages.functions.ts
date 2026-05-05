@@ -34,6 +34,8 @@ export type ContentPageTemplateType =
   | "spanish_resource"
   | "homepage"
   | "host_acq_hub"
+  | "swim_instructor_city"
+  | "swim_instructor_hub"
   | "account_legal"
   | "other";
 
