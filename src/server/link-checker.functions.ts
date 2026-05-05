@@ -148,6 +148,11 @@ export const scanBrokenLinks = createServerFn({ method: "POST" })
       }
     }
 
+    // Optional post-filter: only return missing_p_page issues
+    const filteredBroken = data.onlyMissingPPage ? broken.filter((b) => b.reason === "missing_p_page") : broken;
+    broken.length = 0;
+    broken.push(...filteredBroken);
+
     // Suggest replacements for missing /p/ pages by fuzzy slug match (legacy_slugs first, then ilike)
     const missingSlugs = Array.from(new Set(
       broken.filter((b) => b.reason === "missing_p_page").map((b) => {
