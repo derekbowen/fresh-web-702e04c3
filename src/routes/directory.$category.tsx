@@ -123,7 +123,18 @@ function CategoryPage() {
           <section className="mt-10 space-y-10">
             {states.map((state) => (
               <div key={state}>
-                <h2 className="text-lg font-semibold text-foreground">{state === "—" ? "Other locations" : state}</h2>
+                <div className="flex items-baseline justify-between">
+                  <h2 className="text-lg font-semibold text-foreground">{state === "—" ? "Other locations" : state}</h2>
+                  {state !== "—" && /^[A-Z]{2}$/.test(state) && (
+                    <Link
+                      to="/directory/$category/$state"
+                      params={{ category: category!.slug, state: state.toLowerCase() }}
+                      className="text-sm font-medium text-primary hover:underline"
+                    >
+                      Browse {state} →
+                    </Link>
+                  )}
+                </div>
                 <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {byState.get(state)!.map((p: any) => <ProviderCard key={p.slug} p={p} />)}
                 </div>
