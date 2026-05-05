@@ -54,9 +54,9 @@ export const Route = createFileRoute("/directory/$category")({
 });
 
 function CategoryPage() {
-  const { category, providers } = Route.useLoaderData();
-  const featured = providers.filter((p) => p.is_featured);
-  const standard = providers.filter((p) => !p.is_featured);
+  const { category, providers } = Route.useLoaderData() as any;
+  const featured = (providers as any[]).filter((p: any) => p.is_featured);
+  const standard = (providers as any[]).filter((p: any) => !p.is_featured);
   const url = `${SITE_URL}/directory/${category!.slug}`;
 
   // Group standard providers by state for browseable structure

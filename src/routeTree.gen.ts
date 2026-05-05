@@ -68,6 +68,7 @@ import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as DirectoryCategoryRouteImport } from './routes/directory.$category'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
@@ -407,6 +408,11 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DirectoryCategoryRoute = DirectoryCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => DirectoryRoute,
+} as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -553,7 +559,7 @@ export interface FileRoutesByFullPath {
   '/academy': typeof AcademyRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
-  '/directory': typeof DirectoryRoute
+  '/directory': typeof DirectoryRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -599,6 +605,7 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/directory/$category': typeof DirectoryCategoryRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -640,7 +647,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
-  '/directory': typeof DirectoryRoute
+  '/directory': typeof DirectoryRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -686,6 +693,7 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/directory/$category': typeof DirectoryCategoryRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -729,7 +737,7 @@ export interface FileRoutesById {
   '/academy': typeof AcademyRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
-  '/directory': typeof DirectoryRoute
+  '/directory': typeof DirectoryRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -775,6 +783,7 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/directory/$category': typeof DirectoryCategoryRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -865,6 +874,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/directory/$category'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -952,6 +962,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/directory/$category'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -1040,6 +1051,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/directory/$category'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -1083,7 +1095,7 @@ export interface RootRouteChildren {
   AcademyRoute: typeof AcademyRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
-  DirectoryRoute: typeof DirectoryRoute
+  DirectoryRoute: typeof DirectoryRouteWithChildren
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
@@ -1575,6 +1587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/directory/$category': {
+      id: '/directory/$category'
+      path: '/$category'
+      fullPath: '/directory/$category'
+      preLoaderRoute: typeof DirectoryCategoryRouteImport
+      parentRoute: typeof DirectoryRoute
+    }
     '/category/$slug': {
       id: '/category/$slug'
       path: '/category/$slug'
@@ -1800,6 +1819,18 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface DirectoryRouteChildren {
+  DirectoryCategoryRoute: typeof DirectoryCategoryRoute
+}
+
+const DirectoryRouteChildren: DirectoryRouteChildren = {
+  DirectoryCategoryRoute: DirectoryCategoryRoute,
+}
+
+const DirectoryRouteWithChildren = DirectoryRoute._addFileChildren(
+  DirectoryRouteChildren,
+)
+
 interface ProvidersRouteChildren {
   ProvidersSlugRoute: typeof ProvidersSlugRoute
 }
@@ -1840,7 +1871,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcademyRoute: AcademyRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
-  DirectoryRoute: DirectoryRoute,
+  DirectoryRoute: DirectoryRouteWithChildren,
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
