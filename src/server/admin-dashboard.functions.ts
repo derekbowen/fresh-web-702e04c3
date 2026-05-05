@@ -161,6 +161,35 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       .limit(1)
       .maybeSingle();
 
+    // Quality (Phase 1)
+    const [siteIssuesRes, tplQualityRes] = await Promise.all([
+      (sb as any).from("site_issues").select("*").maybeSingle(),
+      (sb as any).from("template_quality_breakdown").select("*"),
+    ]);
+    const siteIssues = (siteIssuesRes.data as any) || {
+      missing_meta_published: 0,
+      missing_schema_published: 0,
+      no_links_published: 0,
+      title_is_slug_published: 0,
+      thin_published_total: 0,
+      empty_published_total: 0,
+    };
+    const qualityByTemplate = ((tplQualityRes.data as any[]) || [])
+      .map((r) => ({
+        template_type: r.template_type,
+        total: Number(r.total) || 0,
+        published: Number(r.published) || 0,
+        pending: Number(r.pending) || 0,
+        published_empty: Number(r.published_empty) || 0,
+        published_thin: Number(r.published_thin) || 0,
+        published_medium: Number(r.published_medium) || 0,
+        published_healthy: Number(r.published_healthy) || 0,
+        avg_words_published: r.avg_words_published == null ? null : Number(r.avg_words_published),
+        oldest_pending: r.oldest_pending,
+        published_last_7d: Number(r.published_last_7d) || 0,
+      }))
+      .sort((a, b) => b.total - a.total);
+
     return {
       contentPages: {
         total: cpTotal,
@@ -181,6 +210,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       waitlist: { total: waitlistTotal, last7d: waitlist7d },
       leads: { total: leadsTotal, new: leadsNew },
       missing404s: { total: missingTotal, unresolved: missingUnresolved },
+      quality: { siteIssues, byTemplate: qualityByTemplate },
       generatedAt: new Date().toISOString(),
     };
   });
