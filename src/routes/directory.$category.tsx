@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getCategoryWithProviders } from "@/server/directory.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, breadcrumbJsonLd, itemListJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
+import { ProviderPlanBadges } from "@/components/provider-plan-badges";
 
 export const Route = createFileRoute("/directory/$category")({
   loader: async ({ params }) => {
