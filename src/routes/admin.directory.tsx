@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { adminListPendingProviders, adminUpdateProvider, adminGenerateProviderContent, adminBulkGenerateProviderContent } from "@/server/directory.functions";
+import { adminListPendingProviders, adminUpdateProvider, adminGenerateProviderContent, adminListProvidersMissingAI } from "@/server/directory.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
 export const Route = createFileRoute("/admin/directory")({
@@ -46,6 +46,8 @@ function fmtRelative(d: any) {
   return `${-days}d ago`;
 }
 
+type BulkResult = { id: string; name: string; ok: boolean; error?: string; ms: number };
+
 function AdminDirectory() {
   const [rows, setRows] = React.useState<any[]>([]);
   const [total, setTotal] = React.useState(0);
@@ -56,6 +58,12 @@ function AdminDirectory() {
   const [planFilter, setPlanFilter] = React.useState<PlanFilter>("all");
   const [sort, setSort] = React.useState<SortKey>("newest");
   const [search, setSearch] = React.useState("");
+  const [bulkRunning, setBulkRunning] = React.useState(false);
+  const [bulkTotal, setBulkTotal] = React.useState(0);
+  const [bulkDone, setBulkDone] = React.useState(0);
+  const [bulkCurrent, setBulkCurrent] = React.useState<string>("");
+  const [bulkResults, setBulkResults] = React.useState<BulkResult[]>([]);
+  const bulkAbort = React.useRef<{ stop: boolean }>({ stop: false });
   const pageSize = 50;
 
   const load = React.useCallback(async () => {
@@ -130,22 +138,97 @@ function AdminDirectory() {
           <Link to="/admin/gsc-import" className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold hover:bg-secondary">↑ Import GSC</Link>
           <button
             onClick={async () => {
-              if (!confirm("Generate AI long-form content for up to 10 published providers missing it?")) return;
-              setBusy("bulk-ai");
+              const limStr = prompt("How many providers to generate AI content for? (1-50)", "10");
+              const limit = Math.max(1, Math.min(50, parseInt(limStr || "10", 10) || 10));
+              setBulkRunning(true);
+              setBulkResults([]);
+              setBulkDone(0);
+              setBulkCurrent("");
+              bulkAbort.current.stop = false;
               try {
-                const r = await adminBulkGenerateProviderContent({ data: { limit: 10, onlyMissing: true } });
-                alert(`Done: ${r.succeeded}/${r.attempted} succeeded`);
+                const { providers } = await adminListProvidersMissingAI({ data: { limit } });
+                setBulkTotal(providers.length);
+                if (providers.length === 0) { alert("No published providers are missing AI content."); return; }
+                for (const p of providers) {
+                  if (bulkAbort.current.stop) break;
+                  setBulkCurrent(`${p.name}${p.city ? ` — ${p.city}, ${p.state_code}` : ""}`);
+                  const t0 = Date.now();
+                  try {
+                    await adminGenerateProviderContent({ data: { id: p.id } });
+                    setBulkResults((prev) => [...prev, { id: p.id, name: p.name, ok: true, ms: Date.now() - t0 }]);
+                  } catch (e: any) {
+                    setBulkResults((prev) => [...prev, { id: p.id, name: p.name, ok: false, error: e?.message || "Failed", ms: Date.now() - t0 }]);
+                  }
+                  setBulkDone((n) => n + 1);
+                  await new Promise((r) => setTimeout(r, 600));
+                }
+                setBulkCurrent("");
                 await load();
-              } catch (e: any) { alert(e?.message || "Bulk AI failed"); }
-              finally { setBusy(null); }
+              } finally {
+                setBulkRunning(false);
+              }
             }}
-            disabled={busy === "bulk-ai"}
+            disabled={bulkRunning}
             className="rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold disabled:opacity-50"
           >
-            {busy === "bulk-ai" ? "Generating…" : "✨ Bulk Gen AI (10)"}
+            {bulkRunning ? `Generating ${bulkDone}/${bulkTotal}…` : "✨ Bulk Gen AI"}
           </button>
+          {bulkRunning && (
+            <button onClick={() => { bulkAbort.current.stop = true; }} className="rounded-full border border-border bg-card px-3 py-1 text-xs">Stop</button>
+          )}
           <button onClick={load} className="ml-auto rounded-full bg-card border border-border px-3 py-1 text-xs">Refresh</button>
         </div>
+
+        {(bulkRunning || bulkResults.length > 0) && (
+          <div className="mt-4 rounded-lg border border-border bg-card p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-semibold">
+                Bulk AI generation — {bulkDone}/{bulkTotal}
+                {bulkResults.length > 0 && (
+                  <span className="ml-2 text-xs font-normal text-muted-foreground">
+                    {bulkResults.filter(r => r.ok).length} ok · {bulkResults.filter(r => !r.ok).length} failed
+                  </span>
+                )}
+              </div>
+              {!bulkRunning && bulkResults.length > 0 && (
+                <button onClick={() => { setBulkResults([]); setBulkDone(0); setBulkTotal(0); }} className="text-xs text-muted-foreground hover:underline">Clear</button>
+              )}
+            </div>
+            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+              <div
+                className="h-full bg-primary transition-all"
+                style={{ width: `${bulkTotal ? (bulkDone / bulkTotal) * 100 : 0}%` }}
+              />
+            </div>
+            {bulkCurrent && <p className="mt-2 text-xs text-muted-foreground">Current: {bulkCurrent}</p>}
+            {bulkResults.length > 0 && (
+              <div className="mt-3 max-h-72 overflow-auto rounded border border-border">
+                <table className="w-full text-xs">
+                  <thead className="sticky top-0 bg-secondary text-secondary-foreground">
+                    <tr>
+                      <th className="px-2 py-1 text-left">Provider</th>
+                      <th className="px-2 py-1 text-left">Status</th>
+                      <th className="px-2 py-1 text-right">Time</th>
+                      <th className="px-2 py-1 text-left">Error</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bulkResults.map((r) => (
+                      <tr key={r.id} className="border-t border-border">
+                        <td className="px-2 py-1">{r.name}</td>
+                        <td className="px-2 py-1">
+                          <span className={r.ok ? "text-green-600" : "text-destructive"}>{r.ok ? "✓ ok" : "✗ failed"}</span>
+                        </td>
+                        <td className="px-2 py-1 text-right text-muted-foreground">{(r.ms / 1000).toFixed(1)}s</td>
+                        <td className="px-2 py-1 text-destructive">{r.error || ""}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold uppercase text-muted-foreground">Plan:</span>

@@ -442,6 +442,22 @@ Return JSON with shape: { "long_description": string (700-900 words, markdown, n
     return { ok: true };
   });
 
+export const adminListProvidersMissingAI = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ limit: z.number().int().min(1).max(100).default(10) }).parse(d))
+  .handler(async ({ context, data }) => {
+    await requireAdmin((context as any).userId);
+    const { data: rows, error } = await supabaseAdmin
+      .from("providers")
+      .select("id, name, slug, city, state_code")
+      .eq("is_published", true)
+      .is("long_description", null)
+      .order("updated_at", { ascending: true })
+      .limit(data.limit);
+    if (error) throw new Error(error.message);
+    return { providers: rows ?? [] };
+  });
+
 export const adminBulkGenerateProviderContent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ limit: z.number().int().min(1).max(50).default(10), onlyMissing: z.boolean().default(true) }).parse(d))
