@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { adminListPendingProviders, adminUpdateProvider } from "@/server/directory.functions";
+import { adminListPendingProviders, adminUpdateProvider, adminGenerateProviderContent } from "@/server/directory.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
 export const Route = createFileRoute("/admin/directory")({
