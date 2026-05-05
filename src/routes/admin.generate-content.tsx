@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { generateContentBatch } from "@/server/generate-content-batch.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/generate-content")({
   component: GenerateContentPage,
@@ -43,13 +43,9 @@ function GenerateContentPage() {
   const ready = useAdminGate();
   if (!ready) {
     return (
-      <div className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <main className="mx-auto flex w-full max-w-3xl flex-1 items-center justify-center px-4 py-12">
+      <AdminLayout>
           <p className="text-sm text-muted-foreground">Checking admin access…</p>
-        </main>
-        <SiteFooter />
-      </div>
+        </AdminLayout>
     );
   }
   return <GenerateContentPageInner />;
@@ -330,9 +326,7 @@ function GenerateContentPageInner() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
+    <AdminLayout>
         <h1 className="text-3xl font-bold">Generate from Content Plan</h1>
         <p className="mt-2 text-muted-foreground">
           Pulls pending rows from <code>content_plan</code> (3,286 prioritized pages), generates
@@ -675,8 +669,6 @@ function GenerateContentPageInner() {
               </div>
             );
           })()}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

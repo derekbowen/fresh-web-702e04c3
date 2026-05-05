@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { adminListPlanRequests, adminReviewPlanRequest } from "@/server/directory.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { buildMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/plan-requests")({
@@ -9,14 +9,10 @@ export const Route = createFileRoute("/admin/plan-requests")({
   head: () => buildMeta({ title: "Plan Requests | Admin", description: "Review provider plan and payment requests", path: "/admin/plan-requests", noindex: true }),
   component: AdminPlanRequestsPage,
   errorComponent: ({ error }) => (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto max-w-3xl px-4 py-20 text-center">
+    <AdminLayout>
         <h1 className="text-2xl font-bold">Not authorized</h1>
         <p className="mt-2 text-muted-foreground">{error.message}</p>
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   ),
 });
 
@@ -52,9 +48,7 @@ function AdminPlanRequestsPage() {
   const reviewed = requests.filter((r) => r.status !== "pending");
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-5xl px-4 py-10">
+    <AdminLayout>
         <div className="mb-6 flex items-center justify-between">
           <div>
             <Link to="/admin/dashboard" className="text-sm text-primary underline">← Admin</Link>
@@ -108,8 +102,6 @@ function AdminPlanRequestsPage() {
             </li>
           ))}
         </ul>
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

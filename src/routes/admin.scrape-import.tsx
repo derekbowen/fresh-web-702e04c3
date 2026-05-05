@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { adminScrapeProviderUrl, adminListScrapeJobs } from "@/server/directory.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/scrape-import")({
   beforeLoad: async () => {
@@ -53,9 +53,7 @@ function ScrapeImport() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+    <AdminLayout>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Scrape directory URLs</h1>
@@ -111,8 +109,6 @@ function ScrapeImport() {
             {jobs.length === 0 && <li className="p-4 text-sm text-muted-foreground">No jobs yet.</li>}
           </ul>
         </section>
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

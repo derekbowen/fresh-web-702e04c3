@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { adminListProviderClaims, adminReviewProviderClaim } from "@/server/directory.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { buildMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/claims")({
@@ -9,14 +9,10 @@ export const Route = createFileRoute("/admin/claims")({
   head: () => buildMeta({ title: "Listing Claims | Admin", description: "Review provider listing claims", path: "/admin/claims", noindex: true }),
   component: AdminClaimsPage,
   errorComponent: ({ error }) => (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto max-w-3xl px-4 py-20 text-center">
+    <AdminLayout>
         <h1 className="text-2xl font-bold">Not authorized</h1>
         <p className="mt-2 text-muted-foreground">{error.message}</p>
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   ),
 });
 
@@ -51,9 +47,7 @@ function AdminClaimsPage() {
   const reviewed = claims.filter((c) => c.status !== "pending");
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <AdminLayout>
         <header className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Listing Claims</h1>
@@ -66,9 +60,7 @@ function AdminClaimsPage() {
 
         <Section title="Pending review" claims={pending} busyId={busyId} act={act} />
         <Section title="Reviewed" claims={reviewed} busyId={busyId} act={act} compact />
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }
 

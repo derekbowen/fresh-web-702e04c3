@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { createQuickPage } from "@/server/admin-quick-page.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/quick-page")({
   beforeLoad: async () => {
@@ -58,9 +58,7 @@ function AdminQuickPage() {
   const canSubmit = title.trim().length >= 3 && topic.trim().length >= 10 && !busy;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+    <AdminLayout>
         <div className="flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">Quick Page Builder</h1>
@@ -175,8 +173,6 @@ function AdminQuickPage() {
             </a>
           </div>
         )}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

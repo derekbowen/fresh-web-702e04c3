@@ -8,7 +8,7 @@ import {
   type AdminLearnerRow,
 } from "@/server/learning.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/admin/learning")({
@@ -49,9 +49,7 @@ function AdminLearningPage() {
   const completionRate = totalEnroll > 0 ? Math.round((totalComplete / totalEnroll) * 100) : 0;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <AdminLayout>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Learning admin</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Aggregate course progress and per-learner activity.
@@ -157,9 +155,7 @@ function AdminLearningPage() {
             </div>
           )}
         </section>
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }
 

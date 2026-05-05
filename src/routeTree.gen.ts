@@ -74,15 +74,19 @@ import { Route as DirectoryCategoryRouteImport } from './routes/directory.$categ
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminContentPagesRouteImport } from './routes/admin.content-pages'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
@@ -449,6 +453,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AdminSeoHealthRoute = AdminSeoHealthRouteImport.update({
+  id: '/admin/seo-health',
+  path: '/admin/seo-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
   id: '/admin/scrape-import',
   path: '/admin/scrape-import',
@@ -474,6 +483,16 @@ const AdminLearningRoute = AdminLearningRouteImport.update({
   path: '/admin/learning',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexingRoute = AdminIndexingRouteImport.update({
+  id: '/admin/indexing',
+  path: '/admin/indexing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminGscImportRoute = AdminGscImportRouteImport.update({
   id: '/admin/gsc-import',
   path: '/admin/gsc-import',
@@ -492,6 +511,11 @@ const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminContentPagesRoute = AdminContentPagesRouteImport.update({
+  id: '/admin/content-pages',
+  path: '/admin/content-pages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminContentMigrationRoute = AdminContentMigrationRouteImport.update({
@@ -666,15 +690,19 @@ export interface FileRoutesByFullPath {
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
+  '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/indexing': typeof AdminIndexingRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
+  '/admin/seo-health': typeof AdminSeoHealthRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -765,15 +793,19 @@ export interface FileRoutesByTo {
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
+  '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/indexing': typeof AdminIndexingRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
+  '/admin/seo-health': typeof AdminSeoHealthRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -866,15 +898,19 @@ export interface FileRoutesById {
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
+  '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/indexing': typeof AdminIndexingRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
+  '/admin/seo-health': typeof AdminSeoHealthRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -968,15 +1004,19 @@ export interface FileRouteTypes {
     | '/admin/claims'
     | '/admin/click-report'
     | '/admin/content-migration'
+    | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/indexing'
+    | '/admin/leads'
     | '/admin/learning'
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
     | '/admin/scrape-import'
+    | '/admin/seo-health'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1067,15 +1107,19 @@ export interface FileRouteTypes {
     | '/admin/claims'
     | '/admin/click-report'
     | '/admin/content-migration'
+    | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/indexing'
+    | '/admin/leads'
     | '/admin/learning'
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
     | '/admin/scrape-import'
+    | '/admin/seo-health'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1167,15 +1211,19 @@ export interface FileRouteTypes {
     | '/admin/claims'
     | '/admin/click-report'
     | '/admin/content-migration'
+    | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/indexing'
+    | '/admin/leads'
     | '/admin/learning'
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
     | '/admin/scrape-import'
+    | '/admin/seo-health'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1267,15 +1315,19 @@ export interface RootRouteChildren {
   AdminClaimsRoute: typeof AdminClaimsRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
+  AdminContentPagesRoute: typeof AdminContentPagesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDirectoryRoute: typeof AdminDirectoryRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
+  AdminIndexingRoute: typeof AdminIndexingRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
+  AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   CategorySlugRoute: typeof CategorySlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
@@ -1768,6 +1820,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/seo-health': {
+      id: '/admin/seo-health'
+      path: '/admin/seo-health'
+      fullPath: '/admin/seo-health'
+      preLoaderRoute: typeof AdminSeoHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/scrape-import': {
       id: '/admin/scrape-import'
       path: '/admin/scrape-import'
@@ -1803,6 +1862,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLearningRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/indexing': {
+      id: '/admin/indexing'
+      path: '/admin/indexing'
+      fullPath: '/admin/indexing'
+      preLoaderRoute: typeof AdminIndexingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/gsc-import': {
       id: '/admin/gsc-import'
       path: '/admin/gsc-import'
@@ -1829,6 +1902,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/content-pages': {
+      id: '/admin/content-pages'
+      path: '/admin/content-pages'
+      fullPath: '/admin/content-pages'
+      preLoaderRoute: typeof AdminContentPagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/content-migration': {
@@ -2168,15 +2248,19 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClaimsRoute: AdminClaimsRoute,
   AdminClickReportRoute: AdminClickReportRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
+  AdminContentPagesRoute: AdminContentPagesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDirectoryRoute: AdminDirectoryRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
+  AdminIndexingRoute: AdminIndexingRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
+  AdminSeoHealthRoute: AdminSeoHealthRoute,
   CategorySlugRoute: CategorySlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,

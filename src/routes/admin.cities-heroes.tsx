@@ -3,7 +3,7 @@ import { useState } from "react";
 import { runHeroBackfill } from "@/server/cities-hero-backfill.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/cities-heroes")({
   beforeLoad: async () => {
@@ -75,9 +75,7 @@ function AdminHeroBackfillPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <AdminLayout>
         <div className="mb-6">
           <Link to="/" className="text-sm text-muted-foreground hover:underline">
             ← Home
@@ -207,8 +205,6 @@ function AdminHeroBackfillPage() {
             </table>
           </div>
         )}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

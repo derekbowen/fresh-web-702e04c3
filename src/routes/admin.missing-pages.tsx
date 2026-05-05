@@ -7,7 +7,7 @@ import {
   type Content404Row,
 } from "@/server/content-404-log.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/missing-pages")({
   beforeLoad: async () => {
@@ -61,9 +61,7 @@ function AdminMissingPages() {
   const totalHits = rows.reduce((acc, r) => acc + (r.hit_count ?? 0), 0);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <AdminLayout>
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
@@ -171,8 +169,6 @@ function AdminMissingPages() {
             </tbody>
           </table>
         </div>
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

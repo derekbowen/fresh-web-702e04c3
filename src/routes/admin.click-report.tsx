@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { getCityClickReport, type CityClickReport } from "@/server/click-report.functions";
 
 export const Route = createFileRoute("/admin/click-report")({
@@ -69,9 +69,7 @@ function ClickReportPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <AdminLayout>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Top destinations from nearby-city links
         </h1>
@@ -176,8 +174,6 @@ function ClickReportPage() {
             </tbody>
           </table>
         </div>
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

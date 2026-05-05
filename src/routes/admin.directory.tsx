@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { adminListPendingProviders, adminUpdateProvider, adminGenerateProviderContent, adminListProvidersMissingAI } from "@/server/directory.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/directory")({
   beforeLoad: async () => {
@@ -146,9 +146,7 @@ function AdminDirectory() {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+    <AdminLayout>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Directory moderation</h1>
@@ -366,9 +364,7 @@ function AdminDirectory() {
               className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm disabled:opacity-40">Next →</button>
           </div>
         )}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }
 

@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { adminImportGscRows } from "@/server/directory.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/gsc-import")({
   beforeLoad: async () => {
@@ -65,9 +65,7 @@ function GscImport() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+    <AdminLayout>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Import Google Search Console</h1>
@@ -119,8 +117,6 @@ function GscImport() {
             </div>
           </section>
         )}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

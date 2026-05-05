@@ -6,7 +6,7 @@ import {
   type AdminLearnerDetail,
 } from "@/server/learning.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/admin/learning/$userId")({
@@ -37,9 +37,7 @@ function LearnerDetailPage() {
   }, [userId]);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+    <AdminLayout>
         <Link to="/admin/learning" className="text-sm text-primary hover:underline">
           ← Back to learning admin
         </Link>
@@ -166,8 +164,6 @@ function LearnerDetailPage() {
             </section>
           </>
         )}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

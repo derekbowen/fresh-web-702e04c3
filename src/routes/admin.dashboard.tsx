@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { getDashboardStats, type DashboardStats } from "@/server/admin-dashboard.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout, ADMIN_NAV_GROUPS } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/dashboard")({
   beforeLoad: async () => {
@@ -56,21 +56,19 @@ function AdminDashboard() {
   const pct = stats ? Math.round((stats.contentPages.published / Math.max(stats.contentPages.total, 1)) * 100) : 0;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-sm text-muted-foreground">
-              Live snapshot of the platform. Auto-refreshes every 30s.
-              {stats && <> · Updated {new Date(stats.generatedAt).toLocaleTimeString()}</>}
-            </p>
-          </div>
-          <button onClick={load} className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
-            {loading ? "Refreshing…" : "Refresh"}
-          </button>
+    <AdminLayout title="Dashboard">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
+            Live snapshot of the platform. Auto-refreshes every 30s.
+            {stats && <> · Updated {new Date(stats.generatedAt).toLocaleTimeString()}</>}
+          </p>
         </div>
+        <button onClick={load} className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+          {loading ? "Refreshing…" : "Refresh"}
+        </button>
+      </div>
 
         {err && <div className="mt-6 rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm">{err}</div>}
 
@@ -93,7 +91,7 @@ function AdminDashboard() {
               </div>
             </section>
 
-            {/* Critical issues banner (Phase 1) */}
+            {/* Critical issues banner */}
             {(() => {
               const i = stats.quality?.siteIssues;
               if (!i) return null;
@@ -108,7 +106,10 @@ function AdminDashboard() {
               if (lines.length === 0) return null;
               return (
                 <section className="mt-8 rounded-xl border border-red-500/40 bg-red-500/5 p-4">
-                  <h2 className="text-base font-semibold text-red-700 dark:text-red-300">Critical issues — published pages</h2>
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-base font-semibold text-red-700 dark:text-red-300">Critical issues — published pages</h2>
+                    <Link to="/admin/seo-health" className="text-xs font-semibold text-red-700 underline dark:text-red-300">Open SEO health →</Link>
+                  </div>
                   <ul className="mt-2 grid grid-cols-1 gap-1 text-sm sm:grid-cols-2">
                     {lines.map((l) => (
                       <li key={l.key} className="flex items-baseline gap-2">
@@ -154,19 +155,13 @@ function AdminDashboard() {
                           <td className="px-3 py-2 text-right">{t.published.toLocaleString()}</td>
                           <td className="px-3 py-2 text-right">{p}%</td>
                           <td className="px-3 py-2 text-right">
-                            {thin > 0 ? (
-                              <span className="rounded bg-red-500/15 px-1.5 py-0.5 text-xs font-bold text-red-700 dark:text-red-300">{thin}</span>
-                            ) : <span className="text-muted-foreground">0</span>}
+                            {thin > 0 ? <span className="rounded bg-red-500/15 px-1.5 py-0.5 text-xs font-bold text-red-700 dark:text-red-300">{thin}</span> : <span className="text-muted-foreground">0</span>}
                           </td>
                           <td className="px-3 py-2 text-right">
-                            {medium > 0 ? (
-                              <span className="rounded bg-yellow-500/15 px-1.5 py-0.5 text-xs font-bold text-yellow-700 dark:text-yellow-300">{medium}</span>
-                            ) : <span className="text-muted-foreground">0</span>}
+                            {medium > 0 ? <span className="rounded bg-yellow-500/15 px-1.5 py-0.5 text-xs font-bold text-yellow-700 dark:text-yellow-300">{medium}</span> : <span className="text-muted-foreground">0</span>}
                           </td>
                           <td className="px-3 py-2 text-right">
-                            {healthy > 0 ? (
-                              <span className="rounded bg-green-500/15 px-1.5 py-0.5 text-xs font-bold text-green-700 dark:text-green-300">{healthy}</span>
-                            ) : <span className="text-muted-foreground">0</span>}
+                            {healthy > 0 ? <span className="rounded bg-green-500/15 px-1.5 py-0.5 text-xs font-bold text-green-700 dark:text-green-300">{healthy}</span> : <span className="text-muted-foreground">0</span>}
                           </td>
                           <td className="px-3 py-2 text-right text-muted-foreground">{avg == null ? "—" : avg.toLocaleString()}</td>
                         </tr>
@@ -228,34 +223,29 @@ function AdminDashboard() {
               </ul>
             </section>
 
-            {/* Quick links */}
-            <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <AdminLink to="/admin/quick-page" label="Quick page builder" />
-              <AdminLink to="/admin/generate-content" label="Generate content" />
-              <AdminLink to="/admin/content-migration" label="Content migration" />
-              <AdminLink to="/admin/missing-pages" label="Missing pages (404s)" />
-              <AdminLink to="/admin/blog" label="Blog admin" />
-              <AdminLink to="/admin/learning" label="Learning admin" />
-              <AdminLink to="/admin/cities-heroes" label="City heroes" />
-              <AdminLink to="/admin/click-report" label="Click report" />
-              <AdminLink to="/admin/directory" label="Directory moderation" />
-              <AdminLink to="/admin/claims" label="Listing claims" />
-              <AdminLink to="/admin/plan-requests" label="Plan & payment requests" />
+            {/* Tool grid grouped */}
+            <section className="mt-10">
+              <h2 className="text-xl font-semibold">All tools</h2>
+              <div className="mt-4 grid gap-6 lg:grid-cols-2">
+                {ADMIN_NAV_GROUPS.filter((g) => g.label !== "Overview").map((g) => (
+                  <div key={g.label} className="rounded-xl border border-border bg-card p-4">
+                    <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-muted-foreground">{g.label}</h3>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      {g.items.map((it) => (
+                        <Link key={it.to} to={it.to} className="group flex items-center gap-2.5 rounded-lg border border-border bg-background p-3 text-sm font-medium hover:border-primary hover:bg-primary/5">
+                          <it.icon className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary" />
+                          <span className="truncate">{it.label}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </section>
           </>
         )}
 
         {loading && !stats && <div className="mt-12 text-center text-sm text-muted-foreground">Loading…</div>}
-      </main>
-      <SiteFooter />
-    </div>
-  );
-}
-
-function AdminLink({ to, label }: { to: string; label: string }) {
-  return (
-    <Link to={to} className="rounded-xl border border-border bg-card p-4 text-sm font-medium hover:bg-muted/50">
-      {label} →
-    </Link>
+    </AdminLayout>
   );
 }

@@ -7,7 +7,7 @@ import {
   scrapeProgress,
 } from "@/server/content-scrape.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/content-migration")({
   beforeLoad: async () => {
@@ -108,9 +108,7 @@ function AdminContentMigration() {
   }, [autoRun, busy, next?.id, runScrape]);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
+    <AdminLayout>
         <h1 className="text-3xl font-bold">Content migration scraper</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Pulls one pending row at a time via Firecrawl so you can review
@@ -238,8 +236,6 @@ function AdminContentMigration() {
             </details>
           </div>
         )}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }

@@ -7,7 +7,7 @@ import {
   type AdminBlogRow,
 } from "@/server/admin-blog.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -95,9 +95,7 @@ function AdminBlogPage() {
   }, [filtered]);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="mx-auto w-full max-w-6xl px-4 py-10">
+    <AdminLayout>
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-semibold">Blog admin</h1>
@@ -190,9 +188,7 @@ function AdminBlogPage() {
             </div>
           </section>
         ))}
-      </main>
-      <SiteFooter />
-    </div>
+      </AdminLayout>
   );
 }
 // touch 1777849623
