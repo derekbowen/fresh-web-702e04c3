@@ -1,1 +1,9 @@
-I didn't mean to say lifeguard I meant to say swim instructors wanna focus on swim instructor so that they can host classes at peoples pools landing pages will build that into the marketplace later yeah we wanna recruit swim instructors and hold their own classes at these pools\n# Hub & Spoke: Lifeguards Renting Pools to Teach Classes\n\nA hub article plus ~350 location pages targeting the search \
+Insert an `admin` role row into `public.user_roles` for user `mamapalowa@gmail.com` (id `3cc16ea5-43f6-4071-a0cc-f27ea424923c`).
+
+```sql
+INSERT INTO public.user_roles (user_id, role)
+VALUES ('3cc16ea5-43f6-4071-a0cc-f27ea424923c', 'admin')
+ON CONFLICT (user_id, role) DO NOTHING;
+```
+
+After approval she'll have full admin access on next page load (may need to sign out / back in).
