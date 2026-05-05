@@ -229,6 +229,7 @@ function AdminDirectory() {
                           : <Btn onClick={() => act(p.id, "feature")} busy={busy === p.id + "feature"} tone="primary">Feature ($25/yr)</Btn>}
                       </>
                     )}
+                    <Btn onClick={async () => { setBusy(p.id+"ai"); try { await adminGenerateProviderContent({ data: { id: p.id }}); await load(); } catch(e:any){ alert(e?.message||"AI failed"); } finally { setBusy(null); } }} busy={busy === p.id + "ai"} tone="primary">{p.ai_content_generated_at ? "↻ Regen AI" : "✨ Gen AI content"}</Btn>
                     <Btn onClick={() => { if (confirm("Delete this listing?")) act(p.id, "delete"); }} busy={busy === p.id + "delete"} tone="danger">Delete</Btn>
                   </div>
                 </div>
@@ -236,6 +237,16 @@ function AdminDirectory() {
             ))}
             {visible.length === 0 && <p className="text-sm text-muted-foreground">Nothing here.</p>}
           </ul>
+        )}
+
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-center gap-2">
+            <button onClick={() => setPage((p) => Math.max(1, p-1))} disabled={page <= 1}
+              className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm disabled:opacity-40">← Prev</button>
+            <span className="text-sm text-muted-foreground">Page {page} / {totalPages}</span>
+            <button onClick={() => setPage((p) => Math.min(totalPages, p+1))} disabled={page >= totalPages}
+              className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm disabled:opacity-40">Next →</button>
+          </div>
         )}
       </main>
       <SiteFooter />
