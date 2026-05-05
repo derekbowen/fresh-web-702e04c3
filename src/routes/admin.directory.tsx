@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
-import { adminListPendingProviders, adminUpdateProvider } from "@/server/directory.functions";
+import { adminListPendingProviders, adminUpdateProvider, adminGenerateProviderContent } from "@/server/directory.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
 export const Route = createFileRoute("/admin/directory")({
@@ -48,21 +48,26 @@ function fmtRelative(d: any) {
 
 function AdminDirectory() {
   const [rows, setRows] = React.useState<any[]>([]);
+  const [total, setTotal] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(true);
   const [busy, setBusy] = React.useState<string | null>(null);
   const [filter, setFilter] = React.useState<StatusFilter>("pending");
   const [planFilter, setPlanFilter] = React.useState<PlanFilter>("all");
   const [sort, setSort] = React.useState<SortKey>("newest");
   const [search, setSearch] = React.useState("");
+  const pageSize = 50;
 
   const load = React.useCallback(async () => {
     setLoading(true);
     try {
-      const r = await adminListPendingProviders();
+      const r = await adminListPendingProviders({ data: { page, pageSize, status: filter, search } });
       setRows(r.providers);
+      setTotal(r.total);
     } finally { setLoading(false); }
-  }, []);
+  }, [page, filter, search]);
   React.useEffect(() => { void load(); }, [load]);
+  React.useEffect(() => { setPage(1); }, [filter, search]);
 
   async function act(id: string, action: any) {
     setBusy(id + action);
@@ -75,7 +80,7 @@ function AdminDirectory() {
 
   const now = Date.now();
   const visible = React.useMemo(() => {
-    let list = rows.filter((r) => filter === "all" ? true : r.submission_status === filter);
+    let list = rows;
     if (planFilter !== "all") {
       list = list.filter((r) => {
         if (planFilter === "expiring_soon") {
@@ -86,13 +91,6 @@ function AdminDirectory() {
         }
         return planBucket(r) === planFilter;
       });
-    }
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter((r) =>
-        [r.name, r.slug, r.city, r.state_code, r.email, r.submitter_email]
-          .filter(Boolean).some((v: string) => v.toLowerCase().includes(q)),
-      );
     }
     const cmp: Record<SortKey, (a: any, b: any) => number> = {
       newest: (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
@@ -105,26 +103,9 @@ function AdminDirectory() {
         (a.featured_until ? new Date(a.featured_until).getTime() : 0),
     };
     return [...list].sort(cmp[sort]);
-  }, [rows, filter, planFilter, sort, search, now]);
+  }, [rows, planFilter, sort, now]);
 
-  const planCounts = React.useMemo(() => {
-    const buckets = ["all","featured_active","paid_active","expiring_soon","expired","free"] as const;
-    const out: Record<string, number> = {};
-    for (const b of buckets) {
-      if (b === "all") { out[b] = rows.length; continue; }
-      if (b === "expiring_soon") {
-        out[b] = rows.filter((r) => {
-          const f = r.featured_until ? new Date(r.featured_until).getTime() : 0;
-          const p = r.listing_paid_until ? new Date(r.listing_paid_until).getTime() : 0;
-          const soon = (t: number) => t > now && t - now < 30 * DAY;
-          return soon(f) || soon(p);
-        }).length;
-      } else {
-        out[b] = rows.filter((r) => planBucket(r) === b).length;
-      }
-    }
-    return out;
-  }, [rows, now]);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -142,9 +123,11 @@ function AdminDirectory() {
           {(["pending","approved","rejected","all"] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${filter === f ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
-              {f} ({rows.filter((r) => f === "all" ? true : r.submission_status === f).length})
+              {f}
             </button>
           ))}
+          <Link to="/admin/scrape-import" className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold hover:bg-secondary">+ Scrape URL</Link>
+          <Link to="/admin/gsc-import" className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold hover:bg-secondary">↑ Import GSC</Link>
           <button onClick={load} className="ml-auto rounded-full bg-card border border-border px-3 py-1 text-xs">Refresh</button>
         </div>
 
@@ -160,7 +143,7 @@ function AdminDirectory() {
           ] as [PlanFilter, string][]).map(([key, label]) => (
             <button key={key} onClick={() => setPlanFilter(key)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${planFilter === key ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
-              {label} ({planCounts[key] ?? 0})
+              {label}
             </button>
           ))}
         </div>
@@ -184,7 +167,9 @@ function AdminDirectory() {
             <option value="paid_until">Paid until (latest)</option>
             <option value="featured_until">Featured until (latest)</option>
           </select>
-          <span className="text-xs text-muted-foreground">{visible.length} shown</span>
+          <span className="text-xs text-muted-foreground">
+            {total > 0 ? `${(page-1)*pageSize + 1}–${Math.min(page*pageSize, total)} of ${total}` : "0"}
+          </span>
         </div>
 
 
@@ -216,6 +201,13 @@ function AdminDirectory() {
                     <div className="mt-2 flex flex-wrap gap-3 text-xs">
                       <TimestampPill label="Paid until" value={p.listing_paid_until} activeClass="text-green-700" />
                       <TimestampPill label="Featured until" value={p.featured_until} activeClass="text-primary" />
+                      {(p.gsc_impressions || p.gsc_clicks) && (
+                        <span className="text-muted-foreground" title={p.gsc_updated_at ? `Updated ${new Date(p.gsc_updated_at).toLocaleString()}` : undefined}>
+                          GSC: {p.gsc_impressions ?? 0} impr · {p.gsc_clicks ?? 0} clk{p.gsc_position ? ` · pos ${Number(p.gsc_position).toFixed(1)}` : ""}
+                        </span>
+                      )}
+                      {p.ai_content_generated_at && <span className="text-muted-foreground">AI ✓</span>}
+                      {p.source_type && <span className="text-muted-foreground">src: {p.source_type}</span>}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -237,6 +229,7 @@ function AdminDirectory() {
                           : <Btn onClick={() => act(p.id, "feature")} busy={busy === p.id + "feature"} tone="primary">Feature ($25/yr)</Btn>}
                       </>
                     )}
+                    <Btn onClick={async () => { setBusy(p.id+"ai"); try { await adminGenerateProviderContent({ data: { id: p.id }}); await load(); } catch(e:any){ alert(e?.message||"AI failed"); } finally { setBusy(null); } }} busy={busy === p.id + "ai"} tone="primary">{p.ai_content_generated_at ? "↻ Regen AI" : "✨ Gen AI content"}</Btn>
                     <Btn onClick={() => { if (confirm("Delete this listing?")) act(p.id, "delete"); }} busy={busy === p.id + "delete"} tone="danger">Delete</Btn>
                   </div>
                 </div>
@@ -244,6 +237,16 @@ function AdminDirectory() {
             ))}
             {visible.length === 0 && <p className="text-sm text-muted-foreground">Nothing here.</p>}
           </ul>
+        )}
+
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-center gap-2">
+            <button onClick={() => setPage((p) => Math.max(1, p-1))} disabled={page <= 1}
+              className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm disabled:opacity-40">← Prev</button>
+            <span className="text-sm text-muted-foreground">Page {page} / {totalPages}</span>
+            <button onClick={() => setPage((p) => Math.min(totalPages, p+1))} disabled={page >= totalPages}
+              className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm disabled:opacity-40">Next →</button>
+          </div>
         )}
       </main>
       <SiteFooter />

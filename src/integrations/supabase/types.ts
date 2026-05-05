@@ -1340,9 +1340,57 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_scrape_jobs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          provider_id: string | null
+          raw: Json | null
+          source_type: string | null
+          source_url: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          provider_id?: string | null
+          raw?: Json | null
+          source_type?: string | null
+          source_url: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          provider_id?: string | null
+          raw?: Json | null
+          source_type?: string | null
+          source_url?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_scrape_jobs_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       providers: {
         Row: {
           address: string | null
+          ai_content_generated_at: string | null
           ai_enriched_at: string | null
           business_type: string | null
           city: string | null
@@ -1353,9 +1401,15 @@ export type Database = {
           created_at: string
           description: string | null
           email: string | null
+          faq: Json
           featured_until: string | null
+          gallery_urls: string[]
           google_category: string | null
           google_cid: string | null
+          gsc_clicks: number
+          gsc_impressions: number
+          gsc_position: number | null
+          gsc_updated_at: string | null
           hero_image_url: string | null
           id: string
           is_featured: boolean
@@ -1363,6 +1417,7 @@ export type Database = {
           latitude: number | null
           listing_paid_until: string | null
           logo_url: string | null
+          long_description: string | null
           longitude: number | null
           name: string
           phone: string | null
@@ -1370,11 +1425,14 @@ export type Database = {
           primary_category: string | null
           rating: number | null
           rating_count: number | null
+          scraped_at: string | null
           secondary_categories: string[]
           seo_description: string | null
           seo_title: string | null
           services: string[] | null
           slug: string
+          source_type: string | null
+          source_url: string | null
           state_code: string | null
           submission_notes: string | null
           submission_status: string
@@ -1384,6 +1442,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          ai_content_generated_at?: string | null
           ai_enriched_at?: string | null
           business_type?: string | null
           city?: string | null
@@ -1394,9 +1453,15 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          faq?: Json
           featured_until?: string | null
+          gallery_urls?: string[]
           google_category?: string | null
           google_cid?: string | null
+          gsc_clicks?: number
+          gsc_impressions?: number
+          gsc_position?: number | null
+          gsc_updated_at?: string | null
           hero_image_url?: string | null
           id?: string
           is_featured?: boolean
@@ -1404,6 +1469,7 @@ export type Database = {
           latitude?: number | null
           listing_paid_until?: string | null
           logo_url?: string | null
+          long_description?: string | null
           longitude?: number | null
           name: string
           phone?: string | null
@@ -1411,11 +1477,14 @@ export type Database = {
           primary_category?: string | null
           rating?: number | null
           rating_count?: number | null
+          scraped_at?: string | null
           secondary_categories?: string[]
           seo_description?: string | null
           seo_title?: string | null
           services?: string[] | null
           slug: string
+          source_type?: string | null
+          source_url?: string | null
           state_code?: string | null
           submission_notes?: string | null
           submission_status?: string
@@ -1425,6 +1494,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          ai_content_generated_at?: string | null
           ai_enriched_at?: string | null
           business_type?: string | null
           city?: string | null
@@ -1435,9 +1505,15 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          faq?: Json
           featured_until?: string | null
+          gallery_urls?: string[]
           google_category?: string | null
           google_cid?: string | null
+          gsc_clicks?: number
+          gsc_impressions?: number
+          gsc_position?: number | null
+          gsc_updated_at?: string | null
           hero_image_url?: string | null
           id?: string
           is_featured?: boolean
@@ -1445,6 +1521,7 @@ export type Database = {
           latitude?: number | null
           listing_paid_until?: string | null
           logo_url?: string | null
+          long_description?: string | null
           longitude?: number | null
           name?: string
           phone?: string | null
@@ -1452,11 +1529,14 @@ export type Database = {
           primary_category?: string | null
           rating?: number | null
           rating_count?: number | null
+          scraped_at?: string | null
           secondary_categories?: string[]
           seo_description?: string | null
           seo_title?: string | null
           services?: string[] | null
           slug?: string
+          source_type?: string | null
+          source_url?: string | null
           state_code?: string | null
           submission_notes?: string | null
           submission_status?: string
