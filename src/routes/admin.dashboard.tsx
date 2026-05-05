@@ -240,6 +240,7 @@ function AdminDashboard() {
               <AdminLink to="/admin/click-report" label="Click report" />
               <AdminLink to="/admin/directory" label="Directory moderation" />
               <AdminLink to="/admin/claims" label="Listing claims" />
+              <AdminLink to="/admin/plan-requests" label="Plan & payment requests" />
             </section>
           </>
         )}
