@@ -39,7 +39,8 @@ export const listServiceCategories = createServerFn({ method: "GET" }).handler(a
     .order("sort_order");
   const cats = (data ?? []) as ServiceCategory[];
   // also fetch counts per category
-  const { data: counts } = await (supabaseAdmin as any).rpc("count_providers_by_category").catch(() => ({ data: null }));
+  const countsRes = await (supabaseAdmin as any).rpc("count_providers_by_category");
+  const counts = countsRes?.data ?? null;
   const countMap = new Map<string, number>();
   if (Array.isArray(counts)) for (const r of counts as any[]) countMap.set(r.primary_category, Number(r.n) || 0);
   return { categories: cats.map((c) => ({ ...c, provider_count: countMap.get(c.slug) ?? 0 })) };
