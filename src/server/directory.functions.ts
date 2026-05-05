@@ -252,7 +252,7 @@ export const adminListPendingProviders = createServerFn({ method: "GET" })
     await requireAdmin(userId);
     const { data } = await supabaseAdmin
       .from("providers")
-      .select("id, slug, name, primary_category, city, state_code, email, submitter_email, description, website_url, phone, services, created_at, submission_status, is_published, is_featured, plan")
+      .select("id, slug, name, primary_category, city, state_code, email, submitter_email, description, website_url, phone, services, created_at, submission_status, is_published, is_featured, plan, featured_until, listing_paid_until")
       .order("submission_status", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(200);
