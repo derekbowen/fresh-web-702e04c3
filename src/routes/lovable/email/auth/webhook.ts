@@ -10,6 +10,7 @@ import { MagicLinkEmail } from '@/lib/email-templates/magic-link'
 import { RecoveryEmail } from '@/lib/email-templates/recovery'
 import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
+import { loadEmailBranding } from '@/server/email-branding.functions'
 
 const EMAIL_SUBJECTS: Record<string, string> = {
   signup: 'Confirm your email',
