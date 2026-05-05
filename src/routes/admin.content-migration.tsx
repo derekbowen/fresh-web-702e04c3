@@ -52,6 +52,15 @@ function AdminContentMigration() {
     try {
       const res = await scrapeContentPage({ data: { id: next.id } });
       setScraped(res.page);
+      // Auto-advance to the next pending row
+      try {
+        const nextRes = await nextPendingPage({
+          data: { template_type: templateType },
+        });
+        setNext(nextRes.page);
+      } catch {
+        /* ignore — user can click Reload next */
+      }
     } catch (e: any) {
       setError(e?.message ?? String(e));
     } finally {
