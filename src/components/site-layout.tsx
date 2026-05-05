@@ -58,6 +58,8 @@ export function SiteHeader() {
 
 const EXPLORE = [
   { label: "Search Listings", href: marketplace("/s") },
+  { label: "Pool Pros Directory", href: "/directory" },
+  { label: "List Your Business", href: "/directory/list" },
   { label: "How It Works", href: "/p/how-it-works" },
   { label: "Start a Business", href: "/p/hosting" },
   { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
