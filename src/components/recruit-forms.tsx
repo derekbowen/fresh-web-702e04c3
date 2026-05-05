@@ -142,7 +142,7 @@ export function ClaimListingCTA({ providerSlug, providerName }: ClaimProps) {
         <p className="text-xs text-muted-foreground">Claim {providerName} to update your profile, add photos, and get referral leads.</p>
       </div>
       <a
-        href={`/auth?claim=${encodeURIComponent(providerSlug)}`}
+        href={`/providers/${encodeURIComponent(providerSlug)}/claim`}
         className="inline-flex h-10 shrink-0 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow"
       >
         Claim this listing
