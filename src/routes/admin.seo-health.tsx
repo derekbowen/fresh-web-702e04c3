@@ -225,10 +225,11 @@ function SeoHealth() {
           <tbody>
             {rows.map((r) => {
               const res = results[r.id];
+              const job = jobs[r.id];
               return (
                 <tr key={r.id} className="border-t border-border">
                   <td className="px-3 py-2">
-                    <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggle(r.id)} disabled={running} />
+                    <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggle(r.id)} />
                   </td>
                   <td className="px-3 py-2 font-mono text-xs">
                     <a href={r.url_path || "#"} target="_blank" rel="noreferrer" className="hover:underline">{r.url_path}</a>
@@ -237,7 +238,13 @@ function SeoHealth() {
                   <td className="px-3 py-2 text-xs text-muted-foreground">{r.template_type || "—"}</td>
                   <td className="px-3 py-2 text-right">{r.words.toLocaleString()}</td>
                   <td className="px-3 py-2 text-xs">
-                    {!res ? <span className="text-muted-foreground">—</span> :
+                    {job ? (
+                      job.status === "queued" ? <span className="rounded bg-muted px-1.5 py-0.5 font-bold">⏳ Queued</span> :
+                      job.status === "processing" ? <span className="rounded bg-blue-500/20 px-1.5 py-0.5 font-bold text-blue-700 dark:text-blue-300">⚙ Processing</span> :
+                      job.status === "done" ? <span className="rounded bg-green-500/20 px-1.5 py-0.5 font-bold text-green-700 dark:text-green-300">✓ {job.result?.newWords ? `${job.result.newWords}w` : "ok"}</span> :
+                      job.status === "failed" ? <span className="rounded bg-red-500/20 px-1.5 py-0.5 font-bold text-red-700 dark:text-red-300" title={job.error || ""}>✗ {(job.error || "").slice(0, 40)}</span> :
+                      <span className="rounded bg-muted px-1.5 py-0.5">Cancelled</span>
+                    ) : !res ? <span className="text-muted-foreground">—</span> :
                       res.ok ? <span className="rounded bg-green-500/20 px-1.5 py-0.5 font-bold text-green-700 dark:text-green-300">✓ {res.newWords ? `${res.newWords}w` : "ok"}</span> :
                       <span className="rounded bg-red-500/20 px-1.5 py-0.5 font-bold text-red-700 dark:text-red-300" title={res.error}>✗ {(res.error || "").slice(0, 40)}</span>}
                   </td>
@@ -254,7 +261,7 @@ function SeoHealth() {
                         void load();
                       }}
                       className="rounded border border-border px-2 py-1 text-xs font-medium hover:bg-muted disabled:opacity-50">
-                      ✨ Fix
+                      ✨ Fix now
                     </button>
                   </td>
                 </tr>
