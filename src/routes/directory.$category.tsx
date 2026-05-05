@@ -125,7 +125,7 @@ function CategoryPage() {
               <div key={state}>
                 <h2 className="text-lg font-semibold text-foreground">{state === "—" ? "Other locations" : state}</h2>
                 <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {byState.get(state)!.map((p) => <ProviderCard key={p.slug} p={p} />)}
+                  {byState.get(state)!.map((p: any) => <ProviderCard key={p.slug} p={p} />)}
                 </div>
               </div>
             ))}
