@@ -442,6 +442,57 @@ Return JSON with shape: { "long_description": string (700-900 words, markdown, n
     return { ok: true };
   });
 
+export const adminBulkGenerateProviderContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ limit: z.number().int().min(1).max(50).default(10), onlyMissing: z.boolean().default(true) }).parse(d))
+  .handler(async ({ context, data }) => {
+    await requireAdmin((context as any).userId);
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+
+    let q = supabaseAdmin
+      .from("providers")
+      .select("id, name, city, state_code, primary_category, description, services")
+      .eq("is_published", true)
+      .order("updated_at", { ascending: true })
+      .limit(data.limit);
+    if (data.onlyMissing) q = q.is("long_description", null);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+
+    const results: Array<{ id: string; ok: boolean; error?: string }> = [];
+    for (const p of rows ?? []) {
+      try {
+        const sys = "You write SEO-optimized, factual long-form content for a pool services directory. Use second person, friendly founder-mentor tone. No banned words: leverage, utilize, seamlessly, robust, dive into, elevate, game-changer, unlock, journey, landscape, bustling, thriving, vibrant, state-of-the-art, cutting-edge. No em dashes. Output valid JSON only.";
+        const user = `Write content for ${p.name}${p.city ? ` in ${p.city}, ${p.state_code}` : ""}. Category: ${p.primary_category ?? "pool services"}. Services: ${(p.services ?? []).join(", ") || "general pool services"}. Existing description: ${p.description ?? "(none)"}.\n\nReturn JSON: { "long_description": string (700-900 words, markdown, no headings above h3), "faq": Array<{question:string,answer:string}> (5 items) }.`;
+        const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [{ role: "system", content: sys }, { role: "user", content: user }],
+            response_format: { type: "json_object" },
+          }),
+        });
+        if (r.status === 429) { results.push({ id: p.id, ok: false, error: "rate limited" }); await new Promise(rs => setTimeout(rs, 3000)); continue; }
+        if (r.status === 402) throw new Error("AI credits exhausted");
+        if (!r.ok) { results.push({ id: p.id, ok: false, error: `gateway ${r.status}` }); continue; }
+        const j: any = await r.json();
+        const content = JSON.parse(j.choices?.[0]?.message?.content ?? "{}");
+        await supabaseAdmin.from("providers").update({
+          long_description: content.long_description ?? null,
+          faq: Array.isArray(content.faq) ? content.faq : [],
+          ai_content_generated_at: new Date().toISOString(),
+        }).eq("id", p.id);
+        results.push({ id: p.id, ok: true });
+      } catch (e: any) {
+        results.push({ id: p.id, ok: false, error: e?.message || String(e) });
+      }
+      await new Promise(rs => setTimeout(rs, 800));
+    }
+    return { ok: true, attempted: results.length, succeeded: results.filter(r => r.ok).length, results };
+  });
+
 function guessSourceType(url: string): string {
   const h = (() => { try { return new URL(url).hostname; } catch { return ""; } })();
   if (h.includes("yelp")) return "yelp";
