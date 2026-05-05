@@ -1,6 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
-import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { parseCitySlug, cityForContentPage } from "@/lib/city-slug";
@@ -76,11 +76,56 @@ export function SwimInstructorCityTemplate({
 
         <section className="border-b border-border bg-muted/20 py-12">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <NearbyCities
-              cities={nearbyCities}
-              slugPrefix="swim-instructor-pool-rental-"
-              heading={`Swim instructor pool rentals near ${cityName}`}
-            />
+            <h2 className="text-xl font-semibold text-foreground">
+              Keep exploring swim instructor pool rentals
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Start with the full guide, then compare instructor-friendly markets near {cityName}.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <Link
+                to="/p/$slug"
+                params={{ slug: "swim-instructor-pool-rental" }}
+                className="block rounded-lg border border-primary/40 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary transition hover:bg-primary/10"
+              >
+                📘 Swim Instructor Pool Rental Guide →
+              </Link>
+              <a
+                href="/auth"
+                className="block rounded-lg border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary"
+              >
+                🏊 Browse {cityName} pools →
+              </a>
+            </div>
+
+            {nearbyCities.length > 0 && (
+              <>
+                <h3 className="mt-8 text-base font-semibold text-foreground">
+                  Top swim instructor markets near {cityName}
+                </h3>
+                <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+                  {nearbyCities.slice(0, 5).map((c) => {
+                    const slug = `swim-instructor-pool-rental-${c.slug}`;
+                    const label =
+                      c.state_code && !c.slug.endsWith(`-${c.state_code.toLowerCase()}`)
+                        ? `${c.name}, ${c.state_code}`
+                        : c.name;
+                    return (
+                      <li key={c.slug}>
+                        <Link
+                          to="/p/$slug"
+                          params={{ slug }}
+                          className="block rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
+                          title={`Rent a pool to teach swim lessons in ${label}`}
+                        >
+                          Swim lessons in {label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )}
           </div>
         </section>
 
