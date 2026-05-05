@@ -1,36 +1,6 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState, redirect } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-
-/**
- * Production host canonicalization. If a request reaches this app on any
- * host other than poolrentalnearme.com (e.g. published lovable.app URL,
- * EC2 IP, staging), 301 to the canonical host so users never see infra URLs.
- */
-const PROD_HOST = "poolrentalnearme.com";
-const CANONICAL_ORIGIN = "https://www.poolrentalnearme.com";
-
-const checkCanonicalHost = createServerFn({ method: "GET" }).handler(async () => {
-  const { getRequest } = await import("@tanstack/react-start/server");
-  try {
-    const url = new URL(getRequest().url);
-    const host = url.hostname.toLowerCase();
-    const isCanonical = host === PROD_HOST || host === `www.${PROD_HOST}`;
-    const isLocal =
-      host === "localhost" || host === "127.0.0.1" || host.endsWith(".local");
-    const isPreview =
-      host.endsWith(".lovableproject.com") ||
-      host.includes("id-preview--") ||
-      host.includes("lovable.dev");
-    if (!isCanonical && !isLocal && !isPreview) {
-      return { redirectTo: `${CANONICAL_ORIGIN}${url.pathname}${url.search}` };
-    }
-  } catch {
-    // ignore
-  }
-  return { redirectTo: null as string | null };
-});
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { HydrationDebug } from "@/components/hydration-debug";
 import { IntercomWidget } from "@/components/intercom-widget";
