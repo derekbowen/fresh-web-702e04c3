@@ -44,7 +44,7 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-6 md:flex">
           <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "text-foreground" }}>Home</Link>
           <a href="https://www.poolrentalnearme.com/public-pools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Public Pools</a>
-          <a href="https://www.poolrentalnearme.com/amenities" className="text-sm font-medium text-muted-foreground hover:text-foreground">Amenities</a>
+          <Link to="/directory" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground" }}>Pool Pros</Link>
           <a href={rel("/p/how-it-works")} className="text-sm font-medium text-muted-foreground hover:text-foreground">How It Works</a>
           <a href="https://www.poolrentalnearme.com/s" className="text-sm font-medium text-muted-foreground hover:text-foreground">Search</a>
         </nav>
