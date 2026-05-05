@@ -40,6 +40,7 @@ import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
+import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AcademyRouteImport } from './routes/academy'
@@ -67,6 +68,8 @@ import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as DirectoryListRouteImport } from './routes/directory.list'
+import { Route as DirectoryCategoryRouteImport } from './routes/directory.$category'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
@@ -74,6 +77,7 @@ import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
+import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
@@ -261,6 +265,11 @@ const LandingPageRoute = LandingPageRouteImport.update({
   path: '/landing-page',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DirectoryRoute = DirectoryRouteImport.update({
+  id: '/directory',
+  path: '/directory',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
@@ -401,6 +410,16 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DirectoryListRoute = DirectoryListRouteImport.update({
+  id: '/list',
+  path: '/list',
+  getParentRoute: () => DirectoryRoute,
+} as any)
+const DirectoryCategoryRoute = DirectoryCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => DirectoryRoute,
+} as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -434,6 +453,11 @@ const AdminLearningRoute = AdminLearningRouteImport.update({
 const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
   id: '/admin/generate-content',
   path: '/admin/generate-content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
+  id: '/admin/directory',
+  path: '/admin/directory',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
@@ -547,6 +571,7 @@ export interface FileRoutesByFullPath {
   '/academy': typeof AcademyRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/directory': typeof DirectoryRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -585,6 +610,7 @@ export interface FileRoutesByFullPath {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
@@ -592,6 +618,8 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/directory/$category': typeof DirectoryCategoryRoute
+  '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -633,6 +661,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/directory': typeof DirectoryRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -671,6 +700,7 @@ export interface FileRoutesByTo {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
@@ -678,6 +708,8 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/directory/$category': typeof DirectoryCategoryRoute
+  '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -721,6 +753,7 @@ export interface FileRoutesById {
   '/academy': typeof AcademyRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/directory': typeof DirectoryRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -759,6 +792,7 @@ export interface FileRoutesById {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/directory': typeof AdminDirectoryRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/missing-pages': typeof AdminMissingPagesRoute
@@ -766,6 +800,8 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/directory/$category': typeof DirectoryCategoryRoute
+  '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
   '/p/$': typeof PSplatRoute
@@ -810,6 +846,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/auth'
     | '/blog'
+    | '/directory'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/privacy-policy'
@@ -848,6 +885,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
+    | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
@@ -855,6 +893,8 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/directory/$category'
+    | '/directory/list'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -896,6 +936,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/blog'
+    | '/directory'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/privacy-policy'
@@ -934,6 +975,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
+    | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
@@ -941,6 +983,8 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/directory/$category'
+    | '/directory/list'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -983,6 +1027,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/auth'
     | '/blog'
+    | '/directory'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/privacy-policy'
@@ -1021,6 +1066,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/content-migration'
     | '/admin/dashboard'
+    | '/admin/directory'
     | '/admin/generate-content'
     | '/admin/learning'
     | '/admin/missing-pages'
@@ -1028,6 +1074,8 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/directory/$category'
+    | '/directory/list'
     | '/email/unsubscribe'
     | '/host-tools/$slug'
     | '/p/$'
@@ -1071,6 +1119,7 @@ export interface RootRouteChildren {
   AcademyRoute: typeof AcademyRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
+  DirectoryRoute: typeof DirectoryRouteWithChildren
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
@@ -1108,6 +1157,7 @@ export interface RootRouteChildren {
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDirectoryRoute: typeof AdminDirectoryRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
@@ -1366,6 +1416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingPageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/directory': {
+      id: '/directory'
+      path: '/directory'
+      fullPath: '/directory'
+      preLoaderRoute: typeof DirectoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog': {
       id: '/blog'
       path: '/blog'
@@ -1555,6 +1612,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/directory/list': {
+      id: '/directory/list'
+      path: '/list'
+      fullPath: '/directory/list'
+      preLoaderRoute: typeof DirectoryListRouteImport
+      parentRoute: typeof DirectoryRoute
+    }
+    '/directory/$category': {
+      id: '/directory/$category'
+      path: '/$category'
+      fullPath: '/directory/$category'
+      preLoaderRoute: typeof DirectoryCategoryRouteImport
+      parentRoute: typeof DirectoryRoute
+    }
     '/category/$slug': {
       id: '/category/$slug'
       path: '/category/$slug'
@@ -1602,6 +1673,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/generate-content'
       fullPath: '/admin/generate-content'
       preLoaderRoute: typeof AdminGenerateContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/directory': {
+      id: '/admin/directory'
+      path: '/admin/directory'
+      fullPath: '/admin/directory'
+      preLoaderRoute: typeof AdminDirectoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/dashboard': {
@@ -1780,6 +1858,20 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface DirectoryRouteChildren {
+  DirectoryCategoryRoute: typeof DirectoryCategoryRoute
+  DirectoryListRoute: typeof DirectoryListRoute
+}
+
+const DirectoryRouteChildren: DirectoryRouteChildren = {
+  DirectoryCategoryRoute: DirectoryCategoryRoute,
+  DirectoryListRoute: DirectoryListRoute,
+}
+
+const DirectoryRouteWithChildren = DirectoryRoute._addFileChildren(
+  DirectoryRouteChildren,
+)
+
 interface ProvidersRouteChildren {
   ProvidersSlugRoute: typeof ProvidersSlugRoute
 }
@@ -1820,6 +1912,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcademyRoute: AcademyRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
+  DirectoryRoute: DirectoryRouteWithChildren,
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
@@ -1858,6 +1951,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminClickReportRoute: AdminClickReportRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminDirectoryRoute: AdminDirectoryRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminMissingPagesRoute: AdminMissingPagesRoute,

@@ -1207,28 +1207,38 @@ export type Database = {
           business_type: string | null
           city: string | null
           city_slug: string | null
+          claim_status: string
           claimed_at: string | null
           claimed_by: string | null
           created_at: string
           description: string | null
           email: string | null
+          featured_until: string | null
           google_category: string | null
           google_cid: string | null
           hero_image_url: string | null
           id: string
+          is_featured: boolean
           is_published: boolean
           latitude: number | null
+          listing_paid_until: string | null
           logo_url: string | null
           longitude: number | null
           name: string
           phone: string | null
+          plan: string
+          primary_category: string | null
           rating: number | null
           rating_count: number | null
+          secondary_categories: string[]
           seo_description: string | null
           seo_title: string | null
           services: string[] | null
           slug: string
           state_code: string | null
+          submission_notes: string | null
+          submission_status: string
+          submitter_email: string | null
           updated_at: string
           website_url: string | null
         }
@@ -1238,28 +1248,38 @@ export type Database = {
           business_type?: string | null
           city?: string | null
           city_slug?: string | null
+          claim_status?: string
           claimed_at?: string | null
           claimed_by?: string | null
           created_at?: string
           description?: string | null
           email?: string | null
+          featured_until?: string | null
           google_category?: string | null
           google_cid?: string | null
           hero_image_url?: string | null
           id?: string
+          is_featured?: boolean
           is_published?: boolean
           latitude?: number | null
+          listing_paid_until?: string | null
           logo_url?: string | null
           longitude?: number | null
           name: string
           phone?: string | null
+          plan?: string
+          primary_category?: string | null
           rating?: number | null
           rating_count?: number | null
+          secondary_categories?: string[]
           seo_description?: string | null
           seo_title?: string | null
           services?: string[] | null
           slug: string
           state_code?: string | null
+          submission_notes?: string | null
+          submission_status?: string
+          submitter_email?: string | null
           updated_at?: string
           website_url?: string | null
         }
@@ -1269,32 +1289,50 @@ export type Database = {
           business_type?: string | null
           city?: string | null
           city_slug?: string | null
+          claim_status?: string
           claimed_at?: string | null
           claimed_by?: string | null
           created_at?: string
           description?: string | null
           email?: string | null
+          featured_until?: string | null
           google_category?: string | null
           google_cid?: string | null
           hero_image_url?: string | null
           id?: string
+          is_featured?: boolean
           is_published?: boolean
           latitude?: number | null
+          listing_paid_until?: string | null
           logo_url?: string | null
           longitude?: number | null
           name?: string
           phone?: string | null
+          plan?: string
+          primary_category?: string | null
           rating?: number | null
           rating_count?: number | null
+          secondary_categories?: string[]
           seo_description?: string | null
           seo_title?: string | null
           services?: string[] | null
           slug?: string
           state_code?: string | null
+          submission_notes?: string | null
+          submission_status?: string
+          submitter_email?: string | null
           updated_at?: string
           website_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "providers_primary_category_fkey"
+            columns: ["primary_category"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       seo_overrides: {
         Row: {
@@ -1332,6 +1370,54 @@ export type Database = {
           title?: string | null
           updated_at?: string
           url_path?: string
+        }
+        Relationships: []
+      }
+      service_categories: {
+        Row: {
+          created_at: string
+          hero_image_url: string | null
+          icon: string | null
+          id: string
+          intro_markdown: string | null
+          is_published: boolean
+          name: string
+          plural_name: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          hero_image_url?: string | null
+          icon?: string | null
+          id?: string
+          intro_markdown?: string | null
+          is_published?: boolean
+          name: string
+          plural_name: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          hero_image_url?: string | null
+          icon?: string | null
+          id?: string
+          intro_markdown?: string | null
+          is_published?: boolean
+          name?: string
+          plural_name?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
