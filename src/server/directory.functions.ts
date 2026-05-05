@@ -52,7 +52,7 @@ export const getCategoryWithProviders = createServerFn({ method: "GET" })
       supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
       supabaseAdmin
         .from("providers")
-        .select("slug, name, business_type, city, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count")
+        .select("slug, name, business_type, city, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count")
         .eq("is_published", true)
         .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
         .order("is_featured", { ascending: false })
@@ -83,7 +83,7 @@ export const getCategoryStateProviders = createServerFn({ method: "GET" })
       supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
       supabaseAdmin
         .from("providers")
-        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count")
+        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count")
         .eq("is_published", true)
         .eq("state_code", stateCode)
         .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
@@ -119,7 +119,7 @@ export const getCategoryCityProviders = createServerFn({ method: "GET" })
       supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
       supabaseAdmin
         .from("providers")
-        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count, address, phone, website_url")
+        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count, address, phone, website_url")
         .eq("is_published", true)
         .eq("state_code", stateCode)
         .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
