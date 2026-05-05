@@ -1,7 +1,11 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import type { SiteFooterSettings, FooterLink, FooterMarket, FooterSocial } from "@/server/site-footer.functions";
-import { DEFAULT_FOOTER } from "@/server/site-footer.functions";
+import {
+  DEFAULT_FOOTER,
+  type SiteFooterSettings,
+  type FooterLink,
+  type FooterMarket,
+} from "@/lib/site-footer-defaults";
 
 const FOOTER_YEAR = 2026;
 
