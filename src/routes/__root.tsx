@@ -10,7 +10,25 @@ import appCss from "../styles.css?url";
  * underlying lovable.app URL in the address bar.
  */
 const PROD_HOST = "poolrentalnearme.com";
+const PROD_HOST = "poolrentalnearme.com";
 const CANONICAL_ORIGIN = "https://www.poolrentalnearme.com";
+
+// Server-only access to the incoming Request. On the client this returns null,
+// so the redirect logic below is a no-op during client navigation.
+const getServerRequest = createIsomorphicFn()
+  .client((): Request | null => null)
+  .server((): Request | null => {
+    try {
+      // Lazy require to keep the server-only import out of the client bundle.
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { getRequest } = require("@tanstack/react-start/server") as {
+        getRequest: () => Request;
+      };
+      return getRequest();
+    } catch {
+      return null;
+    }
+  });
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { HydrationDebug } from "@/components/hydration-debug";
 import { IntercomWidget } from "@/components/intercom-widget";
