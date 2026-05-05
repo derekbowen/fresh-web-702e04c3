@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { listSeoIssues, type SeoIssueRow } from "@/server/admin-tools.functions";
+import { listSeoIssues, aiFixContentPage, type SeoIssueRow } from "@/server/admin-tools.functions";
 
 export const Route = createFileRoute("/admin/seo-health")({
   beforeLoad: async () => {
@@ -18,37 +18,145 @@ export const Route = createFileRoute("/admin/seo-health")({
 });
 
 const KINDS = [
-  { id: "thin", label: "Thin pages (<500 words)" },
-  { id: "empty", label: "Empty body" },
-  { id: "missing_meta", label: "Missing meta description" },
-  { id: "title_is_slug", label: "Title is just slug" },
+  { id: "thin", label: "Thin pages (<500 words)", fixMode: "full" as const, fixLabel: "Expand body" },
+  { id: "empty", label: "Empty body", fixMode: "full" as const, fixLabel: "Generate body" },
+  { id: "missing_meta", label: "Missing meta description", fixMode: "meta_only" as const, fixLabel: "Generate meta" },
+  { id: "title_is_slug", label: "Title is just slug", fixMode: "title_only" as const, fixLabel: "Rewrite title" },
 ] as const;
 
+type FixResult = { id: string; ok: boolean; error?: string; newWords?: number; ms: number };
+
 function SeoHealth() {
-  const [kind, setKind] = React.useState<typeof KINDS[number]["id"]>("thin");
+  const [kindId, setKindId] = React.useState<typeof KINDS[number]["id"]>("thin");
+  const kind = KINDS.find((k) => k.id === kindId)!;
   const [rows, setRows] = React.useState<SeoIssueRow[]>([]);
   const [loading, setLoading] = React.useState(false);
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [results, setResults] = React.useState<Record<string, FixResult>>({});
+  const [running, setRunning] = React.useState(false);
+  const [progress, setProgress] = React.useState({ done: 0, total: 0, current: "" });
+  const abortRef = React.useRef(false);
 
   const load = React.useCallback(async () => {
     setLoading(true);
-    try { const r = await listSeoIssues({ data: { kind, limit: 200 } }); setRows(r.rows); }
+    try { const r = await listSeoIssues({ data: { kind: kindId, limit: 200 } }); setRows(r.rows); setSelected(new Set()); }
     finally { setLoading(false); }
-  }, [kind]);
+  }, [kindId]);
   React.useEffect(() => { void load(); }, [load]);
+
+  function toggle(id: string) {
+    setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  }
+  function toggleAll() {
+    setSelected((s) => s.size === rows.length ? new Set() : new Set(rows.map((r) => r.id)));
+  }
+
+  async function fixOne(row: SeoIssueRow): Promise<FixResult> {
+    const t0 = Date.now();
+    try {
+      const res = await aiFixContentPage({ data: { id: row.id, mode: kind.fixMode } });
+      return { id: row.id, ok: !!res.ok, error: (res as any).error, newWords: (res as any).newWords, ms: Date.now() - t0 };
+    } catch (e: any) {
+      return { id: row.id, ok: false, error: e?.message || "Failed", ms: Date.now() - t0 };
+    }
+  }
+
+  async function runBatch(targets: SeoIssueRow[]) {
+    if (!targets.length) return;
+    abortRef.current = false;
+    setRunning(true);
+    setProgress({ done: 0, total: targets.length, current: "" });
+    setResults({});
+    for (let i = 0; i < targets.length; i++) {
+      if (abortRef.current) break;
+      const row = targets[i];
+      setProgress({ done: i, total: targets.length, current: row.url_path || row.title || row.id });
+      const r = await fixOne(row);
+      setResults((prev) => ({ ...prev, [row.id]: r }));
+      setProgress({ done: i + 1, total: targets.length, current: row.url_path || "" });
+      // gentle pacing to avoid rate limits
+      if (i < targets.length - 1) await new Promise((res) => setTimeout(res, 600));
+    }
+    setRunning(false);
+    // refresh list to reflect fixes
+    void load();
+  }
+
+  const selectedRows = rows.filter((r) => selected.has(r.id));
+  const failedResults = Object.values(results).filter((r) => !r.ok);
 
   return (
     <AdminLayout title="SEO Health">
-      <h1 className="text-3xl font-bold">SEO Health</h1>
-      <p className="text-sm text-muted-foreground">Drill into published /p/* pages with quality issues.</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold">SEO Health</h1>
+          <p className="text-sm text-muted-foreground">Drill into published /p/* pages with quality issues, then fix them with AI.</p>
+        </div>
+        <Link to="/admin/generate-content" className="shrink-0 text-xs font-semibold text-primary hover:underline">Open Generate content →</Link>
+      </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {KINDS.map((k) => (
-          <button key={k.id} onClick={() => setKind(k.id)}
-            className={`rounded-full border px-3 py-1.5 text-sm ${kind === k.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card hover:bg-muted"}`}>
+          <button key={k.id} onClick={() => setKindId(k.id)} disabled={running}
+            className={`rounded-full border px-3 py-1.5 text-sm ${kindId === k.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card hover:bg-muted"} disabled:opacity-50`}>
             {k.label}
           </button>
         ))}
       </div>
+
+      {/* Action bar */}
+      <div className="mt-4 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card p-3">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={rows.length > 0 && selected.size === rows.length} onChange={toggleAll} disabled={running} />
+          Select all ({rows.length})
+        </label>
+        <span className="text-sm text-muted-foreground">· {selected.size} selected</span>
+        <div className="ml-auto flex gap-2">
+          {!running && (
+            <>
+              <button
+                onClick={() => runBatch(selectedRows)}
+                disabled={selected.size === 0}
+                className="rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+                ✨ {kind.fixLabel} ({selected.size})
+              </button>
+              <button
+                onClick={() => runBatch(rows.slice(0, 10))}
+                disabled={rows.length === 0}
+                className="rounded-md border border-primary px-3 py-1.5 text-sm font-semibold text-primary disabled:opacity-50">
+                Fix first 10
+              </button>
+              {failedResults.length > 0 && (
+                <button
+                  onClick={() => runBatch(rows.filter((r) => failedResults.some((f) => f.id === r.id)))}
+                  className="rounded-md border border-yellow-500 px-3 py-1.5 text-sm font-semibold text-yellow-700 dark:text-yellow-300">
+                  Retry failed ({failedResults.length})
+                </button>
+              )}
+            </>
+          )}
+          {running && (
+            <button onClick={() => { abortRef.current = true; }}
+              className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white">
+              Stop
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Progress */}
+      {(running || progress.total > 0) && (
+        <div className="mt-3 rounded-lg border border-border bg-card p-3">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>{running ? `Processing ${progress.current}` : "Done"}</span>
+            <span>{progress.done} / {progress.total}</span>
+          </div>
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+            <div className="h-full bg-primary transition-all"
+              style={{ width: `${(progress.done / Math.max(progress.total, 1)) * 100}%` }} />
+          </div>
+        </div>
+      )}
 
       <div className="mt-4 text-sm text-muted-foreground">{loading ? "Loading…" : `${rows.length} pages`}</div>
 
@@ -56,34 +164,58 @@ function SeoHealth() {
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left text-xs uppercase">
             <tr>
+              <th className="w-8 px-3 py-2"></th>
               <th className="px-3 py-2">URL</th>
               <th className="px-3 py-2">Title</th>
               <th className="px-3 py-2">Template</th>
               <th className="px-3 py-2 text-right">Words</th>
-              <th className="px-3 py-2 text-right">Updated</th>
+              <th className="px-3 py-2">Result</th>
+              <th className="px-3 py-2 text-right"></th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.id} className="border-t border-border">
-                <td className="px-3 py-2 font-mono text-xs">
-                  <a href={r.url_path || "#"} target="_blank" rel="noreferrer" className="hover:underline">{r.url_path}</a>
-                </td>
-                <td className="px-3 py-2 max-w-md truncate">{r.title || <span className="text-muted-foreground">—</span>}</td>
-                <td className="px-3 py-2 text-xs text-muted-foreground">{r.template_type || "—"}</td>
-                <td className="px-3 py-2 text-right">{r.words.toLocaleString()}</td>
-                <td className="px-3 py-2 text-right text-xs text-muted-foreground">{new Date(r.updated_at).toLocaleDateString()}</td>
-              </tr>
-            ))}
+            {rows.map((r) => {
+              const res = results[r.id];
+              return (
+                <tr key={r.id} className="border-t border-border">
+                  <td className="px-3 py-2">
+                    <input type="checkbox" checked={selected.has(r.id)} onChange={() => toggle(r.id)} disabled={running} />
+                  </td>
+                  <td className="px-3 py-2 font-mono text-xs">
+                    <a href={r.url_path || "#"} target="_blank" rel="noreferrer" className="hover:underline">{r.url_path}</a>
+                  </td>
+                  <td className="px-3 py-2 max-w-xs truncate">{r.title || <span className="text-muted-foreground">—</span>}</td>
+                  <td className="px-3 py-2 text-xs text-muted-foreground">{r.template_type || "—"}</td>
+                  <td className="px-3 py-2 text-right">{r.words.toLocaleString()}</td>
+                  <td className="px-3 py-2 text-xs">
+                    {!res ? <span className="text-muted-foreground">—</span> :
+                      res.ok ? <span className="rounded bg-green-500/20 px-1.5 py-0.5 font-bold text-green-700 dark:text-green-300">✓ {res.newWords ? `${res.newWords}w` : "ok"}</span> :
+                      <span className="rounded bg-red-500/20 px-1.5 py-0.5 font-bold text-red-700 dark:text-red-300" title={res.error}>✗ {(res.error || "").slice(0, 40)}</span>}
+                  </td>
+                  <td className="px-3 py-2 text-right">
+                    <button
+                      disabled={running}
+                      onClick={async () => {
+                        setRunning(true);
+                        setProgress({ done: 0, total: 1, current: r.url_path || "" });
+                        const out = await fixOne(r);
+                        setResults((prev) => ({ ...prev, [r.id]: out }));
+                        setProgress({ done: 1, total: 1, current: r.url_path || "" });
+                        setRunning(false);
+                        void load();
+                      }}
+                      className="rounded border border-border px-2 py-1 text-xs font-medium hover:bg-muted disabled:opacity-50">
+                      ✨ Fix
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
             {!loading && rows.length === 0 && (
-              <tr><td colSpan={5} className="px-3 py-8 text-center text-muted-foreground">No issues 🎉</td></tr>
+              <tr><td colSpan={7} className="px-3 py-8 text-center text-muted-foreground">No issues 🎉</td></tr>
             )}
           </tbody>
         </table>
-      </div>
-
-      <div className="mt-6">
-        <Link to="/admin/generate-content" className="text-sm font-semibold text-primary hover:underline">Open Generate content tool →</Link>
       </div>
     </AdminLayout>
   );
