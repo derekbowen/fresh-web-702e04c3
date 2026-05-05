@@ -140,58 +140,74 @@ function SeoHealth() {
       {/* Action bar */}
       <div className="mt-4 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card p-3">
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={rows.length > 0 && selected.size === rows.length} onChange={toggleAll} disabled={running} />
+          <input type="checkbox" checked={rows.length > 0 && selected.size === rows.length} onChange={toggleAll} />
           Select all ({rows.length})
         </label>
         <span className="text-sm text-muted-foreground">· {selected.size} selected</span>
-        <div className="ml-auto flex gap-2">
-          {!running && (
-            <>
-              <button
-                onClick={() => runBatch(selectedRows)}
-                disabled={selected.size === 0}
-                className="rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground disabled:opacity-50">
-                ✨ {kind.fixLabel} ({selected.size})
-              </button>
-              <button
-                onClick={() => runBatch(rows.slice(0, 10))}
-                disabled={rows.length === 0}
-                className="rounded-md border border-primary px-3 py-1.5 text-sm font-semibold text-primary disabled:opacity-50">
-                Fix first 10
-              </button>
-              {failedResults.length > 0 && (
-                <button
-                  onClick={() => runBatch(rows.filter((r) => failedResults.some((f) => f.id === r.id)))}
-                  className="rounded-md border border-yellow-500 px-3 py-1.5 text-sm font-semibold text-yellow-700 dark:text-yellow-300">
-                  Retry failed ({failedResults.length})
-                </button>
-              )}
-            </>
+        <div className="ml-auto flex flex-wrap gap-2">
+          <button
+            onClick={() => enqueueBatch(rows.filter((r) => selected.has(r.id)))}
+            disabled={selected.size === 0}
+            className="rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+            ⚡ Queue {kind.fixLabel} ({selected.size})
+          </button>
+          <button
+            onClick={() => enqueueBatch(rows.slice(0, 10))}
+            disabled={rows.length === 0}
+            className="rounded-md border border-primary px-3 py-1.5 text-sm font-semibold text-primary disabled:opacity-50">
+            Queue first 10
+          </button>
+          {summary.failed > 0 && (
+            <button
+              onClick={() => {
+                const failedPageIds = new Set(Object.values(jobs).filter((j) => j.status === "failed").map((j) => j.page_id));
+                void enqueueBatch(rows.filter((r) => failedPageIds.has(r.id)));
+              }}
+              className="rounded-md border border-yellow-500 px-3 py-1.5 text-sm font-semibold text-yellow-700 dark:text-yellow-300">
+              Retry failed ({summary.failed})
+            </button>
           )}
-          {running && (
-            <button onClick={() => { abortRef.current = true; }}
-              className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white">
-              Stop
+          {batchId && (summary.queued > 0 || summary.processing > 0) && (
+            <button onClick={cancelBatch} className="rounded-md border border-red-500 px-3 py-1.5 text-sm font-semibold text-red-600">
+              Cancel queue
             </button>
           )}
         </div>
       </div>
 
-      {/* Progress */}
-      {(running || progress.total > 0) && (
+      {/* Background queue progress */}
+      {(summary.queued + summary.processing + summary.done + summary.failed) > 0 && (
         <div className="mt-3 rounded-lg border border-border bg-card p-3">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{running ? `Processing ${progress.current}` : "Done"}</span>
-            <span>{progress.done} / {progress.total}</span>
+          <div className="flex flex-wrap items-center gap-3 text-xs">
+            <span className="font-semibold">Background queue</span>
+            <span className="rounded bg-muted px-2 py-0.5">⏳ Queued {summary.queued}</span>
+            <span className="rounded bg-blue-500/20 px-2 py-0.5 text-blue-700 dark:text-blue-300">⚙ Processing {summary.processing}</span>
+            <span className="rounded bg-green-500/20 px-2 py-0.5 text-green-700 dark:text-green-300">✓ Done {summary.done}</span>
+            {summary.failed > 0 && <span className="rounded bg-red-500/20 px-2 py-0.5 text-red-700 dark:text-red-300">✗ Failed {summary.failed}</span>}
+            <span className="ml-auto text-muted-foreground">Worker runs every minute. UI auto-refreshes.</span>
           </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-            <div className="h-full bg-primary transition-all"
-              style={{ width: `${(progress.done / Math.max(progress.total, 1)) * 100}%` }} />
-          </div>
+          {(() => {
+            const total = summary.queued + summary.processing + summary.done + summary.failed;
+            const done = summary.done + summary.failed;
+            const pct = total ? Math.round((done / total) * 100) : 0;
+            return (
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+              </div>
+            );
+          })()}
         </div>
       )}
 
-      <div className="mt-4 text-sm text-muted-foreground">{loading ? "Loading…" : `${rows.length} pages`}</div>
+      {/* Single-row inline progress */}
+      {running && (
+        <div className="mt-3 rounded-lg border border-border bg-card p-3">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>Fixing {progress.current}…</span>
+            <span>{progress.done} / {progress.total}</span>
+          </div>
+        </div>
+      )}
 
       <div className="mt-3 overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
