@@ -48,21 +48,26 @@ function fmtRelative(d: any) {
 
 function AdminDirectory() {
   const [rows, setRows] = React.useState<any[]>([]);
+  const [total, setTotal] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(true);
   const [busy, setBusy] = React.useState<string | null>(null);
   const [filter, setFilter] = React.useState<StatusFilter>("pending");
   const [planFilter, setPlanFilter] = React.useState<PlanFilter>("all");
   const [sort, setSort] = React.useState<SortKey>("newest");
   const [search, setSearch] = React.useState("");
+  const pageSize = 50;
 
   const load = React.useCallback(async () => {
     setLoading(true);
     try {
-      const r = await adminListPendingProviders();
+      const r = await adminListPendingProviders({ data: { page, pageSize, status: filter, search } });
       setRows(r.providers);
+      setTotal(r.total);
     } finally { setLoading(false); }
-  }, []);
+  }, [page, filter, search]);
   React.useEffect(() => { void load(); }, [load]);
+  React.useEffect(() => { setPage(1); }, [filter, search]);
 
   async function act(id: string, action: any) {
     setBusy(id + action);
