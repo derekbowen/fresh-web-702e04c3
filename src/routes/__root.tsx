@@ -1,6 +1,16 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState, redirect } from "@tanstack/react-router";
+import { getRequest } from "@tanstack/react-start/server";
 
 import appCss from "../styles.css?url";
+
+/**
+ * Production host canonicalization. If a request reaches this app on any
+ * host other than poolrentalnearme.com (e.g. *.lovable.app preview/published
+ * URLs, EC2 IP, staging), 301 to the canonical host so users never see the
+ * underlying lovable.app URL in the address bar.
+ */
+const PROD_HOST = "poolrentalnearme.com";
+const CANONICAL_ORIGIN = "https://www.poolrentalnearme.com";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { HydrationDebug } from "@/components/hydration-debug";
 import { IntercomWidget } from "@/components/intercom-widget";
