@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as SmAmenitiesDotxmlRouteImport } from './routes/sm-amenities[.]xml'
 import { Route as Sm74buq58vDotxmlRouteImport } from './routes/sm-74buq58v[.]xml'
 import { Route as Sm74buq58vLsDotxmlRouteImport } from './routes/sm-74buq58v-ls[.]xml'
@@ -90,6 +91,11 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SmAmenitiesDotxmlRoute = SmAmenitiesDotxmlRouteImport.update({
   id: '/sm-amenities.xml',
   path: '/sm-amenities.xml',
@@ -541,6 +547,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -622,6 +629,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -705,6 +713,7 @@ export interface FileRoutesById {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/academy/$slug': typeof AcademySlugRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -789,6 +798,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/sm-amenities.xml'
+    | '/unsubscribe'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
@@ -870,6 +880,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/sm-amenities.xml'
+    | '/unsubscribe'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
@@ -952,6 +963,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/sm-amenities.xml'
+    | '/unsubscribe'
     | '/academy/$slug'
     | '/account/learning'
     | '/admin/blog'
@@ -1035,6 +1047,7 @@ export interface RootRouteChildren {
   Sm74buq58vLsDotxmlRoute: typeof Sm74buq58vLsDotxmlRoute
   Sm74buq58vDotxmlRoute: typeof Sm74buq58vDotxmlRoute
   SmAmenitiesDotxmlRoute: typeof SmAmenitiesDotxmlRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   AccountLearningRoute: typeof AccountLearningRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
@@ -1080,6 +1093,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sm-amenities.xml': {
       id: '/sm-amenities.xml'
       path: '/sm-amenities.xml'
@@ -1745,6 +1765,7 @@ const rootRouteChildren: RootRouteChildren = {
   Sm74buq58vLsDotxmlRoute: Sm74buq58vLsDotxmlRoute,
   Sm74buq58vDotxmlRoute: Sm74buq58vDotxmlRoute,
   SmAmenitiesDotxmlRoute: SmAmenitiesDotxmlRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   AccountLearningRoute: AccountLearningRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
