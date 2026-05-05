@@ -171,6 +171,36 @@ function LinkChecker() {
         </div>
       )}
 
+      {filtered.length > 0 && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card p-3">
+          <span className="text-sm font-medium">Bulk action on {filtered.length} filtered link{filtered.length === 1 ? "" : "s"}:</span>
+          <button
+            onClick={() => applyBulk("replace")}
+            disabled={bulkRunning}
+            className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50"
+            title="Replaces each link with its suggested or edited URL. Links without a target are skipped."
+          >
+            ⚡ Replace all (using suggestions)
+          </button>
+          <button
+            onClick={() => applyBulk("unlink")}
+            disabled={bulkRunning}
+            className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted disabled:opacity-50"
+          >
+            Unlink all
+          </button>
+          <button
+            onClick={() => applyBulk("remove")}
+            disabled={bulkRunning}
+            className="rounded-md border border-red-500 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-500/10 disabled:opacity-50"
+          >
+            Remove all
+          </button>
+          {bulkRunning && <span className="text-xs text-muted-foreground">Working…</span>}
+          {bulkResult && <span className="ml-auto text-xs text-muted-foreground">{bulkResult}</span>}
+        </div>
+      )}
+
       <div className="mt-4 overflow-x-auto rounded-lg border border-border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
