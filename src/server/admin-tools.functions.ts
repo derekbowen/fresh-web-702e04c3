@@ -179,3 +179,136 @@ export const getIndexingStats = createServerFn({ method: "GET" })
       recentlyPublished: recent || 0,
     };
   });
+
+// ============================================================================
+// SEO fix actions: AI-powered repair for thin/empty/missing-meta/title-is-slug
+// ============================================================================
+
+const SEO_SYSTEM = `
+You write SEO + brand content for Pool Rental Near Me (PRNM), a marketplace where homeowners rent out private pools by the hour.
+Differentiators (mention naturally): 10% flat host fee (vs Swimply's 15%+), $2M liability insurance included.
+Voice: confident, friendly, host-first. Short paragraphs. Real, useful copy. No filler. Sentence case headings. No em dashes.
+Format: Markdown only. Use ## and ### headings. Include 3-5 internal links from this set where relevant:
+  /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works
+List Your Pool CTA URL: /l/draft/00000000-0000-0000-0000-000000000000/new/details
+Always end with a short CTA paragraph linking to the List Your Pool URL or /s.
+Return your answer ONLY by calling the write_page tool.
+`.trim();
+
+const SEO_TOOL = {
+  type: "function" as const,
+  function: {
+    name: "write_page",
+    description: "Return the repaired page content.",
+    parameters: {
+      type: "object",
+      properties: {
+        title: { type: "string", description: "Human-readable H1 title (case-correct, no slug-style)" },
+        seo_title: { type: "string", description: "<=60 chars" },
+        seo_description: { type: "string", description: "<=155 chars, compelling meta description" },
+        body_markdown: { type: "string", description: "Full markdown body, 800-1200 words, no frontmatter" },
+      },
+      required: ["title", "seo_title", "seo_description", "body_markdown"],
+      additionalProperties: false,
+    },
+  },
+};
+
+function humanizeSlug(slug: string): string {
+  return slug.replace(/^\/p\//, "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+export const aiFixContentPage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      mode: z.enum(["full", "meta_only", "title_only"]).default("full"),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
+
+    const { data: page, error: pErr } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .select("id, url_path, slug, title, seo_title, seo_description, body_markdown, template_type, category")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (pErr || !page) return { ok: false, error: "Page not found" };
+
+    const topic = humanizeSlug(page.url_path || page.slug || "");
+    const currentBody = page.body_markdown || "";
+    const wordCount = currentBody.split(/\s+/).filter(Boolean).length;
+
+    let userPrompt = "";
+    if (data.mode === "meta_only" || data.mode === "title_only") {
+      userPrompt = `Generate ONLY a clean human-readable title and SEO title/description for this existing page.
+
+URL: ${page.url_path}
+Topic (derived from slug): ${topic}
+Existing title: ${page.title || "(none)"}
+Existing body excerpt (first 800 chars): ${currentBody.slice(0, 800)}
+
+Produce:
+- title: proper sentence-case H1 (NOT the slug)
+- seo_title: <=60 chars, includes primary keyword
+- seo_description: <=155 chars, compelling and specific
+
+For body_markdown, return the EXISTING body unchanged.`;
+    } else {
+      const reason =
+        wordCount === 0 ? "Page body is EMPTY — write fresh content." :
+        wordCount < 500 ? `Page body is THIN (${wordCount} words) — expand to 800-1200 words while keeping any existing facts.` :
+        "Improve the existing page.";
+      userPrompt = `Repair this content page.
+
+URL: ${page.url_path}
+Topic (derived from slug): ${topic}
+Existing title: ${page.title || "(none)"}
+Issue: ${reason}
+${currentBody ? `Existing body to expand/improve:\n---\n${currentBody.slice(0, 3000)}\n---` : ""}
+
+Length: 800-1200 words. Use ## sections and ### sub-points. Strong opening, no fluff.`;
+    }
+
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [{ role: "system", content: SEO_SYSTEM }, { role: "user", content: userPrompt }],
+        tools: [SEO_TOOL],
+        tool_choice: { type: "function", function: { name: "write_page" } },
+      }),
+    });
+    if (resp.status === 402) return { ok: false, error: "AI credits exhausted" };
+    if (resp.status === 429) return { ok: false, error: "Rate limited — slow down" };
+    if (!resp.ok) return { ok: false, error: `AI gateway ${resp.status}: ${(await resp.text()).slice(0, 200)}` };
+
+    const json = await resp.json();
+    const tc = json?.choices?.[0]?.message?.tool_calls?.[0];
+    if (!tc?.function?.arguments) return { ok: false, error: "AI returned no tool call" };
+    const gen = JSON.parse(tc.function.arguments) as {
+      title: string; seo_title: string; seo_description: string; body_markdown: string;
+    };
+
+    const update: any = {
+      title: gen.title || page.title,
+      seo_title: (gen.seo_title || page.seo_title || gen.title || "").slice(0, 70),
+      seo_description: (gen.seo_description || page.seo_description || "").slice(0, 160),
+      updated_at: new Date().toISOString(),
+    };
+    if (data.mode === "full" && gen.body_markdown && gen.body_markdown.length > 300) {
+      update.body_markdown = gen.body_markdown;
+    }
+
+    const { error: uErr } = await (supabaseAdmin as any).from("content_pages").update(update).eq("id", data.id);
+    if (uErr) return { ok: false, error: uErr.message };
+    return {
+      ok: true,
+      newWords: (update.body_markdown || currentBody).split(/\s+/).filter(Boolean).length,
+      newTitle: update.title,
+    };
+  });
