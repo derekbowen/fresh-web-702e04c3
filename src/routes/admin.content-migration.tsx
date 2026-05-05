@@ -59,16 +59,17 @@ function AdminContentMigration() {
 
   React.useEffect(() => {
     void loadNext();
-  }, [loadNext]);
+    void loadProgress();
+  }, [loadNext, loadProgress]);
 
-  const runScrape = async () => {
+  const runScrape = React.useCallback(async () => {
     if (!next?.id) return;
     setError(null);
     setBusy(true);
     try {
       const res = await scrapeContentPage({ data: { id: next.id } });
       setScraped(res.page);
-      // Auto-advance to the next pending row
+      void loadProgress();
       try {
         const nextRes = await nextPendingPage({
           data: { template_type: templateType },
@@ -79,10 +80,21 @@ function AdminContentMigration() {
       }
     } catch (e: any) {
       setError(e?.message ?? String(e));
+      setAutoRun(false);
     } finally {
       setBusy(false);
     }
-  };
+  }, [next?.id, templateType, loadProgress]);
+
+  // Auto-run loop: when enabled, keep scraping until no pending rows remain.
+  React.useEffect(() => {
+    if (!autoRun || busy) return;
+    if (!next?.id) {
+      setAutoRun(false);
+      return;
+    }
+    void runScrape();
+  }, [autoRun, busy, next?.id, runScrape]);
 
   return (
     <div className="flex min-h-screen flex-col">
