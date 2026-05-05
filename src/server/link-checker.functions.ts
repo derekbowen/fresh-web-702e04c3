@@ -153,50 +153,113 @@ export const scanBrokenLinks = createServerFn({ method: "POST" })
     broken.length = 0;
     broken.push(...filteredBroken);
 
-    // Suggest replacements for missing /p/ pages by fuzzy slug match (legacy_slugs first, then ilike)
-    const missingSlugs = Array.from(new Set(
-      broken.filter((b) => b.reason === "missing_p_page").map((b) => {
-        const c = classifyHref(b.href);
-        return c.path ? c.path.replace(/^\/p\//, "").replace(/\/$/, "") : "";
-      }).filter(Boolean),
-    ));
+    // === Smart suggestions for missing /p/ targets ===
+    // Combine the broken slug with the link label text. Score candidate pages by:
+    //   (a) exact legacy_slugs hit  → highest
+    //   (b) exact slug equality     → very high
+    //   (c) token overlap (Jaccard) on (broken-slug-tokens ∪ label-tokens) vs candidate slug+title tokens
+    //   (d) prefix/contains bonus, length-distance penalty
+    const STOP = new Set([
+      "the","a","an","and","or","of","in","at","to","for","by","on","near","me","you","your",
+      "is","are","with","best","top","find","how","what","pool","pools","rental","rentals",
+    ]);
+    const slugify = (s: string) =>
+      (s || "").toLowerCase().normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    const tokenize = (s: string) =>
+      slugify(s).split("-").filter((t) => t && !STOP.has(t) && t.length > 1);
 
-    const suggestions = new Map<string, { href: string; reason: string }>();
-    for (const slug of missingSlugs) {
-      // 1) legacy_slugs exact match
-      const { data: legacy } = await sb
-        .from("content_pages")
-        .select("url_path")
-        .contains("legacy_slugs", [slug])
-        .eq("status", "published")
-        .limit(1);
-      if (legacy && legacy.length) {
-        suggestions.set(slug, { href: (legacy[0] as any).url_path, reason: "legacy slug match" });
+    // Group broken links by (slug, labelSlug) so we score each unique pair once.
+    type Pair = { slug: string; label: string; labelSlug: string };
+    const pairKey = (p: Pair) => `${p.slug}::${p.labelSlug}`;
+    const pairs = new Map<string, Pair>();
+    const brokenSlugOf = (b: BrokenLink) => {
+      const c = classifyHref(b.href);
+      return c.path ? c.path.replace(/^\/p\//, "").replace(/\/$/, "") : "";
+    };
+    for (const b of broken) {
+      if (b.reason !== "missing_p_page") continue;
+      const slug = brokenSlugOf(b);
+      if (!slug) continue;
+      const labelSlug = slugify(b.label);
+      pairs.set(pairKey({ slug, label: b.label, labelSlug }), { slug, label: b.label, labelSlug });
+    }
+
+    const suggestions = new Map<string, { href: string; reason: string; score: number }>();
+
+    for (const pair of pairs.values()) {
+      const { slug, labelSlug } = pair;
+      const slugTokens = tokenize(slug);
+      const labelTokens = tokenize(labelSlug);
+      const queryTokens = Array.from(new Set([...slugTokens, ...labelTokens]));
+      if (!queryTokens.length) continue;
+
+      // 1) legacy_slugs exact (try broken slug, then label slug)
+      const legacyTry = async (s: string) => {
+        if (!s) return null;
+        const { data } = await sb
+          .from("content_pages").select("url_path").contains("legacy_slugs", [s])
+          .eq("status", "published").limit(1);
+        return data && data.length ? (data[0] as any).url_path as string : null;
+      };
+      const legacyHit = (await legacyTry(slug)) || (await legacyTry(labelSlug));
+      if (legacyHit) {
+        suggestions.set(pairKey(pair), { href: legacyHit, reason: "legacy slug match", score: 100 });
         continue;
       }
-      // 2) ilike close match
-      const { data: similar } = await sb
-        .from("content_pages")
-        .select("url_path, slug")
-        .ilike("slug", `%${slug.replace(/[%_]/g, "")}%`)
-        .eq("status", "published")
-        .like("url_path", "/p/%")
-        .limit(3);
-      if (similar && similar.length) {
-        // pick shortest difference in length
-        const best = (similar as any[]).sort((a, b) =>
-          Math.abs((a.slug || "").length - slug.length) - Math.abs((b.slug || "").length - slug.length),
-        )[0];
-        suggestions.set(slug, { href: best.url_path, reason: "similar slug" });
+
+      // 2) Pull candidates by ilike on the most distinctive tokens (longest first)
+      const ranked = [...queryTokens].sort((a, b) => b.length - a.length).slice(0, 3);
+      const candidates = new Map<string, { url_path: string; slug: string; title: string | null }>();
+      for (const tok of ranked) {
+        const safe = tok.replace(/[%_]/g, "");
+        if (safe.length < 3) continue;
+        const [{ data: bySlug }, { data: byTitle }] = await Promise.all([
+          sb.from("content_pages").select("url_path, slug, title")
+            .ilike("slug", `%${safe}%`).eq("status", "published").like("url_path", "/p/%").limit(15),
+          sb.from("content_pages").select("url_path, slug, title")
+            .ilike("title", `%${safe}%`).eq("status", "published").like("url_path", "/p/%").limit(15),
+        ]);
+        for (const r of [...(bySlug || []), ...(byTitle || [])] as any[]) {
+          if (r?.url_path) candidates.set(r.url_path, r);
+        }
+        if (candidates.size >= 40) break;
       }
+      if (!candidates.size) continue;
+
+      // 3) Score candidates
+      const querySet = new Set(queryTokens);
+      let best: { href: string; reason: string; score: number } | null = null;
+      for (const c of candidates.values()) {
+        const cTokens = new Set([...tokenize(c.slug || ""), ...tokenize(c.title || "")]);
+        if (!cTokens.size) continue;
+        let inter = 0;
+        for (const t of querySet) if (cTokens.has(t)) inter++;
+        const union = new Set([...querySet, ...cTokens]).size;
+        const jaccard = union ? inter / union : 0;
+        // bonuses
+        const exactSlug = c.slug === slug ? 0.4 : 0;
+        const labelExact = labelSlug && c.slug === labelSlug ? 0.35 : 0;
+        const prefix = c.slug && (c.slug.startsWith(slug) || slug.startsWith(c.slug)) ? 0.1 : 0;
+        const lenPenalty = Math.min(0.15, Math.abs((c.slug || "").length - slug.length) / 200);
+        const score = jaccard + exactSlug + labelExact + prefix - lenPenalty;
+        if (score > 0.25 && (!best || score > best.score)) {
+          const reason = exactSlug ? "exact slug" : labelExact ? "label matches slug"
+            : inter > 1 ? `${inter} shared terms` : "similar content";
+          best = { href: c.url_path, reason, score: Math.round(score * 100) / 100 };
+        }
+      }
+      if (best) suggestions.set(pairKey(pair), best);
     }
 
     for (const b of broken) {
       if (b.reason !== "missing_p_page") continue;
-      const c = classifyHref(b.href);
-      const slug = c.path ? c.path.replace(/^\/p\//, "").replace(/\/$/, "") : "";
-      const s = suggestions.get(slug);
-      if (s) b.suggestion = s;
+      const slug = brokenSlugOf(b);
+      const k = `${slug}::${slugify(b.label)}`;
+      const s = suggestions.get(k);
+      if (s) b.suggestion = { href: s.href, reason: s.reason };
     }
 
     return {
