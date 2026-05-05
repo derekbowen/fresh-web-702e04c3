@@ -188,7 +188,7 @@ export const adminUpdateProvider = createServerFn({ method: "POST" })
       patch.is_featured = false;
       patch.featured_until = null;
     }
-    const { error } = await sb.from("providers").update(patch).eq("id", data.id);
+    const { error } = await (sb.from("providers") as any).update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
