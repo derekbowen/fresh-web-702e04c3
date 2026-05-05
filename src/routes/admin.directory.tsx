@@ -214,11 +214,19 @@ function AdminDirectory() {
                       <a href={`/providers/${p.slug}`} target="_blank" rel="noreferrer" className="text-primary hover:underline">/providers/{p.slug}</a>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-3 text-xs">
-                      <span className={p.listing_paid_until && new Date(p.listing_paid_until) > new Date() ? "text-green-700" : "text-muted-foreground"}>
-                        Paid until: {p.listing_paid_until ? new Date(p.listing_paid_until).toLocaleDateString() : "—"}
+                      <span
+                        title={p.listing_paid_until || ""}
+                        className={p.listing_paid_until && new Date(p.listing_paid_until) > new Date() ? "text-green-700" : "text-muted-foreground"}
+                      >
+                        Paid until: {fmtDate(p.listing_paid_until)}
+                        {p.listing_paid_until && <span className="ml-1 opacity-70">({fmtRelative(p.listing_paid_until)})</span>}
                       </span>
-                      <span className={p.featured_until && new Date(p.featured_until) > new Date() ? "text-primary" : "text-muted-foreground"}>
-                        Featured until: {p.featured_until ? new Date(p.featured_until).toLocaleDateString() : "—"}
+                      <span
+                        title={p.featured_until || ""}
+                        className={p.featured_until && new Date(p.featured_until) > new Date() ? "text-primary" : "text-muted-foreground"}
+                      >
+                        Featured until: {fmtDate(p.featured_until)}
+                        {p.featured_until && <span className="ml-1 opacity-70">({fmtRelative(p.featured_until)})</span>}
                       </span>
                     </div>
                   </div>
