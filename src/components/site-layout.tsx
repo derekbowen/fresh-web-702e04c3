@@ -48,30 +48,164 @@ export function SiteHeader() {
   return <SiteHeaderInner />;
 }
 
+const HEADER_LINKS: Array<{ label: string; href: string; internal?: boolean; exact?: boolean }> = [
+  { label: "Home", href: "/", internal: true, exact: true },
+  { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
+  { label: "Pool Pros", href: "/directory", internal: true },
+  { label: "How It Works", href: "/p/how-it-works" },
+  { label: "Search", href: "https://www.poolrentalnearme.com/s" },
+];
+
 function SiteHeaderInner() {
+  const [open, setOpen] = React.useState(false);
+  const close = React.useCallback(() => setOpen(false), []);
+
+  // Lock body scroll when menu is open
+  React.useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [open]);
+
+  // Close on Escape
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        <Link to="/" className="flex items-center gap-2" onClick={close}>
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
               <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1v3c-1.5 0-2.5 1-4 1s-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1v-3zM6 14V5a3 3 0 0 1 6 0v9M12 9h6a3 3 0 0 1 0 6" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
             </svg>
           </div>
-          <span className="text-lg font-bold tracking-tight text-foreground">Pool Rental Near Me</span>
+          <span className="text-base font-bold tracking-tight text-foreground sm:text-lg">Pool Rental Near Me</span>
         </Link>
+
         <nav className="hidden items-center gap-6 md:flex">
-          <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "text-foreground" }}>Home</Link>
-          <a href="https://www.poolrentalnearme.com/public-pools" className="text-sm font-medium text-muted-foreground hover:text-foreground">Public Pools</a>
-          <Link to="/directory" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground" }}>Pool Pros</Link>
-          <a href={rel("/p/how-it-works")} className="text-sm font-medium text-muted-foreground hover:text-foreground">How It Works</a>
-          <a href="https://www.poolrentalnearme.com/s" className="text-sm font-medium text-muted-foreground hover:text-foreground">Search</a>
+          {HEADER_LINKS.map((l) =>
+            l.internal ? (
+              <Link
+                key={l.label}
+                to={l.href}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                activeOptions={l.exact ? { exact: true } : undefined}
+                activeProps={{ className: "text-foreground" }}
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a key={l.label} href={rel(l.href)} className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                {l.label}
+              </a>
+            )
+          )}
         </nav>
-        <a href={marketplace("/l/draft/00000000-0000-0000-0000-000000000000/new/details")} className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow">List Your Pool</a>
+
+        <div className="flex items-center gap-2">
+          <a
+            href={marketplace("/l/draft/00000000-0000-0000-0000-000000000000/new/details")}
+            className="hidden h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow sm:inline-flex"
+          >
+            List Your Pool
+          </a>
+          <button
+            type="button"
+            aria-label="Open menu"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen(true)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted md:hidden"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6" aria-hidden="true">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="18" x2="20" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile slide-out */}
+      <div
+        className={`fixed inset-0 z-50 md:hidden ${open ? "" : "pointer-events-none"}`}
+        aria-hidden={!open}
+      >
+        <div
+          className={`absolute inset-0 bg-black/50 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
+          onClick={close}
+        />
+        <aside
+          id="mobile-nav"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
+          className={`absolute right-0 top-0 flex h-full w-[85%] max-w-sm flex-col bg-background shadow-xl transition-transform duration-200 ease-out ${open ? "translate-x-0" : "translate-x-full"}`}
+        >
+          <div className="flex h-16 items-center justify-between border-b border-border px-4">
+            <span className="text-base font-semibold text-foreground">Menu</span>
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={close}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <nav className="flex-1 overflow-y-auto px-2 py-3">
+            <ul className="flex flex-col">
+              {HEADER_LINKS.map((l) => (
+                <li key={l.label}>
+                  {l.internal ? (
+                    <Link
+                      to={l.href}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                      activeOptions={l.exact ? { exact: true } : undefined}
+                      activeProps={{ className: "block rounded-md px-3 py-3 text-base font-semibold bg-muted text-foreground" }}
+                    >
+                      {l.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={rel(l.href)}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    >
+                      {l.label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div className="border-t border-border p-4">
+            <a
+              href={marketplace("/l/draft/00000000-0000-0000-0000-000000000000/new/details")}
+              onClick={close}
+              className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow"
+            >
+              List Your Pool
+            </a>
+          </div>
+        </aside>
       </div>
     </header>
   );
 }
+
 
 const SOCIAL_ICONS: Record<string, React.ReactNode> = {
   facebook: <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>,
