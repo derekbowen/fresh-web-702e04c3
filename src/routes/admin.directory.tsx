@@ -260,6 +260,34 @@ function Badge({ children, tone }: { children: React.ReactNode; tone?: "ok" | "w
   return <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${cls}`}>{children}</span>;
 }
 
+function TimestampPill({ label, value, activeClass }: { label: string; value: string | null | undefined; activeClass: string }) {
+  const [copied, setCopied] = React.useState(false);
+  const isActive = !!value && new Date(value) > new Date();
+  const iso = value ? new Date(value).toISOString() : "";
+  async function copy() {
+    if (!iso) return;
+    try { await navigator.clipboard.writeText(iso); setCopied(true); setTimeout(() => setCopied(false), 1200); } catch {}
+  }
+  return (
+    <span className={`inline-flex items-center gap-1 ${isActive ? activeClass : "text-muted-foreground"}`}>
+      <span title={iso || "—"}>
+        {label}: {fmtDate(value)}
+        {value && <span className="ml-1 opacity-70">({fmtRelative(value)})</span>}
+      </span>
+      {value && (
+        <button
+          type="button"
+          onClick={copy}
+          title={`Copy ISO-8601: ${iso}`}
+          className="rounded border border-border bg-background px-1.5 py-0.5 text-[10px] font-mono hover:bg-secondary"
+        >
+          {copied ? "✓" : "copy"}
+        </button>
+      )}
+    </span>
+  );
+}
+
 function Btn({ children, onClick, busy, tone }: { children: React.ReactNode; onClick: () => void; busy?: boolean; tone?: "ok" | "danger" | "primary" }) {
   const cls = tone === "ok" ? "bg-green-600 text-white"
     : tone === "danger" ? "bg-red-600 text-white"
