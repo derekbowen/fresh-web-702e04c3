@@ -66,6 +66,116 @@ export const getCategoryWithProviders = createServerFn({ method: "GET" })
     };
   });
 
+const STATE_NAMES: Record<string, string> = {
+  AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",DC:"District of Columbia",
+};
+export const stateName = (code: string) => STATE_NAMES[code.toUpperCase()] ?? code.toUpperCase();
+
+function citySlugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+export const getCategoryStateProviders = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ slug: z.string().min(1), state: z.string().length(2) }).parse(d))
+  .handler(async ({ data }) => {
+    const stateCode = data.state.toUpperCase();
+    const [{ data: cat }, { data: rows }] = await Promise.all([
+      supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
+      supabaseAdmin
+        .from("providers")
+        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count")
+        .eq("is_published", true)
+        .eq("state_code", stateCode)
+        .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
+        .order("is_featured", { ascending: false })
+        .order("rating", { ascending: false, nullsFirst: false })
+        .order("name")
+        .limit(500),
+    ]);
+    const provs = (rows ?? []) as any[];
+    const cityMap = new Map<string, { name: string; slug: string; count: number }>();
+    for (const r of provs) {
+      if (!r.city) continue;
+      const slug = r.city_slug || citySlugify(r.city);
+      const cur = cityMap.get(slug);
+      if (cur) cur.count++;
+      else cityMap.set(slug, { name: r.city, slug, count: 1 });
+    }
+    return {
+      category: (cat as ServiceCategory | null) ?? null,
+      stateCode,
+      stateName: stateName(stateCode),
+      providers: provs,
+      cities: [...cityMap.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+    };
+  });
+
+export const getCategoryCityProviders = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ slug: z.string().min(1), state: z.string().length(2), city: z.string().min(1) }).parse(d))
+  .handler(async ({ data }) => {
+    const stateCode = data.state.toUpperCase();
+    const citySlug = data.city.toLowerCase();
+    const [{ data: cat }, { data: provs }] = await Promise.all([
+      supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
+      supabaseAdmin
+        .from("providers")
+        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count, address, phone, website_url")
+        .eq("is_published", true)
+        .eq("state_code", stateCode)
+        .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
+        .order("is_featured", { ascending: false })
+        .order("rating", { ascending: false, nullsFirst: false })
+        .order("name")
+        .limit(500),
+    ]);
+    const filtered = ((provs ?? []) as any[]).filter((p) => {
+      if (p.city_slug) return p.city_slug.toLowerCase() === citySlug;
+      if (p.city) return citySlugify(p.city) === citySlug;
+      return false;
+    });
+    const displayCity = filtered[0]?.city || citySlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    return {
+      category: (cat as ServiceCategory | null) ?? null,
+      stateCode,
+      stateName: stateName(stateCode),
+      citySlug,
+      cityName: displayCity,
+      providers: filtered,
+    };
+  });
+
+// All (state, city) combos for a category — used by sitemap and state hubs
+export const listCategoryGeoCoverage = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ slug: z.string().min(1) }).parse(d))
+  .handler(async ({ data }) => {
+    const { data: rows } = await supabaseAdmin
+      .from("providers")
+      .select("city, city_slug, state_code")
+      .eq("is_published", true)
+      .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
+      .limit(5000);
+    const states = new Map<string, Map<string, { name: string; slug: string; count: number }>>();
+    for (const r of rows ?? []) {
+      if (!r.state_code || !r.city) continue;
+      const sc = r.state_code.toUpperCase();
+      const slug = r.city_slug || citySlugify(r.city);
+      if (!states.has(sc)) states.set(sc, new Map());
+      const cm = states.get(sc)!;
+      const cur = cm.get(slug);
+      if (cur) cur.count++;
+      else cm.set(slug, { name: r.city, slug, count: 1 });
+    }
+    return {
+      states: [...states.entries()]
+        .map(([code, cm]) => ({
+          code,
+          name: stateName(code),
+          cities: [...cm.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    };
+  });
+
 const ListProviderInput = z.object({
   name: z.string().min(2).max(120),
   primary_category: z.string().min(2),
