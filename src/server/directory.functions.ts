@@ -247,17 +247,216 @@ async function requireAdmin(userId: string) {
 
 export const adminListPendingProviders = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((d) => z.object({
+    page: z.number().int().min(1).default(1),
+    pageSize: z.number().int().min(10).max(200).default(50),
+    status: z.enum(["pending","approved","rejected","all"]).default("all"),
+    search: z.string().trim().max(120).default(""),
+  }).partial().parse(d ?? {}))
+  .handler(async ({ context, data }) => {
     const { userId } = context as { userId: string };
     await requireAdmin(userId);
-    const { data } = await supabaseAdmin
+    const page = data?.page ?? 1;
+    const pageSize = data?.pageSize ?? 50;
+    const status = data?.status ?? "all";
+    const search = (data?.search ?? "").trim();
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let q = supabaseAdmin
       .from("providers")
-      .select("id, slug, name, primary_category, city, state_code, email, submitter_email, description, website_url, phone, services, created_at, submission_status, is_published, is_featured, plan, featured_until, listing_paid_until")
+      .select("id, slug, name, primary_category, city, state_code, email, submitter_email, description, website_url, phone, services, created_at, submission_status, is_published, is_featured, plan, featured_until, listing_paid_until, gsc_impressions, gsc_clicks, gsc_position, ai_content_generated_at, source_type", { count: "exact" })
       .order("submission_status", { ascending: true })
       .order("created_at", { ascending: false })
-      .limit(200);
-    return { providers: data ?? [] };
+      .range(from, to);
+    if (status !== "all") q = q.eq("submission_status", status);
+    if (search) {
+      const esc = search.replace(/[%_,]/g, "");
+      q = q.or(`name.ilike.%${esc}%,slug.ilike.%${esc}%,city.ilike.%${esc}%,state_code.ilike.%${esc}%,email.ilike.%${esc}%`);
+    }
+    const { data: rows, count } = await q;
+    return { providers: rows ?? [], total: count ?? 0, page, pageSize };
   });
+
+// ============ Scrape competitor directory URL → create provider ============
+export const adminScrapeProviderUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    url: z.string().url(),
+    autoCreate: z.boolean().default(true),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    const { userId } = context as { userId: string };
+    await requireAdmin(userId);
+    const apiKey = process.env.FIRECRAWL_API_KEY;
+    if (!apiKey) throw new Error("FIRECRAWL_API_KEY is not configured");
+
+    const sourceType = guessSourceType(data.url);
+    const { data: job } = await supabaseAdmin
+      .from("provider_scrape_jobs")
+      .insert({ source_url: data.url, source_type: sourceType, status: "running", created_by: userId })
+      .select("id")
+      .single();
+    const jobId = job?.id as string;
+
+    try {
+      const res = await fetch("https://api.firecrawl.dev/v2/scrape", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          url: data.url,
+          formats: [
+            { type: "json", prompt: "Extract a single business listing as JSON with fields: name (string), description (string, 2-4 sentences), website (string|null), phone (string|null), email (string|null), address (string|null), city (string|null), state_code (2-letter US state, string|null), services (string[]), rating (number|null), rating_count (integer|null), logo_url (string|null), hero_image_url (string|null), gallery_urls (string[])." }
+          ],
+          onlyMainContent: true,
+        }),
+      });
+      const payload: any = await res.json();
+      if (!res.ok || !payload?.success) throw new Error(payload?.error || `Firecrawl ${res.status}`);
+      const j = payload.data?.json ?? payload.json ?? {};
+
+      let providerId: string | null = null;
+      if (data.autoCreate && j?.name) {
+        const slug = slugify(`${j.name}-${j.city ?? ""}-${j.state_code ?? ""}`);
+        const upsert = await supabaseAdmin
+          .from("providers")
+          .upsert({
+            slug,
+            name: j.name,
+            description: j.description ?? null,
+            website_url: j.website ?? null,
+            phone: j.phone ?? null,
+            email: j.email ?? null,
+            address: j.address ?? null,
+            city: j.city ?? null,
+            state_code: j.state_code ?? null,
+            services: Array.isArray(j.services) ? j.services : [],
+            rating: typeof j.rating === "number" ? j.rating : null,
+            rating_count: typeof j.rating_count === "number" ? j.rating_count : null,
+            logo_url: j.logo_url ?? null,
+            hero_image_url: j.hero_image_url ?? null,
+            gallery_urls: Array.isArray(j.gallery_urls) ? j.gallery_urls : [],
+            source_url: data.url,
+            source_type: sourceType,
+            scraped_at: new Date().toISOString(),
+            submission_status: "pending",
+            is_published: false,
+          }, { onConflict: "slug" })
+          .select("id")
+          .single();
+        providerId = (upsert.data as any)?.id ?? null;
+      }
+
+      await supabaseAdmin.from("provider_scrape_jobs").update({
+        status: "success", provider_id: providerId, raw: j,
+      }).eq("id", jobId);
+
+      return { ok: true, jobId, providerId, extracted: j };
+    } catch (e: any) {
+      await supabaseAdmin.from("provider_scrape_jobs").update({
+        status: "failed", error: String(e?.message ?? e),
+      }).eq("id", jobId);
+      throw e;
+    }
+  });
+
+export const adminListScrapeJobs = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin((context as any).userId);
+    const { data } = await supabaseAdmin
+      .from("provider_scrape_jobs")
+      .select("id, source_url, source_type, status, provider_id, error, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    return { jobs: data ?? [] };
+  });
+
+// ============ GSC import (CSV upload from user) ============
+export const adminImportGscRows = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({
+    rows: z.array(z.object({
+      slug: z.string(),
+      impressions: z.number().int().nonnegative(),
+      clicks: z.number().int().nonnegative(),
+      position: z.number().nullable().optional(),
+    })).max(5000),
+  }).parse(d))
+  .handler(async ({ context, data }) => {
+    await requireAdmin((context as any).userId);
+    const now = new Date().toISOString();
+    let updated = 0;
+    for (const r of data.rows) {
+      const { error, count } = await supabaseAdmin
+        .from("providers")
+        .update({
+          gsc_impressions: r.impressions,
+          gsc_clicks: r.clicks,
+          gsc_position: r.position ?? null,
+          gsc_updated_at: now,
+        }, { count: "exact" })
+        .eq("slug", r.slug);
+      if (!error && (count ?? 0) > 0) updated += 1;
+    }
+    return { ok: true, updated, total: data.rows.length };
+  });
+
+// ============ AI long-form content backfill ============
+export const adminGenerateProviderContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await requireAdmin((context as any).userId);
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+    const { data: p } = await supabaseAdmin
+      .from("providers")
+      .select("id, name, city, state_code, primary_category, description, services, website_url")
+      .eq("id", data.id)
+      .single();
+    if (!p) throw new Error("Provider not found");
+
+    const sys = "You write SEO-optimized, factual long-form content for a pool services directory. Use second person, friendly founder-mentor tone. No banned words: leverage, utilize, seamlessly, robust, dive into, elevate, game-changer, unlock, journey, landscape, bustling, thriving, vibrant, state-of-the-art, cutting-edge. No em dashes. Output valid JSON only.";
+    const user = `Write content for ${p.name}${p.city ? ` in ${p.city}, ${p.state_code}` : ""}. Category: ${p.primary_category ?? "pool services"}. Services: ${(p.services ?? []).join(", ") || "general pool services"}. Existing description: ${p.description ?? "(none)"}.
+
+Return JSON with shape: { "long_description": string (700-900 words, markdown, no headings above h3), "faq": Array<{question: string, answer: string}> (5 items, locally relevant) }.`;
+
+    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [{ role: "system", content: sys }, { role: "user", content: user }],
+        response_format: { type: "json_object" },
+      }),
+    });
+    if (!r.ok) throw new Error(`AI gateway ${r.status}: ${await r.text()}`);
+    const j: any = await r.json();
+    const content = JSON.parse(j.choices?.[0]?.message?.content ?? "{}");
+    await supabaseAdmin.from("providers").update({
+      long_description: content.long_description ?? null,
+      faq: Array.isArray(content.faq) ? content.faq : [],
+      ai_content_generated_at: new Date().toISOString(),
+    }).eq("id", data.id);
+    return { ok: true };
+  });
+
+function guessSourceType(url: string): string {
+  const h = (() => { try { return new URL(url).hostname; } catch { return ""; } })();
+  if (h.includes("yelp")) return "yelp";
+  if (h.includes("google")) return "google";
+  if (h.includes("bbb.org")) return "bbb";
+  if (h.includes("angi") || h.includes("angieslist")) return "angi";
+  if (h.includes("houzz")) return "houzz";
+  if (h.includes("thumbtack")) return "thumbtack";
+  return "web";
+}
+
+function slugify(s: string) {
+  return s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || `provider-${Date.now()}`;
+}
 
 export const adminUpdateProvider = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
