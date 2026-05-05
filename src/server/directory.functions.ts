@@ -52,7 +52,7 @@ export const getCategoryWithProviders = createServerFn({ method: "GET" })
       supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
       supabaseAdmin
         .from("providers")
-        .select("slug, name, business_type, city, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count")
+        .select("slug, name, business_type, city, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count")
         .eq("is_published", true)
         .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
         .order("is_featured", { ascending: false })
@@ -83,7 +83,7 @@ export const getCategoryStateProviders = createServerFn({ method: "GET" })
       supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
       supabaseAdmin
         .from("providers")
-        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count")
+        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count")
         .eq("is_published", true)
         .eq("state_code", stateCode)
         .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
@@ -119,7 +119,7 @@ export const getCategoryCityProviders = createServerFn({ method: "GET" })
       supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
       supabaseAdmin
         .from("providers")
-        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, rating, rating_count, address, phone, website_url")
+        .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count, address, phone, website_url")
         .eq("is_published", true)
         .eq("state_code", stateCode)
         .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
@@ -252,7 +252,7 @@ export const adminListPendingProviders = createServerFn({ method: "GET" })
     await requireAdmin(userId);
     const { data } = await supabaseAdmin
       .from("providers")
-      .select("id, slug, name, primary_category, city, state_code, email, submitter_email, description, website_url, phone, services, created_at, submission_status, is_published, is_featured, plan")
+      .select("id, slug, name, primary_category, city, state_code, email, submitter_email, description, website_url, phone, services, created_at, submission_status, is_published, is_featured, plan, featured_until, listing_paid_until")
       .order("submission_status", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(200);
@@ -265,7 +265,12 @@ export const adminUpdateProvider = createServerFn({ method: "POST" })
     z
       .object({
         id: z.string().uuid(),
-        action: z.enum(["approve", "reject", "publish", "unpublish", "feature", "unfeature", "delete"]),
+        action: z.enum([
+          "approve", "reject", "publish", "unpublish",
+          "feature", "unfeature",
+          "mark_paid", "mark_unpaid",
+          "delete",
+        ]),
       })
       .parse(d),
   )
@@ -279,6 +284,7 @@ export const adminUpdateProvider = createServerFn({ method: "POST" })
       return { ok: true };
     }
     const patch: Record<string, unknown> = {};
+    const inOneYear = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
     if (data.action === "approve") {
       patch.submission_status = "approved";
       patch.is_published = true;
@@ -291,10 +297,27 @@ export const adminUpdateProvider = createServerFn({ method: "POST" })
     if (data.action === "unpublish") patch.is_published = false;
     if (data.action === "feature") {
       patch.is_featured = true;
-      patch.featured_until = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+      patch.featured_until = inOneYear;
       patch.plan = "featured";
+      // featured implies a paid listing too
+      patch.listing_paid_until = inOneYear;
     }
     if (data.action === "unfeature") {
+      patch.is_featured = false;
+      patch.featured_until = null;
+      // downgrade plan back to paid if still within paid window, else free
+      const { data: row } = await sb.from("providers").select("listing_paid_until").eq("id", data.id).maybeSingle();
+      const paidUntil = (row as any)?.listing_paid_until ? new Date((row as any).listing_paid_until).getTime() : 0;
+      patch.plan = paidUntil > Date.now() ? "paid" : "free";
+    }
+    if (data.action === "mark_paid") {
+      patch.listing_paid_until = inOneYear;
+      patch.plan = "paid";
+      patch.is_published = true;
+    }
+    if (data.action === "mark_unpaid") {
+      patch.listing_paid_until = null;
+      patch.plan = "free";
       patch.is_featured = false;
       patch.featured_until = null;
     }

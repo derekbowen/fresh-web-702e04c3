@@ -162,9 +162,12 @@ function ProviderCard({ p, featured = false }: { p: any; featured?: boolean }) {
         </div>
       )}
       <div className="min-w-0">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <h3 className="truncate font-semibold text-foreground">{p.name}</h3>
           {featured && <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">Featured</span>}
+          {!featured && p.listing_paid_until && new Date(p.listing_paid_until).getTime() > Date.now() && (
+            <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase text-secondary-foreground">Verified</span>
+          )}
         </div>
         {p.address && <p className="truncate text-xs text-muted-foreground">{p.address}</p>}
         {typeof p.rating === "number" && (

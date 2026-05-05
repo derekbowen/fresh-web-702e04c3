@@ -78,6 +78,7 @@ function AdminDirectory() {
                       <Badge tone={p.submission_status === "pending" ? "warn" : p.submission_status === "approved" ? "ok" : "danger"}>{p.submission_status}</Badge>
                       {p.is_published && <Badge tone="ok">published</Badge>}
                       {p.is_featured && <Badge tone="primary">featured</Badge>}
+                      {p.plan && p.plan !== "free" && <Badge>{p.plan}</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {[p.primary_category, [p.city, p.state_code].filter(Boolean).join(", ")].filter(Boolean).join(" · ")}
@@ -88,6 +89,14 @@ function AdminDirectory() {
                       {p.phone && <span>📞 {p.phone}</span>}
                       {p.website_url && <a href={p.website_url} target="_blank" rel="noreferrer" className="text-primary hover:underline">🔗 site</a>}
                       <a href={`/providers/${p.slug}`} target="_blank" rel="noreferrer" className="text-primary hover:underline">/providers/{p.slug}</a>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-3 text-xs">
+                      <span className={p.listing_paid_until && new Date(p.listing_paid_until) > new Date() ? "text-green-700" : "text-muted-foreground"}>
+                        Paid until: {p.listing_paid_until ? new Date(p.listing_paid_until).toLocaleDateString() : "—"}
+                      </span>
+                      <span className={p.featured_until && new Date(p.featured_until) > new Date() ? "text-primary" : "text-muted-foreground"}>
+                        Featured until: {p.featured_until ? new Date(p.featured_until).toLocaleDateString() : "—"}
+                      </span>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -102,9 +111,11 @@ function AdminDirectory() {
                         {p.is_published
                           ? <Btn onClick={() => act(p.id, "unpublish")} busy={busy === p.id + "unpublish"}>Unpublish</Btn>
                           : <Btn onClick={() => act(p.id, "publish")} busy={busy === p.id + "publish"} tone="ok">Publish</Btn>}
+                        <Btn onClick={() => act(p.id, "mark_paid")} busy={busy === p.id + "mark_paid"} tone="ok">Mark paid ($5/yr)</Btn>
+                        {p.listing_paid_until && <Btn onClick={() => act(p.id, "mark_unpaid")} busy={busy === p.id + "mark_unpaid"}>Mark unpaid</Btn>}
                         {p.is_featured
                           ? <Btn onClick={() => act(p.id, "unfeature")} busy={busy === p.id + "unfeature"}>Unfeature</Btn>
-                          : <Btn onClick={() => act(p.id, "feature")} busy={busy === p.id + "feature"} tone="primary">Feature</Btn>}
+                          : <Btn onClick={() => act(p.id, "feature")} busy={busy === p.id + "feature"} tone="primary">Feature ($25/yr)</Btn>}
                       </>
                     )}
                     <Btn onClick={() => { if (confirm("Delete this listing?")) act(p.id, "delete"); }} busy={busy === p.id + "delete"} tone="danger">Delete</Btn>
