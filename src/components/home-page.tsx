@@ -95,8 +95,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     ? `${nearby.city}${nearby.region ? `, ${nearby.region}` : ""}`
     : null;
   const searchHref = nearbyLabel
-    ? `/s?address=${encodeURIComponent(nearbyLabel)}`
-    : "/s";
+    ? `https://www.poolrentalnearme.com/s?address=${encodeURIComponent(nearbyLabel)}`
+    : "https://www.poolrentalnearme.com/s";
 
   return (
     <div className="flex min-h-screen flex-col">
