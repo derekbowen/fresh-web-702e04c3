@@ -24,6 +24,13 @@ export const Route = createFileRoute("/")({
       description:
         "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
       path: "/",
+      // The PRODUCTION homepage is served by the EC2 reverse proxy, which
+      // upstreams /landing-page from Lovable and serves it at
+      // https://www.poolrentalnearme.com/. The bare /landing-page route is
+      // the canonical source. This /-route only renders inside the Lovable
+      // preview / lovable.app published mirror, which must NOT compete with
+      // production in the index — canonicalize to prod root and noindex.
+      noindex: true,
       image: HOMEPAGE_HERO_IMAGE,
     });
     const org = {
