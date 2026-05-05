@@ -74,6 +74,7 @@ import { Route as DirectoryCategoryRouteImport } from './routes/directory.$categ
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
@@ -458,6 +459,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
+  id: '/admin/site-footer',
+  path: '/admin/site-footer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSeoHealthRoute = AdminSeoHealthRouteImport.update({
   id: '/admin/seo-health',
   path: '/admin/seo-health',
@@ -736,6 +742,7 @@ export interface FileRoutesByFullPath {
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/site-footer': typeof AdminSiteFooterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -844,6 +851,7 @@ export interface FileRoutesByTo {
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/site-footer': typeof AdminSiteFooterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -954,6 +962,7 @@ export interface FileRoutesById {
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/site-footer': typeof AdminSiteFooterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -1065,6 +1074,7 @@ export interface FileRouteTypes {
     | '/admin/quick-page'
     | '/admin/scrape-import'
     | '/admin/seo-health'
+    | '/admin/site-footer'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1173,6 +1183,7 @@ export interface FileRouteTypes {
     | '/admin/quick-page'
     | '/admin/scrape-import'
     | '/admin/seo-health'
+    | '/admin/site-footer'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1282,6 +1293,7 @@ export interface FileRouteTypes {
     | '/admin/quick-page'
     | '/admin/scrape-import'
     | '/admin/seo-health'
+    | '/admin/site-footer'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1391,6 +1403,7 @@ export interface RootRouteChildren {
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
+  AdminSiteFooterRoute: typeof AdminSiteFooterRoute
   CategorySlugRoute: typeof CategorySlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
@@ -1886,6 +1899,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/site-footer': {
+      id: '/admin/site-footer'
+      path: '/admin/site-footer'
+      fullPath: '/admin/site-footer'
+      preLoaderRoute: typeof AdminSiteFooterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/seo-health': {
       id: '/admin/seo-health'
       path: '/admin/seo-health'
@@ -2364,6 +2384,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
+  AdminSiteFooterRoute: AdminSiteFooterRoute,
   CategorySlugRoute: CategorySlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
