@@ -74,6 +74,7 @@ import { Route as DirectoryCategoryRouteImport } from './routes/directory.$categ
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
@@ -447,6 +448,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
+  id: '/admin/scrape-import',
+  path: '/admin/scrape-import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
   id: '/admin/quick-page',
   path: '/admin/quick-page',
@@ -661,6 +667,7 @@ export interface FileRoutesByFullPath {
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
+  '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -758,6 +765,7 @@ export interface FileRoutesByTo {
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
+  '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -857,6 +865,7 @@ export interface FileRoutesById {
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
+  '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -957,6 +966,7 @@ export interface FileRouteTypes {
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
+    | '/admin/scrape-import'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1054,6 +1064,7 @@ export interface FileRouteTypes {
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
+    | '/admin/scrape-import'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1152,6 +1163,7 @@ export interface FileRouteTypes {
     | '/admin/missing-pages'
     | '/admin/plan-requests'
     | '/admin/quick-page'
+    | '/admin/scrape-import'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1250,6 +1262,7 @@ export interface RootRouteChildren {
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
+  AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   CategorySlugRoute: typeof CategorySlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
@@ -1742,6 +1755,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/scrape-import': {
+      id: '/admin/scrape-import'
+      path: '/admin/scrape-import'
+      fullPath: '/admin/scrape-import'
+      preLoaderRoute: typeof AdminScrapeImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/quick-page': {
       id: '/admin/quick-page'
       path: '/admin/quick-page'
@@ -2135,6 +2155,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
+  AdminScrapeImportRoute: AdminScrapeImportRoute,
   CategorySlugRoute: CategorySlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
