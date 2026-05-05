@@ -59,22 +59,6 @@ export const Route = createFileRoute("/landing-page")({
 });
 
 function LandingPage() {
-  const fetchHome = useServerFn(getHomeData);
-  const [data, setData] = useState<HomeData>(EMPTY_HOME_DATA);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchHome()
-      .then((d) => {
-        if (!cancelled && d) setData(d);
-      })
-      .catch((err) => {
-        console.error("landing-page getHomeData failed:", err);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [fetchHome]);
-
+  const data = Route.useLoaderData();
   return <HomePageContent data={data} />;
 }
