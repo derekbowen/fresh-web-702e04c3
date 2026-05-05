@@ -140,33 +140,9 @@ function AdminDirectory() {
             onClick={async () => {
               const limStr = prompt("How many providers to generate AI content for? (1-50)", "10");
               const limit = Math.max(1, Math.min(50, parseInt(limStr || "10", 10) || 10));
-              setBulkRunning(true);
-              setBulkResults([]);
-              setBulkDone(0);
-              setBulkCurrent("");
-              bulkAbort.current.stop = false;
-              try {
-                const { providers } = await adminListProvidersMissingAI({ data: { limit } });
-                setBulkTotal(providers.length);
-                if (providers.length === 0) { alert("No published providers are missing AI content."); return; }
-                for (const p of providers) {
-                  if (bulkAbort.current.stop) break;
-                  setBulkCurrent(`${p.name}${p.city ? ` — ${p.city}, ${p.state_code}` : ""}`);
-                  const t0 = Date.now();
-                  try {
-                    await adminGenerateProviderContent({ data: { id: p.id } });
-                    setBulkResults((prev) => [...prev, { id: p.id, name: p.name, ok: true, ms: Date.now() - t0 }]);
-                  } catch (e: any) {
-                    setBulkResults((prev) => [...prev, { id: p.id, name: p.name, ok: false, error: e?.message || "Failed", ms: Date.now() - t0 }]);
-                  }
-                  setBulkDone((n) => n + 1);
-                  await new Promise((r) => setTimeout(r, 600));
-                }
-                setBulkCurrent("");
-                await load();
-              } finally {
-                setBulkRunning(false);
-              }
+              const { providers } = await adminListProvidersMissingAI({ data: { limit } });
+              if (providers.length === 0) { alert("No published providers are missing AI content."); return; }
+              await runBulk(providers.map((p: any) => ({ id: p.id, name: p.name, city: p.city, state_code: p.state_code })));
             }}
             disabled={bulkRunning}
             className="rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold disabled:opacity-50"
