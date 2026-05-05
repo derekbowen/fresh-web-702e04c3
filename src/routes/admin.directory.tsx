@@ -201,6 +201,13 @@ function AdminDirectory() {
                     <div className="mt-2 flex flex-wrap gap-3 text-xs">
                       <TimestampPill label="Paid until" value={p.listing_paid_until} activeClass="text-green-700" />
                       <TimestampPill label="Featured until" value={p.featured_until} activeClass="text-primary" />
+                      {(p.gsc_impressions || p.gsc_clicks) && (
+                        <span className="text-muted-foreground" title={p.gsc_updated_at ? `Updated ${new Date(p.gsc_updated_at).toLocaleString()}` : undefined}>
+                          GSC: {p.gsc_impressions ?? 0} impr · {p.gsc_clicks ?? 0} clk{p.gsc_position ? ` · pos ${Number(p.gsc_position).toFixed(1)}` : ""}
+                        </span>
+                      )}
+                      {p.ai_content_generated_at && <span className="text-muted-foreground">AI ✓</span>}
+                      {p.source_type && <span className="text-muted-foreground">src: {p.source_type}</span>}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
