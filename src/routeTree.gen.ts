@@ -91,6 +91,7 @@ import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pa
 import { Route as AdminLinkCheckerRouteImport } from './routes/admin.link-checker'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminLandingLinkCheckRouteImport } from './routes/admin.landing-link-check'
 import { Route as AdminKeywordOpportunitiesRouteImport } from './routes/admin.keyword-opportunities'
 import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
@@ -559,6 +560,11 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
   path: '/leads',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLandingLinkCheckRoute = AdminLandingLinkCheckRouteImport.update({
+  id: '/landing-link-check',
+  path: '/landing-link-check',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminKeywordOpportunitiesRoute =
   AdminKeywordOpportunitiesRouteImport.update({
     id: '/keyword-opportunities',
@@ -833,6 +839,7 @@ export interface FileRoutesByFullPath {
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
+  '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
@@ -957,6 +964,7 @@ export interface FileRoutesByTo {
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
+  '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
@@ -1083,6 +1091,7 @@ export interface FileRoutesById {
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
+  '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
@@ -1210,6 +1219,7 @@ export interface FileRouteTypes {
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
+    | '/admin/landing-link-check'
     | '/admin/leads'
     | '/admin/learning'
     | '/admin/link-checker'
@@ -1334,6 +1344,7 @@ export interface FileRouteTypes {
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
+    | '/admin/landing-link-check'
     | '/admin/leads'
     | '/admin/learning'
     | '/admin/link-checker'
@@ -1459,6 +1470,7 @@ export interface FileRouteTypes {
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
+    | '/admin/landing-link-check'
     | '/admin/leads'
     | '/admin/learning'
     | '/admin/link-checker'
@@ -2187,6 +2199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/landing-link-check': {
+      id: '/admin/landing-link-check'
+      path: '/landing-link-check'
+      fullPath: '/admin/landing-link-check'
+      preLoaderRoute: typeof AdminLandingLinkCheckRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/keyword-opportunities': {
       id: '/admin/keyword-opportunities'
       path: '/keyword-opportunities'
@@ -2519,6 +2538,7 @@ interface AdminRouteChildren {
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminInternalLinksRoute: typeof AdminInternalLinksRoute
   AdminKeywordOpportunitiesRoute: typeof AdminKeywordOpportunitiesRoute
+  AdminLandingLinkCheckRoute: typeof AdminLandingLinkCheckRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
@@ -2552,6 +2572,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexingRoute: AdminIndexingRoute,
   AdminInternalLinksRoute: AdminInternalLinksRoute,
   AdminKeywordOpportunitiesRoute: AdminKeywordOpportunitiesRoute,
+  AdminLandingLinkCheckRoute: AdminLandingLinkCheckRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminLinkCheckerRoute: AdminLinkCheckerRoute,
