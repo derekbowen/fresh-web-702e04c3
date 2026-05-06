@@ -50,7 +50,7 @@ function ProvidersIndex() {
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {providers.length === 0 && <p className="text-muted-foreground">No providers listed yet.</p>}
           {providers.map((p: { slug: string; name: string; business_type: string | null; city: string | null; state_code: string | null; logo_url: string | null }) => (
-            <Link key={p.slug} to="/providers/$slug" params={{ slug: p.slug }}
+            <Link key={p.slug} to="/p/pool-pros/$slug" params={{ slug: p.slug }}
               className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-md">
               {p.logo_url ? (
                 <img src={p.logo_url} alt={p.name} className="h-14 w-14 rounded-lg object-cover"/>

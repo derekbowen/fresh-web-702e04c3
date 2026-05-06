@@ -103,7 +103,7 @@ function CityBuildersPage() {
             {providers.map((p: Record<string, unknown>) => (
               <Link
                 key={p.slug as string}
-                to="/providers/$slug"
+                to="/p/pool-pros/$slug"
                 params={{ slug: p.slug as string }}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-md"
               >
