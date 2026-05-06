@@ -50,7 +50,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PoolBuildersIndexRouteImport } from './routes/pool-builders.index'
 import { Route as HostToolsIndexRouteImport } from './routes/host-tools.index'
 import { Route as HelpCenterIndexRouteImport } from './routes/help-center.index'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
@@ -337,11 +336,6 @@ const HelpCenterIndexRoute = HelpCenterIndexRouteImport.update({
   id: '/help-center/',
   path: '/help-center/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
 } as any)
 const AcademyIndexRoute = AcademyIndexRouteImport.update({
   id: '/',
@@ -795,7 +789,6 @@ export interface FileRoutesByFullPath {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
-  '/admin/': typeof AdminIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
@@ -822,6 +815,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/directory': typeof DirectoryRouteWithChildren
@@ -907,7 +901,6 @@ export interface FileRoutesByTo {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy': typeof AcademyIndexRoute
-  '/admin': typeof AdminIndexRoute
   '/help-center': typeof HelpCenterIndexRoute
   '/host-tools': typeof HostToolsIndexRoute
   '/pool-builders': typeof PoolBuildersIndexRoute
@@ -1022,7 +1015,6 @@ export interface FileRoutesById {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
-  '/admin/': typeof AdminIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
@@ -1138,7 +1130,6 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
-    | '/admin/'
     | '/help-center/'
     | '/host-tools/'
     | '/pool-builders/'
@@ -1165,6 +1156,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/auth'
     | '/blog'
     | '/directory'
@@ -1250,7 +1242,6 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy'
-    | '/admin'
     | '/help-center'
     | '/host-tools'
     | '/pool-builders'
@@ -1364,7 +1355,6 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
-    | '/admin/'
     | '/help-center/'
     | '/host-tools/'
     | '/pool-builders/'
@@ -1756,13 +1746,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/help-center/'
       preLoaderRoute: typeof HelpCenterIndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
     }
     '/academy/': {
       id: '/academy/'
@@ -2306,7 +2289,6 @@ interface AdminRouteChildren {
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
   AdminTeamRoute: typeof AdminTeamRoute
-  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -2333,7 +2315,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
   AdminTeamRoute: AdminTeamRoute,
-  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
