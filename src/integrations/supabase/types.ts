@@ -1645,6 +1645,51 @@ export type Database = {
         }
         Relationships: []
       }
+      privacy_requests: {
+        Row: {
+          created_at: string
+          details: string | null
+          email: string
+          full_name: string | null
+          gpc_signal: boolean | null
+          id: string
+          request_type: string
+          source_url: string | null
+          state_code: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          email: string
+          full_name?: string | null
+          gpc_signal?: boolean | null
+          id?: string
+          request_type: string
+          source_url?: string | null
+          state_code?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          email?: string
+          full_name?: string | null
+          gpc_signal?: boolean | null
+          id?: string
+          request_type?: string
+          source_url?: string | null
+          state_code?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
