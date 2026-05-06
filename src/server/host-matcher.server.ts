@@ -142,9 +142,17 @@ We searched Google/Yelp/Facebook Pages for related public business listings. Her
 
 ${searchResults.map((r, i) => `[${i}] (source=${r.source}) ${r.title}\n  ${r.url}\n  ${r.description}`).join("\n\n")}
 
-For EACH search result, decide if it plausibly belongs to the same person/household. Match strongly only if: name matches AND city matches, OR business is clearly a pool-related side hustle in the same city, OR result contains an email/phone/website that ALSO appears in the listing.
+For EACH search result, decide if it plausibly belongs to the same person/household.
 
-Return JSON array (max 5 entries, only confidence>=30). Each entry:
+STRICT SCORING RULES:
+- Score 85+ ONLY if BOTH the host's first name AND city appear in the result, OR a phone/email/URL from the listing literally appears in the result.
+- Score 60-84 if there is a strong single-signal match (name+state, or a pool-related local business in the same city).
+- Score below 60 for weak matches; we'll send those to a review queue.
+- HARD REJECT (do not return) if the result is: a product page, e-commerce listing, marketplace product (jansport, coupang, ebay, amazon, etsy, alibaba, walmart), a TikTok/Pinterest pin, a news article unrelated to this person, or a foreign-language business with no name overlap.
+- Phone numbers that look like product IDs / SKUs / URL path segments must NOT be returned as candidate_phone. Only return real US/CA phone numbers (NANP format, 10 digits, valid area code).
+- Never invent contact info. If the result doesn't contain a real email/phone, leave those fields null.
+
+Return JSON array (max 5 entries, only confidence>=40). Each entry:
 {
   "result_index": number,
   "candidate_name": string|null,
