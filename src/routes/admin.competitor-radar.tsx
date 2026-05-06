@@ -35,18 +35,22 @@ function CompetitorRadar() {
   const [label, setLabel] = React.useState("");
   const [scanning, setScanning] = React.useState(false);
   const [matchingId, setMatchingId] = React.useState<string | null>(null);
+  const [enrichingId, setEnrichingId] = React.useState<string | null>(null);
+  const [spend, setSpend] = React.useState<{ today_spend_usd: number; today_calls: number; today_hits: number; month_spend_usd: number; daily_cap_usd: number; monthly_target_usd: number } | null>(null);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [showAck, setShowAck] = React.useState(false);
 
   const load = React.useCallback(async () => {
-    const [s, n, m] = await Promise.all([
+    const [s, n, m, sp] = await Promise.all([
       listCompetitorSites(),
       listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } }),
       listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } }),
+      getEnrichmentSpend().catch(() => null),
     ]);
     setSites(s.rows);
     setNewRows(n.rows);
     setMatches(m.rows);
+    setSpend(sp);
   }, [showAck, matchStatus]);
 
   React.useEffect(() => { load(); }, [load]);
