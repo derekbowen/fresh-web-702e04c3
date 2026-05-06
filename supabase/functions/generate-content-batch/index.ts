@@ -444,9 +444,14 @@ async function processGeneration(
   const generated = (
     await Promise.all(
       planRows.map((row) => {
-        // event_guide needs 4k words + 15-20 FAQs; Flash truncates. Force Pro.
-        const effectiveModel = isEventSource(row) ? "google/gemini-2.5-pro" : model;
-        return generateOne(row, effectiveModel, apiKey);
+        // Token-budget gate: estimate output length and auto-promote model if needed.
+        const pick = pickModelForBudget(row, model);
+        if (pick.switched) {
+          console.log(`[generate-content-batch:${row.slug}] model auto-switch — ${pick.reason}`);
+        } else {
+          console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok)`);
+        }
+        return generateOne(row, pick.model, apiKey, pick.maxTokens);
       }),
     )
   ).filter((page): page is GeneratedPage => Boolean(page));
