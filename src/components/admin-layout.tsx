@@ -138,7 +138,7 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <div className="hidden lg:block"><SiteHeader /></div>
+      <div className="hidden lg:block"><ShowChromeOverride><SiteHeader /></ShowChromeOverride></div>
       {/* Mobile top bar — slim, sticky, native-app feel */}
       <div className="sticky top-0 z-40 flex h-12 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur lg:hidden">
         <button
