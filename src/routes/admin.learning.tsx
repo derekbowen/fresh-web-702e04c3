@@ -21,7 +21,7 @@ export const Route = createFileRoute("/admin/learning")({
       });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   component: AdminLearningPage,
   head: () => ({ meta: [{ title: "Learning admin — Pool Rental Near Me" }] }),

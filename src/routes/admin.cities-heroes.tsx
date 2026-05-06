@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/cities-heroes")({
       throw redirect({ to: "/auth" as never });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   component: AdminHeroBackfillPage,
   head: () => ({ meta: [{ title: "Backfill city heroes — Admin" }] }),

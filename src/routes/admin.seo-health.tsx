@@ -14,7 +14,7 @@ export const Route = createFileRoute("/admin/seo-health")({
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/seo-health", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({ meta: [{ title: "SEO Health — Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: SeoHealth,

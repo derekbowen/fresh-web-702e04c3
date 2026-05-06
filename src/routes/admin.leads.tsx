@@ -11,7 +11,7 @@ export const Route = createFileRoute("/admin/leads")({
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/leads", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({ meta: [{ title: "Lead Inbox — Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: LeadInbox,

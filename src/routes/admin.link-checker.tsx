@@ -11,7 +11,7 @@ export const Route = createFileRoute("/admin/link-checker")({
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/link-checker", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({ meta: [{ title: "Link checker — Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: LinkChecker,

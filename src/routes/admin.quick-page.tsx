@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/quick-page")({
       throw redirect({ to: "/auth", search: { redirect: "/admin/quick-page", mode: "signin" } });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({
     meta: [

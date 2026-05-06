@@ -44,6 +44,7 @@ import { Route as LandingPageRouteImport } from './routes/landing-page'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PoolBuildersIndexRouteImport } from './routes/pool-builders.index'
@@ -307,6 +308,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AcademyRoute = AcademyRouteImport.update({
   id: '/academy',
   path: '/academy',
@@ -333,9 +339,9 @@ const HelpCenterIndexRoute = HelpCenterIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AcademyIndexRoute = AcademyIndexRouteImport.update({
   id: '/',
@@ -468,119 +474,119 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 const AdminTeamRoute = AdminTeamRouteImport.update({
-  id: '/admin/team',
-  path: '/admin/team',
-  getParentRoute: () => rootRouteImport,
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
-  id: '/admin/site-footer',
-  path: '/admin/site-footer',
-  getParentRoute: () => rootRouteImport,
+  id: '/site-footer',
+  path: '/site-footer',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminSeoHealthRoute = AdminSeoHealthRouteImport.update({
-  id: '/admin/seo-health',
-  path: '/admin/seo-health',
-  getParentRoute: () => rootRouteImport,
+  id: '/seo-health',
+  path: '/seo-health',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
-  id: '/admin/scrape-import',
-  path: '/admin/scrape-import',
-  getParentRoute: () => rootRouteImport,
+  id: '/scrape-import',
+  path: '/scrape-import',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
-  id: '/admin/quick-page',
-  path: '/admin/quick-page',
-  getParentRoute: () => rootRouteImport,
+  id: '/quick-page',
+  path: '/quick-page',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminPlanRequestsRoute = AdminPlanRequestsRouteImport.update({
-  id: '/admin/plan-requests',
-  path: '/admin/plan-requests',
-  getParentRoute: () => rootRouteImport,
+  id: '/plan-requests',
+  path: '/plan-requests',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminNoAccessRoute = AdminNoAccessRouteImport.update({
-  id: '/admin/no-access',
-  path: '/admin/no-access',
-  getParentRoute: () => rootRouteImport,
+  id: '/no-access',
+  path: '/no-access',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
-  id: '/admin/missing-pages',
-  path: '/admin/missing-pages',
-  getParentRoute: () => rootRouteImport,
+  id: '/missing-pages',
+  path: '/missing-pages',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminLinkCheckerRoute = AdminLinkCheckerRouteImport.update({
-  id: '/admin/link-checker',
-  path: '/admin/link-checker',
-  getParentRoute: () => rootRouteImport,
+  id: '/link-checker',
+  path: '/link-checker',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminLearningRoute = AdminLearningRouteImport.update({
-  id: '/admin/learning',
-  path: '/admin/learning',
-  getParentRoute: () => rootRouteImport,
+  id: '/learning',
+  path: '/learning',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
-  id: '/admin/leads',
-  path: '/admin/leads',
-  getParentRoute: () => rootRouteImport,
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminIndexingRoute = AdminIndexingRouteImport.update({
-  id: '/admin/indexing',
-  path: '/admin/indexing',
-  getParentRoute: () => rootRouteImport,
+  id: '/indexing',
+  path: '/indexing',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminGscImportRoute = AdminGscImportRouteImport.update({
-  id: '/admin/gsc-import',
-  path: '/admin/gsc-import',
-  getParentRoute: () => rootRouteImport,
+  id: '/gsc-import',
+  path: '/gsc-import',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
-  id: '/admin/generate-content',
-  path: '/admin/generate-content',
-  getParentRoute: () => rootRouteImport,
+  id: '/generate-content',
+  path: '/generate-content',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminEmailBrandingRoute = AdminEmailBrandingRouteImport.update({
-  id: '/admin/email-branding',
-  path: '/admin/email-branding',
-  getParentRoute: () => rootRouteImport,
+  id: '/email-branding',
+  path: '/email-branding',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
-  id: '/admin/directory',
-  path: '/admin/directory',
-  getParentRoute: () => rootRouteImport,
+  id: '/directory',
+  path: '/directory',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/admin/dashboard',
-  path: '/admin/dashboard',
-  getParentRoute: () => rootRouteImport,
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminContentPagesRoute = AdminContentPagesRouteImport.update({
-  id: '/admin/content-pages',
-  path: '/admin/content-pages',
-  getParentRoute: () => rootRouteImport,
+  id: '/content-pages',
+  path: '/content-pages',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminContentMigrationRoute = AdminContentMigrationRouteImport.update({
-  id: '/admin/content-migration',
-  path: '/admin/content-migration',
-  getParentRoute: () => rootRouteImport,
+  id: '/content-migration',
+  path: '/content-migration',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminClickReportRoute = AdminClickReportRouteImport.update({
-  id: '/admin/click-report',
-  path: '/admin/click-report',
-  getParentRoute: () => rootRouteImport,
+  id: '/click-report',
+  path: '/click-report',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminClaimsRoute = AdminClaimsRouteImport.update({
-  id: '/admin/claims',
-  path: '/admin/claims',
-  getParentRoute: () => rootRouteImport,
+  id: '/claims',
+  path: '/claims',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminCitiesHeroesRoute = AdminCitiesHeroesRouteImport.update({
-  id: '/admin/cities-heroes',
-  path: '/admin/cities-heroes',
-  getParentRoute: () => rootRouteImport,
+  id: '/cities-heroes',
+  path: '/cities-heroes',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminBlogRoute = AdminBlogRouteImport.update({
-  id: '/admin/blog',
-  path: '/admin/blog',
-  getParentRoute: () => rootRouteImport,
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AccountLearningRoute = AccountLearningRouteImport.update({
   id: '/account/learning',
@@ -703,6 +709,7 @@ const ApiCertificatesUidPdfRoute = ApiCertificatesUidPdfRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/directory': typeof DirectoryRouteWithChildren
@@ -929,6 +936,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/academy': typeof AcademyRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/directory': typeof DirectoryRouteWithChildren
@@ -1044,6 +1052,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/academy'
+    | '/admin'
     | '/auth'
     | '/blog'
     | '/directory'
@@ -1269,6 +1278,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/academy'
+    | '/admin'
     | '/auth'
     | '/blog'
     | '/directory'
@@ -1383,6 +1393,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcademyRoute: typeof AcademyRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   DirectoryRoute: typeof DirectoryRouteWithChildren
@@ -1419,29 +1430,6 @@ export interface RootRouteChildren {
   SmAmenitiesDotxmlRoute: typeof SmAmenitiesDotxmlRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   AccountLearningRoute: typeof AccountLearningRoute
-  AdminBlogRoute: typeof AdminBlogRoute
-  AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
-  AdminClaimsRoute: typeof AdminClaimsRoute
-  AdminClickReportRoute: typeof AdminClickReportRoute
-  AdminContentMigrationRoute: typeof AdminContentMigrationRoute
-  AdminContentPagesRoute: typeof AdminContentPagesRoute
-  AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminDirectoryRoute: typeof AdminDirectoryRoute
-  AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
-  AdminGenerateContentRoute: typeof AdminGenerateContentRoute
-  AdminGscImportRoute: typeof AdminGscImportRoute
-  AdminIndexingRoute: typeof AdminIndexingRoute
-  AdminLeadsRoute: typeof AdminLeadsRoute
-  AdminLearningRoute: typeof AdminLearningRouteWithChildren
-  AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
-  AdminMissingPagesRoute: typeof AdminMissingPagesRoute
-  AdminNoAccessRoute: typeof AdminNoAccessRoute
-  AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
-  AdminQuickPageRoute: typeof AdminQuickPageRoute
-  AdminScrapeImportRoute: typeof AdminScrapeImportRoute
-  AdminSeoHealthRoute: typeof AdminSeoHealthRoute
-  AdminSiteFooterRoute: typeof AdminSiteFooterRoute
-  AdminTeamRoute: typeof AdminTeamRoute
   CategorySlugRoute: typeof CategorySlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
@@ -1461,7 +1449,6 @@ export interface RootRouteChildren {
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
   VerifyUidRoute: typeof VerifyUidRoute
-  AdminIndexRoute: typeof AdminIndexRoute
   HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
   PoolBuildersIndexRoute: typeof PoolBuildersIndexRoute
@@ -1728,6 +1715,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/academy': {
       id: '/academy'
       path: '/academy'
@@ -1765,10 +1759,10 @@ declare module '@tanstack/react-router' {
     }
     '/admin/': {
       id: '/admin/'
-      path: '/admin'
+      path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/academy/': {
       id: '/academy/'
@@ -1947,164 +1941,164 @@ declare module '@tanstack/react-router' {
     }
     '/admin/team': {
       id: '/admin/team'
-      path: '/admin/team'
+      path: '/team'
       fullPath: '/admin/team'
       preLoaderRoute: typeof AdminTeamRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/site-footer': {
       id: '/admin/site-footer'
-      path: '/admin/site-footer'
+      path: '/site-footer'
       fullPath: '/admin/site-footer'
       preLoaderRoute: typeof AdminSiteFooterRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/seo-health': {
       id: '/admin/seo-health'
-      path: '/admin/seo-health'
+      path: '/seo-health'
       fullPath: '/admin/seo-health'
       preLoaderRoute: typeof AdminSeoHealthRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/scrape-import': {
       id: '/admin/scrape-import'
-      path: '/admin/scrape-import'
+      path: '/scrape-import'
       fullPath: '/admin/scrape-import'
       preLoaderRoute: typeof AdminScrapeImportRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/quick-page': {
       id: '/admin/quick-page'
-      path: '/admin/quick-page'
+      path: '/quick-page'
       fullPath: '/admin/quick-page'
       preLoaderRoute: typeof AdminQuickPageRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/plan-requests': {
       id: '/admin/plan-requests'
-      path: '/admin/plan-requests'
+      path: '/plan-requests'
       fullPath: '/admin/plan-requests'
       preLoaderRoute: typeof AdminPlanRequestsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/no-access': {
       id: '/admin/no-access'
-      path: '/admin/no-access'
+      path: '/no-access'
       fullPath: '/admin/no-access'
       preLoaderRoute: typeof AdminNoAccessRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/missing-pages': {
       id: '/admin/missing-pages'
-      path: '/admin/missing-pages'
+      path: '/missing-pages'
       fullPath: '/admin/missing-pages'
       preLoaderRoute: typeof AdminMissingPagesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/link-checker': {
       id: '/admin/link-checker'
-      path: '/admin/link-checker'
+      path: '/link-checker'
       fullPath: '/admin/link-checker'
       preLoaderRoute: typeof AdminLinkCheckerRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/learning': {
       id: '/admin/learning'
-      path: '/admin/learning'
+      path: '/learning'
       fullPath: '/admin/learning'
       preLoaderRoute: typeof AdminLearningRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/leads': {
       id: '/admin/leads'
-      path: '/admin/leads'
+      path: '/leads'
       fullPath: '/admin/leads'
       preLoaderRoute: typeof AdminLeadsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/indexing': {
       id: '/admin/indexing'
-      path: '/admin/indexing'
+      path: '/indexing'
       fullPath: '/admin/indexing'
       preLoaderRoute: typeof AdminIndexingRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/gsc-import': {
       id: '/admin/gsc-import'
-      path: '/admin/gsc-import'
+      path: '/gsc-import'
       fullPath: '/admin/gsc-import'
       preLoaderRoute: typeof AdminGscImportRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/generate-content': {
       id: '/admin/generate-content'
-      path: '/admin/generate-content'
+      path: '/generate-content'
       fullPath: '/admin/generate-content'
       preLoaderRoute: typeof AdminGenerateContentRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/email-branding': {
       id: '/admin/email-branding'
-      path: '/admin/email-branding'
+      path: '/email-branding'
       fullPath: '/admin/email-branding'
       preLoaderRoute: typeof AdminEmailBrandingRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/directory': {
       id: '/admin/directory'
-      path: '/admin/directory'
+      path: '/directory'
       fullPath: '/admin/directory'
       preLoaderRoute: typeof AdminDirectoryRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/dashboard': {
       id: '/admin/dashboard'
-      path: '/admin/dashboard'
+      path: '/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/content-pages': {
       id: '/admin/content-pages'
-      path: '/admin/content-pages'
+      path: '/content-pages'
       fullPath: '/admin/content-pages'
       preLoaderRoute: typeof AdminContentPagesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/content-migration': {
       id: '/admin/content-migration'
-      path: '/admin/content-migration'
+      path: '/content-migration'
       fullPath: '/admin/content-migration'
       preLoaderRoute: typeof AdminContentMigrationRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/click-report': {
       id: '/admin/click-report'
-      path: '/admin/click-report'
+      path: '/click-report'
       fullPath: '/admin/click-report'
       preLoaderRoute: typeof AdminClickReportRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/claims': {
       id: '/admin/claims'
-      path: '/admin/claims'
+      path: '/claims'
       fullPath: '/admin/claims'
       preLoaderRoute: typeof AdminClaimsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/cities-heroes': {
       id: '/admin/cities-heroes'
-      path: '/admin/cities-heroes'
+      path: '/cities-heroes'
       fullPath: '/admin/cities-heroes'
       preLoaderRoute: typeof AdminCitiesHeroesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/blog': {
       id: '/admin/blog'
-      path: '/admin/blog'
+      path: '/blog'
       fullPath: '/admin/blog'
       preLoaderRoute: typeof AdminBlogRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/account/learning': {
       id: '/account/learning'
@@ -2276,6 +2270,74 @@ const AcademyRouteChildren: AcademyRouteChildren = {
 const AcademyRouteWithChildren =
   AcademyRoute._addFileChildren(AcademyRouteChildren)
 
+interface AdminLearningRouteChildren {
+  AdminLearningUserIdRoute: typeof AdminLearningUserIdRoute
+}
+
+const AdminLearningRouteChildren: AdminLearningRouteChildren = {
+  AdminLearningUserIdRoute: AdminLearningUserIdRoute,
+}
+
+const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
+  AdminLearningRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminBlogRoute: typeof AdminBlogRoute
+  AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
+  AdminClaimsRoute: typeof AdminClaimsRoute
+  AdminClickReportRoute: typeof AdminClickReportRoute
+  AdminContentMigrationRoute: typeof AdminContentMigrationRoute
+  AdminContentPagesRoute: typeof AdminContentPagesRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDirectoryRoute: typeof AdminDirectoryRoute
+  AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
+  AdminGenerateContentRoute: typeof AdminGenerateContentRoute
+  AdminGscImportRoute: typeof AdminGscImportRoute
+  AdminIndexingRoute: typeof AdminIndexingRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminLearningRoute: typeof AdminLearningRouteWithChildren
+  AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
+  AdminMissingPagesRoute: typeof AdminMissingPagesRoute
+  AdminNoAccessRoute: typeof AdminNoAccessRoute
+  AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
+  AdminQuickPageRoute: typeof AdminQuickPageRoute
+  AdminScrapeImportRoute: typeof AdminScrapeImportRoute
+  AdminSeoHealthRoute: typeof AdminSeoHealthRoute
+  AdminSiteFooterRoute: typeof AdminSiteFooterRoute
+  AdminTeamRoute: typeof AdminTeamRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminBlogRoute: AdminBlogRoute,
+  AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
+  AdminClaimsRoute: AdminClaimsRoute,
+  AdminClickReportRoute: AdminClickReportRoute,
+  AdminContentMigrationRoute: AdminContentMigrationRoute,
+  AdminContentPagesRoute: AdminContentPagesRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminDirectoryRoute: AdminDirectoryRoute,
+  AdminEmailBrandingRoute: AdminEmailBrandingRoute,
+  AdminGenerateContentRoute: AdminGenerateContentRoute,
+  AdminGscImportRoute: AdminGscImportRoute,
+  AdminIndexingRoute: AdminIndexingRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
+  AdminLearningRoute: AdminLearningRouteWithChildren,
+  AdminLinkCheckerRoute: AdminLinkCheckerRoute,
+  AdminMissingPagesRoute: AdminMissingPagesRoute,
+  AdminNoAccessRoute: AdminNoAccessRoute,
+  AdminPlanRequestsRoute: AdminPlanRequestsRoute,
+  AdminQuickPageRoute: AdminQuickPageRoute,
+  AdminScrapeImportRoute: AdminScrapeImportRoute,
+  AdminSeoHealthRoute: AdminSeoHealthRoute,
+  AdminSiteFooterRoute: AdminSiteFooterRoute,
+  AdminTeamRoute: AdminTeamRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface AuthRouteChildren {
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
@@ -2361,18 +2423,6 @@ const ProvidersRouteWithChildren = ProvidersRoute._addFileChildren(
   ProvidersRouteChildren,
 )
 
-interface AdminLearningRouteChildren {
-  AdminLearningUserIdRoute: typeof AdminLearningUserIdRoute
-}
-
-const AdminLearningRouteChildren: AdminLearningRouteChildren = {
-  AdminLearningUserIdRoute: AdminLearningUserIdRoute,
-}
-
-const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
-  AdminLearningRouteChildren,
-)
-
 interface PoolBuildersStateRouteChildren {
   PoolBuildersStateCityRoute: typeof PoolBuildersStateCityRoute
 }
@@ -2387,6 +2437,7 @@ const PoolBuildersStateRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcademyRoute: AcademyRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   DirectoryRoute: DirectoryRouteWithChildren,
@@ -2424,29 +2475,6 @@ const rootRouteChildren: RootRouteChildren = {
   SmAmenitiesDotxmlRoute: SmAmenitiesDotxmlRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   AccountLearningRoute: AccountLearningRoute,
-  AdminBlogRoute: AdminBlogRoute,
-  AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
-  AdminClaimsRoute: AdminClaimsRoute,
-  AdminClickReportRoute: AdminClickReportRoute,
-  AdminContentMigrationRoute: AdminContentMigrationRoute,
-  AdminContentPagesRoute: AdminContentPagesRoute,
-  AdminDashboardRoute: AdminDashboardRoute,
-  AdminDirectoryRoute: AdminDirectoryRoute,
-  AdminEmailBrandingRoute: AdminEmailBrandingRoute,
-  AdminGenerateContentRoute: AdminGenerateContentRoute,
-  AdminGscImportRoute: AdminGscImportRoute,
-  AdminIndexingRoute: AdminIndexingRoute,
-  AdminLeadsRoute: AdminLeadsRoute,
-  AdminLearningRoute: AdminLearningRouteWithChildren,
-  AdminLinkCheckerRoute: AdminLinkCheckerRoute,
-  AdminMissingPagesRoute: AdminMissingPagesRoute,
-  AdminNoAccessRoute: AdminNoAccessRoute,
-  AdminPlanRequestsRoute: AdminPlanRequestsRoute,
-  AdminQuickPageRoute: AdminQuickPageRoute,
-  AdminScrapeImportRoute: AdminScrapeImportRoute,
-  AdminSeoHealthRoute: AdminSeoHealthRoute,
-  AdminSiteFooterRoute: AdminSiteFooterRoute,
-  AdminTeamRoute: AdminTeamRoute,
   CategorySlugRoute: CategorySlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
@@ -2469,7 +2497,6 @@ const rootRouteChildren: RootRouteChildren = {
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
   VerifyUidRoute: VerifyUidRoute,
-  AdminIndexRoute: AdminIndexRoute,
   HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
   PoolBuildersIndexRoute: PoolBuildersIndexRoute,

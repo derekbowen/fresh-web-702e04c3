@@ -19,7 +19,7 @@ export const Route = createFileRoute("/admin/missing-pages")({
       });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({
     meta: [

@@ -18,7 +18,7 @@ export const Route = createFileRoute("/admin/email-branding")({
       throw redirect({ to: "/auth", search: { redirect: "/admin/email-branding", mode: "signin" } });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({
     meta: [

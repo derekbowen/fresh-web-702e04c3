@@ -22,7 +22,7 @@ export const Route = createFileRoute("/admin/blog")({
       });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   component: AdminBlogPage,
   head: () => ({ meta: [{ title: "Blog admin — Pool Rental Near Me" }] }),

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/click-report")({
       throw redirect({ to: "/auth" as never });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   component: ClickReportPage,
   head: () => ({ meta: [{ title: "Nearby-city click report — Admin" }] }),

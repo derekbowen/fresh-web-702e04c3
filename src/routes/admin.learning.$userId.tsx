@@ -19,7 +19,7 @@ export const Route = createFileRoute("/admin/learning/$userId")({
       });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   component: LearnerDetailPage,
   head: () => ({ meta: [{ title: "Learner detail — Pool Rental Near Me" }] }),

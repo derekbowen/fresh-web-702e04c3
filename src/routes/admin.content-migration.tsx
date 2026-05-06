@@ -14,7 +14,7 @@ export const Route = createFileRoute("/admin/content-migration")({
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/content-migration", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   component: AdminContentMigration,
 });

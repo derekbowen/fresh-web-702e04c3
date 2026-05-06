@@ -11,7 +11,7 @@ export const Route = createFileRoute("/admin/indexing")({
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/indexing", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({ meta: [{ title: "Sitemap & Indexing — Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: Indexing,
