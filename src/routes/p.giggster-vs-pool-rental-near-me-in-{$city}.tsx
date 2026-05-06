@@ -44,7 +44,7 @@ function cityTier(city: CityRow): CityTier {
   return PRODUCTION_HUB_SLUGS.has(city.slug) ? "hub" : "secondary";
 }
 
-export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-$city")({
+export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$city}")({
   loader: async ({ params }) => {
     const city = await getCityBySlug({ data: { slug: params.city } });
     if (!city) throw notFound();

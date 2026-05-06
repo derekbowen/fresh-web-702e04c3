@@ -22,7 +22,7 @@ import {
  * 404s if the city slug isn't a published city, so we don't index junk.
  */
 
-export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-$city")({
+export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$city}")({
   loader: async ({ params }) => {
     const city = await getCityBySlug({ data: { slug: params.city } });
     if (!city) throw notFound();
