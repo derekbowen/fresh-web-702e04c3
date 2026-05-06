@@ -280,17 +280,34 @@ function CompetitorRadar() {
               {spend.today_spend_usd >= spend.daily_cap_usd && <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-800">Cap hit — paid tiers paused</span>}
             </div>
           )}
-          <div className="mb-3 flex flex-wrap gap-2">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             {(["new", "review", "contacted", "converted", "dismissed", "all"] as const).map((s) => (
               <button key={s} onClick={() => setMatchStatus(s)}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold ${matchStatus === s ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>
-                {s}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold ${matchStatus === s ? "bg-primary text-primary-foreground" : "bg-secondary"} ${s === "review" ? "ring-1 ring-amber-400" : ""}`}>
+                {s === "review" ? "🔍 Review queue" : s}
               </button>
             ))}
+            <button onClick={runTests} disabled={runningTests}
+              className="ml-auto inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
+              {runningTests ? <Loader2 className="h-3 w-3 animate-spin" /> : <FlaskConical className="h-3 w-3" />}
+              Run validator tests
+            </button>
           </div>
+          {testReport && (
+            <div className="mb-3 rounded-2xl border border-border bg-card p-3 text-xs">
+              <p className="mb-2 font-semibold">Validator self-test report ({testReport.filter((t) => t.pass).length}/{testReport.length} passed)</p>
+              <ul className="space-y-1">
+                {testReport.map((t, i) => (
+                  <li key={i} className={t.pass ? "text-emerald-700" : "text-destructive"}>
+                    {t.pass ? "✅" : "❌"} {t.name} — {t.rejected ? "rejected" : "accepted"} (expected {t.expectReject ? "reject" : "accept"}){t.reason ? ` · ${t.reason}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {matches.length === 0 && (
             <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              No matches yet. The agent runs automatically on every new competitor URL discovered by the daily scan, or click <strong>Find host</strong> on a URL above to run it manually.
+              {matchStatus === "review" ? "Review queue empty — nothing flagged for manual audit." : "No matches yet. The agent runs automatically on every new competitor URL discovered by the daily scan, or click "}{matchStatus !== "review" && <strong>Find host</strong>}{matchStatus !== "review" && " on a URL above to run it manually."}
             </p>
           )}
           <div className="space-y-2">
