@@ -6,7 +6,7 @@ import {
   CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
   TrendingUp, Swords, Network, Radar, Sparkles,
 } from "lucide-react";
-import { SiteHeader } from "@/components/site-layout";
+import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 
 type Item = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
