@@ -89,7 +89,11 @@ function CategoryPage() {
             <p
               className="mt-4 text-lg text-muted-foreground"
               dangerouslySetInnerHTML={{
-                __html: category!.intro_markdown.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"),
+                __html: (category!.intro_markdown as string)
+                  .replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"),
               }}
             />
           )}

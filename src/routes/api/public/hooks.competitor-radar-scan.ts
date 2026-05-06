@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 /**
  * Daily competitor radar scan — called by pg_cron.
@@ -89,8 +90,16 @@ async function runScan() {
 export const Route = createFileRoute("/api/public/hooks/competitor-radar-scan")({
   server: {
     handlers: {
-      GET: async () => Response.json(await runScan()),
-      POST: async () => Response.json(await runScan()),
+      GET: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
+        return Response.json(await runScan());
+      },
+      POST: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
+        return Response.json(await runScan());
+      },
     },
   },
 });
