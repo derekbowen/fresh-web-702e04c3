@@ -67,6 +67,24 @@ async function buildDigestData() {
     // serp_rankings may not exist yet — non-fatal
   }
 
+  // 4. New host leads in the last 24h (above-board matcher results)
+  let hostLeads: any[] = [];
+  let totalHostLeads = 0;
+  try {
+    const { data: leadRows, count: leadCount } = await sb
+      .from("competitor_host_matches")
+      .select("competitor_url, domain, candidate_name, candidate_business_name, candidate_email, candidate_phone, candidate_website, candidate_evidence, match_confidence", { count: "exact" })
+      .eq("status", "new")
+      .gte("match_confidence", 50)
+      .gte("created_at", since)
+      .order("match_confidence", { ascending: false })
+      .limit(10);
+    hostLeads = leadRows || [];
+    totalHostLeads = leadCount || 0;
+  } catch {
+    // table may not exist yet
+  }
+
   return {
     dateLabel: new Date().toLocaleDateString("en-US", {
       weekday: "long", month: "short", day: "numeric", year: "numeric",
@@ -76,6 +94,8 @@ async function buildDigestData() {
     criticalAudits: auditsRows || [],
     totalCriticalAudits: auditsCount || 0,
     rankDrops,
+    hostLeads,
+    totalHostLeads,
   };
 }
 
