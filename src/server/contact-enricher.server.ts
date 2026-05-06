@@ -524,7 +524,7 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
 
   // ---------- Tier 2: PDL ----------
   const stillUnderCap = (await getDailySpend()) < DAILY_SPEND_CAP_USD;
-  const tier2Eligible = stillUnderCap && priority && confidence >= 85 && revenue.score >= 50 && !!(match.host_first_name && match.host_city);
+  const tier2Eligible = stillUnderCap && !listingCapHit && priority && confidence >= 85 && revenue.score >= 50 && !!(match.host_first_name && match.host_city);
   const forceT2 = opts?.force_tier === "pdl";
 
   if ((tier2Eligible || forceT2) && match.host_first_name && match.host_city) {
