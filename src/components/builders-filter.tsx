@@ -162,7 +162,7 @@ export function BuildersFilter({ providers, showCityFilter = false, fallbackStat
             {filtered.map((p) => (
               <Link
                 key={p.slug}
-                to="/providers/$slug"
+                to="/p/pool-pros/$slug"
                 params={{ slug: p.slug }}
                 className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-md"
               >

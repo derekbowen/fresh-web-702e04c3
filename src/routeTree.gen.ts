@@ -122,6 +122,7 @@ import { Route as HelpCenterCategoryIndexRouteImport } from './routes/help-cente
 import { Route as ProvidersSlugManageRouteImport } from './routes/providers.$slug.manage'
 import { Route as ProvidersSlugClaimRouteImport } from './routes/providers.$slug.claim'
 import { Route as PoolBuildersStateCityRouteImport } from './routes/pool-builders.$state.$city'
+import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as HelpCenterCategorySlugRouteImport } from './routes/help-center.$category.$slug'
@@ -129,6 +130,7 @@ import { Route as DirectoryCategoryStateRouteImport } from './routes/directory.$
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
 import { Route as ApiPublicBackfillContentPagesRouteImport } from './routes/api/public/backfill-content-pages'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
+import { Route as PPoolProsCCategoryRouteImport } from './routes/p.pool-pros.c.$category'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -141,6 +143,8 @@ import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
+import { Route as PPoolProsCCategoryStateRouteImport } from './routes/p.pool-pros.c.$category.$state'
+import { Route as PPoolProsCCategoryStateCityRouteImport } from './routes/p.pool-pros.c.$category.$state.$city'
 
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
@@ -724,6 +728,11 @@ const PoolBuildersStateCityRoute = PoolBuildersStateCityRouteImport.update({
   path: '/$city',
   getParentRoute: () => PoolBuildersStateRoute,
 } as any)
+const PPoolProsSlugRoute = PPoolProsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PPoolProsRoute,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -759,6 +768,11 @@ const AdminLearningUserIdRoute = AdminLearningUserIdRouteImport.update({
   id: '/$userId',
   path: '/$userId',
   getParentRoute: () => AdminLearningRoute,
+} as any)
+const PPoolProsCCategoryRoute = PPoolProsCCategoryRouteImport.update({
+  id: '/c/$category',
+  path: '/c/$category',
+  getParentRoute: () => PPoolProsRoute,
 } as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
@@ -829,6 +843,17 @@ const ApiCertificatesUidPdfRoute = ApiCertificatesUidPdfRouteImport.update({
   path: '/api/certificates/$uid/pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PPoolProsCCategoryStateRoute = PPoolProsCCategoryStateRouteImport.update({
+  id: '/$state',
+  path: '/$state',
+  getParentRoute: () => PPoolProsCCategoryRoute,
+} as any)
+const PPoolProsCCategoryStateCityRoute =
+  PPoolProsCCategoryStateCityRouteImport.update({
+    id: '/$city',
+    path: '/$city',
+    getParentRoute: () => PPoolProsCCategoryStateRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -926,7 +951,7 @@ export interface FileRoutesByFullPath {
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
-  '/p/pool-pros': typeof PPoolProsRoute
+  '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
@@ -947,6 +972,7 @@ export interface FileRoutesByFullPath {
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/providers/$slug/claim': typeof ProvidersSlugClaimRoute
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
@@ -963,6 +989,9 @@ export interface FileRoutesByFullPath {
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/p/pool-pros/c/$category': typeof PPoolProsCCategoryRouteWithChildren
+  '/p/pool-pros/c/$category/$state': typeof PPoolProsCCategoryStateRouteWithChildren
+  '/p/pool-pros/c/$category/$state/$city': typeof PPoolProsCCategoryStateCityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -1059,7 +1088,7 @@ export interface FileRoutesByTo {
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
-  '/p/pool-pros': typeof PPoolProsRoute
+  '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
@@ -1080,6 +1109,7 @@ export interface FileRoutesByTo {
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/providers/$slug/claim': typeof ProvidersSlugClaimRoute
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
@@ -1096,6 +1126,9 @@ export interface FileRoutesByTo {
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/p/pool-pros/c/$category': typeof PPoolProsCCategoryRouteWithChildren
+  '/p/pool-pros/c/$category/$state': typeof PPoolProsCCategoryStateRouteWithChildren
+  '/p/pool-pros/c/$category/$state/$city': typeof PPoolProsCCategoryStateCityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -1194,7 +1227,7 @@ export interface FileRoutesById {
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
-  '/p/pool-pros': typeof PPoolProsRoute
+  '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
@@ -1215,6 +1248,7 @@ export interface FileRoutesById {
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/providers/$slug/claim': typeof ProvidersSlugClaimRoute
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
@@ -1231,6 +1265,9 @@ export interface FileRoutesById {
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/p/pool-pros/c/$category': typeof PPoolProsCCategoryRouteWithChildren
+  '/p/pool-pros/c/$category/$state': typeof PPoolProsCCategoryStateRouteWithChildren
+  '/p/pool-pros/c/$category/$state/$city': typeof PPoolProsCCategoryStateCityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1351,6 +1388,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/pool-pros/$slug'
     | '/pool-builders/$state/$city'
     | '/providers/$slug/claim'
     | '/providers/$slug/manage'
@@ -1367,6 +1405,9 @@ export interface FileRouteTypes {
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
+    | '/p/pool-pros/c/$category'
+    | '/p/pool-pros/c/$category/$state'
+    | '/p/pool-pros/c/$category/$state/$city'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1484,6 +1525,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/pool-pros/$slug'
     | '/pool-builders/$state/$city'
     | '/providers/$slug/claim'
     | '/providers/$slug/manage'
@@ -1500,6 +1542,9 @@ export interface FileRouteTypes {
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
+    | '/p/pool-pros/c/$category'
+    | '/p/pool-pros/c/$category/$state'
+    | '/p/pool-pros/c/$category/$state/$city'
   id:
     | '__root__'
     | '/'
@@ -1618,6 +1663,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/pool-pros/$slug'
     | '/pool-builders/$state/$city'
     | '/providers/$slug/claim'
     | '/providers/$slug/manage'
@@ -1634,6 +1680,9 @@ export interface FileRouteTypes {
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
+    | '/p/pool-pros/c/$category'
+    | '/p/pool-pros/c/$category/$state'
+    | '/p/pool-pros/c/$category/$state/$city'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1696,7 +1745,7 @@ export interface RootRouteChildren {
   PHowItWorksRoute: typeof PHowItWorksRoute
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
   PPeerspaceVsPoolRentalNearMeInCityRoute: typeof PPeerspaceVsPoolRentalNearMeInCityRoute
-  PPoolProsRoute: typeof PPoolProsRoute
+  PPoolProsRoute: typeof PPoolProsRouteWithChildren
   PPrivacyRequestRoute: typeof PPrivacyRequestRoute
   PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
@@ -2520,6 +2569,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoolBuildersStateCityRouteImport
       parentRoute: typeof PoolBuildersStateRoute
     }
+    '/p/pool-pros/$slug': {
+      id: '/p/pool-pros/$slug'
+      path: '/$slug'
+      fullPath: '/p/pool-pros/$slug'
+      preLoaderRoute: typeof PPoolProsSlugRouteImport
+      parentRoute: typeof PPoolProsRoute
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -2568,6 +2624,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/learning/$userId'
       preLoaderRoute: typeof AdminLearningUserIdRouteImport
       parentRoute: typeof AdminLearningRoute
+    }
+    '/p/pool-pros/c/$category': {
+      id: '/p/pool-pros/c/$category'
+      path: '/c/$category'
+      fullPath: '/p/pool-pros/c/$category'
+      preLoaderRoute: typeof PPoolProsCCategoryRouteImport
+      parentRoute: typeof PPoolProsRoute
     }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
@@ -2652,6 +2715,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/certificates/$uid/pdf'
       preLoaderRoute: typeof ApiCertificatesUidPdfRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/p/pool-pros/c/$category/$state': {
+      id: '/p/pool-pros/c/$category/$state'
+      path: '/$state'
+      fullPath: '/p/pool-pros/c/$category/$state'
+      preLoaderRoute: typeof PPoolProsCCategoryStateRouteImport
+      parentRoute: typeof PPoolProsCCategoryRoute
+    }
+    '/p/pool-pros/c/$category/$state/$city': {
+      id: '/p/pool-pros/c/$category/$state/$city'
+      path: '/$city'
+      fullPath: '/p/pool-pros/c/$category/$state/$city'
+      preLoaderRoute: typeof PPoolProsCCategoryStateCityRouteImport
+      parentRoute: typeof PPoolProsCCategoryStateRoute
     }
   }
 }
@@ -2836,6 +2913,45 @@ const ProvidersRouteWithChildren = ProvidersRoute._addFileChildren(
   ProvidersRouteChildren,
 )
 
+interface PPoolProsCCategoryStateRouteChildren {
+  PPoolProsCCategoryStateCityRoute: typeof PPoolProsCCategoryStateCityRoute
+}
+
+const PPoolProsCCategoryStateRouteChildren: PPoolProsCCategoryStateRouteChildren =
+  {
+    PPoolProsCCategoryStateCityRoute: PPoolProsCCategoryStateCityRoute,
+  }
+
+const PPoolProsCCategoryStateRouteWithChildren =
+  PPoolProsCCategoryStateRoute._addFileChildren(
+    PPoolProsCCategoryStateRouteChildren,
+  )
+
+interface PPoolProsCCategoryRouteChildren {
+  PPoolProsCCategoryStateRoute: typeof PPoolProsCCategoryStateRouteWithChildren
+}
+
+const PPoolProsCCategoryRouteChildren: PPoolProsCCategoryRouteChildren = {
+  PPoolProsCCategoryStateRoute: PPoolProsCCategoryStateRouteWithChildren,
+}
+
+const PPoolProsCCategoryRouteWithChildren =
+  PPoolProsCCategoryRoute._addFileChildren(PPoolProsCCategoryRouteChildren)
+
+interface PPoolProsRouteChildren {
+  PPoolProsSlugRoute: typeof PPoolProsSlugRoute
+  PPoolProsCCategoryRoute: typeof PPoolProsCCategoryRouteWithChildren
+}
+
+const PPoolProsRouteChildren: PPoolProsRouteChildren = {
+  PPoolProsSlugRoute: PPoolProsSlugRoute,
+  PPoolProsCCategoryRoute: PPoolProsCCategoryRouteWithChildren,
+}
+
+const PPoolProsRouteWithChildren = PPoolProsRoute._addFileChildren(
+  PPoolProsRouteChildren,
+)
+
 interface PoolBuildersStateRouteChildren {
   PoolBuildersStateCityRoute: typeof PoolBuildersStateCityRoute
 }
@@ -2910,7 +3026,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPeerspaceVsPoolRentalNearMeRoute: PPeerspaceVsPoolRentalNearMeRoute,
   PPeerspaceVsPoolRentalNearMeInCityRoute:
     PPeerspaceVsPoolRentalNearMeInCityRoute,
-  PPoolProsRoute: PPoolProsRoute,
+  PPoolProsRoute: PPoolProsRouteWithChildren,
   PPrivacyRequestRoute: PPrivacyRequestRoute,
   PSwimplyAlternativeVsPoolRentalNearMeRoute:
     PSwimplyAlternativeVsPoolRentalNearMeRoute,

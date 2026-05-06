@@ -8,7 +8,7 @@ export const Route = createFileRoute("/sitemap-directory.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const urls: SitemapUrl[] = [{ loc: `${SITE_URL}/directory` }];
+        const urls: SitemapUrl[] = [{ loc: `${SITE_URL}/p/pool-pros` }];
 
         const { data: cats } = await supabaseAdmin
           .from("service_categories")
@@ -16,15 +16,14 @@ export const Route = createFileRoute("/sitemap-directory.xml")({
           .eq("is_published", true);
 
         for (const c of cats ?? []) {
-          urls.push({ loc: `${SITE_URL}/directory/${c.slug}`, lastmod: c.updated_at });
-          // Per-category state + city pages
+          urls.push({ loc: `${SITE_URL}/p/pool-pros/c/${c.slug}`, lastmod: c.updated_at });
           try {
             const { states } = await listCategoryGeoCoverage({ data: { slug: c.slug } });
             for (const st of states) {
-              urls.push({ loc: `${SITE_URL}/directory/${c.slug}/${st.code.toLowerCase()}` });
+              urls.push({ loc: `${SITE_URL}/p/pool-pros/c/${c.slug}/${st.code.toLowerCase()}` });
               for (const city of st.cities) {
                 urls.push({
-                  loc: `${SITE_URL}/directory/${c.slug}/${st.code.toLowerCase()}/${city.slug}`,
+                  loc: `${SITE_URL}/p/pool-pros/c/${c.slug}/${st.code.toLowerCase()}/${city.slug}`,
                 });
               }
             }
@@ -41,7 +40,7 @@ export const Route = createFileRoute("/sitemap-directory.xml")({
         for (const p of provs ?? []) {
           const img = p.hero_image_url || p.logo_url;
           urls.push({
-            loc: `${SITE_URL}/providers/${p.slug}`,
+            loc: `${SITE_URL}/p/pool-pros/${p.slug}`,
             lastmod: p.updated_at,
             images: img ? [{ loc: img, title: p.name }] : undefined,
           });
