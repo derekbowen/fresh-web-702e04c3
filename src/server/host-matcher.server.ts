@@ -195,7 +195,7 @@ Return ONLY the JSON array, no prose.`;
         candidate_evidence: c.candidate_evidence || "",
         match_confidence: Math.min(100, Math.max(0, Number(c.match_confidence) || 0)),
       } as Candidate;
-    }).filter((c) => c.match_confidence >= 30);
+    }).filter((c) => c.match_confidence >= 40);
   } catch (e) {
     console.error("[host-matcher] gemini parse failed", e);
     return [];
