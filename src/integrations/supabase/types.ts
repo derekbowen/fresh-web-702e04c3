@@ -1277,6 +1277,66 @@ export type Database = {
         }
         Relationships: []
       }
+      host_match_false_positives: {
+        Row: {
+          candidate_business_name: string | null
+          candidate_email: string | null
+          candidate_name: string | null
+          candidate_phone: string | null
+          candidate_source: string | null
+          candidate_website: string | null
+          competitor_url: string | null
+          created_at: string
+          domain: string | null
+          host_city: string | null
+          host_first_name: string | null
+          host_state: string | null
+          id: string
+          match_confidence: number | null
+          match_id: string | null
+          reason: string | null
+          reported_by: string | null
+        }
+        Insert: {
+          candidate_business_name?: string | null
+          candidate_email?: string | null
+          candidate_name?: string | null
+          candidate_phone?: string | null
+          candidate_source?: string | null
+          candidate_website?: string | null
+          competitor_url?: string | null
+          created_at?: string
+          domain?: string | null
+          host_city?: string | null
+          host_first_name?: string | null
+          host_state?: string | null
+          id?: string
+          match_confidence?: number | null
+          match_id?: string | null
+          reason?: string | null
+          reported_by?: string | null
+        }
+        Update: {
+          candidate_business_name?: string | null
+          candidate_email?: string | null
+          candidate_name?: string | null
+          candidate_phone?: string | null
+          candidate_source?: string | null
+          candidate_website?: string | null
+          competitor_url?: string | null
+          created_at?: string
+          domain?: string | null
+          host_city?: string | null
+          host_first_name?: string | null
+          host_state?: string | null
+          id?: string
+          match_confidence?: number | null
+          match_id?: string | null
+          reason?: string | null
+          reported_by?: string | null
+        }
+        Relationships: []
+      }
       host_tools: {
         Row: {
           category: string
