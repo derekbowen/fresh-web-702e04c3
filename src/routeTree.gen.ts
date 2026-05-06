@@ -57,6 +57,7 @@ import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as PoolRentalLawsCityRouteImport } from './routes/pool-rental-laws.$city'
 import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$state'
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
+import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
 import { Route as PPeerspaceVsPoolRentalNearMeInCityRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me-in-$city'
 import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
@@ -81,6 +82,7 @@ import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
+import { Route as AdminPrivacyRequestsRouteImport } from './routes/admin.privacy-requests'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
 import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-auditor'
 import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
@@ -382,6 +384,11 @@ const PSwimplyAlternativeVsPoolRentalNearMeRoute =
     path: '/p/swimply-alternative-vs-pool-rental-near-me',
     getParentRoute: () => rootRouteImport,
   } as any)
+const PPrivacyRequestRoute = PPrivacyRequestRouteImport.update({
+  id: '/p/privacy-request',
+  path: '/p/privacy-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PPeerspaceVsPoolRentalNearMeInCityRoute =
   PPeerspaceVsPoolRentalNearMeInCityRouteImport.update({
     id: '/p/peerspace-vs-pool-rental-near-me-in-$city',
@@ -504,6 +511,11 @@ const AdminRankTrackerRoute = AdminRankTrackerRouteImport.update({
 const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
   id: '/quick-page',
   path: '/quick-page',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPrivacyRequestsRoute = AdminPrivacyRequestsRouteImport.update({
+  id: '/privacy-requests',
+  path: '/privacy-requests',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminPlanRequestsRoute = AdminPlanRequestsRouteImport.update({
@@ -822,6 +834,7 @@ export interface FileRoutesByFullPath {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
+  '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
@@ -846,6 +859,7 @@ export interface FileRoutesByFullPath {
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
@@ -943,6 +957,7 @@ export interface FileRoutesByTo {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
+  '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
@@ -967,6 +982,7 @@ export interface FileRoutesByTo {
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
@@ -1066,6 +1082,7 @@ export interface FileRoutesById {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
+  '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
@@ -1090,6 +1107,7 @@ export interface FileRoutesById {
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
@@ -1190,6 +1208,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
+    | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/scrape-import'
@@ -1214,6 +1233,7 @@ export interface FileRouteTypes {
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-$city'
+    | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
@@ -1311,6 +1331,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
+    | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/scrape-import'
@@ -1335,6 +1356,7 @@ export interface FileRouteTypes {
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-$city'
+    | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
@@ -1433,6 +1455,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
+    | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/scrape-import'
@@ -1457,6 +1480,7 @@ export interface FileRouteTypes {
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-$city'
+    | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
     | '/pool-rental-laws/$city'
@@ -1546,6 +1570,7 @@ export interface RootRouteChildren {
   PHowItWorksRoute: typeof PHowItWorksRoute
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
   PPeerspaceVsPoolRentalNearMeInCityRoute: typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  PPrivacyRequestRoute: typeof PPrivacyRequestRoute
   PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
@@ -1911,6 +1936,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/privacy-request': {
+      id: '/p/privacy-request'
+      path: '/p/privacy-request'
+      fullPath: '/p/privacy-request'
+      preLoaderRoute: typeof PPrivacyRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/peerspace-vs-pool-rental-near-me-in-$city': {
       id: '/p/peerspace-vs-pool-rental-near-me-in-$city'
       path: '/p/peerspace-vs-pool-rental-near-me-in-$city'
@@ -2077,6 +2109,13 @@ declare module '@tanstack/react-router' {
       path: '/quick-page'
       fullPath: '/admin/quick-page'
       preLoaderRoute: typeof AdminQuickPageRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/privacy-requests': {
+      id: '/admin/privacy-requests'
+      path: '/privacy-requests'
+      fullPath: '/admin/privacy-requests'
+      preLoaderRoute: typeof AdminPrivacyRequestsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/plan-requests': {
@@ -2467,6 +2506,7 @@ interface AdminRouteChildren {
   AdminNoAccessRoute: typeof AdminNoAccessRoute
   AdminPageAuditorRoute: typeof AdminPageAuditorRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
+  AdminPrivacyRequestsRoute: typeof AdminPrivacyRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminRankTrackerRoute: typeof AdminRankTrackerRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
@@ -2499,6 +2539,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminNoAccessRoute: AdminNoAccessRoute,
   AdminPageAuditorRoute: AdminPageAuditorRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
+  AdminPrivacyRequestsRoute: AdminPrivacyRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminRankTrackerRoute: AdminRankTrackerRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
@@ -2662,6 +2703,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPeerspaceVsPoolRentalNearMeRoute: PPeerspaceVsPoolRentalNearMeRoute,
   PPeerspaceVsPoolRentalNearMeInCityRoute:
     PPeerspaceVsPoolRentalNearMeInCityRoute,
+  PPrivacyRequestRoute: PPrivacyRequestRoute,
   PSwimplyAlternativeVsPoolRentalNearMeRoute:
     PSwimplyAlternativeVsPoolRentalNearMeRoute,
   PoolBuildersStateRoute: PoolBuildersStateRouteWithChildren,

@@ -375,7 +375,8 @@ function PrivacyPolicyPage() {
       </ul>
       <p><strong>How to exercise rights:</strong></p>
       <ul>
-        <li>Email: <a href="mailto:privacy@poolrentalnearme.com">privacy@poolrentalnearme.com</a></li>
+        <li>Use our <a href="/p/privacy-request">privacy request form</a> (preferred — routes directly to our privacy team).</li>
+        <li>Or email: <a href="mailto:privacy@poolrentalnearme.com">privacy@poolrentalnearme.com</a></li>
         <li>Provide sufficient information for verification.</li>
         <li>We generally respond within 30–45 days (extensions may apply under applicable law).</li>
       </ul>
