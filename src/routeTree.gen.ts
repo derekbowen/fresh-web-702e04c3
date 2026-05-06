@@ -124,6 +124,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as DirectoryCategoryStateCityRouteImport } from './routes/directory.$category.$state.$city'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
+import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
@@ -726,6 +727,12 @@ const ApiPublicHooksSyncListingsRoute =
     path: '/api/public/hooks/sync-listings',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSeoSelfTestRoute =
+  ApiPublicHooksSeoSelfTestRouteImport.update({
+    id: '/api/public/hooks/seo-self-test',
+    path: '/api/public/hooks/seo-self-test',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSeoFixWorkerRoute =
   ApiPublicHooksSeoFixWorkerRouteImport.update({
     id: '/api/public/hooks/seo-fix-worker',
@@ -856,6 +863,7 @@ export interface FileRoutesByFullPath {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
+  '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/directory/$category/$state/$city': typeof DirectoryCategoryStateCityRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -975,6 +983,7 @@ export interface FileRoutesByTo {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
+  '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/directory/$category/$state/$city': typeof DirectoryCategoryStateCityRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1096,6 +1105,7 @@ export interface FileRoutesById {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
+  '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/directory/$category/$state/$city': typeof DirectoryCategoryStateCityRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1218,6 +1228,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/seo-fix-worker'
+    | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
     | '/directory/$category/$state/$city'
     | '/lovable/email/auth/preview'
@@ -1337,6 +1348,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/seo-fix-worker'
+    | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
     | '/directory/$category/$state/$city'
     | '/lovable/email/auth/preview'
@@ -1457,6 +1469,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/seo-fix-worker'
+    | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
     | '/directory/$category/$state/$city'
     | '/lovable/email/auth/preview'
@@ -1537,6 +1550,7 @@ export interface RootRouteChildren {
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
+  ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -2352,6 +2366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/seo-self-test': {
+      id: '/api/public/hooks/seo-self-test'
+      path: '/api/public/hooks/seo-self-test'
+      fullPath: '/api/public/hooks/seo-self-test'
+      preLoaderRoute: typeof ApiPublicHooksSeoSelfTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/seo-fix-worker': {
       id: '/api/public/hooks/seo-fix-worker'
       path: '/api/public/hooks/seo-fix-worker'
@@ -2639,6 +2660,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
+  ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
