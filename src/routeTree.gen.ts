@@ -49,6 +49,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PoolBuildersIndexRouteImport } from './routes/pool-builders.index'
 import { Route as HostToolsIndexRouteImport } from './routes/host-tools.index'
 import { Route as HelpCenterIndexRouteImport } from './routes/help-center.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
@@ -74,11 +75,13 @@ import { Route as DirectoryCategoryRouteImport } from './routes/directory.$categ
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
+import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLinkCheckerRouteImport } from './routes/admin.link-checker'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
@@ -329,6 +332,11 @@ const HelpCenterIndexRoute = HelpCenterIndexRouteImport.update({
   path: '/help-center/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AcademyIndexRoute = AcademyIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -459,6 +467,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/admin/team',
+  path: '/admin/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
   id: '/admin/site-footer',
   path: '/admin/site-footer',
@@ -482,6 +495,11 @@ const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
 const AdminPlanRequestsRoute = AdminPlanRequestsRouteImport.update({
   id: '/admin/plan-requests',
   path: '/admin/plan-requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminNoAccessRoute = AdminNoAccessRouteImport.update({
+  id: '/admin/no-access',
+  path: '/admin/no-access',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
@@ -738,11 +756,13 @@ export interface FileRoutesByFullPath {
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -768,6 +788,7 @@ export interface FileRoutesByFullPath {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
@@ -847,11 +868,13 @@ export interface FileRoutesByTo {
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -877,6 +900,7 @@ export interface FileRoutesByTo {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy': typeof AcademyIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/help-center': typeof HelpCenterIndexRoute
   '/host-tools': typeof HostToolsIndexRoute
   '/pool-builders': typeof PoolBuildersIndexRoute
@@ -958,11 +982,13 @@ export interface FileRoutesById {
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
+  '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -988,6 +1014,7 @@ export interface FileRoutesById {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
@@ -1070,11 +1097,13 @@ export interface FileRouteTypes {
     | '/admin/learning'
     | '/admin/link-checker'
     | '/admin/missing-pages'
+    | '/admin/no-access'
     | '/admin/plan-requests'
     | '/admin/quick-page'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
+    | '/admin/team'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1100,6 +1129,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/admin/'
     | '/help-center/'
     | '/host-tools/'
     | '/pool-builders/'
@@ -1179,11 +1209,13 @@ export interface FileRouteTypes {
     | '/admin/learning'
     | '/admin/link-checker'
     | '/admin/missing-pages'
+    | '/admin/no-access'
     | '/admin/plan-requests'
     | '/admin/quick-page'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
+    | '/admin/team'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1209,6 +1241,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy'
+    | '/admin'
     | '/help-center'
     | '/host-tools'
     | '/pool-builders'
@@ -1289,11 +1322,13 @@ export interface FileRouteTypes {
     | '/admin/learning'
     | '/admin/link-checker'
     | '/admin/missing-pages'
+    | '/admin/no-access'
     | '/admin/plan-requests'
     | '/admin/quick-page'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
+    | '/admin/team'
     | '/auth/reset-password'
     | '/blog/$slug'
     | '/category/$slug'
@@ -1319,6 +1354,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/admin/'
     | '/help-center/'
     | '/host-tools/'
     | '/pool-builders/'
@@ -1399,11 +1435,13 @@ export interface RootRouteChildren {
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
+  AdminNoAccessRoute: typeof AdminNoAccessRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
+  AdminTeamRoute: typeof AdminTeamRoute
   CategorySlugRoute: typeof CategorySlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
@@ -1423,6 +1461,7 @@ export interface RootRouteChildren {
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
   VerifyUidRoute: typeof VerifyUidRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
   PoolBuildersIndexRoute: typeof PoolBuildersIndexRoute
@@ -1724,6 +1763,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelpCenterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/academy/': {
       id: '/academy/'
       path: '/'
@@ -1899,6 +1945,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/admin/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/site-footer': {
       id: '/admin/site-footer'
       path: '/admin/site-footer'
@@ -1932,6 +1985,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/plan-requests'
       fullPath: '/admin/plan-requests'
       preLoaderRoute: typeof AdminPlanRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/no-access': {
+      id: '/admin/no-access'
+      path: '/admin/no-access'
+      fullPath: '/admin/no-access'
+      preLoaderRoute: typeof AdminNoAccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/missing-pages': {
@@ -2380,11 +2440,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminLinkCheckerRoute: AdminLinkCheckerRoute,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
+  AdminNoAccessRoute: AdminNoAccessRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
+  AdminTeamRoute: AdminTeamRoute,
   CategorySlugRoute: CategorySlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
@@ -2407,6 +2469,7 @@ const rootRouteChildren: RootRouteChildren = {
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
   VerifyUidRoute: VerifyUidRoute,
+  AdminIndexRoute: AdminIndexRoute,
   HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
   PoolBuildersIndexRoute: PoolBuildersIndexRoute,
