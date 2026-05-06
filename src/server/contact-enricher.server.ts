@@ -570,7 +570,7 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
     cost_usd: totalCost,
     emails_found: combined.emails.length,
     phones_found: combined.phones.length,
-    reason: overCap ? "daily cap reached, paid tiers skipped" : undefined,
+    reason: listingCapHit ? "30-day per-listing cap hit, paid tiers skipped" : (overCap ? "daily cap reached, paid tiers skipped" : undefined),
   };
 }
 
