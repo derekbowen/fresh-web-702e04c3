@@ -201,6 +201,73 @@ function isEventSource(row: PlanRow): boolean {
   return row.source_type === "event_guide" || row.source_type === "event-city";
 }
 
+/**
+ * Per-source content budget (target words + required FAQ count).
+ * Used by the token-budget gate to pick the right model up-front.
+ */
+function contentBudget(row: PlanRow): { minWords: number; targetWords: number; faqs: number } {
+  if (isEventSource(row)) return { minWords: 2800, targetWords: 4000, faqs: 20 };
+  if (row.source_type === "hosting_es") return { minWords: 1200, targetWords: 2200, faqs: 15 };
+  // host_acq_city and similar
+  return { minWords: 1400, targetWords: 2400, faqs: 15 };
+}
+
+/**
+ * Estimate output tokens needed and pick the model that can actually deliver.
+ * Heuristic: ~1.35 tokens/word in English markdown + ~120 tokens/FAQ overhead +
+ * 15% headroom for headings/links. Models with smaller output windows (Flash
+ * Lite ~8k, Flash ~8k) get bumped to Pro (~32k+) when the budget exceeds them.
+ */
+const MODEL_OUTPUT_BUDGET: Record<string, number> = {
+  "google/gemini-2.5-flash-lite": 8000,
+  "google/gemini-2.5-flash": 8000,
+  "google/gemini-3-flash-preview": 8000,
+  "google/gemini-3.1-flash-image-preview": 8000,
+  "google/gemini-2.5-pro": 32000,
+  "google/gemini-3.1-pro-preview": 32000,
+  "openai/gpt-5-nano": 8000,
+  "openai/gpt-5-mini": 16000,
+  "openai/gpt-5": 32000,
+  "openai/gpt-5.2": 32000,
+};
+
+function estimateOutputTokens(row: PlanRow): number {
+  const { targetWords, faqs } = contentBudget(row);
+  const base = Math.ceil(targetWords * 1.35);
+  const faqOverhead = faqs * 120;
+  return Math.ceil((base + faqOverhead) * 1.15);
+}
+
+function pickModelForBudget(row: PlanRow, requestedModel: string): {
+  model: string;
+  estTokens: number;
+  maxTokens: number;
+  switched: boolean;
+  reason: string;
+} {
+  const estTokens = estimateOutputTokens(row);
+  const requestedBudget = MODEL_OUTPUT_BUDGET[requestedModel] ?? 8000;
+  let model = requestedModel;
+  let switched = false;
+  let reason = `fits requested model (${requestedBudget} tok budget)`;
+
+  if (estTokens > requestedBudget) {
+    // Promote: prefer Gemini Pro (cheaper than gpt-5) for long-form markdown.
+    model = "google/gemini-2.5-pro";
+    switched = true;
+    reason = `est ${estTokens} tok > ${requestedBudget} tok budget of ${requestedModel}; switched to ${model}`;
+  }
+  // Hard rule: event_guides always need Pro regardless (15-20 FAQs + 4k words).
+  if (isEventSource(row) && !model.includes("pro") && !model.includes("gpt-5") && !model.includes("gpt-5.2")) {
+    model = "google/gemini-2.5-pro";
+    switched = true;
+    reason = `event_guide forced to ${model} (FAQ + word-count requirement)`;
+  }
+
+  const maxTokens = Math.min(MODEL_OUTPUT_BUDGET[model] ?? 8000, Math.max(estTokens, 4000));
+  return { model, estTokens, maxTokens, switched, reason };
+}
+
 function tierAliases(tier: string): string[] {
   if (tier === "T1 (200k+)" || tier === "T1") return ["T1 (200k+)", "T1"];
   if (tier === "T2 (75k–199k)" || tier === "T2") return ["T2 (75k–199k)", "T2"];
@@ -318,6 +385,7 @@ async function generateOne(
   plan: PlanRow,
   model: string,
   apiKey: string,
+  maxTokens?: number,
 ): Promise<GeneratedPage | null> {
   const { system, user } = buildPrompt(plan);
   const controller = new AbortController();
@@ -333,7 +401,7 @@ async function generateOne(
           { role: "system", content: system },
           { role: "user", content: user },
         ],
-        max_tokens: plan.source_type === "event_guide" ? 12000 : 8500,
+        max_tokens: maxTokens ?? (plan.source_type === "event_guide" ? 12000 : 8500),
       }),
     });
 
@@ -376,9 +444,14 @@ async function processGeneration(
   const generated = (
     await Promise.all(
       planRows.map((row) => {
-        // event_guide needs 4k words + 15-20 FAQs; Flash truncates. Force Pro.
-        const effectiveModel = isEventSource(row) ? "google/gemini-2.5-pro" : model;
-        return generateOne(row, effectiveModel, apiKey);
+        // Token-budget gate: estimate output length and auto-promote model if needed.
+        const pick = pickModelForBudget(row, model);
+        if (pick.switched) {
+          console.log(`[generate-content-batch:${row.slug}] model auto-switch — ${pick.reason}`);
+        } else {
+          console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok)`);
+        }
+        return generateOne(row, pick.model, apiKey, pick.maxTokens);
       }),
     )
   ).filter((page): page is GeneratedPage => Boolean(page));
