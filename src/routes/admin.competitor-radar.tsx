@@ -6,11 +6,11 @@ import {
   listCompetitorSites, addCompetitorSite, deleteCompetitorSite,
   runCompetitorScan, listNewCompetitorUrls, acknowledgeCompetitorUrls,
   scrapeCompetitorUrlRow, listHostMatches, updateHostMatchStatus, runHostMatchOne,
-  enrichHostMatchOne, getEnrichmentSpend,
+  enrichHostMatchOne, getEnrichmentSpend, reportFalsePositive, runValidatorSelfTests,
   type CompetitorSiteRow, type CompetitorUrlRow, type CompetitorHostMatchRow,
 } from "@/server/admin-weapons.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X, Sparkles, DollarSign } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X, Sparkles, DollarSign, AlertTriangle, ChevronDown, FlaskConical } from "lucide-react";
 
 export const Route = createFileRoute("/admin/competitor-radar")({
   beforeLoad: async () => {
@@ -39,6 +39,26 @@ function CompetitorRadar() {
   const [spend, setSpend] = React.useState<{ today_spend_usd: number; today_calls: number; today_hits: number; month_spend_usd: number; daily_cap_usd: number; monthly_target_usd: number } | null>(null);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [showAck, setShowAck] = React.useState(false);
+  const [expandedMatch, setExpandedMatch] = React.useState<string | null>(null);
+  const [testReport, setTestReport] = React.useState<{ name: string; pass: boolean; rejected: boolean; expectReject: boolean; reason?: string }[] | null>(null);
+  const [runningTests, setRunningTests] = React.useState(false);
+
+  async function flagFalsePositive(id: string) {
+    const reason = prompt("Why is this a false positive? (optional, helps train the filter)") ?? "";
+    const r: any = await reportFalsePositive({ data: { match_id: id, reason: reason || undefined } });
+    if (r.ok) { setMsg("Logged as false positive — filter will improve."); await load(); }
+    else setMsg(`Failed: ${r.error}`);
+  }
+
+  async function runTests() {
+    setRunningTests(true);
+    try {
+      const r: any = await runValidatorSelfTests();
+      setTestReport(r.results);
+      setMsg(r.allPassed ? "✅ All validator self-tests passed" : "⚠️ Some validator tests failed — see report below");
+    } finally { setRunningTests(false); }
+  }
+
 
   const load = React.useCallback(async () => {
     const [s, n, m, sp] = await Promise.all([
@@ -260,17 +280,34 @@ function CompetitorRadar() {
               {spend.today_spend_usd >= spend.daily_cap_usd && <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-800">Cap hit — paid tiers paused</span>}
             </div>
           )}
-          <div className="mb-3 flex flex-wrap gap-2">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             {(["new", "review", "contacted", "converted", "dismissed", "all"] as const).map((s) => (
               <button key={s} onClick={() => setMatchStatus(s)}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold ${matchStatus === s ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>
-                {s}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold ${matchStatus === s ? "bg-primary text-primary-foreground" : "bg-secondary"} ${s === "review" ? "ring-1 ring-amber-400" : ""}`}>
+                {s === "review" ? "🔍 Review queue" : s}
               </button>
             ))}
+            <button onClick={runTests} disabled={runningTests}
+              className="ml-auto inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
+              {runningTests ? <Loader2 className="h-3 w-3 animate-spin" /> : <FlaskConical className="h-3 w-3" />}
+              Run validator tests
+            </button>
           </div>
+          {testReport && (
+            <div className="mb-3 rounded-2xl border border-border bg-card p-3 text-xs">
+              <p className="mb-2 font-semibold">Validator self-test report ({testReport.filter((t) => t.pass).length}/{testReport.length} passed)</p>
+              <ul className="space-y-1">
+                {testReport.map((t, i) => (
+                  <li key={i} className={t.pass ? "text-emerald-700" : "text-destructive"}>
+                    {t.pass ? "✅" : "❌"} {t.name} — {t.rejected ? "rejected" : "accepted"} (expected {t.expectReject ? "reject" : "accept"}){t.reason ? ` · ${t.reason}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {matches.length === 0 && (
             <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              No matches yet. The agent runs automatically on every new competitor URL discovered by the daily scan, or click <strong>Find host</strong> on a URL above to run it manually.
+              {matchStatus === "review" ? "Review queue empty — nothing flagged for manual audit." : "No matches yet. The agent runs automatically on every new competitor URL discovered by the daily scan, or click "}{matchStatus !== "review" && <strong>Find host</strong>}{matchStatus !== "review" && " on a URL above to run it manually."}
             </p>
           )}
           <div className="space-y-2">
@@ -279,9 +316,10 @@ function CompetitorRadar() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${m.match_confidence >= 70 ? "bg-emerald-100 text-emerald-800" : m.match_confidence >= 50 ? "bg-amber-100 text-amber-800" : "bg-secondary"}`}>
-                        {m.match_confidence}% match
+                      <span title={m.candidate_evidence || ""} className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${m.match_confidence >= 90 ? "bg-emerald-100 text-emerald-800" : m.match_confidence >= 85 ? "bg-amber-100 text-amber-800" : "bg-red-100 text-red-800"}`}>
+                        Confidence: {m.match_confidence}%
                       </span>
+                      {m.status === "review" && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700"><AlertTriangle className="mr-0.5 inline h-2.5 w-2.5" />review</span>}
                       {m.domain && <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{m.domain}</span>}
                       {m.candidate_source && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{m.candidate_source}</span>}
                       <span className="text-[10px] text-muted-foreground">{new Date(m.created_at).toLocaleDateString()}</span>
@@ -319,6 +357,26 @@ function CompetitorRadar() {
                         )}
                         {m.property_address && <p className="mt-1 text-[11px] text-muted-foreground">📍 {m.property_address}</p>}
                         {m.revenue_signal_notes && <p className="mt-1 text-[11px] text-muted-foreground">{m.revenue_signal_notes}</p>}
+                      </div>
+                    )}
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+                      <button onClick={() => setExpandedMatch(expandedMatch === m.id ? null : m.id)} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-muted-foreground hover:text-foreground">
+                        <ChevronDown className={`h-3 w-3 transition-transform ${expandedMatch === m.id ? "rotate-180" : ""}`} /> Why this match?
+                      </button>
+                      <button onClick={() => flagFalsePositive(m.id)} className="inline-flex items-center gap-1 rounded-full border border-destructive/40 px-2 py-0.5 text-destructive hover:bg-destructive/5">
+                        <AlertTriangle className="h-3 w-3" /> False positive — improve filter
+                      </button>
+                      {m.enrichment_cost_usd != null && (
+                        <span className="text-muted-foreground">Spent: ${Number(m.enrichment_cost_usd || 0).toFixed(2)}</span>
+                      )}
+                    </div>
+                    {expandedMatch === m.id && (
+                      <div className="mt-2 rounded-lg border border-border bg-muted/30 p-2 text-[11px]">
+                        <p className="font-semibold">Validation breakdown</p>
+                        <p className="mt-1 text-muted-foreground whitespace-pre-wrap break-words">{m.candidate_evidence || "No evidence recorded."}</p>
+                        <p className="mt-2 text-muted-foreground">
+                          Source domain: <code>{m.domain || "—"}</code> · Listing host: {m.host_first_name || "—"}, {m.host_city || "—"} {m.host_state || ""}
+                        </p>
                       </div>
                     )}
                     <a href={m.competitor_url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 break-all text-[11px] text-muted-foreground hover:underline">

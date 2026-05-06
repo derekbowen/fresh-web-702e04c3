@@ -361,6 +361,52 @@ export const getEnrichmentSpend = createServerFn({ method: "GET" })
     };
   });
 
+export const reportFalsePositive = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      match_id: z.string().uuid(),
+      reason: z.string().max(500).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const userId = (context as any).userId;
+    await assertAdmin(userId);
+    const { data: m } = await sb()
+      .from("competitor_host_matches").select("*").eq("id", data.match_id).maybeSingle();
+    if (!m) return { ok: false, error: "match not found" };
+    await sb().from("host_match_false_positives").insert({
+      match_id: m.id,
+      competitor_url: m.competitor_url,
+      domain: m.domain,
+      candidate_name: m.candidate_name,
+      candidate_business_name: m.candidate_business_name,
+      candidate_email: m.candidate_email,
+      candidate_phone: m.candidate_phone,
+      candidate_website: m.candidate_website,
+      candidate_source: m.candidate_source,
+      host_first_name: m.host_first_name,
+      host_city: m.host_city,
+      host_state: m.host_state,
+      match_confidence: m.match_confidence,
+      reason: data.reason || null,
+      reported_by: userId,
+    });
+    await sb().from("competitor_host_matches")
+      .update({ status: "dismissed", admin_notes: `[false positive] ${data.reason || ""}`.slice(0, 2000) })
+      .eq("id", m.id);
+    return { ok: true };
+  });
+
+export const runValidatorSelfTests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin((context as any).userId);
+    const { runSelfTests } = await import("./lead-validators.server");
+    const results = runSelfTests();
+    return { results, allPassed: results.every((r) => r.pass) };
+  });
+
 // ============================================================================
 // SERP RANK TRACKER
 // ============================================================================

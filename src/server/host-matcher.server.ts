@@ -8,7 +8,10 @@
  */
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { validateUSPhone, validateEmail, isStoplistedUrl, formatPhoneForDisplay } from "./lead-validators.server";
+import {
+  validateUSPhone, validateEmail, isStoplistedUrl, formatPhoneForDisplay,
+  containsBusinessEntity, scoreCandidate,
+} from "./lead-validators.server";
 
 const sb = () => supabaseAdmin as any;
 
@@ -272,18 +275,56 @@ export async function matchCompetitorUrl(competitor_url_id: string): Promise<{ o
   if (candidates.length === 0) return { ok: true, inserted: 0, reason: "no confident matches" };
 
   // Validate every candidate field. Drop garbage; route low-confidence to review queue.
+  // Deterministic scoring overrides the LLM's confidence — the LLM hallucinates.
   const cleaned = candidates
     .map((c) => {
       const emailV = c.candidate_email ? validateEmail(c.candidate_email, { firstName: facts.host_first_name }) : { ok: false };
       const phoneV = c.candidate_phone ? validateUSPhone(c.candidate_phone) : { ok: false };
-      const websiteBad = c.candidate_website ? isStoplistedUrl(c.candidate_website) : false;
-      const socialBad = c.candidate_social_url ? isStoplistedUrl(c.candidate_social_url) : false;
+      const listingIsUS = !!facts.host_state;
+      const websiteBad = c.candidate_website ? isStoplistedUrl(c.candidate_website, { listingIsUS }) : false;
+      const socialBad = c.candidate_social_url ? isStoplistedUrl(c.candidate_social_url, { listingIsUS }) : false;
+
+      // Business entity filter — kill GmbH/LLC/d.o.o./Foundation unless host first name appears
+      let candidate_name = c.candidate_name;
+      if (candidate_name && containsBusinessEntity(candidate_name)) {
+        const firstName = facts.host_first_name?.toLowerCase() || "";
+        if (!firstName || !candidate_name.toLowerCase().includes(firstName)) {
+          candidate_name = null;
+        }
+      }
+
+      const cleanPhone = phoneV.ok && (phoneV as any).normalized ? formatPhoneForDisplay((phoneV as any).normalized) : null;
+      const cleanWebsite = websiteBad ? null : c.candidate_website;
+      const cleanSocial = socialBad ? null : c.candidate_social_url;
+      const cleanEmail = emailV.ok ? c.candidate_email : null;
+
+      // Deterministic confidence score with breakdown for UI debugging
+      const breakdown = scoreCandidate({
+        candidate_name,
+        candidate_business_name: c.candidate_business_name,
+        candidate_phone: cleanPhone,
+        candidate_email: cleanEmail,
+        candidate_website: cleanWebsite,
+        candidate_source_url: cleanWebsite || cleanSocial,
+        host_first_name: facts.host_first_name,
+        host_city: facts.host_city,
+        host_state: facts.host_state,
+        result_text: `${c.candidate_evidence || ""} ${c.candidate_business_name || ""} ${candidate_name || ""}`,
+      });
+
       return {
         ...c,
-        candidate_email: emailV.ok ? c.candidate_email : null,
-        candidate_phone: phoneV.ok && (phoneV as any).normalized ? formatPhoneForDisplay((phoneV as any).normalized) : null,
-        candidate_website: websiteBad ? null : c.candidate_website,
-        candidate_social_url: socialBad ? null : c.candidate_social_url,
+        candidate_name,
+        candidate_email: cleanEmail,
+        candidate_phone: cleanPhone,
+        candidate_website: cleanWebsite,
+        candidate_social_url: cleanSocial,
+        // Use deterministic score (LLM score becomes a tie-breaker only)
+        match_confidence: breakdown.total,
+        candidate_evidence: [
+          c.candidate_evidence || "",
+          `[score ${breakdown.total}: ${breakdown.checks.map((k) => `${k.label}=${k.points}/${k.max}`).join("; ")}]`,
+        ].filter(Boolean).join(" "),
       };
     })
     // Must have SOMETHING after validation: a name + city, or a validated email/phone, or a clean website
@@ -293,7 +334,9 @@ export async function matchCompetitorUrl(competitor_url_id: string): Promise<{ o
       c.candidate_website ||
       c.candidate_social_url ||
       (c.candidate_name && (facts.host_first_name || facts.host_city)),
-    );
+    )
+    // Drop sub-40 outright — never insert obvious junk
+    .filter((c) => c.match_confidence >= 40);
 
   if (cleaned.length === 0) return { ok: true, inserted: 0, reason: "all candidates failed validation" };
 
@@ -305,8 +348,7 @@ export async function matchCompetitorUrl(competitor_url_id: string): Promise<{ o
     host_city: facts.host_city,
     host_state: facts.host_state,
     // Confidence floor: only ≥85 lands in the active "new" queue.
-    // Everything else goes to "review" so it doesn't burn enrichment budget
-    // and doesn't clutter Brandon's call list.
+    // 40-84 → review queue. <40 already filtered.
     status: c.match_confidence >= 85 ? "new" : "review",
     ...c,
   }));

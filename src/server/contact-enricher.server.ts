@@ -467,6 +467,20 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
   const spentToday = await getDailySpend();
   const overCap = spentToday >= DAILY_SPEND_CAP_USD;
 
+  // 30-day per-listing cap: max 1 paid enrichment per competitor URL per 30 days
+  let listingCapHit = false;
+  try {
+    const since = new Date(Date.now() - 30 * 86400 * 1000).toISOString();
+    const { data: recent } = await sb()
+      .from("competitor_host_matches")
+      .select("id, enrichment_cost_usd, enriched_at")
+      .eq("competitor_url_id", match.competitor_url_id)
+      .gt("enriched_at", since);
+    const paidCalls = (recent || []).filter((r: any) => Number(r.enrichment_cost_usd || 0) > 0 && r.id !== match_id).length;
+    if (paidCalls >= 1) listingCapHit = true;
+  } catch { /* non-fatal */ }
+
+
   const priority = isPriorityCity(match.host_city);
   const confidence = Number(match.match_confidence || 0);
 
@@ -488,7 +502,7 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
 
   // ---------- Tier 1: BatchData ----------
   // Now also requires confidence >= 85 (was 70) AND the match isn't all-garbage.
-  const tier1Eligible = !overCap && priority && confidence >= 85 && !!combined.property_address;
+  const tier1Eligible = !overCap && !listingCapHit && priority && confidence >= 85 && !!combined.property_address;
   const forceT1 = opts?.force_tier === "batchdata" || opts?.force_tier === "pdl";
 
   if ((tier1Eligible || forceT1) && (combined.property_address)) {
@@ -510,7 +524,7 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
 
   // ---------- Tier 2: PDL ----------
   const stillUnderCap = (await getDailySpend()) < DAILY_SPEND_CAP_USD;
-  const tier2Eligible = stillUnderCap && priority && confidence >= 85 && revenue.score >= 50 && !!(match.host_first_name && match.host_city);
+  const tier2Eligible = stillUnderCap && !listingCapHit && priority && confidence >= 85 && revenue.score >= 50 && !!(match.host_first_name && match.host_city);
   const forceT2 = opts?.force_tier === "pdl";
 
   if ((tier2Eligible || forceT2) && match.host_first_name && match.host_city) {
@@ -556,7 +570,7 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
     cost_usd: totalCost,
     emails_found: combined.emails.length,
     phones_found: combined.phones.length,
-    reason: overCap ? "daily cap reached, paid tiers skipped" : undefined,
+    reason: listingCapHit ? "30-day per-listing cap hit, paid tiers skipped" : (overCap ? "daily cap reached, paid tiers skipped" : undefined),
   };
 }
 
