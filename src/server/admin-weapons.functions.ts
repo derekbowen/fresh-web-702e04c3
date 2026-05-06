@@ -242,6 +242,79 @@ export const scrapeCompetitorUrlRow = createServerFn({ method: "POST" })
   });
 
 // ============================================================================
+// HOST MATCHER — find real-person/business contact info for competitor listings
+// ============================================================================
+
+export type CompetitorHostMatchRow = {
+  id: string;
+  competitor_url_id: string;
+  competitor_url: string;
+  domain: string | null;
+  host_first_name: string | null;
+  host_city: string | null;
+  host_state: string | null;
+  candidate_name: string | null;
+  candidate_business_name: string | null;
+  candidate_email: string | null;
+  candidate_phone: string | null;
+  candidate_website: string | null;
+  candidate_social_url: string | null;
+  candidate_source: string | null;
+  candidate_evidence: string | null;
+  match_confidence: number;
+  status: string;
+  admin_notes: string | null;
+  created_at: string;
+};
+
+export const listHostMatches = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      status: z.enum(["new", "contacted", "converted", "dismissed", "all"]).default("new"),
+      minConfidence: z.number().min(0).max(100).default(40),
+      limit: z.number().min(1).max(500).default(100),
+    }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }): Promise<{ rows: CompetitorHostMatchRow[] }> => {
+    await assertAdmin((context as any).userId);
+    let q = sb().from("competitor_host_matches").select("*")
+      .gte("match_confidence", data.minConfidence)
+      .order("match_confidence", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    if (data.status !== "all") q = q.eq("status", data.status);
+    const { data: rows } = await q;
+    return { rows: (rows || []) as CompetitorHostMatchRow[] };
+  });
+
+export const updateHostMatchStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      status: z.enum(["new", "contacted", "converted", "dismissed"]),
+      admin_notes: z.string().max(2000).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const patch: any = { status: data.status };
+    if (data.admin_notes !== undefined) patch.admin_notes = data.admin_notes;
+    const { error } = await sb().from("competitor_host_matches").update(patch).eq("id", data.id);
+    return error ? { ok: false, error: error.message } : { ok: true };
+  });
+
+export const runHostMatchOne = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ competitor_url_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const { matchCompetitorUrl } = await import("./host-matcher.server");
+    return matchCompetitorUrl(data.competitor_url_id);
+  });
+
+// ============================================================================
 // SERP RANK TRACKER
 // ============================================================================
 
