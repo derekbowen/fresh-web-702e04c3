@@ -154,68 +154,146 @@ function CompetitorRadar() {
         )}
       </div>
 
-      {/* Scan + feed */}
-      <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-bold">{showAck ? "All competitor URLs" : "🚨 New pages discovered"}</h2>
-        <div className="flex flex-wrap items-center gap-2">
-          <button onClick={() => setShowAck((s) => !s)} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
-            {showAck ? "Show new only" : "Show all"}
-          </button>
-          {!showAck && newRows.length > 0 && (
-            <button onClick={ackAll} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
-              <Check className="mr-1 inline h-3 w-3" /> Acknowledge all
-            </button>
-          )}
-          <button onClick={scan} disabled={scanning}
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
-            {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-            {scanning ? "Scanning…" : "Scan now"}
-          </button>
-        </div>
+      {/* Tabs */}
+      <div className="mt-6 flex gap-2 border-b border-border">
+        <button onClick={() => setTab("feed")} className={`px-4 py-2 text-sm font-semibold ${tab === "feed" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
+          New pages
+        </button>
+        <button onClick={() => setTab("matches")} className={`px-4 py-2 text-sm font-semibold ${tab === "matches" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
+          <Target className="mr-1 inline h-3.5 w-3.5" /> Host matches ({matches.length})
+        </button>
       </div>
-      {msg && <p className="mt-2 text-xs text-muted-foreground">{msg}</p>}
 
-      <div className="mt-3 space-y-2">
-        {newRows.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-            {showAck ? "No URLs tracked yet. Run a scan." : "Nothing new since the last scan. You're caught up. 🎯"}
-          </p>
-        )}
-        {newRows.map((r) => (
-          <div key={r.id} className="rounded-2xl border border-border bg-card p-3">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {r.domain && <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{r.domain}</span>}
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                    {new Date(r.first_seen_at).toLocaleDateString()}
-                  </span>
-                  {r.word_count != null && (
-                    <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{r.word_count} words</span>
-                  )}
-                </div>
-                <a href={r.url} target="_blank" rel="noreferrer noopener"
-                  className="mt-1 inline-flex items-center gap-1 break-all text-sm font-medium text-primary hover:underline">
-                  {r.url} <ExternalLink className="h-3 w-3 shrink-0" />
-                </a>
-                {r.title && <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{r.title}</p>}
-              </div>
-              <div className="flex shrink-0 gap-1.5">
-                {!r.scraped_at && (
-                  <button onClick={() => scrapeRow(r.id)} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
-                    <Eye className="h-3 w-3" /> Scrape
-                  </button>
-                )}
-                {!r.acknowledged && (
-                  <button onClick={() => ackOne(r.id)} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-semibold">
-                    <Check className="h-3 w-3" /> Got it
-                  </button>
-                )}
-              </div>
+      {tab === "feed" && (
+        <>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-lg font-bold">{showAck ? "All competitor URLs" : "🚨 New pages discovered"}</h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <button onClick={() => setShowAck((s) => !s)} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
+                {showAck ? "Show new only" : "Show all"}
+              </button>
+              {!showAck && newRows.length > 0 && (
+                <button onClick={ackAll} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
+                  <Check className="mr-1 inline h-3 w-3" /> Acknowledge all
+                </button>
+              )}
+              <button onClick={scan} disabled={scanning}
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+                {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                {scanning ? "Scanning…" : "Scan now"}
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+          {msg && <p className="mt-2 text-xs text-muted-foreground">{msg}</p>}
+
+          <div className="mt-3 space-y-2">
+            {newRows.length === 0 && (
+              <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+                {showAck ? "No URLs tracked yet. Run a scan." : "Nothing new since the last scan. You're caught up. 🎯"}
+              </p>
+            )}
+            {newRows.map((r) => (
+              <div key={r.id} className="rounded-2xl border border-border bg-card p-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {r.domain && <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{r.domain}</span>}
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                        {new Date(r.first_seen_at).toLocaleDateString()}
+                      </span>
+                      {r.word_count != null && (
+                        <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{r.word_count} words</span>
+                      )}
+                    </div>
+                    <a href={r.url} target="_blank" rel="noreferrer noopener"
+                      className="mt-1 inline-flex items-center gap-1 break-all text-sm font-medium text-primary hover:underline">
+                      {r.url} <ExternalLink className="h-3 w-3 shrink-0" />
+                    </a>
+                    {r.title && <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{r.title}</p>}
+                  </div>
+                  <div className="flex shrink-0 flex-wrap gap-1.5">
+                    {!r.scraped_at && (
+                      <button onClick={() => scrapeRow(r.id)} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
+                        <Eye className="h-3 w-3" /> Scrape
+                      </button>
+                    )}
+                    <button onClick={() => findHostFor(r.id)} disabled={matchingId === r.id}
+                      className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary disabled:opacity-50">
+                      {matchingId === r.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Target className="h-3 w-3" />}
+                      Find host
+                    </button>
+                    {!r.acknowledged && (
+                      <button onClick={() => ackOne(r.id)} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-semibold">
+                        <Check className="h-3 w-3" /> Got it
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {tab === "matches" && (
+        <div className="mt-3">
+          <div className="mb-3 flex flex-wrap gap-2">
+            {(["new", "contacted", "converted", "dismissed", "all"] as const).map((s) => (
+              <button key={s} onClick={() => setMatchStatus(s)}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold ${matchStatus === s ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>
+                {s}
+              </button>
+            ))}
+          </div>
+          {matches.length === 0 && (
+            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+              No matches yet. The agent runs automatically on every new competitor URL discovered by the daily scan, or click <strong>Find host</strong> on a URL above to run it manually.
+            </p>
+          )}
+          <div className="space-y-2">
+            {matches.map((m) => (
+              <div key={m.id} className="rounded-2xl border border-border bg-card p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${m.match_confidence >= 70 ? "bg-emerald-100 text-emerald-800" : m.match_confidence >= 50 ? "bg-amber-100 text-amber-800" : "bg-secondary"}`}>
+                        {m.match_confidence}% match
+                      </span>
+                      {m.domain && <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{m.domain}</span>}
+                      {m.candidate_source && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{m.candidate_source}</span>}
+                      <span className="text-[10px] text-muted-foreground">{new Date(m.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <p className="mt-1 text-sm font-bold">
+                      {m.candidate_name || m.candidate_business_name || "Unknown"}
+                      {m.host_first_name && <span className="ml-2 text-xs font-normal text-muted-foreground">(listing host: {m.host_first_name}{m.host_city && `, ${m.host_city}`})</span>}
+                    </p>
+                    <div className="mt-1 flex flex-wrap gap-3 text-xs">
+                      {m.candidate_email && <a href={`mailto:${m.candidate_email}`} className="inline-flex items-center gap-1 text-primary hover:underline"><Mail className="h-3 w-3" />{m.candidate_email}</a>}
+                      {m.candidate_phone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{m.candidate_phone}</span>}
+                      {m.candidate_website && <a href={m.candidate_website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink className="h-3 w-3" />website</a>}
+                      {m.candidate_social_url && <a href={m.candidate_social_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink className="h-3 w-3" />social</a>}
+                    </div>
+                    {m.candidate_evidence && <p className="mt-1 text-xs text-muted-foreground">{m.candidate_evidence}</p>}
+                    <a href={m.competitor_url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 break-all text-[11px] text-muted-foreground hover:underline">
+                      {m.competitor_url}
+                    </a>
+                  </div>
+                  <div className="flex shrink-0 flex-col gap-1">
+                    {m.status === "new" && (
+                      <>
+                        <button onClick={() => setStatus(m.id, "contacted")} className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold">Mark contacted</button>
+                        <button onClick={() => setStatus(m.id, "converted")} className="rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-semibold text-white">Converted</button>
+                        <button onClick={() => setStatus(m.id, "dismissed")} className="rounded-full border border-border px-3 py-1 text-[11px] font-semibold text-muted-foreground"><X className="mr-1 inline h-2.5 w-2.5" />Dismiss</button>
+                      </>
+                    )}
+                    {m.status !== "new" && <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold">{m.status}</span>}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }
