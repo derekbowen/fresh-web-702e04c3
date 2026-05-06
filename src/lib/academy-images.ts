@@ -1,23 +1,23 @@
 // Maps cover_image_url like "academy/bachelorette.jpg" to a bundled asset URL.
-import bachelorette from "@/assets/academy/bachelorette.jpg";
-import quinceanera from "@/assets/academy/quinceanera.jpg";
-import photoshoot from "@/assets/academy/photoshoot.jpg";
-import familyReunion from "@/assets/academy/family-reunion.jpg";
-import sweet16 from "@/assets/academy/sweet-16.jpg";
-import babyShower from "@/assets/academy/baby-shower.jpg";
-import bachelor from "@/assets/academy/bachelor.jpg";
-import dogPool from "@/assets/academy/dog-pool.jpg";
-import swimTraining from "@/assets/academy/swim-training.jpg";
-import production from "@/assets/academy/production.jpg";
-import aquaFitness from "@/assets/academy/aqua-fitness.jpg";
-import migrate from "@/assets/academy/migrate.jpg";
-import multiPlatform from "@/assets/academy/multi-platform.jpg";
-import income from "@/assets/academy/income.jpg";
-import holiday from "@/assets/academy/holiday.jpg";
-import taxes from "@/assets/academy/taxes.jpg";
-import difficultGuests from "@/assets/academy/difficult-guests.jpg";
-import hoa from "@/assets/academy/hoa.jpg";
-import neighborComplaints from "@/assets/academy/neighbor-complaints.jpg";
+import bachelorette from "@/assets/academy/bachelorette.webp";
+import quinceanera from "@/assets/academy/quinceanera.webp";
+import photoshoot from "@/assets/academy/photoshoot.webp";
+import familyReunion from "@/assets/academy/family-reunion.webp";
+import sweet16 from "@/assets/academy/sweet-16.webp";
+import babyShower from "@/assets/academy/baby-shower.webp";
+import bachelor from "@/assets/academy/bachelor.webp";
+import dogPool from "@/assets/academy/dog-pool.webp";
+import swimTraining from "@/assets/academy/swim-training.webp";
+import production from "@/assets/academy/production.webp";
+import aquaFitness from "@/assets/academy/aqua-fitness.webp";
+import migrate from "@/assets/academy/migrate.webp";
+import multiPlatform from "@/assets/academy/multi-platform.webp";
+import income from "@/assets/academy/income.webp";
+import holiday from "@/assets/academy/holiday.webp";
+import taxes from "@/assets/academy/taxes.webp";
+import difficultGuests from "@/assets/academy/difficult-guests.webp";
+import hoa from "@/assets/academy/hoa.webp";
+import neighborComplaints from "@/assets/academy/neighbor-complaints.webp";
 
 export const ACADEMY_HERO_MAP: Record<string, string> = {
   "academy/bachelorette.jpg": bachelorette,
