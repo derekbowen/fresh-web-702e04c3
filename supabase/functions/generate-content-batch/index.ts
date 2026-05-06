@@ -197,8 +197,20 @@ ESTRUCTURA OBLIGATORIA:
 
 Devuelve SOLO el cuerpo final en markdown para esta página. No uses JSON. No uses bloques de código.`;
 
+function isEventSource(row: PlanRow): boolean {
+  return row.source_type === "event_guide" || row.source_type === "event-city";
+}
+
+function tierAliases(tier: string): string[] {
+  if (tier === "T1 (200k+)" || tier === "T1") return ["T1 (200k+)", "T1"];
+  if (tier === "T2 (75k–199k)" || tier === "T2") return ["T2 (75k–199k)", "T2"];
+  if (tier === "T3 (25k–74k)" || tier === "T3") return ["T3 (25k–74k)", "T3"];
+  if (tier === "T4 (10k–24k)" || tier === "T4") return ["T4 (10k–24k)", "T4"];
+  return tier ? [tier] : [];
+}
+
 function pickSystem(row: PlanRow): string {
-  if (row.source_type === "event_guide") return SYSTEM_EVENT_GUIDE;
+  if (isEventSource(row)) return SYSTEM_EVENT_GUIDE;
   if (row.source_type === "hosting_es") return SYSTEM_HOSTING_ES;
   return SYSTEM_VA;
 }
@@ -376,7 +388,7 @@ async function processGeneration(
     }
     const body = gen.body_markdown ?? "";
     const words = body.split(/\s+/).filter(Boolean).length;
-    const isEvent = plan.source_type === "event_guide";
+    const isEvent = isEventSource(plan);
     const isEs = plan.source_type === "hosting_es";
     const minWords = isEvent ? 2800 : isEs ? 1200 : 1400;
     if (words < minWords) {
@@ -404,7 +416,7 @@ async function processGeneration(
         [/##\s*Section\s*5\b.*Neighborhoods/i, "Section 5 (Neighborhoods)"],
         [/##\s*Section\s*9\b.*Do You Own/i, "Section 9 (Host Flip)"],
         [/##\s*Section\s*10\b.*Frequently Asked/i, "Section 10 (20 FAQs)"],
-        [/(?:^|\n)\s*(?:\*\*)?20\.(?:\*\*)?\s/, "20 numbered FAQs"],
+        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?20\.(?:\*\*)?\s/, "20 numbered FAQs"],
       ];
     } else if (isEs) {
       requiredSections = [
@@ -412,7 +424,7 @@ async function processGeneration(
         [/##\s*Cuánto Puedes Ganar/i, "Cuánto Puedes Ganar"],
         [/##\s*Preguntas Frecuentes/i, "Preguntas Frecuentes"],
         [/##\s*¿Listo Para Empezar\?/i, "¿Listo Para Empezar?"],
-        [/(?:^|\n)\s*(?:\*\*)?15\.(?:\*\*)?\s/, "15 numbered FAQs"],
+        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?15\.(?:\*\*)?\s/, "15 numbered FAQs"],
       ];
     } else {
       requiredSections = [
@@ -458,7 +470,7 @@ async function processGeneration(
 
   const rows = okPages.map(({ plan, body }) => {
     const isCity = plan.source_type === "city";
-    const isEvent = plan.source_type === "event_guide";
+    const isEvent = isEventSource(plan);
     const isEs = plan.source_type === "hosting_es";
     const template_type = isCity
       ? "host_acq_city"
@@ -642,7 +654,7 @@ Deno.serve(async (req) => {
       .limit(data.count);
 
     if (data.tier === "longtail") query = query.eq("source_type", "longtail");
-    else if (data.tier) query = query.eq("priority_tier", data.tier);
+    else if (data.tier) query = query.in("priority_tier", tierAliases(data.tier));
     if (data.stateCode) query = query.eq("state_code", data.stateCode);
     if (data.warmOnly) query = query.eq("warm_climate", true);
 
@@ -655,7 +667,9 @@ Deno.serve(async (req) => {
           ok: false,
           inserted: 0,
           attempted: 0,
-          validationErrors: ["No pending plan rows match those filters."],
+          validationErrors: [
+            `No pending plan rows match those filters. Try clearing State code, turning off Warm-climate only, or choosing Any priority tier.`,
+          ],
           pages: [],
         }),
         { headers: { ...cors, "Content-Type": "application/json" } },
