@@ -79,8 +79,10 @@ import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
+import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
+import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-auditor'
 import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLinkCheckerRouteImport } from './routes/admin.link-checker'
@@ -97,6 +99,7 @@ import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentPagesRouteImport } from './routes/admin.content-pages'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
 import { Route as AdminCompetitorsRouteImport } from './routes/admin.competitors'
+import { Route as AdminCompetitorRadarRouteImport } from './routes/admin.competitor-radar'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
@@ -490,6 +493,11 @@ const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
   path: '/scrape-import',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRankTrackerRoute = AdminRankTrackerRouteImport.update({
+  id: '/rank-tracker',
+  path: '/rank-tracker',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
   id: '/quick-page',
   path: '/quick-page',
@@ -498,6 +506,11 @@ const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
 const AdminPlanRequestsRoute = AdminPlanRequestsRouteImport.update({
   id: '/plan-requests',
   path: '/plan-requests',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPageAuditorRoute = AdminPageAuditorRouteImport.update({
+  id: '/page-auditor',
+  path: '/page-auditor',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminNoAccessRoute = AdminNoAccessRouteImport.update({
@@ -579,6 +592,11 @@ const AdminContentMigrationRoute = AdminContentMigrationRouteImport.update({
 const AdminCompetitorsRoute = AdminCompetitorsRouteImport.update({
   id: '/competitors',
   path: '/competitors',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCompetitorRadarRoute = AdminCompetitorRadarRouteImport.update({
+  id: '/competitor-radar',
+  path: '/competitor-radar',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminClickReportRoute = AdminClickReportRouteImport.update({
@@ -764,6 +782,7 @@ export interface FileRoutesByFullPath {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
   '/admin/competitors': typeof AdminCompetitorsRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
@@ -780,8 +799,10 @@ export interface FileRoutesByFullPath {
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
+  '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
+  '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -879,6 +900,7 @@ export interface FileRoutesByTo {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
   '/admin/competitors': typeof AdminCompetitorsRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
@@ -895,8 +917,10 @@ export interface FileRoutesByTo {
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
+  '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
+  '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -996,6 +1020,7 @@ export interface FileRoutesById {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
   '/admin/competitors': typeof AdminCompetitorsRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
@@ -1012,8 +1037,10 @@ export interface FileRoutesById {
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
+  '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
+  '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -1114,6 +1141,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/claims'
     | '/admin/click-report'
+    | '/admin/competitor-radar'
     | '/admin/competitors'
     | '/admin/content-migration'
     | '/admin/content-pages'
@@ -1130,8 +1158,10 @@ export interface FileRouteTypes {
     | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/no-access'
+    | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/quick-page'
+    | '/admin/rank-tracker'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1229,6 +1259,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/claims'
     | '/admin/click-report'
+    | '/admin/competitor-radar'
     | '/admin/competitors'
     | '/admin/content-migration'
     | '/admin/content-pages'
@@ -1245,8 +1276,10 @@ export interface FileRouteTypes {
     | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/no-access'
+    | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/quick-page'
+    | '/admin/rank-tracker'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1345,6 +1378,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/claims'
     | '/admin/click-report'
+    | '/admin/competitor-radar'
     | '/admin/competitors'
     | '/admin/content-migration'
     | '/admin/content-pages'
@@ -1361,8 +1395,10 @@ export interface FileRouteTypes {
     | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/no-access'
+    | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/quick-page'
+    | '/admin/rank-tracker'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1987,6 +2023,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminScrapeImportRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/rank-tracker': {
+      id: '/admin/rank-tracker'
+      path: '/rank-tracker'
+      fullPath: '/admin/rank-tracker'
+      preLoaderRoute: typeof AdminRankTrackerRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/quick-page': {
       id: '/admin/quick-page'
       path: '/quick-page'
@@ -1999,6 +2042,13 @@ declare module '@tanstack/react-router' {
       path: '/plan-requests'
       fullPath: '/admin/plan-requests'
       preLoaderRoute: typeof AdminPlanRequestsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/page-auditor': {
+      id: '/admin/page-auditor'
+      path: '/page-auditor'
+      fullPath: '/admin/page-auditor'
+      preLoaderRoute: typeof AdminPageAuditorRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/no-access': {
@@ -2111,6 +2161,13 @@ declare module '@tanstack/react-router' {
       path: '/competitors'
       fullPath: '/admin/competitors'
       preLoaderRoute: typeof AdminCompetitorsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/competitor-radar': {
+      id: '/admin/competitor-radar'
+      path: '/competitor-radar'
+      fullPath: '/admin/competitor-radar'
+      preLoaderRoute: typeof AdminCompetitorRadarRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/click-report': {
@@ -2328,6 +2385,7 @@ interface AdminRouteChildren {
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
+  AdminCompetitorRadarRoute: typeof AdminCompetitorRadarRoute
   AdminCompetitorsRoute: typeof AdminCompetitorsRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminContentPagesRoute: typeof AdminContentPagesRoute
@@ -2344,8 +2402,10 @@ interface AdminRouteChildren {
   AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminNoAccessRoute: typeof AdminNoAccessRoute
+  AdminPageAuditorRoute: typeof AdminPageAuditorRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
+  AdminRankTrackerRoute: typeof AdminRankTrackerRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
@@ -2357,6 +2417,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClaimsRoute: AdminClaimsRoute,
   AdminClickReportRoute: AdminClickReportRoute,
+  AdminCompetitorRadarRoute: AdminCompetitorRadarRoute,
   AdminCompetitorsRoute: AdminCompetitorsRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminContentPagesRoute: AdminContentPagesRoute,
@@ -2373,8 +2434,10 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLinkCheckerRoute: AdminLinkCheckerRoute,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminNoAccessRoute: AdminNoAccessRoute,
+  AdminPageAuditorRoute: AdminPageAuditorRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
+  AdminRankTrackerRoute: AdminRankTrackerRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,

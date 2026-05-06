@@ -4,7 +4,7 @@ import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
   CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
-  TrendingUp, Swords, Network,
+  TrendingUp, Swords, Network, Radar, Sparkles,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-layout";
 
@@ -30,6 +30,9 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
   {
     label: "SEO",
     items: [
+      { to: "/admin/competitor-radar", label: "Competitor radar 🚨", icon: Radar },
+      { to: "/admin/rank-tracker", label: "Rank tracker", icon: TrendingUp },
+      { to: "/admin/page-auditor", label: "AI page auditor", icon: Sparkles },
       { to: "/admin/keyword-opportunities", label: "Keyword opportunities", icon: TrendingUp },
       { to: "/admin/competitors", label: "Competitor tracker", icon: Swords },
       { to: "/admin/internal-links", label: "Internal link recommender", icon: Network },
