@@ -502,7 +502,7 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
 
   // ---------- Tier 1: BatchData ----------
   // Now also requires confidence >= 85 (was 70) AND the match isn't all-garbage.
-  const tier1Eligible = !overCap && priority && confidence >= 85 && !!combined.property_address;
+  const tier1Eligible = !overCap && !listingCapHit && priority && confidence >= 85 && !!combined.property_address;
   const forceT1 = opts?.force_tier === "batchdata" || opts?.force_tier === "pdl";
 
   if ((tier1Eligible || forceT1) && (combined.property_address)) {
