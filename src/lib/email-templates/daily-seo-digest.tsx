@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {
   Body, Container, Head, Heading, Hr, Html, Preview, Section, Text, Link,
 } from '@react-email/components'
