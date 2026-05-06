@@ -359,6 +359,26 @@ function CompetitorRadar() {
                         {m.revenue_signal_notes && <p className="mt-1 text-[11px] text-muted-foreground">{m.revenue_signal_notes}</p>}
                       </div>
                     )}
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+                      <button onClick={() => setExpandedMatch(expandedMatch === m.id ? null : m.id)} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-muted-foreground hover:text-foreground">
+                        <ChevronDown className={`h-3 w-3 transition-transform ${expandedMatch === m.id ? "rotate-180" : ""}`} /> Why this match?
+                      </button>
+                      <button onClick={() => flagFalsePositive(m.id)} className="inline-flex items-center gap-1 rounded-full border border-destructive/40 px-2 py-0.5 text-destructive hover:bg-destructive/5">
+                        <AlertTriangle className="h-3 w-3" /> False positive — improve filter
+                      </button>
+                      {m.enrichment_cost_usd != null && (
+                        <span className="text-muted-foreground">Spent: ${Number(m.enrichment_cost_usd || 0).toFixed(2)}</span>
+                      )}
+                    </div>
+                    {expandedMatch === m.id && (
+                      <div className="mt-2 rounded-lg border border-border bg-muted/30 p-2 text-[11px]">
+                        <p className="font-semibold">Validation breakdown</p>
+                        <p className="mt-1 text-muted-foreground whitespace-pre-wrap break-words">{m.candidate_evidence || "No evidence recorded."}</p>
+                        <p className="mt-2 text-muted-foreground">
+                          Source domain: <code>{m.domain || "—"}</code> · Listing host: {m.host_first_name || "—"}, {m.host_city || "—"} {m.host_state || ""}
+                        </p>
+                      </div>
+                    )}
                     <a href={m.competitor_url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 break-all text-[11px] text-muted-foreground hover:underline">
                       {m.competitor_url}
                     </a>
