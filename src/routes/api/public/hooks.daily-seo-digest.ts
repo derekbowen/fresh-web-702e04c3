@@ -109,7 +109,7 @@ async function sendDigest(force: boolean) {
   const sb = supabaseAdmin as any;
   const data = await buildDigestData();
 
-  const totalSignals = data.totalNewCompetitor + data.totalCriticalAudits + data.rankDrops.length;
+  const totalSignals = data.totalNewCompetitor + data.totalCriticalAudits + data.rankDrops.length + data.totalHostLeads;
   if (!force && totalSignals === 0) {
     return { sent: false, reason: "no_signals", data };
   }
