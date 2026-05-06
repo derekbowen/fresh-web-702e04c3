@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
-import { AutoLinkedContent } from "@/components/auto-linked-content";
 import type { ContentPage } from "@/server/content-pages.functions";
 
 /**
@@ -11,6 +12,7 @@ import type { ContentPage } from "@/server/content-pages.functions";
  */
 export function ResourceArticleTemplate({ page }: { page: ContentPage }) {
   const publishedAt = page.published_at ?? null;
+  const body = (page.content || page.body_markdown || "").toString();
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
@@ -51,12 +53,20 @@ export function ResourceArticleTemplate({ page }: { page: ContentPage }) {
           {page.description && (
             <p className="mt-8 text-lg text-muted-foreground">{page.description}</p>
           )}
-          {(page.content || page.body_markdown) && (
-            <AutoLinkedContent
-              text={(page.content || page.body_markdown) as string}
-              targets={[]}
-              className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground"
-            />
+          {body && (
+            <div
+              className="prose prose-lg mt-8 max-w-none text-foreground
+                prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground
+                prose-h2:mt-12 prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-2
+                prose-h3:mt-8 prose-h3:text-xl
+                prose-p:leading-relaxed
+                prose-a:text-primary hover:prose-a:underline
+                prose-strong:text-foreground
+                prose-ul:my-4 prose-li:my-1
+                dark:prose-invert"
+            >
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
+            </div>
           )}
         </article>
         <div className="mt-12 border-t border-border pt-8">
