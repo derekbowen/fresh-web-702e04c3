@@ -28,7 +28,7 @@ function CompetitorRadar() {
   const [sites, setSites] = React.useState<CompetitorSiteRow[]>([]);
   const [newRows, setNewRows] = React.useState<CompetitorUrlRow[]>([]);
   const [matches, setMatches] = React.useState<CompetitorHostMatchRow[]>([]);
-  const [matchStatus, setMatchStatus] = React.useState<"new" | "contacted" | "converted" | "dismissed" | "all">("new");
+  const [matchStatus, setMatchStatus] = React.useState<"new" | "review" | "contacted" | "converted" | "dismissed" | "all">("new");
   const [tab, setTab] = React.useState<"feed" | "matches">("feed");
   const [domain, setDomain] = React.useState("");
   const [sitemap, setSitemap] = React.useState("");
