@@ -385,6 +385,7 @@ async function generateOne(
   plan: PlanRow,
   model: string,
   apiKey: string,
+  maxTokens?: number,
 ): Promise<GeneratedPage | null> {
   const { system, user } = buildPrompt(plan);
   const controller = new AbortController();
@@ -400,7 +401,7 @@ async function generateOne(
           { role: "system", content: system },
           { role: "user", content: user },
         ],
-        max_tokens: plan.source_type === "event_guide" ? 12000 : 8500,
+        max_tokens: maxTokens ?? (plan.source_type === "event_guide" ? 12000 : 8500),
       }),
     });
 
