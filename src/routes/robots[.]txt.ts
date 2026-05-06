@@ -35,11 +35,20 @@ Disallow: /listings
 Disallow: /profile-settings
 Disallow: /verify/
 
+# Sharetribe-owned pages stuck in "Crawled — currently not indexed".
+# These are thin/duplicative for Google and waste crawl budget.
+# /l/* — individual listing detail pages (Sharetribe-rendered)
+# /u/* — public user profile pages
+Disallow: /l/
+Disallow: /u/
+
 # Internal API endpoints
 Disallow: /api/sharetribe/
 Disallow: /api/public/track-city-click
 
-# Don't index search query strings, but allow the search hub
+# Don't index search query strings (paginated/filtered /s),
+# but allow the bare search hub at /s
+Allow: /s$
 Allow: /s
 Disallow: /s?
 
