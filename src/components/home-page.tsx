@@ -8,7 +8,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
-import heroPool from "@/assets/pool-hero-default.jpg";
+import heroPool from "@/assets/pool-hero-default.webp";
 
 const NEARBY_RADIUS_MILES = 500;
 
