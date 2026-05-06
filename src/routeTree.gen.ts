@@ -61,11 +61,11 @@ import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$s
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
 import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
-import { Route as PPeerspaceVsPoolRentalNearMeInCityRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me-in-$city'
+import { Route as PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport } from './routes/p.peerspace-vs-pool-rental-near-me-in-{$city}'
 import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
-import { Route as PGiggsterVsPoolRentalNearMeInCityRouteImport } from './routes/p.giggster-vs-pool-rental-near-me-in-$city'
+import { Route as PGiggsterVsPoolRentalNearMeInChar123cityChar125RouteImport } from './routes/p.giggster-vs-pool-rental-near-me-in-{$city}'
 import { Route as PGiggsterVsPoolRentalNearMeRouteImport } from './routes/p.giggster-vs-pool-rental-near-me'
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
 import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-calculator'
@@ -419,10 +419,10 @@ const PPoolProsRoute = PPoolProsRouteImport.update({
   path: '/p/pool-pros',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PPeerspaceVsPoolRentalNearMeInCityRoute =
-  PPeerspaceVsPoolRentalNearMeInCityRouteImport.update({
-    id: '/p/peerspace-vs-pool-rental-near-me-in-$city',
-    path: '/p/peerspace-vs-pool-rental-near-me-in-$city',
+const PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route =
+  PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport.update({
+    id: '/p/peerspace-vs-pool-rental-near-me-in-{$city}',
+    path: '/p/peerspace-vs-pool-rental-near-me-in-{$city}',
     getParentRoute: () => rootRouteImport,
   } as any)
 const PPeerspaceVsPoolRentalNearMeRoute =
@@ -441,10 +441,10 @@ const PHostingRoute = PHostingRouteImport.update({
   path: '/p/hosting',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PGiggsterVsPoolRentalNearMeInCityRoute =
-  PGiggsterVsPoolRentalNearMeInCityRouteImport.update({
-    id: '/p/giggster-vs-pool-rental-near-me-in-$city',
-    path: '/p/giggster-vs-pool-rental-near-me-in-$city',
+const PGiggsterVsPoolRentalNearMeInChar123cityChar125Route =
+  PGiggsterVsPoolRentalNearMeInChar123cityChar125RouteImport.update({
+    id: '/p/giggster-vs-pool-rental-near-me-in-{$city}',
+    path: '/p/giggster-vs-pool-rental-near-me-in-{$city}',
     getParentRoute: () => rootRouteImport,
   } as any)
 const PGiggsterVsPoolRentalNearMeRoute =
@@ -953,11 +953,11 @@ export interface FileRoutesByFullPath {
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
-  '/p/giggster-vs-pool-rental-near-me-in-$city': typeof PGiggsterVsPoolRentalNearMeInCityRoute
+  '/p/giggster-vs-pool-rental-near-me-in-{$city}': typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
-  '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
@@ -1091,11 +1091,11 @@ export interface FileRoutesByTo {
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
-  '/p/giggster-vs-pool-rental-near-me-in-$city': typeof PGiggsterVsPoolRentalNearMeInCityRoute
+  '/p/giggster-vs-pool-rental-near-me-in-{$city}': typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
-  '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
@@ -1231,11 +1231,11 @@ export interface FileRoutesById {
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
-  '/p/giggster-vs-pool-rental-near-me-in-$city': typeof PGiggsterVsPoolRentalNearMeInCityRoute
+  '/p/giggster-vs-pool-rental-near-me-in-{$city}': typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
-  '/p/peerspace-vs-pool-rental-near-me-in-$city': typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
@@ -1372,11 +1372,11 @@ export interface FileRouteTypes {
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
-    | '/p/giggster-vs-pool-rental-near-me-in-$city'
+    | '/p/giggster-vs-pool-rental-near-me-in-{$city}'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
-    | '/p/peerspace-vs-pool-rental-near-me-in-$city'
+    | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
     | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
@@ -1510,11 +1510,11 @@ export interface FileRouteTypes {
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
-    | '/p/giggster-vs-pool-rental-near-me-in-$city'
+    | '/p/giggster-vs-pool-rental-near-me-in-{$city}'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
-    | '/p/peerspace-vs-pool-rental-near-me-in-$city'
+    | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
     | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
@@ -1649,11 +1649,11 @@ export interface FileRouteTypes {
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
-    | '/p/giggster-vs-pool-rental-near-me-in-$city'
+    | '/p/giggster-vs-pool-rental-near-me-in-{$city}'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/peerspace-vs-pool-rental-near-me'
-    | '/p/peerspace-vs-pool-rental-near-me-in-$city'
+    | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
     | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
@@ -1753,11 +1753,11 @@ export interface RootRouteChildren {
   PEarningsCalculatorRoute: typeof PEarningsCalculatorRoute
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PGiggsterVsPoolRentalNearMeRoute: typeof PGiggsterVsPoolRentalNearMeRoute
-  PGiggsterVsPoolRentalNearMeInCityRoute: typeof PGiggsterVsPoolRentalNearMeInCityRoute
+  PGiggsterVsPoolRentalNearMeInChar123cityChar125Route: typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
-  PPeerspaceVsPoolRentalNearMeInCityRoute: typeof PPeerspaceVsPoolRentalNearMeInCityRoute
+  PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route: typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
   PPrivacyRequestRoute: typeof PPrivacyRequestRoute
   PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
@@ -2156,11 +2156,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PPoolProsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/peerspace-vs-pool-rental-near-me-in-$city': {
-      id: '/p/peerspace-vs-pool-rental-near-me-in-$city'
-      path: '/p/peerspace-vs-pool-rental-near-me-in-$city'
-      fullPath: '/p/peerspace-vs-pool-rental-near-me-in-$city'
-      preLoaderRoute: typeof PPeerspaceVsPoolRentalNearMeInCityRouteImport
+    '/p/peerspace-vs-pool-rental-near-me-in-{$city}': {
+      id: '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
+      path: '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
+      fullPath: '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
+      preLoaderRoute: typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/peerspace-vs-pool-rental-near-me': {
@@ -2184,11 +2184,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PHostingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/giggster-vs-pool-rental-near-me-in-$city': {
-      id: '/p/giggster-vs-pool-rental-near-me-in-$city'
-      path: '/p/giggster-vs-pool-rental-near-me-in-$city'
-      fullPath: '/p/giggster-vs-pool-rental-near-me-in-$city'
-      preLoaderRoute: typeof PGiggsterVsPoolRentalNearMeInCityRouteImport
+    '/p/giggster-vs-pool-rental-near-me-in-{$city}': {
+      id: '/p/giggster-vs-pool-rental-near-me-in-{$city}'
+      path: '/p/giggster-vs-pool-rental-near-me-in-{$city}'
+      fullPath: '/p/giggster-vs-pool-rental-near-me-in-{$city}'
+      preLoaderRoute: typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/giggster-vs-pool-rental-near-me': {
@@ -3040,13 +3040,13 @@ const rootRouteChildren: RootRouteChildren = {
   PEarningsCalculatorRoute: PEarningsCalculatorRoute,
   PFreeHostToolsRoute: PFreeHostToolsRoute,
   PGiggsterVsPoolRentalNearMeRoute: PGiggsterVsPoolRentalNearMeRoute,
-  PGiggsterVsPoolRentalNearMeInCityRoute:
-    PGiggsterVsPoolRentalNearMeInCityRoute,
+  PGiggsterVsPoolRentalNearMeInChar123cityChar125Route:
+    PGiggsterVsPoolRentalNearMeInChar123cityChar125Route,
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
   PPeerspaceVsPoolRentalNearMeRoute: PPeerspaceVsPoolRentalNearMeRoute,
-  PPeerspaceVsPoolRentalNearMeInCityRoute:
-    PPeerspaceVsPoolRentalNearMeInCityRoute,
+  PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route:
+    PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route,
   PPoolProsRoute: PPoolProsRouteWithChildren,
   PPrivacyRequestRoute: PPrivacyRequestRoute,
   PSwimplyAlternativeVsPoolRentalNearMeRoute:
@@ -3083,3 +3083,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
