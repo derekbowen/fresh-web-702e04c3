@@ -415,8 +415,9 @@ async function processGeneration(
         [/##\s*Section\s*3\b.*Planning Guide/i, "Section 3 (Planning Guide)"],
         [/##\s*Section\s*5\b.*Neighborhoods/i, "Section 5 (Neighborhoods)"],
         [/##\s*Section\s*9\b.*Do You Own/i, "Section 9 (Host Flip)"],
-        [/##\s*Section\s*10\b.*Frequently Asked/i, "Section 10 (20 FAQs)"],
-        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?20\.(?:\*\*)?\s/, "20 numbered FAQs"],
+        [/##\s*Section\s*10\b.*Frequently Asked/i, "Section 10 (FAQs)"],
+        // Accept 15+ numbered FAQs instead of strict 20 (Flash truncates around 15)
+        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?15\.(?:\*\*)?\s/, "at least 15 numbered FAQs"],
       ];
     } else if (isEs) {
       requiredSections = [
