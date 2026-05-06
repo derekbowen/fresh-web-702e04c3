@@ -140,6 +140,7 @@ import { Route as DirectoryCategoryStateCityRouteImport } from './routes/directo
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
+import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
@@ -826,6 +827,12 @@ const ApiPublicHooksSeoFixWorkerRoute =
     path: '/api/public/hooks/seo-fix-worker',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksProviderAiWorkerRoute =
+  ApiPublicHooksProviderAiWorkerRouteImport.update({
+    id: '/api/public/hooks/provider-ai-worker',
+    path: '/api/public/hooks/provider-ai-worker',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailySeoDigestRoute =
   ApiPublicHooksDailySeoDigestRouteImport.update({
     id: '/api/public/hooks/daily-seo-digest',
@@ -980,6 +987,7 @@ export interface FileRoutesByFullPath {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
@@ -1117,6 +1125,7 @@ export interface FileRoutesByTo {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
@@ -1256,6 +1265,7 @@ export interface FileRoutesById {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
@@ -1396,6 +1406,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
@@ -1533,6 +1544,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
@@ -1671,6 +1683,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
@@ -1766,6 +1779,7 @@ export interface RootRouteChildren {
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
+  ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
@@ -2695,6 +2709,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSeoFixWorkerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/provider-ai-worker': {
+      id: '/api/public/hooks/provider-ai-worker'
+      path: '/api/public/hooks/provider-ai-worker'
+      fullPath: '/api/public/hooks/provider-ai-worker'
+      preLoaderRoute: typeof ApiPublicHooksProviderAiWorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-seo-digest': {
       id: '/api/public/hooks/daily-seo-digest'
       path: '/api/public/hooks/daily-seo-digest'
@@ -3049,6 +3070,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
+  ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
