@@ -64,7 +64,26 @@ async function runScan() {
     }
   }
 
-  return { ok: true, results, matcher: matcherResult, ran_at: new Date().toISOString() };
+  // Auto-run tiered contact enrichment on freshly inserted matches (Tier 0 free,
+  // Tier 1/2 gated by confidence + revenue + $10/day cap)
+  let enrichResult: { processed: number; total_cost: number; cap_hit: boolean } | null = null;
+  try {
+    const { data: freshMatches } = await sb
+      .from("competitor_host_matches")
+      .select("id")
+      .is("enriched_at", null)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    const ids = (freshMatches || []).map((r: any) => r.id);
+    if (ids.length > 0) {
+      const { enrichManyHostMatches } = await import("@/server/contact-enricher.server");
+      enrichResult = await enrichManyHostMatches(ids);
+    }
+  } catch (e: any) {
+    console.error("[radar-scan] enrich failed", e);
+  }
+
+  return { ok: true, results, matcher: matcherResult, enrich: enrichResult, ran_at: new Date().toISOString() };
 }
 
 export const Route = createFileRoute("/api/public/hooks/competitor-radar-scan")({

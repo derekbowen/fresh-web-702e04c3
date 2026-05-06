@@ -6,10 +6,11 @@ import {
   listCompetitorSites, addCompetitorSite, deleteCompetitorSite,
   runCompetitorScan, listNewCompetitorUrls, acknowledgeCompetitorUrls,
   scrapeCompetitorUrlRow, listHostMatches, updateHostMatchStatus, runHostMatchOne,
+  enrichHostMatchOne, getEnrichmentSpend,
   type CompetitorSiteRow, type CompetitorUrlRow, type CompetitorHostMatchRow,
 } from "@/server/admin-weapons.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X, Sparkles, DollarSign } from "lucide-react";
 
 export const Route = createFileRoute("/admin/competitor-radar")({
   beforeLoad: async () => {
@@ -34,18 +35,22 @@ function CompetitorRadar() {
   const [label, setLabel] = React.useState("");
   const [scanning, setScanning] = React.useState(false);
   const [matchingId, setMatchingId] = React.useState<string | null>(null);
+  const [enrichingId, setEnrichingId] = React.useState<string | null>(null);
+  const [spend, setSpend] = React.useState<{ today_spend_usd: number; today_calls: number; today_hits: number; month_spend_usd: number; daily_cap_usd: number; monthly_target_usd: number } | null>(null);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [showAck, setShowAck] = React.useState(false);
 
   const load = React.useCallback(async () => {
-    const [s, n, m] = await Promise.all([
+    const [s, n, m, sp] = await Promise.all([
       listCompetitorSites(),
       listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } }),
       listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } }),
+      getEnrichmentSpend().catch(() => null),
     ]);
     setSites(s.rows);
     setNewRows(n.rows);
     setMatches(m.rows);
+    setSpend(sp);
   }, [showAck, matchStatus]);
 
   React.useEffect(() => { load(); }, [load]);
@@ -62,6 +67,15 @@ function CompetitorRadar() {
   async function setStatus(id: string, status: "contacted" | "converted" | "dismissed") {
     await updateHostMatchStatus({ data: { id, status } });
     await load();
+  }
+
+  async function enrich(id: string) {
+    setEnrichingId(id);
+    try {
+      const r: any = await enrichHostMatchOne({ data: { match_id: id } });
+      setMsg(r.ok ? `Enriched (${r.tier_reached}): ${r.emails_found} email(s), ${r.phones_found} phone(s), $${(r.cost_usd || 0).toFixed(2)}${r.reason ? ` — ${r.reason}` : ""}` : `Enrich failed: ${r.reason}`);
+      await load();
+    } finally { setEnrichingId(null); }
   }
 
   async function add() {
@@ -237,6 +251,15 @@ function CompetitorRadar() {
 
       {tab === "matches" && (
         <div className="mt-3">
+          {spend && (
+            <div className="mb-3 flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-3 text-xs">
+              <DollarSign className="h-4 w-4 text-primary" />
+              <span><strong>${spend.today_spend_usd.toFixed(2)}</strong> / ${spend.daily_cap_usd} today</span>
+              <span className="text-muted-foreground">· {spend.today_calls} calls, {spend.today_hits} hits</span>
+              <span className="text-muted-foreground">· <strong>${spend.month_spend_usd.toFixed(2)}</strong> month-to-date (target ${spend.monthly_target_usd})</span>
+              {spend.today_spend_usd >= spend.daily_cap_usd && <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-800">Cap hit — paid tiers paused</span>}
+            </div>
+          )}
           <div className="mb-3 flex flex-wrap gap-2">
             {(["new", "contacted", "converted", "dismissed", "all"] as const).map((s) => (
               <button key={s} onClick={() => setMatchStatus(s)}
@@ -274,11 +297,40 @@ function CompetitorRadar() {
                       {m.candidate_social_url && <a href={m.candidate_social_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink className="h-3 w-3" />social</a>}
                     </div>
                     {m.candidate_evidence && <p className="mt-1 text-xs text-muted-foreground">{m.candidate_evidence}</p>}
+                    {m.enriched_at && (
+                      <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-xs">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">enriched · {m.enriched_tier}</span>
+                          {m.revenue_signal_score != null && m.revenue_signal_score > 0 && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">revenue {m.revenue_signal_score}</span>
+                          )}
+                          {m.enrichment_cost_usd != null && m.enrichment_cost_usd > 0 && (
+                            <span className="text-[10px] text-muted-foreground">${Number(m.enrichment_cost_usd).toFixed(2)}</span>
+                          )}
+                        </div>
+                        {(m.enriched_emails?.length || 0) > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-2">{m.enriched_emails!.map((e) => <a key={e} href={`mailto:${e}`} className="inline-flex items-center gap-1 text-primary hover:underline"><Mail className="h-3 w-3" />{e}</a>)}</div>
+                        )}
+                        {(m.enriched_phones?.length || 0) > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-2">{m.enriched_phones!.map((p) => <span key={p} className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{p}</span>)}</div>
+                        )}
+                        {(m.enriched_socials?.length || 0) > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-2">{m.enriched_socials!.slice(0, 4).map((u) => <a key={u} href={u} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink className="h-3 w-3" />{new URL(u).hostname.replace("www.", "")}</a>)}</div>
+                        )}
+                        {m.property_address && <p className="mt-1 text-[11px] text-muted-foreground">📍 {m.property_address}</p>}
+                        {m.revenue_signal_notes && <p className="mt-1 text-[11px] text-muted-foreground">{m.revenue_signal_notes}</p>}
+                      </div>
+                    )}
                     <a href={m.competitor_url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 break-all text-[11px] text-muted-foreground hover:underline">
                       {m.competitor_url}
                     </a>
                   </div>
                   <div className="flex shrink-0 flex-col gap-1">
+                    <button onClick={() => enrich(m.id)} disabled={enrichingId === m.id}
+                      className="inline-flex items-center justify-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary disabled:opacity-50">
+                      {enrichingId === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                      {m.enriched_at ? "Re-enrich" : "Enrich"}
+                    </button>
                     {m.status === "new" && (
                       <>
                         <button onClick={() => setStatus(m.id, "contacted")} className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold">Mark contacted</button>

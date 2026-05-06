@@ -265,6 +265,15 @@ export type CompetitorHostMatchRow = {
   status: string;
   admin_notes: string | null;
   created_at: string;
+  enriched_at: string | null;
+  enriched_tier: string | null;
+  enriched_emails: string[] | null;
+  enriched_phones: string[] | null;
+  enriched_socials: string[] | null;
+  property_address: string | null;
+  revenue_signal_score: number | null;
+  revenue_signal_notes: string | null;
+  enrichment_cost_usd: number | null;
 };
 
 export const listHostMatches = createServerFn({ method: "GET" })
@@ -312,6 +321,44 @@ export const runHostMatchOne = createServerFn({ method: "POST" })
     await assertAdmin((context as any).userId);
     const { matchCompetitorUrl } = await import("./host-matcher.server");
     return matchCompetitorUrl(data.competitor_url_id);
+  });
+
+export const enrichHostMatchOne = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      match_id: z.string().uuid(),
+      force_tier: z.enum(["osint", "batchdata", "pdl"]).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const { enrichHostMatch } = await import("./contact-enricher.server");
+    return enrichHostMatch(data.match_id, { force_tier: data.force_tier });
+  });
+
+export const getEnrichmentSpend = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin((context as any).userId);
+    const today = new Date().toISOString().slice(0, 10);
+    const monthStart = today.slice(0, 7) + "-01";
+    const { data: todayRows } = await sb()
+      .from("enrichment_spend_log").select("cost_usd, outcome")
+      .eq("spend_date", today);
+    const { data: monthRows } = await sb()
+      .from("enrichment_spend_log").select("cost_usd")
+      .gte("spend_date", monthStart);
+    const today_total = (todayRows || []).reduce((s: number, r: any) => s + Number(r.cost_usd || 0), 0);
+    const month_total = (monthRows || []).reduce((s: number, r: any) => s + Number(r.cost_usd || 0), 0);
+    return {
+      today_spend_usd: Number(today_total.toFixed(2)),
+      today_calls: (todayRows || []).length,
+      today_hits: (todayRows || []).filter((r: any) => r.outcome === "hit").length,
+      month_spend_usd: Number(month_total.toFixed(2)),
+      daily_cap_usd: 10,
+      monthly_target_usd: 25,
+    };
   });
 
 // ============================================================================
