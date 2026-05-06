@@ -467,6 +467,20 @@ export async function enrichHostMatch(match_id: string, opts?: { force_tier?: "o
   const spentToday = await getDailySpend();
   const overCap = spentToday >= DAILY_SPEND_CAP_USD;
 
+  // 30-day per-listing cap: max 1 paid enrichment per competitor URL per 30 days
+  let listingCapHit = false;
+  try {
+    const since = new Date(Date.now() - 30 * 86400 * 1000).toISOString();
+    const { data: recent } = await sb()
+      .from("competitor_host_matches")
+      .select("id, enrichment_cost_usd, enriched_at")
+      .eq("competitor_url_id", match.competitor_url_id)
+      .gt("enriched_at", since);
+    const paidCalls = (recent || []).filter((r: any) => Number(r.enrichment_cost_usd || 0) > 0 && r.id !== match_id).length;
+    if (paidCalls >= 1) listingCapHit = true;
+  } catch { /* non-fatal */ }
+
+
   const priority = isPriorityCity(match.host_city);
   const confidence = Number(match.match_confidence || 0);
 
