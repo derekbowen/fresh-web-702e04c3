@@ -18,6 +18,10 @@ export function GlobalChromeProvider({ children }: { children: React.ReactNode }
   );
 }
 
+export function ShowChromeOverride({ children }: { children: React.ReactNode }) {
+  return <GlobalChromeContext.Provider value={false}>{children}</GlobalChromeContext.Provider>;
+}
+
 export function FooterDataProvider({
   value,
   children,
