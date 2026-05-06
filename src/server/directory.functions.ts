@@ -394,7 +394,7 @@ export const adminImportGscRows = createServerFn({ method: "POST" })
       const table = kind === "page" ? "content_pages" : "providers";
       const matchCol = kind === "page" ? "url_path" : "slug";
       const matchVal = kind === "page" ? `/p/${r.slug.replace(/^\/+/, "")}` : r.slug;
-      const { error, count } = await supabaseAdmin
+      const { error, count } = await (supabaseAdmin as any)
         .from(table)
         .update({
           gsc_impressions: r.impressions,
