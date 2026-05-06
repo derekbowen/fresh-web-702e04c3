@@ -224,6 +224,83 @@ export type Database = {
         }
         Relationships: []
       }
+      competitor_host_matches: {
+        Row: {
+          admin_notes: string | null
+          candidate_business_name: string | null
+          candidate_email: string | null
+          candidate_evidence: string | null
+          candidate_name: string | null
+          candidate_phone: string | null
+          candidate_social_url: string | null
+          candidate_source: string | null
+          candidate_website: string | null
+          competitor_url: string
+          competitor_url_id: string
+          created_at: string
+          domain: string | null
+          host_city: string | null
+          host_first_name: string | null
+          host_state: string | null
+          id: string
+          match_confidence: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          candidate_business_name?: string | null
+          candidate_email?: string | null
+          candidate_evidence?: string | null
+          candidate_name?: string | null
+          candidate_phone?: string | null
+          candidate_social_url?: string | null
+          candidate_source?: string | null
+          candidate_website?: string | null
+          competitor_url: string
+          competitor_url_id: string
+          created_at?: string
+          domain?: string | null
+          host_city?: string | null
+          host_first_name?: string | null
+          host_state?: string | null
+          id?: string
+          match_confidence?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          candidate_business_name?: string | null
+          candidate_email?: string | null
+          candidate_evidence?: string | null
+          candidate_name?: string | null
+          candidate_phone?: string | null
+          candidate_social_url?: string | null
+          candidate_source?: string | null
+          candidate_website?: string | null
+          competitor_url?: string
+          competitor_url_id?: string
+          created_at?: string
+          domain?: string | null
+          host_city?: string | null
+          host_first_name?: string | null
+          host_state?: string | null
+          id?: string
+          match_confidence?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitor_host_matches_competitor_url_id_fkey"
+            columns: ["competitor_url_id"]
+            isOneToOne: false
+            referencedRelation: "competitor_urls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competitor_pages: {
         Row: {
           created_at: string
