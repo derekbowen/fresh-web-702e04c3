@@ -5,7 +5,7 @@ import {
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
   CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
 } from "lucide-react";
-import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { SiteHeader } from "@/components/site-layout";
 
 type Item = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
@@ -130,8 +130,28 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
   const isDashboard = path === "/admin/dashboard";
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+    <div className="flex min-h-screen flex-col bg-background">
+      <div className="hidden lg:block"><SiteHeader /></div>
+      {/* Mobile top bar — slim, sticky, native-app feel */}
+      <div className="sticky top-0 z-40 flex h-12 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur lg:hidden">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="-ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-muted active:bg-muted"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <span className="truncate text-sm font-semibold">
+          {current?.label ?? title ?? "Admin"}
+        </span>
+        <Link
+          to="/"
+          className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-muted"
+          aria-label="Go to site"
+        >
+          <Home className="h-4 w-4" />
+        </Link>
+      </div>
       <div className="flex flex-1">
         <Sidebar
           collapsed={collapsed}
@@ -140,15 +160,8 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
           onMobileClose={() => setMobileOpen(false)}
         />
         <div className="flex min-w-0 flex-1 flex-col">
-          {/* Breadcrumb / back bar */}
-          <div className="sticky top-16 z-30 flex h-12 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur sm:px-6 lg:px-8">
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="rounded p-1.5 hover:bg-muted lg:hidden"
-              aria-label="Open menu"
-            >
-              <Menu className="h-4 w-4" />
-            </button>
+          {/* Desktop breadcrumb bar */}
+          <div className="sticky top-16 z-30 hidden h-12 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur lg:flex lg:px-8">
             {!isDashboard && (
               <Link to="/admin/dashboard" className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground">
                 <ChevronLeft className="h-3.5 w-3.5" /> Dashboard
@@ -167,12 +180,11 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
             </nav>
             {title && <span className="ml-auto truncate text-sm font-semibold text-foreground/80">{title}</span>}
           </div>
-          <main className={`mx-auto w-full flex-1 px-4 py-6 sm:px-6 lg:px-8 ${maxWidth}`}>
+          <main className={`mx-auto w-full flex-1 px-3 py-4 pb-24 sm:px-6 lg:px-8 lg:py-6 lg:pb-6 ${maxWidth}`}>
             {children}
           </main>
         </div>
       </div>
-      <SiteFooter />
     </div>
   );
 }
