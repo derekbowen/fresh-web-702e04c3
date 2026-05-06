@@ -10,7 +10,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 async function fetchSitemapUrls(sitemapUrl: string, depth = 0): Promise<string[]> {
   if (depth > 2) return [];
-  const res = await fetch(sitemapUrl, { headers: { "User-Agent": "PoolRentalNearMe-Radar/1.0" } });
+  const res = await fetch(sitemapUrl, { headers: { "User-Agent": "Mozilla/5.0 (compatible; PoolRentalNearMeBot/1.0; +https://www.poolrentalnearme.com)" } });
   if (!res.ok) throw new Error(`Sitemap fetch ${res.status}`);
   const xml = await res.text();
   const locs = Array.from(xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)).map((m) => m[1]);
