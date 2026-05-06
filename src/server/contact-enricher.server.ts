@@ -59,6 +59,22 @@ const EMPTY: EnrichedShape = {
   property_zip: null,
 };
 
+function sanitizeShape(s: EnrichedShape, firstName: string | null): EnrichedShape {
+  const emails: string[] = [];
+  for (const e of s.emails) {
+    if (validateEmail(e, { firstName }).ok && !emails.includes(e.toLowerCase())) emails.push(e.toLowerCase());
+  }
+  const phones: string[] = [];
+  for (const p of s.phones) {
+    const v = validateUSPhone(p);
+    if (v.ok && v.normalized) {
+      const display = formatPhoneForDisplay(v.normalized);
+      if (!phones.includes(display)) phones.push(display);
+    }
+  }
+  return { ...s, emails, phones };
+}
+
 function normalizeKey(parts: (string | null | undefined)[]): string {
   return parts
     .map((p) => (p || "").toLowerCase().trim().replace(/\s+/g, " "))
