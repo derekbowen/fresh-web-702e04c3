@@ -113,6 +113,7 @@ export function IntercomWidget() {
 
     return () => {
       cancelled = true;
+      cleanupSchedulers();
       unsub?.();
       try {
         shutdown();
