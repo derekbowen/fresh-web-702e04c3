@@ -70,10 +70,13 @@ function GscImport() {
     for (let i = 1; i < lines.length; i++) {
       const cells = lines[i].split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map((c) => c.trim().replace(/^"|"$/g, ""));
       const url = cells[idx.page] ?? "";
-      const m = url.match(/\/providers\/([^/?#]+)/);
-      if (!m) continue;
+      const mProv = url.match(/\/providers\/([^/?#]+)/);
+      const mPage = url.match(/\/p\/([^?#]+)/);
+      if (!mProv && !mPage) continue;
+      const slug = (mProv ? mProv[1] : mPage![1]).replace(/\/$/, "");
       rows.push({
-        slug: m[1],
+        slug,
+        kind: mProv ? "provider" : "page",
         impressions: Number(cells[idx.impr]?.replace(/[,%]/g, "")) || 0,
         clicks: idx.clicks >= 0 ? Number(cells[idx.clicks]?.replace(/[,%]/g, "")) || 0 : 0,
         position: idx.pos >= 0 ? Number(cells[idx.pos]?.replace(/[,%]/g, "")) || null : null,
