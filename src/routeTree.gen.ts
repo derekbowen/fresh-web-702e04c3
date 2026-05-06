@@ -52,9 +52,11 @@ import { Route as HostToolsIndexRouteImport } from './routes/host-tools.index'
 import { Route as HelpCenterIndexRouteImport } from './routes/help-center.index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
+import { Route as TechnicalSupportSplatRouteImport } from './routes/technical-support.$'
 import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
 import { Route as PoolRentalCityRouteImport } from './routes/pool-rental.$city'
 import { Route as PoolRentalLawsCityRouteImport } from './routes/pool-rental-laws.$city'
+import { Route as PoolManagementSplatRouteImport } from './routes/pool-management.$'
 import { Route as PoolBuildersStateRouteImport } from './routes/pool-builders.$state'
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
 import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
@@ -70,7 +72,13 @@ import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-cal
 import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
+import { Route as MarketingAndGrowthSplatRouteImport } from './routes/marketing-and-growth.$'
+import { Route as LegalAndComplianceSplatRouteImport } from './routes/legal-and-compliance.$'
 import { Route as HostToolsSlugRouteImport } from './routes/host-tools.$slug'
+import { Route as HostInformationSplatRouteImport } from './routes/host-information.$'
+import { Route as GuestInformationSplatRouteImport } from './routes/guest-information.$'
+import { Route as ForHostsSplatRouteImport } from './routes/for-hosts.$'
+import { Route as ForGuestsSplatRouteImport } from './routes/for-guests.$'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as DirectoryListRouteImport } from './routes/directory.list'
 import { Route as DirectoryCategoryRouteImport } from './routes/directory.$category'
@@ -360,6 +368,11 @@ const VerifyUidRoute = VerifyUidRouteImport.update({
   path: '/verify/$uid',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TechnicalSupportSplatRoute = TechnicalSupportSplatRouteImport.update({
+  id: '/technical-support/$',
+  path: '/technical-support/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProvidersSlugRoute = ProvidersSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -373,6 +386,11 @@ const PoolRentalCityRoute = PoolRentalCityRouteImport.update({
 const PoolRentalLawsCityRoute = PoolRentalLawsCityRouteImport.update({
   id: '/pool-rental-laws/$city',
   path: '/pool-rental-laws/$city',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoolManagementSplatRoute = PoolManagementSplatRouteImport.update({
+  id: '/pool-management/$',
+  path: '/pool-management/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoolBuildersStateRoute = PoolBuildersStateRouteImport.update({
@@ -455,9 +473,39 @@ const PSplatRoute = PSplatRouteImport.update({
   path: '/p/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketingAndGrowthSplatRoute = MarketingAndGrowthSplatRouteImport.update({
+  id: '/marketing-and-growth/$',
+  path: '/marketing-and-growth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalAndComplianceSplatRoute = LegalAndComplianceSplatRouteImport.update({
+  id: '/legal-and-compliance/$',
+  path: '/legal-and-compliance/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HostToolsSlugRoute = HostToolsSlugRouteImport.update({
   id: '/host-tools/$slug',
   path: '/host-tools/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HostInformationSplatRoute = HostInformationSplatRouteImport.update({
+  id: '/host-information/$',
+  path: '/host-information/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuestInformationSplatRoute = GuestInformationSplatRouteImport.update({
+  id: '/guest-information/$',
+  path: '/guest-information/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForHostsSplatRoute = ForHostsSplatRouteImport.update({
+  id: '/for-hosts/$',
+  path: '/for-hosts/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForGuestsSplatRoute = ForGuestsSplatRouteImport.update({
+  id: '/for-guests/$',
+  path: '/for-guests/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
@@ -860,7 +908,13 @@ export interface FileRoutesByFullPath {
   '/directory/$category': typeof DirectoryCategoryRouteWithChildren
   '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/for-guests/$': typeof ForGuestsSplatRoute
+  '/for-hosts/$': typeof ForHostsSplatRoute
+  '/guest-information/$': typeof GuestInformationSplatRoute
+  '/host-information/$': typeof HostInformationSplatRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
+  '/legal-and-compliance/$': typeof LegalAndComplianceSplatRoute
+  '/marketing-and-growth/$': typeof MarketingAndGrowthSplatRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
@@ -876,9 +930,11 @@ export interface FileRoutesByFullPath {
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
+  '/pool-management/$': typeof PoolManagementSplatRoute
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
+  '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
@@ -985,7 +1041,13 @@ export interface FileRoutesByTo {
   '/directory/$category': typeof DirectoryCategoryRouteWithChildren
   '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/for-guests/$': typeof ForGuestsSplatRoute
+  '/for-hosts/$': typeof ForHostsSplatRoute
+  '/guest-information/$': typeof GuestInformationSplatRoute
+  '/host-information/$': typeof HostInformationSplatRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
+  '/legal-and-compliance/$': typeof LegalAndComplianceSplatRoute
+  '/marketing-and-growth/$': typeof MarketingAndGrowthSplatRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
@@ -1001,9 +1063,11 @@ export interface FileRoutesByTo {
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
+  '/pool-management/$': typeof PoolManagementSplatRoute
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
+  '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy': typeof AcademyIndexRoute
   '/help-center': typeof HelpCenterIndexRoute
@@ -1112,7 +1176,13 @@ export interface FileRoutesById {
   '/directory/$category': typeof DirectoryCategoryRouteWithChildren
   '/directory/list': typeof DirectoryListRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/for-guests/$': typeof ForGuestsSplatRoute
+  '/for-hosts/$': typeof ForHostsSplatRoute
+  '/guest-information/$': typeof GuestInformationSplatRoute
+  '/host-information/$': typeof HostInformationSplatRoute
   '/host-tools/$slug': typeof HostToolsSlugRoute
+  '/legal-and-compliance/$': typeof LegalAndComplianceSplatRoute
+  '/marketing-and-growth/$': typeof MarketingAndGrowthSplatRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
@@ -1128,9 +1198,11 @@ export interface FileRoutesById {
   '/p/privacy-request': typeof PPrivacyRequestRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/pool-builders/$state': typeof PoolBuildersStateRouteWithChildren
+  '/pool-management/$': typeof PoolManagementSplatRoute
   '/pool-rental-laws/$city': typeof PoolRentalLawsCityRoute
   '/pool-rental/$city': typeof PoolRentalCityRoute
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
+  '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
@@ -1240,7 +1312,13 @@ export interface FileRouteTypes {
     | '/directory/$category'
     | '/directory/list'
     | '/email/unsubscribe'
+    | '/for-guests/$'
+    | '/for-hosts/$'
+    | '/guest-information/$'
+    | '/host-information/$'
     | '/host-tools/$slug'
+    | '/legal-and-compliance/$'
+    | '/marketing-and-growth/$'
     | '/p/$'
     | '/p/$slug'
     | '/p/all-locations'
@@ -1256,9 +1334,11 @@ export interface FileRouteTypes {
     | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
+    | '/pool-management/$'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/technical-support/$'
     | '/verify/$uid'
     | '/academy/'
     | '/help-center/'
@@ -1365,7 +1445,13 @@ export interface FileRouteTypes {
     | '/directory/$category'
     | '/directory/list'
     | '/email/unsubscribe'
+    | '/for-guests/$'
+    | '/for-hosts/$'
+    | '/guest-information/$'
+    | '/host-information/$'
     | '/host-tools/$slug'
+    | '/legal-and-compliance/$'
+    | '/marketing-and-growth/$'
     | '/p/$'
     | '/p/$slug'
     | '/p/all-locations'
@@ -1381,9 +1467,11 @@ export interface FileRouteTypes {
     | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
+    | '/pool-management/$'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/technical-support/$'
     | '/verify/$uid'
     | '/academy'
     | '/help-center'
@@ -1491,7 +1579,13 @@ export interface FileRouteTypes {
     | '/directory/$category'
     | '/directory/list'
     | '/email/unsubscribe'
+    | '/for-guests/$'
+    | '/for-hosts/$'
+    | '/guest-information/$'
+    | '/host-information/$'
     | '/host-tools/$slug'
+    | '/legal-and-compliance/$'
+    | '/marketing-and-growth/$'
     | '/p/$'
     | '/p/$slug'
     | '/p/all-locations'
@@ -1507,9 +1601,11 @@ export interface FileRouteTypes {
     | '/p/privacy-request'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/pool-builders/$state'
+    | '/pool-management/$'
     | '/pool-rental-laws/$city'
     | '/pool-rental/$city'
     | '/providers/$slug'
+    | '/technical-support/$'
     | '/verify/$uid'
     | '/academy/'
     | '/help-center/'
@@ -1582,7 +1678,13 @@ export interface RootRouteChildren {
   AccountLearningRoute: typeof AccountLearningRoute
   CategorySlugRoute: typeof CategorySlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  ForGuestsSplatRoute: typeof ForGuestsSplatRoute
+  ForHostsSplatRoute: typeof ForHostsSplatRoute
+  GuestInformationSplatRoute: typeof GuestInformationSplatRoute
+  HostInformationSplatRoute: typeof HostInformationSplatRoute
   HostToolsSlugRoute: typeof HostToolsSlugRoute
+  LegalAndComplianceSplatRoute: typeof LegalAndComplianceSplatRoute
+  MarketingAndGrowthSplatRoute: typeof MarketingAndGrowthSplatRoute
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
   PAllLocationsRoute: typeof PAllLocationsRoute
@@ -1598,8 +1700,10 @@ export interface RootRouteChildren {
   PPrivacyRequestRoute: typeof PPrivacyRequestRoute
   PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   PoolBuildersStateRoute: typeof PoolBuildersStateRouteWithChildren
+  PoolManagementSplatRoute: typeof PoolManagementSplatRoute
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
+  TechnicalSupportSplatRoute: typeof TechnicalSupportSplatRoute
   VerifyUidRoute: typeof VerifyUidRoute
   HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
@@ -1926,6 +2030,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyUidRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/technical-support/$': {
+      id: '/technical-support/$'
+      path: '/technical-support/$'
+      fullPath: '/technical-support/$'
+      preLoaderRoute: typeof TechnicalSupportSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/providers/$slug': {
       id: '/providers/$slug'
       path: '/$slug'
@@ -1945,6 +2056,13 @@ declare module '@tanstack/react-router' {
       path: '/pool-rental-laws/$city'
       fullPath: '/pool-rental-laws/$city'
       preLoaderRoute: typeof PoolRentalLawsCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pool-management/$': {
+      id: '/pool-management/$'
+      path: '/pool-management/$'
+      fullPath: '/pool-management/$'
+      preLoaderRoute: typeof PoolManagementSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pool-builders/$state': {
@@ -2052,11 +2170,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketing-and-growth/$': {
+      id: '/marketing-and-growth/$'
+      path: '/marketing-and-growth/$'
+      fullPath: '/marketing-and-growth/$'
+      preLoaderRoute: typeof MarketingAndGrowthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal-and-compliance/$': {
+      id: '/legal-and-compliance/$'
+      path: '/legal-and-compliance/$'
+      fullPath: '/legal-and-compliance/$'
+      preLoaderRoute: typeof LegalAndComplianceSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/host-tools/$slug': {
       id: '/host-tools/$slug'
       path: '/host-tools/$slug'
       fullPath: '/host-tools/$slug'
       preLoaderRoute: typeof HostToolsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/host-information/$': {
+      id: '/host-information/$'
+      path: '/host-information/$'
+      fullPath: '/host-information/$'
+      preLoaderRoute: typeof HostInformationSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guest-information/$': {
+      id: '/guest-information/$'
+      path: '/guest-information/$'
+      fullPath: '/guest-information/$'
+      preLoaderRoute: typeof GuestInformationSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-hosts/$': {
+      id: '/for-hosts/$'
+      path: '/for-hosts/$'
+      fullPath: '/for-hosts/$'
+      preLoaderRoute: typeof ForHostsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-guests/$': {
+      id: '/for-guests/$'
+      path: '/for-guests/$'
+      fullPath: '/for-guests/$'
+      preLoaderRoute: typeof ForGuestsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/email/unsubscribe': {
@@ -2730,7 +2890,13 @@ const rootRouteChildren: RootRouteChildren = {
   AccountLearningRoute: AccountLearningRoute,
   CategorySlugRoute: CategorySlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  ForGuestsSplatRoute: ForGuestsSplatRoute,
+  ForHostsSplatRoute: ForHostsSplatRoute,
+  GuestInformationSplatRoute: GuestInformationSplatRoute,
+  HostInformationSplatRoute: HostInformationSplatRoute,
   HostToolsSlugRoute: HostToolsSlugRoute,
+  LegalAndComplianceSplatRoute: LegalAndComplianceSplatRoute,
+  MarketingAndGrowthSplatRoute: MarketingAndGrowthSplatRoute,
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
   PAllLocationsRoute: PAllLocationsRoute,
@@ -2749,8 +2915,10 @@ const rootRouteChildren: RootRouteChildren = {
   PSwimplyAlternativeVsPoolRentalNearMeRoute:
     PSwimplyAlternativeVsPoolRentalNearMeRoute,
   PoolBuildersStateRoute: PoolBuildersStateRouteWithChildren,
+  PoolManagementSplatRoute: PoolManagementSplatRoute,
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
+  TechnicalSupportSplatRoute: TechnicalSupportSplatRoute,
   VerifyUidRoute: VerifyUidRoute,
   HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
@@ -2777,3 +2945,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
