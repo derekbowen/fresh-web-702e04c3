@@ -101,6 +101,44 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     if (page) {
       return { kind: "found", page };
     }
+
+    // Fallback: many host-acq / swim-instructor slugs are stored with a
+    // `-{state_code}` suffix (e.g. `become-a-swimming-pool-host-cleveland-oh`).
+    // If a visitor hits the bare-city variant (`...-cleveland`), look up the
+    // city's state and 301 to the canonical state-suffixed slug if it exists.
+    const KNOWN_PREFIXES = [
+      "become-a-swimming-pool-host-",
+      "swim-instructor-pool-rental-",
+      "rent-a-swimming-pool-",
+      "pool-rental-",
+      "host-acquisition-",
+    ];
+    const matchedPrefix = KNOWN_PREFIXES.find((p) => slug.startsWith(p));
+    if (matchedPrefix) {
+      const citySlug = slug.slice(matchedPrefix.length);
+      if (!/-[a-z]{2}$/.test(citySlug) && citySlug.length > 0) {
+        const { data: cityRows } = await (supabaseAdmin as any)
+          .from("cities")
+          .select("slug, state_code")
+          .eq("slug", citySlug)
+          .eq("is_published", true)
+          .limit(1);
+        const city = (cityRows ?? [])[0] as { slug: string; state_code: string } | undefined;
+        if (city?.state_code) {
+          const candidate = `${matchedPrefix}${citySlug}-${city.state_code.toLowerCase()}`;
+          const { data: candRows } = await (supabaseAdmin as any)
+            .from("content_pages")
+            .select("slug")
+            .eq("slug", candidate)
+            .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
+            .limit(1);
+          if ((candRows ?? []).length > 0) {
+            return { kind: "redirect", canonicalSlug: candidate };
+          }
+        }
+      }
+    }
+
     return { kind: "not_found" };
   });
 
