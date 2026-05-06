@@ -65,7 +65,10 @@ export function IntercomWidget() {
       booted = true;
     };
 
-    (async () => {
+    // Defer Intercom boot until the browser is idle (or after first user
+    // interaction) to avoid blocking the main thread during initial load.
+    // Intercom ships ~350KB of JS that hurts FID/TTI when loaded eagerly.
+    const startBoot = async () => {
       const { appId } = await fetchAppId();
       if (cancelled || !appId) return;
       currentAppId = appId;
@@ -77,7 +80,33 @@ export function IntercomWidget() {
         void boot();
       });
       unsub = () => sub.subscription.unsubscribe();
-    })();
+    };
+
+    let scheduled = false;
+    const schedule = () => {
+      if (scheduled) return;
+      scheduled = true;
+      void startBoot();
+    };
+    const ric = (window as unknown as {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    }).requestIdleCallback;
+    const idleHandle = ric
+      ? ric(schedule, { timeout: 4000 })
+      : window.setTimeout(schedule, 2500);
+    const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll"];
+    const onInteraction = () => schedule();
+    interactionEvents.forEach((e) =>
+      window.addEventListener(e, onInteraction, { once: true, passive: true }),
+    );
+
+    const cleanupSchedulers = () => {
+      const cic = (window as unknown as { cancelIdleCallback?: (h: number) => void })
+        .cancelIdleCallback;
+      if (ric && cic) cic(idleHandle);
+      else clearTimeout(idleHandle);
+      interactionEvents.forEach((e) => window.removeEventListener(e, onInteraction));
+    };
 
     // Expose boot state to the path-change effect via window flag
     (window as unknown as { __intercomBooted?: () => boolean }).__intercomBooted = () => booted;
