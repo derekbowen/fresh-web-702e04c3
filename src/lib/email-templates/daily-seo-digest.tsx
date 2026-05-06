@@ -6,14 +6,23 @@ import type { TemplateEntry } from './registry'
 interface CompetitorPage { url: string; domain: string; title?: string | null }
 interface AuditIssue { url_path: string; score: number; summary?: string | null }
 interface RankDrop { keyword: string; previous_position: number | null; current_position: number | null }
+interface HostLead {
+  competitor_url: string; domain?: string | null;
+  candidate_name?: string | null; candidate_business_name?: string | null;
+  candidate_email?: string | null; candidate_phone?: string | null;
+  candidate_website?: string | null; match_confidence: number;
+  candidate_evidence?: string | null;
+}
 
 interface DailySeoDigestProps {
   dateLabel?: string
   newCompetitorPages?: CompetitorPage[]
   criticalAudits?: AuditIssue[]
   rankDrops?: RankDrop[]
+  hostLeads?: HostLead[]
   totalNewCompetitor?: number
   totalCriticalAudits?: number
+  totalHostLeads?: number
 }
 
 const DailySeoDigestEmail = ({
