@@ -11,8 +11,10 @@ export interface TemplateEntry {
 
 import { template as poolWaitlistConfirmation } from './pool-waitlist-confirmation'
 import { template as internalLeadNotification } from './internal-lead-notification'
+import { template as dailySeoDigest } from './daily-seo-digest'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'pool-waitlist-confirmation': poolWaitlistConfirmation,
   'internal-lead-notification': internalLeadNotification,
+  'daily-seo-digest': dailySeoDigest,
 }
