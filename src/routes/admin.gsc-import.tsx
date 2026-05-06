@@ -24,6 +24,35 @@ function GscImport() {
   const [parsed, setParsed] = React.useState<Row[]>([]);
   const [busy, setBusy] = React.useState(false);
   const [result, setResult] = React.useState<{ updated: number; total: number } | null>(null);
+  const [fileName, setFileName] = React.useState<string | null>(null);
+
+  async function handleFiles(files: FileList | null) {
+    if (!files || !files.length) return;
+    const file = files[0];
+    setFileName(file.name);
+    setResult(null);
+    try {
+      // GSC exports often come as a .zip containing Pages.csv + Queries.csv
+      if (/\.zip$/i.test(file.name) || file.type === "application/zip") {
+        const { unzipSync, strFromU8 } = await import("fflate");
+        const buf = new Uint8Array(await file.arrayBuffer());
+        const entries = unzipSync(buf);
+        // Prefer Pages.csv (any case); fall back to first CSV
+        const names = Object.keys(entries);
+        const pick =
+          names.find((n) => /pages\.csv$/i.test(n)) ||
+          names.find((n) => /\.csv$/i.test(n));
+        if (!pick) { alert("No CSV found inside ZIP"); return; }
+        setCsv(strFromU8(entries[pick]));
+      } else {
+        setCsv(await file.text());
+      }
+      // Auto-parse after load
+      setTimeout(() => parse(), 0);
+    } catch (e: any) {
+      alert(e?.message || "Failed to read file");
+    }
+  }
 
   function parse() {
     setResult(null);
