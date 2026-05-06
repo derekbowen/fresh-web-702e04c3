@@ -239,11 +239,20 @@ export type Database = {
           competitor_url_id: string
           created_at: string
           domain: string | null
+          enriched_at: string | null
+          enriched_emails: Json | null
+          enriched_phones: Json | null
+          enriched_socials: Json | null
+          enriched_tier: string | null
+          enrichment_cost_usd: number | null
           host_city: string | null
           host_first_name: string | null
           host_state: string | null
           id: string
           match_confidence: number
+          property_address: string | null
+          revenue_signal_notes: string | null
+          revenue_signal_score: number | null
           status: string
           updated_at: string
         }
@@ -261,11 +270,20 @@ export type Database = {
           competitor_url_id: string
           created_at?: string
           domain?: string | null
+          enriched_at?: string | null
+          enriched_emails?: Json | null
+          enriched_phones?: Json | null
+          enriched_socials?: Json | null
+          enriched_tier?: string | null
+          enrichment_cost_usd?: number | null
           host_city?: string | null
           host_first_name?: string | null
           host_state?: string | null
           id?: string
           match_confidence?: number
+          property_address?: string | null
+          revenue_signal_notes?: string | null
+          revenue_signal_score?: number | null
           status?: string
           updated_at?: string
         }
@@ -283,11 +301,20 @@ export type Database = {
           competitor_url_id?: string
           created_at?: string
           domain?: string | null
+          enriched_at?: string | null
+          enriched_emails?: Json | null
+          enriched_phones?: Json | null
+          enriched_socials?: Json | null
+          enriched_tier?: string | null
+          enrichment_cost_usd?: number | null
           host_city?: string | null
           host_first_name?: string | null
           host_state?: string | null
           id?: string
           match_confidence?: number
+          property_address?: string | null
+          revenue_signal_notes?: string | null
+          revenue_signal_score?: number | null
           status?: string
           updated_at?: string
         }
@@ -963,6 +990,90 @@ export type Database = {
           id?: string
           token?: string
           used_at?: string | null
+        }
+        Relationships: []
+      }
+      enriched_contacts: {
+        Row: {
+          cache_key: string
+          cost_usd: number
+          emails: Json
+          expires_at: string
+          fetched_at: string
+          full_name: string | null
+          id: string
+          phones: Json
+          property_address: string | null
+          property_city: string | null
+          property_state: string | null
+          property_zip: string | null
+          raw_response: Json | null
+          social_profiles: Json
+          source_tier: string
+        }
+        Insert: {
+          cache_key: string
+          cost_usd?: number
+          emails?: Json
+          expires_at?: string
+          fetched_at?: string
+          full_name?: string | null
+          id?: string
+          phones?: Json
+          property_address?: string | null
+          property_city?: string | null
+          property_state?: string | null
+          property_zip?: string | null
+          raw_response?: Json | null
+          social_profiles?: Json
+          source_tier: string
+        }
+        Update: {
+          cache_key?: string
+          cost_usd?: number
+          emails?: Json
+          expires_at?: string
+          fetched_at?: string
+          full_name?: string | null
+          id?: string
+          phones?: Json
+          property_address?: string | null
+          property_city?: string | null
+          property_state?: string | null
+          property_zip?: string | null
+          raw_response?: Json | null
+          social_profiles?: Json
+          source_tier?: string
+        }
+        Relationships: []
+      }
+      enrichment_spend_log: {
+        Row: {
+          cost_usd: number
+          created_at: string
+          id: string
+          match_id: string | null
+          outcome: string
+          provider: string
+          spend_date: string
+        }
+        Insert: {
+          cost_usd?: number
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          outcome: string
+          provider: string
+          spend_date?: string
+        }
+        Update: {
+          cost_usd?: number
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          outcome?: string
+          provider?: string
+          spend_date?: string
         }
         Relationships: []
       }
