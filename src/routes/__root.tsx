@@ -94,19 +94,20 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const data = Route.useLoaderData();
-  const showIntercom = pathname === "/" || pathname.startsWith("/admin");
+  const isAdmin = pathname.startsWith("/admin");
+  const showIntercom = pathname === "/" || isAdmin;
   const footer = data?.footer;
   const content = (
     <>
       <HydrationDebug />
       <div className="flex min-h-screen flex-col">
-        <SiteHeader />
+        {!isAdmin && <SiteHeader />}
         <div className="flex flex-1 flex-col">
           <GlobalChromeProvider>
             <Outlet />
           </GlobalChromeProvider>
         </div>
-        <SiteFooter />
+        {!isAdmin && <SiteFooter />}
       </div>
       {showIntercom && <IntercomWidget />}
     </>
