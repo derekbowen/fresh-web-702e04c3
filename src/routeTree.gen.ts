@@ -49,6 +49,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PoolBuildersIndexRouteImport } from './routes/pool-builders.index'
 import { Route as HostToolsIndexRouteImport } from './routes/host-tools.index'
 import { Route as HelpCenterIndexRouteImport } from './routes/help-center.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as ProvidersSlugRouteImport } from './routes/providers.$slug'
@@ -327,6 +328,11 @@ const HostToolsIndexRoute = HostToolsIndexRouteImport.update({
 const HelpCenterIndexRoute = HelpCenterIndexRouteImport.update({
   id: '/help-center/',
   path: '/help-center/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcademyIndexRoute = AcademyIndexRouteImport.update({
@@ -768,6 +774,7 @@ export interface FileRoutesByFullPath {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
@@ -877,6 +884,7 @@ export interface FileRoutesByTo {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy': typeof AcademyIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/help-center': typeof HelpCenterIndexRoute
   '/host-tools': typeof HostToolsIndexRoute
   '/pool-builders': typeof PoolBuildersIndexRoute
@@ -988,6 +996,7 @@ export interface FileRoutesById {
   '/providers/$slug': typeof ProvidersSlugRouteWithChildren
   '/verify/$uid': typeof VerifyUidRoute
   '/academy/': typeof AcademyIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/help-center/': typeof HelpCenterIndexRoute
   '/host-tools/': typeof HostToolsIndexRoute
   '/pool-builders/': typeof PoolBuildersIndexRoute
@@ -1100,6 +1109,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/admin/'
     | '/help-center/'
     | '/host-tools/'
     | '/pool-builders/'
@@ -1209,6 +1219,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy'
+    | '/admin'
     | '/help-center'
     | '/host-tools'
     | '/pool-builders'
@@ -1319,6 +1330,7 @@ export interface FileRouteTypes {
     | '/providers/$slug'
     | '/verify/$uid'
     | '/academy/'
+    | '/admin/'
     | '/help-center/'
     | '/host-tools/'
     | '/pool-builders/'
@@ -1423,6 +1435,7 @@ export interface RootRouteChildren {
   PoolRentalLawsCityRoute: typeof PoolRentalLawsCityRoute
   PoolRentalCityRoute: typeof PoolRentalCityRoute
   VerifyUidRoute: typeof VerifyUidRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   HelpCenterIndexRoute: typeof HelpCenterIndexRoute
   HostToolsIndexRoute: typeof HostToolsIndexRoute
   PoolBuildersIndexRoute: typeof PoolBuildersIndexRoute
@@ -1722,6 +1735,13 @@ declare module '@tanstack/react-router' {
       path: '/help-center'
       fullPath: '/help-center/'
       preLoaderRoute: typeof HelpCenterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/academy/': {
@@ -2407,6 +2427,7 @@ const rootRouteChildren: RootRouteChildren = {
   PoolRentalLawsCityRoute: PoolRentalLawsCityRoute,
   PoolRentalCityRoute: PoolRentalCityRoute,
   VerifyUidRoute: VerifyUidRoute,
+  AdminIndexRoute: AdminIndexRoute,
   HelpCenterIndexRoute: HelpCenterIndexRoute,
   HostToolsIndexRoute: HostToolsIndexRoute,
   PoolBuildersIndexRoute: PoolBuildersIndexRoute,
