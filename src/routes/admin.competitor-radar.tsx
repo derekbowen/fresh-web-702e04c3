@@ -261,7 +261,7 @@ function CompetitorRadar() {
             </div>
           )}
           <div className="mb-3 flex flex-wrap gap-2">
-            {(["new", "contacted", "converted", "dismissed", "all"] as const).map((s) => (
+            {(["new", "review", "contacted", "converted", "dismissed", "all"] as const).map((s) => (
               <button key={s} onClick={() => setMatchStatus(s)}
                 className={`rounded-full px-3 py-1.5 text-xs font-semibold ${matchStatus === s ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>
                 {s}
