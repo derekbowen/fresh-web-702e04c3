@@ -297,11 +297,40 @@ function CompetitorRadar() {
                       {m.candidate_social_url && <a href={m.candidate_social_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink className="h-3 w-3" />social</a>}
                     </div>
                     {m.candidate_evidence && <p className="mt-1 text-xs text-muted-foreground">{m.candidate_evidence}</p>}
+                    {m.enriched_at && (
+                      <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-xs">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">enriched · {m.enriched_tier}</span>
+                          {m.revenue_signal_score != null && m.revenue_signal_score > 0 && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">revenue {m.revenue_signal_score}</span>
+                          )}
+                          {m.enrichment_cost_usd != null && m.enrichment_cost_usd > 0 && (
+                            <span className="text-[10px] text-muted-foreground">${Number(m.enrichment_cost_usd).toFixed(2)}</span>
+                          )}
+                        </div>
+                        {(m.enriched_emails?.length || 0) > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-2">{m.enriched_emails!.map((e) => <a key={e} href={`mailto:${e}`} className="inline-flex items-center gap-1 text-primary hover:underline"><Mail className="h-3 w-3" />{e}</a>)}</div>
+                        )}
+                        {(m.enriched_phones?.length || 0) > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-2">{m.enriched_phones!.map((p) => <span key={p} className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{p}</span>)}</div>
+                        )}
+                        {(m.enriched_socials?.length || 0) > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-2">{m.enriched_socials!.slice(0, 4).map((u) => <a key={u} href={u} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink className="h-3 w-3" />{new URL(u).hostname.replace("www.", "")}</a>)}</div>
+                        )}
+                        {m.property_address && <p className="mt-1 text-[11px] text-muted-foreground">📍 {m.property_address}</p>}
+                        {m.revenue_signal_notes && <p className="mt-1 text-[11px] text-muted-foreground">{m.revenue_signal_notes}</p>}
+                      </div>
+                    )}
                     <a href={m.competitor_url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 break-all text-[11px] text-muted-foreground hover:underline">
                       {m.competitor_url}
                     </a>
                   </div>
                   <div className="flex shrink-0 flex-col gap-1">
+                    <button onClick={() => enrich(m.id)} disabled={enrichingId === m.id}
+                      className="inline-flex items-center justify-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary disabled:opacity-50">
+                      {enrichingId === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                      {m.enriched_at ? "Re-enrich" : "Enrich"}
+                    </button>
                     {m.status === "new" && (
                       <>
                         <button onClick={() => setStatus(m.id, "contacted")} className="rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold">Mark contacted</button>
