@@ -382,6 +382,7 @@ export const adminImportGscRows = createServerFn({ method: "POST" })
       impressions: z.number().int().nonnegative(),
       clicks: z.number().int().nonnegative(),
       position: z.number().nullable().optional(),
+      kind: z.enum(["provider", "page"]).optional(),
     })).max(5000),
   }).parse(d))
   .handler(async ({ context, data }) => {
@@ -389,15 +390,19 @@ export const adminImportGscRows = createServerFn({ method: "POST" })
     const now = new Date().toISOString();
     let updated = 0;
     for (const r of data.rows) {
+      const kind = r.kind ?? "provider";
+      const table = kind === "page" ? "content_pages" : "providers";
+      const matchCol = kind === "page" ? "url_path" : "slug";
+      const matchVal = kind === "page" ? `/p/${r.slug.replace(/^\/+/, "")}` : r.slug;
       const { error, count } = await supabaseAdmin
-        .from("providers")
+        .from(table)
         .update({
           gsc_impressions: r.impressions,
           gsc_clicks: r.clicks,
           gsc_position: r.position ?? null,
           gsc_updated_at: now,
         }, { count: "exact" })
-        .eq("slug", r.slug);
+        .eq(matchCol, matchVal);
       if (!error && (count ?? 0) > 0) updated += 1;
     }
     return { ok: true, updated, total: data.rows.length };
