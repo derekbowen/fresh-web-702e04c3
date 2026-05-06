@@ -640,13 +640,13 @@ function GenerateContentPageInner() {
                   </div>
                 </div>
                 {validationErrors.length > 0 && (
-                  <details className="mt-3">
-                    <summary className="cursor-pointer text-sm font-medium">
-                      {validationErrors.length} validation note(s)
+                  <details className="mt-3" open>
+                    <summary className="cursor-pointer text-sm font-medium text-destructive">
+                      {validationErrors.length} validation note(s) — click to see per-slug failure reason
                     </summary>
-                    <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    <ul className="mt-2 space-y-1 rounded border border-destructive/30 bg-destructive/5 p-3 text-xs text-foreground">
                       {validationErrors.map((e, i) => (
-                        <li key={i}>• {e}</li>
+                        <li key={i} className="font-mono">• {e}</li>
                       ))}
                     </ul>
                   </details>
