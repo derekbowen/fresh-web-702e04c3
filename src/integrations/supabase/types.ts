@@ -224,6 +224,54 @@ export type Database = {
         }
         Relationships: []
       }
+      competitor_pages: {
+        Row: {
+          created_at: string
+          domain: string | null
+          h1: string | null
+          headings: Json | null
+          id: string
+          last_scraped_at: string | null
+          markdown: string | null
+          meta_description: string | null
+          notes: string | null
+          title: string | null
+          updated_at: string
+          url: string
+          word_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          domain?: string | null
+          h1?: string | null
+          headings?: Json | null
+          id?: string
+          last_scraped_at?: string | null
+          markdown?: string | null
+          meta_description?: string | null
+          notes?: string | null
+          title?: string | null
+          updated_at?: string
+          url: string
+          word_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          domain?: string | null
+          h1?: string | null
+          headings?: Json | null
+          id?: string
+          last_scraped_at?: string | null
+          markdown?: string | null
+          meta_description?: string | null
+          notes?: string | null
+          title?: string | null
+          updated_at?: string
+          url?: string
+          word_count?: number | null
+        }
+        Relationships: []
+      }
       content_404_log: {
         Row: {
           first_seen_at: string
@@ -809,6 +857,42 @@ export type Database = {
         }
         Relationships: []
       }
+      gsc_query_data: {
+        Row: {
+          captured_at: string
+          clicks: number
+          created_at: string
+          ctr: number | null
+          id: string
+          impressions: number
+          position: number | null
+          query: string
+          url_path: string
+        }
+        Insert: {
+          captured_at?: string
+          clicks?: number
+          created_at?: string
+          ctr?: number | null
+          id?: string
+          impressions?: number
+          position?: number | null
+          query: string
+          url_path: string
+        }
+        Update: {
+          captured_at?: string
+          clicks?: number
+          created_at?: string
+          ctr?: number | null
+          id?: string
+          impressions?: number
+          position?: number | null
+          query?: string
+          url_path?: string
+        }
+        Relationships: []
+      }
       help_articles: {
         Row: {
           category_slug: string
@@ -948,6 +1032,42 @@ export type Database = {
           sort_order?: number
           summary?: string | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      internal_link_suggestions: {
+        Row: {
+          anchor_text: string | null
+          created_at: string
+          from_url: string
+          id: string
+          reason: string | null
+          score: number
+          status: string
+          to_url: string
+          updated_at: string
+        }
+        Insert: {
+          anchor_text?: string | null
+          created_at?: string
+          from_url: string
+          id?: string
+          reason?: string | null
+          score?: number
+          status?: string
+          to_url: string
+          updated_at?: string
+        }
+        Update: {
+          anchor_text?: string | null
+          created_at?: string
+          from_url?: string
+          id?: string
+          reason?: string | null
+          score?: number
+          status?: string
+          to_url?: string
           updated_at?: string
         }
         Relationships: []

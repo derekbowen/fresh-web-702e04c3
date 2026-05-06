@@ -86,6 +86,8 @@ import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pa
 import { Route as AdminLinkCheckerRouteImport } from './routes/admin.link-checker'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminKeywordOpportunitiesRouteImport } from './routes/admin.keyword-opportunities'
+import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
@@ -94,6 +96,7 @@ import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentPagesRouteImport } from './routes/admin.content-pages'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
+import { Route as AdminCompetitorsRouteImport } from './routes/admin.competitors'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
@@ -522,6 +525,17 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
   path: '/leads',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminKeywordOpportunitiesRoute =
+  AdminKeywordOpportunitiesRouteImport.update({
+    id: '/keyword-opportunities',
+    path: '/keyword-opportunities',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminInternalLinksRoute = AdminInternalLinksRouteImport.update({
+  id: '/internal-links',
+  path: '/internal-links',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminIndexingRoute = AdminIndexingRouteImport.update({
   id: '/indexing',
   path: '/indexing',
@@ -560,6 +574,11 @@ const AdminContentPagesRoute = AdminContentPagesRouteImport.update({
 const AdminContentMigrationRoute = AdminContentMigrationRouteImport.update({
   id: '/content-migration',
   path: '/content-migration',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCompetitorsRoute = AdminCompetitorsRouteImport.update({
+  id: '/competitors',
+  path: '/competitors',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminClickReportRoute = AdminClickReportRouteImport.update({
@@ -745,6 +764,7 @@ export interface FileRoutesByFullPath {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/competitors': typeof AdminCompetitorsRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -753,6 +773,8 @@ export interface FileRoutesByFullPath {
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/indexing': typeof AdminIndexingRoute
+  '/admin/internal-links': typeof AdminInternalLinksRoute
+  '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
@@ -857,6 +879,7 @@ export interface FileRoutesByTo {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/competitors': typeof AdminCompetitorsRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -865,6 +888,8 @@ export interface FileRoutesByTo {
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/indexing': typeof AdminIndexingRoute
+  '/admin/internal-links': typeof AdminInternalLinksRoute
+  '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
@@ -971,6 +996,7 @@ export interface FileRoutesById {
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
+  '/admin/competitors': typeof AdminCompetitorsRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -979,6 +1005,8 @@ export interface FileRoutesById {
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/indexing': typeof AdminIndexingRoute
+  '/admin/internal-links': typeof AdminInternalLinksRoute
+  '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
   '/admin/link-checker': typeof AdminLinkCheckerRoute
@@ -1086,6 +1114,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/claims'
     | '/admin/click-report'
+    | '/admin/competitors'
     | '/admin/content-migration'
     | '/admin/content-pages'
     | '/admin/dashboard'
@@ -1094,6 +1123,8 @@ export interface FileRouteTypes {
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/indexing'
+    | '/admin/internal-links'
+    | '/admin/keyword-opportunities'
     | '/admin/leads'
     | '/admin/learning'
     | '/admin/link-checker'
@@ -1198,6 +1229,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/claims'
     | '/admin/click-report'
+    | '/admin/competitors'
     | '/admin/content-migration'
     | '/admin/content-pages'
     | '/admin/dashboard'
@@ -1206,6 +1238,8 @@ export interface FileRouteTypes {
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/indexing'
+    | '/admin/internal-links'
+    | '/admin/keyword-opportunities'
     | '/admin/leads'
     | '/admin/learning'
     | '/admin/link-checker'
@@ -1311,6 +1345,7 @@ export interface FileRouteTypes {
     | '/admin/cities-heroes'
     | '/admin/claims'
     | '/admin/click-report'
+    | '/admin/competitors'
     | '/admin/content-migration'
     | '/admin/content-pages'
     | '/admin/dashboard'
@@ -1319,6 +1354,8 @@ export interface FileRouteTypes {
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/indexing'
+    | '/admin/internal-links'
+    | '/admin/keyword-opportunities'
     | '/admin/leads'
     | '/admin/learning'
     | '/admin/link-checker'
@@ -1999,6 +2036,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/keyword-opportunities': {
+      id: '/admin/keyword-opportunities'
+      path: '/keyword-opportunities'
+      fullPath: '/admin/keyword-opportunities'
+      preLoaderRoute: typeof AdminKeywordOpportunitiesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/internal-links': {
+      id: '/admin/internal-links'
+      path: '/internal-links'
+      fullPath: '/admin/internal-links'
+      preLoaderRoute: typeof AdminInternalLinksRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/indexing': {
       id: '/admin/indexing'
       path: '/indexing'
@@ -2053,6 +2104,13 @@ declare module '@tanstack/react-router' {
       path: '/content-migration'
       fullPath: '/admin/content-migration'
       preLoaderRoute: typeof AdminContentMigrationRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/competitors': {
+      id: '/admin/competitors'
+      path: '/competitors'
+      fullPath: '/admin/competitors'
+      preLoaderRoute: typeof AdminCompetitorsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/click-report': {
@@ -2270,6 +2328,7 @@ interface AdminRouteChildren {
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
+  AdminCompetitorsRoute: typeof AdminCompetitorsRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminContentPagesRoute: typeof AdminContentPagesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
@@ -2278,6 +2337,8 @@ interface AdminRouteChildren {
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
+  AdminInternalLinksRoute: typeof AdminInternalLinksRoute
+  AdminKeywordOpportunitiesRoute: typeof AdminKeywordOpportunitiesRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
   AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
@@ -2296,6 +2357,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminClaimsRoute: AdminClaimsRoute,
   AdminClickReportRoute: AdminClickReportRoute,
+  AdminCompetitorsRoute: AdminCompetitorsRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminContentPagesRoute: AdminContentPagesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
@@ -2304,6 +2366,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
   AdminIndexingRoute: AdminIndexingRoute,
+  AdminInternalLinksRoute: AdminInternalLinksRoute,
+  AdminKeywordOpportunitiesRoute: AdminKeywordOpportunitiesRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
   AdminLinkCheckerRoute: AdminLinkCheckerRoute,
