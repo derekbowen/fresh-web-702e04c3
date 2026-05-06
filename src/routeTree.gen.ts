@@ -125,6 +125,7 @@ import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/em
 import { Route as DirectoryCategoryStateCityRouteImport } from './routes/directory.$category.$state.$city'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
+import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
@@ -731,6 +732,12 @@ const ApiPublicHooksSeoFixWorkerRoute =
     path: '/api/public/hooks/seo-fix-worker',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksCompetitorRadarScanRoute =
+  ApiPublicHooksCompetitorRadarScanRouteImport.update({
+    id: '/api/public/hooks/competitor-radar-scan',
+    path: '/api/public/hooks/competitor-radar-scan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCertificatesUidPdfRoute = ApiCertificatesUidPdfRouteImport.update({
   id: '/api/certificates/$uid/pdf',
   path: '/api/certificates/$uid/pdf',
@@ -847,6 +854,7 @@ export interface FileRoutesByFullPath {
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/directory/$category/$state/$city': typeof DirectoryCategoryStateCityRoute
@@ -965,6 +973,7 @@ export interface FileRoutesByTo {
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
   '/help-center/$category': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/directory/$category/$state/$city': typeof DirectoryCategoryStateCityRoute
@@ -1085,6 +1094,7 @@ export interface FileRoutesById {
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/directory/$category/$state/$city': typeof DirectoryCategoryStateCityRoute
@@ -1206,6 +1216,7 @@ export interface FileRouteTypes {
     | '/providers/$slug/manage'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/sync-listings'
     | '/directory/$category/$state/$city'
@@ -1324,6 +1335,7 @@ export interface FileRouteTypes {
     | '/providers/$slug/manage'
     | '/help-center/$category'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/sync-listings'
     | '/directory/$category/$state/$city'
@@ -1443,6 +1455,7 @@ export interface FileRouteTypes {
     | '/providers/$slug/manage'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/sync-listings'
     | '/directory/$category/$state/$city'
@@ -1522,6 +1535,7 @@ export interface RootRouteChildren {
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   HelpCenterCategoryIndexRoute: typeof HelpCenterCategoryIndexRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
+  ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -2345,6 +2359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSeoFixWorkerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/competitor-radar-scan': {
+      id: '/api/public/hooks/competitor-radar-scan'
+      path: '/api/public/hooks/competitor-radar-scan'
+      fullPath: '/api/public/hooks/competitor-radar-scan'
+      preLoaderRoute: typeof ApiPublicHooksCompetitorRadarScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/certificates/$uid/pdf': {
       id: '/api/certificates/$uid/pdf'
       path: '/api/certificates/$uid/pdf'
@@ -2615,6 +2636,8 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   HelpCenterCategoryIndexRoute: HelpCenterCategoryIndexRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
+  ApiPublicHooksCompetitorRadarScanRoute:
+    ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
