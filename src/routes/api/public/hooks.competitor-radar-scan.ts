@@ -28,6 +28,7 @@ async function runScan() {
   const sb = supabaseAdmin as any;
   const { data: sites } = await sb.from("competitor_sites").select("*").eq("is_active", true);
   const results: any[] = [];
+  const newlyInsertedIds: string[] = [];
   for (const site of sites || []) {
     try {
       const urls = await fetchSitemapUrls(site.sitemap_url);
@@ -37,9 +38,10 @@ async function runScan() {
       const existingSet = new Set((existing || []).map((r: any) => r.url));
       const newOnes = unique.filter((u) => !existingSet.has(u));
       if (newOnes.length) {
-        await sb.from("competitor_urls").insert(
+        const { data: inserted } = await sb.from("competitor_urls").insert(
           newOnes.map((url) => ({ site_id: site.id, url, first_seen_at: now, last_seen_at: now })),
-        );
+        ).select("id");
+        for (const r of inserted || []) newlyInsertedIds.push(r.id);
       }
       await sb.from("competitor_sites").update({
         last_checked_at: now,
@@ -50,7 +52,19 @@ async function runScan() {
       results.push({ domain: site.domain, error: e?.message || "scan failed" });
     }
   }
-  return { ok: true, results, ran_at: new Date().toISOString() };
+
+  // Auto-run host matcher on newly discovered URLs (cap at 25 per scan to control cost)
+  let matcherResult: { processed: number; matched: number } | null = null;
+  if (newlyInsertedIds.length > 0) {
+    try {
+      const { matchManyCompetitorUrls } = await import("@/server/host-matcher.server");
+      matcherResult = await matchManyCompetitorUrls(newlyInsertedIds.slice(0, 25), 2);
+    } catch (e: any) {
+      console.error("[radar-scan] matcher failed", e);
+    }
+  }
+
+  return { ok: true, results, matcher: matcherResult, ran_at: new Date().toISOString() };
 }
 
 export const Route = createFileRoute("/api/public/hooks/competitor-radar-scan")({
