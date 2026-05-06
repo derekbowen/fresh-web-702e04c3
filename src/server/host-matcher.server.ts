@@ -252,7 +252,10 @@ export async function matchCompetitorUrl(competitor_url_id: string): Promise<{ o
   const allResults: Array<{ url: string; title: string; description: string; source: string }> = [];
   for (const { q, source } of queries.slice(0, 5)) {
     const results = await firecrawlSearch(q, 4);
-    for (const r of results) allResults.push({ ...r, source });
+    for (const r of results) {
+      if (isStoplistedUrl(r.url)) continue;
+      allResults.push({ ...r, source });
+    }
   }
 
   if (allResults.length === 0) return { ok: true, inserted: 0, reason: "no search results" };
@@ -260,13 +263,43 @@ export async function matchCompetitorUrl(competitor_url_id: string): Promise<{ o
   const candidates = await geminiRankCandidates(facts, allResults);
   if (candidates.length === 0) return { ok: true, inserted: 0, reason: "no confident matches" };
 
-  const rows = candidates.map((c) => ({
+  // Validate every candidate field. Drop garbage; route low-confidence to review queue.
+  const cleaned = candidates
+    .map((c) => {
+      const emailV = c.candidate_email ? validateEmail(c.candidate_email, { firstName: facts.host_first_name }) : { ok: false };
+      const phoneV = c.candidate_phone ? validateUSPhone(c.candidate_phone) : { ok: false };
+      const websiteBad = c.candidate_website ? isStoplistedUrl(c.candidate_website) : false;
+      const socialBad = c.candidate_social_url ? isStoplistedUrl(c.candidate_social_url) : false;
+      return {
+        ...c,
+        candidate_email: emailV.ok ? c.candidate_email : null,
+        candidate_phone: phoneV.ok && (phoneV as any).normalized ? formatPhoneForDisplay((phoneV as any).normalized) : null,
+        candidate_website: websiteBad ? null : c.candidate_website,
+        candidate_social_url: socialBad ? null : c.candidate_social_url,
+      };
+    })
+    // Must have SOMETHING after validation: a name + city, or a validated email/phone, or a clean website
+    .filter((c) =>
+      c.candidate_email ||
+      c.candidate_phone ||
+      c.candidate_website ||
+      c.candidate_social_url ||
+      (c.candidate_name && (facts.host_first_name || facts.host_city)),
+    );
+
+  if (cleaned.length === 0) return { ok: true, inserted: 0, reason: "all candidates failed validation" };
+
+  const rows = cleaned.map((c) => ({
     competitor_url_id,
     competitor_url: row.url,
     domain,
     host_first_name: facts.host_first_name,
     host_city: facts.host_city,
     host_state: facts.host_state,
+    // Confidence floor: only ≥85 lands in the active "new" queue.
+    // Everything else goes to "review" so it doesn't burn enrichment budget
+    // and doesn't clutter Brandon's call list.
+    status: c.match_confidence >= 85 ? "new" : "review",
     ...c,
   }));
   const { error } = await sb().from("competitor_host_matches").insert(rows);
