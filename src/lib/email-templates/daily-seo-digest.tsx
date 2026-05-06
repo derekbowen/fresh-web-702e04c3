@@ -164,6 +164,19 @@ function Stat({ label, value, tone }: { label: string; value: string; tone: 'ok'
   )
 }
 
+function confidenceBadge(score: number): React.CSSProperties {
+  return {
+    display: 'inline-block',
+    backgroundColor: score >= 70 ? '#dcfce7' : score >= 50 ? '#fef3c7' : '#f1f5f9',
+    color: score >= 70 ? '#166534' : score >= 50 ? '#92400e' : '#475569',
+    padding: '2px 8px',
+    borderRadius: '4px',
+    fontSize: '12px',
+    fontWeight: 600,
+    marginRight: '6px',
+  }
+}
+
 function scoreBadge(score: number): React.CSSProperties {
   return {
     display: 'inline-block',
