@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 const UA = "Mozilla/5.0 (compatible; PoolRentalNearMeBot/1.0; +https://www.poolrentalnearme.com)";
 
@@ -146,8 +147,16 @@ async function runAll() {
 export const Route = createFileRoute("/api/public/hooks/seo-self-test")({
   server: {
     handlers: {
-      GET: async () => Response.json(await runAll()),
-      POST: async () => Response.json(await runAll()),
+      GET: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
+        return Response.json(await runAll());
+      },
+      POST: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
+        return Response.json(await runAll());
+      },
     },
   },
 });

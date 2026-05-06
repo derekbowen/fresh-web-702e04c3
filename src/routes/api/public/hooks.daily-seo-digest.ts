@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 import { render as renderAsync } from "@react-email/components";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { TEMPLATES } from "@/lib/email-templates/registry";
@@ -200,6 +201,8 @@ export const Route = createFileRoute("/api/public/hooks/daily-seo-digest")({
   server: {
     handlers: {
       GET: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
         const url = new URL(request.url);
         const force = url.searchParams.get("force") === "1";
         try {
@@ -211,6 +214,8 @@ export const Route = createFileRoute("/api/public/hooks/daily-seo-digest")({
         }
       },
       POST: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
         const url = new URL(request.url);
         const force = url.searchParams.get("force") === "1";
         try {

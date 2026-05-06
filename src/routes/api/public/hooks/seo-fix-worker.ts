@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { runSeoFix } from "@/server/admin-tools.functions";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 const MAX_PER_INVOCATION = 5;
 
@@ -17,7 +18,6 @@ async function processBatch() {
   const results: Array<{ id: string; ok: boolean; error?: string }> = [];
 
   for (const job of list) {
-    // Claim the job (best-effort; if another worker beat us, skip)
     const { data: claimed } = await sb
       .from("seo_fix_jobs")
       .update({ status: "processing", started_at: new Date().toISOString(), attempts: job.attempts + 1 })
@@ -60,13 +60,15 @@ async function processBatch() {
 export const Route = createFileRoute("/api/public/hooks/seo-fix-worker")({
   server: {
     handlers: {
-      POST: async () => {
-        const out = await processBatch();
-        return Response.json(out);
+      POST: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
+        return Response.json(await processBatch());
       },
-      GET: async () => {
-        const out = await processBatch();
-        return Response.json(out);
+      GET: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
+        return Response.json(await processBatch());
       },
     },
   },
