@@ -13,7 +13,7 @@ export const Route = createFileRoute("/admin/dashboard")({
       throw redirect({ to: "/auth", search: { redirect: "/admin/dashboard", mode: "signin" } });
     }
     const { isAdmin } = await checkAdminRole();
-    if (!isAdmin) throw redirect({ to: "/" });
+    if (!isAdmin) throw redirect({ to: "/admin/no-access" });
   },
   head: () => ({
     meta: [

@@ -47,6 +47,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/directory", label: "Directory moderation", icon: Building2 },
       { to: "/admin/claims", label: "Listing claims", icon: ShieldCheck },
       { to: "/admin/plan-requests", label: "Plan requests", icon: CreditCard },
+      { to: "/admin/team", label: "Admin team", icon: ShieldCheck },
     ],
   },
 ];
