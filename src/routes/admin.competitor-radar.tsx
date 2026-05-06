@@ -26,23 +26,43 @@ export const Route = createFileRoute("/admin/competitor-radar")({
 function CompetitorRadar() {
   const [sites, setSites] = React.useState<CompetitorSiteRow[]>([]);
   const [newRows, setNewRows] = React.useState<CompetitorUrlRow[]>([]);
+  const [matches, setMatches] = React.useState<CompetitorHostMatchRow[]>([]);
+  const [matchStatus, setMatchStatus] = React.useState<"new" | "contacted" | "converted" | "dismissed" | "all">("new");
+  const [tab, setTab] = React.useState<"feed" | "matches">("feed");
   const [domain, setDomain] = React.useState("");
   const [sitemap, setSitemap] = React.useState("");
   const [label, setLabel] = React.useState("");
   const [scanning, setScanning] = React.useState(false);
+  const [matchingId, setMatchingId] = React.useState<string | null>(null);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [showAck, setShowAck] = React.useState(false);
 
   const load = React.useCallback(async () => {
-    const [s, n] = await Promise.all([
+    const [s, n, m] = await Promise.all([
       listCompetitorSites(),
       listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } }),
+      listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } }),
     ]);
     setSites(s.rows);
     setNewRows(n.rows);
-  }, [showAck]);
+    setMatches(m.rows);
+  }, [showAck, matchStatus]);
 
   React.useEffect(() => { load(); }, [load]);
+
+  async function findHostFor(id: string) {
+    setMatchingId(id);
+    try {
+      const r: any = await runHostMatchOne({ data: { competitor_url_id: id } });
+      setMsg(r.ok ? `Matcher: ${r.inserted} candidate(s) found${r.reason ? ` (${r.reason})` : ""}` : `Matcher failed: ${r.reason}`);
+      await load();
+    } finally { setMatchingId(null); }
+  }
+
+  async function setStatus(id: string, status: "contacted" | "converted" | "dismissed") {
+    await updateHostMatchStatus({ data: { id, status } });
+    await load();
+  }
 
   async function add() {
     if (!domain.trim() || !sitemap.trim()) return;
