@@ -17,7 +17,7 @@ export const Route = createFileRoute("/admin/gsc-import")({
   component: GscImport,
 });
 
-type Row = { slug: string; impressions: number; clicks: number; position: number | null };
+type Row = { slug: string; impressions: number; clicks: number; position: number | null; kind: "provider" | "page" };
 
 function GscImport() {
   const [csv, setCsv] = React.useState("");
