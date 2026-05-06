@@ -82,6 +82,7 @@ import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
+import { Route as AdminPrivacyRequestsRouteImport } from './routes/admin.privacy-requests'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
 import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-auditor'
 import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
@@ -512,6 +513,11 @@ const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
   path: '/quick-page',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPrivacyRequestsRoute = AdminPrivacyRequestsRouteImport.update({
+  id: '/privacy-requests',
+  path: '/privacy-requests',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPlanRequestsRoute = AdminPlanRequestsRouteImport.update({
   id: '/plan-requests',
   path: '/plan-requests',
@@ -828,6 +834,7 @@ export interface FileRoutesByFullPath {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
+  '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
@@ -950,6 +957,7 @@ export interface FileRoutesByTo {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
+  '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
@@ -1074,6 +1082,7 @@ export interface FileRoutesById {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
+  '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
@@ -1199,6 +1208,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
+    | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/scrape-import'
@@ -1321,6 +1331,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
+    | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/scrape-import'
@@ -1444,6 +1455,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
+    | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/scrape-import'
@@ -2099,6 +2111,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminQuickPageRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/privacy-requests': {
+      id: '/admin/privacy-requests'
+      path: '/privacy-requests'
+      fullPath: '/admin/privacy-requests'
+      preLoaderRoute: typeof AdminPrivacyRequestsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/plan-requests': {
       id: '/admin/plan-requests'
       path: '/plan-requests'
@@ -2487,6 +2506,7 @@ interface AdminRouteChildren {
   AdminNoAccessRoute: typeof AdminNoAccessRoute
   AdminPageAuditorRoute: typeof AdminPageAuditorRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
+  AdminPrivacyRequestsRoute: typeof AdminPrivacyRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminRankTrackerRoute: typeof AdminRankTrackerRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
@@ -2519,6 +2539,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminNoAccessRoute: AdminNoAccessRoute,
   AdminPageAuditorRoute: AdminPageAuditorRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
+  AdminPrivacyRequestsRoute: AdminPrivacyRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminRankTrackerRoute: AdminRankTrackerRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
