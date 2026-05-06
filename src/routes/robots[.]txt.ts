@@ -35,11 +35,9 @@ Disallow: /listings
 Disallow: /profile-settings
 Disallow: /verify/
 
-# Sharetribe-owned pages stuck in "Crawled — currently not indexed".
-# These are thin/duplicative for Google and waste crawl budget.
-# /l/* — individual listing detail pages (Sharetribe-rendered)
-# /u/* — public user profile pages
-Disallow: /l/
+# Sharetribe public user profiles — thin pages stuck in
+# "Crawled — currently not indexed". Block to save crawl budget.
+# /l/* (pool listings) stays ALLOWED — those are core marketplace content.
 Disallow: /u/
 
 # Internal API endpoints
