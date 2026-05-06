@@ -126,6 +126,7 @@ import { Route as DirectoryCategoryStateCityRouteImport } from './routes/directo
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
+import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 
@@ -739,6 +740,12 @@ const ApiPublicHooksSeoFixWorkerRoute =
     path: '/api/public/hooks/seo-fix-worker',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksDailySeoDigestRoute =
+  ApiPublicHooksDailySeoDigestRouteImport.update({
+    id: '/api/public/hooks/daily-seo-digest',
+    path: '/api/public/hooks/daily-seo-digest',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksCompetitorRadarScanRoute =
   ApiPublicHooksCompetitorRadarScanRouteImport.update({
     id: '/api/public/hooks/competitor-radar-scan',
@@ -862,6 +869,7 @@ export interface FileRoutesByFullPath {
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
+  '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
@@ -982,6 +990,7 @@ export interface FileRoutesByTo {
   '/help-center/$category': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
+  '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
@@ -1104,6 +1113,7 @@ export interface FileRoutesById {
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
+  '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
@@ -1227,6 +1237,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
+    | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
@@ -1347,6 +1358,7 @@ export interface FileRouteTypes {
     | '/help-center/$category'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
+    | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
@@ -1468,6 +1480,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/competitor-radar-scan'
+    | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sync-listings'
@@ -1549,6 +1562,7 @@ export interface RootRouteChildren {
   HelpCenterCategoryIndexRoute: typeof HelpCenterCategoryIndexRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
+  ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
@@ -2380,6 +2394,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSeoFixWorkerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/daily-seo-digest': {
+      id: '/api/public/hooks/daily-seo-digest'
+      path: '/api/public/hooks/daily-seo-digest'
+      fullPath: '/api/public/hooks/daily-seo-digest'
+      preLoaderRoute: typeof ApiPublicHooksDailySeoDigestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/competitor-radar-scan': {
       id: '/api/public/hooks/competitor-radar-scan'
       path: '/api/public/hooks/competitor-radar-scan'
@@ -2659,6 +2680,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
+  ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
