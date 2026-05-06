@@ -5,11 +5,11 @@ import { checkAdminRole } from "@/server/admin-auth.functions";
 import {
   listCompetitorSites, addCompetitorSite, deleteCompetitorSite,
   runCompetitorScan, listNewCompetitorUrls, acknowledgeCompetitorUrls,
-  scrapeCompetitorUrlRow,
-  type CompetitorSiteRow, type CompetitorUrlRow,
+  scrapeCompetitorUrlRow, listHostMatches, updateHostMatchStatus, runHostMatchOne,
+  type CompetitorSiteRow, type CompetitorUrlRow, type CompetitorHostMatchRow,
 } from "@/server/admin-weapons.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X } from "lucide-react";
 
 export const Route = createFileRoute("/admin/competitor-radar")({
   beforeLoad: async () => {
