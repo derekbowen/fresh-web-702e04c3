@@ -302,7 +302,7 @@ export const updateHostMatchStatus = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       id: z.string().uuid(),
-      status: z.enum(["new", "contacted", "converted", "dismissed"]),
+      status: z.enum(["new", "review", "contacted", "converted", "dismissed"]),
       admin_notes: z.string().max(2000).optional(),
     }).parse(d),
   )
