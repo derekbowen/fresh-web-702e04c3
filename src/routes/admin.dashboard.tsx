@@ -40,9 +40,36 @@ function StatCard({ label, value, hint, tone }: { label: string; value: React.Re
 }
 
 function AdminDashboard() {
+  const [authorized, setAuthorized] = React.useState(false);
   const [stats, setStats] = React.useState<DashboardStats | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (cancelled) return;
+      if (error || !data.user) {
+        window.location.href = "/auth?redirect=%2Fadmin%2Fdashboard&mode=signin";
+        return;
+      }
+      try {
+        const { isAdmin } = await checkAdminRole();
+        if (cancelled) return;
+        if (!isAdmin) {
+          window.location.replace("/admin/no-access");
+          return;
+        }
+        setAuthorized(true);
+      } catch {
+        if (!cancelled) window.location.href = "/auth?redirect=%2Fadmin%2Fdashboard&mode=signin";
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const load = React.useCallback(async () => {
     setLoading(true); setErr(null);
@@ -51,12 +78,21 @@ function AdminDashboard() {
     finally { setLoading(false); }
   }, []);
 
-  React.useEffect(() => { void load(); const id = setInterval(load, 30_000); return () => clearInterval(id); }, [load]);
+  React.useEffect(() => {
+    if (!authorized) return;
+    void load();
+    const id = setInterval(load, 30_000);
+    return () => clearInterval(id);
+  }, [authorized, load]);
 
   const pct = stats ? Math.round((stats.contentPages.published / Math.max(stats.contentPages.total, 1)) * 100) : 0;
 
   return (
     <AdminLayout title="Dashboard">
+      {!authorized ? (
+        <div className="mt-12 text-center text-sm text-muted-foreground">Checking admin access…</div>
+      ) : (
+        <>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
@@ -246,6 +282,8 @@ function AdminDashboard() {
         )}
 
         {loading && !stats && <div className="mt-12 text-center text-sm text-muted-foreground">Loading…</div>}
+        </>
+      )}
     </AdminLayout>
   );
 }
