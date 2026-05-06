@@ -69,6 +69,15 @@ function CompetitorRadar() {
     await load();
   }
 
+  async function enrich(id: string) {
+    setEnrichingId(id);
+    try {
+      const r: any = await enrichHostMatchOne({ data: { match_id: id } });
+      setMsg(r.ok ? `Enriched (${r.tier_reached}): ${r.emails_found} email(s), ${r.phones_found} phone(s), $${(r.cost_usd || 0).toFixed(2)}${r.reason ? ` — ${r.reason}` : ""}` : `Enrich failed: ${r.reason}`);
+      await load();
+    } finally { setEnrichingId(null); }
+  }
+
   async function add() {
     if (!domain.trim() || !sitemap.trim()) return;
     const r: any = await addCompetitorSite({ data: { domain: domain.trim(), sitemap_url: sitemap.trim(), label: label.trim() || undefined } });
