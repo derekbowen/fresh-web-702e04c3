@@ -13,12 +13,12 @@ import heroPool from "@/assets/pool-hero-default.jpg";
 const NEARBY_RADIUS_MILES = 500;
 
 const FEATURED_OCCASIONS = [
-  { slug: "tax-implications-for-pool-rental-income", title: "Taxes & Pool Rental Income", img: "academy/taxes.jpg" },
-  { slug: "dealing-with-difficult-guest-scenarios", title: "Difficult Guest Scenarios", img: "academy/difficult-guests.jpg" },
-  { slug: "hoa-warfare-bypass-restrictions-rent-your-pool", title: "HOA Warfare", img: "academy/hoa.jpg" },
-  { slug: "dealing-with-neighbor-complaints-in-real-time", title: "Neighbor Complaints", img: "academy/neighbor-complaints.jpg" },
-  { slug: "bachelorette-pool-party-hosting-playbook", title: "Bachelorette", img: "academy/bachelorette.jpg" },
-  { slug: "photoshoot-content-creator-ugc-pool-hosting", title: "Photoshoot & UGC", img: "academy/photoshoot.jpg" },
+  { slug: "elearning-academy-tax-deduction-tracking-guide-pool-hosts", title: "Taxes & Pool Rental Income", img: "academy/taxes.jpg" },
+  { slug: "elearning-academy-dealing-with-difficult-scenarios-pool-hosts", title: "Difficult Guest Scenarios", img: "academy/difficult-guests.jpg" },
+  { slug: "elearning-academy-hoa-navigation-guide-pool-hosts", title: "HOA Navigation", img: "academy/hoa.jpg" },
+  { slug: "elearning-academy-dealing-with-neighbor-complaints-in-real-time", title: "Neighbor Complaints", img: "academy/neighbor-complaints.jpg" },
+  { slug: "elearning-academy-content-marketing-for-pool-rentals", title: "Content Marketing", img: "academy/bachelorette.jpg" },
+  { slug: "elearning-academy-listing-optimization-photography-conversion", title: "Photography & Listings", img: "academy/photoshoot.jpg" },
 ];
 
 export const HOMEPAGE_FAQS = [
@@ -320,13 +320,13 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <a
-                    href="/academy"
+                    href="/p/learning-academy"
                     className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                   >
                     Browse 100+ free courses →
                   </a>
                   <a
-                    href="/academy"
+                    href="/p/host-training-academy"
                     className="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
                   >
                     Earn certifications
@@ -341,7 +341,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   {FEATURED_OCCASIONS.slice(0, 4).map((o, idx) => (
                     <a
                       key={o.slug}
-                      href={`/academy/${o.slug}`}
+                      href={`/p/${o.slug}`}
                       className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
                     >
                       <div className="aspect-square overflow-hidden">
