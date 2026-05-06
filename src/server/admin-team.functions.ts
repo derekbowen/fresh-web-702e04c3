@@ -47,10 +47,28 @@ export const getAdminIdentity = createServerFn({ method: "POST" })
 
 export type AdminTeamMember = {
   user_id: string;
+  email: string | null;
   display_name: string | null;
   full_name: string | null;
   granted_at: string | null;
+  last_sign_in_at: string | null;
 };
+
+async function fetchAuthUsersByIds(ids: string[]): Promise<Map<string, any>> {
+  const map = new Map<string, any>();
+  if (ids.length === 0) return map;
+  const idSet = new Set(ids);
+  for (let page = 1; page <= 20; page++) {
+    const { data: list, error } = await (supabaseAdmin as any).auth.admin.listUsers({ page, perPage: 200 });
+    if (error) throw new Error(`Auth lookup failed: ${error.message}`);
+    const users = list?.users || [];
+    for (const u of users) {
+      if (idSet.has(u.id)) map.set(u.id, u);
+    }
+    if (users.length < 200 || map.size === idSet.size) break;
+  }
+  return map;
+}
 
 export const listAdmins = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -62,20 +80,95 @@ export const listAdmins = createServerFn({ method: "POST" })
       .eq("role", "admin");
     const ids = (roles || []).map((r: any) => r.user_id);
     if (ids.length === 0) return { admins: [] };
-    const { data: profiles } = await supabaseAdmin
-      .from("profiles")
-      .select("user_id, display_name, full_name")
-      .in("user_id", ids);
+    const [{ data: profiles }, authMap] = await Promise.all([
+      supabaseAdmin.from("profiles").select("user_id, display_name, full_name").in("user_id", ids),
+      fetchAuthUsersByIds(ids),
+    ]);
     const pmap = new Map<string, any>();
     (profiles || []).forEach((p: any) => pmap.set(p.user_id, p));
     const admins: AdminTeamMember[] = (roles || []).map((r: any) => ({
       user_id: r.user_id,
+      email: authMap.get(r.user_id)?.email ?? null,
       display_name: pmap.get(r.user_id)?.display_name ?? null,
       full_name: pmap.get(r.user_id)?.full_name ?? null,
       granted_at: r.created_at ?? null,
+      last_sign_in_at: authMap.get(r.user_id)?.last_sign_in_at ?? null,
     }));
-    admins.sort((a, b) => (a.full_name || a.display_name || a.user_id).localeCompare(b.full_name || b.display_name || b.user_id));
+    admins.sort((a, b) => (a.full_name || a.display_name || a.email || a.user_id).localeCompare(b.full_name || b.display_name || b.email || b.user_id));
     return { admins };
+  });
+
+export const createAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+    full_name: z.string().optional(),
+  }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true; user_id: string }> => {
+    await assertAdmin((context as any).userId);
+    const email = data.email.trim().toLowerCase();
+
+    // Check if user already exists
+    let userId: string | null = null;
+    for (let page = 1; page <= 10 && !userId; page++) {
+      const { data: list, error } = await (supabaseAdmin as any).auth.admin.listUsers({ page, perPage: 200 });
+      if (error) throw new Error(`Lookup failed: ${error.message}`);
+      const users = list?.users || [];
+      const hit = users.find((u: any) => (u.email || "").toLowerCase() === email);
+      if (hit) userId = hit.id;
+      if (users.length < 200) break;
+    }
+
+    if (userId) {
+      // Update existing user's password
+      const { error } = await (supabaseAdmin as any).auth.admin.updateUserById(userId, { password: data.password });
+      if (error) throw new Error(error.message);
+    } else {
+      const { data: created, error } = await (supabaseAdmin as any).auth.admin.createUser({
+        email,
+        password: data.password,
+        email_confirm: true,
+        user_metadata: data.full_name ? { full_name: data.full_name, display_name: data.full_name } : {},
+      });
+      if (error) throw new Error(error.message);
+      userId = created?.user?.id;
+      if (!userId) throw new Error("Failed to create user");
+    }
+
+    const { error: insErr } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: userId, role: "admin" });
+    if (insErr && !/duplicate|unique/i.test(insErr.message)) {
+      throw new Error(insErr.message);
+    }
+    return { ok: true, user_id: userId };
+  });
+
+export const setAdminPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    user_id: z.string().uuid(),
+    password: z.string().min(8),
+  }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true }> => {
+    await assertAdmin((context as any).userId);
+    const { error } = await (supabaseAdmin as any).auth.admin.updateUserById(data.user_id, { password: data.password });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const sendAdminPasswordReset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ email: z.string().email() }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true }> => {
+    await assertAdmin((context as any).userId);
+    const { error } = await (supabaseAdmin as any).auth.admin.generateLink({
+      type: "recovery",
+      email: data.email.trim().toLowerCase(),
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 const UUID = z.string().uuid();
