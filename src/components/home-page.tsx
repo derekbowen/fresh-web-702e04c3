@@ -76,7 +76,17 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     categories: [],
     listings: [],
     nearby: { city: null, region: null, count: 0, nearestMiles: null },
+    academyAvailable: [],
   };
+  const academyAvailable = new Set(
+    Array.isArray(safe.academyAvailable) ? safe.academyAvailable : [],
+  );
+  const visibleOccasions = FEATURED_OCCASIONS.filter((o) => academyAvailable.has(o.slug));
+  const showAcademySection =
+    visibleOccasions.length >= 2 &&
+    (academyAvailable.has("learning-academy") || academyAvailable.has("host-training-academy"));
+  const learningAcademyAvailable = academyAvailable.has("learning-academy");
+  const hostTrainingAvailable = academyAvailable.has("host-training-academy");
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   const categories = Array.isArray(safe.categories) ? safe.categories : [];
@@ -299,6 +309,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         </section>
 
         {/* Free Pool Host Academy — unique e-learning differentiator */}
+        {showAcademySection && (
         <section className="relative overflow-hidden border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/10">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
             <div className="grid items-center gap-10 lg:grid-cols-12">
@@ -328,18 +339,22 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   ))}
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <a
-                    href="/p/learning-academy"
-                    className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
-                  >
-                    Browse 100+ free courses →
-                  </a>
-                  <a
-                    href="/p/host-training-academy"
-                    className="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
-                  >
-                    Earn certifications
-                  </a>
+                  {learningAcademyAvailable && (
+                    <a
+                      href="/p/learning-academy"
+                      className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
+                    >
+                      Browse 100+ free courses →
+                    </a>
+                  )}
+                  {hostTrainingAvailable && (
+                    <a
+                      href="/p/host-training-academy"
+                      className="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
+                    >
+                      Earn certifications
+                    </a>
+                  )}
                 </div>
                 <p className="mt-4 text-xs text-muted-foreground">
                   100% free · English & Español · Earn shareable host certificates
@@ -347,7 +362,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </div>
               <div className="lg:col-span-5">
                 <div className="grid grid-cols-2 gap-3">
-                  {FEATURED_OCCASIONS.slice(0, 4).map((o, idx) => (
+                  {visibleOccasions.slice(0, 4).map((o, idx) => (
                     <a
                       key={o.slug}
                       href={`/p/${o.slug}`}
@@ -373,6 +388,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </div>
           </div>
         </section>
+        )}
 
         {showWaitlist ? (
           <ErrorBoundary name="PoolWaitlistForm" silent>

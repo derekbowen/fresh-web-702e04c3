@@ -28,7 +28,20 @@ export type HomeData = {
     /** Distance in miles to the nearest pool from the visitor location. */
     nearestMiles: number | null;
   };
+  /** Slugs of academy pages that currently have published, non-empty content. */
+  academyAvailable: string[];
 };
+
+const ACADEMY_SLUGS = [
+  "learning-academy",
+  "host-training-academy",
+  "elearning-academy-tax-deduction-tracking-guide-pool-hosts",
+  "elearning-academy-dealing-with-difficult-scenarios-pool-hosts",
+  "elearning-academy-hoa-navigation-guide-pool-hosts",
+  "elearning-academy-dealing-with-neighbor-complaints-in-real-time",
+  "elearning-academy-content-marketing-for-pool-rentals",
+  "elearning-academy-listing-optimization-photography-conversion",
+];
 
 const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
 
@@ -38,6 +51,7 @@ const EMPTY_HOME_DATA: HomeData = {
   categories: [],
   listings: [],
   nearby: { city: null, region: null, count: 0, nearestMiles: null },
+  academyAvailable: [],
 };
 
 function haversineMiles(
@@ -83,7 +97,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, cityCountRes, categories, listingsResult, nearbyResult] = await Promise.all([
+    const [cities, cityCountRes, categories, listingsResult, nearbyResult, academyRes] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -121,6 +135,18 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       origin
         ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
         : Promise.resolve(emptyListingResult),
+      safe(
+        (async () => {
+          const { data } = await supabaseAdmin
+            .from("content_pages")
+            .select("slug, body_markdown")
+            .in("slug", ACADEMY_SLUGS)
+            .eq("status", "published");
+          return (data ?? []) as { slug: string | null; body_markdown: string | null }[];
+        })(),
+        "academy availability query",
+        [] as { slug: string | null; body_markdown: string | null }[],
+      ),
     ]);
 
     let nearestMiles: number | null = null;
@@ -135,6 +161,10 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
+    const academyAvailable: string[] = academyRes
+      .filter((r) => !!r.slug && (r.body_markdown ?? "").trim().length > 200)
+      .map((r) => r.slug as string);
+
     const cityList = (cities.data ?? []) as HomeCity[];
     return {
       cities: cityList,
@@ -147,6 +177,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         count: origin ? nearbyResult.total : 0,
         nearestMiles,
       },
+      academyAvailable,
     };
   } catch (err) {
     console.error("homepage getHomeData fatal failure, returning empty data:", err);
