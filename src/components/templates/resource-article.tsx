@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { Breadcrumbs } from "@/components/listing-card";
+import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { RelatedPages } from "@/components/related-pages";
 import type { LinkTarget } from "@/components/auto-linked-content";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -25,7 +25,7 @@ export function ResourceArticleTemplate({
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
-        <Breadcrumbs
+        <BreadcrumbsWithSchema
           items={[
             { name: "Home", path: "/" },
             { name: page.title || page.slug || "", path: page.url_path },
