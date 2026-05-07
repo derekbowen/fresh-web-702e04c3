@@ -316,6 +316,15 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
                   🎓 Free · Only on PRNM
                 </span>
+        {/* Free Pool Host Academy — unique e-learning differentiator */}
+        {showAcademySection && (
+        <section className="relative overflow-hidden border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/10">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+            <div className="grid items-center gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-7">
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                  🎓 Free · Only on PRNM
+                </span>
                 <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                   The only Pool Host Academy on the internet.
                 </h2>
@@ -338,18 +347,22 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   ))}
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <a
-                    href="/p/learning-academy"
-                    className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
-                  >
-                    Browse 100+ free courses →
-                  </a>
-                  <a
-                    href="/p/host-training-academy"
-                    className="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
-                  >
-                    Earn certifications
-                  </a>
+                  {learningAcademyAvailable && (
+                    <a
+                      href="/p/learning-academy"
+                      className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
+                    >
+                      Browse 100+ free courses →
+                    </a>
+                  )}
+                  {hostTrainingAvailable && (
+                    <a
+                      href="/p/host-training-academy"
+                      className="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
+                    >
+                      Earn certifications
+                    </a>
+                  )}
                 </div>
                 <p className="mt-4 text-xs text-muted-foreground">
                   100% free · English & Español · Earn shareable host certificates
@@ -357,7 +370,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </div>
               <div className="lg:col-span-5">
                 <div className="grid grid-cols-2 gap-3">
-                  {FEATURED_OCCASIONS.slice(0, 4).map((o, idx) => (
+                  {visibleOccasions.slice(0, 4).map((o, idx) => (
                     <a
                       key={o.slug}
                       href={`/p/${o.slug}`}
@@ -383,6 +396,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </div>
           </div>
         </section>
+        )}
 
         {showWaitlist ? (
           <ErrorBoundary name="PoolWaitlistForm" silent>
