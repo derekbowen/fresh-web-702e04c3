@@ -72,7 +72,7 @@ export function EventGuideTemplate({
           {body ? (
             <AutoLinkedContent
               text={body}
-              targets={[]}
+              targets={linkTargets}
               className="prose prose-lg mt-10 max-w-none whitespace-pre-line text-foreground"
             />
           ) : (
@@ -80,6 +80,16 @@ export function EventGuideTemplate({
               Detailed local guide coming soon.
             </p>
           )}
+
+          {nearbyCities.length > 0 && (
+            <NearbyCities
+              cities={nearbyCities}
+              slugPrefix=""
+              heading="Pool rentals in nearby cities"
+            />
+          )}
+
+          <RelatedPages />
         </article>
       </main>
       <SiteFooter />
