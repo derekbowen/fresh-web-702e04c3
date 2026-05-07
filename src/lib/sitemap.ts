@@ -159,7 +159,6 @@ export async function buildContentPagesSitemap(
     .select(cols)
     .in("template_type", templateTypes)
     .eq("in_sitemap", true)
-    .eq("status", "published")
     .not("slug", "is", null)
     .order("slug")
     .range(offset, offset + SITEMAP_PAGE_SIZE - 1);
