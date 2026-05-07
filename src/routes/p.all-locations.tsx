@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { getAllLocations, type DirectoryGroup, type DirectoryLink } from "@/server/all-locations.functions";
 import { getTopCities } from "@/server/top-cities.functions";
 import { TopCitiesBlock } from "@/components/top-cities-block";
