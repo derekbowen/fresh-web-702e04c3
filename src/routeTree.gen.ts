@@ -123,6 +123,7 @@ import { Route as ProvidersSlugManageRouteImport } from './routes/providers.$slu
 import { Route as ProvidersSlugClaimRouteImport } from './routes/providers.$slug.claim'
 import { Route as PoolBuildersStateCityRouteImport } from './routes/pool-builders.$state.$city'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
+import { Route as PEsSlugRouteImport } from './routes/p.es.$slug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as HelpCenterCategorySlugRouteImport } from './routes/help-center.$category.$slug'
@@ -736,6 +737,11 @@ const PPoolProsSlugRoute = PPoolProsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => PPoolProsRoute,
 } as any)
+const PEsSlugRoute = PEsSlugRouteImport.update({
+  id: '/p/es/$slug',
+  path: '/p/es/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -993,6 +999,7 @@ export interface FileRoutesByFullPath {
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/providers/$slug/claim': typeof ProvidersSlugClaimRoute
@@ -1133,6 +1140,7 @@ export interface FileRoutesByTo {
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/providers/$slug/claim': typeof ProvidersSlugClaimRoute
@@ -1275,6 +1283,7 @@ export interface FileRoutesById {
   '/help-center/$category/$slug': typeof HelpCenterCategorySlugRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/pool-builders/$state/$city': typeof PoolBuildersStateCityRoute
   '/providers/$slug/claim': typeof ProvidersSlugClaimRoute
@@ -1418,6 +1427,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/pool-builders/$state/$city'
     | '/providers/$slug/claim'
@@ -1558,6 +1568,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/pool-builders/$state/$city'
     | '/providers/$slug/claim'
@@ -1699,6 +1710,7 @@ export interface FileRouteTypes {
     | '/help-center/$category/$slug'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/pool-builders/$state/$city'
     | '/providers/$slug/claim'
@@ -1801,6 +1813,7 @@ export interface RootRouteChildren {
   HelpCenterCategorySlugRoute: typeof HelpCenterCategorySlugRoute
   LSlugIdRoute: typeof LSlugIdRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  PEsSlugRoute: typeof PEsSlugRoute
   HelpCenterCategoryIndexRoute: typeof HelpCenterCategoryIndexRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
@@ -2617,6 +2630,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PPoolProsSlugRouteImport
       parentRoute: typeof PPoolProsRoute
     }
+    '/p/es/$slug': {
+      id: '/p/es/$slug'
+      path: '/p/es/$slug'
+      fullPath: '/p/es/$slug'
+      preLoaderRoute: typeof PEsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -3107,6 +3127,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpCenterCategorySlugRoute: HelpCenterCategorySlugRoute,
   LSlugIdRoute: LSlugIdRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  PEsSlugRoute: PEsSlugRoute,
   HelpCenterCategoryIndexRoute: HelpCenterCategoryIndexRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
