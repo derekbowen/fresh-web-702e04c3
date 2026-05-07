@@ -137,14 +137,26 @@ export async function buildContentPagesSitemap(
   pathPrefix: string,
   supabase: import("@supabase/supabase-js").SupabaseClient,
   siteUrl: string,
+  options?: {
+    /**
+     * Minimum body_markdown length (chars) required to include the row.
+     * Use to keep thin/empty content pages out of Google's index.
+     */
+    minBodyChars?: number;
+  },
 ): Promise<Response> {
   const url = new URL(request.url);
   const page = Math.max(1, Number(url.searchParams.get("page") ?? 1));
   const offset = (page - 1) * SITEMAP_PAGE_SIZE;
+  const minBodyChars = options?.minBodyChars ?? 0;
+
+  const cols = minBodyChars > 0
+    ? "slug, updated_at, hero_image_url, body_markdown"
+    : "slug, updated_at, hero_image_url";
 
   const { data, error } = await supabase
     .from("content_pages")
-    .select("slug, updated_at, hero_image_url")
+    .select(cols)
     .in("template_type", templateTypes)
     .eq("in_sitemap", true)
     .not("slug", "is", null)
@@ -156,7 +168,13 @@ export async function buildContentPagesSitemap(
     return sitemapResponse(buildUrlsetXml([]));
   }
 
-  const urls: SitemapUrl[] = (data ?? []).map((row) => {
+  const filtered = (data ?? []).filter((row: any) => {
+    if (minBodyChars <= 0) return true;
+    const len = (row.body_markdown ?? "").trim().length;
+    return len >= minBodyChars;
+  });
+
+  const urls: SitemapUrl[] = filtered.map((row: any) => {
     const sitemapUrl: SitemapUrl = {
       loc: `${siteUrl}${pathPrefix}/${row.slug}`,
       lastmod: row.updated_at,

@@ -144,6 +144,7 @@ import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
+import { Route as ApiPublicHooksAcademyHealthRouteImport } from './routes/api/public/hooks.academy-health'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 import { Route as PPoolProsCCategoryStateRouteImport } from './routes/p.pool-pros.c.$category.$state'
 import { Route as PPoolProsCCategoryStateCityRouteImport } from './routes/p.pool-pros.c.$category.$state.$city'
@@ -851,6 +852,12 @@ const ApiPublicHooksCompetitorRadarScanRoute =
     path: '/api/public/hooks/competitor-radar-scan',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAcademyHealthRoute =
+  ApiPublicHooksAcademyHealthRouteImport.update({
+    id: '/api/public/hooks/academy-health',
+    path: '/api/public/hooks/academy-health',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCertificatesUidPdfRoute = ApiCertificatesUidPdfRouteImport.update({
   id: '/api/certificates/$uid/pdf',
   path: '/api/certificates/$uid/pdf',
@@ -992,6 +999,7 @@ export interface FileRoutesByFullPath {
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1131,6 +1139,7 @@ export interface FileRoutesByTo {
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
   '/help-center/$category': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1272,6 +1281,7 @@ export interface FileRoutesById {
   '/providers/$slug/manage': typeof ProvidersSlugManageRoute
   '/help-center/$category/': typeof HelpCenterCategoryIndexRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1414,6 +1424,7 @@ export interface FileRouteTypes {
     | '/providers/$slug/manage'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/academy-health'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1553,6 +1564,7 @@ export interface FileRouteTypes {
     | '/providers/$slug/manage'
     | '/help-center/$category'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/academy-health'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1693,6 +1705,7 @@ export interface FileRouteTypes {
     | '/providers/$slug/manage'
     | '/help-center/$category/'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/academy-health'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1790,6 +1803,7 @@ export interface RootRouteChildren {
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   HelpCenterCategoryIndexRoute: typeof HelpCenterCategoryIndexRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
+  ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
@@ -2750,6 +2764,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksCompetitorRadarScanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/academy-health': {
+      id: '/api/public/hooks/academy-health'
+      path: '/api/public/hooks/academy-health'
+      fullPath: '/api/public/hooks/academy-health'
+      preLoaderRoute: typeof ApiPublicHooksAcademyHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/certificates/$uid/pdf': {
       id: '/api/certificates/$uid/pdf'
       path: '/api/certificates/$uid/pdf'
@@ -3088,6 +3109,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   HelpCenterCategoryIndexRoute: HelpCenterCategoryIndexRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
+  ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
