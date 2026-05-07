@@ -112,12 +112,40 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const slug = String(body.slug ?? "");
-    const spec = ALLOWED_SLUGS[slug];
-    if (!spec) {
-      return new Response(JSON.stringify({ error: `slug not in allowlist: ${slug}` }), {
+    if (!slug) {
+      return new Response(JSON.stringify({ error: "slug required" }), {
         status: 400,
         headers: { ...cors, "Content-Type": "application/json" },
       });
+    }
+
+    // Allowlisted slugs use a curated H1; any other elearning-academy-* slug
+    // gets an H1 derived from the slug itself (Title Case of the trailing path).
+    let spec = ALLOWED_SLUGS[slug];
+    if (!spec) {
+      if (!slug.startsWith("elearning-academy-")) {
+        return new Response(JSON.stringify({ error: `slug not allowed: ${slug}` }), {
+          status: 400,
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      }
+      const topic = slug
+        .replace(/^elearning-academy-/, "")
+        .split("-")
+        .map((w) => (w.length > 2 ? w[0].toUpperCase() + w.slice(1) : w))
+        .join(" ")
+        .replace(/\bFor Pool Hosts\b/i, "for Pool Hosts")
+        .replace(/\bAnd\b/g, "and")
+        .replace(/\bThe\b/g, "the")
+        .replace(/\bOf\b/g, "of")
+        .replace(/\bIn\b/g, "in");
+      const h1 =
+        topic.charAt(0).toUpperCase() +
+        topic.slice(1) +
+        (/(guide|playbook|checklist|tips|hosts|hosting)/i.test(topic)
+          ? ""
+          : ": A Pool Host's Guide");
+      spec = { h1, kind: "course" };
     }
 
     const KEY = Deno.env.get("LOVABLE_API_KEY");

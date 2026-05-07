@@ -3,6 +3,12 @@ import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { searchListings } from "@/server/sharetribe.server";
 import type { ListingSummary } from "@/server/sharetribe.functions";
+import {
+  ACADEMY_SLUGS,
+  ACADEMY_OCCASION_SLUGS,
+  classifyAcademyHealth,
+  type AcademyHealth,
+} from "@/lib/academy-config";
 
 export type HomeCity = {
   slug: string;
@@ -37,22 +43,8 @@ export type HomeData = {
    *                low quality; UI may still link but should not feature.
    * - "published": published with substantial content (≥800 chars)
    */
-  academyHealth: Record<string, "missing" | "short" | "published">;
+  academyHealth: Record<string, AcademyHealth>;
 };
-
-const ACADEMY_SHORT_THRESHOLD = 200;
-const ACADEMY_HEALTHY_THRESHOLD = 800;
-
-const ACADEMY_SLUGS = [
-  "learning-academy",
-  "host-training-academy",
-  "elearning-academy-tax-deduction-tracking-guide-pool-hosts",
-  "elearning-academy-dealing-with-difficult-scenarios-pool-hosts",
-  "elearning-academy-hoa-navigation-guide-pool-hosts",
-  "elearning-academy-dealing-with-neighbor-complaints-in-real-time",
-  "elearning-academy-content-marketing-for-pool-rentals",
-  "elearning-academy-listing-optimization-photography-conversion",
-];
 
 const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
 
@@ -175,13 +167,14 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
-    const academyHealth: Record<string, "missing" | "short" | "published"> =
-      Object.fromEntries(ACADEMY_SLUGS.map((s) => [s, "missing" as const]));
+    const academyHealth: Record<string, AcademyHealth> = Object.fromEntries(
+      ACADEMY_SLUGS.map((s) => [s, "missing" as const]),
+    );
     for (const r of academyRes) {
       if (!r.slug || !ACADEMY_SLUGS.includes(r.slug)) continue;
-      const len = (r.body_markdown ?? "").trim().length;
-      if (len >= ACADEMY_HEALTHY_THRESHOLD) academyHealth[r.slug] = "published";
-      else if (len >= ACADEMY_SHORT_THRESHOLD) academyHealth[r.slug] = "short";
+      academyHealth[r.slug] = classifyAcademyHealth(
+        (r.body_markdown ?? "").trim().length,
+      );
     }
     const academyAvailable: string[] = ACADEMY_SLUGS.filter(
       (s) => academyHealth[s] !== "missing",
@@ -192,14 +185,9 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
     // Worker logs / server-function-logs and easily greppable by `tag`.
     const missingSlugs = ACADEMY_SLUGS.filter((s) => academyHealth[s] === "missing");
     const shortSlugs = ACADEMY_SLUGS.filter((s) => academyHealth[s] === "short");
-    const healthyOccasionCount = [
-      "elearning-academy-tax-deduction-tracking-guide-pool-hosts",
-      "elearning-academy-dealing-with-difficult-scenarios-pool-hosts",
-      "elearning-academy-hoa-navigation-guide-pool-hosts",
-      "elearning-academy-dealing-with-neighbor-complaints-in-real-time",
-      "elearning-academy-content-marketing-for-pool-rentals",
-      "elearning-academy-listing-optimization-photography-conversion",
-    ].filter((s) => academyHealth[s] === "published").length;
+    const healthyOccasionCount = ACADEMY_OCCASION_SLUGS.filter(
+      (s) => academyHealth[s] === "published",
+    ).length;
     const hubsHealthy =
       academyHealth["learning-academy"] === "published" ||
       academyHealth["host-training-academy"] === "published";
