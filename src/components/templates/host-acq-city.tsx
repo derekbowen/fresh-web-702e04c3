@@ -1,6 +1,6 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
-import { AutoLinkedContent } from "@/components/auto-linked-content";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
 import { EarningsCalculator } from "@/components/earnings-calculator";
