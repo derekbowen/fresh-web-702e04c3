@@ -30,7 +30,18 @@ export type HomeData = {
   };
   /** Slugs of academy pages that currently have published, non-empty content. */
   academyAvailable: string[];
+  /**
+   * Per-slug content-health for each academy page the homepage may link to.
+   * - "missing":   no row, unpublished, or empty/near-empty body (<200 chars)
+   * - "short":     published but body is thin (200–799 chars) — usable but
+   *                low quality; UI may still link but should not feature.
+   * - "published": published with substantial content (≥800 chars)
+   */
+  academyHealth: Record<string, "missing" | "short" | "published">;
 };
+
+const ACADEMY_SHORT_THRESHOLD = 200;
+const ACADEMY_HEALTHY_THRESHOLD = 800;
 
 const ACADEMY_SLUGS = [
   "learning-academy",
