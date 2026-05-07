@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/listing-card";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
+import { RelatedPages } from "@/components/related-pages";
 import { EarningsCalculator } from "@/components/earnings-calculator";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
