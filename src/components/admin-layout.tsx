@@ -10,6 +10,30 @@ import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 
 type Item = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
+// Demo mode: shrinks the sidebar to only the customer-facing tools so
+// the admin can record clean demo videos / screenshare with prospects
+// without exposing internal ops (leads, claims, team, etc.).
+// Toggle via the "Demo mode" button in the sidebar footer or by
+// appending ?demo=1 / ?demo=0 to any /admin URL.
+const DEMO_KEY = "prnm_demo_mode";
+
+const DEMO_ALLOWED_PATHS = new Set<string>([
+  "/admin/quick-page",
+  "/admin/generate-content",
+  "/admin/content-pages",
+  "/admin/seo-health",
+  "/admin/link-checker",
+]);
+
+function filterGroupsForDemo(groups: typeof GROUPS) {
+  return groups
+    .map((g) => ({
+      ...g,
+      items: g.items.filter((it) => DEMO_ALLOWED_PATHS.has(it.to)),
+    }))
+    .filter((g) => g.items.length > 0);
+}
+
 const GROUPS: Array<{ label: string; items: Item[] }> = [
   {
     label: "Overview",
