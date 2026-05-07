@@ -89,10 +89,12 @@ function useCurrentPath() {
   return useRouterState({ select: (s) => s.location.pathname });
 }
 
-function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
+function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onToggleDemo }: {
   collapsed: boolean; onToggle: () => void; mobileOpen: boolean; onMobileClose: () => void;
+  demoMode: boolean; onToggleDemo: () => void;
 }) {
   const path = useCurrentPath();
+  const groups = demoMode ? filterGroupsForDemo(GROUPS) : GROUPS;
   return (
     <>
       {mobileOpen && (
@@ -108,7 +110,11 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
         ].join(" ")}
       >
         <div className="flex h-12 items-center justify-between gap-2 border-b border-border px-3">
-          {!collapsed && <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Admin</span>}
+          {!collapsed && (
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {demoMode ? "PRNM CMS" : "Admin"}
+            </span>
+          )}
           <button onClick={onToggle} className="hidden rounded p-1 hover:bg-muted lg:inline-flex" aria-label="Toggle sidebar">
             <ChevronLeft className={`h-4 w-4 transition-transform ${collapsed ? "rotate-180" : ""}`} />
           </button>
@@ -116,35 +122,50 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: {
             <X className="h-4 w-4" />
           </button>
         </div>
-        <nav className="h-[calc(100%-3rem)] overflow-y-auto p-2">
-          {GROUPS.map((g) => (
-            <div key={g.label} className="mb-3">
-              {!collapsed && (
-                <div className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{g.label}</div>
-              )}
-              <ul className="space-y-0.5">
-                {g.items.map((it) => {
-                  const active = path === it.to || path.startsWith(it.to + "/");
-                  return (
-                    <li key={it.to}>
-                      <Link
-                        to={it.to}
-                        onClick={onMobileClose}
-                        title={collapsed ? it.label : undefined}
-                        className={[
-                          "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
-                          active ? "bg-primary text-primary-foreground font-medium" : "text-foreground hover:bg-muted",
-                        ].join(" ")}
-                      >
-                        <it.icon className="h-4 w-4 shrink-0" />
-                        {!collapsed && <span className="truncate">{it.label}</span>}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+        <nav className="flex h-[calc(100%-3rem)] flex-col overflow-y-auto p-2">
+          <div className="flex-1">
+            {groups.map((g) => (
+              <div key={g.label} className="mb-3">
+                {!collapsed && (
+                  <div className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{g.label}</div>
+                )}
+                <ul className="space-y-0.5">
+                  {g.items.map((it) => {
+                    const active = path === it.to || path.startsWith(it.to + "/");
+                    return (
+                      <li key={it.to}>
+                        <Link
+                          to={it.to}
+                          onClick={onMobileClose}
+                          title={collapsed ? it.label : undefined}
+                          className={[
+                            "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
+                            active ? "bg-primary text-primary-foreground font-medium" : "text-foreground hover:bg-muted",
+                          ].join(" ")}
+                        >
+                          <it.icon className="h-4 w-4 shrink-0" />
+                          {!collapsed && <span className="truncate">{it.label}</span>}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 border-t border-border pt-2">
+            <button
+              onClick={onToggleDemo}
+              title={collapsed ? (demoMode ? "Exit demo mode" : "Enter demo mode") : undefined}
+              className={[
+                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs",
+                demoMode ? "bg-amber-500/15 text-amber-700 dark:text-amber-400" : "text-muted-foreground hover:bg-muted",
+              ].join(" ")}
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0" />
+              {!collapsed && <span className="truncate">{demoMode ? "Demo mode: ON" : "Demo mode"}</span>}
+            </button>
+          </div>
         </nav>
       </aside>
     </>
@@ -156,8 +177,41 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
 }) {
   const [collapsed, setCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [demoMode, setDemoMode] = React.useState(false);
   const path = useCurrentPath();
-  const current = ALL_ITEMS.find((i) => path === i.to || path.startsWith(i.to + "/"));
+
+  // Initialize demo mode from URL (?demo=1) or localStorage
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("demo");
+    if (q === "1") {
+      setDemoMode(true);
+      try { localStorage.setItem(DEMO_KEY, "1"); } catch {}
+    } else if (q === "0") {
+      setDemoMode(false);
+      try { localStorage.removeItem(DEMO_KEY); } catch {}
+    } else {
+      try { setDemoMode(localStorage.getItem(DEMO_KEY) === "1"); } catch {}
+    }
+  }, []);
+
+  const toggleDemo = React.useCallback(() => {
+    setDemoMode((prev) => {
+      const next = !prev;
+      try {
+        if (next) localStorage.setItem(DEMO_KEY, "1");
+        else localStorage.removeItem(DEMO_KEY);
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const visibleItems = demoMode
+    ? ALL_ITEMS.filter((i) => DEMO_ALLOWED_PATHS.has(i.to))
+    : ALL_ITEMS;
+  const current = visibleItems.find((i) => path === i.to || path.startsWith(i.to + "/"))
+    ?? ALL_ITEMS.find((i) => path === i.to || path.startsWith(i.to + "/"));
   const isDashboard = path === "/admin/dashboard";
 
   return (
