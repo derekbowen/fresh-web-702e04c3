@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.generate-content-batch]
 verify_jwt = false
+
+[functions.generate-academy-pages]
+verify_jwt = false
