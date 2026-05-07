@@ -13,7 +13,7 @@
  * `{ ok: false, broken: [...] }` so monitors can alert on the JSON body.
  */
 import { createFileRoute } from "@tanstack/react-router";
-import { getRequestHeader } from "@tanstack/react-start/server";
+
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const EXTERNAL_PREFIXES = [
@@ -69,10 +69,17 @@ async function handle(request: Request) {
   const persist = url.searchParams.get("persist") === "1";
   const source = (url.searchParams.get("source") || "manual").slice(0, 32);
 
-  const xfh = getRequestHeader("x-forwarded-host");
-  const proto = getRequestHeader("x-forwarded-proto") || "https";
-  const host = xfh || url.host;
-  const origin = `${proto}://${host}`;
+  // Default to production origin so the crawl always hits real prod URLs (via nginx → correct
+  // backend per path), regardless of where the endpoint is invoked from. Self-fetching the
+  // lovable.app worker host reliably times out in the sandboxed runtime.
+  // Override with ?origin=https://example.com for ad-hoc testing.
+  const PROD_ORIGIN = "https://www.poolrentalnearme.com";
+  const originParam = url.searchParams.get("origin");
+  let origin = PROD_ORIGIN;
+  if (originParam && /^https?:\/\/[^\s/]+$/i.test(originParam)) {
+    origin = originParam.replace(/\/$/, "");
+  }
+  const host = new URL(origin).host;
 
   const seeds = (seedsParam ? seedsParam.split(",") : DEFAULT_SEEDS)
     .map((s) => s.trim()).filter((s) => s.startsWith("/")).slice(0, 25);
