@@ -215,7 +215,7 @@ function HowItWorksPage() {
                 Find a pool near you
               </a>
               <a
-                href="https://www.poolrentalnearme.com/p/become-a-pool-host" target="_blank" rel="noopener noreferrer"
+                href="/p/hosting" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/10 px-6 py-3 text-base font-semibold text-white backdrop-blur transition hover:bg-white/20"
               >
                 List your pool
@@ -297,7 +297,7 @@ function HowItWorksPage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <a
-                href="https://www.poolrentalnearme.com/p/become-a-pool-host" target="_blank" rel="noopener noreferrer"
+                href="/p/hosting" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
               >
                 Start hosting
@@ -409,7 +409,7 @@ function HowItWorksPage() {
               </p>
             </a>
             <a
-              href="https://www.poolrentalnearme.com/p/become-a-pool-host" target="_blank" rel="noopener noreferrer"
+              href="/p/hosting" target="_blank" rel="noopener noreferrer"
               className="group rounded-2xl border border-border p-5 transition hover:border-primary hover:shadow-sm"
             >
               <h3 className="text-base font-semibold text-foreground group-hover:text-primary">
@@ -452,7 +452,7 @@ function HowItWorksPage() {
                 Find a pool near you
               </a>
               <a
-                href="https://www.poolrentalnearme.com/p/become-a-pool-host" target="_blank" rel="noopener noreferrer"
+                href="/p/hosting" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-base font-semibold text-foreground transition hover:bg-muted"
               >
                 List your pool
