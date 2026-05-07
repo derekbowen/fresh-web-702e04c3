@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { DustBanner } from "@/components/dust-banner";
 import { ListingCard } from "@/components/listing-card";
-import { PoolWaitlistForm } from "@/components/pool-waitlist-form";
-import { FeatureRequestForm } from "@/components/feature-request-form";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
+
+// Below-the-fold form components — pull react-hook-form + zod resolvers.
+// Lazy-load so they don't bloat the homepage entry chunk.
+const PoolWaitlistForm = lazy(() =>
+  import("@/components/pool-waitlist-form").then((m) => ({ default: m.PoolWaitlistForm })),
+);
+const FeatureRequestForm = lazy(() =>
+  import("@/components/feature-request-form").then((m) => ({ default: m.FeatureRequestForm })),
+);
 import heroPool from "@/assets/pool-hero-default.webp";
 
 const NEARBY_RADIUS_MILES = 500;
