@@ -106,7 +106,7 @@ function buildPrompt(row: Row): { system: string; user: string } {
 You write SEO content for Pool Rental Near Me (PRNM), a marketplace where homeowners rent out their private pools by the hour.
 Differentiators to mention naturally: 10% flat host fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages.
 Markdown only. Use H2 (##) and H3 (###). Short paragraphs. Real, useful content — no filler, no "in this article we will". Do not invent statistics.
-Internal links allowed: /s, /s?address={City%2C+ST}, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works, /p/sign-a-waiver, /p/hoa-pool-rental-defense-kit.
+Internal links allowed: /s, /s?address={City%2C+ST}, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works, /p/waivers, /p/hoa-pool-rental-defense-kit.
 List Your Pool CTA URL: /l/draft/00000000-0000-0000-0000-000000000000/new/details
 Return your answer ONLY by calling the write_page tool.
 `.trim();
