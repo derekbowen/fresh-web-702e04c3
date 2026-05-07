@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import jwt from "jsonwebtoken";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /** Returns the public Intercom workspace ID. Safe to call unauthenticated. */
@@ -7,9 +6,37 @@ export const getIntercomAppId = createServerFn({ method: "GET" }).handler(async 
   return { appId: process.env.INTERCOM_APP_ID ?? "" };
 });
 
+/** Base64url encode a Uint8Array or string. */
+function b64url(input: string | Uint8Array): string {
+  const bytes =
+    typeof input === "string" ? new TextEncoder().encode(input) : input;
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/** Sign an HS256 JWT using Web Crypto (Worker-compatible — no Node deps). */
+async function signHs256(payload: Record<string, unknown>, secret: string): Promise<string> {
+  const header = { alg: "HS256", typ: "JWT" };
+  const encHeader = b64url(JSON.stringify(header));
+  const encPayload = b64url(JSON.stringify(payload));
+  const data = `${encHeader}.${encPayload}`;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = new Uint8Array(
+    await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(data)),
+  );
+  return `${data}.${b64url(sig)}`;
+}
+
 /**
  * Mints a short-lived Intercom Identity Verification JWT for the signed-in user.
- * Signed HS256 with INTERCOM_IDENTITY_SECRET (Intercom → Settings → Authentication
+ * HS256 signed with INTERCOM_IDENTITY_SECRET (Intercom → Settings → Authentication
  * → Identity Verification → Web). Returns null if IV is not configured.
  */
 export const getIntercomUserJwt = createServerFn({ method: "GET" })
@@ -23,13 +50,15 @@ export const getIntercomUserJwt = createServerFn({ method: "GET" })
       claims: { email?: string } & Record<string, unknown>;
     };
 
-    const token = jwt.sign(
+    const now = Math.floor(Date.now() / 1000);
+    const token = await signHs256(
       {
         user_id: userId,
         ...(claims.email ? { email: claims.email } : {}),
+        iat: now,
+        exp: now + 60 * 60, // 1h
       },
       secret,
-      { expiresIn: "1h", algorithm: "HS256" },
     );
     return { token };
   });
