@@ -144,9 +144,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
             .eq("status", "published"),
         ),
         "academy availability query",
-        { data: [] as { slug: string; body_markdown: string | null }[] } as {
-          data: { slug: string; body_markdown: string | null }[] | null;
-        },
+        { data: [] as { slug: string | null; body_markdown: string | null }[] } as unknown as Awaited<ReturnType<typeof supabaseAdmin.from>>,
       ),
     ]);
 
@@ -162,9 +160,10 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
-    const academyAvailable = (academyRes.data ?? [])
-      .filter((r) => (r.body_markdown ?? "").trim().length > 200)
-      .map((r) => r.slug);
+    const academyRows = (academyRes.data ?? []) as { slug: string | null; body_markdown: string | null }[];
+    const academyAvailable: string[] = academyRows
+      .filter((r) => !!r.slug && (r.body_markdown ?? "").trim().length > 200)
+      .map((r) => r.slug as string);
 
     const cityList = (cities.data ?? []) as HomeCity[];
     return {
