@@ -1,24 +1,32 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { ACADEMY_SLUGS } from "@/lib/academy-config";
 
 /**
  * Verifies every course / academy link on the landing page resolves to a
  * published `/p/{slug}` content page (i.e. nginx forwards it to fresh-web
  * and it does NOT fall through to Sharetribe's 404).
  *
- * Source of truth lives in src/components/home-page.tsx. Keep in sync.
+ * Slug list comes from `@/lib/academy-config` so this stays in lockstep
+ * with the homepage source of truth.
  */
-const LANDING_ACADEMY_LINKS: Array<{ label: string; href: string }> = [
-  { label: "Browse 100+ free courses (CTA)", href: "/p/learning-academy" },
-  { label: "Earn certifications (CTA)", href: "/p/host-training-academy" },
-  { label: "Taxes & Pool Rental Income", href: "/p/elearning-academy-tax-deduction-tracking-guide-pool-hosts" },
-  { label: "Difficult Guest Scenarios", href: "/p/elearning-academy-dealing-with-difficult-scenarios-pool-hosts" },
-  { label: "HOA Navigation", href: "/p/elearning-academy-hoa-navigation-guide-pool-hosts" },
-  { label: "Neighbor Complaints", href: "/p/elearning-academy-dealing-with-neighbor-complaints-in-real-time" },
-  { label: "Content Marketing", href: "/p/elearning-academy-content-marketing-for-pool-rentals" },
-  { label: "Photography & Listings", href: "/p/elearning-academy-listing-optimization-photography-conversion" },
-];
+const SLUG_LABELS: Record<string, string> = {
+  "learning-academy": "Browse 100+ free courses (CTA)",
+  "host-training-academy": "Earn certifications (CTA)",
+  "elearning-academy-tax-deduction-tracking-guide-pool-hosts": "Taxes & Pool Rental Income",
+  "elearning-academy-dealing-with-difficult-scenarios-pool-hosts": "Difficult Guest Scenarios",
+  "elearning-academy-hoa-navigation-guide-pool-hosts": "HOA Navigation",
+  "elearning-academy-dealing-with-neighbor-complaints-in-real-time": "Neighbor Complaints",
+  "elearning-academy-content-marketing-for-pool-rentals": "Content Marketing",
+  "elearning-academy-listing-optimization-photography-conversion": "Photography & Listings",
+};
+
+const LANDING_ACADEMY_LINKS: Array<{ label: string; href: string }> =
+  ACADEMY_SLUGS.map((slug) => ({
+    label: SLUG_LABELS[slug] ?? slug,
+    href: `/p/${slug}`,
+  }));
 
 export type LandingLinkCheck = {
   label: string;
