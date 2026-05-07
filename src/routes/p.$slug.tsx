@@ -242,24 +242,24 @@ function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city } = Route.useLoaderData();
+  const { page, nearbyCities, city, linkTargets } = Route.useLoaderData();
 
   switch (page.template_type) {
     case "host_acq_city":
-      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} />;
+      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} />;
     case "public_pool":
-      return <PublicPoolTemplate page={page} />;
+      return <PublicPoolTemplate page={page} linkTargets={linkTargets} />;
     case "public_pool_city":
-      return <PublicPoolTemplate page={page} nearbyCities={nearbyCities} />;
+      return <PublicPoolTemplate page={page} nearbyCities={nearbyCities} linkTargets={linkTargets} />;
     case "event_guide":
-      return <EventGuideTemplate page={page} />;
+      return <EventGuideTemplate page={page} linkTargets={linkTargets} nearbyCities={nearbyCities} />;
     case "swim_instructor_city":
       return <SwimInstructorCityTemplate page={page} nearbyCities={nearbyCities} />;
     case "swim_instructor_hub":
       return <SwimInstructorHubTemplate page={page} />;
     case "resource":
-      return <ResourceArticleTemplate page={page} />;
+      return <ResourceArticleTemplate page={page} linkTargets={linkTargets} />;
     default:
-      return <GenericPageTemplate page={page} />;
+      return <GenericPageTemplate page={page} linkTargets={linkTargets} />;
   }
 }
