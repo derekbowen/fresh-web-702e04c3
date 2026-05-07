@@ -187,6 +187,37 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       (s) => academyHealth[s] !== "missing",
     );
 
+    // Track regressions: log a structured event whenever the homepage academy
+    // block would hide or render in a degraded state. Picked up by Cloudflare
+    // Worker logs / server-function-logs and easily greppable by `tag`.
+    const missingSlugs = ACADEMY_SLUGS.filter((s) => academyHealth[s] === "missing");
+    const shortSlugs = ACADEMY_SLUGS.filter((s) => academyHealth[s] === "short");
+    const healthyOccasionCount = [
+      "elearning-academy-tax-deduction-tracking-guide-pool-hosts",
+      "elearning-academy-dealing-with-difficult-scenarios-pool-hosts",
+      "elearning-academy-hoa-navigation-guide-pool-hosts",
+      "elearning-academy-dealing-with-neighbor-complaints-in-real-time",
+      "elearning-academy-content-marketing-for-pool-rentals",
+      "elearning-academy-listing-optimization-photography-conversion",
+    ].filter((s) => academyHealth[s] === "published").length;
+    const hubsHealthy =
+      academyHealth["learning-academy"] === "published" ||
+      academyHealth["host-training-academy"] === "published";
+    const sectionHidden = healthyOccasionCount < 2 || !hubsHealthy;
+    if (sectionHidden || missingSlugs.length > 0 || shortSlugs.length > 0) {
+      console.warn(
+        JSON.stringify({
+          tag: "academy_health",
+          sectionHidden,
+          healthyOccasionCount,
+          hubsHealthy,
+          missing: missingSlugs,
+          short: shortSlugs,
+          totalTracked: ACADEMY_SLUGS.length,
+        }),
+      );
+    }
+
     const cityList = (cities.data ?? []) as HomeCity[];
     return {
       cities: cityList,
