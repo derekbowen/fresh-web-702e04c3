@@ -110,6 +110,7 @@ import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentPagesRouteImport } from './routes/admin.content-pages'
 import { Route as AdminContentMigrationRouteImport } from './routes/admin.content-migration'
+import { Route as AdminContentHealthRouteImport } from './routes/admin.content-health'
 import { Route as AdminCompetitorsRouteImport } from './routes/admin.competitors'
 import { Route as AdminCompetitorRadarRouteImport } from './routes/admin.competitor-radar'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
@@ -672,6 +673,11 @@ const AdminContentMigrationRoute = AdminContentMigrationRouteImport.update({
   path: '/content-migration',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminContentHealthRoute = AdminContentHealthRouteImport.update({
+  id: '/content-health',
+  path: '/content-health',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCompetitorsRoute = AdminCompetitorsRouteImport.update({
   id: '/competitors',
   path: '/competitors',
@@ -928,6 +934,7 @@ export interface FileRoutesByFullPath {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
   '/admin/competitors': typeof AdminCompetitorsRoute
+  '/admin/content-health': typeof AdminContentHealthRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -1069,6 +1076,7 @@ export interface FileRoutesByTo {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
   '/admin/competitors': typeof AdminCompetitorsRoute
+  '/admin/content-health': typeof AdminContentHealthRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -1212,6 +1220,7 @@ export interface FileRoutesById {
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
   '/admin/competitors': typeof AdminCompetitorsRoute
+  '/admin/content-health': typeof AdminContentHealthRoute
   '/admin/content-migration': typeof AdminContentMigrationRoute
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -1356,6 +1365,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/competitor-radar'
     | '/admin/competitors'
+    | '/admin/content-health'
     | '/admin/content-migration'
     | '/admin/content-pages'
     | '/admin/dashboard'
@@ -1497,6 +1507,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/competitor-radar'
     | '/admin/competitors'
+    | '/admin/content-health'
     | '/admin/content-migration'
     | '/admin/content-pages'
     | '/admin/dashboard'
@@ -1639,6 +1650,7 @@ export interface FileRouteTypes {
     | '/admin/click-report'
     | '/admin/competitor-radar'
     | '/admin/competitors'
+    | '/admin/content-health'
     | '/admin/content-migration'
     | '/admin/content-pages'
     | '/admin/dashboard'
@@ -2539,6 +2551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContentMigrationRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/content-health': {
+      id: '/admin/content-health'
+      path: '/content-health'
+      fullPath: '/admin/content-health'
+      preLoaderRoute: typeof AdminContentHealthRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/competitors': {
       id: '/admin/competitors'
       path: '/competitors'
@@ -2847,6 +2866,7 @@ interface AdminRouteChildren {
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminCompetitorRadarRoute: typeof AdminCompetitorRadarRoute
   AdminCompetitorsRoute: typeof AdminCompetitorsRoute
+  AdminContentHealthRoute: typeof AdminContentHealthRoute
   AdminContentMigrationRoute: typeof AdminContentMigrationRoute
   AdminContentPagesRoute: typeof AdminContentPagesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
@@ -2881,6 +2901,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminClickReportRoute: AdminClickReportRoute,
   AdminCompetitorRadarRoute: AdminCompetitorRadarRoute,
   AdminCompetitorsRoute: AdminCompetitorsRoute,
+  AdminContentHealthRoute: AdminContentHealthRoute,
   AdminContentMigrationRoute: AdminContentMigrationRoute,
   AdminContentPagesRoute: AdminContentPagesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
