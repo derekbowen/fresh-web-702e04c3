@@ -14,6 +14,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { getRequestHeader } from "@tanstack/react-start/server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const EXTERNAL_PREFIXES = [
   "/s", "/l/", "/login", "/signup", "/inbox", "/auth/", "/account/",
