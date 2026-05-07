@@ -88,23 +88,18 @@ export function IntercomWidget() {
       scheduled = true;
       void startBoot();
     };
-    const ric = (window as unknown as {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-    }).requestIdleCallback;
-    const idleHandle = ric
-      ? ric(schedule, { timeout: 4000 })
-      : window.setTimeout(schedule, 2500);
-    const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll"];
+    // Wait for first user interaction OR a long timeout fallback before
+    // booting Intercom. This avoids loading ~350KB of unused JS on page load
+    // for visitors who never engage with chat (improves LCP / unused JS).
+    const fallbackHandle = window.setTimeout(schedule, 8000);
+    const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll", "touchstart"];
     const onInteraction = () => schedule();
     interactionEvents.forEach((e) =>
       window.addEventListener(e, onInteraction, { once: true, passive: true }),
     );
 
     const cleanupSchedulers = () => {
-      const cic = (window as unknown as { cancelIdleCallback?: (h: number) => void })
-        .cancelIdleCallback;
-      if (ric && cic) cic(idleHandle);
-      else clearTimeout(idleHandle);
+      clearTimeout(fallbackHandle);
       interactionEvents.forEach((e) => window.removeEventListener(e, onInteraction));
     };
 
