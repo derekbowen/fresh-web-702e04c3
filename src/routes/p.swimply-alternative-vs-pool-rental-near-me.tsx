@@ -319,7 +319,7 @@ function SwimplyComparisonPage() {
           <strong>888-940-4247</strong>.
         </li>
         <li>
-          You're <a href="https://www.poolrentalnearme.com/p/howithostsworks">
+          You're <a href="https://www.poolrentalnearme.com/p/how-it-works">
           becoming a host</a> in a market where Swimply hasn't saturated and
           you want to capture local search demand early.
         </li>
