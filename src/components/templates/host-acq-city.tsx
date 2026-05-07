@@ -20,10 +20,12 @@ export function HostAcqCityTemplate({
   page,
   nearbyCities = [],
   city = null,
+  linkTargets = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
   city?: CityRow | null;
+  linkTargets?: LinkTarget[];
 }) {
   const title = page.title || page.seo_title || "Become a pool host";
   const description = page.seo_description || page.description || null;
