@@ -103,7 +103,10 @@ if (unregistered.length) failures.push({ kind: "unregistered-route", paths: unre
 const buckets = new Map();
 for (const p of paths) {
   if (!isAllowed(p) || isForbidden(p)) continue;
-  const key = p.startsWith("/p/") ? "/p/" : p.startsWith("/l/") ? "/l/" : "other";
+  // Only live-check fresh-web-owned paths. /s and /l/ resolve through the
+  // prod nginx proxy to Sharetribe and 404 on the bare lovable.app host.
+  if (!p.startsWith("/p/") && p !== "/" && !p.startsWith("/landing-page")) continue;
+  const key = p.startsWith("/p/") ? "/p/" : "other";
   if (!buckets.has(key)) buckets.set(key, []);
   buckets.get(key).push(p);
 }
