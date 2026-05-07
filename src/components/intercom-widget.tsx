@@ -3,7 +3,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import Intercom, { update, shutdown } from "@intercom/messenger-js-sdk";
 import { supabase } from "@/integrations/supabase/client";
-import { getIntercomAppId } from "@/server/intercom.functions";
+import { getIntercomAppId, getIntercomUserJwt } from "@/server/intercom.functions";
 
 /** Pull useful IDs out of the current path for support context. */
 function deriveContext(pathname: string) {
@@ -37,6 +37,7 @@ function deriveContext(pathname: string) {
  */
 export function IntercomWidget() {
   const fetchAppId = useServerFn(getIntercomAppId);
+  const fetchUserJwt = useServerFn(getIntercomUserJwt);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -49,8 +50,21 @@ export function IntercomWidget() {
       const { data } = await supabase.auth.getUser();
       const user = data.user;
       const ctx = deriveContext(window.location.pathname);
+
+      let userJwt: string | null = null;
+      if (user) {
+        try {
+          const res = await fetchUserJwt();
+          userJwt = res.token;
+        } catch {
+          userJwt = null;
+        }
+      }
+
       Intercom({
         app_id: currentAppId,
+        api_base: "https://api-iam.intercom.io",
+        session_duration: 86_400_000,
         ...(user
           ? {
               user_id: user.id,
@@ -58,6 +72,7 @@ export function IntercomWidget() {
               name:
                 (user.user_metadata?.full_name as string | undefined) ??
                 (user.user_metadata?.name as string | undefined),
+              ...(userJwt ? { intercom_user_jwt: userJwt } : {}),
             }
           : {}),
         ...ctx,
@@ -116,7 +131,7 @@ export function IntercomWidget() {
         /* noop */
       }
     };
-  }, [fetchAppId]);
+  }, [fetchAppId, fetchUserJwt]);
 
   // Push updated metadata on every client-side navigation.
   useEffect(() => {
