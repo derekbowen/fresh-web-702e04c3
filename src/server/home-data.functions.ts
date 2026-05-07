@@ -28,7 +28,20 @@ export type HomeData = {
     /** Distance in miles to the nearest pool from the visitor location. */
     nearestMiles: number | null;
   };
+  /** Slugs of academy pages that currently have published, non-empty content. */
+  academyAvailable: string[];
 };
+
+const ACADEMY_SLUGS = [
+  "learning-academy",
+  "host-training-academy",
+  "elearning-academy-tax-deduction-tracking-guide-pool-hosts",
+  "elearning-academy-dealing-with-difficult-scenarios-pool-hosts",
+  "elearning-academy-hoa-navigation-guide-pool-hosts",
+  "elearning-academy-dealing-with-neighbor-complaints-in-real-time",
+  "elearning-academy-content-marketing-for-pool-rentals",
+  "elearning-academy-listing-optimization-photography-conversion",
+];
 
 const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
 
