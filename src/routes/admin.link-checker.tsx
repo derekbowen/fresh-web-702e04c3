@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { AdminLayout } from "@/components/admin-layout";
 import { scanBrokenLinks, fixBrokenLink, bulkFixBrokenLinks, type BrokenLink } from "@/server/link-checker.functions";
+import { getRecentLinkHealthRuns, type LinkHealthRun } from "@/server/link-health.functions";
 
 export const Route = createFileRoute("/admin/link-checker")({
   beforeLoad: async () => {
