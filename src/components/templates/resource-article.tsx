@@ -77,6 +77,7 @@ export function ResourceArticleTemplate({
             </div>
           )}
         </article>
+        <RelatedPages />
         <div className="mt-12 border-t border-border pt-8">
           <Link
             to="/"
