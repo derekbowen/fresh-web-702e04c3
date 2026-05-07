@@ -223,7 +223,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </div>
             <div className="mt-6">
               <ErrorBoundary name="FeatureRequestForm" silent>
-                <FeatureRequestForm />
+                <Suspense fallback={<div className="min-h-[280px]" />}>
+                  <FeatureRequestForm />
+                </Suspense>
               </ErrorBoundary>
             </div>
           </div>
