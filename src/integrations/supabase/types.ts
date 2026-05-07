@@ -1412,6 +1412,42 @@ export type Database = {
         }
         Relationships: []
       }
+      link_health_runs: {
+        Row: {
+          broken: Json
+          broken_count: number
+          checked: number
+          duration_ms: number | null
+          id: string
+          ok: boolean
+          origin: string | null
+          ran_at: string
+          source: string
+        }
+        Insert: {
+          broken?: Json
+          broken_count?: number
+          checked?: number
+          duration_ms?: number | null
+          id?: string
+          ok?: boolean
+          origin?: string | null
+          ran_at?: string
+          source?: string
+        }
+        Update: {
+          broken?: Json
+          broken_count?: number
+          checked?: number
+          duration_ms?: number | null
+          id?: string
+          ok?: boolean
+          origin?: string | null
+          ran_at?: string
+          source?: string
+        }
+        Relationships: []
+      }
       listing_sync_log: {
         Row: {
           created_at: string
