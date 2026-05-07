@@ -1,110 +1,71 @@
-# Competitor Radar — Quality fix + Conversion engine
+## Goal
 
-You're right. Right now the matcher is regex-grepping any 10-digit string and shipping it as a "phone." Before we spend another dollar on PDL or BatchData, we plug the leak. Then we layer on the conversion machinery.
+Cut the homepage main bundle (currently 239 KB transferred / ~140 KB unused) and pull TTI down from 7.5 s. Focus only on JavaScript reduction — caching and render-blocking are out of scope per your note.
 
-I'm proposing this in phases so you can ship #1 today and approve the rest piece by piece.
+## Where the bytes are coming from
 
-## Phase 1 — Stop the garbage (ship today)
+The Lighthouse trace points at one chunk: `/fw-assets/index-BY_aLCKy.js` (239 KB transferred, 142 KB unused = 60% dead weight on first paint). TanStack auto-code-splits route components by default, so the leakage is from things hoisted into the entry bundle by static imports:
 
-Goal: every card on the matches tab is either a real lead or it's gone.
+1. **`src/routes/__root.tsx`** statically imports `IntercomWidget`. Intercom's messenger SDK is loaded on every route even though only `/` and admin pages use it.
+2. **`src/components/home-page.tsx`** statically imports `PoolWaitlistForm`, `FeatureRequestForm`, `ListingCard`, `DustBanner`, all `ACADEMY_HERO_MAP` images, plus the FAQ block. Everything below the fold ships in the critical chunk.
+3. **`src/router.tsx`** has `defaultPreloadStaleTime: 0` but no preload strategy is set — fine, but worth noting it's not over-eagerly fetching.
+4. Heavy UI libraries (`recharts`, `embla-carousel`, `react-day-picker`, `react-resizable-panels`, `cmdk`, `vaul`, `react-markdown`) are pulled in by `src/components/ui/*` files. None should be on the homepage path, but if any get pulled transitively, they'll bloat the entry. Need to verify the actual chunk contents after the first pass.
 
-**1a. Phone validation in `host-matcher.server.ts`**
-- Replace the raw `PHONE_RE` capture with a validator that:
-  - normalizes to 10 digits (strip +1, parens, spaces, dashes)
-  - rejects if the 10-digit string appears inside a URL path, query string, or product SKU context (look at the surrounding 40 chars in source markdown — if it's wrapped in `/`, `?`, `=`, `sku`, `id=`, `product`, kill it)
-  - rejects if area code is not in the NANP valid-area-code list (we ship a small static set)
-  - rejects if the central office code starts with 0 or 1
-  - rejects obvious sequential/repeated patterns (1234567890, 5555555555)
-- Same hardening for emails: reject anything matching `noreply|no-reply|support@|info@|hello@|contact@` unless first-name match is strong, and reject any email whose domain is on a stoplist of marketplaces, CDNs, analytics vendors.
+## Plan
 
-**1b. Confidence floor + review queue**
-- DB: add a `review` status to `competitor_host_matches` (already free-text — just use it).
-- Anything < 85 confidence is inserted as `status = 'review'`, not `'new'`.
-- Matches tab gets a 5th filter chip: `review`. Default tab stays `new` so you only see the high-quality ones. Review queue is for when you want to spot-check.
-- Bump the matcher's Gemini prompt to require BOTH a name match AND a city match for ≥85, OR a verified email/phone overlap.
+### 1. Lazy-load below-the-fold homepage sections
 
-**1c. Domain stoplist for candidate websites**
-- Reject candidate URLs from: jansport.com, coupang.com, ebay, amazon, alibaba, etsy, pinterest, reddit (unless it's a profile), any `*.shop`, any URL with `/product/`, `/dp/`, `/itm/`, `/sku/`. These keep showing up because Gemini sees a number match and rolls with it.
+In `src/components/home-page.tsx`, split the page into:
 
-**1d. Block enrichment on garbage**
-- `enrichHostMatch` already gates on confidence ≥ 85 for Tier 2. Add the same gate for Tier 1, plus a hard refusal if the candidate has zero validated emails, zero validated phones, AND no first-name match. No more burning $0.10 on a JanSport result.
+- **Above-the-fold** (stays eager): hero, primary search CTA, "X pools near you" badge.
+- **Below-the-fold** (becomes `React.lazy` + `<Suspense>`): featured listings grid, occasions/academy strip, FAQ, `PoolWaitlistForm`, `FeatureRequestForm`, footer extras.
 
-## Phase 2 — Conversion machine (ship this week)
+Each below-the-fold block becomes its own small file under `src/components/home/` and is loaded via `React.lazy(() => import('./home/featured-listings'))`. Wrap with `<Suspense fallback={null}>`. This pulls ~80–120 KB out of the entry.
 
-Goal: "contacted" actually does something. Brandon doesn't think; the system tells him who to call.
+### 2. Defer Intercom
 
-**2a. Personalized landing pages**
-- New route: `src/routes/migrate-from-$source.$firstname.tsx` (e.g. `/migrate-from-swimply/sarah-h7k2`).
-- Slug is `firstname + 4-char hash of match_id` so it's unguessable but shareable.
-- Server function pulls the match row + scraped listing markdown + photos and renders:
-  - "Hey {first name} — we'll rebuild your {city} listing in 10 minutes"
-  - Photo strip from their actual scraped listing
-  - Side-by-side fee comparison (10% vs Swimply 15%)
-  - Single CTA → `/l/draft/.../new/details`
-- Each match row gets a `landing_slug` column. Generated lazily on first "contacted" action.
-- The matches card grows a "Copy landing URL" button.
+`IntercomWidget` is a pure client component but currently imported statically in `__root.tsx`. Convert to:
 
-**2b. Brandon view**
-- New tab on the radar page: "Today's call list."
-- Server-side ranks `new` + enriched matches by:
-  - revenue_signal_score (already computed)
-  - × city demand multiplier (count of `pool_waitlist` rows in that city in last 30 days)
-  - × recency boost (newer first_seen = hotter)
-- Top 10. Shown as a numbered list with phone, email, landing URL, evidence, "mark contacted" button.
-- One screen, no thinking.
+```tsx
+const IntercomWidget = lazy(() => import('@/components/intercom-widget').then(m => ({ default: m.IntercomWidget })));
+```
 
-**2c. Status → action wiring**
-- "Mark contacted" fires a server function that:
-  - generates the personalized landing URL (if not already)
-  - logs the contact to a new `host_outreach_log` table (timestamp, channel, slug, user_id who clicked the button)
-  - sets `status = contacted`
-- We DO NOT auto-send SMS/email yet. See legal below. The button just preps everything Brandon then sends manually from his own inbox/phone — that's the safe path for now.
+Wrap render in `<Suspense fallback={null}>`. Additionally, defer the actual `Intercom('boot', …)` call until `requestIdleCallback` (or `setTimeout(…, 2000)` fallback) so the SDK script doesn't compete with hero rendering on slow phones.
 
-## Phase 3 — Signal upgrades (next sprint)
+### 3. Audit + trim ui/ barrel imports
 
-**3a. Price-drop tracker**
-- New table `competitor_price_history` (competitor_url_id, price, captured_at).
-- Daily scan re-scrapes any URL we've matched, extracts price (already parsing in `scoreRevenueSignal`), inserts a row.
-- If price drops twice in 30 days → flag match with `🔥 ripe to switch` badge + bump it to top of Brandon view.
+Spot-check the homepage's transitive import graph for `recharts`, `embla-carousel`, `react-day-picker`, `react-resizable-panels`, `cmdk`, `vaul`. If any sneak into the entry chunk via a shared component, refactor that component to import the heavy bit lazily (e.g., chart.tsx should never be imported from non-admin pages).
 
-**3b. Giggster + Peerspace data extraction**
-- Sitemaps already tracked. Add their detail-page extractors to the matcher. Same flow.
+I'll use `vite build` output (chunk sizes) as the verification signal after each step.
 
-**3c. "What's new" pSEO loop**
-- New route: `/p/whats-new/$city.tsx`.
-- Server function aggregates competitor_urls discovered in the last 7 days for that city.
-- "23 new pool listings added this week in Phoenix — here's what hosts are charging."
-- Sitemap entry auto-published. Self-feeding pSEO.
+### 4. Lazy-load `PoolWaitlistForm` / `FeatureRequestForm` everywhere
 
-**3d. Public "Swimply Refugee" counter**
-- Tiny widget on homepage: "X hosts switched this month." Pulls `count(*) where status='converted' and updated_at > now() - 30d`.
-- Wrapped in error boundary; falls back to nothing if query fails.
+These forms also appear on a handful of `/p/*` routes (`pool-builders.*`, `pool-rental.$city`, `p.pool-pros.$slug`). Convert each to `React.lazy` so admin/template chunks shrink too. Low risk, mechanical.
 
-## Phase 4 — Legal cover (before any outbound automation)
+### 5. (Optional, only if budget allows) `react-markdown` on resource articles
 
-I'm not building auto-SMS or auto-email until this is settled. The TCPA exposure is real ($1,500/text), and after the C&D you've already gotten, Swimply's lawyers will pattern-match anything that looks like systematic poaching.
+`resource-article.tsx` pulls `react-markdown` + `remark-gfm`. That template only ships when its route is hit, so it's not a homepage problem — but `React.lazy`-ing the markdown renderer would help that template's TTI too. Mention only; not in scope unless you want it.
 
-What I recommend BEFORE phase 2c becomes "auto-send":
-- Run the outreach copy + flow past an actual IP/employment attorney (1-hour consult, ~$300).
-- Outreach must be educational ("hosts in your area pay 10% vs 15%"), CAN-SPAM compliant footer, single-click unsubscribe, no SMS without express written consent.
-- Only contact emails the host published themselves on the listing. Skip-traced contacts get a redder line — those go to Brandon's manual queue, not any automation.
+## Verification
 
-## Technical details
+After each change:
+1. Run `vite build` and read the emitted chunk sizes from the build manifest.
+2. Re-run Lighthouse mobile against the homepage and confirm `unused-javascript` and `interactive` improve.
+3. Spot-check that the lazy boundaries don't cause a visible flash (Suspense fallback={null} for offscreen content is safe; for any in-viewport block use a sized skeleton).
 
-Files I'll touch in phase 1:
-- `src/server/host-matcher.server.ts` — add `validateUSPhone`, `validateEmail`, surrounding-context check, reject noisy candidates before insert
-- `src/server/contact-enricher.server.ts` — gate Tier 1 on validated contacts, not just address presence
-- `src/routes/admin.competitor-radar.tsx` — add `review` status chip, default to `new` only
-- `src/server/admin-weapons.functions.ts` — add `review` to the status type union
-- One small migration: nothing schema-wise needed for phase 1 (status column is text); we'll add `landing_slug` and `host_outreach_log` in phase 2
+## Out of scope (explicitly)
 
-Phase 1 ships in one pass. Phase 2 needs a migration + new route. Phase 3 is its own batch.
+- Cache-Control headers on `/fw-assets/*`
+- Render-blocking CSS (`styles-Btesw3KM.css`)
+- Image compression / responsive variants
+- Sitemap, SEO, or content changes
 
-## What I need from you
+## Files I expect to touch
 
-Pick one:
-1. **Just ship phase 1** (quality fix) and we re-evaluate after you see clean cards.
-2. **Phase 1 + 2** (quality + landing pages + Brandon view, no auto-send).
-3. **All of it including phase 4** (you've already got the attorney lined up).
+- `src/routes/__root.tsx` — lazy Intercom
+- `src/components/home-page.tsx` — split into above-fold + lazy below-fold
+- `src/components/home/*` — new small chunks (featured-listings, occasions, faq-block, forms)
+- `src/components/intercom-widget.tsx` — defer boot to idle
+- `src/routes/pool-builders.*.tsx`, `src/routes/pool-rental.$city.tsx`, `src/routes/p.pool-pros.$slug.tsx`, and `src/routes/p.*` — `React.lazy` for waitlist/feature-request forms
 
-My recommendation: option 2. Phase 1 unblocks you immediately, phase 2 makes Brandon dangerous, phase 3 and the auto-send wait until you've validated the manual flow converts.
+No changes to `vite.config.ts`, no router config changes, no SSR/canonical helpers touched.
