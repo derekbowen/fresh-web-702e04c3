@@ -115,7 +115,11 @@ function RootComponent() {
         </div>
         {!isAdmin && <SiteFooter />}
       </div>
-      {showIntercom && <IntercomWidget />}
+      {showIntercom && (
+        <Suspense fallback={null}>
+          <IntercomWidget />
+        </Suspense>
+      )}
     </>
   );
   if (footer) {
