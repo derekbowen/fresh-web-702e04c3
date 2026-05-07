@@ -1,15 +1,19 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { AutoLinkedContent } from "@/components/auto-linked-content";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { RelatedPages } from "@/components/related-pages";
 import type { ContentPage } from "@/server/content-pages.functions";
 
 /**
  * Fallback template used when a content_page row has a template_type that
  * doesn't yet have a dedicated template. Renders bare title + content.
- *
- * As specialized templates ship (host_acquisition_city, event_city_guide, etc.)
- * the dispatcher in routes/p.$slug.tsx will branch to those instead.
  */
-export function GenericPageTemplate({ page }: { page: ContentPage }) {
+export function GenericPageTemplate({
+  page,
+  linkTargets = [],
+}: {
+  page: ContentPage;
+  linkTargets?: LinkTarget[];
+}) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
