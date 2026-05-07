@@ -98,13 +98,10 @@ const STATIC_GROUP: DirectoryGroup = {
   description: "Core sections of PRNM (PoolRentalNearMe).",
   links: [
     { href: "/", label: "Home" },
-    { href: "/search", label: "Search Pools" },
+    { href: "/s", label: "Search Pools" },
     { href: "/p/hosting", label: "Become a Host" },
     { href: "/p/how-it-works", label: "How It Works" },
     { href: "/p/free-host-tools", label: "Free Host Tools" },
-    { href: "/academy", label: "Host Academy" },
-    { href: "/blog", label: "Blog" },
-    { href: "/help", label: "Help Center" },
   ],
 };
 
