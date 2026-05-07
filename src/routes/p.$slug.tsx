@@ -94,7 +94,19 @@ export const Route = createFileRoute("/p/$slug")({
         }
       }
     }
-    return { page, nearbyCities, city };
+    let linkTargets: LinkTarget[] = [];
+    try {
+      const citySlug = cityForContentPage(page.template_type, page.slug);
+      linkTargets = await getInternalLinkTargets({
+        data: {
+          citySlug: citySlug ?? null,
+          nearbyCitySlugs: nearbyCities.map((c) => c.slug),
+        },
+      });
+    } catch {
+      linkTargets = [];
+    }
+    return { page, nearbyCities, city, linkTargets };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
