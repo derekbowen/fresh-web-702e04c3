@@ -136,15 +136,16 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
         : Promise.resolve(emptyListingResult),
       safe(
-        Promise.resolve(
-          supabaseAdmin
+        (async () => {
+          const { data } = await supabaseAdmin
             .from("content_pages")
             .select("slug, body_markdown")
             .in("slug", ACADEMY_SLUGS)
-            .eq("status", "published"),
-        ),
+            .eq("status", "published");
+          return (data ?? []) as { slug: string | null; body_markdown: string | null }[];
+        })(),
         "academy availability query",
-        { data: [] as { slug: string | null; body_markdown: string | null }[] } as unknown as Awaited<ReturnType<typeof supabaseAdmin.from>>,
+        [] as { slug: string | null; body_markdown: string | null }[],
       ),
     ]);
 
@@ -160,8 +161,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
-    const academyRows = (academyRes.data ?? []) as { slug: string | null; body_markdown: string | null }[];
-    const academyAvailable: string[] = academyRows
+    const academyAvailable: string[] = academyRes
       .filter((r) => !!r.slug && (r.body_markdown ?? "").trim().length > 200)
       .map((r) => r.slug as string);
 
