@@ -30,7 +30,18 @@ export type HomeData = {
   };
   /** Slugs of academy pages that currently have published, non-empty content. */
   academyAvailable: string[];
+  /**
+   * Per-slug content-health for each academy page the homepage may link to.
+   * - "missing":   no row, unpublished, or empty/near-empty body (<200 chars)
+   * - "short":     published but body is thin (200–799 chars) — usable but
+   *                low quality; UI may still link but should not feature.
+   * - "published": published with substantial content (≥800 chars)
+   */
+  academyHealth: Record<string, "missing" | "short" | "published">;
 };
+
+const ACADEMY_SHORT_THRESHOLD = 200;
+const ACADEMY_HEALTHY_THRESHOLD = 800;
 
 const ACADEMY_SLUGS = [
   "learning-academy",
@@ -52,6 +63,9 @@ const EMPTY_HOME_DATA: HomeData = {
   listings: [],
   nearby: { city: null, region: null, count: 0, nearestMiles: null },
   academyAvailable: [],
+  academyHealth: Object.fromEntries(
+    ACADEMY_SLUGS.map((s) => [s, "missing" as const]),
+  ) as Record<string, "missing" | "short" | "published">,
 };
 
 function haversineMiles(
@@ -161,9 +175,17 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
-    const academyAvailable: string[] = academyRes
-      .filter((r) => !!r.slug && (r.body_markdown ?? "").trim().length > 200)
-      .map((r) => r.slug as string);
+    const academyHealth: Record<string, "missing" | "short" | "published"> =
+      Object.fromEntries(ACADEMY_SLUGS.map((s) => [s, "missing" as const]));
+    for (const r of academyRes) {
+      if (!r.slug || !ACADEMY_SLUGS.includes(r.slug)) continue;
+      const len = (r.body_markdown ?? "").trim().length;
+      if (len >= ACADEMY_HEALTHY_THRESHOLD) academyHealth[r.slug] = "published";
+      else if (len >= ACADEMY_SHORT_THRESHOLD) academyHealth[r.slug] = "short";
+    }
+    const academyAvailable: string[] = ACADEMY_SLUGS.filter(
+      (s) => academyHealth[s] !== "missing",
+    );
 
     const cityList = (cities.data ?? []) as HomeCity[];
     return {
@@ -178,6 +200,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         nearestMiles,
       },
       academyAvailable,
+      academyHealth,
     };
   } catch (err) {
     console.error("homepage getHomeData fatal failure, returning empty data:", err);
