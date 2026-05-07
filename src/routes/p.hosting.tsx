@@ -148,6 +148,7 @@ export const Route = createFileRoute("/p/hosting")({
 });
 
 function HostingPage() {
+  const { topCities } = Route.useLoaderData();
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
