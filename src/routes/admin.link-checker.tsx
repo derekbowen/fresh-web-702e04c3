@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { AdminLayout } from "@/components/admin-layout";
 import { scanBrokenLinks, fixBrokenLink, bulkFixBrokenLinks, type BrokenLink } from "@/server/link-checker.functions";
+import { getRecentLinkHealthRuns, type LinkHealthRun } from "@/server/link-health.functions";
 
 export const Route = createFileRoute("/admin/link-checker")({
   beforeLoad: async () => {
@@ -32,7 +33,12 @@ function LinkChecker() {
   const [filter, setFilter] = React.useState<"all" | BrokenLink["reason"]>("all");
   const [state, setState] = React.useState<Record<string, RowState>>({});
   const [editHref, setEditHref] = React.useState<Record<string, string>>({});
+  const [healthRuns, setHealthRuns] = React.useState<LinkHealthRun[]>([]);
   const abortRef = React.useRef(false);
+
+  React.useEffect(() => {
+    getRecentLinkHealthRuns().then(setHealthRuns).catch(() => setHealthRuns([]));
+  }, []);
 
   // Scan filters
   const [showFilters, setShowFilters] = React.useState(false);
@@ -233,7 +239,35 @@ function LinkChecker() {
               {rows.length ? "Re-scan" : "Start scan"}
             </button>
           )}
+      </div>
+
+      {healthRuns.length > 0 && (
+        <div className="mt-4 rounded-lg border border-border bg-card p-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold">Scheduled link-health runs</h2>
+            <span className="text-xs text-muted-foreground">Latest {healthRuns.length} of cron-driven /api/public/link-health calls</span>
+          </div>
+          <div className="mt-3 max-h-48 overflow-y-auto">
+            <table className="w-full text-xs">
+              <thead className="text-left text-muted-foreground">
+                <tr><th className="py-1 pr-3">When</th><th className="py-1 pr-3">Source</th><th className="py-1 pr-3">Checked</th><th className="py-1 pr-3">Broken</th><th className="py-1 pr-3">Duration</th><th className="py-1">Status</th></tr>
+              </thead>
+              <tbody>
+                {healthRuns.map((r) => (
+                  <tr key={r.id} className="border-t border-border/50">
+                    <td className="py-1 pr-3 whitespace-nowrap">{new Date(r.ran_at).toLocaleString()}</td>
+                    <td className="py-1 pr-3">{r.source}</td>
+                    <td className="py-1 pr-3">{r.checked}</td>
+                    <td className={`py-1 pr-3 ${r.broken_count ? "font-semibold text-destructive" : ""}`}>{r.broken_count}</td>
+                    <td className="py-1 pr-3">{r.duration_ms ? `${(r.duration_ms / 1000).toFixed(1)}s` : "—"}</td>
+                    <td className="py-1">{r.ok ? "✓" : "✗"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+      )}
       </div>
 
       {showFilters && (

@@ -1,10 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getAllLocations, type DirectoryGroup, type DirectoryLink } from "@/server/all-locations.functions";
+import { getTopCities } from "@/server/top-cities.functions";
+import { TopCitiesBlock } from "@/components/top-cities-block";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/p/all-locations")({
-  loader: () => getAllLocations(),
+  loader: async () => {
+    const [data, topCities] = await Promise.all([
+      getAllLocations(),
+      getTopCities({ data: { limit: 24 } }).catch(() => []),
+    ]);
+    return { ...data, topCities };
+  },
   head: ({ loaderData }) => {
     const meta = buildMeta({
       title: `All Locations & Pages — ${loaderData?.totalUrls.toLocaleString() ?? ""} URLs | PRNM`,
@@ -122,6 +130,9 @@ function AllLocationsPage() {
               </div>
             </section>
           ))}
+
+          {/* Top cities reciprocal links */}
+          <TopCitiesBlock cities={data.topCities} />
 
           {/* Bottom jump nav */}
           <section

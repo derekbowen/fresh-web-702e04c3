@@ -14,6 +14,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { getRequestHeader } from "@tanstack/react-start/server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const EXTERNAL_PREFIXES = [
   "/s", "/l/", "/login", "/signup", "/inbox", "/auth/", "/account/",
@@ -53,100 +54,124 @@ async function fetchWithTimeout(url: string, ms: number): Promise<Response> {
 export const Route = createFileRoute("/api/public/link-health")({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        const url = new URL(request.url);
-        const seedsParam = url.searchParams.get("seeds");
-        const max = Math.min(Number(url.searchParams.get("max") || 40), 150);
-        const timeoutMs = Math.min(Number(url.searchParams.get("timeout") || 8000), 15000);
-
-        const xfh = getRequestHeader("x-forwarded-host");
-        const proto = getRequestHeader("x-forwarded-proto") || "https";
-        const host = xfh || url.host;
-        const origin = `${proto}://${host}`;
-
-        const seeds = (seedsParam ? seedsParam.split(",") : DEFAULT_SEEDS)
-          .map((s) => s.trim()).filter((s) => s.startsWith("/")).slice(0, 25);
-
-        const seen = new Set<string>();
-        const queue: string[] = [...seeds];
-        const sources = new Map<string, string>();
-        for (const s of seeds) sources.set(s, "(seed)");
-        const results: Array<{ path: string; status: number; ok: boolean; reason: string; source?: string }> = [];
-
-        async function check(path: string) {
-          if (seen.has(path) || seen.size >= max) return;
-          seen.add(path);
-          let res: Response;
-          try {
-            res = await fetchWithTimeout(origin + path, timeoutMs);
-          } catch (err: any) {
-            results.push({ path, status: 0, ok: false, reason: `fetch failed: ${err?.message || err}`, source: sources.get(path) });
-            return;
-          }
-          const status = res.status;
-          let ok = false;
-          let reason = "";
-          if (status === 200) ok = true;
-          else if ([301, 302, 307, 308].includes(status)) {
-            const loc = res.headers.get("location") || "";
-            if (!loc) reason = `${status} no Location`;
-            else {
-              try {
-                const target = loc.startsWith("http") ? loc : origin + (loc.startsWith("/") ? loc : "/" + loc);
-                const r2 = await fetchWithTimeout(target, timeoutMs);
-                if (r2.status === 200) { ok = true; reason = `${status} -> 200`; }
-                else reason = `${status} -> ${r2.status}`;
-              } catch (err: any) {
-                reason = `${status} -> error ${err?.message || err}`;
-              }
-            }
-          } else {
-            reason = `HTTP ${status}`;
-          }
-          results.push({ path, status, ok, reason, source: sources.get(path) });
-
-          if (ok && status === 200 && !isExternalOwned(path) && seen.size < max) {
-            const ct = res.headers.get("content-type") || "";
-            if (/html/i.test(ct)) {
-              let body = "";
-              try { body = await res.text(); } catch { /* ignore */ }
-              for (const raw of extractHrefs(body)) {
-                const href = raw.split("#")[0].trim();
-                if (!href || href.startsWith("mailto:") || href.startsWith("tel:")) continue;
-                let p: string | null = null;
-                if (href.startsWith("/")) p = href;
-                else if (/^https?:\/\//i.test(href)) {
-                  try {
-                    const u = new URL(href);
-                    if (u.host === host) p = u.pathname + (u.search || "");
-                  } catch { /* ignore */ }
-                }
-                if (!p) continue;
-                if (!sources.has(p)) sources.set(p, path);
-                if (!seen.has(p)) queue.push(p);
-              }
-            }
-          }
-        }
-
-        // Sequential with bounded queue; cheap and predictable.
-        while (queue.length && seen.size < max) {
-          const next = queue.shift()!;
-          await check(next);
-        }
-
-        const broken = results.filter((r) => !r.ok);
-        return new Response(
-          JSON.stringify({
-            ok: broken.length === 0,
-            origin,
-            checked: results.length,
-            brokenCount: broken.length,
-            broken: broken.slice(0, 100),
-          }, null, 2),
-          { status: 200, headers: { "content-type": "application/json", "cache-control": "no-store" } },
-        );
-      },
+      GET: async ({ request }) => handle(request),
+      POST: async ({ request }) => handle(request),
     },
   },
 });
+
+async function handle(request: Request) {
+  const t0 = Date.now();
+  const url = new URL(request.url);
+  const seedsParam = url.searchParams.get("seeds");
+  const max = Math.min(Number(url.searchParams.get("max") || 40), 150);
+  const timeoutMs = Math.min(Number(url.searchParams.get("timeout") || 8000), 15000);
+  const persist = url.searchParams.get("persist") === "1";
+  const source = (url.searchParams.get("source") || "manual").slice(0, 32);
+
+  const xfh = getRequestHeader("x-forwarded-host");
+  const proto = getRequestHeader("x-forwarded-proto") || "https";
+  const host = xfh || url.host;
+  const origin = `${proto}://${host}`;
+
+  const seeds = (seedsParam ? seedsParam.split(",") : DEFAULT_SEEDS)
+    .map((s) => s.trim()).filter((s) => s.startsWith("/")).slice(0, 25);
+
+  const seen = new Set<string>();
+  const queue: string[] = [...seeds];
+  const sources = new Map<string, string>();
+  for (const s of seeds) sources.set(s, "(seed)");
+  const results: Array<{ path: string; status: number; ok: boolean; reason: string; source?: string }> = [];
+
+  async function check(path: string) {
+    if (seen.has(path) || seen.size >= max) return;
+    seen.add(path);
+    let res: Response;
+    try {
+      res = await fetchWithTimeout(origin + path, timeoutMs);
+    } catch (err: any) {
+      results.push({ path, status: 0, ok: false, reason: `fetch failed: ${err?.message || err}`, source: sources.get(path) });
+      return;
+    }
+    const status = res.status;
+    let ok = false;
+    let reason = "";
+    if (status === 200) ok = true;
+    else if ([301, 302, 307, 308].includes(status)) {
+      const loc = res.headers.get("location") || "";
+      if (!loc) reason = `${status} no Location`;
+      else {
+        try {
+          const target = loc.startsWith("http") ? loc : origin + (loc.startsWith("/") ? loc : "/" + loc);
+          const r2 = await fetchWithTimeout(target, timeoutMs);
+          if (r2.status === 200) { ok = true; reason = `${status} -> 200`; }
+          else reason = `${status} -> ${r2.status}`;
+        } catch (err: any) {
+          reason = `${status} -> error ${err?.message || err}`;
+        }
+      }
+    } else {
+      reason = `HTTP ${status}`;
+    }
+    results.push({ path, status, ok, reason, source: sources.get(path) });
+
+    if (ok && status === 200 && !isExternalOwned(path) && seen.size < max) {
+      const ct = res.headers.get("content-type") || "";
+      if (/html/i.test(ct)) {
+        let body = "";
+        try { body = await res.text(); } catch { /* ignore */ }
+        for (const raw of extractHrefs(body)) {
+          const href = raw.split("#")[0].trim();
+          if (!href || href.startsWith("mailto:") || href.startsWith("tel:")) continue;
+          let p: string | null = null;
+          if (href.startsWith("/")) p = href;
+          else if (/^https?:\/\//i.test(href)) {
+            try {
+              const u = new URL(href);
+              if (u.host === host) p = u.pathname + (u.search || "");
+            } catch { /* ignore */ }
+          }
+          if (!p) continue;
+          if (!sources.has(p)) sources.set(p, path);
+          if (!seen.has(p)) queue.push(p);
+        }
+      }
+    }
+  }
+
+  while (queue.length && seen.size < max) {
+    const next = queue.shift()!;
+    await check(next);
+  }
+
+  const broken = results.filter((r) => !r.ok);
+  const durationMs = Date.now() - t0;
+
+  if (persist) {
+    try {
+      await (supabaseAdmin as any).from("link_health_runs").insert({
+        origin,
+        checked: results.length,
+        broken_count: broken.length,
+        ok: broken.length === 0,
+        broken: broken.slice(0, 200),
+        duration_ms: durationMs,
+        source,
+      });
+    } catch (err) {
+      console.error("link_health_runs insert failed:", err);
+    }
+  }
+
+  return new Response(
+    JSON.stringify({
+      ok: broken.length === 0,
+      origin,
+      checked: results.length,
+      brokenCount: broken.length,
+      durationMs,
+      broken: broken.slice(0, 100),
+    }, null, 2),
+    { status: 200, headers: { "content-type": "application/json", "cache-control": "no-store" } },
+  );
+}

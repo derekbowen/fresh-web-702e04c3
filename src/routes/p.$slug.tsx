@@ -254,9 +254,9 @@ function ContentPageDispatcher() {
     case "event_guide":
       return <EventGuideTemplate page={page} linkTargets={linkTargets} nearbyCities={nearbyCities} />;
     case "swim_instructor_city":
-      return <SwimInstructorCityTemplate page={page} nearbyCities={nearbyCities} />;
+      return <SwimInstructorCityTemplate page={page} nearbyCities={nearbyCities} linkTargets={linkTargets} />;
     case "swim_instructor_hub":
-      return <SwimInstructorHubTemplate page={page} />;
+      return <SwimInstructorHubTemplate page={page} linkTargets={linkTargets} />;
     case "resource":
       return <ResourceArticleTemplate page={page} linkTargets={linkTargets} />;
     default:

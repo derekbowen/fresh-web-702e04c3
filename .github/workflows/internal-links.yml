@@ -1,0 +1,41 @@
+name: Internal link check
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'scripts/check-internal-links.mjs'
+      - '.github/workflows/internal-links.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 06:30 UTC against the published preview
+    - cron: '30 6 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      # Stable preview URL (immutable; serves latest preview build)
+      BASE_URL: https://project--4831238c-ae4b-468a-bfd8-41cba26ba0b1-dev.lovable.app
+      MAX_PAGES: '120'
+      CONCURRENCY: '6'
+      TIMEOUT_MS: '20000'
+      # Representative seeds — one of every template family
+      SEEDS: >-
+        /,
+        /p/hosting,
+        /p/how-it-works,
+        /p/earnings-calculator,
+        /p/free-host-tools,
+        /p/all-locations,
+        /p/pool-pros,
+        /p/swimply-alternative-vs-pool-rental-near-me,
+        /sitemap.xml
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run internal link checker
+        run: node scripts/check-internal-links.mjs

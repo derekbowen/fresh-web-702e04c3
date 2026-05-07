@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { FaqBlock } from "@/components/faq-block";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { parseCitySlug, cityForContentPage } from "@/lib/city-slug";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -10,9 +12,11 @@ import type { NearbyCity } from "@/server/nearby-cities.functions";
 export function SwimInstructorCityTemplate({
   page,
   nearbyCities = [],
+  linkTargets = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
+  linkTargets?: LinkTarget[];
 }) {
   const citySlug = cityForContentPage("swim_instructor_city", page.slug) || "";
   const { city, stateCode } = parseCitySlug(citySlug);
@@ -54,7 +58,7 @@ export function SwimInstructorCityTemplate({
 
         <section className="border-b border-border py-12">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <p className="whitespace-pre-line text-base leading-relaxed text-foreground/90">{body}</p>
+            <AutoLinkedContent text={body} targets={linkTargets} className="whitespace-pre-line text-base leading-relaxed text-foreground/90" />
 
             <h2 className="mt-10 text-2xl font-bold text-foreground">Hourly pricing benchmarks in {cityName}</h2>
             <ul className="mt-4 space-y-2 text-foreground/90">
@@ -132,6 +136,7 @@ export function SwimInstructorCityTemplate({
         <section className="py-12">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
+            <RelatedPages />
           </div>
         </section>
 

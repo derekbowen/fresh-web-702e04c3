@@ -6,6 +6,8 @@ import {
   ldJsonScript,
   SITE_URL,
 } from "@/lib/seo";
+import { getTopCities } from "@/server/top-cities.functions";
+import { TopCitiesBlock } from "@/components/top-cities-block";
 import heroImage from "@/assets/hosting-hero.jpg";
 
 /**
@@ -98,6 +100,7 @@ const FAQS = [
 ];
 
 export const Route = createFileRoute("/p/hosting")({
+  loader: () => getTopCities({ data: { limit: 24 } }).then((topCities) => ({ topCities })).catch(() => ({ topCities: [] })),
   head: () => {
     const meta = buildMeta({
       title: TITLE,
@@ -145,6 +148,7 @@ export const Route = createFileRoute("/p/hosting")({
 });
 
 function HostingPage() {
+  const { topCities } = Route.useLoaderData();
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
@@ -345,6 +349,11 @@ function HostingPage() {
               </details>
             ))}
           </div>
+        </section>
+
+        {/* Top cities reciprocal links */}
+        <section className="mx-auto max-w-6xl px-4">
+          <TopCitiesBlock cities={topCities} />
         </section>
 
         {/* CTA */}
