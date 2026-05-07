@@ -104,7 +104,7 @@ async function fetchAllPages() {
     const { data, error } = await sb
       .from("content_pages")
       .select("id, url_path, title, body_markdown")
-      .eq("status", "published")
+      .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
       .like("url_path", "/p/%")
       .order("url_path", { ascending: true })
       .range(from, from + size - 1);
@@ -146,7 +146,7 @@ async function main() {
   for (let i = 0; i < refArr.length; i += 500) {
     const chunk = refArr.slice(i, i + 500);
     const { data } = await sb.from("content_pages").select("url_path")
-      .in("url_path", chunk).eq("status", "published");
+      .in("url_path", chunk).in("status", ["pending", "scraped", "drafted", "migrated", "published"]);
     for (const r of data || []) existing.add(r.url_path);
   }
   console.log(`  ${existing.size} resolve, ${referenced.size - existing.size} missing`);
@@ -174,6 +174,8 @@ async function main() {
     ["/p/sign-a-waiver", "/p/waivers"],
     ["/p/howithostsworks", "/p/how-it-works"],
     ["/p/become-a-pool-host", "/p/hosting"],
+    ["/p/learning-academy", "/p/learningacademy"],
+    ["/p/host-training-academy", "/p/learningacademy"],
     // legacy underscore boilerplate → existing canonical pages
     ["/faq", "/p/faq"],
     ["/insurance_guide_for_pool_owners", "/p/insurance-guide-for-pool-owners"],
@@ -190,13 +192,13 @@ async function main() {
         continue;
       }
       const path = c.path;
-      if (path.startsWith("/p/")) {
+      if (AUTO_REWRITES.has(path)) {
+        const target = AUTO_REWRITES.get(path);
+        broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "auto_rewrite", autoTarget: target });
+      } else if (path.startsWith("/p/")) {
         if (!existing.has(path) && !ROUTE_BACKED_P_PATHS.has(path)) {
           broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "missing_p_page" });
         }
-      } else if (AUTO_REWRITES.has(path)) {
-        const target = AUTO_REWRITES.get(path);
-        broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "auto_rewrite", autoTarget: target });
       } else if (!isAllowedInternal(path)) {
         broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "unknown_internal_path" });
       }
