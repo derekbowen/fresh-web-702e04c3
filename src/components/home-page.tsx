@@ -309,14 +309,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         </section>
 
         {/* Free Pool Host Academy — unique e-learning differentiator */}
-        <section className="relative overflow-hidden border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/10">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-            <div className="grid items-center gap-10 lg:grid-cols-12">
-              <div className="lg:col-span-7">
-                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                  🎓 Free · Only on PRNM
-                </span>
-        {/* Free Pool Host Academy — unique e-learning differentiator */}
         {showAcademySection && (
         <section className="relative overflow-hidden border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/10">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
