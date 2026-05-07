@@ -70,6 +70,16 @@ export const Route = createFileRoute("/p/es/$slug")({
     const title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
     const description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
 
+    // EN ↔ ES hreflang pairing for the Texas launch.
+    const enTwin = ES_TO_EN_SLUG[params.slug];
+    const hreflang = enTwin
+      ? [
+          { lang: "es", href: `${SITE_URL}${path}` },
+          { lang: "en", href: `${SITE_URL}/p/${enTwin}` },
+          { lang: "x-default", href: `${SITE_URL}/p/${enTwin}` },
+        ]
+      : undefined;
+
     const meta = buildMeta({
       title,
       description,
@@ -77,6 +87,7 @@ export const Route = createFileRoute("/p/es/$slug")({
       canonicalPath,
       image: p.cover_image_url || p.hero_image_url || undefined,
       type: "article",
+      hreflang,
     });
 
     const scripts = [
