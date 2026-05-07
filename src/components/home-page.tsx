@@ -376,11 +376,13 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
 
         {showWaitlist ? (
           <ErrorBoundary name="PoolWaitlistForm" silent>
-            <PoolWaitlistForm
-              nearestMiles={nearby.nearestMiles}
-              city={nearby.city}
-              region={nearby.region}
-            />
+            <Suspense fallback={null}>
+              <PoolWaitlistForm
+                nearestMiles={nearby.nearestMiles}
+                city={nearby.city}
+                region={nearby.region}
+              />
+            </Suspense>
           </ErrorBoundary>
         ) : (
           listings.length > 0 && (
