@@ -3,6 +3,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
+import { RelatedPages } from "@/components/related-pages";
+import type { LinkTarget } from "@/components/auto-linked-content";
 import type { ContentPage } from "@/server/content-pages.functions";
 
 /**
@@ -10,7 +12,13 @@ import type { ContentPage } from "@/server/content-pages.functions";
  * template_type='resource_article'. Renders title, cover image, optional
  * excerpt, and the full markdown body.
  */
-export function ResourceArticleTemplate({ page }: { page: ContentPage }) {
+export function ResourceArticleTemplate({
+  page,
+  linkTargets: _linkTargets = [],
+}: {
+  page: ContentPage;
+  linkTargets?: LinkTarget[];
+}) {
   const publishedAt = page.published_at ?? null;
   const body = (page.content || page.body_markdown || "").toString();
   return (
