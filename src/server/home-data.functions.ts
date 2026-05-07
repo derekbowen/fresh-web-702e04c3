@@ -51,6 +51,7 @@ const EMPTY_HOME_DATA: HomeData = {
   categories: [],
   listings: [],
   nearby: { city: null, region: null, count: 0, nearestMiles: null },
+  academyAvailable: [],
 };
 
 function haversineMiles(
