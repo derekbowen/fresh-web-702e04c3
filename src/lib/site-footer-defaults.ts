@@ -26,8 +26,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
   bottom_text: "© 2026 PRNM CORP Riverside, Ca 92509",
   explore_links: [
     { label: "Search Listings", href: m("/s") },
-    { label: "Pool Pros Directory", href: "/directory" },
-    { label: "List Your Business", href: "/directory/list" },
+    { label: "Pool Pros Directory", href: "/p/pool-pros" },
     { label: "How It Works", href: "/p/how-it-works" },
     { label: "Start a Business", href: "/p/hosting" },
     { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
