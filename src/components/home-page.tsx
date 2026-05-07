@@ -76,7 +76,17 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     categories: [],
     listings: [],
     nearby: { city: null, region: null, count: 0, nearestMiles: null },
+    academyAvailable: [],
   };
+  const academyAvailable = new Set(
+    Array.isArray(safe.academyAvailable) ? safe.academyAvailable : [],
+  );
+  const visibleOccasions = FEATURED_OCCASIONS.filter((o) => academyAvailable.has(o.slug));
+  const showAcademySection =
+    visibleOccasions.length >= 2 &&
+    (academyAvailable.has("learning-academy") || academyAvailable.has("host-training-academy"));
+  const learningAcademyAvailable = academyAvailable.has("learning-academy");
+  const hostTrainingAvailable = academyAvailable.has("host-training-academy");
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   const categories = Array.isArray(safe.categories) ? safe.categories : [];
