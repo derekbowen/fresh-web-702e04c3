@@ -32,7 +32,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
-    { label: "Sign a Waiver", href: "/p/sign-a-waiver" },
+    { label: "Sign a Waiver", href: "/p/waivers" },
     { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
   ],
   host_links: [
