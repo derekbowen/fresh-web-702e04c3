@@ -191,13 +191,13 @@ async function main() {
         continue;
       }
       const path = c.path;
-      if (path.startsWith("/p/")) {
+      if (AUTO_REWRITES.has(path)) {
+        const target = AUTO_REWRITES.get(path);
+        broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "auto_rewrite", autoTarget: target });
+      } else if (path.startsWith("/p/")) {
         if (!existing.has(path) && !ROUTE_BACKED_P_PATHS.has(path)) {
           broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "missing_p_page" });
         }
-      } else if (AUTO_REWRITES.has(path)) {
-        const target = AUTO_REWRITES.get(path);
-        broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "auto_rewrite", autoTarget: target });
       } else if (!isAllowedInternal(path)) {
         broken.push({ pageId: page.id, page_url: page.url_path, href, label, reason: "unknown_internal_path" });
       }
