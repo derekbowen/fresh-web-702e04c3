@@ -59,7 +59,7 @@ export function PublicPoolTemplate({
           {body && (
             <AutoLinkedContent
               text={body}
-              targets={[]}
+              targets={linkTargets}
               className="prose prose-lg mt-10 max-w-none whitespace-pre-line text-foreground"
             />
           )}
