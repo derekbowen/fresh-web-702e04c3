@@ -98,13 +98,10 @@ const STATIC_GROUP: DirectoryGroup = {
   description: "Core sections of PRNM (PoolRentalNearMe).",
   links: [
     { href: "/", label: "Home" },
-    { href: "/search", label: "Search Pools" },
+    { href: "/s", label: "Search Pools" },
     { href: "/p/hosting", label: "Become a Host" },
     { href: "/p/how-it-works", label: "How It Works" },
     { href: "/p/free-host-tools", label: "Free Host Tools" },
-    { href: "/academy", label: "Host Academy" },
-    { href: "/blog", label: "Blog" },
-    { href: "/help", label: "Help Center" },
   ],
 };
 
@@ -153,41 +150,9 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
       }
     }
 
-    // 2. cities
-    {
-      const links: DirectoryLink[] = [];
-      const pageSize = 1000;
-      let from = 0;
-      while (true) {
-        const { data, error } = await supabaseAdmin
-          .from("cities")
-          .select("slug, name, state_code")
-          .eq("is_published", true)
-          .order("name", { ascending: true })
-          .range(from, from + pageSize - 1);
-        if (error) break;
-        if (!data || data.length === 0) break;
-        for (const row of data) {
-          links.push({
-            href: `/pool-rental/${row.slug}`,
-            label: `${row.name}, ${row.state_code}`,
-          });
-        }
-        if (data.length < pageSize) break;
-        from += pageSize;
-      }
-      if (links.length > 0) {
-        groups.push({
-          id: "cities",
-          title: "Pool Rentals by City",
-          description: "Browse pools available for hourly or daily rental in every city we serve.",
-          links,
-        });
-        total += links.length;
-      }
-    }
+    // 2. cities — removed: /pool-rental/* is not forwarded by the production
+    //    nginx proxy so those links 404 in production.
 
-    // 3. service providers — intentionally excluded from the directory.
 
     // 4. live listings (synced)
     {

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { getAllLocations, type DirectoryGroup, type DirectoryLink } from "@/server/all-locations.functions";
 import { getTopCities } from "@/server/top-cities.functions";
 import { TopCitiesBlock } from "@/components/top-cities-block";
@@ -104,13 +104,13 @@ function AllLocationsPage() {
               <ul className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {group.links.map((link: DirectoryLink) => (
                   <li key={link.href} className="leading-snug">
-                    <Link
-                      to={link.href as never}
+                    <a
+                      href={link.href}
                       className="block truncate text-sm text-foreground hover:text-primary hover:underline"
                       title={link.label}
                     >
                       {link.label}
-                    </Link>
+                    </a>
                     {link.sub && (
                       <span className="block truncate text-xs text-muted-foreground">
                         {link.sub}
