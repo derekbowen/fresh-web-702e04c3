@@ -380,6 +380,7 @@ export function HostAcqCityTemplate({
         <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
+            <RelatedPages />
           </div>
         </section>
 
