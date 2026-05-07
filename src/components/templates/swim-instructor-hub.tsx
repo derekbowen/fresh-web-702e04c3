@@ -1,10 +1,12 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { FaqBlock } from "@/components/faq-block";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 
-export function SwimInstructorHubTemplate({ page }: { page: ContentPage }) {
+export function SwimInstructorHubTemplate({ page, linkTargets = [] }: { page: ContentPage; linkTargets?: LinkTarget[] }) {
   const body = page.body_markdown || page.content || "";
   const faqs = faqsForContentPage(page);
   return (
@@ -20,12 +22,13 @@ export function SwimInstructorHubTemplate({ page }: { page: ContentPage }) {
         </section>
         <section className="border-b border-border py-12">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <article className="prose prose-lg max-w-none whitespace-pre-line text-foreground">{body}</article>
+            <AutoLinkedContent text={body} targets={linkTargets} className="prose prose-lg max-w-none whitespace-pre-line text-foreground" />
           </div>
         </section>
         <section className="py-12">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
+            <RelatedPages />
           </div>
         </section>
       </main>
