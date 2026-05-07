@@ -166,7 +166,14 @@ async function main() {
     ["/privacy-request", "/p/privacy-request"],
     ["/host-signup", "/p/hosting"],
     ["/help-center", "/p/faq"],
+    ["/academy", "/p/learningacademy"],
+    ["/auth", "/login"],
+    ["/app", "/s"],
     ["/host-protection", "/p/insurance-guide-for-pool-owners"],
+    // legacy /p/* slugs that 404
+    ["/p/sign-a-waiver", "/p/waivers"],
+    ["/p/howithostsworks", "/p/how-it-works"],
+    ["/p/become-a-pool-host", "/p/hosting"],
     // legacy underscore boilerplate → existing canonical pages
     ["/faq", "/p/faq"],
     ["/insurance_guide_for_pool_owners", "/p/insurance-guide-for-pool-owners"],
