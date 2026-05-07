@@ -23,6 +23,18 @@ import {
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 
 /**
+ * Maps Spanish slug (after /p/es/) to its English twin slug (under /p/).
+ * Used to emit hreflang alternates so Google clusters the EN/ES pages.
+ */
+const ES_TO_EN_SLUG: Record<string, string> = {
+  "houston-gana-dinero-alberca": "become-a-swimming-pool-host-houston-tx",
+  "dallas-renta-tu-alberca": "become-a-swimming-pool-host-dallas-tx",
+  "san-antonio-rentar-alberca": "become-a-swimming-pool-host-san-antonio-tx",
+  "austin-alquila-tu-alberca": "become-a-swimming-pool-host-austin-tx",
+  "katy-gana-dinero-alberca": "become-a-swimming-pool-host-katy-tx",
+};
+
+/**
  * Spanish pSEO pages live at /p/es/{slug}. The DB row stores the composite
  * slug as "es/{slug}" so it sorts/queries cleanly alongside English content.
  */
