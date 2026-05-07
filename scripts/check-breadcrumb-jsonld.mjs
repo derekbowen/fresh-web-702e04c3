@@ -37,7 +37,15 @@ for (const f of files) {
 }
 
 // 2. Render-time assertion: the component itself emits a valid BreadcrumbList.
-//    We import via tsx-friendly dynamic import so this works under Bun/Node20+.
+//    Stub @tanstack/react-router's <Link> so render works without a RouterProvider.
+const ROUTER_STUB_ID = "@tanstack/react-router";
+import { Module } from "node:module";
+const origResolve = Module._resolveFilename;
+Module._resolveFilename = function (request, ...rest) {
+  if (request === ROUTER_STUB_ID) return new URL("./_router-stub.mjs", import.meta.url).pathname;
+  return origResolve.call(this, request, ...rest);
+};
+
 let BreadcrumbsWithSchema;
 try {
   ({ BreadcrumbsWithSchema } = await import("../src/components/breadcrumbs-jsonld.tsx"));
