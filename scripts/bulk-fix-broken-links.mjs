@@ -104,7 +104,7 @@ async function fetchAllPages() {
     const { data, error } = await sb
       .from("content_pages")
       .select("id, url_path, title, body_markdown")
-      .eq("status", "published")
+      .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
       .like("url_path", "/p/%")
       .order("url_path", { ascending: true })
       .range(from, from + size - 1);
