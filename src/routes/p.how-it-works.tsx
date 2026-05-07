@@ -302,12 +302,12 @@ function HowItWorksPage() {
               >
                 Start hosting
               </a>
-              <Link
-                to="/academy"
+              <a
+                href="/p/learningacademy"
                 className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-base font-semibold text-foreground transition hover:bg-muted"
               >
                 Free Host Academy
-              </Link>
+              </a>
             </div>
           </div>
         </section>
