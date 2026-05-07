@@ -63,6 +63,9 @@ const EMPTY_HOME_DATA: HomeData = {
   listings: [],
   nearby: { city: null, region: null, count: 0, nearestMiles: null },
   academyAvailable: [],
+  academyHealth: Object.fromEntries(
+    ACADEMY_SLUGS.map((s) => [s, "missing" as const]),
+  ) as Record<string, "missing" | "short" | "published">,
 };
 
 function haversineMiles(
