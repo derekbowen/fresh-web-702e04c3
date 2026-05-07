@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "check:links": "node scripts/check-internal-links.mjs",
     "check:all-locations": "node scripts/check-all-locations.mjs",
+    "check:page-links": "node scripts/check-page-links.mjs",
+    "check:key-pages": "TARGETS=/p/how-it-works,/p/hosting,/p/swimply-alternative-vs-pool-rental-near-me node scripts/check-page-links.mjs",
     "check:breadcrumbs": "bun scripts/check-breadcrumb-jsonld.mjs",
     "format": "prettier --write ."
   },

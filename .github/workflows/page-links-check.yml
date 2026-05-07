@@ -1,0 +1,29 @@
+name: Key page link audit
+
+on:
+  pull_request:
+    paths:
+      - 'src/routes/p.$slug.tsx'
+      - 'src/components/templates/**'
+      - 'src/server/content-pages.functions.ts'
+      - 'scripts/check-page-links.mjs'
+      - '.github/workflows/page-links-check.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '15 7 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      BASE_URL: https://project--4831238c-ae4b-468a-bfd8-41cba26ba0b1-dev.lovable.app
+      TARGETS: /p/how-it-works,/p/hosting,/p/swimply-alternative-vs-pool-rental-near-me
+      SAMPLE_PER_GROUP: '15'
+      TIMEOUT_MS: '20000'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/check-page-links.mjs
