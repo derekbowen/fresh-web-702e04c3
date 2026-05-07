@@ -331,7 +331,7 @@ export function HostAcqCityTemplate({
             {body ? (
               <AutoLinkedContent
                 text={body}
-                targets={[]}
+                targets={linkTargets}
                 className="prose prose-lg max-w-none whitespace-pre-line text-foreground"
               />
             ) : guide ? (
