@@ -149,7 +149,7 @@ Required sections:
 3. HOA & deed restrictions — how to defend your right to host (link to /p/hoa-pool-rental-defense-kit)
 4. Insurance requirements — note PRNM's included $2M liability
 5. Tax implications — Schedule E vs Schedule C, lodging tax, sales tax
-6. How to operate compliantly — waivers (link /p/sign-a-waiver), capacity limits, neighbor relations
+6. How to operate compliantly — waivers (link /p/waivers), capacity limits, neighbor relations
 7. FAQ — 5 questions specific to ${cls.stateName} hosts
 
 End with CTA linking to /l/draft/00000000-0000-0000-0000-000000000000/new/details.
