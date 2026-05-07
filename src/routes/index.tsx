@@ -9,6 +9,7 @@ const EMPTY_HOME_DATA: HomeData = {
   categories: [],
   listings: [],
   nearby: { city: null, region: null, count: 0, nearestMiles: null },
+  academyAvailable: [],
 };
 
 export const Route = createFileRoute("/")({
