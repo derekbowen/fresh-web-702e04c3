@@ -100,6 +100,7 @@ const FAQS = [
 ];
 
 export const Route = createFileRoute("/p/hosting")({
+  loader: () => getTopCities({ data: { limit: 24 } }).then((topCities) => ({ topCities })).catch(() => ({ topCities: [] })),
   head: () => {
     const meta = buildMeta({
       title: TITLE,
