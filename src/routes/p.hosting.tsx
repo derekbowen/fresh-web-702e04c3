@@ -179,7 +179,7 @@ function HostingPage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="/auth"
+                  href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                   className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
                 >
                   List my pool — it's free
@@ -367,7 +367,7 @@ function HostingPage() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
-                href="/auth"
+                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                 className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
                 List my pool
