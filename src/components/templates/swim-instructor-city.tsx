@@ -58,7 +58,7 @@ export function SwimInstructorCityTemplate({
 
         <section className="border-b border-border py-12">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <p className="whitespace-pre-line text-base leading-relaxed text-foreground/90">{body}</p>
+            <AutoLinkedContent text={body} targets={linkTargets} className="whitespace-pre-line text-base leading-relaxed text-foreground/90" />
 
             <h2 className="mt-10 text-2xl font-bold text-foreground">Hourly pricing benchmarks in {cityName}</h2>
             <ul className="mt-4 space-y-2 text-foreground/90">
