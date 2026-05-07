@@ -6,6 +6,8 @@ import {
   ldJsonScript,
   SITE_URL,
 } from "@/lib/seo";
+import { getTopCities } from "@/server/top-cities.functions";
+import { TopCitiesBlock } from "@/components/top-cities-block";
 import heroImage from "@/assets/hosting-hero.jpg";
 
 /**
