@@ -73,7 +73,11 @@ export const Route = createRootRoute({
       links: [
         { rel: "stylesheet", href: appCss },
         { rel: "icon", href: "/favicon.ico" },
-        ...meta.links,
+        // Do NOT spread meta.links here — it would emit a root-level
+        // <link rel="canonical" href="/"> on every page, duplicating the
+        // per-route canonical. Each shareable route emits its own canonical
+        // via buildMeta() in its head().
+        ...meta.links.filter((l) => l.rel !== "canonical"),
       ],
       scripts: [ldJsonScript(organizationJsonLd()), ldJsonScript(websiteJsonLd())],
     };
