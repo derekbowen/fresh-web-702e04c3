@@ -97,7 +97,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, cityCountRes, categories, listingsResult, nearbyResult] = await Promise.all([
+    const [cities, cityCountRes, categories, listingsResult, nearbyResult, academyRes] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -135,6 +135,19 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       origin
         ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
         : Promise.resolve(emptyListingResult),
+      safe(
+        Promise.resolve(
+          supabaseAdmin
+            .from("content_pages")
+            .select("slug, body_markdown")
+            .in("slug", ACADEMY_SLUGS)
+            .eq("status", "published"),
+        ),
+        "academy availability query",
+        { data: [] as { slug: string; body_markdown: string | null }[] } as {
+          data: { slug: string; body_markdown: string | null }[] | null;
+        },
+      ),
     ]);
 
     let nearestMiles: number | null = null;
@@ -149,6 +162,10 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
+    const academyAvailable = (academyRes.data ?? [])
+      .filter((r) => (r.body_markdown ?? "").trim().length > 200)
+      .map((r) => r.slug);
+
     const cityList = (cities.data ?? []) as HomeCity[];
     return {
       cities: cityList,
@@ -161,6 +178,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         count: origin ? nearbyResult.total : 0,
         nearestMiles,
       },
+      academyAvailable,
     };
   } catch (err) {
     console.error("homepage getHomeData fatal failure, returning empty data:", err);
