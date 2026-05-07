@@ -38,10 +38,11 @@ export function GenericPageTemplate({
         {(page.content || page.body_markdown) && (
           <AutoLinkedContent
             text={(page.content || page.body_markdown) as string}
-            targets={[]}
+            targets={linkTargets}
             className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground"
           />
         )}
+        <RelatedPages />
       </main>
       <SiteFooter />
     </div>
