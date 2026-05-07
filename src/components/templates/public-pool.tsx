@@ -15,9 +15,11 @@ import type { NearbyCity } from "@/server/nearby-cities.functions";
 export function PublicPoolTemplate({
   page,
   nearbyCities = [],
+  linkTargets = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
+  linkTargets?: LinkTarget[];
 }) {
   const title = page.title || page.seo_title || "Public pool";
   const description = page.seo_description || page.description || null;
