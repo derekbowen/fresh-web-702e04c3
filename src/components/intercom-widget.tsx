@@ -72,6 +72,9 @@ export function IntercomWidget() {
               name:
                 (user.user_metadata?.full_name as string | undefined) ??
                 (user.user_metadata?.name as string | undefined),
+              ...(user.created_at
+                ? { created_at: Math.floor(new Date(user.created_at).getTime() / 1000) }
+                : {}),
               ...(userJwt ? { intercom_user_jwt: userJwt } : {}),
             }
           : {}),
