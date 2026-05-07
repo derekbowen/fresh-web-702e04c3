@@ -37,14 +37,26 @@ for (const f of files) {
 }
 
 // 2. Render-time assertion: the component itself emits a valid BreadcrumbList.
-//    Stub @tanstack/react-router's <Link> so render works without a RouterProvider.
-const ROUTER_STUB_ID = "@tanstack/react-router";
-import { Module } from "node:module";
-const origResolve = Module._resolveFilename;
-Module._resolveFilename = function (request, ...rest) {
-  if (request === ROUTER_STUB_ID) return new URL("./_router-stub.mjs", import.meta.url).pathname;
-  return origResolve.call(this, request, ...rest);
-};
+//    Mock @tanstack/react-router so <Link> renders as a plain <a> without a RouterProvider.
+//    Bun.plugin works under both `bun` and the Bun-managed Node compat we use here.
+const isBun = typeof Bun !== "undefined";
+if (isBun) {
+  Bun.plugin({
+    name: "router-link-stub",
+    setup(build) {
+      build.module("@tanstack/react-router", () => ({
+        loader: "object",
+        exports: {
+          Link: ({ to, children, className }) =>
+            React.createElement("a", { href: typeof to === "string" ? to : "#", className }, children),
+        },
+      }));
+    },
+  });
+} else {
+  console.error("This check must be run with `bun` (uses Bun.plugin to stub the router).");
+  process.exit(1);
+}
 
 let BreadcrumbsWithSchema;
 try {
