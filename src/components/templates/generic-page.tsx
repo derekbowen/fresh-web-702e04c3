@@ -1,6 +1,7 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
+import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import type { ContentPage } from "@/server/content-pages.functions";
 
 /**
@@ -14,12 +15,19 @@ export function GenericPageTemplate({
   page: ContentPage;
   linkTargets?: LinkTarget[];
 }) {
+  const title = page.title || page.seo_title || page.slug || "";
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          {page.title || page.seo_title || page.slug}
+        <BreadcrumbsWithSchema
+          items={[
+            { name: "Home", path: "/" },
+            { name: title, path: page.url_path },
+          ]}
+        />
+        <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+          {title}
         </h1>
         {page.description && (
           <p className="mt-4 text-lg text-muted-foreground">{page.description}</p>

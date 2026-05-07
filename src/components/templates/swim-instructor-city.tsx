@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { Breadcrumbs } from "@/components/listing-card";
+import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
@@ -31,7 +31,7 @@ export function SwimInstructorCityTemplate({
       <main className="flex-1">
         <section className="border-b border-border bg-gradient-to-br from-primary/10 via-background to-accent/10 py-12 sm:py-16">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <Breadcrumbs
+            <BreadcrumbsWithSchema
               items={[
                 { name: "Home", path: "/" },
                 { name: "Swim instructor pool rentals", path: "/p/swim-instructor-pool-rental" },
