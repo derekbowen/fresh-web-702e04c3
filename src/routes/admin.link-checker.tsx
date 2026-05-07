@@ -33,7 +33,12 @@ function LinkChecker() {
   const [filter, setFilter] = React.useState<"all" | BrokenLink["reason"]>("all");
   const [state, setState] = React.useState<Record<string, RowState>>({});
   const [editHref, setEditHref] = React.useState<Record<string, string>>({});
+  const [healthRuns, setHealthRuns] = React.useState<LinkHealthRun[]>([]);
   const abortRef = React.useRef(false);
+
+  React.useEffect(() => {
+    getRecentLinkHealthRuns().then(setHealthRuns).catch(() => setHealthRuns([]));
+  }, []);
 
   // Scan filters
   const [showFilters, setShowFilters] = React.useState(false);
