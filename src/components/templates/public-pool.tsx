@@ -88,6 +88,7 @@ export function PublicPoolTemplate({
           />
 
           <FaqBlock faqs={faqs} />
+          <RelatedPages />
         </article>
       </main>
       <SiteFooter />
