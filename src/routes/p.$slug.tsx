@@ -15,6 +15,8 @@ import {
   type NearbyCity,
 } from "@/server/nearby-cities.functions";
 import { getCityBySlug, type CityRow } from "@/server/cities.functions";
+import { getInternalLinkTargets } from "@/server/internal-links.functions";
+import type { LinkTarget } from "@/components/auto-linked-content";
 import { log404 } from "@/server/content-404-log.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
@@ -92,7 +94,19 @@ export const Route = createFileRoute("/p/$slug")({
         }
       }
     }
-    return { page, nearbyCities, city };
+    let linkTargets: LinkTarget[] = [];
+    try {
+      const citySlug = cityForContentPage(page.template_type, page.slug);
+      linkTargets = await getInternalLinkTargets({
+        data: {
+          citySlug: citySlug ?? null,
+          nearbyCitySlugs: nearbyCities.map((c) => c.slug),
+        },
+      });
+    } catch {
+      linkTargets = [];
+    }
+    return { page, nearbyCities, city, linkTargets };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -228,24 +242,24 @@ function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city } = Route.useLoaderData();
+  const { page, nearbyCities, city, linkTargets } = Route.useLoaderData();
 
   switch (page.template_type) {
     case "host_acq_city":
-      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} />;
+      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} />;
     case "public_pool":
-      return <PublicPoolTemplate page={page} />;
+      return <PublicPoolTemplate page={page} linkTargets={linkTargets} />;
     case "public_pool_city":
-      return <PublicPoolTemplate page={page} nearbyCities={nearbyCities} />;
+      return <PublicPoolTemplate page={page} nearbyCities={nearbyCities} linkTargets={linkTargets} />;
     case "event_guide":
-      return <EventGuideTemplate page={page} />;
+      return <EventGuideTemplate page={page} linkTargets={linkTargets} nearbyCities={nearbyCities} />;
     case "swim_instructor_city":
       return <SwimInstructorCityTemplate page={page} nearbyCities={nearbyCities} />;
     case "swim_instructor_hub":
       return <SwimInstructorHubTemplate page={page} />;
     case "resource":
-      return <ResourceArticleTemplate page={page} />;
+      return <ResourceArticleTemplate page={page} linkTargets={linkTargets} />;
     default:
-      return <GenericPageTemplate page={page} />;
+      return <GenericPageTemplate page={page} linkTargets={linkTargets} />;
   }
 }

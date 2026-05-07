@@ -1,8 +1,9 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
-import { AutoLinkedContent } from "@/components/auto-linked-content";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
+import { RelatedPages } from "@/components/related-pages";
 import { EarningsCalculator } from "@/components/earnings-calculator";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
@@ -20,10 +21,12 @@ export function HostAcqCityTemplate({
   page,
   nearbyCities = [],
   city = null,
+  linkTargets = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
   city?: CityRow | null;
+  linkTargets?: LinkTarget[];
 }) {
   const title = page.title || page.seo_title || "Become a pool host";
   const description = page.seo_description || page.description || null;
@@ -329,7 +332,7 @@ export function HostAcqCityTemplate({
             {body ? (
               <AutoLinkedContent
                 text={body}
-                targets={[]}
+                targets={linkTargets}
                 className="prose prose-lg max-w-none whitespace-pre-line text-foreground"
               />
             ) : guide ? (
@@ -378,6 +381,7 @@ export function HostAcqCityTemplate({
         <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
+            <RelatedPages />
           </div>
         </section>
 

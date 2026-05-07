@@ -1,16 +1,23 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
-import { AutoLinkedContent } from "@/components/auto-linked-content";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { RelatedPages } from "@/components/related-pages";
+import { NearbyCities } from "@/components/nearby-cities";
 import type { ContentPage } from "@/server/content-pages.functions";
+import type { NearbyCity } from "@/server/nearby-cities.functions";
 
 /**
  * Template for /p/{slug} pages where template_type = "event_guide".
- * ~566 city + event-type guides (e.g. "guide to family reunion pool rental
- * dearborn mi"). High commercial intent — the visitor is planning a specific
- * event in a specific city. Goal: convert to a Swimply pool search for that
- * city/event combo.
  */
-export function EventGuideTemplate({ page }: { page: ContentPage }) {
+export function EventGuideTemplate({
+  page,
+  linkTargets = [],
+  nearbyCities = [],
+}: {
+  page: ContentPage;
+  linkTargets?: LinkTarget[];
+  nearbyCities?: NearbyCity[];
+}) {
   const title = page.title || page.seo_title || "Event pool rental guide";
   const description = page.seo_description || page.description || null;
   const body = page.body_markdown || page.content || null;
@@ -65,7 +72,7 @@ export function EventGuideTemplate({ page }: { page: ContentPage }) {
           {body ? (
             <AutoLinkedContent
               text={body}
-              targets={[]}
+              targets={linkTargets}
               className="prose prose-lg mt-10 max-w-none whitespace-pre-line text-foreground"
             />
           ) : (
@@ -73,6 +80,16 @@ export function EventGuideTemplate({ page }: { page: ContentPage }) {
               Detailed local guide coming soon.
             </p>
           )}
+
+          {nearbyCities.length > 0 && (
+            <NearbyCities
+              cities={nearbyCities}
+              slugPrefix=""
+              heading="Pool rentals in nearby cities"
+            />
+          )}
+
+          <RelatedPages />
         </article>
       </main>
       <SiteFooter />

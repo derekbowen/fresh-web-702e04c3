@@ -1,8 +1,9 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
-import { AutoLinkedContent } from "@/components/auto-linked-content";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
+import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
@@ -15,9 +16,11 @@ import type { NearbyCity } from "@/server/nearby-cities.functions";
 export function PublicPoolTemplate({
   page,
   nearbyCities = [],
+  linkTargets = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
+  linkTargets?: LinkTarget[];
 }) {
   const title = page.title || page.seo_title || "Public pool";
   const description = page.seo_description || page.description || null;
@@ -57,7 +60,7 @@ export function PublicPoolTemplate({
           {body && (
             <AutoLinkedContent
               text={body}
-              targets={[]}
+              targets={linkTargets}
               className="prose prose-lg mt-10 max-w-none whitespace-pre-line text-foreground"
             />
           )}
@@ -85,6 +88,7 @@ export function PublicPoolTemplate({
           />
 
           <FaqBlock faqs={faqs} />
+          <RelatedPages />
         </article>
       </main>
       <SiteFooter />
