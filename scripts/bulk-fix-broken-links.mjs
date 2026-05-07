@@ -175,6 +175,7 @@ async function main() {
     ["/p/howithostsworks", "/p/how-it-works"],
     ["/p/become-a-pool-host", "/p/hosting"],
     ["/p/learning-academy", "/p/learningacademy"],
+    ["/p/host-training-academy", "/p/learningacademy"],
     // legacy underscore boilerplate → existing canonical pages
     ["/faq", "/p/faq"],
     ["/insurance_guide_for_pool_owners", "/p/insurance-guide-for-pool-owners"],
