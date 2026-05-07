@@ -23,11 +23,12 @@ const TARGET = "/p/all-locations";
 // to fresh-web or to one of the sibling Lovable apps / Sharetribe).
 const ALLOWED_PREFIXES = [
   "/p/", "/l/", "/s", "/landing-page", "/sitemap", "/robots.txt", "/fw-assets/",
+  "/privacy-policy", "/terms-of-service",
   // Sharetribe
   "/login", "/signup", "/inbox", "/auth/", "/account/", "/profile/",
   "/messages/", "/listings/", "/saved-listings",
   // Sibling Lovable apps
-  "/amenity/", "/amenities", "/public-pools/", "/referral",
+  "/amenity/", "/amenities", "/public-pools", "/referral",
 ];
 
 // Paths that look like routes inside this codebase but 404 in production
