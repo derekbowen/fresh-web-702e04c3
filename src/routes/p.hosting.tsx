@@ -351,6 +351,11 @@ function HostingPage() {
           </div>
         </section>
 
+        {/* Top cities reciprocal links */}
+        <section className="mx-auto max-w-6xl px-4">
+          <TopCitiesBlock cities={topCities} />
+        </section>
+
         {/* CTA */}
         <section className="bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20">
           <div className="mx-auto max-w-3xl px-4 text-center">
