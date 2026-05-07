@@ -1,0 +1,27 @@
+name: All-locations link audit
+
+on:
+  pull_request:
+    paths:
+      - 'src/routes/p.all-locations.tsx'
+      - 'src/server/all-locations.functions.ts'
+      - 'scripts/check-all-locations.mjs'
+      - '.github/workflows/all-locations-check.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '45 6 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      BASE_URL: https://project--4831238c-ae4b-468a-bfd8-41cba26ba0b1-dev.lovable.app
+      SAMPLE_PER_GROUP: '15'
+      TIMEOUT_MS: '20000'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/check-all-locations.mjs
