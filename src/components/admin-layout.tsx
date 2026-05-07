@@ -243,6 +243,8 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
           onToggle={() => setCollapsed((c) => !c)}
           mobileOpen={mobileOpen}
           onMobileClose={() => setMobileOpen(false)}
+          demoMode={demoMode}
+          onToggleDemo={toggleDemo}
         />
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Desktop breadcrumb bar */}
