@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { FaqBlock } from "@/components/faq-block";
+import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { parseCitySlug, cityForContentPage } from "@/lib/city-slug";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -10,9 +12,11 @@ import type { NearbyCity } from "@/server/nearby-cities.functions";
 export function SwimInstructorCityTemplate({
   page,
   nearbyCities = [],
+  linkTargets = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
+  linkTargets?: LinkTarget[];
 }) {
   const citySlug = cityForContentPage("swim_instructor_city", page.slug) || "";
   const { city, stateCode } = parseCitySlug(citySlug);
