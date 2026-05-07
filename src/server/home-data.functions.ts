@@ -175,9 +175,17 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     }
 
-    const academyAvailable: string[] = academyRes
-      .filter((r) => !!r.slug && (r.body_markdown ?? "").trim().length > 200)
-      .map((r) => r.slug as string);
+    const academyHealth: Record<string, "missing" | "short" | "published"> =
+      Object.fromEntries(ACADEMY_SLUGS.map((s) => [s, "missing" as const]));
+    for (const r of academyRes) {
+      if (!r.slug || !ACADEMY_SLUGS.includes(r.slug)) continue;
+      const len = (r.body_markdown ?? "").trim().length;
+      if (len >= ACADEMY_HEALTHY_THRESHOLD) academyHealth[r.slug] = "published";
+      else if (len >= ACADEMY_SHORT_THRESHOLD) academyHealth[r.slug] = "short";
+    }
+    const academyAvailable: string[] = ACADEMY_SLUGS.filter(
+      (s) => academyHealth[s] !== "missing",
+    );
 
     const cityList = (cities.data ?? []) as HomeCity[];
     return {
@@ -192,6 +200,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         nearestMiles,
       },
       academyAvailable,
+      academyHealth,
     };
   } catch (err) {
     console.error("homepage getHomeData fatal failure, returning empty data:", err);
