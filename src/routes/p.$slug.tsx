@@ -107,7 +107,15 @@ export const Route = createFileRoute("/p/$slug")({
     } catch {
       linkTargets = [];
     }
-    return { page, nearbyCities, city, linkTargets };
+    let academyCourses: AcademyCourseLink[] = [];
+    if (page.slug === "learningacademy") {
+      try {
+        academyCourses = await listAcademyCourses();
+      } catch {
+        academyCourses = [];
+      }
+    }
+    return { page, nearbyCities, city, linkTargets, academyCourses };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
