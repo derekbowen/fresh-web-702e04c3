@@ -12,6 +12,7 @@ import {
   articleJsonLd,
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
+import { absUrl } from "@/lib/site-origin";
 
 const SLUG = "giggster-vs-pool-rental-near-me";
 const TITLE =
@@ -76,11 +77,11 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me")({
         dateModified: "2026-05-05",
       }),
       breadcrumbJsonLd([
-        { name: "Home", url: "https://www.poolrentalnearme.com/" },
-        { name: "Compare", url: "https://www.poolrentalnearme.com/p/" },
+        { name: "Home", url: absUrl("/") },
+        { name: "Compare", url: absUrl("/p/") },
         {
           name: "Giggster vs Pool Rental Near Me",
-          url: `https://www.poolrentalnearme.com/p/${SLUG}`,
+          url: absUrl(`/p/${SLUG}`),
         },
       ]),
     ],
