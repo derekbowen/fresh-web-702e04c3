@@ -172,6 +172,7 @@ function AdminDashboard() {
                       <th className="px-3 py-2 text-right">Thin</th>
                       <th className="px-3 py-2 text-right">Medium</th>
                       <th className="px-3 py-2 text-right">Healthy</th>
+                      <th className="px-3 py-2 text-right">Missing body</th>
                       <th className="px-3 py-2 text-right">Avg words</th>
                     </tr>
                   </thead>
@@ -182,6 +183,7 @@ function AdminDashboard() {
                       const thin = q?.published_thin ?? 0;
                       const medium = q?.published_medium ?? 0;
                       const healthy = q?.published_healthy ?? 0;
+                      const missingBody = q?.published_missing_body ?? 0;
                       const avg = q?.avg_words_published ?? null;
                       return (
                         <tr key={t.template_type || "(none)"} className="border-t border-border">
@@ -198,6 +200,9 @@ function AdminDashboard() {
                           <td className="px-3 py-2 text-right">
                             {healthy > 0 ? <span className="rounded bg-green-500/15 px-1.5 py-0.5 text-xs font-bold text-green-700 dark:text-green-300">{healthy}</span> : <span className="text-muted-foreground">0</span>}
                           </td>
+                          <td className="px-3 py-2 text-right">
+                            {missingBody > 0 ? <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-xs font-bold text-red-700 dark:text-red-300">{missingBody}</span> : <span className="text-muted-foreground">0</span>}
+                          </td>
                           <td className="px-3 py-2 text-right text-muted-foreground">{avg == null ? "—" : avg.toLocaleString()}</td>
                         </tr>
                       );
@@ -206,6 +211,12 @@ function AdminDashboard() {
                 </table>
               </div>
             </section>
+
+            {/* Pending Queue Diagnostics */}
+            <PendingDiagnosticsSection diagnostics={stats.pendingDiagnostics} />
+
+            {/* Spanish Content Engine */}
+            <SpanishEngineSection spanish={stats.spanish} onQueued={load} />
 
             {/* Other content */}
             <section className="mt-8">
