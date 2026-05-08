@@ -190,6 +190,31 @@ export const Route = createFileRoute("/p/$slug")({
       scripts.push(ldJsonScript(localBiz));
     }
 
+    // CollectionPage + ItemList for the learning academy hub
+    const courses = (loaderData as { academyCourses?: AcademyCourseLink[] }).academyCourses;
+    if (p.slug === "learningacademy" && courses && courses.length > 0) {
+      scripts.push(
+        ldJsonScript({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: titleBase,
+          description,
+          url: `${SITE_URL}${canonicalPath}`,
+          inLanguage: p.language,
+          mainEntity: {
+            "@type": "ItemList",
+            numberOfItems: courses.length,
+            itemListElement: courses.map((c, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              url: `${SITE_URL}/p/${c.slug}`,
+              name: c.title,
+            })),
+          },
+        }),
+      );
+    }
+
     return { ...meta, scripts };
   },
   component: ContentPageDispatcher,
