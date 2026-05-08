@@ -29,7 +29,7 @@ export function EventGuideTemplate({
         <BreadcrumbsWithSchema
           items={[
             { name: "Home", path: "/" },
-            { name: "Event guides", path: "/p/event-guides" },
+            { name: "Event guides", path: "/p/learningacademy" },
             { name: title, path: page.url_path },
           ]}
         />
