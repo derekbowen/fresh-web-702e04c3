@@ -174,7 +174,7 @@ export const queueSpanishCityBatch = createServerFn({ method: "POST" })
 
     const { error } = await supabaseAdmin
       .from("content_plan")
-      .upsert(newRows, { onConflict: "slug", ignoreDuplicates: true });
+      .upsert(newRows as any, { onConflict: "slug", ignoreDuplicates: true });
     if (error) throw new Error(error.message);
 
     return {
