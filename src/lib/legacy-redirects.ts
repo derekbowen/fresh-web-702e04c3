@@ -38,8 +38,8 @@ export const LEGACY_REDIRECTS: Record<string, string> = {
     "/p/insurance-guide-for-pool-owners",
   "/legal-and-compliance/liability-guide-for-hosts-and-guests-poolrentalnearme-com":
     "/p/insurance-guide-for-pool-owners",
-  "/legal-and-compliance/privacy-policy-pool-rental-near-me": "/privacy-policy",
-  "/legal-and-compliance/terms-of-service-pool-rental-near-me": "/privacy-policy",
+  "/legal-and-compliance/privacy-policy-pool-rental-near-me": "/p/privacy-policy",
+  "/legal-and-compliance/terms-of-service-pool-rental-near-me": "/p/terms-of-service",
 
   // /marketing-and-growth/*
   "/marketing-and-growth/local-seo-for-pool-hosts-poolrentalnearme-com": "/p/hosting",
