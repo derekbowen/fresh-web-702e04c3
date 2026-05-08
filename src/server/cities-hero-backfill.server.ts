@@ -17,7 +17,6 @@
 import Firecrawl from "@mendable/firecrawl-js";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateAndUploadHero } from "./cities-hero-fallback.server";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export type BackfillResult = {
   slug: string;
