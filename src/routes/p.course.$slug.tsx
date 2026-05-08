@@ -162,6 +162,12 @@ function CoursePage() {
         />
 
         <article className="mt-6">
+          <div className="mb-4">
+            <LanguageSwitcher
+              current={lang}
+              alternateHref={academyHubPath(lang === "en" ? "es" : "en")}
+            />
+          </div>
           <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-medium">
             <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-primary">
               {cat.emoji} {cat.label}
