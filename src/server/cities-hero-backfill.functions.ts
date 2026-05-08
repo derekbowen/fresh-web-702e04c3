@@ -32,5 +32,9 @@ export const runHeroBackfill = createServerFn({ method: "POST" })
       force: data.force,
       limit: data.limit,
       onlySlugs: data.onlySlugs,
+      batchSize: data.batchSize,
+      concurrency: data.concurrency,
+      excludeSlugs: data.excludeSlugs,
+      maxDurationMs: data.maxDurationMs,
     });
   });
