@@ -678,7 +678,7 @@ function GiggsterComparisonPage() {
           $10,000 medical expenses per person, and a $150,000 STRETCH® PLUS
           property coverage blanket on every approved booking at no cost to
           the host. Full terms in the{" "}
-          <a href="/terms-of-service">
+          <a href="/p/terms-of-service">
             Pool Rental Near Me Terms of Service
           </a>
           .

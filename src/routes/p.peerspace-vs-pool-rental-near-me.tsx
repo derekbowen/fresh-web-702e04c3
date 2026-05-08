@@ -361,7 +361,7 @@ function PeerspaceComparisonPage() {
           liability, $10K medical expenses per person, and a $150K STRETCH® PLUS
           property coverage blanket on every approved booking at no cost to the
           host. Full terms in our{" "}
-          <a href="/terms-of-service">Terms of Service</a>.
+          <a href="/p/terms-of-service">Terms of Service</a>.
         </li>
         <li>
           <strong>10% Pool Rental Near Me Host Commission</strong> — 10% platform
