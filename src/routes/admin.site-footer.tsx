@@ -151,22 +151,35 @@ function SiteFooterAdmin() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Social Links</CardTitle></CardHeader>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle>Social Links</CardTitle>
+              <Button variant="outline" size="sm" onClick={validateSocials} disabled={validating}>
+                {validating ? "Validating…" : "Validate & fix URLs"}
+              </Button>
+            </div>
+          </CardHeader>
           <CardContent className="space-y-3">
-            {data.socials.map((s, i) => (
-              <div key={i} className="grid grid-cols-[1fr_1fr_2fr_auto] gap-2">
-                <select
-                  className="h-10 rounded-md border border-input bg-background px-2 text-sm"
-                  value={s.icon}
-                  onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, icon: e.target.value })}
-                >
-                  {SOCIAL_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-                </select>
-                <Input value={s.label} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, label: e.target.value })} placeholder="Label" />
-                <Input value={s.href} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, href: e.target.value })} placeholder="https://…" />
-                <Button variant="ghost" size="icon" onClick={() => removeArrayItem(setData, "socials", i)}><Trash2 className="h-4 w-4" /></Button>
-              </div>
-            ))}
+            {data.socials.map((s, i) => {
+              const r = socialResults[i];
+              return (
+                <div key={i} className="space-y-1">
+                  <div className="grid grid-cols-[1fr_1fr_2fr_auto] gap-2">
+                    <select
+                      className="h-10 rounded-md border border-input bg-background px-2 text-sm"
+                      value={s.icon}
+                      onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, icon: e.target.value })}
+                    >
+                      {SOCIAL_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                    <Input value={s.label} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, label: e.target.value })} placeholder="Label" />
+                    <Input value={s.href} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, href: e.target.value })} placeholder="https://…" />
+                    <Button variant="ghost" size="icon" onClick={() => removeArrayItem(setData, "socials", i)}><Trash2 className="h-4 w-4" /></Button>
+                  </div>
+                  {r ? <SocialStatusBadge status={r.status} httpStatus={r.httpStatus} reason={r.reason} /> : null}
+                </div>
+              );
+            })}
             <Button variant="outline" size="sm" onClick={() => addArrayItem(setData, "socials", { label: "", href: "", icon: "facebook" } as FooterSocial)}>
               <Plus className="mr-1 h-4 w-4" /> Add social
             </Button>
