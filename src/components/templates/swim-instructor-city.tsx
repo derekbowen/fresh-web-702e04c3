@@ -102,14 +102,20 @@ export function SwimInstructorCityTemplate({
               </a>
             </div>
 
-            {nearbyCities.length > 0 && (
+            {(() => {
+              const validated = nearbyCities.filter((c) => c.linkSlug || nearbyCities.every((x) => !x.linkSlug));
+              const list = nearbyCities.some((c) => c.linkSlug)
+                ? nearbyCities.filter((c) => c.linkSlug)
+                : nearbyCities;
+              void validated;
+              return list.length > 0 ? (
               <>
                 <h3 className="mt-8 text-base font-semibold text-foreground">
                   Top swim instructor markets near {cityName}
                 </h3>
                 <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-                  {nearbyCities.slice(0, 5).map((c) => {
-                    const slug = `swim-instructor-pool-rental-${c.slug}`;
+                  {list.slice(0, 5).map((c) => {
+                    const slug = c.linkSlug ?? `swim-instructor-pool-rental-${c.slug}`;
                     const label =
                       c.state_code && !c.slug.endsWith(`-${c.state_code.toLowerCase()}`)
                         ? `${c.name}, ${c.state_code}`
@@ -129,7 +135,8 @@ export function SwimInstructorCityTemplate({
                   })}
                 </ul>
               </>
-            )}
+              ) : null;
+            })()}
           </div>
         </section>
 
