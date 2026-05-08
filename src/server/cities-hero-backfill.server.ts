@@ -328,49 +328,59 @@ async function scrapeOne(
   cityName: string,
   sourceUrl: string,
 ): Promise<BackfillResult> {
-  const maxAttempts = 5;
+  // Try the primary source first, then fall back to our own rendered city
+  // pages. Each candidate gets the full retry/backoff treatment.
+  const candidates = buildSourceUrlCandidates(citySlug, sourceUrl);
   let lastError: string | null = null;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const res = await client.scrape(sourceUrl, {
-        formats: ["rawHtml"],
-        onlyMainContent: false,
-        waitFor: 3000,
-      });
-      const html =
-        (res as { rawHtml?: string }).rawHtml ??
-        (res as { data?: { rawHtml?: string } }).data?.rawHtml ??
-        "";
-      const heroRaw = extractHeroUrl(html);
-      if (!heroRaw) {
-        return { slug: citySlug, name: cityName, source_url: sourceUrl, status: "miss" };
-      }
-      const hero = normalizeHeroUrl(heroRaw);
-      const { error } = await supabaseAdmin
-        .from("cities")
-        .update({ hero_image_url: hero })
-        .eq("slug", citySlug);
-      if (error) {
+  let lastUrl: string = sourceUrl;
+  const maxAttempts = 3;
+
+  for (const url of candidates) {
+    lastUrl = url;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const res = await client.scrape(url, {
+          formats: ["rawHtml"],
+          onlyMainContent: false,
+          waitFor: 3000,
+        });
+        const html =
+          (res as { rawHtml?: string }).rawHtml ??
+          (res as { data?: { rawHtml?: string } }).data?.rawHtml ??
+          "";
+        const heroRaw = extractHeroUrl(html);
+        if (!heroRaw) break; // try next candidate URL
+        const hero = normalizeHeroUrl(heroRaw);
+        const { error } = await supabaseAdmin
+          .from("cities")
+          .update({ hero_image_url: hero })
+          .eq("slug", citySlug);
+        if (error) {
+          return {
+            slug: citySlug, name: cityName, source_url: url,
+            status: "error", error: error.message,
+          };
+        }
         return {
-          slug: citySlug, name: cityName, source_url: sourceUrl,
-          status: "error", error: error.message,
+          slug: citySlug, name: cityName, source_url: url,
+          status: "ok", hero_url: hero,
         };
+      } catch (e) {
+        lastError = e instanceof Error ? e.message : String(e);
+        const { retry, waitMs } = isRetryableScrapeError(e);
+        if (!retry || attempt >= maxAttempts) break;
+        await sleep(waitMs ?? jitteredDelay(attempt, 1000, 30_000));
       }
-      return {
-        slug: citySlug, name: cityName, source_url: sourceUrl,
-        status: "ok", hero_url: hero,
-      };
-    } catch (e) {
-      lastError = e instanceof Error ? e.message : String(e);
-      const { retry, waitMs } = isRetryableScrapeError(e);
-      if (!retry || attempt >= maxAttempts) break;
-      await sleep(waitMs ?? jitteredDelay(attempt, 1000, 30_000));
     }
   }
-  return {
-    slug: citySlug, name: cityName, source_url: sourceUrl,
-    status: "error", error: lastError ?? "Unknown error",
-  };
+
+  if (lastError) {
+    return {
+      slug: citySlug, name: cityName, source_url: lastUrl,
+      status: "error", error: lastError,
+    };
+  }
+  return { slug: citySlug, name: cityName, source_url: lastUrl, status: "miss" };
 }
 
 export async function backfillCityHeroes(opts: {
