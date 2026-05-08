@@ -474,17 +474,13 @@ export async function backfillCityHeroes(opts: {
         const now = Date.now();
         if (cooldownUntil > now) await sleep(cooldownUntil - now);
         const url = resolveSourceUrl(c.slug, c.state_code, directory);
-        let r: BackfillResult;
-        if (!url) {
-          r = {
-            slug: c.slug, name: c.name, source_url: null,
-            status: "skipped", error: "No source URL found in directory or overrides",
-          };
-        } else {
-          r = await scrapeOne(client, c.slug, c.name, url);
-          if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
-            cooldownUntil = Date.now() + 10_000;
-          }
+        // Even when no directory match exists, scrapeOne will still try our
+        // own rendered city pages (/p/{slug}, /p/host-acquisition/{slug}).
+        const seedUrl =
+          url ?? `https://www.poolrentalnearme.com/p/${c.slug}`;
+        let r = await scrapeOne(client, c.slug, c.name, seedUrl);
+        if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
+          cooldownUntil = Date.now() + 10_000;
         }
         // Fallback: generate an AI hero when scraping couldn't find one.
         r = await maybeFallback(r, c.state_code);
