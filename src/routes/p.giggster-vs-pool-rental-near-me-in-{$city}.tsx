@@ -13,6 +13,7 @@ import {
   articleJsonLd,
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
+import { absUrl } from "@/lib/site-origin";
 
 /**
  * Programmatic city variant of the Giggster pillar comparison.

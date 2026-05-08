@@ -12,6 +12,7 @@ import {
   articleJsonLd,
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
+import { absUrl } from "@/lib/site-origin";
 
 const SLUG = "peerspace-vs-pool-rental-near-me";
 const TITLE = "Peerspace vs Pool Rental Near Me (2026): Fees, Insurance & Best Pool Host Platform";
