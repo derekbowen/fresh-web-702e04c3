@@ -17,6 +17,7 @@ import {
   type FooterMarket,
   type FooterSocial,
 } from "@/server/site-footer.functions";
+import { validateSocialUrlsFn } from "@/server/social-url-validator.functions";
 
 export const Route = createFileRoute("/admin/site-footer")({
   component: SiteFooterAdmin,
@@ -27,6 +28,10 @@ const SOCIAL_OPTIONS = ["facebook", "x", "twitter", "youtube", "linkedin", "inst
 function SiteFooterAdmin() {
   const [data, setData] = React.useState<SiteFooterSettings | null>(null);
   const [saving, setSaving] = React.useState(false);
+  const [validating, setValidating] = React.useState(false);
+  const [socialResults, setSocialResults] = React.useState<
+    Record<number, { status: string; httpStatus: number | null; reason?: string; workingUrl: string | null }>
+  >({});
 
   React.useEffect(() => {
     getSiteFooterAdmin().then(setData).catch((e) => toast.error(e.message));
@@ -71,6 +76,48 @@ function SiteFooterAdmin() {
     }
   };
 
+  const validateSocials = async () => {
+    if (!data) return;
+    const urls = data.socials.map((s) => s.href).filter((h) => /^https?:\/\//i.test(h));
+    if (urls.length === 0) {
+      toast.error("No http(s) social URLs to validate.");
+      return;
+    }
+    setValidating(true);
+    try {
+      const { results } = await validateSocialUrlsFn({ data: { urls } });
+      const map: typeof socialResults = {};
+      let rewrites = 0;
+      let broken = 0;
+      const next = [...data.socials];
+      results.forEach((r) => {
+        const idx = next.findIndex((s) => s.href === r.input);
+        if (idx === -1) return;
+        map[idx] = { status: r.status, httpStatus: r.httpStatus, reason: r.reason, workingUrl: r.workingUrl };
+        if (r.workingUrl && r.workingUrl !== r.input && (r.status === "rewritten" || r.status === "ok")) {
+          next[idx] = { ...next[idx], href: r.workingUrl };
+          rewrites += 1;
+        }
+        if (r.status === "not_found" || r.status === "redirect_to_login" || r.status === "invalid") {
+          broken += 1;
+        }
+      });
+      setSocialResults(map);
+      if (rewrites > 0) {
+        update("socials", next);
+        toast.success(`Rewrote ${rewrites} URL${rewrites === 1 ? "" : "s"}. Click Save to persist.`);
+      } else if (broken > 0) {
+        toast.warning(`${broken} link${broken === 1 ? "" : "s"} look broken. See badges below.`);
+      } else {
+        toast.success("All social links look healthy.");
+      }
+    } catch (e: any) {
+      toast.error(e.message ?? "Validation failed");
+    } finally {
+      setValidating(false);
+    }
+  };
+
   return (
     <AdminLayout title="Site Footer">
       <div className="flex items-center justify-between gap-2 pb-6">
@@ -104,22 +151,35 @@ function SiteFooterAdmin() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Social Links</CardTitle></CardHeader>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle>Social Links</CardTitle>
+              <Button variant="outline" size="sm" onClick={validateSocials} disabled={validating}>
+                {validating ? "Validating…" : "Validate & fix URLs"}
+              </Button>
+            </div>
+          </CardHeader>
           <CardContent className="space-y-3">
-            {data.socials.map((s, i) => (
-              <div key={i} className="grid grid-cols-[1fr_1fr_2fr_auto] gap-2">
-                <select
-                  className="h-10 rounded-md border border-input bg-background px-2 text-sm"
-                  value={s.icon}
-                  onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, icon: e.target.value })}
-                >
-                  {SOCIAL_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-                </select>
-                <Input value={s.label} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, label: e.target.value })} placeholder="Label" />
-                <Input value={s.href} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, href: e.target.value })} placeholder="https://…" />
-                <Button variant="ghost" size="icon" onClick={() => removeArrayItem(setData, "socials", i)}><Trash2 className="h-4 w-4" /></Button>
-              </div>
-            ))}
+            {data.socials.map((s, i) => {
+              const r = socialResults[i];
+              return (
+                <div key={i} className="space-y-1">
+                  <div className="grid grid-cols-[1fr_1fr_2fr_auto] gap-2">
+                    <select
+                      className="h-10 rounded-md border border-input bg-background px-2 text-sm"
+                      value={s.icon}
+                      onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, icon: e.target.value })}
+                    >
+                      {SOCIAL_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                    <Input value={s.label} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, label: e.target.value })} placeholder="Label" />
+                    <Input value={s.href} onChange={(e) => updateArrayItem(setData, "socials", i, { ...s, href: e.target.value })} placeholder="https://…" />
+                    <Button variant="ghost" size="icon" onClick={() => removeArrayItem(setData, "socials", i)}><Trash2 className="h-4 w-4" /></Button>
+                  </div>
+                  {r ? <SocialStatusBadge status={r.status} httpStatus={r.httpStatus} reason={r.reason} /> : null}
+                </div>
+              );
+            })}
             <Button variant="outline" size="sm" onClick={() => addArrayItem(setData, "socials", { label: "", href: "", icon: "facebook" } as FooterSocial)}>
               <Plus className="mr-1 h-4 w-4" /> Add social
             </Button>
@@ -152,6 +212,28 @@ function SiteFooterAdmin() {
         <Button onClick={save} disabled={saving}>{saving ? "Saving…" : "Save changes"}</Button>
       </div>
     </AdminLayout>
+  );
+}
+
+function SocialStatusBadge({ status, httpStatus, reason }: { status: string; httpStatus: number | null; reason?: string }) {
+  const tone =
+    status === "ok" ? "bg-emerald-100 text-emerald-800"
+    : status === "rewritten" ? "bg-blue-100 text-blue-800"
+    : status === "blocked" ? "bg-amber-100 text-amber-800"
+    : "bg-red-100 text-red-800";
+  const label =
+    status === "ok" ? "OK"
+    : status === "rewritten" ? "Rewritten ✓"
+    : status === "blocked" ? `Blocked (${httpStatus ?? "?"}) — likely live`
+    : status === "redirect_to_login" ? "Redirects to login (broken)"
+    : status === "not_found" ? `Not found (${httpStatus ?? "?"})`
+    : status === "invalid" ? "Invalid URL"
+    : status === "network_error" ? "Network error"
+    : status;
+  return (
+    <div className={`inline-block rounded px-2 py-0.5 text-xs ${tone}`} title={reason}>
+      {label}
+    </div>
   );
 }
 
