@@ -71,6 +71,7 @@ import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
+import { Route as AdminRedirectAliasesRouteImport } from './routes/admin.redirect-aliases'
 import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPrivacyRequestsRouteImport } from './routes/admin.privacy-requests'
@@ -452,6 +453,11 @@ const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
   path: '/scrape-import',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRedirectAliasesRoute = AdminRedirectAliasesRouteImport.update({
+  id: '/redirect-aliases',
+  path: '/redirect-aliases',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRankTrackerRoute = AdminRankTrackerRouteImport.update({
   id: '/rank-tracker',
   path: '/rank-tracker',
@@ -799,6 +805,7 @@ export interface FileRoutesByFullPath {
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
+  '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -917,6 +924,7 @@ export interface FileRoutesByTo {
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
+  '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -1036,6 +1044,7 @@ export interface FileRoutesById {
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
+  '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -1156,6 +1165,7 @@ export interface FileRouteTypes {
     | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
+    | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1274,6 +1284,7 @@ export interface FileRouteTypes {
     | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
+    | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1392,6 +1403,7 @@ export interface FileRouteTypes {
     | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
+    | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1965,6 +1977,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminScrapeImportRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/redirect-aliases': {
+      id: '/admin/redirect-aliases'
+      path: '/redirect-aliases'
+      fullPath: '/admin/redirect-aliases'
+      preLoaderRoute: typeof AdminRedirectAliasesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/rank-tracker': {
       id: '/admin/rank-tracker'
       path: '/rank-tracker'
@@ -2387,6 +2406,7 @@ interface AdminRouteChildren {
   AdminPrivacyRequestsRoute: typeof AdminPrivacyRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminRankTrackerRoute: typeof AdminRankTrackerRoute
+  AdminRedirectAliasesRoute: typeof AdminRedirectAliasesRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
@@ -2422,6 +2442,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPrivacyRequestsRoute: AdminPrivacyRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminRankTrackerRoute: AdminRankTrackerRoute,
+  AdminRedirectAliasesRoute: AdminRedirectAliasesRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
