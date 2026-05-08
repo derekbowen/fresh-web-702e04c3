@@ -350,6 +350,28 @@ export async function backfillCityHeroes(opts: {
 
   const results: BackfillResult[] = [];
   let stoppedReason: "completed" | "batch_full" | "time_budget" = "completed";
+  const fallbackBudget = Math.max(0, opts.maxFallbacksPerBatch ?? 10);
+  let fallbacksUsed = 0;
+
+  async function maybeFallback(r: BackfillResult, cityState: string | null): Promise<BackfillResult> {
+    if (!opts.generateFallback) return r;
+    if (r.status !== "miss" && r.status !== "skipped") return r;
+    if (fallbacksUsed >= fallbackBudget) return r;
+    fallbacksUsed++;
+    const gen = await generateAndUploadHero(r.slug, r.name, cityState);
+    if (!gen.ok) {
+      return { ...r, error: `${r.error ?? r.status}; fallback failed: ${gen.error}` };
+    }
+    const { error } = await supabaseAdmin
+      .from("cities").update({ hero_image_url: gen.hero_url }).eq("slug", r.slug);
+    if (error) {
+      return { ...r, error: `${r.error ?? r.status}; fallback save failed: ${error.message}` };
+    }
+    return {
+      slug: r.slug, name: r.name, source_url: r.source_url,
+      status: "generated", hero_url: gen.hero_url,
+    };
+  }
 
   if (cities?.length) {
     let cursor = 0;
@@ -375,6 +397,8 @@ export async function backfillCityHeroes(opts: {
             cooldownUntil = Date.now() + 10_000;
           }
         }
+        // Fallback: generate an AI hero when scraping couldn't find one.
+        r = await maybeFallback(r, c.state_code);
         results.push(r);
         try { await logAttempt(r); } catch { /* swallow */ }
         await sleep(300);
