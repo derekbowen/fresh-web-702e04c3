@@ -320,30 +320,19 @@ export async function backfillCityHeroes(opts: {
   const maxDurationMs = Math.min(Math.max(opts.maxDurationMs ?? 45_000, 5_000), 120_000);
   const startedAt = Date.now();
 
-  // Build a query factory so we can reuse for both data fetch and remaining count.
-  const buildQuery = (countOnly: boolean) => {
-    let q = countOnly
-      ? supabaseAdmin
-          .from("cities")
-          .select("slug", { count: "exact", head: true })
-          .eq("is_published", true)
-      : supabaseAdmin
-          .from("cities")
-          .select("slug,name,state_code")
-          .eq("is_published", true)
-          .order("name", { ascending: true });
-    if (!opts.force) q = q.is("hero_image_url", null);
-    if (opts.onlySlugs?.length) q = q.in("slug", opts.onlySlugs);
-    if (opts.excludeSlugs?.length) {
-      // Postgrest "in" filter expects a comma-separated list inside parens.
-      const list = `(${opts.excludeSlugs.map((s) => `"${s.replace(/"/g, '""')}"`).join(",")})`;
-      q = q.not("slug", "in", list);
-    }
-    return q;
-  };
-
   const effectiveLimit = Math.min(opts.limit ?? batchSize, batchSize);
-  const { data: cities, error } = await buildQuery(false).limit(effectiveLimit);
+  let dataQuery = supabaseAdmin
+    .from("cities")
+    .select("slug,name,state_code")
+    .eq("is_published", true)
+    .order("name", { ascending: true });
+  if (!opts.force) dataQuery = dataQuery.is("hero_image_url", null);
+  if (opts.onlySlugs?.length) dataQuery = dataQuery.in("slug", opts.onlySlugs);
+  if (opts.excludeSlugs?.length) {
+    const list = `(${opts.excludeSlugs.map((s) => `"${s.replace(/"/g, '""')}"`).join(",")})`;
+    dataQuery = dataQuery.not("slug", "in", list);
+  }
+  const { data: cities, error } = await dataQuery.limit(effectiveLimit);
   if (error) throw new Error(`Failed to load cities: ${error.message}`);
 
   async function logAttempt(r: BackfillResult) {
