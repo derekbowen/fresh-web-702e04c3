@@ -1,6 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import { getCategoryMeta, getTierMeta, I18N, type Lang } from "@/lib/academy";
 import { resolveAcademyHero } from "@/lib/academy-images";
+import { coursePath } from "@/lib/course-urls";
 
 export interface CourseCardCourse {
   slug: string;
@@ -34,7 +34,7 @@ export function CourseCard({
         featured ? "ring-1 ring-primary/20" : ""
       }`}
     >
-      <Link to="/academy/$slug" params={{ slug: course.slug }} className="block">
+      <a href={coursePath(course.slug)} className="block">
         <div className="aspect-[16/10] overflow-hidden bg-muted">
           {heroUrl ? (
             <img
@@ -49,7 +49,7 @@ export function CourseCard({
             </div>
           )}
         </div>
-      </Link>
+      </a>
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 flex flex-wrap items-center gap-2 text-xs font-medium">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-primary">
@@ -65,21 +65,20 @@ export function CourseCard({
           )}
         </div>
         <h3 className="text-lg font-semibold leading-snug text-foreground">
-          <Link to="/academy/$slug" params={{ slug: course.slug }} className="hover:text-primary">
+          <a href={coursePath(course.slug)} className="hover:text-primary">
             {course.title}
-          </Link>
+          </a>
         </h3>
         {course.excerpt && (
           <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{course.excerpt}</p>
         )}
         <div className="mt-auto pt-4">
-          <Link
-            to="/academy/$slug"
-            params={{ slug: course.slug }}
+          <a
+            href={coursePath(course.slug)}
             className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
           >
             {t.startCourse} →
-          </Link>
+          </a>
         </div>
       </div>
     </article>

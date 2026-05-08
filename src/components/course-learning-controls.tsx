@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { ACADEMY_HUB_PATH } from "@/lib/course-urls";
 
 type Props = {
   courseSlug: string;
@@ -164,7 +165,7 @@ export function CourseLearningControls({ courseSlug, courseTitle, expectedMinute
               to="/auth"
               search={{
                 mode: "signup",
-                redirect: typeof window !== "undefined" ? window.location.pathname : "/academy",
+                redirect: typeof window !== "undefined" ? window.location.pathname : ACADEMY_HUB_PATH,
               }}
             >
               Sign up to track progress
