@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { CourseCard, type CourseCardCourse } from "@/components/course-card";
 import { CourseLearningControls } from "@/components/course-learning-controls";
 import { getCourse, getRelatedCourses } from "@/server/courses.functions";
