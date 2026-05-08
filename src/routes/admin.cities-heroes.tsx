@@ -38,6 +38,8 @@ function AdminHeroBackfillPage() {
   const [batchSize, setBatchSize] = useState(25);
   const [concurrency, setConcurrency] = useState(2);
   const [forceMode, setForceMode] = useState(false);
+  const [generateFallback, setGenerateFallback] = useState(true);
+  const [maxFallbacksPerBatch, setMaxFallbacksPerBatch] = useState(10);
 
   // Persist processed slugs across batches so force-mode runs are resumable
   // (non-force is naturally resumable because filled rows drop out of the query).
