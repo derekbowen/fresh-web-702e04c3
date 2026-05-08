@@ -64,7 +64,7 @@ export const LEGACY_PREFIX_FALLBACKS: Record<string, string> = {
   "for-hosts": "/p/hosting",
   "guest-information": "/p/how-it-works",
   "host-information": "/p/hosting",
-  "legal-and-compliance": "/privacy-policy",
+  "legal-and-compliance": "/p/privacy-policy",
   "marketing-and-growth": "/p/hosting",
   "pool-management": "/p/hosting",
   "technical-support": "/",
