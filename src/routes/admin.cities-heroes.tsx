@@ -185,6 +185,28 @@ function AdminHeroBackfillPage() {
               className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5"
             />
           </label>
+          <label className="block text-xs">
+            <span className="text-muted-foreground">Max AI fallbacks / batch</span>
+            <input
+              type="number" min={0} max={50} value={maxFallbacksPerBatch}
+              disabled={running || !generateFallback}
+              onChange={(e) => setMaxFallbacksPerBatch(Math.max(0, Math.min(50, Number(e.target.value) || 0)))}
+              className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5 disabled:opacity-50"
+            />
+          </label>
+          <label className="flex items-center gap-2 text-xs">
+            <input
+              type="checkbox" checked={generateFallback}
+              disabled={running}
+              onChange={(e) => setGenerateFallback(e.target.checked)}
+            />
+            <span>
+              <span className="font-medium">Generate AI hero on miss</span>
+              <span className="block text-muted-foreground">
+                When scrape can't find an image, generate one and upload it.
+              </span>
+            </span>
+          </label>
           {remaining !== null && (
             <div className="col-span-2 rounded-md border border-border bg-card p-2 text-xs">
               <div className="text-muted-foreground">Remaining</div>
