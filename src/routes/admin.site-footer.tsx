@@ -17,6 +17,7 @@ import {
   type FooterMarket,
   type FooterSocial,
 } from "@/server/site-footer.functions";
+import { validateSocialUrlsFn } from "@/server/social-url-validator.functions";
 
 export const Route = createFileRoute("/admin/site-footer")({
   component: SiteFooterAdmin,
