@@ -296,7 +296,22 @@ function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city, linkTargets } = Route.useLoaderData();
+  const { page, nearbyCities, city, linkTargets, academyHub } = Route.useLoaderData();
+
+  // Academy hubs (en + es) override their stored template_type so they always
+  // render the rich hub UI even though the row's template_type may be
+  // "resource" or "spanish_resource".
+  const academyLang = academyLangForSlug(page.slug);
+  if (academyLang && academyHub) {
+    return (
+      <AcademyHubTemplate
+        page={page}
+        hub={academyHub}
+        lang={academyLang}
+        twinPath={academyHubPath(academyLang === "en" ? "es" : "en")}
+      />
+    );
+  }
 
   switch (page.template_type) {
     case "host_acq_city":
