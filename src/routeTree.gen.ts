@@ -122,6 +122,7 @@ import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
+import { Route as ApiPublicHooksAliasBackfillRouteImport } from './routes/api/public/hooks/alias-backfill'
 import { Route as ApiPublicHooksAcademyHealthRouteImport } from './routes/api/public/hooks.academy-health'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 import { Route as PPoolProsCCategoryStateRouteImport } from './routes/p.pool-pros.c.$category.$state'
@@ -719,6 +720,12 @@ const ApiPublicHooksCompetitorRadarScanRoute =
     path: '/api/public/hooks/competitor-radar-scan',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAliasBackfillRoute =
+  ApiPublicHooksAliasBackfillRouteImport.update({
+    id: '/api/public/hooks/alias-backfill',
+    path: '/api/public/hooks/alias-backfill',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksAcademyHealthRoute =
   ApiPublicHooksAcademyHealthRouteImport.update({
     id: '/api/public/hooks/academy-health',
@@ -846,6 +853,7 @@ export interface FileRoutesByFullPath {
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
+  '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -965,6 +973,7 @@ export interface FileRoutesByTo {
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
+  '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1085,6 +1094,7 @@ export interface FileRoutesById {
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
+  '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1206,6 +1216,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
+    | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1325,6 +1336,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
+    | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1444,6 +1456,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
+    | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1528,6 +1541,7 @@ export interface RootRouteChildren {
   PEsSlugRoute: typeof PEsSlugRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
+  ApiPublicHooksAliasBackfillRoute: typeof ApiPublicHooksAliasBackfillRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
@@ -2334,6 +2348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksCompetitorRadarScanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/alias-backfill': {
+      id: '/api/public/hooks/alias-backfill'
+      path: '/api/public/hooks/alias-backfill'
+      fullPath: '/api/public/hooks/alias-backfill'
+      preLoaderRoute: typeof ApiPublicHooksAliasBackfillRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/academy-health': {
       id: '/api/public/hooks/academy-health'
       path: '/api/public/hooks/academy-health'
@@ -2572,6 +2593,7 @@ const rootRouteChildren: RootRouteChildren = {
   PEsSlugRoute: PEsSlugRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
+  ApiPublicHooksAliasBackfillRoute: ApiPublicHooksAliasBackfillRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
