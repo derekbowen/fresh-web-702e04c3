@@ -8,6 +8,10 @@ const inputSchema = z.object({
   force: z.boolean().optional(),
   limit: z.number().int().positive().max(500).optional(),
   onlySlugs: z.array(z.string()).max(500).optional(),
+  batchSize: z.number().int().positive().max(100).optional(),
+  concurrency: z.number().int().positive().max(8).optional(),
+  excludeSlugs: z.array(z.string()).max(10000).optional(),
+  maxDurationMs: z.number().int().positive().max(120_000).optional(),
 });
 
 export const runHeroBackfill = createServerFn({ method: "POST" })
@@ -28,5 +32,9 @@ export const runHeroBackfill = createServerFn({ method: "POST" })
       force: data.force,
       limit: data.limit,
       onlySlugs: data.onlySlugs,
+      batchSize: data.batchSize,
+      concurrency: data.concurrency,
+      excludeSlugs: data.excludeSlugs,
+      maxDurationMs: data.maxDurationMs,
     });
   });

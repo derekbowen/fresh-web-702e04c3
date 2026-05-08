@@ -297,7 +297,17 @@ export async function backfillCityHeroes(opts: {
   force?: boolean;
   limit?: number;
   onlySlugs?: string[];
-}): Promise<{ results: BackfillResult[]; summary: Record<string, number> }> {
+  batchSize?: number;
+  concurrency?: number;
+  excludeSlugs?: string[];
+  maxDurationMs?: number;
+}): Promise<{
+  results: BackfillResult[];
+  summary: Record<string, number>;
+  remaining: number;
+  processedSlugs: string[];
+  stoppedReason: "completed" | "batch_full" | "time_budget";
+}> {
   const apiKey = process.env.FIRECRAWL_API_KEY;
   if (!apiKey) throw new Error("FIRECRAWL_API_KEY is not configured");
 
@@ -305,19 +315,25 @@ export async function backfillCityHeroes(opts: {
 
   const directory = await harvestSourceUrls();
 
-  let query = supabaseAdmin
+  const batchSize = Math.min(Math.max(opts.batchSize ?? 25, 1), 100);
+  const concurrency = Math.min(Math.max(opts.concurrency ?? 2, 1), 8);
+  const maxDurationMs = Math.min(Math.max(opts.maxDurationMs ?? 45_000, 5_000), 120_000);
+  const startedAt = Date.now();
+
+  const effectiveLimit = Math.min(opts.limit ?? batchSize, batchSize);
+  let dataQuery = supabaseAdmin
     .from("cities")
     .select("slug,name,state_code")
     .eq("is_published", true)
     .order("name", { ascending: true });
-
-  if (!opts.force) query = query.is("hero_image_url", null);
-  if (opts.onlySlugs?.length) query = query.in("slug", opts.onlySlugs);
-  if (opts.limit) query = query.limit(opts.limit);
-
-  const { data: cities, error } = await query;
+  if (!opts.force) dataQuery = dataQuery.is("hero_image_url", null);
+  if (opts.onlySlugs?.length) dataQuery = dataQuery.in("slug", opts.onlySlugs);
+  if (opts.excludeSlugs?.length) {
+    const list = `(${opts.excludeSlugs.map((s) => `"${s.replace(/"/g, '""')}"`).join(",")})`;
+    dataQuery = dataQuery.not("slug", "in", list);
+  }
+  const { data: cities, error } = await dataQuery.limit(effectiveLimit);
   if (error) throw new Error(`Failed to load cities: ${error.message}`);
-  if (!cities?.length) return { results: [], summary: { total: 0 } };
 
   async function logAttempt(r: BackfillResult) {
     await supabaseAdmin.from("cities_hero_backfill_log").insert({
@@ -329,37 +345,64 @@ export async function backfillCityHeroes(opts: {
     });
   }
 
-  // Lower default concurrency to play nicer with Firecrawl rate limits.
-  const concurrency = 2;
   const results: BackfillResult[] = [];
-  let cursor = 0;
-  // Shared cooldown — when any worker hits 429, others briefly back off too.
-  let cooldownUntil = 0;
-  async function worker() {
-    while (cursor < cities!.length) {
-      const i = cursor++;
-      const c = cities![i];
-      const now = Date.now();
-      if (cooldownUntil > now) await sleep(cooldownUntil - now);
-      const url = resolveSourceUrl(c.slug, c.state_code, directory);
-      let r: BackfillResult;
-      if (!url) {
-        r = {
-          slug: c.slug, name: c.name, source_url: null,
-          status: "skipped", error: "No source URL found in directory or overrides",
-        };
-      } else {
-        r = await scrapeOne(client, c.slug, c.name, url);
-        if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
-          cooldownUntil = Date.now() + 10_000;
+  let stoppedReason: "completed" | "batch_full" | "time_budget" = "completed";
+
+  if (cities?.length) {
+    let cursor = 0;
+    let cooldownUntil = 0;
+    let timeUp = false;
+    async function worker() {
+      while (cursor < cities!.length) {
+        if (Date.now() - startedAt > maxDurationMs) { timeUp = true; return; }
+        const i = cursor++;
+        const c = cities![i];
+        const now = Date.now();
+        if (cooldownUntil > now) await sleep(cooldownUntil - now);
+        const url = resolveSourceUrl(c.slug, c.state_code, directory);
+        let r: BackfillResult;
+        if (!url) {
+          r = {
+            slug: c.slug, name: c.name, source_url: null,
+            status: "skipped", error: "No source URL found in directory or overrides",
+          };
+        } else {
+          r = await scrapeOne(client, c.slug, c.name, url);
+          if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
+            cooldownUntil = Date.now() + 10_000;
+          }
         }
+        results.push(r);
+        try { await logAttempt(r); } catch { /* swallow */ }
+        await sleep(300);
       }
-      results.push(r);
-      try { await logAttempt(r); } catch { /* swallow */ }
-      await sleep(300);
     }
+    await Promise.all(Array.from({ length: concurrency }, worker));
+    stoppedReason = timeUp ? "time_budget" : (cities.length >= effectiveLimit ? "batch_full" : "completed");
   }
-  await Promise.all(Array.from({ length: concurrency }, worker));
+
+  // Compute remaining work for the next batch (excludes what we just processed).
+  const processedSlugs = results.map((r) => r.slug);
+  const exclusionForCount = [...(opts.excludeSlugs ?? []), ...processedSlugs];
+  const { count: remainingCount } = await (() => {
+    let q = supabaseAdmin
+      .from("cities")
+      .select("slug", { count: "exact", head: true })
+      .eq("is_published", true);
+    if (!opts.force) q = q.is("hero_image_url", null);
+    if (opts.onlySlugs?.length) q = q.in("slug", opts.onlySlugs);
+    if (exclusionForCount.length) {
+      const list = `(${exclusionForCount.map((s) => `"${s.replace(/"/g, '""')}"`).join(",")})`;
+      q = q.not("slug", "in", list);
+    }
+    return q;
+  })();
+
+  // For non-force runs the OK results no longer match `hero_image_url IS NULL`,
+  // so they're already removed from the count. For force runs we exclude
+  // explicitly via excludeSlugs/processedSlugs.
+  const remaining = remainingCount ?? 0;
+  if (remaining === 0) stoppedReason = "completed";
 
   const summary = results.reduce<Record<string, number>>(
     (acc, r) => {
@@ -369,5 +412,6 @@ export async function backfillCityHeroes(opts: {
     },
     { total: 0 },
   );
-  return { results, summary };
+  return { results, summary, remaining, processedSlugs, stoppedReason };
 }
+

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { runHeroBackfill } from "@/server/cities-hero-backfill.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
@@ -32,23 +32,95 @@ function AdminHeroBackfillPage() {
   const [results, setResults] = useState<Result[]>([]);
   const [summary, setSummary] = useState<Record<string, number> | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [stoppedReason, setStoppedReason] = useState<string | null>(null);
+  const [autoContinue, setAutoContinue] = useState(false);
+  const [batchSize, setBatchSize] = useState(25);
+  const [concurrency, setConcurrency] = useState(2);
+  const [forceMode, setForceMode] = useState(false);
 
-  async function run(force: boolean) {
-    if (running) return;
-    setRunning(true);
-    setErrMsg(null);
+  // Persist processed slugs across batches so force-mode runs are resumable
+  // (non-force is naturally resumable because filled rows drop out of the query).
+  const processedRef = useRef<Set<string>>(new Set());
+  const stopRef = useRef(false);
+
+  function reset() {
+    processedRef.current = new Set();
     setResults([]);
     setSummary(null);
+    setRemaining(null);
+    setStoppedReason(null);
+    setErrMsg(null);
+  }
+
+  async function runBatch(force: boolean): Promise<{ remaining: number } | null> {
+    const excludeSlugs = force ? Array.from(processedRef.current) : undefined;
     try {
-      const out = await runHeroBackfill({ data: { force } });
-      setResults(out.results);
-      setSummary(out.summary);
+      const out = await runHeroBackfill({
+        data: { force, batchSize, concurrency, excludeSlugs },
+      });
+      // Append results.
+      setResults((prev) => [...prev, ...out.results]);
+      out.processedSlugs.forEach((s) => processedRef.current.add(s));
+      // Merge summary.
+      setSummary((prev) => {
+        const next: Record<string, number> = { ...(prev ?? {}) };
+        for (const [k, v] of Object.entries(out.summary)) {
+          next[k] = (next[k] ?? 0) + v;
+        }
+        return next;
+      });
+      setRemaining(out.remaining);
+      setStoppedReason(out.stoppedReason);
+      return { remaining: out.remaining };
     } catch (e) {
       setErrMsg(e instanceof Error ? e.message : String(e));
+      return null;
+    }
+  }
+
+  async function startRun(force: boolean, continuous: boolean) {
+    if (running) return;
+    reset();
+    setForceMode(force);
+    setAutoContinue(continuous);
+    stopRef.current = false;
+    setRunning(true);
+    try {
+      // Loop batches until done, user stops, or single batch when !continuous.
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const out = await runBatch(force);
+        if (!out) break;
+        if (!continuous) break;
+        if (stopRef.current) break;
+        if (out.remaining <= 0) break;
+        // Brief pause between batches to be polite.
+        await new Promise((r) => setTimeout(r, 800));
+      }
+    } finally {
+      setRunning(false);
+      setAutoContinue(false);
+    }
+  }
+
+  async function continueOneBatch() {
+    if (running) return;
+    setRunning(true);
+    try {
+      await runBatch(forceMode);
     } finally {
       setRunning(false);
     }
   }
+
+  function stop() {
+    stopRef.current = true;
+  }
+
+  // Pause guard: if the page is hidden the user can leave; runs continue
+  // server-side per batch, so the loop keeps progressing while tab is open.
+  useEffect(() => () => { stopRef.current = true; }, []);
 
   function downloadMissesCsv() {
     const misses = results.filter((r) => r.status !== "ok");
@@ -89,21 +161,76 @@ function AdminHeroBackfillPage() {
           </p>
         </div>
 
+        <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <label className="block text-xs">
+            <span className="text-muted-foreground">Batch size</span>
+            <input
+              type="number" min={1} max={100} value={batchSize}
+              disabled={running}
+              onChange={(e) => setBatchSize(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+              className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5"
+            />
+          </label>
+          <label className="block text-xs">
+            <span className="text-muted-foreground">Concurrency</span>
+            <input
+              type="number" min={1} max={8} value={concurrency}
+              disabled={running}
+              onChange={(e) => setConcurrency(Math.max(1, Math.min(8, Number(e.target.value) || 1)))}
+              className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5"
+            />
+          </label>
+          {remaining !== null && (
+            <div className="col-span-2 rounded-md border border-border bg-card p-2 text-xs">
+              <div className="text-muted-foreground">Remaining</div>
+              <div className="text-lg font-semibold">{remaining}</div>
+              {stoppedReason && (
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  last stop: {stoppedReason}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="flex flex-wrap gap-3">
           <button
             disabled={running}
-            onClick={() => run(false)}
+            onClick={() => startRun(false, false)}
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
-            {running ? "Running…" : "Backfill missing only"}
+            {running && !autoContinue ? "Running…" : "Run one batch (missing)"}
           </button>
           <button
             disabled={running}
-            onClick={() => run(true)}
+            onClick={() => startRun(false, true)}
+            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            {running && autoContinue ? "Auto-running…" : "Run until done (missing)"}
+          </button>
+          <button
+            disabled={running}
+            onClick={() => startRun(true, true)}
             className="inline-flex items-center justify-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-secondary disabled:opacity-50"
           >
-            {running ? "Running…" : "Force re-scrape all"}
+            Force re-scrape (until done)
           </button>
+          {!running && remaining !== null && remaining > 0 && (
+            <button
+              onClick={continueOneBatch}
+              className="inline-flex items-center justify-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-secondary"
+            >
+              Continue next batch
+            </button>
+          )}
+          {running && autoContinue && (
+            <button
+              onClick={stop}
+              className="inline-flex items-center justify-center rounded-full border border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive hover:bg-destructive/20"
+            >
+              Stop after current batch
+            </button>
+          )}
           {results.length > 0 && (
             <button
               onClick={downloadMissesCsv}
