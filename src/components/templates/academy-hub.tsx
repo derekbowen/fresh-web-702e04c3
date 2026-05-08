@@ -1,6 +1,7 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { CourseCard, type CourseCardCourse } from "@/components/course-card";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { getCategoryMeta, I18N, type Lang } from "@/lib/academy";
 import { academyHubPath } from "@/lib/course-urls";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -38,6 +39,9 @@ export function AcademyHubTemplate({
         />
 
         <header className="mt-6 max-w-3xl">
+          <div className="mb-4">
+            <LanguageSwitcher current={lang} alternateHref={twinPath ?? null} />
+          </div>
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             {title}
           </h1>
@@ -45,13 +49,6 @@ export function AcademyHubTemplate({
           <p className="mt-2 text-sm text-muted-foreground">
             {hub.total} {lang === "es" ? "cursos gratuitos" : "free courses"}
           </p>
-          {twinPath && (
-            <p className="mt-3 text-sm">
-              <a href={twinPath} className="text-primary hover:underline" hrefLang={lang === "en" ? "es" : "en"}>
-                {lang === "en" ? "Ver en español →" : "View in English →"}
-              </a>
-            </p>
-          )}
         </header>
 
         {hub.featured.length > 0 && (
