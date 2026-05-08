@@ -209,9 +209,10 @@ export const Route = createFileRoute("/p/$slug")({
       scripts.push(ldJsonScript(localBiz));
     }
 
-    // CollectionPage + ItemList for the learning academy hub
-    const courses = (loaderData as { academyCourses?: AcademyCourseLink[] }).academyCourses;
-    if (p.slug === "learningacademy" && courses && courses.length > 0) {
+    // CollectionPage + ItemList for the learning academy hubs
+    const hub = (loaderData as { academyHub?: AcademyHubData | null }).academyHub;
+    if (academyLang && hub && hub.total > 0) {
+      const allCourses = hub.categories.flatMap((g) => g.courses);
       scripts.push(
         ldJsonScript({
           "@context": "https://schema.org",
@@ -219,14 +220,14 @@ export const Route = createFileRoute("/p/$slug")({
           name: titleBase,
           description,
           url: `${SITE_URL}${canonicalPath}`,
-          inLanguage: p.language,
+          inLanguage: academyLang,
           mainEntity: {
             "@type": "ItemList",
-            numberOfItems: courses.length,
-            itemListElement: courses.map((c, i) => ({
+            numberOfItems: allCourses.length,
+            itemListElement: allCourses.map((c, i) => ({
               "@type": "ListItem",
               position: i + 1,
-              url: `${SITE_URL}/p/${c.slug}`,
+              url: `${SITE_URL}/p/course/${c.slug}`,
               name: c.title,
             })),
           },
