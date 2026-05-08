@@ -319,13 +319,28 @@ export async function backfillCityHeroes(opts: {
   if (error) throw new Error(`Failed to load cities: ${error.message}`);
   if (!cities?.length) return { results: [], summary: { total: 0 } };
 
-  const concurrency = 3;
+  async function logAttempt(r: BackfillResult) {
+    await supabaseAdmin.from("cities_hero_backfill_log").insert({
+      city_slug: r.slug,
+      source_url: r.source_url,
+      status: r.status,
+      image_url: r.hero_url ?? null,
+      error: r.error ?? null,
+    });
+  }
+
+  // Lower default concurrency to play nicer with Firecrawl rate limits.
+  const concurrency = 2;
   const results: BackfillResult[] = [];
   let cursor = 0;
+  // Shared cooldown — when any worker hits 429, others briefly back off too.
+  let cooldownUntil = 0;
   async function worker() {
     while (cursor < cities!.length) {
       const i = cursor++;
       const c = cities![i];
+      const now = Date.now();
+      if (cooldownUntil > now) await sleep(cooldownUntil - now);
       const url = resolveSourceUrl(c.slug, c.state_code, directory);
       let r: BackfillResult;
       if (!url) {
@@ -335,11 +350,13 @@ export async function backfillCityHeroes(opts: {
         };
       } else {
         r = await scrapeOne(client, c.slug, c.name, url);
+        if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
+          cooldownUntil = Date.now() + 10_000;
+        }
       }
       results.push(r);
-      // Best-effort log; don't fail the run if logging fails.
       try { await logAttempt(r); } catch { /* swallow */ }
-      await new Promise((res) => setTimeout(res, 150));
+      await sleep(300);
     }
   }
   await Promise.all(Array.from({ length: concurrency }, worker));
