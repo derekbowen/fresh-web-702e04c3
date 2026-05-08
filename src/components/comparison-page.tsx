@@ -62,7 +62,7 @@ export function CTAMid() {
   return (
     <div className="not-prose my-8 grid gap-3 sm:grid-cols-2">
       <a
-        href="https://www.poolrentalnearme.com/p/learningacademy"
+        href="/p/learningacademy"
         className="rounded-xl border border-border bg-card p-5 text-center font-semibold text-foreground shadow-sm transition hover:border-primary hover:bg-primary/5"
       >
         📚 Browse 70+ Free Pool Host Courses →
@@ -94,7 +94,7 @@ export function AuthorBlock() {
       <p>
         Connect:{" "}
         <a href="https://www.linkedin.com/in/derekcbowen/">LinkedIn</a> ·{" "}
-        <a href="https://www.poolrentalnearme.com/p/learningacademy">
+        <a href="/p/learningacademy">
           Pool Host Academy
         </a>
       </p>
@@ -123,7 +123,7 @@ export function FooterBlock({ city }: { city?: string }) {
       <p className="text-sm text-muted-foreground">
         © 2026 PRNM Corp. All rights reserved. ·{" "}
         <Link to="/privacy-policy">Privacy Policy</Link> ·{" "}
-        <a href="https://www.poolrentalnearme.com/terms-of-service">
+        <a href="/terms-of-service">
           Terms of Service
         </a>
       </p>

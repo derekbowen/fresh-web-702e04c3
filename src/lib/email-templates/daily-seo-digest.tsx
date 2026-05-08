@@ -147,7 +147,7 @@ const DailySeoDigestEmail = ({
           <Hr style={hr} />
           <Text style={footer}>
             Sent automatically by Pool Rental Near Me admin.
-            View details in <Link href="https://www.poolrentalnearme.com/admin/dashboard" style={linkStyle}>admin dashboard</Link>.
+            View details in <Link href="/admin/dashboard" style={linkStyle}>admin dashboard</Link>.
           </Text>
         </Container>
       </Body>

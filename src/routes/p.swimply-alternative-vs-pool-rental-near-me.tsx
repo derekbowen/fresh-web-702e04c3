@@ -193,13 +193,13 @@ function SwimplyComparisonPage() {
       </p>
 
       <p>
-        PRNM ships the <a href="https://www.poolrentalnearme.com/p/learningacademy">
+        PRNM ships the <a href="/p/learningacademy">
         Pool Host Academy</a> — a structured library of 70+ free courses
-        covering pool safety, <a href="https://www.poolrentalnearme.com/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course">
+        covering pool safety, <a href="/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course">
         liability waivers</a>, HOA navigation, marketing, listing optimization
-        and <a href="https://www.poolrentalnearme.com/p/elearning-academy-maximizing-revenue-upselling-pool-amenities">
+        and <a href="/p/elearning-academy-maximizing-revenue-upselling-pool-amenities">
         revenue optimization</a>. PRNM also publishes the{" "}
-        <a href="https://www.poolrentalnearme.com/p/hoa-pool-rental-defense-kit">
+        <a href="/p/hoa-pool-rental-defense-kit">
         HOA Defense Kit</a> for hosts dealing with HOA pushback, and CEO Derek
         Bowen has authored multiple Amazon books on pool hosting.
       </p>
@@ -221,7 +221,7 @@ function SwimplyComparisonPage() {
 
       <p>
         Pool Rental Near Me is active in 40+ states with continued city
-        expansion — see the live <a href="https://www.poolrentalnearme.com/p/all-locations">
+        expansion — see the live <a href="/p/all-locations">
         all PRNM cities</a> directory for the current footprint. PRNM is
         younger as a brand, which means lower brand-driven guest discovery in
         some metros — and also means hosts who join early benefit from less
@@ -311,7 +311,7 @@ function SwimplyComparisonPage() {
           general liability coverage with a $150K property blanket.
         </li>
         <li>
-          You want structured <a href="https://www.poolrentalnearme.com/p/learningacademy">
+          You want structured <a href="/p/learningacademy">
           free training</a> from day one — not just help articles.
         </li>
         <li>
@@ -319,7 +319,7 @@ function SwimplyComparisonPage() {
           <strong>888-940-4247</strong>.
         </li>
         <li>
-          You're <a href="https://www.poolrentalnearme.com/p/how-it-works">
+          You're <a href="/p/how-it-works">
           becoming a host</a> in a market where Swimply hasn't saturated and
           you want to capture local search demand early.
         </li>
@@ -345,7 +345,7 @@ function SwimplyComparisonPage() {
           Sync your calendar so you don't double-book.
         </li>
         <li>
-          Run the <a href="https://www.poolrentalnearme.com/p/learningacademy">
+          Run the <a href="/p/learningacademy">
           Pool Host Academy</a> intake modules to dial in your listing copy and
           weekend pricing.
         </li>
@@ -393,7 +393,7 @@ function SwimplyComparisonPage() {
           liability, $10K medical expenses per person, and a $150K STRETCH®
           PLUS property coverage blanket on every approved booking at no cost
           to the host. Full terms in our{" "}
-          <a href="https://www.poolrentalnearme.com/terms-of-service">
+          <a href="/terms-of-service">
             Terms of Service
           </a>
           .
@@ -407,7 +407,7 @@ function SwimplyComparisonPage() {
         <li>
           <strong>70+ Pool Host Academy Courses</strong> — Free training
           library at{" "}
-          <a href="https://www.poolrentalnearme.com/p/learningacademy">
+          <a href="/p/learningacademy">
             poolrentalnearme.com/p/learningacademy
           </a>
           .

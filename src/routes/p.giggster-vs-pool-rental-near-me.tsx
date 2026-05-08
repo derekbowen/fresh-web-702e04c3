@@ -378,7 +378,7 @@ function GiggsterComparisonPage() {
       <p>
         Pool Rental Near Me runs across 40+ U.S. states with city-level pool
         rental hubs — see the live{" "}
-        <a href="https://www.poolrentalnearme.com/p/all-locations">
+        <a href="/p/all-locations">
           all PRNM cities
         </a>{" "}
         directory. Recreational pool demand is broadly distributed by population
@@ -481,17 +481,17 @@ function GiggsterComparisonPage() {
       </p>
       <p>
         Pool Rental Near Me ships the{" "}
-        <a href="https://www.poolrentalnearme.com/p/learningacademy">
+        <a href="/p/learningacademy">
           Pool Host Academy
         </a>: 70+ free courses purpose-built for residential pool hosting,
         including pool safety,{" "}
-        <a href="https://www.poolrentalnearme.com/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course">
+        <a href="/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course">
           liability waivers
         </a>, the{" "}
-        <a href="https://www.poolrentalnearme.com/p/hoa-pool-rental-defense-kit">
+        <a href="/p/hoa-pool-rental-defense-kit">
           HOA Defense Kit
         </a>,{" "}
-        <a href="https://www.poolrentalnearme.com/p/elearning-academy-maximizing-revenue-upselling-pool-amenities">
+        <a href="/p/elearning-academy-maximizing-revenue-upselling-pool-amenities">
           revenue optimization &amp; amenity upsells
         </a>, marketing, and listing setup. Plus a free liability waiver generator
         at{" "}
@@ -558,13 +558,13 @@ function GiggsterComparisonPage() {
         </li>
         <li>
           You want structured{" "}
-          <a href="https://www.poolrentalnearme.com/p/learningacademy">
+          <a href="/p/learningacademy">
             free training
           </a>{" "}
           purpose-built for residential pool hosting.
         </li>
         <li>
-          You're <a href="https://www.poolrentalnearme.com/p/howithostsworks">
+          You're <a href="/p/howithostsworks">
             becoming a host
           </a>{" "}
           outside the major production-hub metros, where Giggster's buyer flow
@@ -593,7 +593,7 @@ function GiggsterComparisonPage() {
         </li>
         <li>
           Run the{" "}
-          <a href="https://www.poolrentalnearme.com/p/learningacademy">
+          <a href="/p/learningacademy">
             Pool Host Academy
           </a>{" "}
           intake modules to optimize your PRNM recreational listing — listing
@@ -677,7 +677,7 @@ function GiggsterComparisonPage() {
           $10,000 medical expenses per person, and a $150,000 STRETCH® PLUS
           property coverage blanket on every approved booking at no cost to
           the host. Full terms in the{" "}
-          <a href="https://www.poolrentalnearme.com/terms-of-service">
+          <a href="/terms-of-service">
             Pool Rental Near Me Terms of Service
           </a>
           .
@@ -689,7 +689,7 @@ function GiggsterComparisonPage() {
         </li>
         <li>
           <strong>70+ Pool Host Academy courses</strong> — Free training library:{" "}
-          <a href="https://www.poolrentalnearme.com/p/learningacademy">
+          <a href="/p/learningacademy">
             poolrentalnearme.com/p/learningacademy
           </a>
           .

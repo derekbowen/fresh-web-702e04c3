@@ -162,7 +162,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
 
             {/* Search widget */}
             <form
-              action="https://www.poolrentalnearme.com/s"
+              action="/s"
               method="get"
               className="mx-auto mt-8 flex max-w-3xl flex-col gap-2 rounded-2xl bg-white p-2 text-foreground shadow-2xl ring-1 ring-black/5 sm:flex-row sm:items-center sm:gap-0 sm:rounded-full"
             >

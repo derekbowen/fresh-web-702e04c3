@@ -189,7 +189,7 @@ function PeerspaceComparisonPage() {
         on Peerspace — <strong>$30 more in your pocket per booking</strong>.
         Across 50 bookings a season that's $1,500 in fee savings. Run your own
         numbers in the{" "}
-        <a href="https://www.poolrentalnearme.com/p/earnings-calculator">
+        <a href="/p/earnings-calculator">
           earnings calculator
         </a>.
       </p>
@@ -231,17 +231,17 @@ function PeerspaceComparisonPage() {
 
       <p>
         Pool Rental Near Me ships the{" "}
-        <a href="https://www.poolrentalnearme.com/p/learningacademy">
+        <a href="/p/learningacademy">
           Pool Host Academy
         </a>{" "}
         — 70+ free courses covering pool safety,{" "}
-        <a href="https://www.poolrentalnearme.com/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course">
+        <a href="/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course">
           liability waivers
         </a>, the{" "}
-        <a href="https://www.poolrentalnearme.com/p/hoa-pool-rental-defense-kit">
+        <a href="/p/hoa-pool-rental-defense-kit">
           HOA Defense Kit
         </a>, marketing, listing optimization and{" "}
-        <a href="https://www.poolrentalnearme.com/p/elearning-academy-maximizing-revenue-upselling-pool-amenities">
+        <a href="/p/elearning-academy-maximizing-revenue-upselling-pool-amenities">
           revenue optimization
         </a>. Plus a free liability waiver generator at{" "}
         <a href="https://www.rentalwaivers.com">RentalWaivers.com</a>.
@@ -259,7 +259,7 @@ function PeerspaceComparisonPage() {
       <p>
         Pool Rental Near Me is active in 40+ states with continued city
         expansion — the live{" "}
-        <a href="https://www.poolrentalnearme.com/p/all-locations">
+        <a href="/p/all-locations">
           all-locations directory
         </a>{" "}
         shows the current footprint of 5,100+ pool-intent landing pages. It's
@@ -294,11 +294,11 @@ function PeerspaceComparisonPage() {
         Swimply. Swimply pioneered the pool rental category but charges a 15%
         host fee. Pool Rental Near Me's 10% host fee is the lowest of the
         three. See the full breakdown in{" "}
-        <a href="https://www.poolrentalnearme.com/p/swimply-alternative-vs-pool-rental-near-me">
+        <a href="/p/swimply-alternative-vs-pool-rental-near-me">
           Swimply Alternative vs Pool Rental Near Me
         </a>{" "}
         and{" "}
-        <a href="https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me">
+        <a href="/p/giggster-vs-pool-rental-near-me">
           Giggster vs Pool Rental Near Me
         </a>.
       </p>
@@ -319,8 +319,8 @@ function PeerspaceComparisonPage() {
         <li>You want to <strong>keep 90%</strong> of every booking subtotal vs Peerspace's published 80% retention.</li>
         <li>You want the larger <strong>$2M general liability</strong> coverage sized for residential pool incidents.</li>
         <li>You want guests who specifically searched for a pool — not for a "venue."</li>
-        <li>You want structured <a href="https://www.poolrentalnearme.com/p/learningacademy">free training</a> built around pool hosting.</li>
-        <li>You're <a href="https://www.poolrentalnearme.com/p/hosting">becoming a host</a> with a typical residential pool charging $45–$150/hour for recreational use.</li>
+        <li>You want structured <a href="/p/learningacademy">free training</a> built around pool hosting.</li>
+        <li>You're <a href="/p/hosting">becoming a host</a> with a typical residential pool charging $45–$150/hour for recreational use.</li>
       </ul>
 
       <CTAMid />
@@ -331,7 +331,7 @@ function PeerspaceComparisonPage() {
         <li>Create your free Pool Rental Near Me listing at <a href="https://earn.poolrentalnearme.com/">earn.poolrentalnearme.com</a> using your existing photos, capacity, and rules.</li>
         <li>Set recreational hourly pricing for Pool Rental Near Me ($45–$150/hr) and keep your premium rates on Peerspace for production / event use.</li>
         <li>Sync your calendar to prevent double-bookings.</li>
-        <li>Run the <a href="https://www.poolrentalnearme.com/p/learningacademy">Pool Host Academy</a> intake modules to optimize your Pool Rental Near Me listing.</li>
+        <li>Run the <a href="/p/learningacademy">Pool Host Academy</a> intake modules to optimize your Pool Rental Near Me listing.</li>
       </ol>
 
       <h2>Frequently Asked Questions</h2>
@@ -360,7 +360,7 @@ function PeerspaceComparisonPage() {
           liability, $10K medical expenses per person, and a $150K STRETCH® PLUS
           property coverage blanket on every approved booking at no cost to the
           host. Full terms in our{" "}
-          <a href="https://www.poolrentalnearme.com/terms-of-service">Terms of Service</a>.
+          <a href="/terms-of-service">Terms of Service</a>.
         </li>
         <li>
           <strong>10% Pool Rental Near Me Host Commission</strong> — 10% platform
@@ -369,7 +369,7 @@ function PeerspaceComparisonPage() {
         </li>
         <li>
           <strong>70+ Pool Host Academy Courses</strong> — Free training library
-          at <a href="https://www.poolrentalnearme.com/p/learningacademy">poolrentalnearme.com/p/learningacademy</a>.
+          at <a href="/p/learningacademy">poolrentalnearme.com/p/learningacademy</a>.
         </li>
       </ol>
 

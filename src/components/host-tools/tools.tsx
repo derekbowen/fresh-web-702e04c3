@@ -893,7 +893,7 @@ export function HOARiskChecker() {
       summary="Self-audit your HOA risk before publishing your listing."
       output={<Checklist items={items} />}
     >
-      <p className="text-sm text-muted-foreground">Need legal templates? Check the <a href="https://www.poolrentalnearme.com/p/hoa-pool-rental-defense-kit" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">HOA Defense Kit</a>.</p>
+      <p className="text-sm text-muted-foreground">Need legal templates? Check the <a href="/p/hoa-pool-rental-defense-kit" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">HOA Defense Kit</a>.</p>
     </ToolShell>
   );
 }

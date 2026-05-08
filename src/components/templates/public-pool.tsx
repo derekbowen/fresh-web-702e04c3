@@ -74,7 +74,7 @@ export function PublicPoolTemplate({
               no lap lanes, no schedule restrictions — just your group.
             </p>
             <a
-              href="https://www.poolrentalnearme.com/s" target="_blank" rel="noopener noreferrer"
+              href="/s" target="_blank" rel="noopener noreferrer"
               className="mt-5 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
             >
               Find a private pool
