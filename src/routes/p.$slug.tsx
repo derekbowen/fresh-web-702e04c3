@@ -35,7 +35,16 @@ import { SwimInstructorCityTemplate } from "@/components/templates/swim-instruct
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
-import { listAcademyCourses, type AcademyCourseLink } from "@/server/academy-hub.functions";
+import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
+import { AcademyHubTemplate } from "@/components/templates/academy-hub";
+import { ACADEMY_HUB_SLUGS, academyHubPath } from "@/lib/course-urls";
+
+function academyLangForSlug(slug: string | null | undefined): "en" | "es" | null {
+  if (!slug) return null;
+  if (slug === ACADEMY_HUB_SLUGS.en) return "en";
+  if (slug === ACADEMY_HUB_SLUGS.es) return "es";
+  return null;
+}
 
 /**
  * Dispatcher route for /p/{slug}.
@@ -107,15 +116,16 @@ export const Route = createFileRoute("/p/$slug")({
     } catch {
       linkTargets = [];
     }
-    let academyCourses: AcademyCourseLink[] = [];
-    if (page.slug === "learningacademy") {
+    let academyHub: AcademyHubData | null = null;
+    const academyLang = academyLangForSlug(page.slug);
+    if (academyLang) {
       try {
-        academyCourses = await listAcademyCourses();
+        academyHub = await getAcademyHub({ data: { language: academyLang } });
       } catch {
-        academyCourses = [];
+        academyHub = null;
       }
     }
-    return { page, nearbyCities, city, linkTargets, academyCourses };
+    return { page, nearbyCities, city, linkTargets, academyHub };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -129,10 +139,19 @@ export const Route = createFileRoute("/p/$slug")({
     const title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
     const description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
 
-    // Hreflang — emit only when this page is part of an EN↔ES pair.
-    // The other-language slug is fetched in the loader so we always have it
-    // available here. (Skipped on simple en pages with no Spanish twin.)
-    const hreflang = buildHreflangLinks(p);
+    // Hreflang — emit the EN↔ES pair for the academy hubs and any other
+    // page that has a known twin. (Skipped on simple en pages with no twin.)
+    const academyLang = academyLangForSlug(p.slug);
+    let hreflang: Array<{ lang: string; href: string }> | undefined;
+    if (academyLang) {
+      hreflang = [
+        { lang: "en", href: `${SITE_URL}${academyHubPath("en")}` },
+        { lang: "es", href: `${SITE_URL}${academyHubPath("es")}` },
+        { lang: "x-default", href: `${SITE_URL}${academyHubPath("en")}` },
+      ];
+    } else {
+      hreflang = buildHreflangLinks(p);
+    }
 
     const meta = buildMeta({
       title,
@@ -140,7 +159,7 @@ export const Route = createFileRoute("/p/$slug")({
       path,
       canonicalPath,
       image: p.cover_image_url || p.hero_image_url || undefined,
-      type: isArticleType(p.template_type) ? "article" : "website",
+      type: isArticleType(p.template_type) || academyLang ? "article" : "website",
       hreflang,
     });
 
@@ -190,9 +209,10 @@ export const Route = createFileRoute("/p/$slug")({
       scripts.push(ldJsonScript(localBiz));
     }
 
-    // CollectionPage + ItemList for the learning academy hub
-    const courses = (loaderData as { academyCourses?: AcademyCourseLink[] }).academyCourses;
-    if (p.slug === "learningacademy" && courses && courses.length > 0) {
+    // CollectionPage + ItemList for the learning academy hubs
+    const hub = (loaderData as { academyHub?: AcademyHubData | null }).academyHub;
+    if (academyLang && hub && hub.total > 0) {
+      const allCourses = hub.categories.flatMap((g) => g.courses);
       scripts.push(
         ldJsonScript({
           "@context": "https://schema.org",
@@ -200,14 +220,14 @@ export const Route = createFileRoute("/p/$slug")({
           name: titleBase,
           description,
           url: `${SITE_URL}${canonicalPath}`,
-          inLanguage: p.language,
+          inLanguage: academyLang,
           mainEntity: {
             "@type": "ItemList",
-            numberOfItems: courses.length,
-            itemListElement: courses.map((c, i) => ({
+            numberOfItems: allCourses.length,
+            itemListElement: allCourses.map((c, i) => ({
               "@type": "ListItem",
               position: i + 1,
-              url: `${SITE_URL}/p/${c.slug}`,
+              url: `${SITE_URL}/p/course/${c.slug}`,
               name: c.title,
             })),
           },
@@ -276,7 +296,22 @@ function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city, linkTargets } = Route.useLoaderData();
+  const { page, nearbyCities, city, linkTargets, academyHub } = Route.useLoaderData();
+
+  // Academy hubs (en + es) override their stored template_type so they always
+  // render the rich hub UI even though the row's template_type may be
+  // "resource" or "spanish_resource".
+  const academyLang = academyLangForSlug(page.slug);
+  if (academyLang && academyHub) {
+    return (
+      <AcademyHubTemplate
+        page={page}
+        hub={academyHub}
+        lang={academyLang}
+        twinPath={academyHubPath(academyLang === "en" ? "es" : "en")}
+      />
+    );
+  }
 
   switch (page.template_type) {
     case "host_acq_city":
