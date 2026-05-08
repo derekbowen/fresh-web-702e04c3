@@ -149,7 +149,7 @@ function ClickReportPage() {
                   </td>
                   <td className="px-4 py-2 text-muted-foreground">
                     <a
-                      href={`/pool-rental/${r.to_city_slug}`}
+                      href={`/s?address=${encodeURIComponent(r.to_city_slug)}`}
                       target="_blank"
                       rel="noreferrer"
                       className="hover:text-primary hover:underline"

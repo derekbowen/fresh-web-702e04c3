@@ -297,7 +297,7 @@ function GiggsterCityPage() {
       <p>
         Across a typical {city.name} season of 40–60 bookings, the fee delta
         compounds. Run your specific {city.name} numbers in the{" "}
-        <a href="https://www.poolrentalnearme.com/p/earnings-calculator">
+        <a href="/p/earnings-calculator">
           earnings calculator
         </a>
         .
@@ -397,23 +397,14 @@ function GiggsterCityPage() {
 
       <h2 id="local-demand">Live {city.name} pool-rental demand</h2>
       <p>
-        See current {city.name} pool inventory and intent on the{" "}
-        <Link
-          to="/pool-rental/$city"
-          params={{ city: city.slug }}
+        See current {city.name} pool inventory on the{" "}
+        <a
+          href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`}
           className="text-primary underline"
         >
-          Pool Rental Near Me {city.name} hub
-        </Link>
-        . If you want the local legal context first, read the{" "}
-        <Link
-          to="/pool-rental-laws/$city"
-          params={{ city: city.slug }}
-          className="text-primary underline"
-        >
-          {city.name} pool rental laws guide
-        </Link>{" "}
-        before you list.
+          {city.name} pool search
+        </a>
+        . Browse what locals are renting and how hosts price their hours.
       </p>
 
       <CTAMid />
@@ -440,7 +431,7 @@ function GiggsterCityPage() {
           </li>
           <li>
             Run the{" "}
-            <a href="https://www.poolrentalnearme.com/p/learningacademy">
+            <a href="/p/learningacademy">
               Pool Host Academy
             </a>{" "}
             intake modules to optimize your PRNM recreational listing — photo
@@ -467,7 +458,7 @@ function GiggsterCityPage() {
           </li>
           <li>
             Run the{" "}
-            <a href="https://www.poolrentalnearme.com/p/learningacademy">
+            <a href="/p/learningacademy">
               Pool Host Academy
             </a>{" "}
             intake modules to optimize photos, amenity upsells, waiver setup,
@@ -561,7 +552,7 @@ function GiggsterCityPage() {
           <strong>$2,000,000 PRNM general liability insurance</strong> — PRNM
           Corp's Business Owner's Policy through Hartford Underwriters. Full
           terms in the{" "}
-          <a href="https://www.poolrentalnearme.com/terms-of-service">
+          <a href="/terms-of-service">
             Pool Rental Near Me Terms of Service
           </a>
           .

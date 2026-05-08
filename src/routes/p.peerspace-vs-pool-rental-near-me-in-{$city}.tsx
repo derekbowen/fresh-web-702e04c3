@@ -145,7 +145,7 @@ function PeerspaceCityPage() {
       <p>
         Across a 50-booking {city.name} summer season, that's $1,500 in fee
         savings. Run your specific {city.name} numbers in the{" "}
-        <a href="https://www.poolrentalnearme.com/p/earnings-calculator">
+        <a href="/p/earnings-calculator">
           earnings calculator
         </a>.
       </p>
@@ -199,7 +199,7 @@ function PeerspaceCityPage() {
         <li>Set your {city.name} hourly rate ($45–$150 is the typical band).</li>
         <li>
           Run the{" "}
-          <a href="https://www.poolrentalnearme.com/p/learningacademy">
+          <a href="/p/learningacademy">
             Pool Host Academy
           </a>{" "}
           intake to optimize your listing.
