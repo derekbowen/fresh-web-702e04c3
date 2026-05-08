@@ -161,21 +161,76 @@ function AdminHeroBackfillPage() {
           </p>
         </div>
 
+        <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <label className="block text-xs">
+            <span className="text-muted-foreground">Batch size</span>
+            <input
+              type="number" min={1} max={100} value={batchSize}
+              disabled={running}
+              onChange={(e) => setBatchSize(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+              className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5"
+            />
+          </label>
+          <label className="block text-xs">
+            <span className="text-muted-foreground">Concurrency</span>
+            <input
+              type="number" min={1} max={8} value={concurrency}
+              disabled={running}
+              onChange={(e) => setConcurrency(Math.max(1, Math.min(8, Number(e.target.value) || 1)))}
+              className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5"
+            />
+          </label>
+          {remaining !== null && (
+            <div className="col-span-2 rounded-md border border-border bg-card p-2 text-xs">
+              <div className="text-muted-foreground">Remaining</div>
+              <div className="text-lg font-semibold">{remaining}</div>
+              {stoppedReason && (
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  last stop: {stoppedReason}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="flex flex-wrap gap-3">
           <button
             disabled={running}
-            onClick={() => run(false)}
+            onClick={() => startRun(false, false)}
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
-            {running ? "Running…" : "Backfill missing only"}
+            {running && !autoContinue ? "Running…" : "Run one batch (missing)"}
           </button>
           <button
             disabled={running}
-            onClick={() => run(true)}
+            onClick={() => startRun(false, true)}
+            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            {running && autoContinue ? "Auto-running…" : "Run until done (missing)"}
+          </button>
+          <button
+            disabled={running}
+            onClick={() => startRun(true, true)}
             className="inline-flex items-center justify-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-secondary disabled:opacity-50"
           >
-            {running ? "Running…" : "Force re-scrape all"}
+            Force re-scrape (until done)
           </button>
+          {!running && remaining !== null && remaining > 0 && (
+            <button
+              onClick={continueOneBatch}
+              className="inline-flex items-center justify-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-secondary"
+            >
+              Continue next batch
+            </button>
+          )}
+          {running && autoContinue && (
+            <button
+              onClick={stop}
+              className="inline-flex items-center justify-center rounded-full border border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive hover:bg-destructive/20"
+            >
+              Stop after current batch
+            </button>
+          )}
           {results.length > 0 && (
             <button
               onClick={downloadMissesCsv}
