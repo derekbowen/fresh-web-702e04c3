@@ -46,13 +46,11 @@ const URL_OVERRIDES: Record<string, string> = {
  * not include the state suffix.
  */
 export async function harvestSourceUrls(): Promise<Map<string, string>> {
-  const res = await fetch("https://www.poolrentalnearme.com/p/all-locations", {
-    headers: { "User-Agent": "Mozilla/5.0 LovableHeroBackfill/1.0" },
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch directory: ${res.status} ${res.statusText}`);
-  }
-  const html = await res.text();
+  const html = await fetchWithBackoff(
+    "https://www.poolrentalnearme.com/p/all-locations",
+    { headers: { "User-Agent": "Mozilla/5.0 LovableHeroBackfill/1.0" } },
+    { maxAttempts: 5 },
+  );
 
   const map = new Map<string, string>();
   // Match both URL templates listed in the directory:
@@ -174,14 +172,74 @@ export function normalizeHeroUrl(url: string): string {
   }
 }
 
-async function logAttempt(r: BackfillResult) {
-  await supabaseAdmin.from("cities_hero_backfill_log").insert({
-    city_slug: r.slug,
-    source_url: r.source_url,
-    status: r.status,
-    image_url: r.hero_url ?? null,
-    error: r.error ?? null,
-  });
+/* ─────────────────────────── retry / backoff helpers ────────────────────── */
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+type BackoffOpts = { maxAttempts?: number; baseDelayMs?: number; maxDelayMs?: number };
+
+function jitteredDelay(attempt: number, base = 800, max = 30_000) {
+  const exp = Math.min(max, base * 2 ** (attempt - 1));
+  return Math.floor(exp / 2 + Math.random() * (exp / 2));
+}
+
+function parseRetryAfter(h: string | null | undefined): number | null {
+  if (!h) return null;
+  const n = Number(h);
+  if (Number.isFinite(n)) return Math.max(0, n * 1000);
+  const t = Date.parse(h);
+  if (Number.isFinite(t)) return Math.max(0, t - Date.now());
+  return null;
+}
+
+/** Fetch a URL with exponential backoff on 429/5xx/network errors. Returns body text on success. */
+export async function fetchWithBackoff(
+  url: string,
+  init: RequestInit = {},
+  opts: BackoffOpts = {},
+): Promise<string> {
+  const max = opts.maxAttempts ?? 5;
+  let lastErr: unknown = null;
+  for (let attempt = 1; attempt <= max; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      if (res.ok) return await res.text();
+      if (res.status === 429 || res.status >= 500) {
+        const ra = parseRetryAfter(res.headers.get("retry-after"));
+        const wait = ra ?? jitteredDelay(attempt, opts.baseDelayMs, opts.maxDelayMs);
+        if (attempt < max) { await sleep(wait); continue; }
+        throw new Error(`HTTP ${res.status} after ${attempt} attempts`);
+      }
+      throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    } catch (e) {
+      lastErr = e;
+      if (attempt >= max) break;
+      await sleep(jitteredDelay(attempt, opts.baseDelayMs, opts.maxDelayMs));
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
+}
+
+/** Detect rate-limit / transient errors from the Firecrawl SDK. */
+function isRetryableScrapeError(e: unknown): { retry: boolean; waitMs?: number } {
+  const msg = (e instanceof Error ? e.message : String(e)) || "";
+  const status =
+    (e as { status?: number; statusCode?: number; response?: { status?: number } })?.status ??
+    (e as { statusCode?: number })?.statusCode ??
+    (e as { response?: { status?: number } })?.response?.status ??
+    null;
+  const m = msg.match(/\b(429|5\d\d)\b/);
+  const code = status ?? (m ? Number(m[1]) : null);
+  if (code === 429 || (typeof code === "number" && code >= 500)) {
+    const raMatch = msg.match(/retry[-\s]?after[:\s]+(\d+)/i);
+    const waitMs = raMatch ? Number(raMatch[1]) * 1000 : undefined;
+    return { retry: true, waitMs };
+  }
+  // Network-y / timeout errors are also retryable.
+  if (/timeout|ETIMEDOUT|ECONNRESET|ENOTFOUND|fetch failed|network/i.test(msg)) {
+    return { retry: true };
+  }
+  return { retry: false };
 }
 
 async function scrapeOne(
@@ -190,41 +248,49 @@ async function scrapeOne(
   cityName: string,
   sourceUrl: string,
 ): Promise<BackfillResult> {
-  try {
-    const res = await client.scrape(sourceUrl, {
-      formats: ["rawHtml"],
-      onlyMainContent: false,
-      waitFor: 3000,
-    });
-    const html =
-      (res as { rawHtml?: string }).rawHtml ??
-      (res as { data?: { rawHtml?: string } }).data?.rawHtml ??
-      "";
-    const heroRaw = extractHeroUrl(html);
-    if (!heroRaw) {
-      return { slug: citySlug, name: cityName, source_url: sourceUrl, status: "miss" };
-    }
-    const hero = normalizeHeroUrl(heroRaw);
-    const { error } = await supabaseAdmin
-      .from("cities")
-      .update({ hero_image_url: hero })
-      .eq("slug", citySlug);
-    if (error) {
+  const maxAttempts = 5;
+  let lastError: string | null = null;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await client.scrape(sourceUrl, {
+        formats: ["rawHtml"],
+        onlyMainContent: false,
+        waitFor: 3000,
+      });
+      const html =
+        (res as { rawHtml?: string }).rawHtml ??
+        (res as { data?: { rawHtml?: string } }).data?.rawHtml ??
+        "";
+      const heroRaw = extractHeroUrl(html);
+      if (!heroRaw) {
+        return { slug: citySlug, name: cityName, source_url: sourceUrl, status: "miss" };
+      }
+      const hero = normalizeHeroUrl(heroRaw);
+      const { error } = await supabaseAdmin
+        .from("cities")
+        .update({ hero_image_url: hero })
+        .eq("slug", citySlug);
+      if (error) {
+        return {
+          slug: citySlug, name: cityName, source_url: sourceUrl,
+          status: "error", error: error.message,
+        };
+      }
       return {
         slug: citySlug, name: cityName, source_url: sourceUrl,
-        status: "error", error: error.message,
+        status: "ok", hero_url: hero,
       };
+    } catch (e) {
+      lastError = e instanceof Error ? e.message : String(e);
+      const { retry, waitMs } = isRetryableScrapeError(e);
+      if (!retry || attempt >= maxAttempts) break;
+      await sleep(waitMs ?? jitteredDelay(attempt, 1000, 30_000));
     }
-    return {
-      slug: citySlug, name: cityName, source_url: sourceUrl,
-      status: "ok", hero_url: hero,
-    };
-  } catch (e) {
-    return {
-      slug: citySlug, name: cityName, source_url: sourceUrl,
-      status: "error", error: e instanceof Error ? e.message : String(e),
-    };
   }
+  return {
+    slug: citySlug, name: cityName, source_url: sourceUrl,
+    status: "error", error: lastError ?? "Unknown error",
+  };
 }
 
 export async function backfillCityHeroes(opts: {
@@ -253,13 +319,28 @@ export async function backfillCityHeroes(opts: {
   if (error) throw new Error(`Failed to load cities: ${error.message}`);
   if (!cities?.length) return { results: [], summary: { total: 0 } };
 
-  const concurrency = 3;
+  async function logAttempt(r: BackfillResult) {
+    await supabaseAdmin.from("cities_hero_backfill_log").insert({
+      city_slug: r.slug,
+      source_url: r.source_url,
+      status: r.status,
+      image_url: r.hero_url ?? null,
+      error: r.error ?? null,
+    });
+  }
+
+  // Lower default concurrency to play nicer with Firecrawl rate limits.
+  const concurrency = 2;
   const results: BackfillResult[] = [];
   let cursor = 0;
+  // Shared cooldown — when any worker hits 429, others briefly back off too.
+  let cooldownUntil = 0;
   async function worker() {
     while (cursor < cities!.length) {
       const i = cursor++;
       const c = cities![i];
+      const now = Date.now();
+      if (cooldownUntil > now) await sleep(cooldownUntil - now);
       const url = resolveSourceUrl(c.slug, c.state_code, directory);
       let r: BackfillResult;
       if (!url) {
@@ -269,11 +350,13 @@ export async function backfillCityHeroes(opts: {
         };
       } else {
         r = await scrapeOne(client, c.slug, c.name, url);
+        if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
+          cooldownUntil = Date.now() + 10_000;
+        }
       }
       results.push(r);
-      // Best-effort log; don't fail the run if logging fails.
       try { await logAttempt(r); } catch { /* swallow */ }
-      await new Promise((res) => setTimeout(res, 150));
+      await sleep(300);
     }
   }
   await Promise.all(Array.from({ length: concurrency }, worker));
