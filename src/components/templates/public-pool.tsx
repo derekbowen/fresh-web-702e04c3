@@ -34,7 +34,7 @@ export function PublicPoolTemplate({
         <BreadcrumbsWithSchema
           items={[
             { name: "Home", path: "/" },
-            { name: "Public pools", path: "/p/public-pools" },
+            { name: "Public pools", path: "/public-pools" },
             { name: title, path: page.url_path },
           ]}
         />
