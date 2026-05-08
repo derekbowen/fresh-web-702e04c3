@@ -108,8 +108,8 @@ export function FooterBlock({ city }: { city?: string }) {
       <hr />
       <h2>🌐 Connect with Pool Rental Near Me</h2>
       <ul>
-        <li>📸 <strong>Instagram:</strong> <a href="https://instagram.com/poolrentalnearme">@poolrentalnearme</a></li>
-        <li>👍 <strong>Facebook:</strong> <a href="https://facebook.com/poolrentalnearme">/poolrentalnearme</a></li>
+        <li>📸 <strong>Instagram:</strong> <a href="https://www.instagram.com/poolrentalnearme">@poolrentalnearme</a></li>
+        <li>👍 <strong>Facebook:</strong> <a href="https://www.facebook.com/poolrentalnearme">/poolrentalnearme</a></li>
         <li>💼 <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/derekcbowen/">Derek Bowen</a></li>
       </ul>
       <hr />

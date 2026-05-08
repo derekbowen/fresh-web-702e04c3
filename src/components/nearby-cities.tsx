@@ -21,6 +21,12 @@ export function NearbyCities({
 }: Props) {
   if (!cities || cities.length === 0) return null;
 
+  // If any city carries a pre-validated linkSlug, prefer those (they point to
+  // verified-published pages). Otherwise fall back to prefix+slug.
+  const hasValidated = cities.some((c) => c.linkSlug);
+  const renderable = hasValidated ? cities.filter((c) => c.linkSlug) : cities;
+  if (renderable.length === 0) return null;
+
   return (
     <section className="mt-12 border-t border-border pt-8">
       <h2 className="text-xl font-semibold text-foreground">{heading}</h2>
@@ -28,8 +34,8 @@ export function NearbyCities({
         <p className="mt-1 text-sm text-muted-foreground">{subheading}</p>
       )}
       <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {cities.map((c) => {
-          const slug = `${slugPrefix}${c.slug}`;
+        {renderable.map((c) => {
+          const slug = c.linkSlug ?? `${slugPrefix}${c.slug}`;
           const label =
             c.state_code && !c.slug.endsWith(`-${c.state_code.toLowerCase()}`)
               ? `${c.name}, ${c.state_code}`

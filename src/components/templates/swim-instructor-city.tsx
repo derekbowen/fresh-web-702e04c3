@@ -102,34 +102,40 @@ export function SwimInstructorCityTemplate({
               </a>
             </div>
 
-            {nearbyCities.length > 0 && (
-              <>
-                <h3 className="mt-8 text-base font-semibold text-foreground">
-                  Top swim instructor markets near {cityName}
-                </h3>
-                <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-                  {nearbyCities.slice(0, 5).map((c) => {
-                    const slug = `swim-instructor-pool-rental-${c.slug}`;
-                    const label =
-                      c.state_code && !c.slug.endsWith(`-${c.state_code.toLowerCase()}`)
-                        ? `${c.name}, ${c.state_code}`
-                        : c.name;
-                    return (
-                      <li key={c.slug}>
-                        <Link
-                          to="/p/$slug"
-                          params={{ slug }}
-                          className="block rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
-                          title={`Rent a pool to teach swim lessons in ${label}`}
-                        >
-                          Swim lessons in {label}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
-            )}
+            {(() => {
+              const list = nearbyCities.some((c) => c.linkSlug)
+                ? nearbyCities.filter((c) => c.linkSlug)
+                : nearbyCities;
+              if (list.length === 0) return null;
+              return (
+                <>
+                  <h3 className="mt-8 text-base font-semibold text-foreground">
+                    Top swim instructor markets near {cityName}
+                  </h3>
+                  <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+                    {list.slice(0, 5).map((c) => {
+                      const slug = c.linkSlug ?? `swim-instructor-pool-rental-${c.slug}`;
+                      const label =
+                        c.state_code && !c.slug.endsWith(`-${c.state_code.toLowerCase()}`)
+                          ? `${c.name}, ${c.state_code}`
+                          : c.name;
+                      return (
+                        <li key={c.slug}>
+                          <Link
+                            to="/p/$slug"
+                            params={{ slug }}
+                            className="block rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
+                            title={`Rent a pool to teach swim lessons in ${label}`}
+                          >
+                            Swim lessons in {label}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              );
+            })()}
           </div>
         </section>
 
