@@ -35,6 +35,7 @@ import { SwimInstructorCityTemplate } from "@/components/templates/swim-instruct
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
+import { listAcademyCourses, type AcademyCourseLink } from "@/server/academy-hub.functions";
 
 /**
  * Dispatcher route for /p/{slug}.
@@ -106,7 +107,15 @@ export const Route = createFileRoute("/p/$slug")({
     } catch {
       linkTargets = [];
     }
-    return { page, nearbyCities, city, linkTargets };
+    let academyCourses: AcademyCourseLink[] = [];
+    if (page.slug === "learningacademy") {
+      try {
+        academyCourses = await listAcademyCourses();
+      } catch {
+        academyCourses = [];
+      }
+    }
+    return { page, nearbyCities, city, linkTargets, academyCourses };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -179,6 +188,31 @@ export const Route = createFileRoute("/p/$slug")({
     const localBiz = localBusinessForContentPage(p);
     if (localBiz) {
       scripts.push(ldJsonScript(localBiz));
+    }
+
+    // CollectionPage + ItemList for the learning academy hub
+    const courses = (loaderData as { academyCourses?: AcademyCourseLink[] }).academyCourses;
+    if (p.slug === "learningacademy" && courses && courses.length > 0) {
+      scripts.push(
+        ldJsonScript({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: titleBase,
+          description,
+          url: `${SITE_URL}${canonicalPath}`,
+          inLanguage: p.language,
+          mainEntity: {
+            "@type": "ItemList",
+            numberOfItems: courses.length,
+            itemListElement: courses.map((c, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              url: `${SITE_URL}/p/${c.slug}`,
+              name: c.title,
+            })),
+          },
+        }),
+      );
     }
 
     return { ...meta, scripts };
