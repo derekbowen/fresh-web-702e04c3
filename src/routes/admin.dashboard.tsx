@@ -297,3 +297,133 @@ function AdminDashboard() {
     </AdminLayout>
   );
 }
+
+function PendingDiagnosticsSection({ diagnostics }: { diagnostics: DashboardStats["pendingDiagnostics"] }) {
+  const [busy, setBusy] = React.useState<string | null>(null);
+  const [failedFor, setFailedFor] = React.useState<string | null>(null);
+  const [failed, setFailed] = React.useState<FailedPage[] | null>(null);
+  const [msg, setMsg] = React.useState<string | null>(null);
+
+  if (!diagnostics || diagnostics.length === 0) return null;
+
+  async function retry(t: string) {
+    setBusy(t); setMsg(null);
+    try {
+      const r = await retryPendingTemplate({ data: { template_type: t, limit: 500 } });
+      setMsg(`Re-queued ${r.retried} pending pages for ${t}.`);
+    } catch (e: any) {
+      setMsg(e?.message || "Retry failed");
+    } finally { setBusy(null); }
+  }
+  async function viewFailed(t: string) {
+    setBusy(t); setFailedFor(t); setFailed(null);
+    try {
+      const list = await listPendingFailures({ data: { template_type: t, limit: 100 } });
+      setFailed(list);
+    } catch (e: any) {
+      setMsg(e?.message || "Load failed");
+    } finally { setBusy(null); }
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="text-xl font-semibold">Pending queue diagnostics</h2>
+      <p className="text-xs text-muted-foreground">Templates with &gt;10 pending pages. Errors come from content_plan.last_error joined by slug.</p>
+      {msg && <div className="mt-2 rounded border border-border bg-muted/30 p-2 text-xs">{msg}</div>}
+      <div className="mt-3 space-y-3">
+        {diagnostics.map((d) => (
+          <div key={d.template_type || "(none)"} className="rounded-xl border border-border bg-card p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div className="font-mono text-sm font-bold">{d.template_type || "(none)"}</div>
+                <div className="text-xs text-muted-foreground">
+                  {d.pending} pending · {d.missing_body} missing body · {d.missing_title} missing title · {d.missing_meta} missing meta · {d.missing_slug} missing slug
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => retry(d.template_type || "")} disabled={busy === d.template_type} className="rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+                  {busy === d.template_type ? "…" : "Retry all pending"}
+                </button>
+                <button onClick={() => viewFailed(d.template_type || "")} className="rounded-full border border-border px-3 py-1.5 text-xs font-semibold">
+                  View failed
+                </button>
+              </div>
+            </div>
+            {d.top_errors.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs">
+                {d.top_errors.map((e, i) => (
+                  <li key={i} className="flex gap-2"><span className="rounded bg-red-500/15 px-1.5 font-bold text-red-700 dark:text-red-300">{e.count}×</span><span className="text-muted-foreground">{e.reason}</span></li>
+                ))}
+              </ul>
+            )}
+            {failedFor === d.template_type && failed && (
+              <div className="mt-3 max-h-64 overflow-auto rounded border border-border bg-background">
+                <table className="w-full text-xs">
+                  <thead className="bg-muted/50 text-left"><tr><th className="px-2 py-1">Slug</th><th className="px-2 py-1">Status</th><th className="px-2 py-1">Last error</th></tr></thead>
+                  <tbody>
+                    {failed.map((p) => (
+                      <tr key={p.slug} className="border-t border-border">
+                        <td className="px-2 py-1 font-mono">{p.slug}</td>
+                        <td className="px-2 py-1">{p.status}</td>
+                        <td className="px-2 py-1 text-muted-foreground">{p.last_error || "—"}</td>
+                      </tr>
+                    ))}
+                    {failed.length === 0 && <tr><td colSpan={3} className="px-2 py-3 text-center text-muted-foreground">No pending pages.</td></tr>}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SpanishEngineSection({ spanish, onQueued }: { spanish: DashboardStats["spanish"]; onQueued: () => void }) {
+  const [count, setCount] = React.useState(100);
+  const [busy, setBusy] = React.useState(false);
+  const [msg, setMsg] = React.useState<string | null>(null);
+
+  async function queue() {
+    setBusy(true); setMsg(null);
+    try {
+      const r = await queueSpanishCityBatch({ data: { count } });
+      setMsg(`Queued ${r.inserted} new Spanish city plan rows (skipped ${r.skipped} already covered).`);
+      onQueued();
+    } catch (e: any) {
+      setMsg(e?.message || "Queue failed");
+    } finally { setBusy(false); }
+  }
+
+  const queuedPct = spanish.cities_eligible > 0
+    ? Math.round((spanish.cities_with_es / spanish.cities_eligible) * 100)
+    : 0;
+
+  return (
+    <section className="mt-8 rounded-xl border border-emerald-500/40 bg-emerald-500/5 p-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Spanish content engine</h2>
+        <span className="text-xs text-muted-foreground">{queuedPct}% city coverage</span>
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4 text-sm">
+        <div><div className="text-xs uppercase text-muted-foreground">Spanish pages</div><div className="font-bold">{spanish.pages_published}/{spanish.pages_total}</div></div>
+        <div><div className="text-xs uppercase text-muted-foreground">Pending</div><div className="font-bold">{spanish.pages_pending}</div></div>
+        <div><div className="text-xs uppercase text-muted-foreground">Plan rows pending</div><div className="font-bold">{spanish.plan_pending}</div></div>
+        <div><div className="text-xs uppercase text-muted-foreground">Cities w/ ES</div><div className="font-bold">{spanish.cities_with_es}/{spanish.cities_eligible}</div></div>
+      </div>
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+        <div className="h-full bg-emerald-500" style={{ width: `${queuedPct}%` }} />
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <label className="text-xs text-muted-foreground">Cities to queue:</label>
+        <input type="number" min={1} max={500} value={count} onChange={(e) => setCount(Math.max(1, Math.min(500, Number(e.target.value) || 0)))} className="w-24 rounded border border-border bg-background px-2 py-1 text-sm" />
+        <button onClick={queue} disabled={busy} className="rounded-full bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-50">
+          {busy ? "Queueing…" : "Generate Spanish city batch"}
+        </button>
+        <span className="text-xs text-muted-foreground">Sorted by population, skips existing.</span>
+      </div>
+      {msg && <div className="mt-2 text-xs">{msg}</div>}
+    </section>
+  );
+}
