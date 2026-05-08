@@ -2696,6 +2696,7 @@ export type Database = {
           published_healthy: number | null
           published_last_7d: number | null
           published_medium: number | null
+          published_missing_body: number | null
           published_thin: number | null
           template_type: string | null
           total: number | null
