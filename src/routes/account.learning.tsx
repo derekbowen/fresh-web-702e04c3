@@ -9,6 +9,7 @@ import {
 } from "@/server/learning.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
+import { ACADEMY_HUB_PATH, coursePath } from "@/lib/course-urls";
 import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/account/learning")({
@@ -116,9 +117,9 @@ function MyLearningPage() {
           {inProgress.length === 0 ? (
             <p className="mt-2 text-sm text-muted-foreground">
               You aren't enrolled in any active courses.{" "}
-              <Link to="/academy" className="text-primary hover:underline">
+              <a href={ACADEMY_HUB_PATH} className="text-primary hover:underline">
                 Browse the Academy
-              </Link>
+              </a>
               .
             </p>
           ) : (
@@ -145,9 +146,9 @@ function MyLearningPage() {
                       <Progress value={pct} aria-label={`${pct}% complete`} />
                     </div>
                     <Button asChild size="sm" variant="outline" className="mt-3">
-                      <Link to="/academy/$slug" params={{ slug: r.course_slug }}>
+                      <a href={coursePath(r.course_slug)}>
                         Continue course
-                      </Link>
+                      </a>
                     </Button>
                   </li>
                 );

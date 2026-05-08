@@ -70,12 +70,12 @@ export const TOOLS: ToolMeta[] = [
   { slug: "pool-rental-profit", title: "Pool Rental Profit Calculator", summary: "Net profit from pool rentals", category: "Calculator", icon: "dollar" },
   { slug: "noise-distance", title: "Noise Distance Calculator", summary: "Check party noise compliance", category: "Calculator", icon: "volume" },
   { slug: "hoa-risk-checker", title: "HOA Risk Checker", summary: "Assess HOA compatibility", category: "Checklist", icon: "shield" },
-  { slug: "hoa-pool-rental-defense-kit", title: "HOA Pool Rental Defense Kit", summary: "Legal templates & strategies to protect your right to rent your pool", category: "Guide", icon: "shield", external: "https://www.poolrentalnearme.com/p/hoa-pool-rental-defense-kit" },
+  { slug: "hoa-pool-rental-defense-kit", title: "HOA Pool Rental Defense Kit", summary: "Legal templates & strategies to protect your right to rent your pool", category: "Guide", icon: "shield", external: "/p/hoa-pool-rental-defense-kit" },
   { slug: "amenity-revenue-guide", title: "Amenity & Upgrade Revenue Guide", summary: "Interactive ROI calculator for 249 pool amenities & upgrades", category: "Guide", icon: "star", external: "https://amenities.poolrentalnearme.com/" },
-  { slug: "pool-host-academy", title: "Pool Host Academy", summary: "Free courses and guides to become a top-rated pool host", category: "Guide", icon: "book", external: "/academy" },
+  { slug: "pool-host-academy", title: "Pool Host Academy", summary: "Free courses and guides to become a top-rated pool host", category: "Guide", icon: "book", external: "/p/learningacademy" },
   { slug: "pool-host-community", title: "Pool Host Community", summary: "Connect with other pool hosts, share tips & grow together", category: "Community", icon: "users", external: "https://connect.poolrentalnearme.com/community" },
-  { slug: "new-host-courses", title: "New Host Courses", summary: "Latest training courses for pool hosts", category: "Guide", icon: "book", external: "https://www.poolrentalnearme.com/p/learning-academy-new-courses" },
-  { slug: "cursos-en-espanol", title: "Cursos en Español", summary: "Aprende a rentar tu piscina — Spanish hosting guides", category: "Guide", icon: "book", external: "https://www.poolrentalnearme.com/p/aprende-a-rentar-tu-piscina" },
+  { slug: "new-host-courses", title: "New Host Courses", summary: "Latest training courses for pool hosts", category: "Guide", icon: "book", external: "/p/learningacademy" },
+  { slug: "cursos-en-espanol", title: "Cursos en Español", summary: "Aprende a rentar tu piscina — Spanish hosting guides", category: "Guide", icon: "book", external: "/p/learningacademy?lang=es" },
 ];
 
 export const CATEGORIES: { name: ToolCategory | "All"; label: string }[] = [

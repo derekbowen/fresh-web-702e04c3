@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { verifyCertificate } from "@/server/learning.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { coursePath } from "@/lib/course-urls";
 
 export const Route = createFileRoute("/verify/$uid")({
   loader: async ({ params }) => {
@@ -57,13 +58,12 @@ function VerifyPage() {
             <div>
               <dt className="text-muted-foreground">Course</dt>
               <dd className="text-base text-foreground">
-                <Link
-                  to="/academy/$slug"
-                  params={{ slug: cert.course_slug }}
+                <a
+                  href={coursePath(cert.course_slug)}
                   className="hover:text-primary hover:underline"
                 >
                   {cert.course_title}
-                </Link>
+                </a>
               </dd>
             </div>
             <div>

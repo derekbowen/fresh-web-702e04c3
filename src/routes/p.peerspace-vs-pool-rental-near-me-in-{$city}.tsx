@@ -13,6 +13,7 @@ import {
   articleJsonLd,
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
+import { absUrl } from "@/lib/site-origin";
 
 /**
  * Programmatic city variant of the Peerspace pillar page.
@@ -39,11 +40,11 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$c
       scripts: [
         articleJsonLd({ slug, title, description }),
         breadcrumbJsonLd([
-          { name: "Home", url: "https://www.poolrentalnearme.com/" },
-          { name: "Compare", url: "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me" },
+          { name: "Home", url: absUrl("/") },
+          { name: "Compare", url: absUrl("/p/peerspace-vs-pool-rental-near-me") },
           {
             name: `Peerspace vs PRNM in ${city.name}`,
-            url: `https://www.poolrentalnearme.com/p/${slug}`,
+            url: absUrl(`/p/${slug}`),
           },
         ]),
         faqJsonLd(buildFaqs(city).map((f) => ({ q: f.q, a: f.a }))),
@@ -159,14 +160,14 @@ function PeerspaceCityPage() {
         convert at a higher rate per impression.
       </p>
       <p>
-        See live {city.name} pool-rental demand on the{" "}
-        <Link to="/pool-rental/$city" params={{ city: city.slug }} className="text-primary underline">
-          Pool Rental Near Me {city.name} page
-        </Link>{" "}
-        and the{" "}
-        <Link to="/pool-rental-laws/$city" params={{ city: city.slug }} className="text-primary underline">
-          {city.name} pool rental laws guide
-        </Link>.
+        See live {city.name} pool-rental demand in{" "}
+        <a href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`} className="text-primary underline">
+          marketplace search
+        </a>{" "}
+        and review the{" "}
+        <a href="/p/elearning-academy-permit-licensing-requirements-pool-hosts" className="text-primary underline">
+          permit and licensing guide
+        </a>.
       </p>
 
       <h2>Insurance that actually fits a {city.state} residential pool</h2>
