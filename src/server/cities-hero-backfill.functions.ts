@@ -12,19 +12,17 @@ const inputSchema = z.object({
   concurrency: z.number().int().positive().max(8).optional(),
   excludeSlugs: z.array(z.string()).max(10000).optional(),
   maxDurationMs: z.number().int().positive().max(120_000).optional(),
+  generateFallback: z.boolean().optional(),
+  maxFallbacksPerBatch: z.number().int().positive().max(50).optional(),
 });
 
 export const runHeroBackfill = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) => inputSchema.parse(data))
   .handler(async ({ data, context }) => {
-    // Admin only.
     const { data: roleRow, error: roleErr } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", context.userId)
-      .eq("role", "admin")
-      .maybeSingle();
+      .from("user_roles").select("role")
+      .eq("user_id", context.userId).eq("role", "admin").maybeSingle();
     if (roleErr) throw new Error(roleErr.message);
     if (!roleRow) throw new Error("Admin role required");
 
@@ -36,5 +34,7 @@ export const runHeroBackfill = createServerFn({ method: "POST" })
       concurrency: data.concurrency,
       excludeSlugs: data.excludeSlugs,
       maxDurationMs: data.maxDurationMs,
+      generateFallback: data.generateFallback,
+      maxFallbacksPerBatch: data.maxFallbacksPerBatch,
     });
   });

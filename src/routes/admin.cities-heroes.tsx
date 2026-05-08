@@ -22,7 +22,7 @@ type Result = {
   slug: string;
   name: string;
   source_url: string | null;
-  status: "ok" | "miss" | "error" | "skipped";
+  status: "ok" | "miss" | "error" | "skipped" | "generated";
   hero_url?: string;
   error?: string;
 };
@@ -38,6 +38,8 @@ function AdminHeroBackfillPage() {
   const [batchSize, setBatchSize] = useState(25);
   const [concurrency, setConcurrency] = useState(2);
   const [forceMode, setForceMode] = useState(false);
+  const [generateFallback, setGenerateFallback] = useState(true);
+  const [maxFallbacksPerBatch, setMaxFallbacksPerBatch] = useState(10);
 
   // Persist processed slugs across batches so force-mode runs are resumable
   // (non-force is naturally resumable because filled rows drop out of the query).
@@ -57,7 +59,7 @@ function AdminHeroBackfillPage() {
     const excludeSlugs = force ? Array.from(processedRef.current) : undefined;
     try {
       const out = await runHeroBackfill({
-        data: { force, batchSize, concurrency, excludeSlugs },
+        data: { force, batchSize, concurrency, excludeSlugs, generateFallback, maxFallbacksPerBatch },
       });
       // Append results.
       setResults((prev) => [...prev, ...out.results]);
@@ -183,6 +185,28 @@ function AdminHeroBackfillPage() {
               className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5"
             />
           </label>
+          <label className="block text-xs">
+            <span className="text-muted-foreground">Max AI fallbacks / batch</span>
+            <input
+              type="number" min={0} max={50} value={maxFallbacksPerBatch}
+              disabled={running || !generateFallback}
+              onChange={(e) => setMaxFallbacksPerBatch(Math.max(0, Math.min(50, Number(e.target.value) || 0)))}
+              className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5 disabled:opacity-50"
+            />
+          </label>
+          <label className="flex items-center gap-2 text-xs">
+            <input
+              type="checkbox" checked={generateFallback}
+              disabled={running}
+              onChange={(e) => setGenerateFallback(e.target.checked)}
+            />
+            <span>
+              <span className="font-medium">Generate AI hero on miss</span>
+              <span className="block text-muted-foreground">
+                When scrape can't find an image, generate one and upload it.
+              </span>
+            </span>
+          </label>
           {remaining !== null && (
             <div className="col-span-2 rounded-md border border-border bg-card p-2 text-xs">
               <div className="text-muted-foreground">Remaining</div>
@@ -285,9 +309,11 @@ function AdminHeroBackfillPage() {
                         className={
                           r.status === "ok"
                             ? "text-emerald-600"
-                            : r.status === "miss"
-                              ? "text-amber-600"
-                              : "text-destructive"
+                            : r.status === "generated"
+                              ? "text-sky-600"
+                              : r.status === "miss"
+                                ? "text-amber-600"
+                                : "text-destructive"
                         }
                       >
                         {r.status}
