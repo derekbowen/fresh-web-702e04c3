@@ -309,9 +309,11 @@ function AdminHeroBackfillPage() {
                         className={
                           r.status === "ok"
                             ? "text-emerald-600"
-                            : r.status === "miss"
-                              ? "text-amber-600"
-                              : "text-destructive"
+                            : r.status === "generated"
+                              ? "text-sky-600"
+                              : r.status === "miss"
+                                ? "text-amber-600"
+                                : "text-destructive"
                         }
                       >
                         {r.status}
