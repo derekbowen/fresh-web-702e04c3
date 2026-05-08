@@ -187,7 +187,7 @@ function PrivacyRequestPage() {
             <p className="text-xs text-muted-foreground">
               By submitting, you agree we may contact you to verify your
               identity before fulfilling the request. See our{" "}
-              <a href="/privacy-policy" className="underline">privacy policy</a>{" "}
+              <a href="/p/privacy-policy" className="underline">privacy policy</a>{" "}
               for details.
             </p>
           </form>

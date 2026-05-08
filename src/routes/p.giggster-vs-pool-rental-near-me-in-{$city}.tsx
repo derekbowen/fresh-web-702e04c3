@@ -553,7 +553,7 @@ function GiggsterCityPage() {
           <strong>$2,000,000 PRNM general liability insurance</strong> — PRNM
           Corp's Business Owner's Policy through Hartford Underwriters. Full
           terms in the{" "}
-          <a href="/terms-of-service">
+          <a href="/p/terms-of-service">
             Pool Rental Near Me Terms of Service
           </a>
           .

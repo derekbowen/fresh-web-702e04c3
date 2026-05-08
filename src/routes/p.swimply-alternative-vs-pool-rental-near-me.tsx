@@ -393,7 +393,7 @@ function SwimplyComparisonPage() {
           liability, $10K medical expenses per person, and a $150K STRETCH®
           PLUS property coverage blanket on every approved booking at no cost
           to the host. Full terms in our{" "}
-          <a href="/terms-of-service">
+          <a href="/p/terms-of-service">
             Terms of Service
           </a>
           .
