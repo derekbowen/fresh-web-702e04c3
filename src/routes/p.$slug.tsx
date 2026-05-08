@@ -89,8 +89,19 @@ export const Route = createFileRoute("/p/$slug")({
       page.template_type === "swim_instructor_city"
     ) {
       try {
+        const requirePathPrefix =
+          page.template_type === "host_acq_city"
+            ? "become-a-swimming-pool-host-"
+            : page.template_type === "swim_instructor_city"
+              ? "swim-instructor-pool-rental-"
+              : undefined;
         nearbyCities = await getNearbyCitiesForPage({
-          data: { templateType: page.template_type, slug: page.slug, limit: 6 },
+          data: {
+            templateType: page.template_type,
+            slug: page.slug,
+            limit: 6,
+            ...(requirePathPrefix ? { requirePathPrefix } : {}),
+          },
         });
       } catch {
         nearbyCities = [];
