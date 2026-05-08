@@ -59,7 +59,7 @@ function AdminHeroBackfillPage() {
     const excludeSlugs = force ? Array.from(processedRef.current) : undefined;
     try {
       const out = await runHeroBackfill({
-        data: { force, batchSize, concurrency, excludeSlugs },
+        data: { force, batchSize, concurrency, excludeSlugs, generateFallback, maxFallbacksPerBatch },
       });
       // Append results.
       setResults((prev) => [...prev, ...out.results]);
