@@ -215,6 +215,28 @@ function SiteFooterAdmin() {
   );
 }
 
+function SocialStatusBadge({ status, httpStatus, reason }: { status: string; httpStatus: number | null; reason?: string }) {
+  const tone =
+    status === "ok" ? "bg-emerald-100 text-emerald-800"
+    : status === "rewritten" ? "bg-blue-100 text-blue-800"
+    : status === "blocked" ? "bg-amber-100 text-amber-800"
+    : "bg-red-100 text-red-800";
+  const label =
+    status === "ok" ? "OK"
+    : status === "rewritten" ? "Rewritten ✓"
+    : status === "blocked" ? `Blocked (${httpStatus ?? "?"}) — likely live`
+    : status === "redirect_to_login" ? "Redirects to login (broken)"
+    : status === "not_found" ? `Not found (${httpStatus ?? "?"})`
+    : status === "invalid" ? "Invalid URL"
+    : status === "network_error" ? "Network error"
+    : status;
+  return (
+    <div className={`inline-block rounded px-2 py-0.5 text-xs ${tone}`} title={reason}>
+      {label}
+    </div>
+  );
+}
+
 function Field({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
     <div>
