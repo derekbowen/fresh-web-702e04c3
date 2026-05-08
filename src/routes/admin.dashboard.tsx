@@ -3,6 +3,7 @@ import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { getDashboardStats, type DashboardStats } from "@/server/admin-dashboard.functions";
+import { listPendingFailures, retryPendingTemplate, queueSpanishCityBatch, type FailedPage } from "@/server/admin-pending-actions.functions";
 import { AdminLayout, ADMIN_NAV_GROUPS } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/dashboard")({
