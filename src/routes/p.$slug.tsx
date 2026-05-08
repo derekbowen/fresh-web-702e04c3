@@ -35,7 +35,20 @@ import { SwimInstructorCityTemplate } from "@/components/templates/swim-instruct
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
-import { listAcademyCourses, type AcademyCourseLink } from "@/server/academy-hub.functions";
+import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
+import { AcademyHubTemplate } from "@/components/templates/academy-hub";
+import { ACADEMY_HUB_SLUGS, academyHubPath } from "@/lib/course-urls";
+
+const ACADEMY_HUB_SLUG_SET = new Set<string>([
+  ACADEMY_HUB_SLUGS.en,
+  ACADEMY_HUB_SLUGS.es,
+]);
+
+function academyLangForSlug(slug: string): "en" | "es" | null {
+  if (slug === ACADEMY_HUB_SLUGS.en) return "en";
+  if (slug === ACADEMY_HUB_SLUGS.es) return "es";
+  return null;
+}
 
 /**
  * Dispatcher route for /p/{slug}.

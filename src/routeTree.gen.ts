@@ -103,6 +103,7 @@ import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
 import { Route as PEsSlugRouteImport } from './routes/p.es.$slug'
+import { Route as PCourseSlugRouteImport } from './routes/p.course.$slug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
@@ -613,6 +614,11 @@ const PEsSlugRoute = PEsSlugRouteImport.update({
   path: '/p/es/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PCourseSlugRoute = PCourseSlugRouteImport.update({
+  id: '/p/course/$slug',
+  path: '/p/course/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -835,6 +841,7 @@ export interface FileRoutesByFullPath {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/course/$slug': typeof PCourseSlugRoute
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -953,6 +960,7 @@ export interface FileRoutesByTo {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/course/$slug': typeof PCourseSlugRoute
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -1072,6 +1080,7 @@ export interface FileRoutesById {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/course/$slug': typeof PCourseSlugRoute
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
@@ -1192,6 +1201,7 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/course/$slug'
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
@@ -1310,6 +1320,7 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/course/$slug'
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
@@ -1428,6 +1439,7 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/course/$slug'
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
@@ -1513,6 +1525,7 @@ export interface RootRouteChildren {
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   LSlugIdRoute: typeof LSlugIdRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  PCourseSlugRoute: typeof PCourseSlugRoute
   PEsSlugRoute: typeof PEsSlugRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
@@ -2189,6 +2202,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PEsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/course/$slug': {
+      id: '/p/course/$slug'
+      path: '/p/course/$slug'
+      fullPath: '/p/course/$slug'
+      preLoaderRoute: typeof PCourseSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -2548,6 +2568,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   LSlugIdRoute: LSlugIdRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  PCourseSlugRoute: PCourseSlugRoute,
   PEsSlugRoute: PEsSlugRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
