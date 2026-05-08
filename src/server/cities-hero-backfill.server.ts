@@ -138,18 +138,47 @@ export function resolveSourceUrl(
   return null;
 }
 
-/** Extract the first plausible hero image URL from rendered HTML. */
+/**
+ * Extract the first plausible hero image URL from rendered HTML.
+ *
+ * Supports multiple sources, in priority order:
+ *   1. og:image / twitter:image meta tags (cleanest signal of "the hero")
+ *   2. <link rel="preload" as="image"> (Next/TanStack hero hint)
+ *   3. sharetribe-assets imgix URLs (legacy listing photos)
+ *   4. Supabase Storage public URLs (city-heroes bucket / lovable uploads)
+ *   5. Generic large image URLs from common CDNs (imgix, cloudinary,
+ *      cloudfront, unsplash, lovable-uploads, supabase.co/storage)
+ */
 export function extractHeroUrl(html: string): string | null {
   if (!html) return null;
-  const re =
-    /https:\/\/sharetribe-assets\.imgix\.net\/[A-Za-z0-9._/-]+\?[^"'\s)]+/g;
-  const candidates: string[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) !== null) {
-    candidates.push(m[0].replace(/&amp;/g, "&").replace(/\\u0026/g, "&"));
-  }
-  if (!candidates.length) return null;
+  const decode = (s: string) =>
+    s.replace(/&amp;/g, "&").replace(/\\u0026/g, "&").replace(/&#x2F;/g, "/");
 
+  // 1. og:image / twitter:image
+  const metaRe =
+    /<meta[^>]+(?:property|name)=["'](?:og:image(?::secure_url)?|twitter:image(?::src)?)["'][^>]*content=["']([^"']+)["']/gi;
+  const metaRe2 =
+    /<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["'](?:og:image(?::secure_url)?|twitter:image(?::src)?)["']/gi;
+  for (const re of [metaRe, metaRe2]) {
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(html)) !== null) {
+      const u = decode(m[1]).trim();
+      if (/^https?:\/\//i.test(u) && !/favicon|logo|sprite|icon/i.test(u)) {
+        return u;
+      }
+    }
+  }
+
+  // 2. <link rel="preload" as="image" href="...">
+  const preloadRe =
+    /<link[^>]+rel=["']preload["'][^>]+as=["']image["'][^>]+href=["']([^"']+)["']/gi;
+  let pm: RegExpExecArray | null;
+  while ((pm = preloadRe.exec(html)) !== null) {
+    const u = decode(pm[1]).trim();
+    if (/^https?:\/\//i.test(u)) return u;
+  }
+
+  // Helper for sized URLs (imgix-style w=/h= query params).
   const isLargeEnough = (u: string) => {
     const wMatch = u.match(/[?&]w=(\d+)/);
     const hMatch = u.match(/[?&]h=(\d+)/);
@@ -157,10 +186,60 @@ export function extractHeroUrl(html: string): string | null {
     const h = hMatch ? Number(hMatch[1]) : 0;
     return w >= 800 || h >= 500;
   };
-  return candidates.find(isLargeEnough) || candidates[0];
+
+  // 3. Sharetribe imgix
+  const stRe =
+    /https:\/\/sharetribe-assets\.imgix\.net\/[A-Za-z0-9._/-]+\?[^"'\s)]+/g;
+  const stCandidates: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = stRe.exec(html)) !== null) stCandidates.push(decode(m[0]));
+  if (stCandidates.length) {
+    return stCandidates.find(isLargeEnough) || stCandidates[0];
+  }
+
+  // 4 + 5. Generic CDN / hero-ish URLs found anywhere in HTML.
+  const cdnRe =
+    /https:\/\/[A-Za-z0-9.-]+(?:imgix\.net|cloudinary\.com|cloudfront\.net|images\.unsplash\.com|supabase\.co\/storage\/v1\/object\/public|lovable-uploads|gstatic\.com\/images|googleusercontent\.com)\/[^"'\s)<>]+\.(?:jpe?g|png|webp|avif)(?:\?[^"'\s)<>]*)?/gi;
+  const cdn: string[] = [];
+  while ((m = cdnRe.exec(html)) !== null) {
+    const u = decode(m[0]);
+    if (!/favicon|logo|sprite|icon|avatar|profile/i.test(u)) cdn.push(u);
+  }
+  if (cdn.length) return cdn.find(isLargeEnough) || cdn[0];
+
+  // 6. Last resort: first large-looking <img src> on the page.
+  const imgRe =
+    /<img[^>]+src=["'](https?:\/\/[^"']+\.(?:jpe?g|png|webp|avif)(?:\?[^"']*)?)["'][^>]*>/gi;
+  while ((m = imgRe.exec(html)) !== null) {
+    const u = decode(m[1]);
+    if (!/favicon|logo|sprite|icon|avatar|profile/i.test(u)) return u;
+  }
+  return null;
+}
+
+/**
+ * Build the list of source URLs to try for a city, in priority order:
+ *   1. The resolved Sharetribe-style landing page (if any)
+ *   2. Our own rendered city page at /p/{slug} on the production site
+ *   3. The host-acquisition city page at /p/host-acquisition/{slug}
+ */
+export function buildSourceUrlCandidates(
+  citySlug: string,
+  primary: string | null,
+): string[] {
+  const own = `https://www.poolrentalnearme.com/p/${citySlug}`;
+  const hostAcq = `https://www.poolrentalnearme.com/p/host-acquisition/${citySlug}`;
+  const list = [primary, own, hostAcq].filter(
+    (u): u is string => !!u && typeof u === "string",
+  );
+  return Array.from(new Set(list));
 }
 
 export function normalizeHeroUrl(url: string): string {
+  // Only rewrite query params for imgix-backed URLs. Other CDNs (Supabase
+  // Storage, Cloudinary, lovable-uploads, og:image PNGs, etc.) don't honour
+  // these params and adding them can break the URL or cache.
+  if (!/imgix\.net/i.test(url)) return url;
   try {
     const u = new URL(url);
     u.searchParams.set("auto", "format");
@@ -249,49 +328,59 @@ async function scrapeOne(
   cityName: string,
   sourceUrl: string,
 ): Promise<BackfillResult> {
-  const maxAttempts = 5;
+  // Try the primary source first, then fall back to our own rendered city
+  // pages. Each candidate gets the full retry/backoff treatment.
+  const candidates = buildSourceUrlCandidates(citySlug, sourceUrl);
   let lastError: string | null = null;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const res = await client.scrape(sourceUrl, {
-        formats: ["rawHtml"],
-        onlyMainContent: false,
-        waitFor: 3000,
-      });
-      const html =
-        (res as { rawHtml?: string }).rawHtml ??
-        (res as { data?: { rawHtml?: string } }).data?.rawHtml ??
-        "";
-      const heroRaw = extractHeroUrl(html);
-      if (!heroRaw) {
-        return { slug: citySlug, name: cityName, source_url: sourceUrl, status: "miss" };
-      }
-      const hero = normalizeHeroUrl(heroRaw);
-      const { error } = await supabaseAdmin
-        .from("cities")
-        .update({ hero_image_url: hero })
-        .eq("slug", citySlug);
-      if (error) {
+  let lastUrl: string = sourceUrl;
+  const maxAttempts = 3;
+
+  for (const url of candidates) {
+    lastUrl = url;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const res = await client.scrape(url, {
+          formats: ["rawHtml"],
+          onlyMainContent: false,
+          waitFor: 3000,
+        });
+        const html =
+          (res as { rawHtml?: string }).rawHtml ??
+          (res as { data?: { rawHtml?: string } }).data?.rawHtml ??
+          "";
+        const heroRaw = extractHeroUrl(html);
+        if (!heroRaw) break; // try next candidate URL
+        const hero = normalizeHeroUrl(heroRaw);
+        const { error } = await supabaseAdmin
+          .from("cities")
+          .update({ hero_image_url: hero })
+          .eq("slug", citySlug);
+        if (error) {
+          return {
+            slug: citySlug, name: cityName, source_url: url,
+            status: "error", error: error.message,
+          };
+        }
         return {
-          slug: citySlug, name: cityName, source_url: sourceUrl,
-          status: "error", error: error.message,
+          slug: citySlug, name: cityName, source_url: url,
+          status: "ok", hero_url: hero,
         };
+      } catch (e) {
+        lastError = e instanceof Error ? e.message : String(e);
+        const { retry, waitMs } = isRetryableScrapeError(e);
+        if (!retry || attempt >= maxAttempts) break;
+        await sleep(waitMs ?? jitteredDelay(attempt, 1000, 30_000));
       }
-      return {
-        slug: citySlug, name: cityName, source_url: sourceUrl,
-        status: "ok", hero_url: hero,
-      };
-    } catch (e) {
-      lastError = e instanceof Error ? e.message : String(e);
-      const { retry, waitMs } = isRetryableScrapeError(e);
-      if (!retry || attempt >= maxAttempts) break;
-      await sleep(waitMs ?? jitteredDelay(attempt, 1000, 30_000));
     }
   }
-  return {
-    slug: citySlug, name: cityName, source_url: sourceUrl,
-    status: "error", error: lastError ?? "Unknown error",
-  };
+
+  if (lastError) {
+    return {
+      slug: citySlug, name: cityName, source_url: lastUrl,
+      status: "error", error: lastError,
+    };
+  }
+  return { slug: citySlug, name: cityName, source_url: lastUrl, status: "miss" };
 }
 
 export async function backfillCityHeroes(opts: {
@@ -385,17 +474,13 @@ export async function backfillCityHeroes(opts: {
         const now = Date.now();
         if (cooldownUntil > now) await sleep(cooldownUntil - now);
         const url = resolveSourceUrl(c.slug, c.state_code, directory);
-        let r: BackfillResult;
-        if (!url) {
-          r = {
-            slug: c.slug, name: c.name, source_url: null,
-            status: "skipped", error: "No source URL found in directory or overrides",
-          };
-        } else {
-          r = await scrapeOne(client, c.slug, c.name, url);
-          if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
-            cooldownUntil = Date.now() + 10_000;
-          }
+        // Even when no directory match exists, scrapeOne will still try our
+        // own rendered city pages (/p/{slug}, /p/host-acquisition/{slug}).
+        const seedUrl =
+          url ?? `https://www.poolrentalnearme.com/p/${c.slug}`;
+        let r = await scrapeOne(client, c.slug, c.name, seedUrl);
+        if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
+          cooldownUntil = Date.now() + 10_000;
         }
         // Fallback: generate an AI hero when scraping couldn't find one.
         r = await maybeFallback(r, c.state_code);
