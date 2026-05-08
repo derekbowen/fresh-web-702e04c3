@@ -22,7 +22,7 @@ export type BackfillResult = {
   slug: string;
   name: string;
   source_url: string | null;
-  status: "ok" | "miss" | "error" | "skipped";
+  status: "ok" | "miss" | "error" | "skipped" | "generated";
   hero_url?: string;
   error?: string;
 };
