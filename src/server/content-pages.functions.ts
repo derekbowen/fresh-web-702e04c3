@@ -99,7 +99,31 @@ export const lookupContentPage = createServerFn({ method: "GET" })
       list.find((r) => r.url_path === canonicalPath) ?? list[0] ?? null;
 
     if (page) {
+      // Honor an explicit redirect_to on the canonical row.
+      const redirectTo = (page as unknown as { redirect_to?: string | null }).redirect_to;
+      if (redirectTo && typeof redirectTo === "string") {
+        const target = redirectTo.startsWith("/p/")
+          ? redirectTo.slice(3)
+          : redirectTo;
+        if (target && target !== slug) {
+          return { kind: "redirect", canonicalSlug: target };
+        }
+      }
       return { kind: "found", page };
+    }
+
+    // Alias lookup: any published page that lists this slug in legacy_slugs[]
+    // becomes the canonical destination for a 301 redirect.
+    const { data: aliasRows } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .select("slug, url_path, priority")
+      .contains("legacy_slugs", [slug])
+      .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
+      .order("priority", { ascending: false })
+      .limit(1);
+    const alias = (aliasRows ?? [])[0] as { slug: string | null } | undefined;
+    if (alias?.slug && alias.slug !== slug) {
+      return { kind: "redirect", canonicalSlug: alias.slug };
     }
 
     // Fallback: many host-acq / swim-instructor slugs are stored with a

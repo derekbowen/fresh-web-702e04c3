@@ -71,6 +71,7 @@ import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
+import { Route as AdminRedirectAliasesRouteImport } from './routes/admin.redirect-aliases'
 import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPrivacyRequestsRouteImport } from './routes/admin.privacy-requests'
@@ -121,6 +122,7 @@ import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
+import { Route as ApiPublicHooksAliasBackfillRouteImport } from './routes/api/public/hooks/alias-backfill'
 import { Route as ApiPublicHooksAcademyHealthRouteImport } from './routes/api/public/hooks.academy-health'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 import { Route as PPoolProsCCategoryStateRouteImport } from './routes/p.pool-pros.c.$category.$state'
@@ -452,6 +454,11 @@ const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
   path: '/scrape-import',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRedirectAliasesRoute = AdminRedirectAliasesRouteImport.update({
+  id: '/redirect-aliases',
+  path: '/redirect-aliases',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRankTrackerRoute = AdminRankTrackerRouteImport.update({
   id: '/rank-tracker',
   path: '/rank-tracker',
@@ -713,6 +720,12 @@ const ApiPublicHooksCompetitorRadarScanRoute =
     path: '/api/public/hooks/competitor-radar-scan',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAliasBackfillRoute =
+  ApiPublicHooksAliasBackfillRouteImport.update({
+    id: '/api/public/hooks/alias-backfill',
+    path: '/api/public/hooks/alias-backfill',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksAcademyHealthRoute =
   ApiPublicHooksAcademyHealthRouteImport.update({
     id: '/api/public/hooks/academy-health',
@@ -799,6 +812,7 @@ export interface FileRoutesByFullPath {
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
+  '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -839,6 +853,7 @@ export interface FileRoutesByFullPath {
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
+  '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -917,6 +932,7 @@ export interface FileRoutesByTo {
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
+  '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -957,6 +973,7 @@ export interface FileRoutesByTo {
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
+  '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1036,6 +1053,7 @@ export interface FileRoutesById {
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
+  '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -1076,6 +1094,7 @@ export interface FileRoutesById {
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
+  '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1156,6 +1175,7 @@ export interface FileRouteTypes {
     | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
+    | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1196,6 +1216,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
+    | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1274,6 +1295,7 @@ export interface FileRouteTypes {
     | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
+    | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1314,6 +1336,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
+    | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1392,6 +1415,7 @@ export interface FileRouteTypes {
     | '/admin/privacy-requests'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
+    | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
     | '/admin/site-footer'
@@ -1432,6 +1456,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
+    | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/provider-ai-worker'
@@ -1516,6 +1541,7 @@ export interface RootRouteChildren {
   PEsSlugRoute: typeof PEsSlugRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
+  ApiPublicHooksAliasBackfillRoute: typeof ApiPublicHooksAliasBackfillRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1965,6 +1991,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminScrapeImportRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/redirect-aliases': {
+      id: '/admin/redirect-aliases'
+      path: '/redirect-aliases'
+      fullPath: '/admin/redirect-aliases'
+      preLoaderRoute: typeof AdminRedirectAliasesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/rank-tracker': {
       id: '/admin/rank-tracker'
       path: '/rank-tracker'
@@ -2315,6 +2348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksCompetitorRadarScanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/alias-backfill': {
+      id: '/api/public/hooks/alias-backfill'
+      path: '/api/public/hooks/alias-backfill'
+      fullPath: '/api/public/hooks/alias-backfill'
+      preLoaderRoute: typeof ApiPublicHooksAliasBackfillRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/academy-health': {
       id: '/api/public/hooks/academy-health'
       path: '/api/public/hooks/academy-health'
@@ -2387,6 +2427,7 @@ interface AdminRouteChildren {
   AdminPrivacyRequestsRoute: typeof AdminPrivacyRequestsRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminRankTrackerRoute: typeof AdminRankTrackerRoute
+  AdminRedirectAliasesRoute: typeof AdminRedirectAliasesRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
@@ -2422,6 +2463,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPrivacyRequestsRoute: AdminPrivacyRequestsRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminRankTrackerRoute: AdminRankTrackerRoute,
+  AdminRedirectAliasesRoute: AdminRedirectAliasesRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
@@ -2551,6 +2593,7 @@ const rootRouteChildren: RootRouteChildren = {
   PEsSlugRoute: PEsSlugRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
+  ApiPublicHooksAliasBackfillRoute: ApiPublicHooksAliasBackfillRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
