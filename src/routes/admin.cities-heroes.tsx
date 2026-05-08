@@ -157,7 +157,10 @@ function AdminHeroBackfillPage() {
           </h1>
           <p className="mt-2 text-muted-foreground">
             Scrapes the source page for each city and saves the unique hero into
-            the database. Admin only.
+            the database. Admin only.{" "}
+            <Link to={"/admin/cities-heroes-report" as never} className="text-primary hover:underline">
+              View per-city report →
+            </Link>
           </p>
         </div>
 

@@ -99,6 +99,7 @@ import { Route as AdminCompetitorsRouteImport } from './routes/admin.competitors
 import { Route as AdminCompetitorRadarRouteImport } from './routes/admin.competitor-radar'
 import { Route as AdminClickReportRouteImport } from './routes/admin.click-report'
 import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
+import { Route as AdminCitiesHeroesReportRouteImport } from './routes/admin.cities-heroes-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
@@ -596,6 +597,11 @@ const AdminClaimsRoute = AdminClaimsRouteImport.update({
   path: '/claims',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCitiesHeroesReportRoute = AdminCitiesHeroesReportRouteImport.update({
+  id: '/cities-heroes-report',
+  path: '/cities-heroes-report',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCitiesHeroesRoute = AdminCitiesHeroesRouteImport.update({
   id: '/cities-heroes',
   path: '/cities-heroes',
@@ -792,6 +798,7 @@ export interface FileRoutesByFullPath {
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/cities-heroes-report': typeof AdminCitiesHeroesReportRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
@@ -913,6 +920,7 @@ export interface FileRoutesByTo {
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/cities-heroes-report': typeof AdminCitiesHeroesReportRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
@@ -1035,6 +1043,7 @@ export interface FileRoutesById {
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
+  '/admin/cities-heroes-report': typeof AdminCitiesHeroesReportRoute
   '/admin/claims': typeof AdminClaimsRoute
   '/admin/click-report': typeof AdminClickReportRoute
   '/admin/competitor-radar': typeof AdminCompetitorRadarRoute
@@ -1158,6 +1167,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
+    | '/admin/cities-heroes-report'
     | '/admin/claims'
     | '/admin/click-report'
     | '/admin/competitor-radar'
@@ -1279,6 +1289,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
+    | '/admin/cities-heroes-report'
     | '/admin/claims'
     | '/admin/click-report'
     | '/admin/competitor-radar'
@@ -1400,6 +1411,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/blog'
     | '/admin/cities-heroes'
+    | '/admin/cities-heroes-report'
     | '/admin/claims'
     | '/admin/click-report'
     | '/admin/competitor-radar'
@@ -2199,6 +2211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClaimsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/cities-heroes-report': {
+      id: '/admin/cities-heroes-report'
+      path: '/cities-heroes-report'
+      fullPath: '/admin/cities-heroes-report'
+      preLoaderRoute: typeof AdminCitiesHeroesReportRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/cities-heroes': {
       id: '/admin/cities-heroes'
       path: '/cities-heroes'
@@ -2420,6 +2439,7 @@ const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
+  AdminCitiesHeroesReportRoute: typeof AdminCitiesHeroesReportRoute
   AdminClaimsRoute: typeof AdminClaimsRoute
   AdminClickReportRoute: typeof AdminClickReportRoute
   AdminCompetitorRadarRoute: typeof AdminCompetitorRadarRoute
@@ -2457,6 +2477,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
+  AdminCitiesHeroesReportRoute: AdminCitiesHeroesReportRoute,
   AdminClaimsRoute: AdminClaimsRoute,
   AdminClickReportRoute: AdminClickReportRoute,
   AdminCompetitorRadarRoute: AdminCompetitorRadarRoute,
