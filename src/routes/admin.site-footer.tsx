@@ -28,6 +28,10 @@ const SOCIAL_OPTIONS = ["facebook", "x", "twitter", "youtube", "linkedin", "inst
 function SiteFooterAdmin() {
   const [data, setData] = React.useState<SiteFooterSettings | null>(null);
   const [saving, setSaving] = React.useState(false);
+  const [validating, setValidating] = React.useState(false);
+  const [socialResults, setSocialResults] = React.useState<
+    Record<number, { status: string; httpStatus: number | null; reason?: string; workingUrl: string | null }>
+  >({});
 
   React.useEffect(() => {
     getSiteFooterAdmin().then(setData).catch((e) => toast.error(e.message));
