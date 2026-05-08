@@ -236,6 +236,10 @@ export function buildSourceUrlCandidates(
 }
 
 export function normalizeHeroUrl(url: string): string {
+  // Only rewrite query params for imgix-backed URLs. Other CDNs (Supabase
+  // Storage, Cloudinary, lovable-uploads, og:image PNGs, etc.) don't honour
+  // these params and adding them can break the URL or cache.
+  if (!/imgix\.net/i.test(url)) return url;
   try {
     const u = new URL(url);
     u.searchParams.set("auto", "format");
