@@ -397,23 +397,14 @@ function GiggsterCityPage() {
 
       <h2 id="local-demand">Live {city.name} pool-rental demand</h2>
       <p>
-        See current {city.name} pool inventory and intent on the{" "}
-        <Link
-          to="/pool-rental/$city"
-          params={{ city: city.slug }}
+        See current {city.name} pool inventory on the{" "}
+        <a
+          href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`}
           className="text-primary underline"
         >
-          Pool Rental Near Me {city.name} hub
-        </Link>
-        . If you want the local legal context first, read the{" "}
-        <Link
-          to="/pool-rental-laws/$city"
-          params={{ city: city.slug }}
-          className="text-primary underline"
-        >
-          {city.name} pool rental laws guide
-        </Link>{" "}
-        before you list.
+          {city.name} pool search
+        </a>
+        . Browse what locals are renting and how hosts price their hours.
       </p>
 
       <CTAMid />
