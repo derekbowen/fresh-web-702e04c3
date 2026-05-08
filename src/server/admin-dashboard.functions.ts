@@ -40,10 +40,28 @@ export type DashboardStats = {
       published_thin: number;
       published_medium: number;
       published_healthy: number;
+      published_missing_body: number;
       avg_words_published: number | null;
       oldest_pending: string | null;
       published_last_7d: number;
     }>;
+  };
+  pendingDiagnostics: Array<{
+    template_type: string | null;
+    pending: number;
+    missing_body: number;
+    missing_title: number;
+    missing_meta: number;
+    missing_slug: number;
+    top_errors: Array<{ reason: string; count: number }>;
+  }>;
+  spanish: {
+    pages_total: number;
+    pages_published: number;
+    pages_pending: number;
+    plan_pending: number;
+    cities_with_es: number;
+    cities_eligible: number;
   };
   generatedAt: string;
 };
