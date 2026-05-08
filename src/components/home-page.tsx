@@ -346,7 +346,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <div className="mt-8 flex flex-wrap gap-3">
                   {learningAcademyAvailable && (
                     <a
-                      href="/p/learning-academy"
+                      href="/p/learningacademy"
                       className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                     >
                       Browse 100+ free courses →
