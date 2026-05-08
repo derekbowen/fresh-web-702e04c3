@@ -46,13 +46,11 @@ const URL_OVERRIDES: Record<string, string> = {
  * not include the state suffix.
  */
 export async function harvestSourceUrls(): Promise<Map<string, string>> {
-  const res = await fetch("https://www.poolrentalnearme.com/p/all-locations", {
-    headers: { "User-Agent": "Mozilla/5.0 LovableHeroBackfill/1.0" },
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch directory: ${res.status} ${res.statusText}`);
-  }
-  const html = await res.text();
+  const html = await fetchWithBackoff(
+    "https://www.poolrentalnearme.com/p/all-locations",
+    { headers: { "User-Agent": "Mozilla/5.0 LovableHeroBackfill/1.0" } },
+    { maxAttempts: 5 },
+  );
 
   const map = new Map<string, string>();
   // Match both URL templates listed in the directory:
