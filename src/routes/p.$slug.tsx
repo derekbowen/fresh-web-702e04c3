@@ -39,12 +39,8 @@ import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functio
 import { AcademyHubTemplate } from "@/components/templates/academy-hub";
 import { ACADEMY_HUB_SLUGS, academyHubPath } from "@/lib/course-urls";
 
-const ACADEMY_HUB_SLUG_SET = new Set<string>([
-  ACADEMY_HUB_SLUGS.en,
-  ACADEMY_HUB_SLUGS.es,
-]);
-
-function academyLangForSlug(slug: string): "en" | "es" | null {
+function academyLangForSlug(slug: string | null | undefined): "en" | "es" | null {
+  if (!slug) return null;
   if (slug === ACADEMY_HUB_SLUGS.en) return "en";
   if (slug === ACADEMY_HUB_SLUGS.es) return "es";
   return null;
