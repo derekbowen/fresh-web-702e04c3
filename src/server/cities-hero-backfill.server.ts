@@ -302,6 +302,8 @@ export async function backfillCityHeroes(opts: {
   concurrency?: number;
   excludeSlugs?: string[];
   maxDurationMs?: number;
+  generateFallback?: boolean;
+  maxFallbacksPerBatch?: number;
 }): Promise<{
   results: BackfillResult[];
   summary: Record<string, number>;
