@@ -202,11 +202,104 @@ export const getDashboardStats = createServerFn({ method: "GET" })
         published_thin: Number(r.published_thin) || 0,
         published_medium: Number(r.published_medium) || 0,
         published_healthy: Number(r.published_healthy) || 0,
+        published_missing_body: Number(r.published_missing_body) || 0,
         avg_words_published: r.avg_words_published == null ? null : Number(r.avg_words_published),
         oldest_pending: r.oldest_pending,
         published_last_7d: Number(r.published_last_7d) || 0,
       }))
       .sort((a, b) => b.total - a.total);
+
+    // ─── Pending Queue Diagnostics ────────────────────────────────────────────
+    // For each template with >10 pending pages, gather missing-field counts
+    // and the top 3 last_error reasons (joined via content_plan.slug).
+    const pendingTemplates = qualityByTemplate
+      .filter((q) => q.pending > 10)
+      .map((q) => q.template_type)
+      .filter((x): x is string => !!x);
+
+    const pendingDiagnostics: DashboardStats["pendingDiagnostics"] = [];
+    if (pendingTemplates.length > 0) {
+      // Pull pending pages once for all relevant templates
+      const { data: pendingRows } = await sb
+        .from("content_pages")
+        .select("template_type, slug, title, seo_description, body_markdown")
+        .like("url_path", "/p/%")
+        .neq("status", "published")
+        .in("template_type", pendingTemplates)
+        .limit(5000);
+
+      const allSlugs = (pendingRows || []).map((r: any) => r.slug).filter(Boolean);
+      const errorBySlug = new Map<string, string>();
+      // Chunk slugs to keep IN() query manageable
+      for (let i = 0; i < allSlugs.length; i += 500) {
+        const chunk = allSlugs.slice(i, i + 500);
+        const { data: planErrs } = await sb
+          .from("content_plan")
+          .select("slug, last_error")
+          .in("slug", chunk)
+          .not("last_error", "is", null);
+        for (const r of planErrs || []) {
+          if (r.last_error) errorBySlug.set(r.slug as string, r.last_error as string);
+        }
+      }
+
+      const byTpl = new Map<string, {
+        pending: number;
+        missing_body: number;
+        missing_title: number;
+        missing_meta: number;
+        missing_slug: number;
+        errors: Map<string, number>;
+      }>();
+      for (const r of pendingRows || []) {
+        const k = (r.template_type as string) || "(none)";
+        const cur = byTpl.get(k) || {
+          pending: 0,
+          missing_body: 0,
+          missing_title: 0,
+          missing_meta: 0,
+          missing_slug: 0,
+          errors: new Map<string, number>(),
+        };
+        cur.pending++;
+        if (!r.body_markdown || String(r.body_markdown).trim().length === 0) cur.missing_body++;
+        if (!r.title || String(r.title).trim().length === 0) cur.missing_title++;
+        if (!r.seo_description || String(r.seo_description).trim().length === 0) cur.missing_meta++;
+        if (!r.slug) cur.missing_slug++;
+        const err = errorBySlug.get(r.slug as string);
+        if (err) {
+          // Bucket common error families to surface "top 3"
+          const short = err.length > 120 ? err.slice(0, 120) + "…" : err;
+          cur.errors.set(short, (cur.errors.get(short) || 0) + 1);
+        }
+        byTpl.set(k, cur);
+      }
+      for (const [tpl, v] of byTpl.entries()) {
+        const top_errors = Array.from(v.errors.entries())
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([reason, count]) => ({ reason, count }));
+        pendingDiagnostics.push({
+          template_type: tpl,
+          pending: v.pending,
+          missing_body: v.missing_body,
+          missing_title: v.missing_title,
+          missing_meta: v.missing_meta,
+          missing_slug: v.missing_slug,
+          top_errors,
+        });
+      }
+      pendingDiagnostics.sort((a, b) => b.pending - a.pending);
+    }
+
+    // ─── Spanish content engine stats ────────────────────────────────────────
+    const [spanishPagesRes, spanishPubRes, spanishPlanPendingRes, esCitiesRes, citiesTotalRes] = await Promise.all([
+      cnt(sb.from("content_pages").select("*", { count: "exact", head: true }).like("url_path", "/p/%").or("locale.eq.es,template_type.eq.host_acq_city_es,template_type.eq.spanish_host_acq,template_type.eq.spanish_resource")),
+      cnt(sb.from("content_pages").select("*", { count: "exact", head: true }).like("url_path", "/p/%").eq("status", "published").or("locale.eq.es,template_type.eq.host_acq_city_es,template_type.eq.spanish_host_acq,template_type.eq.spanish_resource")),
+      cnt(sb.from("content_plan").select("*", { count: "exact", head: true }).eq("source_type", "hosting_es").eq("status", "pending")),
+      cnt(sb.from("content_plan").select("*", { count: "exact", head: true }).eq("source_type", "hosting_es")),
+      cnt(sb.from("cities").select("*", { count: "exact", head: true }).eq("is_published", true)),
+    ]);
 
     return {
       contentPages: {
@@ -229,6 +322,15 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       leads: { total: leadsTotal, new: leadsNew },
       missing404s: { total: missingTotal, unresolved: missingUnresolved },
       quality: { siteIssues, byTemplate: qualityByTemplate },
+      pendingDiagnostics,
+      spanish: {
+        pages_total: spanishPagesRes,
+        pages_published: spanishPubRes,
+        pages_pending: spanishPagesRes - spanishPubRes,
+        plan_pending: spanishPlanPendingRes,
+        cities_with_es: esCitiesRes,
+        cities_eligible: citiesTotalRes,
+      },
       generatedAt: new Date().toISOString(),
     };
   });
