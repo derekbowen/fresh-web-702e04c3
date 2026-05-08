@@ -80,6 +80,7 @@ import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-audito
 import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminLinkCheckerRouteImport } from './routes/admin.link-checker'
+import { Route as AdminLinkAuditRouteImport } from './routes/admin.link-audit'
 import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLandingLinkCheckRouteImport } from './routes/admin.landing-link-check'
@@ -499,6 +500,11 @@ const AdminLinkCheckerRoute = AdminLinkCheckerRouteImport.update({
   path: '/link-checker',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLinkAuditRoute = AdminLinkAuditRouteImport.update({
+  id: '/link-audit',
+  path: '/link-audit',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLearningRoute = AdminLearningRouteImport.update({
   id: '/learning',
   path: '/learning',
@@ -804,6 +810,7 @@ export interface FileRoutesByFullPath {
   '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/link-audit': typeof AdminLinkAuditRoute
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
@@ -924,6 +931,7 @@ export interface FileRoutesByTo {
   '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/link-audit': typeof AdminLinkAuditRoute
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
@@ -1045,6 +1053,7 @@ export interface FileRoutesById {
   '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/learning': typeof AdminLearningRouteWithChildren
+  '/admin/link-audit': typeof AdminLinkAuditRoute
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
@@ -1167,6 +1176,7 @@ export interface FileRouteTypes {
     | '/admin/landing-link-check'
     | '/admin/leads'
     | '/admin/learning'
+    | '/admin/link-audit'
     | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/no-access'
@@ -1287,6 +1297,7 @@ export interface FileRouteTypes {
     | '/admin/landing-link-check'
     | '/admin/leads'
     | '/admin/learning'
+    | '/admin/link-audit'
     | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/no-access'
@@ -1407,6 +1418,7 @@ export interface FileRouteTypes {
     | '/admin/landing-link-check'
     | '/admin/leads'
     | '/admin/learning'
+    | '/admin/link-audit'
     | '/admin/link-checker'
     | '/admin/missing-pages'
     | '/admin/no-access'
@@ -2054,6 +2066,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLinkCheckerRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/link-audit': {
+      id: '/admin/link-audit'
+      path: '/link-audit'
+      fullPath: '/admin/link-audit'
+      preLoaderRoute: typeof AdminLinkAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/learning': {
       id: '/admin/learning'
       path: '/learning'
@@ -2419,6 +2438,7 @@ interface AdminRouteChildren {
   AdminLandingLinkCheckRoute: typeof AdminLandingLinkCheckRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLearningRoute: typeof AdminLearningRouteWithChildren
+  AdminLinkAuditRoute: typeof AdminLinkAuditRoute
   AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminNoAccessRoute: typeof AdminNoAccessRoute
@@ -2455,6 +2475,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLandingLinkCheckRoute: AdminLandingLinkCheckRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLearningRoute: AdminLearningRouteWithChildren,
+  AdminLinkAuditRoute: AdminLinkAuditRoute,
   AdminLinkCheckerRoute: AdminLinkCheckerRoute,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminNoAccessRoute: AdminNoAccessRoute,
