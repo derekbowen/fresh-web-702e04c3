@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { runHeroBackfill } from "@/server/cities-hero-backfill.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
@@ -32,23 +32,95 @@ function AdminHeroBackfillPage() {
   const [results, setResults] = useState<Result[]>([]);
   const [summary, setSummary] = useState<Record<string, number> | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [stoppedReason, setStoppedReason] = useState<string | null>(null);
+  const [autoContinue, setAutoContinue] = useState(false);
+  const [batchSize, setBatchSize] = useState(25);
+  const [concurrency, setConcurrency] = useState(2);
+  const [forceMode, setForceMode] = useState(false);
 
-  async function run(force: boolean) {
-    if (running) return;
-    setRunning(true);
-    setErrMsg(null);
+  // Persist processed slugs across batches so force-mode runs are resumable
+  // (non-force is naturally resumable because filled rows drop out of the query).
+  const processedRef = useRef<Set<string>>(new Set());
+  const stopRef = useRef(false);
+
+  function reset() {
+    processedRef.current = new Set();
     setResults([]);
     setSummary(null);
+    setRemaining(null);
+    setStoppedReason(null);
+    setErrMsg(null);
+  }
+
+  async function runBatch(force: boolean): Promise<{ remaining: number } | null> {
+    const excludeSlugs = force ? Array.from(processedRef.current) : undefined;
     try {
-      const out = await runHeroBackfill({ data: { force } });
-      setResults(out.results);
-      setSummary(out.summary);
+      const out = await runHeroBackfill({
+        data: { force, batchSize, concurrency, excludeSlugs },
+      });
+      // Append results.
+      setResults((prev) => [...prev, ...out.results]);
+      out.processedSlugs.forEach((s) => processedRef.current.add(s));
+      // Merge summary.
+      setSummary((prev) => {
+        const next: Record<string, number> = { ...(prev ?? {}) };
+        for (const [k, v] of Object.entries(out.summary)) {
+          next[k] = (next[k] ?? 0) + v;
+        }
+        return next;
+      });
+      setRemaining(out.remaining);
+      setStoppedReason(out.stoppedReason);
+      return { remaining: out.remaining };
     } catch (e) {
       setErrMsg(e instanceof Error ? e.message : String(e));
+      return null;
+    }
+  }
+
+  async function startRun(force: boolean, continuous: boolean) {
+    if (running) return;
+    reset();
+    setForceMode(force);
+    setAutoContinue(continuous);
+    stopRef.current = false;
+    setRunning(true);
+    try {
+      // Loop batches until done, user stops, or single batch when !continuous.
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const out = await runBatch(force);
+        if (!out) break;
+        if (!continuous) break;
+        if (stopRef.current) break;
+        if (out.remaining <= 0) break;
+        // Brief pause between batches to be polite.
+        await new Promise((r) => setTimeout(r, 800));
+      }
+    } finally {
+      setRunning(false);
+      setAutoContinue(false);
+    }
+  }
+
+  async function continueOneBatch() {
+    if (running) return;
+    setRunning(true);
+    try {
+      await runBatch(forceMode);
     } finally {
       setRunning(false);
     }
   }
+
+  function stop() {
+    stopRef.current = true;
+  }
+
+  // Pause guard: if the page is hidden the user can leave; runs continue
+  // server-side per batch, so the loop keeps progressing while tab is open.
+  useEffect(() => () => { stopRef.current = true; }, []);
 
   function downloadMissesCsv() {
     const misses = results.filter((r) => r.status !== "ok");
