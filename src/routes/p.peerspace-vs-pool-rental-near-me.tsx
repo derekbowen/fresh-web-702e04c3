@@ -12,6 +12,7 @@ import {
   articleJsonLd,
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
+import { absUrl } from "@/lib/site-origin";
 
 const SLUG = "peerspace-vs-pool-rental-near-me";
 const TITLE = "Peerspace vs Pool Rental Near Me (2026): Fees, Insurance & Best Pool Host Platform";
@@ -122,9 +123,9 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me")({
       faqJsonLd(faqs.map((f) => ({ q: f.q, a: f.a }))),
       articleJsonLd({ slug: SLUG, title: TITLE, description: DESCRIPTION }),
       breadcrumbJsonLd([
-        { name: "Home", url: "https://www.poolrentalnearme.com/" },
-        { name: "Compare", url: "https://www.poolrentalnearme.com/p/all-locations" },
-        { name: "Peerspace vs Pool Rental Near Me", url: `https://www.poolrentalnearme.com/p/${SLUG}` },
+        { name: "Home", url: absUrl("/") },
+        { name: "Compare", url: absUrl("/p/all-locations") },
+        { name: "Peerspace vs Pool Rental Near Me", url: absUrl(`/p/${SLUG}`) },
       ]),
     ],
   }),

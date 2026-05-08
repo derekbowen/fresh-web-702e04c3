@@ -13,6 +13,7 @@ import {
   articleJsonLd,
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
+import { absUrl } from "@/lib/site-origin";
 
 /**
  * Programmatic city variant of the Giggster pillar comparison.
@@ -67,14 +68,14 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$ci
           dateModified: "2026-05-05",
         }),
         breadcrumbJsonLd([
-          { name: "Home", url: "https://www.poolrentalnearme.com/" },
+          { name: "Home", url: absUrl("/") },
           {
             name: "Giggster vs Pool Rental Near Me",
-            url: "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me",
+            url: absUrl("/p/giggster-vs-pool-rental-near-me"),
           },
           {
             name: `Giggster vs PRNM in ${city.name}`,
-            url: `https://www.poolrentalnearme.com/p/${slug}`,
+            url: absUrl(`/p/${slug}`),
           },
         ]),
         faqJsonLd(buildFaqs(city).map((f) => ({ q: f.q, a: f.a }))),
