@@ -851,10 +851,26 @@ Deno.serve(async (req) => {
     const generation = processGeneration(supabase, planRows, data.model, apiKey, data.dryRun).catch(
       async (e) => {
         console.error("[generate-content-batch:background]", e);
-        await supabase
-          .from("content_plan")
-          .update({ status: "pending", last_error: errorMessage(e).slice(0, 500) })
-          .in("slug", pendingSlugs);
+        const msg = errorMessage(e).slice(0, 500);
+        const nowIso = new Date().toISOString();
+        // Per-row attempt increment + auto-pause on hard background errors.
+        await Promise.all(
+          planRows.map(async (r) => {
+            const attempts = (r.attempt_count ?? 0) + 1;
+            const pause = attempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
+            await supabase
+              .from("content_plan")
+              .update({
+                status: pause ? "paused" : "pending",
+                last_error: msg,
+                attempt_count: attempts,
+                last_attempt_at: nowIso,
+                validator_version: VALIDATOR_VERSION,
+                paused_at: pause ? nowIso : null,
+              })
+              .eq("slug", r.slug);
+          }),
+        );
       },
     );
     (globalThis as any).EdgeRuntime?.waitUntil?.(generation);
