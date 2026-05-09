@@ -181,8 +181,9 @@ function BlogHubPage() {
                   ))}
                 </ul>
               </section>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </main>
       <SiteFooter />
