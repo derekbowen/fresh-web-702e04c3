@@ -53,12 +53,10 @@ export function ResourceArticleTemplate({
           </div>
           {(page.cover_image_url || page.hero_image_url) && (
             <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
-              <img
+              <HeroImage
                 src={(page.cover_image_url || page.hero_image_url) as string}
                 alt={page.title || ""}
                 className="h-full w-full object-cover"
-                loading="eager"
-                fetchPriority="high"
               />
             </div>
           )}
