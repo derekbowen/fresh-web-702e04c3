@@ -31,19 +31,28 @@ const SECURITY_HEADERS: Record<string, string> = {
 // (*.lovable.app, *.lovable.dev, *.lovableproject.com, *.gptengineer.app) are
 // internal-only and must NEVER be indexed — otherwise Google sees duplicate
 // content competing with prod. We send X-Robots-Tag: noindex, nofollow on
-// every response when the request host is not the canonical production host.
-// nginx is configured to forward the original Host as X-Forwarded-Host, so
-// requests proxied through prod will have the canonical host and stay
-// indexable.
-const PRODUCTION_HOSTS = new Set([
-  "poolrentalnearme.com",
-  "www.poolrentalnearme.com",
-]);
+// every response whose request host is one of those known preview hosts.
+//
+// IMPORTANT: this is an allowlist of hosts to NOINDEX, not a denylist of
+// non-production hosts. nginx in front of www.poolrentalnearme.com has
+// historically not always set X-Forwarded-Host reliably, which under the
+// previous (denylist) logic caused production to receive a noindex header
+// and get deindexed from Google. Defaulting unknown hosts to indexable is
+// the safe direction here — at worst a future preview host gets indexed
+// once and we add it below; the prior failure mode silently killed prod SEO.
+const PREVIEW_HOST_SUFFIXES = [
+  ".lovable.app",
+  ".lovable.dev",
+  ".lovableproject.com",
+  ".gptengineer.app",
+];
 
-function isNonProductionHost(hostHeader: string | null): boolean {
-  if (!hostHeader) return true; // unknown -> safer to noindex
+function isPreviewHost(hostHeader: string | null): boolean {
+  if (!hostHeader) return false; // unknown -> assume prod, allow indexing
   const host = hostHeader.split(":")[0]!.toLowerCase();
-  return !PRODUCTION_HOSTS.has(host);
+  return PREVIEW_HOST_SUFFIXES.some(
+    (suffix) => host === suffix.slice(1) || host.endsWith(suffix),
+  );
 }
 
 const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
