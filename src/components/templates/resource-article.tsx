@@ -23,6 +23,7 @@ export function ResourceArticleTemplate({
 }) {
   const publishedAt = page.published_at ?? null;
   const body = (page.content || page.body_markdown || "").toString();
+  const faqs = faqsForContentPage(page);
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
