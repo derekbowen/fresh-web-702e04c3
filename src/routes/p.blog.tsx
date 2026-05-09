@@ -13,7 +13,7 @@ export const Route = createFileRoute("/p/blog")({
     return { posts };
   },
   head: () => ({
-    meta: buildMeta({
+    ...buildMeta({
       title: "Pool rental blog — guides for hosts and guests",
       description:
         "Articles on pool care, hosting, marketing, safety, and pool party ideas from Pool Rental Near Me.",
