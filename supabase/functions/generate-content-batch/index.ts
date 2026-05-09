@@ -768,6 +768,37 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (data.action === "resume-paused") {
+      let resumeQuery = supabase
+        .from("content_plan")
+        .update({
+          status: "pending",
+          attempt_count: 0,
+          paused_at: null,
+          last_error: null,
+        })
+        .eq("status", "paused");
+      if (data.onlyStaleValidator) {
+        resumeQuery = resumeQuery.or(
+          `validator_version.is.null,validator_version.neq.${VALIDATOR_VERSION}`,
+        );
+      }
+      const { error: resumeErr, count } = await resumeQuery.select("*", {
+        count: "exact",
+        head: true,
+      });
+      if (resumeErr) throw new Error(`resume failed: ${resumeErr.message}`);
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          resumed: count ?? 0,
+          validatorVersion: VALIDATOR_VERSION,
+          onlyStaleValidator: Boolean(data.onlyStaleValidator),
+        }),
+        { headers: { ...cors, "Content-Type": "application/json" } },
+      );
+    }
+
     await supabase
       .from("content_plan")
       .update({ status: "pending", last_error: "Released from interrupted generation run" })
