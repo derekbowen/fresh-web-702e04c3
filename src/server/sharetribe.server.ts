@@ -489,3 +489,52 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
     return null;
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Availability / time slots (Marketplace API public-read)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface AvailableTimeSlot {
+  start: string; // ISO
+  end: string;   // ISO
+  seats: number;
+}
+
+/**
+ * Fetch available time slots for a listing within [startISO, endISO).
+ * Uses Marketplace API: GET /v1/api/timeslots/query
+ *
+ * Returns an array sorted by start. Returns [] on error so callers stay defensive.
+ */
+export async function fetchAvailableTimeSlots(
+  listingId: string,
+  startISO: string,
+  endISO: string,
+): Promise<AvailableTimeSlot[]> {
+  try {
+    const json = await integGet<{
+      data: Array<{
+        attributes: { start: string; end: string; seats: number; type?: string };
+      }>;
+    }>("/timeslots/query", {
+      listingId,
+      start: startISO,
+      end: endISO,
+      per_page: 100,
+    });
+
+    const slots = (json?.data ?? [])
+      .map((d) => ({
+        start: d.attributes.start,
+        end: d.attributes.end,
+        seats: d.attributes.seats ?? 1,
+      }))
+      .filter((s) => s.start && s.end)
+      .sort((a, b) => a.start.localeCompare(b.start));
+
+    return slots;
+  } catch (err) {
+    console.error("fetchAvailableTimeSlots error:", err);
+    return [];
+  }
+}
