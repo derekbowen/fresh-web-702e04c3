@@ -40,7 +40,8 @@ function TableCard({ table }: { table: TableName }) {
   const [importResult, setImportResult] = React.useState<{
     totalRows: number;
     inserted: number;
-    errors: string[];
+    rowErrors: { row: number; slug?: string; reason: string }[];
+    chunkErrors: string[];
   } | null>(null);
   const [mode, setMode] = React.useState<"upsert" | "insert">("upsert");
   const fileRef = React.useRef<HTMLInputElement>(null);
