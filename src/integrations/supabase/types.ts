@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      availability_cache: {
+        Row: {
+          fetched_at: string
+          listing_id: string
+          slots: Json
+        }
+        Insert: {
+          fetched_at?: string
+          listing_id: string
+          slots: Json
+        }
+        Update: {
+          fetched_at?: string
+          listing_id?: string
+          slots?: Json
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author: string | null
