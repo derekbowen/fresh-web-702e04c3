@@ -53,10 +53,10 @@ export function SiteHeader() {
 
 const HEADER_LINKS: Array<{ label: string; href: string; internal?: boolean; exact?: boolean }> = [
   { label: "Home", href: "/", internal: true, exact: true },
-  { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
+  { label: "Public Pools", href: "/public-pools" },
   { label: "Pool Pros", href: "/p/pool-pros" },
   { label: "How It Works", href: "/p/how-it-works" },
-  { label: "Search", href: "https://www.poolrentalnearme.com/s" },
+  { label: "Search", href: "/s" },
 ];
 
 function SiteHeaderInner() {
