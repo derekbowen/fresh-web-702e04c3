@@ -92,6 +92,8 @@ export function EventGuideTemplate({
             />
           )}
 
+          <FaqBlock faqs={faqs} />
+
           <RelatedPages />
         </article>
       </main>
