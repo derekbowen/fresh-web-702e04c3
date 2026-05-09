@@ -39,6 +39,10 @@ export function AvailabilityCalendar({
   days = 60,
 }: Props) {
   const fetchAvailability = useServerFn(getListingAvailability);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
