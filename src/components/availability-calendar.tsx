@@ -279,7 +279,7 @@ export function AvailabilityCalendar({
                     {selectedSlots.map((s) => (
                       <a
                         key={s.start}
-                        href={buildBookingUrl(s.start)}
+                        href={buildBookingUrl(s.start, s.end)}
                         className="group flex items-center justify-center rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground transition hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow"
                       >
                         {formatHour(s.start)}
