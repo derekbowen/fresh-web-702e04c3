@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ListingCard } from "@/components/listing-card";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
-import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
+import type { HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
 import { LiteYouTube } from "@/components/lite-youtube";
 
@@ -92,7 +92,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     (learningAcademyAvailable || hostTrainingAvailable);
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
-  const categories = Array.isArray(safe.categories) ? safe.categories : [];
+  void safe.categories; // categories now rendered by static PoolTypeGrid below
   const rawListings = Array.isArray(safe.listings) ? safe.listings : [];
   // distanceMiles is computed server-side from Cloudflare geo headers, which
   // may differ between the upstream SSR request (proxied via /landing-page)
@@ -215,9 +215,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </button>
             </form>
 
-            {/* Quantified social proof inline */}
+            {/* Honest value-prop strip — no fabricated stats */}
             <p className="mt-5 text-sm text-primary-foreground/90">
-              ★ 4.8 average rating · 50,000+ guests booked · 40+ states · $2M insurance included
+              10% flat host fee · Verified hosts in 40+ states · $2M liability per booking · 100% US-based support
             </p>
           </div>
         </section>
@@ -493,36 +493,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
-        {categories.length > 0 && (
-          <section className="bg-secondary/30">
-            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Browse by pool type
-              </h2>
-              <p className="mt-2 text-muted-foreground">
-                Heated pools, hot tubs, infinity edges — find the right vibe.
-              </p>
-              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                {categories.map((c: HomeCategory) => (
-                  <a
-                    key={c.slug}
-                    href={`/s?pub_category=${encodeURIComponent(c.slug)}`}
-                    className="group rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
-                  >
-                    {c.icon && (
-                      <div className="text-3xl" aria-hidden="true">
-                        {c.icon}
-                      </div>
-                    )}
-                    <div className="mt-2 text-sm font-semibold text-foreground group-hover:text-primary">
-                      {c.name}
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <PoolTypeGrid />
 
         {cities.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -569,3 +540,70 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     </div>
   );
 }
+
+// --- Pool type discovery grid (12 cards with image backgrounds) ---
+import poolTypeSalt from "@/assets/la-saltwater/poolside-day.jpg";
+import poolTypeHeated from "@/assets/la-saltwater/pool-spa.jpg";
+import poolTypeResort from "@/assets/la-saltwater/hero-night.jpg";
+import poolTypeLap from "@/assets/la-saltwater/night-glow.jpg";
+import poolTypeHotTub from "@/assets/la-saltwater/pool-spa.jpg";
+import poolTypeKitchen from "@/assets/la-saltwater/dining.jpg";
+import poolTypeFire from "@/assets/la-saltwater/fire-pit.jpg";
+import poolTypePet from "@/assets/la-saltwater/poolside-day.jpg";
+import poolTypeAccessible from "@/assets/la-saltwater/balcony.jpg";
+import poolTypeTheater from "@/assets/la-saltwater/hero-night.jpg";
+import poolTypeIndoor from "@/assets/la-saltwater/bathroom.jpg";
+import poolTypeInfinity from "@/assets/la-saltwater/shell-float.jpg";
+
+const POOL_TYPES: { name: string; slug: string; img: string }[] = [
+  { name: "Saltwater Pools", slug: "saltwater", img: poolTypeSalt },
+  { name: "Heated Pools", slug: "heated", img: poolTypeHeated },
+  { name: "Resort-Style Pools", slug: "resort-style", img: poolTypeResort },
+  { name: "Lap Pools", slug: "lap", img: poolTypeLap },
+  { name: "Pools with Hot Tubs", slug: "hot-tub", img: poolTypeHotTub },
+  { name: "Pools with Outdoor Kitchens", slug: "outdoor-kitchen", img: poolTypeKitchen },
+  { name: "Pools with Fire Pits", slug: "fire-pit", img: poolTypeFire },
+  { name: "Pet-Friendly Pools", slug: "pet-friendly", img: poolTypePet },
+  { name: "Wheelchair-Accessible Pools", slug: "accessible", img: poolTypeAccessible },
+  { name: "Pools with Outdoor Theaters", slug: "outdoor-theater", img: poolTypeTheater },
+  { name: "Indoor Pools", slug: "indoor", img: poolTypeIndoor },
+  { name: "Infinity Pools", slug: "infinity", img: poolTypeInfinity },
+];
+
+function PoolTypeGrid() {
+  return (
+    <section className="bg-secondary/30">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          Browse by pool type
+        </h2>
+        <p className="mt-2 text-muted-foreground">
+          Heated pools, hot tubs, infinity edges, fire pits, outdoor theaters — find your vibe.
+        </p>
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {POOL_TYPES.map((t) => (
+            <a
+              key={t.slug}
+              href={`/s?pub_category=${encodeURIComponent(t.slug)}`}
+              className="group relative aspect-[4/5] overflow-hidden rounded-2xl shadow-sm ring-1 ring-border transition-transform duration-200 hover:scale-[1.03] hover:shadow-lg"
+            >
+              <img
+                src={t.img}
+                alt={t.name}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-3">
+                <div className="text-sm font-semibold leading-tight text-white drop-shadow">
+                  {t.name}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
