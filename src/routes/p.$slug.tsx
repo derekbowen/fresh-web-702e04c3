@@ -379,7 +379,7 @@ function buildHreflangLinks(
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city, linkTargets, academyHub } = Route.useLoaderData();
+  const { page, nearbyCities, city, linkTargets, academyHub, relatedPosts } = Route.useLoaderData();
 
   // Academy hubs (en + es) override their stored template_type so they always
   // render the rich hub UI even though the row's template_type may be
