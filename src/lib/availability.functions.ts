@@ -1,16 +1,47 @@
 import { createServerFn } from "@tanstack/react-start";
 import { fetchAvailableTimeSlots, type AvailableTimeSlot } from "@/server/sharetribe.server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export interface AvailabilityResult {
   listingId: string;
   fetchedAt: string;
   slots: AvailableTimeSlot[];
   error: string | null;
+  cached?: boolean;
+}
+
+const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+
+function expandToHourlySlots(
+  blocks: AvailableTimeSlot[],
+  windowEndMs: number,
+): AvailableTimeSlot[] {
+  const HOUR_MS = 60 * 60 * 1000;
+  const nowMs = Date.now();
+  const out: AvailableTimeSlot[] = [];
+  for (const b of blocks) {
+    const bStart = new Date(b.start).getTime();
+    const bEnd = new Date(b.end).getTime();
+    if (!Number.isFinite(bStart) || !Number.isFinite(bEnd)) continue;
+    const firstSlotStart = Math.ceil(bStart / HOUR_MS) * HOUR_MS;
+    for (let t = firstSlotStart; t + HOUR_MS <= bEnd; t += HOUR_MS) {
+      if (t < nowMs) continue;
+      if (t >= windowEndMs) break;
+      out.push({
+        start: new Date(t).toISOString(),
+        end: new Date(t + HOUR_MS).toISOString(),
+        seats: b.seats ?? 1,
+      });
+    }
+  }
+  return out;
 }
 
 /**
  * Fetch live availability for a listing.
- * Defensive: returns empty slots on any error so the page still renders.
+ * - Reads from `availability_cache` if < 15 min old
+ * - Otherwise calls Sharetribe, splits day blocks into hourly slots, caches result
+ * - Returns empty slots + error message on failure (page still renders)
  */
 export const getListingAvailability = createServerFn({ method: "GET" })
   .inputValidator((data: { listingId: string; days?: number }) => {
@@ -22,8 +53,32 @@ export const getListingAvailability = createServerFn({ method: "GET" })
     return { listingId: id, days };
   })
   .handler(async ({ data }): Promise<AvailabilityResult> => {
+    // 1. Try cache
+    try {
+      const { data: row } = await supabaseAdmin
+        .from("availability_cache")
+        .select("slots, fetched_at")
+        .eq("listing_id", data.listingId)
+        .maybeSingle();
+
+      if (row && row.fetched_at) {
+        const ageMs = Date.now() - new Date(row.fetched_at).getTime();
+        if (ageMs < CACHE_TTL_MS && Array.isArray(row.slots)) {
+          return {
+            listingId: data.listingId,
+            fetchedAt: row.fetched_at,
+            slots: row.slots as AvailableTimeSlot[],
+            error: null,
+            cached: true,
+          };
+        }
+      }
+    } catch (err) {
+      console.warn("availability_cache read failed (continuing to fresh fetch):", err);
+    }
+
+    // 2. Fresh fetch from Sharetribe
     const start = new Date();
-    // Round down to start of next hour so Sharetribe accepts the window.
     start.setMinutes(0, 0, 0);
     const end = new Date(start);
     end.setDate(end.getDate() + data.days);
@@ -34,34 +89,27 @@ export const getListingAvailability = createServerFn({ method: "GET" })
         start.toISOString(),
         end.toISOString(),
       );
-      // Sharetribe returns availability blocks (e.g. one 10am–10pm block per
-      // day). Split each block into 1-hour bookable slots so the calendar
-      // shows real hourly options instead of one giant range.
-      const HOUR_MS = 60 * 60 * 1000;
-      const nowMs = Date.now();
-      const windowEndMs = end.getTime();
-      const hourly: AvailableTimeSlot[] = [];
-      for (const b of blocks) {
-        const bStart = new Date(b.start).getTime();
-        const bEnd = new Date(b.end).getTime();
-        if (!Number.isFinite(bStart) || !Number.isFinite(bEnd)) continue;
-        // Align to top of hour
-        const firstSlotStart = Math.ceil(bStart / HOUR_MS) * HOUR_MS;
-        for (let t = firstSlotStart; t + HOUR_MS <= bEnd; t += HOUR_MS) {
-          if (t < nowMs) continue;
-          if (t >= windowEndMs) break;
-          hourly.push({
-            start: new Date(t).toISOString(),
-            end: new Date(t + HOUR_MS).toISOString(),
-            seats: b.seats ?? 1,
-          });
-        }
+      const hourly = expandToHourlySlots(blocks, end.getTime());
+      const fetchedAt = new Date().toISOString();
+
+      // 3. Update cache (best-effort)
+      try {
+        await supabaseAdmin
+          .from("availability_cache")
+          .upsert(
+            { listing_id: data.listingId, slots: hourly, fetched_at: fetchedAt },
+            { onConflict: "listing_id" },
+          );
+      } catch (err) {
+        console.warn("availability_cache write failed:", err);
       }
+
       return {
         listingId: data.listingId,
-        fetchedAt: new Date().toISOString(),
+        fetchedAt,
         slots: hourly,
         error: null,
+        cached: false,
       };
     } catch (err) {
       console.error("getListingAvailability error:", err);
