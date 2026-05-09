@@ -1,12 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 
-const MARKETPLACE_ORIGIN = "https://www.poolrentalnearme.com";
-
 export function ListingCard({ listing }: { listing: ListingSummary }) {
   return (
     <a
-      href={`${MARKETPLACE_ORIGIN}/l/${listing.slug}/${listing.id}`}
+      href={`/l/${listing.slug}/${listing.id}`}
       className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
     >
       <div className="aspect-[4/3] overflow-hidden bg-muted">
