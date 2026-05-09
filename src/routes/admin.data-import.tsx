@@ -92,7 +92,8 @@ function DataImportPage() {
       setResult({
         inserted: res.inserted,
         totalRows: res.totalRows,
-        errors: res.errors,
+        rowErrors: res.rowErrors,
+        chunkErrors: res.chunkErrors,
         droppedColumns: res.droppedColumns,
       });
     } catch (e: any) {
