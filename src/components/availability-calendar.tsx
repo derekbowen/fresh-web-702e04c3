@@ -39,6 +39,10 @@ export function AvailabilityCalendar({
   days = 60,
 }: Props) {
   const fetchAvailability = useServerFn(getListingAvailability);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -139,6 +143,13 @@ export function AvailabilityCalendar({
           Real-time openings from the host's calendar. Tap a date to see hourly slots.
         </p>
       </div>
+
+      {!mounted ? (
+        <div className="mt-8 flex items-center justify-center gap-2 rounded-3xl border border-border bg-card px-6 py-16 text-sm text-muted-foreground shadow-sm">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading live availability…
+        </div>
+      ) : (
 
       <div className="mt-8 overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
         {/* Calendar header */}
@@ -305,8 +316,9 @@ export function AvailabilityCalendar({
           </>
         )}
       </div>
+      )}
 
-      {data && data.slots.length === 0 && !isError && !isLoading && (
+      {mounted && data && data.slots.length === 0 && !isError && !isLoading && (
         <p className="mt-4 text-center text-xs text-muted-foreground">
           No openings in the next {days} days. Message the host for custom dates.
         </p>
