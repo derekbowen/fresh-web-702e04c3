@@ -295,6 +295,14 @@ Length: 800-1200 words. Use ## sections and ### sub-points. Strong opening, no f
   };
   if (mode === "full" && gen.body_markdown && gen.body_markdown.length > 300) {
     update.body_markdown = gen.body_markdown;
+    // Auto-promote scraped/pending rows to published once they have a real
+    // body. Without this, /p/{slug} keeps 404'ing because lookupContentPage
+    // only renders status='published'. This is what unblocks GSC validation
+    // for "Crawled - currently not indexed" / "Soft 404" / "Not found 404".
+    if (gen.body_markdown.length >= 1000) {
+      update.status = "published";
+      update.in_sitemap = true;
+    }
   }
 
   const { error: uErr } = await (supabaseAdmin as any).from("content_pages").update(update).eq("id", pageId);
