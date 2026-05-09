@@ -87,7 +87,7 @@ async function processRow(row: any) {
   }
 
   const md = scraped.markdown ? cleanWaybackMarkdown(scraped.markdown) : null;
-  if (looksLikeProxy404(md)) {
+  if (isUnusable(md)) {
     return { slug: row.slug, status: "no-archive-or-empty", bytes: md?.length ?? 0 };
   }
 
