@@ -448,17 +448,17 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <div className="grid items-start gap-10 lg:grid-cols-12">
               <div className="lg:sticky lg:top-8 lg:col-span-4">
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                  Got an occasion to celebrate?
+                  Run your pool like a pro
                 </h2>
                 <p className="mt-3 text-primary-foreground/85">
-                  Every party type has its own perfect pool — and its own hosting playbook. Tap one to learn what to expect, what it costs, and how to book it right.
+                  Free playbooks from real hosts — taxes, HOAs, tough guests, listing photos. Read what works before you list, then again whenever you hit a snag.
                 </p>
                 <div className="mt-6 hidden lg:block">
                   <a
-                    href="/s"
+                    href="/p/host-training-academy"
                     className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                   >
-                    Browse all pools →
+                    Browse host academy →
                   </a>
                 </div>
               </div>
@@ -467,13 +467,13 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   {FEATURED_OCCASIONS.map((o) => (
                     <a
                       key={o.slug}
-                      href={`/s?keywords=${encodeURIComponent(o.title)}`}
+                      href={`/p/${o.slug}`}
                       className="group relative overflow-hidden rounded-2xl bg-white text-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-xl"
                     >
                       <div className="aspect-[4/3] overflow-hidden">
                         <img
                           src={ACADEMY_HERO_MAP[o.img]}
-                          alt={`${o.title} pool rental`}
+                          alt={`${o.title} — pool host guide`}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
                         />
@@ -487,10 +487,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 </div>
                 <div className="mt-8 flex justify-center lg:hidden">
                   <a
-                    href="/s"
+                    href="/p/host-training-academy"
                     className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
                   >
-                    Browse all pools →
+                    Browse host academy →
                   </a>
                 </div>
               </div>
