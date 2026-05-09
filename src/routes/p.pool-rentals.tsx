@@ -32,7 +32,7 @@ export const Route = createFileRoute("/p/pool-rentals")({
 
 function PoolRentalsIndex() {
   const { states } = Route.useLoaderData();
-  const totalCities = states.reduce((s, x) => s + x.cityCount, 0);
+  const totalCities = states.reduce((s: number, x: StateIndexEntry) => s + x.cityCount, 0);
 
   return (
     <div className="flex min-h-screen flex-col">
