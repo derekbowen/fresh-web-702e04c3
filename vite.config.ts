@@ -28,17 +28,6 @@ export default defineConfig({
       // so the EC2 nginx reverse proxy can route this app's static assets
       // without colliding with other Lovable apps on the same domain.
       assetsDir: "fw-assets",
-      // DIAGNOSTIC: keep readable names + symbols so React's full hydration
-      // warning + component stack survives into production. REVERT AFTER USE.
-      minify: false,
-      sourcemap: true,
-    },
-    // DIAGNOSTIC: force react-dom to load its development bundle so we get the
-    // full unminified hydration warning ("Hydration failed because... Server: X
-    // Client: Y") with a component stack instead of minified error #418.
-    // REVERT AFTER USE.
-    define: {
-      "process.env.NODE_ENV": JSON.stringify("development"),
     },
   },
 });
