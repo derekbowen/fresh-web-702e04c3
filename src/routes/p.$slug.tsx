@@ -201,15 +201,33 @@ export const Route = createFileRoute("/p/$slug")({
 
     const scripts = [];
 
-    // BreadcrumbList JSON-LD — universal
-    scripts.push(
-      ldJsonScript(
-        breadcrumbJsonLd([
-          { name: "Home", path: "/" },
-          { name: titleBase || path, path },
-        ]),
-      ),
-    );
+    // BreadcrumbList JSON-LD — Home > Blog > {Topic} > {Title} for blog posts.
+    const blogTopic = (p as { topic?: string | null }).topic ?? null;
+    const blogCrumbs =
+      p.template_type === "resource" && (blogTopic || p.category === "blog" || blogTopic !== null);
+    if (blogCrumbs) {
+      const topicLabel = blogTopic
+        ? blogTopic.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+        : null;
+      const crumbs: Array<{ name: string; path: string }> = [
+        { name: "Home", path: "/" },
+        { name: "Blog", path: "/p/blog" },
+      ];
+      if (topicLabel && blogTopic) {
+        crumbs.push({ name: topicLabel, path: `/p/blog?topic=${encodeURIComponent(blogTopic)}` });
+      }
+      crumbs.push({ name: titleBase || path, path });
+      scripts.push(ldJsonScript(breadcrumbJsonLd(crumbs)));
+    } else {
+      scripts.push(
+        ldJsonScript(
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: titleBase || path, path },
+          ]),
+        ),
+      );
+    }
 
     // Article JSON-LD — for content-style template types
     if (isArticleType(p.template_type)) {
