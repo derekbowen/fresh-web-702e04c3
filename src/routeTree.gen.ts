@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
-import { Route as SmAmenitiesDotxmlRouteImport } from './routes/sm-amenities[.]xml'
 import { Route as Sm74buq58vDotxmlRouteImport } from './routes/sm-74buq58v[.]xml'
 import { Route as Sm74buq58vLsDotxmlRouteImport } from './routes/sm-74buq58v-ls[.]xml'
 import { Route as Sm74buq58vHoDotxmlRouteImport } from './routes/sm-74buq58v-ho[.]xml'
@@ -144,11 +143,6 @@ import { Route as PPoolProsCCategoryStateCityRouteImport } from './routes/p.pool
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SmAmenitiesDotxmlRoute = SmAmenitiesDotxmlRouteImport.update({
-  id: '/sm-amenities.xml',
-  path: '/sm-amenities.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Sm74buq58vDotxmlRoute = Sm74buq58vDotxmlRouteImport.update({
@@ -861,7 +855,6 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v-ho.xml': typeof Sm74buq58vHoDotxmlRoute
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
-  '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -994,7 +987,6 @@ export interface FileRoutesByTo {
   '/sm-74buq58v-ho.xml': typeof Sm74buq58vHoDotxmlRoute
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
-  '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1128,7 +1120,6 @@ export interface FileRoutesById {
   '/sm-74buq58v-ho.xml': typeof Sm74buq58vHoDotxmlRoute
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
-  '/sm-amenities.xml': typeof SmAmenitiesDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1263,7 +1254,6 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ho.xml'
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
-    | '/sm-amenities.xml'
     | '/unsubscribe'
     | '/account/learning'
     | '/admin/blog'
@@ -1396,7 +1386,6 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ho.xml'
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
-    | '/sm-amenities.xml'
     | '/unsubscribe'
     | '/account/learning'
     | '/admin/blog'
@@ -1529,7 +1518,6 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ho.xml'
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
-    | '/sm-amenities.xml'
     | '/unsubscribe'
     | '/account/learning'
     | '/admin/blog'
@@ -1663,7 +1651,6 @@ export interface RootRouteChildren {
   Sm74buq58vHoDotxmlRoute: typeof Sm74buq58vHoDotxmlRoute
   Sm74buq58vLsDotxmlRoute: typeof Sm74buq58vLsDotxmlRoute
   Sm74buq58vDotxmlRoute: typeof Sm74buq58vDotxmlRoute
-  SmAmenitiesDotxmlRoute: typeof SmAmenitiesDotxmlRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   AccountLearningRoute: typeof AccountLearningRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
@@ -1726,13 +1713,6 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/unsubscribe'
       preLoaderRoute: typeof UnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sm-amenities.xml': {
-      id: '/sm-amenities.xml'
-      path: '/sm-amenities.xml'
-      fullPath: '/sm-amenities.xml'
-      preLoaderRoute: typeof SmAmenitiesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sm-74buq58v.xml': {
@@ -2829,7 +2809,6 @@ const rootRouteChildren: RootRouteChildren = {
   Sm74buq58vHoDotxmlRoute: Sm74buq58vHoDotxmlRoute,
   Sm74buq58vLsDotxmlRoute: Sm74buq58vLsDotxmlRoute,
   Sm74buq58vDotxmlRoute: Sm74buq58vDotxmlRoute,
-  SmAmenitiesDotxmlRoute: SmAmenitiesDotxmlRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   AccountLearningRoute: AccountLearningRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
@@ -2891,3 +2870,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
