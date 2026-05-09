@@ -91,7 +91,14 @@ function SiteHeaderInner() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        {hydrated ? (
         <Link to="/" className="flex items-center gap-2" onClick={close}>
+        </Link>
+        ) : (
+        <a href="/" className="flex items-center gap-2"></a>
+        )}
+        {/* logo content rendered separately below for clarity */}
+        <_LogoInner />
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
               <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1v3c-1.5 0-2.5 1-4 1s-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1v-3zM6 14V5a3 3 0 0 1 6 0v9M12 9h6a3 3 0 0 1 0 6" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
