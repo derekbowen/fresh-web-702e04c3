@@ -132,6 +132,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
           ? redirectTo.slice(3)
           : redirectTo;
         if (target && target !== slug) {
+          logRedirect(slug, target);
           return { kind: "redirect", canonicalSlug: target };
         }
       }
@@ -148,6 +149,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
       .limit(1);
     const alias = (aliasRows ?? [])[0] as { slug: string | null } | undefined;
     if (alias?.slug && alias.slug !== slug) {
+      logRedirect(slug, alias.slug);
       return { kind: "redirect", canonicalSlug: alias.slug };
     }
 
@@ -182,6 +184,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
             .eq("status", "published")
             .limit(1);
           if ((candRows ?? []).length > 0) {
+            logRedirect(slug, candidate);
             return { kind: "redirect", canonicalSlug: candidate };
           }
         }
