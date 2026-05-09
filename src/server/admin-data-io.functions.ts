@@ -129,9 +129,24 @@ async function getTableColumns(table: TableName): Promise<string[]> {
   return [];
 }
 
+function applyMapping(
+  header: string[],
+  mapping?: Record<string, string>,
+): { effective: string[]; map: (string | null)[] } {
+  const m = header.map((h) => {
+    if (!mapping) return h;
+    if (!(h in mapping)) return h; // unmapped → identity
+    const v = mapping[h];
+    return v && v.length > 0 ? v : null;
+  });
+  const effective: string[] = [];
+  m.forEach((v) => { if (v) effective.push(v); });
+  return { effective, map: m };
+}
+
 export const previewImport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { table: TableName; csv: string }) => {
+  .inputValidator((d: { table: TableName; csv: string; columnMapping?: Record<string, string> }) => {
     if (!TABLES.includes(d.table)) throw new Error("Invalid table");
     if (!d.csv) throw new Error("Empty CSV");
     if (d.csv.length > 25 * 1024 * 1024) throw new Error("CSV too large (>25MB)");
@@ -148,26 +163,32 @@ export const previewImport = createServerFn({ method: "POST" })
 
     const tableCols = await getTableColumns(data.table);
     const knownCols = new Set(tableCols);
+
+    const { effective: effectiveHeader, map: headerMap } = applyMapping(
+      header,
+      data.columnMapping,
+    );
+
     const unknownCols = tableCols.length > 0
-      ? header.filter((c) => !knownCols.has(c))
+      ? effectiveHeader.filter((c) => !knownCols.has(c))
       : [];
     const missingCols = tableCols.length > 0
-      ? tableCols.filter((c) => !header.includes(c))
+      ? tableCols.filter((c) => !effectiveHeader.includes(c))
       : [];
 
     const conflictColumn = data.table === "content_plan" ? "slug" : "id";
-    const conflictIdx = header.indexOf(conflictColumn);
+    const conflictEffectiveIdx = effectiveHeader.indexOf(conflictColumn);
+    const conflictCsvIdx = headerMap.findIndex((m) => m === conflictColumn);
     const conflictValues: string[] = [];
-    if (conflictIdx >= 0) {
+    if (conflictCsvIdx >= 0) {
       for (const r of dataRows) {
-        const v = r[conflictIdx];
+        const v = r[conflictCsvIdx];
         if (v) conflictValues.push(v);
       }
     }
 
     let existingCount = 0;
     if (conflictValues.length > 0) {
-      // Chunk lookups to avoid query-size limits
       const lookupChunk = 500;
       for (let i = 0; i < conflictValues.length; i += lookupChunk) {
         const slice = conflictValues.slice(i, i + lookupChunk);
@@ -182,8 +203,9 @@ export const previewImport = createServerFn({ method: "POST" })
     const sampleSize = Math.min(5, dataRows.length);
     const sample = dataRows.slice(0, sampleSize).map((r) => {
       const obj: Record<string, any> = {};
-      header.forEach((col, i) => {
-        obj[col] = coerceValue(r[i] ?? "", col);
+      headerMap.forEach((eff, i) => {
+        if (!eff) return;
+        obj[eff] = coerceValue(r[i] ?? "", eff);
       });
       return obj;
     });
@@ -191,11 +213,12 @@ export const previewImport = createServerFn({ method: "POST" })
     return {
       totalRows: dataRows.length,
       header,
+      effectiveHeader,
       tableColumns: tableCols,
       unknownColumns: unknownCols,
       missingColumns: missingCols,
       conflictColumn,
-      hasConflictColumn: conflictIdx >= 0,
+      hasConflictColumn: conflictEffectiveIdx >= 0,
       existingMatches: existingCount,
       newRowsEstimate: dataRows.length - existingCount,
       sample,
