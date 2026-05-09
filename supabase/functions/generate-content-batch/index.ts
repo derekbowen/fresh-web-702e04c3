@@ -26,9 +26,15 @@ type GeneratedPage = {
   body_markdown: string;
 };
 
+// Bump this whenever validator rules change. Paused rows older than the
+// current version are eligible for auto-resume on operator action.
+const VALIDATOR_VERSION = "v2-faq8-2026-05-09";
+const MAX_ATTEMPTS_BEFORE_PAUSE = 3;
+
 type PlanRow = {
   slug: string;
   source_type: string;
+  attempt_count?: number | null;
   city: string | null;
   state: string | null;
   state_code: string | null;
@@ -47,7 +53,7 @@ type PlanRow = {
 };
 
 type Input = {
-  action?: "start" | "status" | "preflight";
+  action?: "start" | "status" | "preflight" | "resume-paused";
   count?: number;
   tier?: string;
   stateCode?: string;
@@ -55,6 +61,8 @@ type Input = {
   model?: string;
   dryRun?: boolean;
   slugs?: string[];
+  /** When resuming paused rows, only reset rows whose validator_version differs from current. */
+  onlyStaleValidator?: boolean;
 };
 
 const SYSTEM_VA = `You are an expert SEO content writer and pool care specialist writing for Pool Rental Near Me (poolrentalnearme.com) — a marketplace where homeowners rent out private pools by the hour to earn passive income ($3,000–$15,000/year).
@@ -321,7 +329,13 @@ function parseInput(value: unknown): Required<Input> {
   const tier = typeof input.tier === "string" ? input.tier : "";
   return {
     action:
-      input.action === "status" ? "status" : input.action === "preflight" ? "preflight" : "start",
+      input.action === "status"
+        ? "status"
+        : input.action === "preflight"
+          ? "preflight"
+          : input.action === "resume-paused"
+            ? "resume-paused"
+            : "start",
     count,
     tier,
     stateCode,
@@ -332,6 +346,7 @@ function parseInput(value: unknown): Required<Input> {
         : "google/gemini-3-flash-preview",
     dryRun: Boolean(input.dryRun),
     slugs: Array.isArray(input.slugs) ? input.slugs.filter((s) => typeof s === "string" && s) : [],
+    onlyStaleValidator: Boolean(input.onlyStaleValidator),
   };
 }
 
@@ -526,6 +541,33 @@ async function processGeneration(
     okPages.push({ plan, body });
   }
 
+  // Helper: per-row failure update with attempt tracking + auto-pause.
+  const nowIso = new Date().toISOString();
+  const errorBySlug = new Map<string, string>();
+  for (const e of errors) {
+    const idx = e.indexOf(":");
+    if (idx > 0) {
+      const slug = e.slice(0, idx).trim();
+      const msg = e.slice(idx + 1).trim();
+      errorBySlug.set(slug, (errorBySlug.get(slug) ? errorBySlug.get(slug) + "; " : "") + msg);
+    }
+  }
+  const recordFailure = async (slug: string, msg: string, currentAttempts: number) => {
+    const newAttempts = (currentAttempts ?? 0) + 1;
+    const shouldPause = newAttempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
+    await supabase
+      .from("content_plan")
+      .update({
+        status: shouldPause ? "paused" : "pending",
+        last_error: msg.slice(0, 500),
+        attempt_count: newAttempts,
+        last_attempt_at: nowIso,
+        validator_version: VALIDATOR_VERSION,
+        paused_at: shouldPause ? nowIso : null,
+      })
+      .eq("slug", slug);
+  };
+
   if (dryRun) {
     await supabase
       .from("content_plan")
@@ -538,13 +580,15 @@ async function processGeneration(
   }
 
   if (okPages.length === 0) {
-    await supabase
-      .from("content_plan")
-      .update({ status: "pending", last_error: errors.join("; ").slice(0, 500) })
-      .in(
-        "slug",
-        planRows.map((r) => r.slug),
-      );
+    await Promise.all(
+      planRows.map((r) =>
+        recordFailure(
+          r.slug,
+          errorBySlug.get(r.slug) ?? errors.join("; ") ?? "unknown validation error",
+          r.attempt_count ?? 0,
+        ),
+      ),
+    );
     return;
   }
 
@@ -591,23 +635,29 @@ async function processGeneration(
   if (upErr) throw new Error(`upsert failed: ${upErr.message}`);
 
   const generatedSlugs = okPages.map((p) => p.plan.slug);
-  const failedSlugs = planRows.map((r) => r.slug).filter((s) => !generatedSlugs.includes(s));
+  const failedRows = planRows.filter((r) => !generatedSlugs.includes(r.slug));
   await supabase
     .from("content_plan")
     .update({
       status: "generated",
-      generated_at: new Date().toISOString(),
+      generated_at: nowIso,
       last_error: null,
+      attempt_count: 0,
+      last_attempt_at: nowIso,
+      validator_version: VALIDATOR_VERSION,
+      paused_at: null,
     })
     .in("slug", generatedSlugs);
-  if (failedSlugs.length > 0) {
-    await supabase
-      .from("content_plan")
-      .update({
-        status: "pending",
-        last_error: errors.join("; ").slice(0, 500),
-      })
-      .in("slug", failedSlugs);
+  if (failedRows.length > 0) {
+    await Promise.all(
+      failedRows.map((r) =>
+        recordFailure(
+          r.slug,
+          errorBySlug.get(r.slug) ?? errors.join("; ") ?? "unknown validation error",
+          r.attempt_count ?? 0,
+        ),
+      ),
+    );
   }
 }
 
@@ -718,6 +768,37 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (data.action === "resume-paused") {
+      let resumeQuery = supabase
+        .from("content_plan")
+        .update({
+          status: "pending",
+          attempt_count: 0,
+          paused_at: null,
+          last_error: null,
+        })
+        .eq("status", "paused");
+      if (data.onlyStaleValidator) {
+        resumeQuery = resumeQuery.or(
+          `validator_version.is.null,validator_version.neq.${VALIDATOR_VERSION}`,
+        );
+      }
+      const { error: resumeErr, count } = await resumeQuery.select("*", {
+        count: "exact",
+        head: true,
+      });
+      if (resumeErr) throw new Error(`resume failed: ${resumeErr.message}`);
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          resumed: count ?? 0,
+          validatorVersion: VALIDATOR_VERSION,
+          onlyStaleValidator: Boolean(data.onlyStaleValidator),
+        }),
+        { headers: { ...cors, "Content-Type": "application/json" } },
+      );
+    }
+
     await supabase
       .from("content_plan")
       .update({ status: "pending", last_error: "Released from interrupted generation run" })
@@ -727,7 +808,7 @@ Deno.serve(async (req) => {
     let query = supabase
       .from("content_plan")
       .select(
-        "slug, source_type, city, state, state_code, population_2024, warm_climate, h1, meta_title, meta_description, primary_keyword, supporting_keywords, uniqueness_angle, internal_links, schema_suggestions, notes, search_intent",
+        "slug, source_type, city, state, state_code, population_2024, warm_climate, h1, meta_title, meta_description, primary_keyword, supporting_keywords, uniqueness_angle, internal_links, schema_suggestions, notes, search_intent, attempt_count",
       )
       .eq("status", "pending")
       .order("priority_score", { ascending: false, nullsFirst: false })
@@ -770,10 +851,26 @@ Deno.serve(async (req) => {
     const generation = processGeneration(supabase, planRows, data.model, apiKey, data.dryRun).catch(
       async (e) => {
         console.error("[generate-content-batch:background]", e);
-        await supabase
-          .from("content_plan")
-          .update({ status: "pending", last_error: errorMessage(e).slice(0, 500) })
-          .in("slug", pendingSlugs);
+        const msg = errorMessage(e).slice(0, 500);
+        const nowIso = new Date().toISOString();
+        // Per-row attempt increment + auto-pause on hard background errors.
+        await Promise.all(
+          planRows.map(async (r) => {
+            const attempts = (r.attempt_count ?? 0) + 1;
+            const pause = attempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
+            await supabase
+              .from("content_plan")
+              .update({
+                status: pause ? "paused" : "pending",
+                last_error: msg,
+                attempt_count: attempts,
+                last_attempt_at: nowIso,
+                validator_version: VALIDATOR_VERSION,
+                paused_at: pause ? nowIso : null,
+              })
+              .eq("slug", r.slug);
+          }),
+        );
       },
     );
     (globalThis as any).EdgeRuntime?.waitUntil?.(generation);

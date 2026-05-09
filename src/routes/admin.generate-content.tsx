@@ -389,7 +389,7 @@ function GenerateContentPageInner() {
           {stats?.error && <p className="mt-3 text-sm text-destructive">{stats.error}</p>}
           {stats?.ok && (
             <>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <div className="mt-4 grid gap-3 sm:grid-cols-4">
                 <div className="rounded-md border border-border bg-muted/30 p-3">
                   <div className="text-xs uppercase text-muted-foreground">Generated</div>
                   <div className="mt-1 text-2xl font-semibold">{stats.totals.generated.toLocaleString()}</div>
@@ -405,6 +405,11 @@ function GenerateContentPageInner() {
                   </div>
                 </div>
                 <div className="rounded-md border border-border bg-muted/30 p-3">
+                  <div className="text-xs uppercase text-muted-foreground">Paused (auto)</div>
+                  <div className="mt-1 text-2xl font-semibold text-amber-600">{stats.totals.paused.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">Failed 3+ times — won't retry until resumed</div>
+                </div>
+                <div className="rounded-md border border-border bg-muted/30 p-3">
                   <div className="text-xs uppercase text-muted-foreground">Plan total</div>
                   <div className="mt-1 text-2xl font-semibold">{stats.totals.total.toLocaleString()}</div>
                 </div>
@@ -418,6 +423,70 @@ function GenerateContentPageInner() {
                         {t.tier}: {t.n}
                       </span>
                     ))}
+                  </div>
+                </div>
+              )}
+              {stats.totals.paused > 0 && (
+                <div className="mt-4 rounded-md border border-amber-300 bg-amber-50 p-3 dark:bg-amber-950/30">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="text-xs font-medium uppercase text-amber-900 dark:text-amber-200">Paused queue</div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={async () => {
+                          if (!confirm(`Resume only paused rows from older validator versions (current: ${stats.pausedByValidator.find(v => v.version !== "(pre-tracking)")?.version ?? "v2-faq8-2026-05-09"})?`)) return;
+                          const res = await generateContentBatch({ data: { action: "resume-paused", onlyStaleValidator: true } }) as { resumed?: number };
+                          alert(`Resumed ${res.resumed ?? 0} stale rows back to pending.`);
+                          refreshStats();
+                        }}
+                        className="rounded-md border border-amber-400 bg-background px-3 py-1.5 text-xs font-medium hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                      >
+                        Resume stale-validator only
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (!confirm(`Resume ALL ${stats.totals.paused} paused rows back to pending? They will be retried on the next run.`)) return;
+                          const res = await generateContentBatch({ data: { action: "resume-paused" } }) as { resumed?: number };
+                          alert(`Resumed ${res.resumed ?? 0} rows back to pending.`);
+                          refreshStats();
+                        }}
+                        className="rounded-md border border-amber-500 bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600"
+                      >
+                        Resume all paused
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid gap-3 lg:grid-cols-3">
+                    <div>
+                      <div className="text-xs font-medium text-amber-900 dark:text-amber-200">By tier</div>
+                      <div className="mt-1 flex flex-wrap gap-1 text-xs">
+                        {stats.pausedByTier.map((t) => (
+                          <span key={t.tier} className="rounded-full border border-amber-300 bg-background px-2 py-0.5 font-mono">
+                            {t.tier}: {t.n}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-amber-900 dark:text-amber-200">By validator version</div>
+                      <div className="mt-1 flex flex-wrap gap-1 text-xs">
+                        {stats.pausedByValidator.map((v) => (
+                          <span key={v.version} className="rounded-full border border-amber-300 bg-background px-2 py-0.5 font-mono">
+                            {v.version}: {v.n}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-amber-900 dark:text-amber-200">Top failure reasons</div>
+                      <ul className="mt-1 space-y-0.5 text-xs">
+                        {stats.topPausedReasons.map((r) => (
+                          <li key={r.reason} className="flex justify-between gap-2">
+                            <span>{r.reason}</span>
+                            <span className="font-mono text-muted-foreground">{r.n}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               )}
@@ -453,15 +522,20 @@ function GenerateContentPageInner() {
                   )}
                 </div>
                 <div>
-                  <div className="text-xs font-medium uppercase text-muted-foreground">Recent rejections (why money burned)</div>
+                  <div className="text-xs font-medium uppercase text-muted-foreground">Recent rejections (with attempt count)</div>
                   {stats.recentErrors.length === 0 ? (
                     <p className="mt-2 text-xs text-muted-foreground">No recent errors.</p>
                   ) : (
                     <ul className="mt-2 max-h-64 space-y-2 overflow-auto text-xs">
                       {stats.recentErrors.map((e) => (
                         <li key={e.slug} className="rounded border border-border bg-muted/20 p-2">
-                          <div className="font-mono">{e.slug}</div>
-                          <div className="text-muted-foreground">{e.error}</div>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-mono">{e.slug}</span>
+                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${e.status === "paused" ? "bg-amber-200 text-amber-900" : "bg-muted text-muted-foreground"}`}>
+                              {e.status} · attempt {e.attempts}
+                            </span>
+                          </div>
+                          <div className="mt-1 text-muted-foreground">{e.error}</div>
                         </li>
                       ))}
                     </ul>
