@@ -143,10 +143,11 @@ async function main() {
   // Existence check (chunked)
   const existing = new Set();
   const refArr = Array.from(referenced);
-  for (let i = 0; i < refArr.length; i += 500) {
-    const chunk = refArr.slice(i, i + 500);
-    const { data } = await sb.from("content_pages").select("url_path")
+  for (let i = 0; i < refArr.length; i += 100) {
+    const chunk = refArr.slice(i, i + 100);
+    const { data, error } = await sb.from("content_pages").select("url_path")
       .in("url_path", chunk).in("status", ["pending", "scraped", "drafted", "migrated", "published"]);
+    if (error) { console.error(`  existence-check error @${i}:`, error.message); throw error; }
     for (const r of data || []) existing.add(r.url_path);
   }
   console.log(`  ${existing.size} resolve, ${referenced.size - existing.size} missing`);
