@@ -239,55 +239,158 @@ export const importTable = createServerFn({ method: "POST" })
       }
     }
 
-    const rows = parsed.slice(1).map((r) => {
-      const obj: Record<string, any> = {};
-      effectiveHeader.forEach((col) => {
-        const i = header.indexOf(col);
-        obj[col] = coerceValue(r[i] ?? "", col);
-      });
-      return obj;
-    });
+    // Schema validation per row. Build the row object and collect issues.
+    const tableCols = new Set(await getTableColumns(data.table));
+    const knownSchema = tableCols.size > 0;
+
+    const rowErrors: { row: number; slug?: string; reason: string }[] = [];
+    const validRows: Record<string, any>[] = [];
+    const validRowNumbers: number[] = []; // 1-based CSV row numbers (data row 1 = csv row 2)
 
     const conflictColumn =
       data.conflictColumn || (data.table === "content_plan" ? "slug" : "id");
+    const seenKeys = new Map<string, number>();
+
+    parsed.slice(1).forEach((rawRow, idx) => {
+      const csvRowNum = idx + 2; // header is row 1
+      const obj: Record<string, any> = {};
+      const issues: string[] = [];
+
+      effectiveHeader.forEach((col) => {
+        const i = header.indexOf(col);
+        const raw = rawRow[i] ?? "";
+        // Detect malformed JSON in jsonb-looking columns
+        const trimmed = String(raw).trim();
+        if (
+          (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
+          (trimmed.startsWith("[") && trimmed.endsWith("]"))
+        ) {
+          try {
+            JSON.parse(trimmed);
+          } catch {
+            issues.push(`Invalid JSON in "${col}"`);
+          }
+        }
+        obj[col] = coerceValue(raw, col);
+      });
+
+      // Required: conflict column must be present and non-empty
+      if (
+        effectiveHeader.includes(conflictColumn) &&
+        (obj[conflictColumn] === null || obj[conflictColumn] === "")
+      ) {
+        issues.push(`Missing required "${conflictColumn}"`);
+      }
+
+      // Schema check: any unknown columns left after drop step?
+      if (knownSchema) {
+        for (const col of effectiveHeader) {
+          if (!tableCols.has(col)) {
+            issues.push(`Unknown column "${col}"`);
+          }
+        }
+      }
+
+      // Duplicate key within the CSV
+      const keyVal = obj[conflictColumn];
+      if (keyVal != null && keyVal !== "") {
+        const prior = seenKeys.get(String(keyVal));
+        if (prior !== undefined) {
+          issues.push(
+            `Duplicate "${conflictColumn}"="${keyVal}" (also on CSV row ${prior})`,
+          );
+        } else {
+          seenKeys.set(String(keyVal), csvRowNum);
+        }
+      }
+
+      if (issues.length > 0) {
+        rowErrors.push({
+          row: csvRowNum,
+          slug: keyVal != null ? String(keyVal) : undefined,
+          reason: issues.join("; "),
+        });
+        return;
+      }
+      validRows.push(obj);
+      validRowNumbers.push(csvRowNum);
+    });
 
     if (data.dryRun) {
       return {
         dryRun: true,
-        totalRows: rows.length,
+        totalRows: parsed.length - 1,
+        validRowCount: validRows.length,
         inserted: 0,
-        errors: [] as string[],
+        rowErrors,
+        chunkErrors: [] as string[],
         columns: effectiveHeader,
         droppedColumns: header.filter((_, i) => dropIdx.has(i)),
       };
     }
 
+    // Insert valid rows in chunks. On chunk failure, retry per-row to pinpoint
+    // the offending rows so the rest of the chunk still lands.
     const chunkSize = 500;
     let inserted = 0;
-    const errors: string[] = [];
+    const chunkErrors: string[] = [];
 
-    for (let i = 0; i < rows.length; i += chunkSize) {
-      const chunk = rows.slice(i, i + chunkSize);
+    const writeOne = async (row: Record<string, any>) => {
+      const tbl = supabaseAdmin.from(data.table) as any;
+      const q =
+        data.mode === "upsert"
+          ? tbl.upsert([row], { onConflict: conflictColumn })
+          : tbl.insert([row]);
+      return q;
+    };
+
+    for (let i = 0; i < validRows.length; i += chunkSize) {
+      const chunk = validRows.slice(i, i + chunkSize);
+      const chunkRowNums = validRowNumbers.slice(i, i + chunkSize);
       const tbl = supabaseAdmin.from(data.table) as any;
       const q =
         data.mode === "upsert"
           ? tbl.upsert(chunk, { onConflict: conflictColumn })
           : tbl.insert(chunk);
       const { error } = await q;
-      if (error) {
-        errors.push(`Rows ${i + 1}-${i + chunk.length}: ${error.message}`);
-      } else {
+
+      if (!error) {
         inserted += chunk.length;
+        continue;
       }
+
+      // Fall back to per-row writes so good rows still land.
+      for (let j = 0; j < chunk.length; j++) {
+        const { error: rowErr } = await writeOne(chunk[j]);
+        if (rowErr) {
+          rowErrors.push({
+            row: chunkRowNums[j],
+            slug:
+              chunk[j][conflictColumn] != null
+                ? String(chunk[j][conflictColumn])
+                : undefined,
+            reason: `DB: ${rowErr.message}`,
+          });
+        } else {
+          inserted++;
+        }
+      }
+      // Note the chunk-level message too for context
+      chunkErrors.push(
+        `Chunk rows ${chunkRowNums[0]}-${chunkRowNums[chunkRowNums.length - 1]} retried per-row: ${error.message}`,
+      );
     }
 
     return {
       dryRun: false,
-      totalRows: rows.length,
+      totalRows: parsed.length - 1,
+      validRowCount: validRows.length,
       inserted,
-      errors,
+      rowErrors,
+      chunkErrors,
       columns: effectiveHeader,
       droppedColumns: header.filter((_, i) => dropIdx.has(i)),
     };
   });
+
 

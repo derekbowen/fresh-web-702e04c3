@@ -40,7 +40,8 @@ function TableCard({ table }: { table: TableName }) {
   const [importResult, setImportResult] = React.useState<{
     totalRows: number;
     inserted: number;
-    errors: string[];
+    rowErrors: { row: number; slug?: string; reason: string }[];
+    chunkErrors: string[];
   } | null>(null);
   const [mode, setMode] = React.useState<"upsert" | "insert">("upsert");
   const fileRef = React.useRef<HTMLInputElement>(null);
@@ -68,9 +69,15 @@ function TableCard({ table }: { table: TableName }) {
       const csv = await file.text();
       setStatus("Uploading and importing...");
       const res = await importTable({ data: { table, csv, mode } });
-      setImportResult(res);
+      setImportResult({
+        totalRows: res.totalRows,
+        inserted: res.inserted,
+        rowErrors: res.rowErrors,
+        chunkErrors: res.chunkErrors,
+      });
+      const totalErr = res.rowErrors.length;
       setStatus(
-        `Imported ${res.inserted}/${res.totalRows} rows${res.errors.length ? ` (${res.errors.length} chunk error(s))` : ""}`,
+        `Imported ${res.inserted}/${res.totalRows} rows${totalErr ? ` (${totalErr} bad row(s))` : ""}`,
       );
     } catch (e: any) {
       setStatus(`Error: ${e?.message ?? String(e)}`);
@@ -140,13 +147,21 @@ function TableCard({ table }: { table: TableName }) {
             {status}
           </div>
         )}
-        {importResult && importResult.errors.length > 0 && (
+        {importResult && importResult.rowErrors.length > 0 && (
           <div className="rounded border border-destructive/50 bg-destructive/10 p-3 text-xs">
-            <div className="mb-1 font-medium">Errors:</div>
-            <ul className="list-inside list-disc space-y-1">
-              {importResult.errors.map((e, i) => (
-                <li key={i}>{e}</li>
+            <div className="mb-1 font-medium">
+              Bad rows ({importResult.rowErrors.length}):
+            </div>
+            <ul className="max-h-48 list-inside list-disc space-y-1 overflow-auto">
+              {importResult.rowErrors.slice(0, 50).map((e, i) => (
+                <li key={i}>
+                  Row {e.row}
+                  {e.slug ? ` (${e.slug})` : ""}: {e.reason}
+                </li>
               ))}
+              {importResult.rowErrors.length > 50 && (
+                <li>...and {importResult.rowErrors.length - 50} more</li>
+              )}
             </ul>
           </div>
         )}

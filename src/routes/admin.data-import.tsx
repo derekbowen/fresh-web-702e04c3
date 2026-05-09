@@ -45,7 +45,8 @@ function DataImportPage() {
   const [result, setResult] = React.useState<{
     inserted: number;
     totalRows: number;
-    errors: string[];
+    rowErrors: { row: number; slug?: string; reason: string }[];
+    chunkErrors: string[];
     droppedColumns: string[];
   } | null>(null);
   const [mode, setMode] = React.useState<"upsert" | "insert">("upsert");
@@ -91,7 +92,8 @@ function DataImportPage() {
       setResult({
         inserted: res.inserted,
         totalRows: res.totalRows,
-        errors: res.errors,
+        rowErrors: res.rowErrors,
+        chunkErrors: res.chunkErrors,
         droppedColumns: res.droppedColumns,
       });
     } catch (e: any) {
@@ -393,7 +395,7 @@ function DataImportPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                {result.errors.length === 0 ? (
+                {result.rowErrors.length === 0 && result.chunkErrors.length === 0 ? (
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
                 ) : (
                   <AlertTriangle className="h-5 w-5 text-amber-600" />
@@ -404,18 +406,80 @@ function DataImportPage() {
             <CardContent className="space-y-3 text-sm">
               <div>
                 Wrote <strong>{result.inserted}</strong> of{" "}
-                <strong>{result.totalRows}</strong> rows.
+                <strong>{result.totalRows}</strong> rows.{" "}
+                {result.rowErrors.length > 0 && (
+                  <span className="text-amber-700 dark:text-amber-400">
+                    {result.rowErrors.length} row(s) skipped.
+                  </span>
+                )}
               </div>
               {result.droppedColumns.length > 0 && (
                 <div className="text-muted-foreground">
                   Dropped columns: {result.droppedColumns.join(", ")}
                 </div>
               )}
-              {result.errors.length > 0 && (
+              {result.rowErrors.length > 0 && (
                 <div className="rounded border border-destructive/50 bg-destructive/10 p-3 text-xs">
-                  <div className="mb-1 font-medium">Errors:</div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-medium">
+                      Bad rows ({result.rowErrors.length})
+                    </span>
+                    <button
+                      onClick={() => {
+                        const csv =
+                          "csv_row,key,reason\n" +
+                          result.rowErrors
+                            .map(
+                              (e) =>
+                                `${e.row},"${(e.slug ?? "").replace(/"/g, '""')}","${e.reason.replace(/"/g, '""')}"`,
+                            )
+                            .join("\n");
+                        const blob = new Blob([csv], { type: "text/csv" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `import-errors-${Date.now()}.csv`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                      className="underline-offset-2 hover:underline"
+                    >
+                      Download error report
+                    </button>
+                  </div>
+                  <div className="max-h-64 overflow-auto rounded border bg-background">
+                    <table className="w-full text-xs">
+                      <thead className="bg-muted">
+                        <tr>
+                          <th className="px-2 py-1 text-left">Row</th>
+                          <th className="px-2 py-1 text-left">Key</th>
+                          <th className="px-2 py-1 text-left">Reason</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {result.rowErrors.slice(0, 100).map((e, i) => (
+                          <tr key={i} className="border-t">
+                            <td className="px-2 py-1">{e.row}</td>
+                            <td className="px-2 py-1 font-mono">{e.slug ?? ""}</td>
+                            <td className="px-2 py-1">{e.reason}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {result.rowErrors.length > 100 && (
+                      <div className="border-t bg-muted px-2 py-1 text-muted-foreground">
+                        Showing 100 of {result.rowErrors.length}. Download the
+                        report for the full list.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              {result.chunkErrors.length > 0 && (
+                <div className="rounded border bg-muted p-3 text-xs">
+                  <div className="mb-1 font-medium">Chunk notes:</div>
                   <ul className="list-inside list-disc space-y-1">
-                    {result.errors.map((e, i) => (
+                    {result.chunkErrors.map((e, i) => (
                       <li key={i}>{e}</li>
                     ))}
                   </ul>
