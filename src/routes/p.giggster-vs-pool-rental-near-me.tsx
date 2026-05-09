@@ -565,7 +565,7 @@ function GiggsterComparisonPage() {
           purpose-built for residential pool hosting.
         </li>
         <li>
-          You're <a href="/p/howithostsworks">
+          You're <a href="/p/hosting">
             becoming a host
           </a>{" "}
           outside the major production-hub metros, where Giggster's buyer flow
