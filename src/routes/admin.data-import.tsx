@@ -45,7 +45,8 @@ function DataImportPage() {
   const [result, setResult] = React.useState<{
     inserted: number;
     totalRows: number;
-    errors: string[];
+    rowErrors: { row: number; slug?: string; reason: string }[];
+    chunkErrors: string[];
     droppedColumns: string[];
   } | null>(null);
   const [mode, setMode] = React.useState<"upsert" | "insert">("upsert");
