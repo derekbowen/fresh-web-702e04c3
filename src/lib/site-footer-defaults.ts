@@ -30,7 +30,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
-    { label: "Liability Waivers Guide", href: "/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course" },
+    { label: "Liability Waivers", href: "https://rentalwaivers.com" },
     { label: "Public Pools", href: "/public-pools" },
     { label: "Browse All States", href: "/p/pool-rentals" },
   ],
@@ -51,6 +51,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Privacy", href: "/p/privacy-policy" },
     { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
     { label: "Refer Pool Owners", href: "/referral" },
+    { label: "Investors", href: "/p/investors" },
   ],
   // Slugs map to published `content_pages` (host_acq_city template) so each
   // link resolves through the /p/$slug dispatcher. The cities table has rows
