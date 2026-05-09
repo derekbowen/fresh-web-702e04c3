@@ -92,6 +92,10 @@ export interface ContentPage {
   is_published?: boolean;
   legacy_slugs?: string[];
   hreflang_alt?: string | null;
+  /** Optional AI/derived enrichment surfaced on blog posts. */
+  tldr_bullets?: string[] | null;
+  related_slugs?: string[] | null;
+  topic?: string | null;
 }
 
 export type ContentPageLookupResult =
@@ -198,7 +202,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     const { data: blogRows } = await (supabaseAdmin as any)
       .from("blog_posts")
       .select(
-        "id, slug, title, excerpt, content, cover_image_url, author, seo_title, seo_description, is_published, published_at, updated_at, topic",
+        "id, slug, title, excerpt, content, cover_image_url, author, seo_title, seo_description, is_published, published_at, updated_at, topic, tldr_bullets, related_slugs",
       )
       .eq("slug", slug)
       .eq("is_published", true)
@@ -217,9 +221,17 @@ export const lookupContentPage = createServerFn({ method: "GET" })
           published_at: string | null;
           updated_at: string;
           topic: string | null;
+          tldr_bullets: unknown;
+          related_slugs: unknown;
         }
       | undefined;
     if (blog) {
+      const tldr = Array.isArray(blog.tldr_bullets)
+        ? (blog.tldr_bullets as unknown[]).filter((s): s is string => typeof s === "string")
+        : null;
+      const related = Array.isArray(blog.related_slugs)
+        ? (blog.related_slugs as unknown[]).filter((s): s is string => typeof s === "string")
+        : null;
       const synthetic: ContentPage = {
         id: blog.id,
         slug: blog.slug,
@@ -246,6 +258,9 @@ export const lookupContentPage = createServerFn({ method: "GET" })
         is_published: true,
         legacy_slugs: [],
         hreflang_alt: null,
+        tldr_bullets: tldr,
+        related_slugs: related,
+        topic: blog.topic,
       };
       return { kind: "found", page: synthetic };
     }

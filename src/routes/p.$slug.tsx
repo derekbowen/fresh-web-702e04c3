@@ -40,6 +40,10 @@ import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
 import { AcademyHubTemplate } from "@/components/templates/academy-hub";
 import { ACADEMY_HUB_SLUGS, academyHubPath } from "@/lib/course-urls";
+import {
+  getRelatedBlogMeta,
+  type RelatedPostMeta,
+} from "@/server/blog-enrichment.functions";
 
 function academyLangForSlug(slug: string | null | undefined): "en" | "es" | null {
   if (!slug) return null;
@@ -147,7 +151,17 @@ export const Route = createFileRoute("/p/$slug")({
         hreflangSibling = null;
       }
     }
-    return { page, nearbyCities, city, linkTargets, academyHub, hreflangSibling };
+    let relatedPosts: RelatedPostMeta[] = [];
+    const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs;
+    if (Array.isArray(relatedSlugs) && relatedSlugs.length > 0) {
+      try {
+        const r = await getRelatedBlogMeta({ data: { slugs: relatedSlugs.slice(0, 8) } });
+        relatedPosts = r.posts;
+      } catch {
+        relatedPosts = [];
+      }
+    }
+    return { page, nearbyCities, city, linkTargets, academyHub, hreflangSibling, relatedPosts };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -187,15 +201,33 @@ export const Route = createFileRoute("/p/$slug")({
 
     const scripts = [];
 
-    // BreadcrumbList JSON-LD — universal
-    scripts.push(
-      ldJsonScript(
-        breadcrumbJsonLd([
-          { name: "Home", path: "/" },
-          { name: titleBase || path, path },
-        ]),
-      ),
-    );
+    // BreadcrumbList JSON-LD — Home > Blog > {Topic} > {Title} for blog posts.
+    const blogTopic = (p as { topic?: string | null }).topic ?? null;
+    const blogCrumbs =
+      p.template_type === "resource" && (blogTopic || p.category === "blog" || blogTopic !== null);
+    if (blogCrumbs) {
+      const topicLabel = blogTopic
+        ? blogTopic.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+        : null;
+      const crumbs: Array<{ name: string; path: string }> = [
+        { name: "Home", path: "/" },
+        { name: "Blog", path: "/p/blog" },
+      ];
+      if (topicLabel && blogTopic) {
+        crumbs.push({ name: topicLabel, path: `/p/blog?topic=${encodeURIComponent(blogTopic)}` });
+      }
+      crumbs.push({ name: titleBase || path, path });
+      scripts.push(ldJsonScript(breadcrumbJsonLd(crumbs)));
+    } else {
+      scripts.push(
+        ldJsonScript(
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: titleBase || path, path },
+          ]),
+        ),
+      );
+    }
 
     // Article JSON-LD — for content-style template types
     if (isArticleType(p.template_type)) {
@@ -347,7 +379,7 @@ function buildHreflangLinks(
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city, linkTargets, academyHub } = Route.useLoaderData();
+  const { page, nearbyCities, city, linkTargets, academyHub, relatedPosts } = Route.useLoaderData();
 
   // Academy hubs (en + es) override their stored template_type so they always
   // render the rich hub UI even though the row's template_type may be
@@ -378,7 +410,7 @@ function ContentPageDispatcher() {
     case "swim_instructor_hub":
       return <SwimInstructorHubTemplate page={page} linkTargets={linkTargets} />;
     case "resource":
-      return <ResourceArticleTemplate page={page} linkTargets={linkTargets} />;
+      return <ResourceArticleTemplate page={page} linkTargets={linkTargets} relatedPosts={relatedPosts} />;
     default:
       return <GenericPageTemplate page={page} linkTargets={linkTargets} />;
   }
