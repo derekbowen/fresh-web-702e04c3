@@ -43,9 +43,8 @@ function rel(path: string): string {
   return path.startsWith("/") ? `${base}${path}` : `${base}/${path}`;
 }
 
-const MARKETPLACE_ORIGIN = "https://www.poolrentalnearme.com";
 const marketplace = (path: string): string =>
-  `${MARKETPLACE_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`;
+  path.startsWith("/") ? path : `/${path}`;
 
 export function SiteHeader() {
   if (useSuppressChrome()) return null;
