@@ -4,10 +4,20 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export type GenStats = {
   ok: boolean;
-  totals: { generated: number; pending: number; total: number };
+  totals: { generated: number; pending: number; paused: number; total: number };
   pendingByTier: Array<{ tier: string; n: number }>;
+  pausedByTier: Array<{ tier: string; n: number }>;
+  pausedByValidator: Array<{ version: string; n: number }>;
+  topPausedReasons: Array<{ reason: string; n: number }>;
   recentInserts: Array<{ slug: string; title: string | null; created_at: string }>;
-  recentErrors: Array<{ slug: string; tier: string | null; updated_at: string; error: string }>;
+  recentErrors: Array<{
+    slug: string;
+    tier: string | null;
+    updated_at: string;
+    error: string;
+    attempts: number;
+    status: string;
+  }>;
   perDay: Array<{ day: string; n: number }>;
   error?: string;
 };
