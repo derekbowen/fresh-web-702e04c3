@@ -450,7 +450,10 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
     if (normalizedState) query = query.eq("state_code", normalizedState);
 
     const { data, count, error } = await query
+      // Newest-first, with sharetribe_id as a stable tiebreaker so two rows
+      // with identical updated_at always come back in the same order.
       .order("updated_at", { ascending: false })
+      .order("sharetribe_id", { ascending: true })
       .range(from, to);
     if (error) throw error;
 
