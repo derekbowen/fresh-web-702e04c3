@@ -175,13 +175,37 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
     }
     const listingsResult = { ...generalResult, listings: mergedListings };
 
-    let nearestMiles: number | null = null;
-    if (cf.latitude && cf.longitude && nearbyResult.listings.length > 0) {
+    // Annotate every featured listing with approximate distance from the
+    // visitor (Cloudflare-resolved lat/lng). Powers the "X mi away" badge
+    // on listing cards without exposing host street addresses.
+    let visitorLat: number | null = null;
+    let visitorLng: number | null = null;
+    if (cf.latitude && cf.longitude) {
       const lat = Number(cf.latitude);
       const lng = Number(cf.longitude);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        visitorLat = lat;
+        visitorLng = lng;
+      }
+    }
+    if (visitorLat !== null && visitorLng !== null) {
+      for (const l of listingsResult.listings) {
+        if (l.geolocation) {
+          l.distanceMiles = haversineMiles(
+            visitorLat,
+            visitorLng,
+            l.geolocation.lat,
+            l.geolocation.lng,
+          );
+        }
+      }
+    }
+
+    let nearestMiles: number | null = null;
+    if (visitorLat !== null && visitorLng !== null && nearbyResult.listings.length > 0) {
       for (const l of nearbyResult.listings) {
         if (l.geolocation) {
-          const d = haversineMiles(lat, lng, l.geolocation.lat, l.geolocation.lng);
+          const d = haversineMiles(visitorLat, visitorLng, l.geolocation.lat, l.geolocation.lng);
           if (nearestMiles === null || d < nearestMiles) nearestMiles = d;
         }
       }

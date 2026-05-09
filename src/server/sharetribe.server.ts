@@ -261,6 +261,8 @@ export interface ListingSummary {
   imageUrl: string | null;
   url: string;
   geolocation: { lat: number; lng: number } | null;
+  /** Approx miles from visitor (server-computed via Cloudflare geo). */
+  distanceMiles?: number | null;
 }
 
 function slugify(s: string): string {
