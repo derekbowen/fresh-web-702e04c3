@@ -69,9 +69,15 @@ function TableCard({ table }: { table: TableName }) {
       const csv = await file.text();
       setStatus("Uploading and importing...");
       const res = await importTable({ data: { table, csv, mode } });
-      setImportResult(res);
+      setImportResult({
+        totalRows: res.totalRows,
+        inserted: res.inserted,
+        rowErrors: res.rowErrors,
+        chunkErrors: res.chunkErrors,
+      });
+      const totalErr = res.rowErrors.length;
       setStatus(
-        `Imported ${res.inserted}/${res.totalRows} rows${res.errors.length ? ` (${res.errors.length} chunk error(s))` : ""}`,
+        `Imported ${res.inserted}/${res.totalRows} rows${totalErr ? ` (${totalErr} bad row(s))` : ""}`,
       );
     } catch (e: any) {
       setStatus(`Error: ${e?.message ?? String(e)}`);
