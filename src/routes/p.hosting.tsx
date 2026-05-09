@@ -409,7 +409,7 @@ function HostingPage() {
             <p className="mx-auto mt-6 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Sample categories
             </p>
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 text-left">
+            <div className="mt-6 grid gap-5 grid-cols-2 lg:grid-cols-3 text-left">
               {COURSES.map((c) => {
                 const Icon = c.icon;
                 return (
