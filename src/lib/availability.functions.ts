@@ -97,7 +97,7 @@ export const getListingAvailability = createServerFn({ method: "GET" })
         await supabaseAdmin
           .from("availability_cache")
           .upsert(
-            { listing_id: data.listingId, slots: hourly, fetched_at: fetchedAt },
+            { listing_id: data.listingId, slots: hourly as unknown as never, fetched_at: fetchedAt },
             { onConflict: "listing_id" },
           );
       } catch (err) {
