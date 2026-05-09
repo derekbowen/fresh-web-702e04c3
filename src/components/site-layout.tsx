@@ -246,10 +246,11 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
           </button>
         </div>
       </div>
+    </header>
 
-      {/* Mobile slide-out */}
+      {/* Mobile slide-out — rendered outside <header> to escape its sticky stacking context */}
       <div
-        className={`fixed inset-0 z-50 lg:hidden ${open ? "" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[60] lg:hidden ${open ? "" : "pointer-events-none"}`}
         aria-hidden={!open}
       >
         <div
@@ -379,7 +380,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
           </div>
         </aside>
       </div>
-    </header>
+    </>
   );
 }
 
