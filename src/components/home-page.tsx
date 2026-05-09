@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
+import { LiteYouTube } from "@/components/lite-youtube";
 
 // Below-the-fold form components — pull react-hook-form + zod resolvers.
 // Lazy-load so they don't bloat the homepage entry chunk.
