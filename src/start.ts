@@ -70,7 +70,7 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
     // Forwarded host wins (set by EC2 nginx); fall back to direct Host header.
     const forwardedHost = request.headers.get("x-forwarded-host");
     const host = forwardedHost ?? request.headers.get("host");
-    if (isNonProductionHost(host)) {
+    if (isPreviewHost(host)) {
       response.headers.set("X-Robots-Tag", "noindex, nofollow");
     }
   }
