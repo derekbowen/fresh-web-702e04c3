@@ -93,7 +93,15 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   const categories = Array.isArray(safe.categories) ? safe.categories : [];
-  const listings = Array.isArray(safe.listings) ? safe.listings : [];
+  const rawListings = Array.isArray(safe.listings) ? safe.listings : [];
+  // distanceMiles is computed server-side from Cloudflare geo headers, which
+  // may differ between the upstream SSR request (proxied via /landing-page)
+  // and what the client would compute on rehydration. Strip the badge until
+  // after hydration to keep server and client markup identical (avoids
+  // React #418 hydration mismatches on listing cards).
+  const listings = hydrated
+    ? rawListings
+    : rawListings.map((l) => ({ ...l, distanceMiles: null }));
   const rawNearby = (safe.nearby && typeof safe.nearby === "object" ? safe.nearby : null) ?? {
     city: null,
     region: null,
