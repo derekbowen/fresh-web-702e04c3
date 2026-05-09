@@ -376,9 +376,9 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
   totalPages: number;
 }> {
   try {
-    if (opts.citySlug || opts.city) {
-      const byCity = await searchSyncedListings(opts);
-      if (byCity) return byCity;
+    if (opts.citySlug || opts.city || opts.stateCode) {
+      const bySynced = await searchSyncedListings(opts);
+      if (bySynced) return bySynced;
     }
 
     const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
