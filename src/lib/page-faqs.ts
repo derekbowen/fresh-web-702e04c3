@@ -273,10 +273,6 @@ export function faqsForContentPage(page: ContentPage): FaqItem[] {
     }
     return [];
   }
-  if (t === "city_main" && page.slug) {
-    const { city, stateCode } = parseCitySlug(page.slug);
-    return cityMainFaqs(city, stateCode);
-  }
   if (t === "resource" || t === "spanish_resource") {
     const title = page.title || page.seo_title || "this guide";
     return genericResourceFaqs(title);
