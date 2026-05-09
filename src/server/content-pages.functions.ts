@@ -167,6 +167,49 @@ export const lookupContentPage = createServerFn({ method: "GET" })
 
 export const getHreflangSibling = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ pageId: z.string().uuid() }).parse(data))
-  .handler(async () => {
-    return { sibling: null as null | { slug: string; language: string } };
+  .handler(async ({ data }): Promise<{ sibling: null | { slug: string; language: string } }> => {
+    const { pageId } = data;
+
+    // Load the source page to read its hreflang_alt FK / hreflang_group.
+    const { data: pageRow } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .select("id, locale, hreflang_group, hreflang_alt")
+      .eq("id", pageId)
+      .maybeSingle();
+
+    if (!pageRow) return { sibling: null };
+
+    // Prefer the explicit hreflang_alt FK when present.
+    const altId = (pageRow as { hreflang_alt?: string | null }).hreflang_alt;
+    if (altId) {
+      const { data: sib } = await (supabaseAdmin as any)
+        .from("content_pages")
+        .select("slug, locale, status")
+        .eq("id", altId)
+        .eq("status", "published")
+        .maybeSingle();
+      if (sib?.slug && sib?.locale) {
+        return { sibling: { slug: sib.slug, language: sib.locale } };
+      }
+      return { sibling: null };
+    }
+
+    // Fallback: find another published row sharing the same hreflang_group.
+    const group = (pageRow as { hreflang_group?: string | null }).hreflang_group;
+    if (!group) return { sibling: null };
+
+    const { data: sibRows } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .select("slug, locale")
+      .eq("hreflang_group", group)
+      .eq("status", "published")
+      .neq("id", pageId)
+      .limit(1);
+
+    const sib = (sibRows ?? [])[0] as { slug: string | null; locale: string | null } | undefined;
+    if (sib?.slug && sib?.locale) {
+      return { sibling: { slug: sib.slug, language: sib.locale } };
+    }
+    return { sibling: null };
   });
+
