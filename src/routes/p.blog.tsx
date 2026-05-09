@@ -36,6 +36,8 @@ function normalizeTopic(t: string | null): string {
 function BlogHubPage() {
   const { posts } = Route.useLoaderData() as { posts: BlogHubPost[] };
 
+  const featured = useMemo(() => posts.slice(0, 6), [posts]);
+
   const grouped = useMemo(() => {
     const map = new Map<string, BlogHubPost[]>();
     for (const p of posts) {
