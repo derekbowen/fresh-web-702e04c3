@@ -92,6 +92,10 @@ export interface ContentPage {
   is_published?: boolean;
   legacy_slugs?: string[];
   hreflang_alt?: string | null;
+  /** Optional AI/derived enrichment surfaced on blog posts. */
+  tldr_bullets?: string[] | null;
+  related_slugs?: string[] | null;
+  topic?: string | null;
 }
 
 export type ContentPageLookupResult =
