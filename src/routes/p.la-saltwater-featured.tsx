@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AvailabilityCalendar } from "@/components/availability-calendar";
 import { buildMeta, ldJsonScript, SITE_URL } from "@/lib/seo";
 import {
   Flame,
