@@ -366,6 +366,7 @@ export interface SearchOptions {
   address?: string;
   citySlug?: string;
   city?: string;
+  stateCode?: string; // e.g. "CA" — synced_listings only
 }
 
 export async function searchListings(opts: SearchOptions = {}): Promise<{
@@ -375,9 +376,9 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
   totalPages: number;
 }> {
   try {
-    if (opts.citySlug || opts.city) {
-      const byCity = await searchSyncedListings(opts);
-      if (byCity) return byCity;
+    if (opts.citySlug || opts.city || opts.stateCode) {
+      const bySynced = await searchSyncedListings(opts);
+      if (bySynced) return bySynced;
     }
 
     const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
@@ -420,6 +421,7 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
       .eq("is_deleted", false);
     if (opts.citySlug) query = query.eq("city_slug", opts.citySlug);
     else if (opts.city) query = query.ilike("city", opts.city);
+    if (opts.stateCode) query = query.eq("state_code", opts.stateCode);
 
     const { data, count, error } = await query
       .order("updated_at", { ascending: false })

@@ -103,7 +103,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, cityCountRes, categories, listingsResult, nearbyResult, academyRes] = await Promise.all([
+    const [cities, cityCountRes, categories, californiaResult, generalResult, nearbyResult, academyRes] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -137,7 +137,8 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         "categories query",
         { data: [] as HomeCategory[] } as { data: HomeCategory[] | null },
       ),
-      safe(searchListings({ perPage: 6 }), "searchListings (featured)", emptyListingResult),
+      safe(searchListings({ perPage: 6, stateCode: "CA" }), "searchListings (CA)", emptyListingResult),
+      safe(searchListings({ perPage: 12 }), "searchListings (featured)", emptyListingResult),
       origin
         ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
         : Promise.resolve(emptyListingResult),
@@ -154,6 +155,25 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         [] as { slug: string | null; body_markdown: string | null }[],
       ),
     ]);
+
+    // Combine 6 California pools + fill to 12 with general featured (deduped by id).
+    const seen = new Set<string>();
+    const mergedListings = [];
+    for (const l of californiaResult.listings) {
+      if (l.id && !seen.has(l.id)) {
+        seen.add(l.id);
+        mergedListings.push(l);
+      }
+      if (mergedListings.length >= 6) break;
+    }
+    for (const l of generalResult.listings) {
+      if (mergedListings.length >= 12) break;
+      if (l.id && !seen.has(l.id)) {
+        seen.add(l.id);
+        mergedListings.push(l);
+      }
+    }
+    const listingsResult = { ...generalResult, listings: mergedListings };
 
     let nearestMiles: number | null = null;
     if (cf.latitude && cf.longitude && nearbyResult.listings.length > 0) {
