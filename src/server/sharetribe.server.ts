@@ -390,7 +390,17 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
   try {
     if (opts.citySlug || opts.city || opts.stateCode) {
       const bySynced = await searchSyncedListings(opts);
-      if (bySynced) return bySynced;
+      if (bySynced && bySynced.listings.length > 0) return bySynced;
+      // Fallback: mirror returned null (error) or zero results. Hit Sharetribe
+      // directly so the home page never silently renders an empty grid due to
+      // mirror staleness or a missing state_code on a row. The direct API
+      // can't filter by US state, so we just return unfiltered listings —
+      // better something than nothing.
+      if (opts.stateCode) {
+        console.warn(
+          `[searchListings] synced returned 0 for stateCode="${opts.stateCode}" — falling back to direct Sharetribe`,
+        );
+      }
     }
 
     const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
