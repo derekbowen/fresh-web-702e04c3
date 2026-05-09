@@ -14,11 +14,12 @@ export const Route = createFileRoute("/p/pool-rentals-$state")({
     if (!loaderData) return { meta: [], links: [] };
     const { stateName, cities } = loaderData;
     const title = `Pool rentals in ${stateName} — ${cities.length} cities | Pool Rental Near Me`;
-    const description = `Browse private backyard pool rentals across ${cities.length} cities in ${stateName}. Book by the hour from ${cities[0]?.cityName ?? ""} to ${cities[cities.length - 1]?.cityName ?? ""}.`;
+    const description = `Browse private backyard pool rentals across ${cities.length} cities in ${stateName}. Book by the hour, $40–150/hour typical, with $2M liability insurance included.`;
+    const stateSlug = stateName.toLowerCase().replace(/\s+/g, "-");
     const meta = buildMeta({
       title,
       description,
-      path: `/p/pool-rentals-${(loaderData as { stateName: string }).stateName.toLowerCase().replace(/\s+/g, "-")}`,
+      path: `/p/pool-rentals-${stateSlug}`,
     });
     return { meta: meta.meta, links: meta.links };
   },
