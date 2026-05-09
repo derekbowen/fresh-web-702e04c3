@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { HeroImage } from "@/components/hero-image";
 import { RelatedPages } from "@/components/related-pages";
 import { FaqBlock } from "@/components/faq-block";
 import { faqsForContentPage } from "@/lib/page-faqs";
@@ -52,12 +53,10 @@ export function ResourceArticleTemplate({
           </div>
           {(page.cover_image_url || page.hero_image_url) && (
             <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
-              <img
+              <HeroImage
                 src={(page.cover_image_url || page.hero_image_url) as string}
                 alt={page.title || ""}
                 className="h-full w-full object-cover"
-                loading="eager"
-                fetchPriority="high"
               />
             </div>
           )}

@@ -1,5 +1,6 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { HeroImage } from "@/components/hero-image";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
@@ -58,12 +59,10 @@ export function HostAcqCityTemplate({
         <section className="relative overflow-hidden border-b border-border">
           {page.hero_image_url && (
             <>
-              <img
+              <HeroImage
                 src={page.hero_image_url}
                 alt={`${cityName} backyard pool`}
                 className="absolute inset-0 h-full w-full object-cover"
-                loading="eager"
-                fetchPriority="high"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
             </>

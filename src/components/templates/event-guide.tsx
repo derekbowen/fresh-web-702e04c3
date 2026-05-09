@@ -1,5 +1,6 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { HeroImage } from "@/components/hero-image";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { NearbyCities } from "@/components/nearby-cities";
@@ -45,12 +46,10 @@ export function EventGuideTemplate({
           )}
           {page.hero_image_url && (
             <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
-              <img
+              <HeroImage
                 src={page.hero_image_url}
                 alt={title}
                 className="h-full w-full object-cover"
-                loading="eager"
-                fetchPriority="high"
               />
             </div>
           )}

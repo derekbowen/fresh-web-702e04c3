@@ -34,6 +34,7 @@ import { EventGuideTemplate } from "@/components/templates/event-guide";
 import { SwimInstructorCityTemplate } from "@/components/templates/swim-instructor-city";
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
+import { heroPreloadLinks } from "@/lib/hero-image";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
 import { AcademyHubTemplate } from "@/components/templates/academy-hub";
@@ -246,7 +247,16 @@ export const Route = createFileRoute("/p/$slug")({
       );
     }
 
-    return { ...meta, scripts };
+    // LCP preload — kicks off the hero image fetch in parallel with the JS
+    // chunks. Only preload when the page actually has a stored hero (the
+    // templates only render <img> in that case).
+    const heroForPreload = p.hero_image_url || p.cover_image_url || null;
+    const links = [
+      ...(meta.links ?? []),
+      ...heroPreloadLinks(heroForPreload),
+    ];
+
+    return { ...meta, links, scripts };
   },
   component: ContentPageDispatcher,
   errorComponent: ({ error, reset }) => {
