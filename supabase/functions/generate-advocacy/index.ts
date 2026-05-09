@@ -159,6 +159,8 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const sb = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
+  const url = new URL(req.url);
+  const limit = Math.max(1, Math.min(15, Number(url.searchParams.get("limit") ?? "6")));
 
   const { data: rows, error } = await sb
     .from("content_pages")
@@ -167,8 +169,9 @@ Deno.serve(async (req) => {
     .order("url_path");
   if (error) return new Response(`db error: ${error.message}`, { status: 500, headers: corsHeaders });
 
-  const todo = (rows ?? []).filter((r: any) => (r.body_markdown?.length ?? 0) < 200);
-  const log: string[] = [`Generating ${todo.length} pages with ${MODEL}`];
+  const allTodo = (rows ?? []).filter((r: any) => (r.body_markdown?.length ?? 0) < 200);
+  const todo = allTodo.slice(0, limit);
+  const log: string[] = [`Generating ${todo.length} of ${allTodo.length} remaining (limit=${limit}) with ${MODEL}`];
   let ok = 0, failed = 0;
 
   for (const r of todo as any[]) {
