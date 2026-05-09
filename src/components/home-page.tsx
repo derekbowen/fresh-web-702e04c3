@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { DustBanner } from "@/components/dust-banner";
+
 import { ListingCard } from "@/components/listing-card";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
