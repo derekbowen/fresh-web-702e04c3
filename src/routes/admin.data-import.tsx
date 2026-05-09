@@ -52,6 +52,7 @@ function DataImportPage() {
   const [mode, setMode] = React.useState<"upsert" | "insert">("upsert");
   const [ignoreUnknown, setIgnoreUnknown] = React.useState(true);
   const [confirmText, setConfirmText] = React.useState("");
+  const [mapping, setMapping] = React.useState<Record<string, string>>({});
   const fileRef = React.useRef<HTMLInputElement>(null);
 
   const reset = () => {
@@ -61,24 +62,42 @@ function DataImportPage() {
     setError(null);
     setResult(null);
     setConfirmText("");
+    setMapping({});
     if (fileRef.current) fileRef.current.value = "";
   };
+
+  const runPreview = React.useCallback(
+    async (text: string, m: Record<string, string>) => {
+      setBusy("preview");
+      setError(null);
+      try {
+        const res = await previewImport({ data: { table, csv: text, columnMapping: m } });
+        setPreview(res);
+      } catch (e: any) {
+        setError(e?.message ?? String(e));
+      } finally {
+        setBusy(null);
+      }
+    },
+    [table],
+  );
 
   const handleFile = async (f: File) => {
     reset();
     setFile(f);
     const text = await f.text();
     setCsv(text);
-    setBusy("preview");
-    try {
-      const res = await previewImport({ data: { table, csv: text } });
-      setPreview(res);
-    } catch (e: any) {
-      setError(e?.message ?? String(e));
-    } finally {
-      setBusy(null);
-    }
+    // Initial preview with identity mapping
+    await runPreview(text, {});
   };
+
+  // When mapping changes, re-run preview (debounced)
+  React.useEffect(() => {
+    if (!csv || !preview) return;
+    const t = setTimeout(() => { void runPreview(csv, mapping); }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapping]);
 
   const handleCommit = async () => {
     if (!csv) return;
@@ -87,7 +106,7 @@ function DataImportPage() {
     setResult(null);
     try {
       const res = await importTable({
-        data: { table, csv, mode, dryRun: false, ignoreUnknownColumns: ignoreUnknown },
+        data: { table, csv, mode, dryRun: false, ignoreUnknownColumns: ignoreUnknown, columnMapping: mapping },
       });
       setResult({
         inserted: res.inserted,
@@ -101,6 +120,14 @@ function DataImportPage() {
     } finally {
       setBusy(null);
     }
+  };
+
+  const effectiveFor = (csvHeader: string): string | null => {
+    if (csvHeader in mapping) {
+      const v = mapping[csvHeader];
+      return v && v.length > 0 ? v : null;
+    }
+    return csvHeader; // identity default
   };
 
   const blockingIssues: string[] = [];
@@ -305,11 +332,100 @@ function DataImportPage() {
           </Card>
         )}
 
-        {/* Step 4: Options + commit */}
+        {/* Step 4: Column mapping */}
         {preview && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">4. Confirm and import</CardTitle>
+              <CardTitle className="text-base">4. Map CSV columns to table columns</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-xs text-muted-foreground">
+                Each CSV column is mapped to a table column of the same name by
+                default. Pick a different target or "Skip" to ignore a column.
+                Preview updates automatically.
+              </p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <button
+                  className="rounded border px-2 py-1 hover:bg-muted"
+                  onClick={() => setMapping({})}
+                >
+                  Reset to identity
+                </button>
+                <button
+                  className="rounded border px-2 py-1 hover:bg-muted"
+                  onClick={() => {
+                    const next: Record<string, string> = {};
+                    const known = new Set(preview.tableColumns);
+                    preview.header.forEach((h) => { if (!known.has(h)) next[h] = ""; });
+                    setMapping(next);
+                  }}
+                >
+                  Skip all unknown
+                </button>
+              </div>
+              <div className="max-h-80 overflow-auto rounded border">
+                <table className="w-full text-xs">
+                  <thead className="bg-muted">
+                    <tr>
+                      <th className="px-2 py-1 text-left">CSV column</th>
+                      <th className="px-2 py-1 text-left">→ Table column</th>
+                      <th className="px-2 py-1 text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {preview.header.map((h) => {
+                      const eff = effectiveFor(h);
+                      const known = preview.tableColumns.length === 0
+                        || (eff !== null && preview.tableColumns.includes(eff));
+                      const dup = eff
+                        ? preview.header.filter((x) => effectiveFor(x) === eff).length > 1
+                        : false;
+                      return (
+                        <tr key={h} className="border-t">
+                          <td className="px-2 py-1 font-mono">{h}</td>
+                          <td className="px-2 py-1">
+                            <select
+                              value={h in mapping ? mapping[h] : h}
+                              onChange={(e) =>
+                                setMapping((m) => ({ ...m, [h]: e.target.value }))
+                              }
+                              className="w-full rounded border bg-background px-2 py-1 font-mono"
+                            >
+                              <option value="">— Skip —</option>
+                              {preview.tableColumns.length === 0 && (
+                                <option value={h}>{h} (identity)</option>
+                              )}
+                              {preview.tableColumns.map((c) => (
+                                <option key={c} value={c}>{c}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="px-2 py-1">
+                            {eff === null ? (
+                              <span className="text-muted-foreground">skipped</span>
+                            ) : dup ? (
+                              <span className="text-destructive">duplicate target</span>
+                            ) : !known ? (
+                              <span className="text-amber-700 dark:text-amber-400">unknown</span>
+                            ) : (
+                              <span className="text-green-700 dark:text-green-400">ok</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Step 5: Options + commit */}
+        {preview && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">5. Confirm and import</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
