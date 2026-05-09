@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { HeroImage } from "@/components/hero-image";
 import { RelatedPages } from "@/components/related-pages";
 import { FaqBlock } from "@/components/faq-block";
 import { faqsForContentPage } from "@/lib/page-faqs";
