@@ -172,7 +172,7 @@ export const Route = createFileRoute("/p/$slug")({
         { lang: "x-default", href: `${SITE_URL}${academyHubPath("en")}` },
       ];
     } else {
-      hreflang = buildHreflangLinks(p);
+      hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null);
     }
 
     const meta = buildMeta({
@@ -322,8 +322,28 @@ function isArticleType(t: ContentPage["template_type"]): boolean {
   );
 }
 
-function buildHreflangLinks(_p: ContentPage): Array<{ lang: string; href: string }> | undefined {
-  return undefined;
+function buildHreflangLinks(
+  p: ContentPage,
+  sibling: { slug: string; language: string } | null,
+): Array<{ lang: string; href: string }> | undefined {
+  if (!p.hreflang_alt || !sibling) return undefined;
+
+  const pagePath = p.url_path || `/p/${p.slug ?? ""}`;
+  const siblingPath = `/p/${sibling.slug}`;
+  const pageLang = p.locale || p.language || "en";
+
+  const englishHref =
+    pageLang === "en"
+      ? `${SITE_URL}${pagePath}`
+      : sibling.language === "en"
+        ? `${SITE_URL}${siblingPath}`
+        : `${SITE_URL}${pagePath}`;
+
+  return [
+    { lang: pageLang, href: `${SITE_URL}${pagePath}` },
+    { lang: sibling.language, href: `${SITE_URL}${siblingPath}` },
+    { lang: "x-default", href: englishHref },
+  ];
 }
 
 function ContentPageDispatcher() {
