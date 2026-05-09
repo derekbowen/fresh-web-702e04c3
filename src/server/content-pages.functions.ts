@@ -116,10 +116,9 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     // becomes the canonical destination for a 301 redirect.
     const { data: aliasRows } = await (supabaseAdmin as any)
       .from("content_pages")
-      .select("slug, url_path, priority")
+      .select("slug")
       .contains("legacy_slugs", [slug])
-      .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
-      .order("priority", { ascending: false })
+      .eq("status", "published")
       .limit(1);
     const alias = (aliasRows ?? [])[0] as { slug: string | null } | undefined;
     if (alias?.slug && alias.slug !== slug) {
