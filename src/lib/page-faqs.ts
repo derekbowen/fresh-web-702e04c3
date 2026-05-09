@@ -71,28 +71,6 @@ function hostAcqFaqs(city: string, stateCode: string | null): FaqItem[] {
   ];
 }
 
-function publicPoolCityFaqs(city: string, stateCode: string | null): FaqItem[] {
-  const where = stateCode ? `${city}, ${stateCode}` : city;
-  return [
-    {
-      question: `Can I rent a private pool by the hour in ${where}?`,
-      answer: `Yes. Pool Rental Near Me lets you book private backyard pools in ${where} by the hour. No memberships, no crowds, no schedule restrictions.`,
-    },
-    {
-      question: `How much does it cost to rent a pool in ${where}?`,
-      answer: `Pool rentals in ${where} typically range from $40 to $150 per hour depending on the pool, amenities, and time of day. You can filter by price when searching.`,
-    },
-    {
-      question: `Are private pool rentals in ${where} safer than public pools?`,
-      answer: `Private pool rentals give you exclusive use of the pool — no strangers, no shared lap lanes, and you control how many guests come.`,
-    },
-    {
-      question: `Do I need to bring my own towels and floats?`,
-      answer: `It depends on the host. Many ${where} listings include towels, floats, and grills. Each listing page shows exactly what's provided.`,
-    },
-  ];
-}
-
 function hostAdvocacyFaqs(stateCode: string): FaqItem[] {
   const stateName = STATE_NAMES[stateCode] ?? stateCode;
   return [
