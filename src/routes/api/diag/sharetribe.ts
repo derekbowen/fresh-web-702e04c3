@@ -64,10 +64,18 @@ export const Route = createFileRoute("/api/diag/sharetribe")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const url = new URL(request.url);
         const expected = process.env.DIAG_KEY || FALLBACK_KEY;
-        if (url.searchParams.get("key") !== expected) {
-          return new Response("Forbidden", { status: 403 });
+        let providedKey: string | null = null;
+        try {
+          providedKey = new URL(request.url).searchParams.get("key");
+        } catch {
+          /* ignore */
+        }
+        if (providedKey !== expected) {
+          return new Response(
+            `Forbidden. seenUrl=${request.url} providedKey=${providedKey}`,
+            { status: 403 },
+          );
         }
 
         const clientId = process.env.SHARETRIBE_CLIENT_ID;
