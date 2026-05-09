@@ -58,12 +58,10 @@ export function HostAcqCityTemplate({
         <section className="relative overflow-hidden border-b border-border">
           {page.hero_image_url && (
             <>
-              <img
+              <HeroImage
                 src={page.hero_image_url}
                 alt={`${cityName} backyard pool`}
                 className="absolute inset-0 h-full w-full object-cover"
-                loading="eager"
-                fetchPriority="high"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
             </>
