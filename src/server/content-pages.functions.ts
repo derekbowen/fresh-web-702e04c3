@@ -90,7 +90,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
       .from("content_pages")
       .select("*")
       .eq("slug", slug)
-      .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
+      .eq("status", "published")
       .order("priority", { ascending: false })
       .limit(5);
 
@@ -153,7 +153,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
             .from("content_pages")
             .select("slug")
             .eq("slug", candidate)
-            .in("status", ["pending", "scraped", "drafted", "migrated", "published"])
+            .eq("status", "published")
             .limit(1);
           if ((candRows ?? []).length > 0) {
             return { kind: "redirect", canonicalSlug: candidate };
