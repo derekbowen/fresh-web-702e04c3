@@ -305,10 +305,20 @@ function summarize(
       : typeof (pd.location as Record<string, unknown> | undefined)?.address === "string"
         ? ((pd.location as Record<string, unknown>).address as string)
         : "";
+  // PRIVACY: never derive "city" from the raw address string — the first
+  // comma-segment is almost always the street (e.g. "1234 Main St"). Only
+  // use structured city/state fields. If they're missing, show nothing.
+  const cityFromAddress = (() => {
+    if (!addressStr) return null;
+    const parts = addressStr.split(",").map((s) => s.trim()).filter(Boolean);
+    // Heuristic: a US address like "123 Main St, Los Angeles, CA 90001"
+    // has the city at index -2. Anything shorter is unsafe — skip.
+    return parts.length >= 3 ? parts[parts.length - 2] ?? null : null;
+  })();
   const city =
     (location.city as string) ||
     (pd.city as string) ||
-    (addressStr ? addressStr.split(",")[0]?.trim() : "") ||
+    cityFromAddress ||
     null;
   const state =
     (location.state as string) ||
