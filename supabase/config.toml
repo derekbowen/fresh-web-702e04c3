@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.generate-academy-pages]
 verify_jwt = false
+
+[functions.generate-advocacy]
+verify_jwt = false
