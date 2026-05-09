@@ -157,10 +157,11 @@ export const importTable = createServerFn({ method: "POST" })
 
     for (let i = 0; i < rows.length; i += chunkSize) {
       const chunk = rows.slice(i, i + chunkSize);
+      const tbl = supabaseAdmin.from(data.table) as any;
       const q =
         data.mode === "upsert"
-          ? supabaseAdmin.from(data.table).upsert(chunk, { onConflict: conflictColumn })
-          : supabaseAdmin.from(data.table).insert(chunk);
+          ? tbl.upsert(chunk, { onConflict: conflictColumn })
+          : tbl.insert(chunk);
       const { error } = await q;
       if (error) {
         errors.push(`Rows ${i + 1}-${i + chunk.length}: ${error.message}`);
