@@ -242,8 +242,8 @@ function LaSaltwaterPage() {
             </div>
             <div>
               <ShieldCheck className="mx-auto h-6 w-6 text-primary" />
-              <div className="mt-2 text-xl font-bold text-foreground">$2M coverage</div>
-              <div className="text-xs text-muted-foreground">Per booking, included</div>
+              <div className="mt-2 text-xl font-bold text-foreground">10% flat fee</div>
+              <div className="text-xs text-muted-foreground">Lowest host fee in the market</div>
             </div>
           </div>
         </section>
@@ -434,9 +434,9 @@ function LaSaltwaterPage() {
             </h2>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {[
-                { label: "Flat host fee", prnm: "10%", other: "15%+" },
-                { label: "Liability coverage", prnm: "$2M / booking", other: "$1M typical" },
-                { label: "Host communication", prnm: "Direct", other: "Filtered" },
+                { label: "Flat host fee", prnm: "10%", other: "15–30%+" },
+                { label: "Direct host messaging", prnm: "Yes", other: "Limited" },
+                { label: "US-based support", prnm: "Yes", other: "Varies" },
               ].map((row) => (
                 <div key={row.label} className="rounded-2xl border border-border bg-card p-5">
                   <div className="text-sm font-semibold text-foreground">{row.label}</div>
