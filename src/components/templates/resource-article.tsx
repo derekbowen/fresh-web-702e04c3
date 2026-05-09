@@ -79,6 +79,7 @@ export function ResourceArticleTemplate({
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
             </div>
           )}
+          <FaqBlock faqs={faqs} />
         </article>
         <RelatedPages />
         <div className="mt-12 border-t border-border pt-8">
