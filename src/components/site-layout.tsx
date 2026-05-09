@@ -101,23 +101,15 @@ function SiteHeaderInner() {
         </a>
 
         <nav className="hidden items-center gap-6 md:flex">
-          {HEADER_LINKS.map((l) =>
-            l.internal ? (
-              <Link
-                key={l.label}
-                to={l.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground"
-                activeOptions={hydrated && l.exact ? { exact: true } : undefined}
-                activeProps={hydrated ? { className: "text-foreground" } : undefined}
-              >
-                {l.label}
-              </Link>
-            ) : (
-              <a key={l.label} href={rel(l.href)} className="text-sm font-medium text-muted-foreground hover:text-foreground">
-                {l.label}
-              </a>
-            )
-          )}
+          {HEADER_LINKS.map((l) => (
+            <a
+              key={l.label}
+              href={rel(l.href)}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              {l.label}
+            </a>
+          ))}
         </nav>
 
         <div className="flex items-center gap-2">
