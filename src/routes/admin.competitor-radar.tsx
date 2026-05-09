@@ -42,6 +42,8 @@ function CompetitorRadar() {
   const [expandedMatch, setExpandedMatch] = React.useState<string | null>(null);
   const [testReport, setTestReport] = React.useState<{ name: string; pass: boolean; rejected: boolean; expectReject: boolean; reason?: string }[] | null>(null);
   const [runningTests, setRunningTests] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
 
   async function flagFalsePositive(id: string) {
     const reason = prompt("Why is this a false positive? (optional, helps train the filter)") ?? "";
