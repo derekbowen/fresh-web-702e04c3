@@ -2182,6 +2182,33 @@ export type Database = {
           },
         ]
       }
+      redirect_log: {
+        Row: {
+          from_slug: string
+          id: string
+          redirected_at: string
+          referrer: string | null
+          to_slug: string
+          user_agent: string | null
+        }
+        Insert: {
+          from_slug: string
+          id?: string
+          redirected_at?: string
+          referrer?: string | null
+          to_slug: string
+          user_agent?: string | null
+        }
+        Update: {
+          from_slug?: string
+          id?: string
+          redirected_at?: string
+          referrer?: string | null
+          to_slug?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       seo_fix_jobs: {
         Row: {
           attempts: number
