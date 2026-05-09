@@ -86,11 +86,23 @@ const APP_NAV: NavLink[] = [
 const LIST_SPACE_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 
 const ACCOUNT_LINKS: NavLink[] = [
+  { label: "Inbox", href: "/inbox/sales" },
   { label: "Profile settings", href: "/profile-settings" },
   { label: "Account settings", href: "/account" },
   { label: "Manage listings", href: "/listings" },
-  { label: "Logout", href: "/logout" },
 ];
+
+function handleSharetribeLogout() {
+  if (typeof document === "undefined") return;
+  document.cookie.split(";").forEach((c) => {
+    const name = c.split("=")[0].trim();
+    if (name.startsWith("st-") || name === "st-authinfo") {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.poolrentalnearme.com`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    }
+  });
+  window.location.href = "/";
+}
 
 function NavAnchor({
   link,
@@ -181,7 +193,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
         <div className="flex items-center gap-2">
           {isAuthed ? (
             <div className="hidden items-center gap-4 md:flex" ref={accountRef}>
-              <a href={marketplace("/inbox")} className={navLinkClass}>
+              <a href={marketplace("/inbox/sales")} className={navLinkClass}>
                 Inbox
               </a>
               <div className="relative">
@@ -213,6 +225,17 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
                         {l.label}
                       </a>
                     ))}
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setAccountOpen(false);
+                        handleSharetribeLogout();
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-foreground hover:bg-muted"
+                    >
+                      Logout
+                    </button>
                   </div>
                 )}
               </div>
@@ -310,7 +333,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
                 <>
                   <li>
                     <a
-                      href={marketplace("/inbox")}
+                      href={marketplace("/inbox/sales")}
                       onClick={close}
                       className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
                     >
@@ -336,13 +359,16 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
                     </a>
                   </li>
                   <li>
-                    <a
-                      href={marketplace("/logout")}
-                      onClick={close}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        close();
+                        handleSharetribeLogout();
+                      }}
+                      className="block w-full rounded-md px-3 py-3 text-left text-base font-medium text-foreground hover:bg-muted"
                     >
                       Logout
-                    </a>
+                    </button>
                   </li>
                 </>
               ) : (
