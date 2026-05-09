@@ -117,10 +117,13 @@ export function AvailabilityCalendar({
 
   const selectedSlots = selectedDate ? slotsByDay.get(selectedDate) ?? [] : [];
 
-  function buildBookingUrl(startISO: string): string {
+  function buildBookingUrl(startISO: string, endISO: string): string {
     const base = bookingBaseUrl.replace(/\/$/, "");
-    const params = new URLSearchParams({ bookingStart: startISO });
-    return `${base}/l/${listingSlug}/${listingId}?${params.toString()}`;
+    const params = new URLSearchParams({
+      bookingStart: startISO,
+      bookingEnd: endISO,
+    });
+    return `${base}/l/${listingSlug}/${listingId}/checkout?${params.toString()}`;
   }
 
   return (
@@ -276,7 +279,7 @@ export function AvailabilityCalendar({
                     {selectedSlots.map((s) => (
                       <a
                         key={s.start}
-                        href={buildBookingUrl(s.start)}
+                        href={buildBookingUrl(s.start, s.end)}
                         className="group flex items-center justify-center rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground transition hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow"
                       >
                         {formatHour(s.start)}
