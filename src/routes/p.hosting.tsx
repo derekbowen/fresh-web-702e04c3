@@ -438,11 +438,10 @@ function HostingPage() {
                 href={ACADEMY_HREF}
                 className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
-                Browse all 100+ free classes →
+                Browse all 69 free classes →
               </a>
               <p className="mt-3 text-sm text-muted-foreground">
-                100% free. English &amp; español. Host certifications you
-                can share with guests.
+                100% free. No signup required. English &amp; español.
               </p>
             </div>
           </div>
