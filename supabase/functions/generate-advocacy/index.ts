@@ -16,6 +16,8 @@ const corsHeaders = {
 
 const STATE_FROM_SLUG: Record<string, string> = {
   alabama: "Alabama", alaska: "Alaska", arizona: "Arizona", arkansas: "Arkansas",
+  california: "California", florida: "Florida", georgia: "Georgia", indiana: "Indiana",
+  louisiana: "Louisiana",
   colorado: "Colorado", connecticut: "Connecticut", delaware: "Delaware",
   hawaii: "Hawaii", idaho: "Idaho", illinois: "Illinois", iowa: "Iowa",
   kansas: "Kansas", kentucky: "Kentucky", maine: "Maine", maryland: "Maryland",
