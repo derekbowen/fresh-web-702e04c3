@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import {
   lookupContentPage,
+  getHreflangSibling,
   type ContentPage,
 } from "@/server/content-pages.functions";
 import {
@@ -137,7 +138,16 @@ export const Route = createFileRoute("/p/$slug")({
         academyHub = null;
       }
     }
-    return { page, nearbyCities, city, linkTargets, academyHub };
+    let hreflangSibling: { slug: string; language: string } | null = null;
+    if ((page as { hreflang_alt?: string | null }).hreflang_alt) {
+      try {
+        const res = await getHreflangSibling({ data: { pageId: page.id } });
+        hreflangSibling = res.sibling;
+      } catch {
+        hreflangSibling = null;
+      }
+    }
+    return { page, nearbyCities, city, linkTargets, academyHub, hreflangSibling };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
