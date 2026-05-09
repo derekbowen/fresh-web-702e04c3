@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { generateContentBatch } from "@/server/generate-content-batch.functions";
+import { getGenerateStats, type GenStats } from "@/server/generate-content-stats.functions";
 import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/generate-content")({
@@ -274,6 +275,41 @@ function GenerateContentPageInner() {
     runPreflight();
   }, [runPreflight]);
 
+  const [stats, setStats] = React.useState<GenStats | null>(null);
+  const [statsLoading, setStatsLoading] = React.useState(false);
+  const refreshStats = React.useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const res = await getGenerateStats();
+      setStats(res);
+    } catch (e) {
+      console.error("[stats] failed", e);
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+  React.useEffect(() => {
+    refreshStats();
+  }, [refreshStats]);
+  // Auto-refresh stats while a generation run is active
+  React.useEffect(() => {
+    if (!busy) return;
+    const t = window.setInterval(refreshStats, 8000);
+    return () => window.clearInterval(t);
+  }, [busy, refreshStats]);
+
+  // Rough per-page input/output token estimates × published Gemini pricing per 1M tokens.
+  // These are ballpark — meant to give the user a sense of spend, not an invoice.
+  const COST_PER_PAGE_USD: Record<string, number> = {
+    "google/gemini-3-flash-preview": 0.012,
+    "google/gemini-2.5-flash": 0.012,
+    "google/gemini-2.5-pro": 0.09,
+    "google/gemini-3.1-pro-preview": 0.12,
+  };
+  const perPageCost = COST_PER_PAGE_USD[model] ?? 0.02;
+  const plannedPages = autoLoop ? count * maxBatches : count;
+  const estCost = perPageCost * plannedPages;
+
   const run = async () => {
     if (preflight.status !== "ok") {
       const ok = await runPreflight();
@@ -334,6 +370,107 @@ function GenerateContentPageInner() {
           links + FAQ, then inserts into <code>content_pages</code>. No SQL copy-paste, no doorway
           pages.
         </p>
+
+        {/* Queue + proof panel */}
+        <div className="mt-6 rounded-lg border border-border bg-card p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold">Queue & recent activity</h2>
+            <button
+              onClick={refreshStats}
+              disabled={statsLoading}
+              className="rounded-md border border-input px-3 py-1.5 text-xs font-medium disabled:opacity-50"
+            >
+              {statsLoading ? "Refreshing…" : "Refresh"}
+            </button>
+          </div>
+          {!stats && !statsLoading && (
+            <p className="mt-3 text-sm text-muted-foreground">No data yet.</p>
+          )}
+          {stats?.error && <p className="mt-3 text-sm text-destructive">{stats.error}</p>}
+          {stats?.ok && (
+            <>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-md border border-border bg-muted/30 p-3">
+                  <div className="text-xs uppercase text-muted-foreground">Generated</div>
+                  <div className="mt-1 text-2xl font-semibold">{stats.totals.generated.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {stats.totals.total > 0 ? `${Math.round((stats.totals.generated / stats.totals.total) * 100)}% of plan` : ""}
+                  </div>
+                </div>
+                <div className="rounded-md border border-border bg-muted/30 p-3">
+                  <div className="text-xs uppercase text-muted-foreground">Pending</div>
+                  <div className="mt-1 text-2xl font-semibold">{stats.totals.pending.toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {plannedPages > 0 && stats.totals.pending > 0 ? `${Math.ceil(stats.totals.pending / plannedPages)} runs at current size` : ""}
+                  </div>
+                </div>
+                <div className="rounded-md border border-border bg-muted/30 p-3">
+                  <div className="text-xs uppercase text-muted-foreground">Plan total</div>
+                  <div className="mt-1 text-2xl font-semibold">{stats.totals.total.toLocaleString()}</div>
+                </div>
+              </div>
+              {stats.pendingByTier.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-xs font-medium uppercase text-muted-foreground">Pending by tier</div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                    {stats.pendingByTier.map((t) => (
+                      <span key={t.tier} className="rounded-full border border-border bg-background px-2 py-1 font-mono">
+                        {t.tier}: {t.n}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {stats.perDay.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-xs font-medium uppercase text-muted-foreground">Inserts per day (last 14d)</div>
+                  <ul className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1 text-xs sm:grid-cols-4">
+                    {stats.perDay.map((d) => (
+                      <li key={d.day} className="flex justify-between font-mono">
+                        <span>{d.day}</span>
+                        <span>{d.n}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <div>
+                  <div className="text-xs font-medium uppercase text-muted-foreground">Last 20 inserted (proof)</div>
+                  {stats.recentInserts.length === 0 ? (
+                    <p className="mt-2 text-xs text-muted-foreground">Nothing inserted yet.</p>
+                  ) : (
+                    <ul className="mt-2 max-h-64 space-y-1 overflow-auto text-xs">
+                      {stats.recentInserts.map((p) => (
+                        <li key={p.slug}>
+                          <a href={`/p/${p.slug}`} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                            /p/{p.slug}
+                          </a>
+                          <span className="ml-2 text-muted-foreground">{new Date(p.created_at).toLocaleString()}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs font-medium uppercase text-muted-foreground">Recent rejections (why money burned)</div>
+                  {stats.recentErrors.length === 0 ? (
+                    <p className="mt-2 text-xs text-muted-foreground">No recent errors.</p>
+                  ) : (
+                    <ul className="mt-2 max-h-64 space-y-2 overflow-auto text-xs">
+                      {stats.recentErrors.map((e) => (
+                        <li key={e.slug} className="rounded border border-border bg-muted/20 p-2">
+                          <div className="font-mono">{e.slug}</div>
+                          <div className="text-muted-foreground">{e.error}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
 
         <div className="mt-6 space-y-4 rounded-lg border border-border bg-card p-6">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -523,6 +660,10 @@ function GenerateContentPageInner() {
                 Stop after this batch
               </button>
             )}
+            <div className="ml-auto self-center text-xs text-muted-foreground">
+              Est. spend this run: <span className="font-mono">${estCost.toFixed(2)}</span>
+              <span className="ml-1">({plannedPages} page{plannedPages === 1 ? "" : "s"} × ~${perPageCost.toFixed(3)})</span>
+            </div>
           </div>
 
           {error && (

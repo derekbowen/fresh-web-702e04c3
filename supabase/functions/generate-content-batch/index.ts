@@ -495,8 +495,8 @@ async function processGeneration(
         [/##\s*Section\s*5\b.*Neighborhoods/i, "Section 5 (Neighborhoods)"],
         [/##\s*Section\s*9\b.*Do You Own/i, "Section 9 (Host Flip)"],
         [/##\s*Section\s*10\b.*Frequently Asked/i, "Section 10 (FAQs)"],
-        // Accept 15+ numbered FAQs instead of strict 20 (Flash truncates around 15)
-        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?15\.(?:\*\*)?\s/, "at least 15 numbered FAQs"],
+        // Accept 8+ numbered FAQs (Flash often truncates; 8 is enough for SEO)
+        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?8\.(?:\*\*)?\s/, "at least 8 numbered FAQs"],
       ];
     } else if (isEs) {
       requiredSections = [
@@ -504,7 +504,7 @@ async function processGeneration(
         [/##\s*Cuánto Puedes Ganar/i, "Cuánto Puedes Ganar"],
         [/##\s*Preguntas Frecuentes/i, "Preguntas Frecuentes"],
         [/##\s*¿Listo Para Empezar\?/i, "¿Listo Para Empezar?"],
-        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?15\.(?:\*\*)?\s/, "15 numbered FAQs"],
+        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?8\.(?:\*\*)?\s/, "at least 8 numbered FAQs"],
       ];
     } else {
       requiredSections = [
