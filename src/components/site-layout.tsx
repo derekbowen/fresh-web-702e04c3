@@ -333,7 +333,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
                 <>
                   <li>
                     <a
-                      href={marketplace("/inbox")}
+                      href={marketplace("/inbox/sales")}
                       onClick={close}
                       className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
                     >
@@ -359,13 +359,16 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
                     </a>
                   </li>
                   <li>
-                    <a
-                      href={marketplace("/logout")}
-                      onClick={close}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        close();
+                        handleSharetribeLogout();
+                      }}
+                      className="block w-full rounded-md px-3 py-3 text-left text-base font-medium text-foreground hover:bg-muted"
                     >
                       Logout
-                    </a>
+                    </button>
                   </li>
                 </>
               ) : (
