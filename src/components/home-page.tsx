@@ -493,36 +493,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
-        {categories.length > 0 && (
-          <section className="bg-secondary/30">
-            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Browse by pool type
-              </h2>
-              <p className="mt-2 text-muted-foreground">
-                Heated pools, hot tubs, infinity edges — find the right vibe.
-              </p>
-              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                {categories.map((c: HomeCategory) => (
-                  <a
-                    key={c.slug}
-                    href={`/s?pub_category=${encodeURIComponent(c.slug)}`}
-                    className="group rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
-                  >
-                    {c.icon && (
-                      <div className="text-3xl" aria-hidden="true">
-                        {c.icon}
-                      </div>
-                    )}
-                    <div className="mt-2 text-sm font-semibold text-foreground group-hover:text-primary">
-                      {c.name}
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <PoolTypeGrid />
 
         {cities.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
