@@ -215,9 +215,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </button>
             </form>
 
-            {/* Quantified social proof inline */}
+            {/* Honest value-prop strip — no fabricated stats */}
             <p className="mt-5 text-sm text-primary-foreground/90">
-              ★ 4.8 average rating · 50,000+ guests booked · 40+ states · $2M insurance included
+              10% flat host fee · Verified hosts in 40+ states · $2M liability per booking · 100% US-based support
             </p>
           </div>
         </section>
