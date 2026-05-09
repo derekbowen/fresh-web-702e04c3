@@ -742,7 +742,7 @@ Deno.serve(async (req) => {
     let query = supabase
       .from("content_plan")
       .select(
-        "slug, source_type, city, state, state_code, population_2024, warm_climate, h1, meta_title, meta_description, primary_keyword, supporting_keywords, uniqueness_angle, internal_links, schema_suggestions, notes, search_intent",
+        "slug, source_type, city, state, state_code, population_2024, warm_climate, h1, meta_title, meta_description, primary_keyword, supporting_keywords, uniqueness_angle, internal_links, schema_suggestions, notes, search_intent, attempt_count",
       )
       .eq("status", "pending")
       .order("priority_score", { ascending: false, nullsFirst: false })
