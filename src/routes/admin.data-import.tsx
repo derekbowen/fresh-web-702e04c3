@@ -52,6 +52,7 @@ function DataImportPage() {
   const [mode, setMode] = React.useState<"upsert" | "insert">("upsert");
   const [ignoreUnknown, setIgnoreUnknown] = React.useState(true);
   const [confirmText, setConfirmText] = React.useState("");
+  const [mapping, setMapping] = React.useState<Record<string, string>>({});
   const fileRef = React.useRef<HTMLInputElement>(null);
 
   const reset = () => {
@@ -61,24 +62,42 @@ function DataImportPage() {
     setError(null);
     setResult(null);
     setConfirmText("");
+    setMapping({});
     if (fileRef.current) fileRef.current.value = "";
   };
+
+  const runPreview = React.useCallback(
+    async (text: string, m: Record<string, string>) => {
+      setBusy("preview");
+      setError(null);
+      try {
+        const res = await previewImport({ data: { table, csv: text, columnMapping: m } });
+        setPreview(res);
+      } catch (e: any) {
+        setError(e?.message ?? String(e));
+      } finally {
+        setBusy(null);
+      }
+    },
+    [table],
+  );
 
   const handleFile = async (f: File) => {
     reset();
     setFile(f);
     const text = await f.text();
     setCsv(text);
-    setBusy("preview");
-    try {
-      const res = await previewImport({ data: { table, csv: text } });
-      setPreview(res);
-    } catch (e: any) {
-      setError(e?.message ?? String(e));
-    } finally {
-      setBusy(null);
-    }
+    // Initial preview with identity mapping
+    await runPreview(text, {});
   };
+
+  // When mapping changes, re-run preview (debounced)
+  React.useEffect(() => {
+    if (!csv || !preview) return;
+    const t = setTimeout(() => { void runPreview(csv, mapping); }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapping]);
 
   const handleCommit = async () => {
     if (!csv) return;
@@ -87,7 +106,7 @@ function DataImportPage() {
     setResult(null);
     try {
       const res = await importTable({
-        data: { table, csv, mode, dryRun: false, ignoreUnknownColumns: ignoreUnknown },
+        data: { table, csv, mode, dryRun: false, ignoreUnknownColumns: ignoreUnknown, columnMapping: mapping },
       });
       setResult({
         inserted: res.inserted,
@@ -101,6 +120,14 @@ function DataImportPage() {
     } finally {
       setBusy(null);
     }
+  };
+
+  const effectiveFor = (csvHeader: string): string | null => {
+    if (csvHeader in mapping) {
+      const v = mapping[csvHeader];
+      return v && v.length > 0 ? v : null;
+    }
+    return csvHeader; // identity default
   };
 
   const blockingIssues: string[] = [];
