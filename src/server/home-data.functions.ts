@@ -103,7 +103,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, cityCountRes, categories, californiaResult, generalResult, nearbyResult, academyRes] = await Promise.all([
+    const [cities, cityCountRes, categories, featuredResult, nearbyResult, academyRes] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -137,7 +137,13 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         "categories query",
         { data: [] as HomeCategory[] } as { data: HomeCategory[] | null },
       ),
-      safe(searchListings({ perPage: 6, stateCode: "CA" }), "searchListings (CA)", emptyListingResult),
+      // Single deterministic Featured Pools pull. Previously this merged a
+      // CA-specific pull with a general pull to guarantee 12 cards, but that
+      // forced a Sharetribe direct-API fallback whenever the mirror had <6
+      // CA rows — and SSR/client returning different listing orders inside
+      // the route loader's Suspense boundary triggered React #418. One pull,
+      // one source, deterministic order. If fewer than 12 come back, that's
+      // fine — show what the mirror has rather than chase ghosts.
       safe(searchListings({ perPage: 12 }), "searchListings (featured)", emptyListingResult),
       origin
         ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
@@ -156,24 +162,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       ),
     ]);
 
-    // Combine 6 California pools + fill to 12 with general featured (deduped by id).
-    const seen = new Set<string>();
-    const mergedListings = [];
-    for (const l of californiaResult.listings) {
-      if (l.id && !seen.has(l.id)) {
-        seen.add(l.id);
-        mergedListings.push(l);
-      }
-      if (mergedListings.length >= 6) break;
-    }
-    for (const l of generalResult.listings) {
-      if (mergedListings.length >= 12) break;
-      if (l.id && !seen.has(l.id)) {
-        seen.add(l.id);
-        mergedListings.push(l);
-      }
-    }
-    const listingsResult = { ...generalResult, listings: mergedListings };
+    const listingsResult = featuredResult;
 
     // Annotate every featured listing with approximate distance from the
     // visitor (Cloudflare-resolved lat/lng). Powers the "X mi away" badge

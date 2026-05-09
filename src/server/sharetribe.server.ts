@@ -388,25 +388,28 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
   totalPages: number;
 }> {
   try {
+    // Deterministic source selection: if the synced mirror is queryable for
+    // these opts, ALWAYS use the mirror result — even if it returns zero
+    // rows. Falling back to the direct Sharetribe API on empty would make
+    // SSR vs client return different data shapes (different listings or
+    // different orders), which causes React #418 hydration mismatches inside
+    // the route loader's Suspense boundary. Same opts → same source → same
+    // result, every call. Only fall through if the mirror itself errored.
     if (opts.citySlug || opts.city || opts.stateCode) {
       const bySynced = await searchSyncedListings(opts);
-      if (bySynced && bySynced.listings.length > 0) return bySynced;
-      // Fallback: mirror returned null (error) or zero results. Hit Sharetribe
-      // directly so the home page never silently renders an empty grid due to
-      // mirror staleness or a missing state_code on a row. The direct API
-      // can't filter by US state, so we just return unfiltered listings —
-      // better something than nothing.
-      if (opts.stateCode) {
-        console.warn(
-          `[searchListings] synced returned 0 for stateCode="${opts.stateCode}" — falling back to direct Sharetribe`,
-        );
-      }
+      if (bySynced) return bySynced;
+      console.warn(
+        `[searchListings] synced query errored for opts=${JSON.stringify(opts)} — falling back to direct Sharetribe`,
+      );
     }
 
     const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
       page: opts.page ?? 1,
       perPage: opts.perPage ?? 24,
       states: "published",
+      // Explicit sort so the API doesn't rely on a default that can shift
+      // between calls. Newest-first matches the synced mirror's ordering.
+      sort: "-createdAt",
       keywords: opts.keywords,
       origin: opts.origin,
       bounds: opts.bounds,
@@ -447,7 +450,10 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
     if (normalizedState) query = query.eq("state_code", normalizedState);
 
     const { data, count, error } = await query
+      // Newest-first, with sharetribe_id as a stable tiebreaker so two rows
+      // with identical updated_at always come back in the same order.
       .order("updated_at", { ascending: false })
+      .order("sharetribe_id", { ascending: true })
       .range(from, to);
     if (error) throw error;
 
