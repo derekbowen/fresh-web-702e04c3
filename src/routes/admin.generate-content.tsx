@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { generateContentBatch } from "@/server/generate-content-batch.functions";
+import { getGenerateStats, type GenStats } from "@/server/generate-content-stats.functions";
 import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/generate-content")({
