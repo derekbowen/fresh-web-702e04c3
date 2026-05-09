@@ -49,12 +49,35 @@ export function AvailabilityCalendar({
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["availability", listingId, days],
-    queryFn: () => fetchAvailability({ data: { listingId, days } }),
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-  });
+  const [data, setData] = useState<AvailabilityResult | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const refetch = () => setReloadKey((k) => k + 1);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    setIsError(false);
+    fetchAvailability({ data: { listingId, days } })
+      .then((res) => {
+        if (cancelled) return;
+        setData(res);
+        setIsError(!!res.error);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setIsError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // fetchAvailability is stable from useServerFn
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listingId, days, reloadKey]);
 
   // Group slots by YYYY-MM-DD
   const slotsByDay = useMemo(() => {
