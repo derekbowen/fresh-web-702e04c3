@@ -1,9 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+/** Public Intercom workspace ID — safe to ship to the browser. */
+const INTERCOM_APP_ID = "nuuc4281";
+
 /** Returns the public Intercom workspace ID. Safe to call unauthenticated. */
 export const getIntercomAppId = createServerFn({ method: "GET" }).handler(async () => {
-  return { appId: process.env.INTERCOM_APP_ID ?? "" };
+  return { appId: INTERCOM_APP_ID };
 });
 
 /** Base64url encode a Uint8Array or string. */
