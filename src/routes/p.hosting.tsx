@@ -12,6 +12,9 @@ import {
   TrendingUp,
   Check,
   Plus,
+  Scale,
+  Building,
+  Megaphone,
   type LucideIcon,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
@@ -37,7 +40,7 @@ const DESCRIPTION =
   "Earn $1,500–$8,000+ a month renting your pool. Flat 10% host fee — Swimply charges 15–30%. Free to list, $2M coverage, 100+ free classes, 24-hr payouts.";
 
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
-const ACADEMY_HREF = "/p/host-academy";
+const ACADEMY_HREF = "/p/learningacademy";
 const CONNECT_HREF =
   "https://connect.poolrentalnearme.com/community/welcome";
 
@@ -92,12 +95,12 @@ const REASONS: Reason[] = [
 ];
 
 const COURSES: Array<{ icon: LucideIcon; title: string; desc: string }> = [
-  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table." },
-  { icon: ShieldAlert, title: "Difficult Guest Scenarios", desc: "12 real-world cases and exactly how to handle each." },
-  { icon: Calculator, title: "Taxes & 1099-K Basics", desc: "What to set aside, what to deduct, when to call a CPA." },
-  { icon: Calendar, title: "Holiday & Weekend Upcharges", desc: "When to raise prices and by how much. With actual dates." },
-  { icon: ShieldCheck, title: "Insurance & Liability", desc: "What our $2M covers, what it doesn't, and what to add yourself." },
-  { icon: TrendingUp, title: "Booking Acceleration", desc: "How top hosts go from 0 to 10 bookings/week in under 90 days." },
+  { icon: ShieldCheck, title: "Safety & Rescue", desc: "Pool safety protocols, emergency procedures, and first-aid basics every host should know." },
+  { icon: Scale, title: "Legal & Compliance", desc: "Permits, waivers, liability, and short-term rental ordinances by state." },
+  { icon: Building, title: "HOA Navigation", desc: "How to host successfully when you're in an HOA (and what to do if your HOA pushes back)." },
+  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table. Includes holiday upcharges." },
+  { icon: Megaphone, title: "Marketing Your Listing", desc: "Photos, descriptions, and SEO tactics to get more views and bookings." },
+  { icon: Users, title: "Guest Experience", desc: "Difficult guest scenarios, communication scripts, and how to earn 5-star reviews every time." },
 ];
 
 const COMPARE: Array<[string, string, string]> = [
@@ -397,13 +400,16 @@ function HostingPage() {
         <section className="bg-amber-50/60 py-20">
           <div className="mx-auto max-w-6xl px-4 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              100+ free classes. Built for pool hosts.
+              69 free classes. Built for pool hosts.
             </h2>
             <p className="mx-auto mt-4 max-w-3xl text-lg text-muted-foreground">
               No other platform teaches you how to host. We do — and we
-              don't charge for it. Sample courses:
+              don't charge for it. No signup required.
             </p>
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 text-left">
+            <p className="mx-auto mt-6 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              Sample categories
+            </p>
+            <div className="mt-6 grid gap-5 grid-cols-2 lg:grid-cols-3 text-left">
               {COURSES.map((c) => {
                 const Icon = c.icon;
                 return (
@@ -432,11 +438,10 @@ function HostingPage() {
                 href={ACADEMY_HREF}
                 className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
-                Browse all 100+ free classes →
+                Browse all 69 free classes →
               </a>
               <p className="mt-3 text-sm text-muted-foreground">
-                100% free. English &amp; español. Host certifications you
-                can share with guests.
+                100% free. No signup required. English &amp; español.
               </p>
             </div>
           </div>
