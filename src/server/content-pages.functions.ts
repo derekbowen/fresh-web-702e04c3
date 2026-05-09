@@ -15,7 +15,33 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
+
+// Fire-and-forget: log a 301 redirect from a legacy slug to the canonical
+// slug. Failures are swallowed so logging never blocks the user-visible
+// redirect.
+function logRedirect(fromSlug: string, toSlug: string): void {
+  let userAgent: string | null = null;
+  let referrer: string | null = null;
+  try {
+    userAgent = getRequestHeader("user-agent") ?? null;
+    referrer = getRequestHeader("referer") ?? null;
+  } catch {
+    // No active request context; leave as null.
+  }
+  void (supabaseAdmin as any)
+    .from("redirect_log")
+    .insert({
+      from_slug: fromSlug,
+      to_slug: toSlug,
+      user_agent: userAgent,
+      referrer: referrer,
+    })
+    .then((res: { error?: unknown }) => {
+      if (res?.error) console.error("[redirect_log] insert failed", res.error);
+    });
+}
 
 export type ContentPageTemplateType =
   | "host_acq_city"
