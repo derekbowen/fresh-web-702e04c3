@@ -360,7 +360,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       href="/p/learningacademy"
                       className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                     >
-                      Browse 100+ free courses →
+                      Browse 135 free classes →
                     </a>
                   )}
                   {hostTrainingAvailable && (
