@@ -6,7 +6,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
-import laSaltwaterHero from "@/assets/la-saltwater/hero-night.jpg";
+import { LiteYouTube } from "@/components/lite-youtube";
 
 // Below-the-fold form components — pull react-hook-form + zod resolvers.
 // Lazy-load so they don't bloat the homepage entry chunk.
@@ -290,43 +290,33 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
-        {/* Featured listing — La Saltwater Pool & Spa, Sherman Oaks */}
-        <section aria-label="Featured pool" className="border-b border-border bg-background">
+        {/* Featured listing video — real backyard, real host. Social proof above the academy CTA. */}
+        <section aria-label="Featured pool tour" className="border-b border-border bg-background">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
             <div className="grid items-center gap-10 lg:grid-cols-12">
               <div className="lg:col-span-7">
-                <a
-                  href="/l/la-saltwater-pool-spa-free-heat-night-swim-resort/69ff1cde-1688-41e0-8f27-9bceeb69573b"
-                  className="block overflow-hidden rounded-2xl ring-1 ring-border transition hover:ring-primary"
-                >
-                  <img
-                    src={laSaltwaterHero}
-                    alt="La Saltwater Pool & Spa at night with palm trees and ambient lighting"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
-                  />
-                </a>
+                <LiteYouTube videoId="jJF_OyufFQs" title="Tour Katy's Staycation Saltwater Getaway" />
               </div>
               <div className="lg:col-span-5">
-                <p className="text-sm font-semibold uppercase tracking-wide text-primary">Featured pool · Sherman Oaks, CA</p>
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary">Featured pool</p>
                 <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                  La Saltwater Pool & Spa
+                  Tour Katy's Staycation Saltwater Getaway
                 </h2>
                 <p className="mt-4 text-base text-muted-foreground">
-                  Private saltwater resort with free heat, included heated spa, Sonos sound, and ambient night-swim lighting. Fits up to 45 guests. Ranked top 9 pools in LA 2025.
+                  Heated saltwater pool, private backyard, room for the whole crew. See what one of our top hosts built — then book it for your next reunion, birthday, or chill Sunday.
                 </p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <a
-                    href="/l/la-saltwater-pool-spa-free-heat-night-swim-resort/69ff1cde-1688-41e0-8f27-9bceeb69573b"
+                    href="/l/katy-staycation-saltwater-getaway/685b3bd3-1e5d-44b8-9483-5f6452306157"
                     className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                   >
                     Book this pool →
                   </a>
                   <a
-                    href="/p/la-saltwater-featured"
+                    href="/s"
                     className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
                   >
-                    See full tour
+                    Browse all pools
                   </a>
                 </div>
               </div>
