@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ListingCard } from "@/components/listing-card";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
-import type { HomeCategory, HomeCity, HomeData } from "@/server/home-data.functions";
+import type { HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
 import { LiteYouTube } from "@/components/lite-youtube";
 
