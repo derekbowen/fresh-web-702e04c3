@@ -65,6 +65,9 @@ const PRIMARY_NAV: NavLink[] = [
   { label: "Home Page", href: "/" },
   { label: "Find a Pool", href: "/s" },
   { label: "Locations", href: "/p/all-locations" },
+  { label: "Public Pools", href: "/public-pools" },
+  { label: "Pool Pros", href: "/p/pool-pros" },
+  { label: "How It Works", href: "/p/how-it-works" },
 ];
 
 const APP_NAV: NavLink[] = [
@@ -168,11 +171,8 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
           <span className="text-base font-bold tracking-tight text-foreground sm:text-lg">Pool Rental Near Me</span>
         </a>
 
-        <nav className="hidden items-center gap-6 lg:flex">
+        <nav className="hidden items-center gap-5 lg:flex">
           {PRIMARY_NAV.map((l) => (
-            <NavAnchor key={l.label} link={l} className={navLinkClass} />
-          ))}
-          {APP_NAV.map((l) => (
             <NavAnchor key={l.label} link={l} className={navLinkClass} />
           ))}
         </nav>
