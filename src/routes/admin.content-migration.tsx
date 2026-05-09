@@ -123,7 +123,7 @@ function AdminContentMigration() {
             className="rounded border border-border bg-background px-2 py-1 text-sm"
           >
             <option value="host_acq_city">host_acq_city</option>
-            <option value="public_pool">public_pool</option>
+            
             <option value="event_guide">event_guide</option>
             <option value="resource">resource</option>
           </select>

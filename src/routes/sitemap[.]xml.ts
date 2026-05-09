@@ -25,7 +25,7 @@ interface TemplateGroup {
 
 const TEMPLATE_GROUPS: TemplateGroup[] = [
   { basePath: "/sitemap-pages-money.xml", templateTypes: ["money_page"] },
-  { basePath: "/sitemap-pages-cities.xml", templateTypes: ["city_main", "public_pool_city", "public_pool_state"] },
+  { basePath: "/sitemap-pages-cities.xml", templateTypes: ["city_main"] },
   { basePath: "/sitemap-pages-host-acquisition.xml", templateTypes: ["host_acq_city", "host_acq_hub"] },
   { basePath: "/sitemap-pages-event-guides.xml", templateTypes: ["event_guide"] },
   { basePath: "/sitemap-pages-articles.xml", templateTypes: ["resource", "other"] },
