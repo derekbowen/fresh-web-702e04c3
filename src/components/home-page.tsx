@@ -13,9 +13,6 @@ import { LiteYouTube } from "@/components/lite-youtube";
 const PoolWaitlistForm = lazy(() =>
   import("@/components/pool-waitlist-form").then((m) => ({ default: m.PoolWaitlistForm })),
 );
-const FeatureRequestForm = lazy(() =>
-  import("@/components/feature-request-form").then((m) => ({ default: m.FeatureRequestForm })),
-);
 import heroPool from "@/assets/pool-hero-default.webp";
 
 const NEARBY_RADIUS_MILES = 500;
