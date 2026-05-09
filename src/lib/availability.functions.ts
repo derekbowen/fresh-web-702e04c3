@@ -67,7 +67,7 @@ export const getListingAvailability = createServerFn({ method: "GET" })
           return {
             listingId: data.listingId,
             fetchedAt: row.fetched_at,
-            slots: row.slots as AvailableTimeSlot[],
+            slots: row.slots as unknown as AvailableTimeSlot[],
             error: null,
             cached: true,
           };
