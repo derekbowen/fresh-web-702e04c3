@@ -8,6 +8,8 @@
  * Gate: ?key=<DIAG_KEY env or fallback>. Remove this file after diagnosing.
  */
 import { createFileRoute } from "@tanstack/react-router";
+import { searchListings } from "@/server/sharetribe.server";
+import { supabaseAdmin } from "@/server/supabase-admin.server";
 
 const FALLBACK_KEY = "poolside-diag-2026";
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
