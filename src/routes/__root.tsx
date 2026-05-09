@@ -11,6 +11,7 @@ const IntercomWidget = lazy(() =>
   import("@/components/intercom-widget").then((m) => ({ default: m.IntercomWidget })),
 );
 import { getSiteFooter } from "@/server/site-footer.functions";
+import { getSharetribeAuthState } from "@/server/sharetribe-session.functions";
 import {
   buildMeta,
   ldJsonScript,
