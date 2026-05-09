@@ -248,7 +248,16 @@ export const Route = createFileRoute("/p/$slug")({
       );
     }
 
-    return { ...meta, scripts };
+    // LCP preload — kicks off the hero image fetch in parallel with the JS
+    // chunks. Uses the same resolved hero (real or fallback) the template
+    // will actually render so we never preload an image that's not used.
+    const heroForPreload = resolveCityHero(p.slug ?? "", p.hero_image_url);
+    const links = [
+      ...(meta.links ?? []),
+      ...heroPreloadLinks(heroForPreload),
+    ];
+
+    return { ...meta, links, scripts };
   },
   component: ContentPageDispatcher,
   errorComponent: ({ error, reset }) => {
