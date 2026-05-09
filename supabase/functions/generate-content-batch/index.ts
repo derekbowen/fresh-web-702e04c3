@@ -635,23 +635,29 @@ async function processGeneration(
   if (upErr) throw new Error(`upsert failed: ${upErr.message}`);
 
   const generatedSlugs = okPages.map((p) => p.plan.slug);
-  const failedSlugs = planRows.map((r) => r.slug).filter((s) => !generatedSlugs.includes(s));
+  const failedRows = planRows.filter((r) => !generatedSlugs.includes(r.slug));
   await supabase
     .from("content_plan")
     .update({
       status: "generated",
-      generated_at: new Date().toISOString(),
+      generated_at: nowIso,
       last_error: null,
+      attempt_count: 0,
+      last_attempt_at: nowIso,
+      validator_version: VALIDATOR_VERSION,
+      paused_at: null,
     })
     .in("slug", generatedSlugs);
-  if (failedSlugs.length > 0) {
-    await supabase
-      .from("content_plan")
-      .update({
-        status: "pending",
-        last_error: errors.join("; ").slice(0, 500),
-      })
-      .in("slug", failedSlugs);
+  if (failedRows.length > 0) {
+    await Promise.all(
+      failedRows.map((r) =>
+        recordFailure(
+          r.slug,
+          errorBySlug.get(r.slug) ?? errors.join("; ") ?? "unknown validation error",
+          r.attempt_count ?? 0,
+        ),
+      ),
+    );
   }
 }
 
