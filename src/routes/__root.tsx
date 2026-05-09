@@ -110,11 +110,12 @@ function RootComponent() {
   const isAdmin = pathname.startsWith("/admin");
   const showIntercom = pathname === "/" || isAdmin || pathname.startsWith("/p/");
   const footer = data?.footer;
+  const isAuthed = !!data?.isAuthed;
   const content = (
     <>
       <HydrationDebug />
       <div className="flex min-h-screen flex-col">
-        {!isAdmin && <SiteHeader />}
+        {!isAdmin && <SiteHeader isAuthed={isAuthed} />}
         <div className="flex flex-1 flex-col">
           <GlobalChromeProvider>
             <Outlet />
