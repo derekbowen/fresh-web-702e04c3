@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AvailabilityCalendar } from "@/components/availability-calendar";
 import { buildMeta, ldJsonScript, SITE_URL } from "@/lib/seo";
 import {
   Flame,
@@ -246,6 +247,16 @@ function LaSaltwaterPage() {
             </div>
           </div>
         </section>
+
+        {/* LIVE AVAILABILITY CALENDAR */}
+        <div id="availability">
+          <AvailabilityCalendar
+            listingId="69ff1cde-1688-41e0-8f27-9bceeb69573b"
+            listingSlug="la-saltwater-pool-spa"
+            bookingBaseUrl="https://poolrentalnearme.com"
+            days={60}
+          />
+        </div>
 
         {/* INCLUDED AMENITIES */}
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
