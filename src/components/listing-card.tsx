@@ -1,6 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 
+function formatDistance(miles: number): string {
+  if (!Number.isFinite(miles) || miles < 0) return "";
+  if (miles < 0.1) return "<0.1 mi";
+  if (miles < 10) return `${miles.toFixed(1)} mi`;
+  return `${Math.round(miles)} mi`;
+}
+
 export function ListingCard({ listing }: { listing: ListingSummary }) {
   return (
     <a
