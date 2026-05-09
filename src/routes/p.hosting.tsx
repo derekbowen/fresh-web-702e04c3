@@ -165,7 +165,25 @@ const FAQS = [
   },
   {
     q: "I'm currently on Swimply. Can I list on both?",
-    a: "Yes. We don't lock you in. Most hosts start by listing on both — it's the smart move while you're building bookings on PRNM. Just sync your calendar between platforms manually so you don't double-book. Some hosts keep both indefinitely; others delist from Swimply once their PRNM bookings are consistent. Your call.",
+    a: "Yes. We don't lock you in. Most hosts start by listing on both — it's the smart move while you're building bookings on PRNM. Just sync your calendar between platforms manually so you don't double-book. We even have a free course on this exact topic: Multi-platform hosting: cross-listing PRNM, Swimply & Peerspace (15 minutes, the exact workflow). Some hosts keep both indefinitely; others delist from Swimply once their PRNM bookings are consistent. Your call.",
+    node: (
+      <>
+        Yes. We don't lock you in. Most hosts start by listing on both — it's the smart move while you're building bookings on PRNM. Just sync your calendar between platforms manually so you don't double-book.{" "}
+        <span className="block mt-2">
+          We even have a free course on this exact topic:{" "}
+          <a
+            href="/p/course/multi-platform-hosting-cross-listing-prnm-swimply-peerspace"
+            className="font-semibold text-primary hover:underline"
+          >
+            Multi-platform hosting: cross-listing PRNM, Swimply &amp; Peerspace
+          </a>
+          . 15 minutes, the exact workflow.
+        </span>
+        <span className="block mt-2">
+          Some hosts keep both indefinitely; others delist from Swimply once your PRNM bookings are consistent. Your call.
+        </span>
+      </>
+    ),
   },
 ];
 
