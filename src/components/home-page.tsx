@@ -314,6 +314,40 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
+        {/* Featured listing video — real backyard, real host. Social proof above the academy CTA. */}
+        <section aria-label="Featured pool tour" className="border-b border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+            <div className="grid items-center gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-7">
+                <LiteYouTube videoId="jJF_OyufFQs" title="Tour Katy's Staycation Saltwater Getaway" />
+              </div>
+              <div className="lg:col-span-5">
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary">Featured pool</p>
+                <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                  Tour Katy's Staycation Saltwater Getaway
+                </h2>
+                <p className="mt-4 text-base text-muted-foreground">
+                  Heated saltwater pool, private backyard, room for the whole crew. See what one of our top hosts built — then book it for your next reunion, birthday, or chill Sunday.
+                </p>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <a
+                    href="/l/katy-staycation-saltwater-getaway/685b3bd3-1e5d-44b8-9483-5f6452306157"
+                    className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
+                  >
+                    Book this pool →
+                  </a>
+                  <a
+                    href="/s"
+                    className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
+                  >
+                    Browse all pools
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Free Pool Host Academy — unique e-learning differentiator */}
         {showAcademySection && (
         <section className="relative overflow-hidden border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/10">
