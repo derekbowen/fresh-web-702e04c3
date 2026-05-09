@@ -92,6 +92,33 @@ export const Route = createFileRoute("/sitemap.xml")({
           }
         }
 
+        // 2b. Blog posts (sourced from blog_posts, served at /p/{slug})
+        try {
+          const { count: blogCount } = await (supabaseAdmin as any)
+            .from("blog_posts")
+            .select("*", { count: "exact", head: true })
+            .eq("is_published", true);
+          if (blogCount && blogCount > 0) {
+            const { data: latestBlog } = await (supabaseAdmin as any)
+              .from("blog_posts")
+              .select("updated_at")
+              .eq("is_published", true)
+              .order("updated_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            const blogPageCount = Math.ceil(blogCount / SITEMAP_PAGE_SIZE);
+            for (let p = 1; p <= blogPageCount; p++) {
+              const loc =
+                p === 1
+                  ? `${SITE_URL}/sitemap-pages-blog.xml`
+                  : `${SITE_URL}/sitemap-pages-blog.xml?page=${p}`;
+              entries.push({ loc, lastmod: latestBlog?.updated_at });
+            }
+          }
+        } catch (err) {
+          console.error("[sitemap] blog_posts count error", err);
+        }
+
         // 3. Sharetribe-served listing sub-sitemap — passthrough
         entries.push({ loc: `${SITE_URL}/sitemap-recent-listings.xml` });
 

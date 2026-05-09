@@ -28,6 +28,7 @@ import { Route as SitemapPagesHostAcquisitionDotxmlRouteImport } from './routes/
 import { Route as SitemapPagesEventGuidesDotxmlRouteImport } from './routes/sitemap-pages-event-guides[.]xml'
 import { Route as SitemapPagesComparisonsDotxmlRouteImport } from './routes/sitemap-pages-comparisons[.]xml'
 import { Route as SitemapPagesCitiesDotxmlRouteImport } from './routes/sitemap-pages-cities[.]xml'
+import { Route as SitemapPagesBlogDotxmlRouteImport } from './routes/sitemap-pages-blog[.]xml'
 import { Route as SitemapPagesArticlesDotxmlRouteImport } from './routes/sitemap-pages-articles[.]xml'
 import { Route as SitemapPagesAdvocacyDotxmlRouteImport } from './routes/sitemap-pages-advocacy[.]xml'
 import { Route as SitemapPagesAcademyDotxmlRouteImport } from './routes/sitemap-pages-academy[.]xml'
@@ -240,6 +241,11 @@ const SitemapPagesCitiesDotxmlRoute =
     path: '/sitemap-pages-cities.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SitemapPagesBlogDotxmlRoute = SitemapPagesBlogDotxmlRouteImport.update({
+  id: '/sitemap-pages-blog.xml',
+  path: '/sitemap-pages-blog.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapPagesArticlesDotxmlRoute =
   SitemapPagesArticlesDotxmlRouteImport.update({
     id: '/sitemap-pages-articles.xml',
@@ -824,6 +830,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
+  '/sitemap-pages-blog.xml': typeof SitemapPagesBlogDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
   '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
@@ -954,6 +961,7 @@ export interface FileRoutesByTo {
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
+  '/sitemap-pages-blog.xml': typeof SitemapPagesBlogDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
   '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
@@ -1085,6 +1093,7 @@ export interface FileRoutesById {
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
+  '/sitemap-pages-blog.xml': typeof SitemapPagesBlogDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
   '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
@@ -1217,6 +1226,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-academy.xml'
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
+    | '/sitemap-pages-blog.xml'
     | '/sitemap-pages-cities.xml'
     | '/sitemap-pages-comparisons.xml'
     | '/sitemap-pages-event-guides.xml'
@@ -1347,6 +1357,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-academy.xml'
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
+    | '/sitemap-pages-blog.xml'
     | '/sitemap-pages-cities.xml'
     | '/sitemap-pages-comparisons.xml'
     | '/sitemap-pages-event-guides.xml'
@@ -1477,6 +1488,7 @@ export interface FileRouteTypes {
     | '/sitemap-pages-academy.xml'
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
+    | '/sitemap-pages-blog.xml'
     | '/sitemap-pages-cities.xml'
     | '/sitemap-pages-comparisons.xml'
     | '/sitemap-pages-event-guides.xml'
@@ -1608,6 +1620,7 @@ export interface RootRouteChildren {
   SitemapPagesAcademyDotxmlRoute: typeof SitemapPagesAcademyDotxmlRoute
   SitemapPagesAdvocacyDotxmlRoute: typeof SitemapPagesAdvocacyDotxmlRoute
   SitemapPagesArticlesDotxmlRoute: typeof SitemapPagesArticlesDotxmlRoute
+  SitemapPagesBlogDotxmlRoute: typeof SitemapPagesBlogDotxmlRoute
   SitemapPagesCitiesDotxmlRoute: typeof SitemapPagesCitiesDotxmlRoute
   SitemapPagesComparisonsDotxmlRoute: typeof SitemapPagesComparisonsDotxmlRoute
   SitemapPagesEventGuidesDotxmlRoute: typeof SitemapPagesEventGuidesDotxmlRoute
@@ -1814,6 +1827,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-pages-cities.xml'
       fullPath: '/sitemap-pages-cities.xml'
       preLoaderRoute: typeof SitemapPagesCitiesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages-blog.xml': {
+      id: '/sitemap-pages-blog.xml'
+      path: '/sitemap-pages-blog.xml'
+      fullPath: '/sitemap-pages-blog.xml'
+      preLoaderRoute: typeof SitemapPagesBlogDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-pages-articles.xml': {
@@ -2740,6 +2760,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapPagesAcademyDotxmlRoute: SitemapPagesAcademyDotxmlRoute,
   SitemapPagesAdvocacyDotxmlRoute: SitemapPagesAdvocacyDotxmlRoute,
   SitemapPagesArticlesDotxmlRoute: SitemapPagesArticlesDotxmlRoute,
+  SitemapPagesBlogDotxmlRoute: SitemapPagesBlogDotxmlRoute,
   SitemapPagesCitiesDotxmlRoute: SitemapPagesCitiesDotxmlRoute,
   SitemapPagesComparisonsDotxmlRoute: SitemapPagesComparisonsDotxmlRoute,
   SitemapPagesEventGuidesDotxmlRoute: SitemapPagesEventGuidesDotxmlRoute,
