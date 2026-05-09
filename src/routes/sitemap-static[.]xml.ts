@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/seo";
 import { buildUrlsetXml, sitemapResponse, type SitemapUrl } from "@/lib/sitemap";
+import { STATE_NAMES } from "@/lib/states";
 
 /**
  * Static sub-sitemap: pages whose URLs and content are known at build time
@@ -21,6 +22,11 @@ const STATIC_URLS: Array<{ path: string; lastmod?: Date }> = [
   { path: "/p/make-money" },
   { path: "/p/investors" },
   { path: "/p/all-locations" },
+  { path: "/p/pool-rentals" },
+  // 50 state hub pages — internal linking layer for the 3,400+ city pages.
+  ...Object.values(STATE_NAMES).map((name) => ({
+    path: `/p/pool-rentals-${name.toLowerCase().replace(/\s+/g, "-")}`,
+  })),
 ];
 
 export const Route = createFileRoute("/sitemap-static.xml")({
