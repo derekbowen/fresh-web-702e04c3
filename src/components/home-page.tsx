@@ -531,6 +531,61 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
+        {/* Host resources — advocacy hub + blog. Educational, not promotional. */}
+        <section aria-label="Resources for pool hosts" className="border-y border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary">For pool hosts</p>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                Host smarter, host legally.
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Free guides on local laws, permits, HOA rules, taxes, and the day-to-day playbook for renting your pool the right way.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-6 md:grid-cols-2">
+              <a
+                href="/p/host-advocacy"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-card to-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                    ⚖️ Host advocacy hub
+                  </span>
+                  <h3 className="mt-4 text-2xl font-bold text-foreground">
+                    State-by-state hosting laws and rights
+                  </h3>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    What's allowed where you live, how to handle HOAs and neighbors, and how we fight for hosts when local rules get in the way.
+                  </p>
+                </div>
+                <span className="mt-6 inline-flex items-center text-sm font-semibold text-primary">
+                  Browse 50 state guides →
+                </span>
+              </a>
+              <a
+                href="/p/blog"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-secondary/40 via-card to-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-foreground">
+                    📝 The blog
+                  </span>
+                  <h3 className="mt-4 text-2xl font-bold text-foreground">
+                    Honest stories from real pool hosts
+                  </h3>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    The good, the awkward, and the lessons learned. Hosting tips, platform deep-dives, and the side of pool rentals nobody else writes about.
+                  </p>
+                </div>
+                <span className="mt-6 inline-flex items-center text-sm font-semibold text-primary">
+                  Read the blog →
+                </span>
+              </a>
+            </div>
+          </div>
+        </section>
+
         <PoolTypeGrid />
 
         {cities.length > 0 && (
