@@ -614,6 +614,7 @@ export type Database = {
       }
       content_plan: {
         Row: {
+          attempt_count: number
           city: string | null
           created_at: string
           generated_at: string | null
@@ -621,10 +622,12 @@ export type Database = {
           h1: string | null
           id: string
           internal_links: string | null
+          last_attempt_at: string | null
           last_error: string | null
           meta_description: string | null
           meta_title: string | null
           notes: string | null
+          paused_at: string | null
           population_2024: number | null
           primary_keyword: string | null
           priority_score: number | null
@@ -640,9 +643,11 @@ export type Database = {
           supporting_keywords: string | null
           uniqueness_angle: string | null
           updated_at: string
+          validator_version: string | null
           warm_climate: boolean | null
         }
         Insert: {
+          attempt_count?: number
           city?: string | null
           created_at?: string
           generated_at?: string | null
@@ -650,10 +655,12 @@ export type Database = {
           h1?: string | null
           id?: string
           internal_links?: string | null
+          last_attempt_at?: string | null
           last_error?: string | null
           meta_description?: string | null
           meta_title?: string | null
           notes?: string | null
+          paused_at?: string | null
           population_2024?: number | null
           primary_keyword?: string | null
           priority_score?: number | null
@@ -669,9 +676,11 @@ export type Database = {
           supporting_keywords?: string | null
           uniqueness_angle?: string | null
           updated_at?: string
+          validator_version?: string | null
           warm_climate?: boolean | null
         }
         Update: {
+          attempt_count?: number
           city?: string | null
           created_at?: string
           generated_at?: string | null
@@ -679,10 +688,12 @@ export type Database = {
           h1?: string | null
           id?: string
           internal_links?: string | null
+          last_attempt_at?: string | null
           last_error?: string | null
           meta_description?: string | null
           meta_title?: string | null
           notes?: string | null
+          paused_at?: string | null
           population_2024?: number | null
           primary_keyword?: string | null
           priority_score?: number | null
@@ -698,6 +709,7 @@ export type Database = {
           supporting_keywords?: string | null
           uniqueness_angle?: string | null
           updated_at?: string
+          validator_version?: string | null
           warm_climate?: boolean | null
         }
         Relationships: []
