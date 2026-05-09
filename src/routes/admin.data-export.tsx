@@ -147,13 +147,21 @@ function TableCard({ table }: { table: TableName }) {
             {status}
           </div>
         )}
-        {importResult && importResult.errors.length > 0 && (
+        {importResult && importResult.rowErrors.length > 0 && (
           <div className="rounded border border-destructive/50 bg-destructive/10 p-3 text-xs">
-            <div className="mb-1 font-medium">Errors:</div>
-            <ul className="list-inside list-disc space-y-1">
-              {importResult.errors.map((e, i) => (
-                <li key={i}>{e}</li>
+            <div className="mb-1 font-medium">
+              Bad rows ({importResult.rowErrors.length}):
+            </div>
+            <ul className="max-h-48 list-inside list-disc space-y-1 overflow-auto">
+              {importResult.rowErrors.slice(0, 50).map((e, i) => (
+                <li key={i}>
+                  Row {e.row}
+                  {e.slug ? ` (${e.slug})` : ""}: {e.reason}
+                </li>
               ))}
+              {importResult.rowErrors.length > 50 && (
+                <li>...and {importResult.rowErrors.length - 50} more</li>
+              )}
             </ul>
           </div>
         )}
