@@ -19,16 +19,21 @@ if (!SUPABASE_URL || !SVC || !FC) {
 
 const sb = createClient(SUPABASE_URL, SVC, { auth: { persistSession: false } });
 
-const PROXY_404_MARKERS = [
+const REJECT_MARKERS = [
   "Page not found",
   "this page doesn't exist",
   "data-lovable-blank-page-placeholder",
+  "maintenance mode",
+  "marketplace is not fully operational",
 ];
 
-function looksLikeProxy404(md: string | null) {
+function isUnusable(md: string | null) {
   if (!md) return true;
-  if (md.length < 400) return true;
-  return PROXY_404_MARKERS.some((m) => md.toLowerCase().includes(m.toLowerCase()));
+  // Wayback toolbar + Sharetribe maintenance shell is ~500 bytes; real
+  // captured advocacy pages are 30KB+. 2KB is a safe floor.
+  if (md.length < 2000) return true;
+  const lower = md.toLowerCase();
+  return REJECT_MARKERS.some((m) => lower.includes(m.toLowerCase()));
 }
 
 function waybackUrl(original: string) {
