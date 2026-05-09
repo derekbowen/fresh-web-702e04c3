@@ -151,7 +151,17 @@ export const Route = createFileRoute("/p/$slug")({
         hreflangSibling = null;
       }
     }
-    return { page, nearbyCities, city, linkTargets, academyHub, hreflangSibling };
+    let relatedPosts: RelatedPostMeta[] = [];
+    const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs;
+    if (Array.isArray(relatedSlugs) && relatedSlugs.length > 0) {
+      try {
+        const r = await getRelatedBlogMeta({ data: { slugs: relatedSlugs.slice(0, 8) } });
+        relatedPosts = r.posts;
+      } catch {
+        relatedPosts = [];
+      }
+    }
+    return { page, nearbyCities, city, linkTargets, academyHub, hreflangSibling, relatedPosts };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
