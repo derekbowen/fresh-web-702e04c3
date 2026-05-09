@@ -92,7 +92,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     (learningAcademyAvailable || hostTrainingAvailable);
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
-  const categories = Array.isArray(safe.categories) ? safe.categories : [];
+  void safe.categories; // categories now rendered by static PoolTypeGrid below
   const rawListings = Array.isArray(safe.listings) ? safe.listings : [];
   // distanceMiles is computed server-side from Cloudflare geo headers, which
   // may differ between the upstream SSR request (proxied via /landing-page)
