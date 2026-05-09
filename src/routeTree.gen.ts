@@ -71,6 +71,7 @@ import { Route as GuestInformationSplatRouteImport } from './routes/guest-inform
 import { Route as ForHostsSplatRouteImport } from './routes/for-hosts.$'
 import { Route as ForGuestsSplatRouteImport } from './routes/for-guests.$'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as BlogSplatRouteImport } from './routes/blog.$'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
@@ -463,6 +464,11 @@ const ForGuestsSplatRoute = ForGuestsSplatRouteImport.update({
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSplatRoute = BlogSplatRouteImport.update({
+  id: '/blog/$',
+  path: '/blog/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
@@ -889,6 +895,7 @@ export interface FileRoutesByFullPath {
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/blog/$': typeof BlogSplatRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/for-guests/$': typeof ForGuestsSplatRoute
   '/for-hosts/$': typeof ForHostsSplatRoute
@@ -1020,6 +1027,7 @@ export interface FileRoutesByTo {
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/blog/$': typeof BlogSplatRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/for-guests/$': typeof ForGuestsSplatRoute
   '/for-hosts/$': typeof ForHostsSplatRoute
@@ -1152,6 +1160,7 @@ export interface FileRoutesById {
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/blog/$': typeof BlogSplatRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/for-guests/$': typeof ForGuestsSplatRoute
   '/for-hosts/$': typeof ForHostsSplatRoute
@@ -1285,6 +1294,7 @@ export interface FileRouteTypes {
     | '/admin/site-footer'
     | '/admin/team'
     | '/auth/reset-password'
+    | '/blog/$'
     | '/email/unsubscribe'
     | '/for-guests/$'
     | '/for-hosts/$'
@@ -1416,6 +1426,7 @@ export interface FileRouteTypes {
     | '/admin/site-footer'
     | '/admin/team'
     | '/auth/reset-password'
+    | '/blog/$'
     | '/email/unsubscribe'
     | '/for-guests/$'
     | '/for-hosts/$'
@@ -1547,6 +1558,7 @@ export interface FileRouteTypes {
     | '/admin/site-footer'
     | '/admin/team'
     | '/auth/reset-password'
+    | '/blog/$'
     | '/email/unsubscribe'
     | '/for-guests/$'
     | '/for-hosts/$'
@@ -1641,6 +1653,7 @@ export interface RootRouteChildren {
   SmAmenitiesDotxmlRoute: typeof SmAmenitiesDotxmlRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   AccountLearningRoute: typeof AccountLearningRoute
+  BlogSplatRoute: typeof BlogSplatRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   ForGuestsSplatRoute: typeof ForGuestsSplatRoute
   ForHostsSplatRoute: typeof ForHostsSplatRoute
@@ -2128,6 +2141,13 @@ declare module '@tanstack/react-router' {
       path: '/email/unsubscribe'
       fullPath: '/email/unsubscribe'
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$': {
+      id: '/blog/$'
+      path: '/blog/$'
+      fullPath: '/blog/$'
+      preLoaderRoute: typeof BlogSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/reset-password': {
@@ -2782,6 +2802,7 @@ const rootRouteChildren: RootRouteChildren = {
   SmAmenitiesDotxmlRoute: SmAmenitiesDotxmlRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   AccountLearningRoute: AccountLearningRoute,
+  BlogSplatRoute: BlogSplatRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   ForGuestsSplatRoute: ForGuestsSplatRoute,
   ForHostsSplatRoute: ForHostsSplatRoute,
