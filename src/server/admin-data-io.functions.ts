@@ -235,6 +235,7 @@ export const importTable = createServerFn({ method: "POST" })
       conflictColumn?: string;
       dryRun?: boolean;
       ignoreUnknownColumns?: boolean;
+      columnMapping?: Record<string, string>;
     }) => {
       if (!TABLES.includes(d.table)) throw new Error("Invalid table");
       if (!d.csv || d.csv.length === 0) throw new Error("Empty CSV");
@@ -250,49 +251,54 @@ export const importTable = createServerFn({ method: "POST" })
     if (parsed.length < 2) throw new Error("CSV has no data rows");
     const header = parsed[0];
 
-    let effectiveHeader = header;
-    let dropIdx: Set<number> = new Set();
-    if (data.ignoreUnknownColumns) {
-      const tableCols = new Set(await getTableColumns(data.table));
-      if (tableCols.size > 0) {
-        header.forEach((c, i) => {
-          if (!tableCols.has(c)) dropIdx.add(i);
-        });
-        effectiveHeader = header.filter((_, i) => !dropIdx.has(i));
-      }
-    }
+    // Apply user-supplied column mapping first (CSV header → table column, "" = skip)
+    const { map: headerMap0 } = applyMapping(header, data.columnMapping);
+    let headerMap: (string | null)[] = headerMap0;
 
-    // Schema validation per row. Build the row object and collect issues.
     const tableCols = new Set(await getTableColumns(data.table));
     const knownSchema = tableCols.size > 0;
 
+    // Optionally drop columns whose mapped name isn't in the schema
+    const droppedColumns: string[] = [];
+    if (data.ignoreUnknownColumns && knownSchema) {
+      headerMap = headerMap.map((eff, i) => {
+        if (eff && !tableCols.has(eff)) {
+          droppedColumns.push(eff || header[i]);
+          return null;
+        }
+        return eff;
+      });
+    } else {
+      // Skipped columns from mapping are already dropped
+      headerMap.forEach((eff, i) => { if (!eff) droppedColumns.push(header[i]); });
+    }
+
+    const effectiveHeader: string[] = [];
+    headerMap.forEach((eff) => { if (eff) effectiveHeader.push(eff); });
+
     const rowErrors: { row: number; slug?: string; reason: string }[] = [];
     const validRows: Record<string, any>[] = [];
-    const validRowNumbers: number[] = []; // 1-based CSV row numbers (data row 1 = csv row 2)
+    const validRowNumbers: number[] = [];
 
     const conflictColumn =
       data.conflictColumn || (data.table === "content_plan" ? "slug" : "id");
     const seenKeys = new Map<string, number>();
 
     parsed.slice(1).forEach((rawRow, idx) => {
-      const csvRowNum = idx + 2; // header is row 1
+      const csvRowNum = idx + 2;
       const obj: Record<string, any> = {};
       const issues: string[] = [];
 
-      effectiveHeader.forEach((col) => {
-        const i = header.indexOf(col);
+      headerMap.forEach((col, i) => {
+        if (!col) return;
         const raw = rawRow[i] ?? "";
-        // Detect malformed JSON in jsonb-looking columns
         const trimmed = String(raw).trim();
         if (
           (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
           (trimmed.startsWith("[") && trimmed.endsWith("]"))
         ) {
-          try {
-            JSON.parse(trimmed);
-          } catch {
-            issues.push(`Invalid JSON in "${col}"`);
-          }
+          try { JSON.parse(trimmed); }
+          catch { issues.push(`Invalid JSON in "${col}"`); }
         }
         obj[col] = coerceValue(raw, col);
       });
