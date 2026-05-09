@@ -62,6 +62,13 @@ const HEADER_LINKS: Array<{ label: string; href: string; internal?: boolean; exa
 function SiteHeaderInner() {
   const [open, setOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
+  // Avoid hydration mismatch (React #418): the SSR-side URL can differ from
+  // the client URL when the app is reverse-proxied (e.g. SSR sees
+  // /landing-page while the browser sees /), which would make Link
+  // activeProps render different classNames on server vs client. Defer
+  // active-link styling until after hydration.
+  const [hydrated, setHydrated] = React.useState(false);
+  React.useEffect(() => { setHydrated(true); }, []);
 
   // Lock body scroll when menu is open
   React.useEffect(() => {
