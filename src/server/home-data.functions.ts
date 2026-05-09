@@ -144,7 +144,9 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       // the route loader's Suspense boundary triggered React #418. One pull,
       // one source, deterministic order. If fewer than 12 come back, that's
       // fine — show what the mirror has rather than chase ghosts.
-      safe(searchListings({ perPage: 12 }), "searchListings (featured)", emptyListingResult),
+      // Over-fetch so we can drop listings without an image (placeholder/test
+      // rows) and still hand the grid a clean set of 12.
+      safe(searchListings({ perPage: 24 }), "searchListings (featured)", emptyListingResult),
       origin
         ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
         : Promise.resolve(emptyListingResult),
@@ -162,7 +164,15 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       ),
     ]);
 
-    const listingsResult = featuredResult;
+    // Strip listings missing a real image — they render as a blank "no image"
+    // card on the homepage and look like a broken/placeholder listing.
+    const filteredFeatured = featuredResult.listings.filter(
+      (l) => typeof l.imageUrl === "string" && l.imageUrl.length > 0,
+    );
+    const listingsResult = {
+      ...featuredResult,
+      listings: filteredFeatured.slice(0, 12),
+    };
 
     // Annotate every featured listing with approximate distance from the
     // visitor (Cloudflare-resolved lat/lng). Powers the "X mi away" badge
