@@ -181,7 +181,7 @@ export const previewImport = createServerFn({ method: "POST" })
 
     const sampleSize = Math.min(5, dataRows.length);
     const sample = dataRows.slice(0, sampleSize).map((r) => {
-      const obj: Record<string, unknown> = {};
+      const obj: Record<string, any> = {};
       header.forEach((col, i) => {
         obj[col] = coerceValue(r[i] ?? "", col);
       });
@@ -240,7 +240,7 @@ export const importTable = createServerFn({ method: "POST" })
     }
 
     const rows = parsed.slice(1).map((r) => {
-      const obj: Record<string, unknown> = {};
+      const obj: Record<string, any> = {};
       effectiveHeader.forEach((col) => {
         const i = header.indexOf(col);
         obj[col] = coerceValue(r[i] ?? "", col);
