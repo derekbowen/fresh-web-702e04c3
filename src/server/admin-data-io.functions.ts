@@ -354,7 +354,7 @@ export const importTable = createServerFn({ method: "POST" })
         rowErrors,
         chunkErrors: [] as string[],
         columns: effectiveHeader,
-        droppedColumns: header.filter((_, i) => dropIdx.has(i)),
+        droppedColumns,
       };
     }
 
@@ -418,7 +418,7 @@ export const importTable = createServerFn({ method: "POST" })
       rowErrors,
       chunkErrors,
       columns: effectiveHeader,
-      droppedColumns: header.filter((_, i) => dropIdx.has(i)),
+      droppedColumns,
     };
   });
 
