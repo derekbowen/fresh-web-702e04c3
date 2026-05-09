@@ -1,5 +1,9 @@
 import * as React from "react";
-import { Link } from "@tanstack/react-router";
+// Header/footer use plain <a> tags instead of TanStack <Link> to avoid React #418
+// hydration mismatches: Link auto-applies class="active" + data-status="active" +
+// aria-current="page" when its `to` matches the router's current path. Through the
+// nginx proxy SSR sees a different URL (e.g. /landing-page) than the browser (/),
+// so server and client render different markup → hydration mismatch.
 import {
   DEFAULT_FOOTER,
   type SiteFooterSettings,
@@ -62,13 +66,7 @@ const HEADER_LINKS: Array<{ label: string; href: string; internal?: boolean; exa
 function SiteHeaderInner() {
   const [open, setOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
-  // Avoid hydration mismatch (React #418): the SSR-side URL can differ from
-  // the client URL when the app is reverse-proxied (e.g. SSR sees
-  // /landing-page while the browser sees /), which would make Link
-  // activeProps render different classNames on server vs client. Defer
-  // active-link styling until after hydration.
-  const [hydrated, setHydrated] = React.useState(false);
-  React.useEffect(() => { setHydrated(true); }, []);
+
 
   // Lock body scroll when menu is open
   React.useEffect(() => {
@@ -91,33 +89,25 @@ function SiteHeaderInner() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2" onClick={close}>
+        <a href="/" className="flex items-center gap-2" onClick={close}>
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
               <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1v3c-1.5 0-2.5 1-4 1s-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1v-3zM6 14V5a3 3 0 0 1 6 0v9M12 9h6a3 3 0 0 1 0 6" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
             </svg>
           </div>
           <span className="text-base font-bold tracking-tight text-foreground sm:text-lg">Pool Rental Near Me</span>
-        </Link>
+        </a>
 
         <nav className="hidden items-center gap-6 md:flex">
-          {HEADER_LINKS.map((l) =>
-            l.internal ? (
-              <Link
-                key={l.label}
-                to={l.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground"
-                activeOptions={hydrated && l.exact ? { exact: true } : undefined}
-                activeProps={hydrated ? { className: "text-foreground" } : undefined}
-              >
-                {l.label}
-              </Link>
-            ) : (
-              <a key={l.label} href={rel(l.href)} className="text-sm font-medium text-muted-foreground hover:text-foreground">
-                {l.label}
-              </a>
-            )
-          )}
+          {HEADER_LINKS.map((l) => (
+            <a
+              key={l.label}
+              href={rel(l.href)}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              {l.label}
+            </a>
+          ))}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -178,25 +168,13 @@ function SiteHeaderInner() {
             <ul className="flex flex-col">
               {HEADER_LINKS.map((l) => (
                 <li key={l.label}>
-                  {l.internal ? (
-                    <Link
-                      to={l.href}
-                      onClick={close}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
-                      activeOptions={hydrated && l.exact ? { exact: true } : undefined}
-                      activeProps={hydrated ? { className: "block rounded-md px-3 py-3 text-base font-semibold bg-muted text-foreground" } : undefined}
-                    >
-                      {l.label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={rel(l.href)}
-                      onClick={close}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
-                    >
-                      {l.label}
-                    </a>
-                  )}
+                  <a
+                    href={rel(l.href)}
+                    onClick={close}
+                    className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                  >
+                    {l.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -246,13 +224,13 @@ function SiteFooterInner() {
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-3">
-            <Link to="/" aria-label="Pool Rental Near Me" className="inline-flex">
+            <a href="/" aria-label="Pool Rental Near Me" className="inline-flex">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7" aria-hidden="true">
                   <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1v3c-1.5 0-2.5 1-4 1s-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1v-3z" />
                 </svg>
               </div>
-            </Link>
+            </a>
             {data.contact_phone_label && (
               <p className="mt-5 text-sm text-foreground">
                 {data.contact_phone ? (
