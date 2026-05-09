@@ -50,23 +50,72 @@ function rel(path: string): string {
 const marketplace = (path: string): string =>
   path.startsWith("/") ? path : `/${path}`;
 
-export function SiteHeader() {
+export function SiteHeader({ isAuthed = false }: { isAuthed?: boolean } = {}) {
   if (useSuppressChrome()) return null;
-  return <SiteHeaderInner />;
+  return <SiteHeaderInner isAuthed={isAuthed} />;
 }
 
-const HEADER_LINKS: Array<{ label: string; href: string; internal?: boolean; exact?: boolean }> = [
-  { label: "Home", href: "/", internal: true, exact: true },
-  { label: "Public Pools", href: "/public-pools" },
-  { label: "Pool Pros", href: "/p/pool-pros" },
-  { label: "How It Works", href: "/p/how-it-works" },
-  { label: "Search", href: "/s" },
+type NavLink = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+const PRIMARY_NAV: NavLink[] = [
+  { label: "Home Page", href: "/" },
+  { label: "Find a Pool", href: "/s" },
+  { label: "Locations", href: "/p/all-locations" },
 ];
 
-function SiteHeaderInner() {
-  const [open, setOpen] = React.useState(false);
-  const close = React.useCallback(() => setOpen(false), []);
+const APP_NAV: NavLink[] = [
+  {
+    label: "iOS App",
+    href: "https://apps.apple.com/us/app/pool-rental-near-me/id6737762373",
+    external: true,
+  },
+  {
+    label: "Google Play",
+    href: "https://play.google.com/store/apps/details?id=com.poolrentalnearme.app.prod",
+    external: true,
+  },
+];
 
+const LIST_SPACE_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
+
+const ACCOUNT_LINKS: NavLink[] = [
+  { label: "Profile settings", href: "/profile-settings" },
+  { label: "Account settings", href: "/account" },
+  { label: "Manage listings", href: "/listings" },
+  { label: "Logout", href: "/logout" },
+];
+
+function NavAnchor({
+  link,
+  className,
+  onClick,
+}: {
+  link: NavLink;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const external = link.external;
+  return (
+    <a
+      href={external ? link.href : rel(link.href)}
+      onClick={onClick}
+      className={className}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {link.label}
+    </a>
+  );
+}
+
+function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
+  const [open, setOpen] = React.useState(false);
+  const [accountOpen, setAccountOpen] = React.useState(false);
+  const close = React.useCallback(() => setOpen(false), []);
+  const accountRef = React.useRef<HTMLDivElement | null>(null);
 
   // Lock body scroll when menu is open
   React.useEffect(() => {
@@ -80,11 +129,32 @@ function SiteHeaderInner() {
 
   // Close on Escape
   React.useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    if (!open && !accountOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        setAccountOpen(false);
+      }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, accountOpen]);
+
+  // Close account dropdown on outside click
+  React.useEffect(() => {
+    if (!accountOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!accountRef.current) return;
+      if (!accountRef.current.contains(e.target as Node)) setAccountOpen(false);
+    };
+    window.addEventListener("mousedown", onClick);
+    return () => window.removeEventListener("mousedown", onClick);
+  }, [accountOpen]);
+
+  const navLinkClass =
+    "text-sm font-medium text-muted-foreground hover:text-foreground";
+  const ctaPillClass =
+    "hidden h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow sm:inline-flex";
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -98,24 +168,66 @@ function SiteHeaderInner() {
           <span className="text-base font-bold tracking-tight text-foreground sm:text-lg">Pool Rental Near Me</span>
         </a>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          {HEADER_LINKS.map((l) => (
-            <a
-              key={l.label}
-              href={rel(l.href)}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              {l.label}
-            </a>
+        <nav className="hidden items-center gap-6 lg:flex">
+          {PRIMARY_NAV.map((l) => (
+            <NavAnchor key={l.label} link={l} className={navLinkClass} />
+          ))}
+          {APP_NAV.map((l) => (
+            <NavAnchor key={l.label} link={l} className={navLinkClass} />
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
-          <a
-            href={marketplace("/l/draft/00000000-0000-0000-0000-000000000000/new/details")}
-            className="hidden h-9 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow sm:inline-flex"
-          >
-            List Your Pool
+          {isAuthed ? (
+            <div className="hidden items-center gap-4 md:flex" ref={accountRef}>
+              <a href={marketplace("/inbox")} className={navLinkClass}>
+                Inbox
+              </a>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setAccountOpen((v) => !v)}
+                  aria-expanded={accountOpen}
+                  aria-haspopup="menu"
+                  className="inline-flex h-9 items-center justify-center gap-1 rounded-full border border-border bg-background px-3 text-sm font-medium text-foreground hover:bg-muted"
+                >
+                  Account
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                {accountOpen && (
+                  <div
+                    role="menu"
+                    className="absolute right-0 mt-2 w-56 overflow-hidden rounded-md border border-border bg-background shadow-lg"
+                  >
+                    {ACCOUNT_LINKS.map((l) => (
+                      <a
+                        key={l.label}
+                        href={marketplace(l.href)}
+                        role="menuitem"
+                        className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted"
+                        onClick={() => setAccountOpen(false)}
+                      >
+                        {l.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="hidden items-center gap-4 md:flex">
+              <a href={marketplace("/signup")} className={navLinkClass}>
+                Sign up
+              </a>
+              <a href={marketplace("/login")} className={navLinkClass}>
+                Log in
+              </a>
+            </div>
+          )}
+          <a href={marketplace(LIST_SPACE_HREF)} className={ctaPillClass}>
+            List your space now
           </a>
           <button
             type="button"
@@ -123,7 +235,7 @@ function SiteHeaderInner() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen(true)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted lg:hidden"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6" aria-hidden="true">
               <line x1="4" y1="6" x2="20" y2="6" />
@@ -136,7 +248,7 @@ function SiteHeaderInner() {
 
       {/* Mobile slide-out */}
       <div
-        className={`fixed inset-0 z-50 md:hidden ${open ? "" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-50 lg:hidden ${open ? "" : "pointer-events-none"}`}
         aria-hidden={!open}
       >
         <div
@@ -166,26 +278,102 @@ function SiteHeaderInner() {
           </div>
           <nav className="flex-1 overflow-y-auto px-2 py-3">
             <ul className="flex flex-col">
-              {HEADER_LINKS.map((l) => (
+              {PRIMARY_NAV.map((l) => (
                 <li key={l.label}>
-                  <a
-                    href={rel(l.href)}
+                  <NavAnchor
+                    link={l}
                     onClick={close}
                     className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
-                  >
-                    {l.label}
-                  </a>
+                  />
                 </li>
               ))}
+            </ul>
+            <div className="mt-3 px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Get the app
+            </div>
+            <ul className="flex flex-col">
+              {APP_NAV.map((l) => (
+                <li key={l.label}>
+                  <NavAnchor
+                    link={l}
+                    onClick={close}
+                    className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                  />
+                </li>
+              ))}
+            </ul>
+            <div className="my-3 border-t border-border" />
+            <ul className="flex flex-col">
+              {isAuthed ? (
+                <>
+                  <li>
+                    <a
+                      href={marketplace("/inbox")}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    >
+                      Inbox
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={marketplace("/profile-settings")}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    >
+                      Profile settings
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={marketplace("/listings")}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    >
+                      Manage listings
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={marketplace("/logout")}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    >
+                      Logout
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <a
+                      href={marketplace("/signup")}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    >
+                      Sign up
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href={marketplace("/login")}
+                      onClick={close}
+                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                    >
+                      Log in
+                    </a>
+                  </li>
+                </>
+              )}
             </ul>
           </nav>
           <div className="border-t border-border p-4">
             <a
-              href={marketplace("/l/draft/00000000-0000-0000-0000-000000000000/new/details")}
+              href={marketplace(LIST_SPACE_HREF)}
               onClick={close}
               className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-glow"
             >
-              List Your Pool
+              List your space now
             </a>
           </div>
         </aside>

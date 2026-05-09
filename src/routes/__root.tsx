@@ -11,6 +11,7 @@ const IntercomWidget = lazy(() =>
   import("@/components/intercom-widget").then((m) => ({ default: m.IntercomWidget })),
 );
 import { getSiteFooter } from "@/server/site-footer.functions";
+import { getSharetribeAuthState } from "@/server/sharetribe-session.functions";
 import {
   buildMeta,
   ldJsonScript,
@@ -47,12 +48,14 @@ function NotFoundComponent() {
 
 export const Route = createRootRoute({
   loader: async () => {
-    try {
-      const footer = await getSiteFooter();
-      return { footer };
-    } catch {
-      return { footer: null };
-    }
+    const [footerRes, authRes] = await Promise.allSettled([
+      getSiteFooter(),
+      getSharetribeAuthState(),
+    ]);
+    const footer = footerRes.status === "fulfilled" ? footerRes.value : null;
+    const isAuthed =
+      authRes.status === "fulfilled" ? !!authRes.value?.isAuthed : false;
+    return { footer, isAuthed };
   },
   head: () => {
     const meta = buildMeta({
@@ -107,11 +110,12 @@ function RootComponent() {
   const isAdmin = pathname.startsWith("/admin");
   const showIntercom = pathname === "/" || isAdmin || pathname.startsWith("/p/");
   const footer = data?.footer;
+  const isAuthed = !!data?.isAuthed;
   const content = (
     <>
       <HydrationDebug />
       <div className="flex min-h-screen flex-col">
-        {!isAdmin && <SiteHeader />}
+        {!isAdmin && <SiteHeader isAuthed={isAuthed} />}
         <div className="flex flex-1 flex-col">
           <GlobalChromeProvider>
             <Outlet />
