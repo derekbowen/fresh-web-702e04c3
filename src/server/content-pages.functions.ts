@@ -15,7 +15,33 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
+
+// Fire-and-forget: log a 301 redirect from a legacy slug to the canonical
+// slug. Failures are swallowed so logging never blocks the user-visible
+// redirect.
+function logRedirect(fromSlug: string, toSlug: string): void {
+  let userAgent: string | null = null;
+  let referrer: string | null = null;
+  try {
+    userAgent = getRequestHeader("user-agent") ?? null;
+    referrer = getRequestHeader("referer") ?? null;
+  } catch {
+    // No active request context; leave as null.
+  }
+  void (supabaseAdmin as any)
+    .from("redirect_log")
+    .insert({
+      from_slug: fromSlug,
+      to_slug: toSlug,
+      user_agent: userAgent,
+      referrer: referrer,
+    })
+    .then((res: { error?: unknown }) => {
+      if (res?.error) console.error("[redirect_log] insert failed", res.error);
+    });
+}
 
 export type ContentPageTemplateType =
   | "host_acq_city"
@@ -106,6 +132,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
           ? redirectTo.slice(3)
           : redirectTo;
         if (target && target !== slug) {
+          logRedirect(slug, target);
           return { kind: "redirect", canonicalSlug: target };
         }
       }
@@ -122,6 +149,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
       .limit(1);
     const alias = (aliasRows ?? [])[0] as { slug: string | null } | undefined;
     if (alias?.slug && alias.slug !== slug) {
+      logRedirect(slug, alias.slug);
       return { kind: "redirect", canonicalSlug: alias.slug };
     }
 
@@ -156,6 +184,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
             .eq("status", "published")
             .limit(1);
           if ((candRows ?? []).length > 0) {
+            logRedirect(slug, candidate);
             return { kind: "redirect", canonicalSlug: candidate };
           }
         }
