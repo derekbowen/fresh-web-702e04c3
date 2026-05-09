@@ -291,7 +291,7 @@ function SiteFooterInner() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               {data.popular_markets.map((mkt: FooterMarket) => (
                 <li key={mkt.slug}>
-                  <a href={marketplace(`/s?address=${encodeURIComponent(mkt.name)}`)} className="hover:text-primary">
+                  <a href={rel(`/p/${mkt.slug}`)} className="hover:text-primary">
                     {mkt.name}
                   </a>
                 </li>
