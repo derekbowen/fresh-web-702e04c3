@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { DustBanner } from "@/components/dust-banner";
+
 import { ListingCard } from "@/components/listing-card";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
@@ -12,9 +12,6 @@ import { LiteYouTube } from "@/components/lite-youtube";
 // Lazy-load so they don't bloat the homepage entry chunk.
 const PoolWaitlistForm = lazy(() =>
   import("@/components/pool-waitlist-form").then((m) => ({ default: m.PoolWaitlistForm })),
-);
-const FeatureRequestForm = lazy(() =>
-  import("@/components/feature-request-form").then((m) => ({ default: m.FeatureRequestForm })),
 );
 import heroPool from "@/assets/pool-hero-default.webp";
 
@@ -126,9 +123,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="flex-1">
-        <ErrorBoundary silent>
-          <DustBanner />
-        </ErrorBoundary>
         <section className="relative overflow-hidden bg-primary text-primary-foreground">
           <div className="absolute inset-0 -z-0">
             <img
@@ -220,32 +214,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
-        {/* Feature request lead-capture */}
-        <section
-          aria-labelledby="feature-request-heading"
-          className="border-b border-border bg-background"
-        >
-          <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
-            <div className="text-center">
-              <h2
-                id="feature-request-heading"
-                className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
-              >
-                Tell us what to build for your pool business.
-              </h2>
-              <p className="mt-3 text-muted-foreground">
-                Our new AI tooling lets us ship custom features the same day. Tell us what you need and we'll follow up to scope it.
-              </p>
-            </div>
-            <div className="mt-6">
-              <ErrorBoundary name="FeatureRequestForm" silent>
-                <Suspense fallback={<div className="min-h-[280px]" />}>
-                  <FeatureRequestForm />
-                </Suspense>
-              </ErrorBoundary>
-            </div>
-          </div>
-        </section>
 
         {/* Comparative trust strip */}
         <section aria-label="Why book with Pool Rental Near Me" className="border-b border-border bg-secondary/30">
