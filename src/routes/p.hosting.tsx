@@ -40,7 +40,7 @@ const DESCRIPTION =
   "Earn $1,500–$8,000+ a month renting your pool. Flat 10% host fee — Swimply charges 15–30%. Free to list, $2M coverage, 100+ free classes, 24-hr payouts.";
 
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
-const ACADEMY_HREF = "/p/host-academy";
+const ACADEMY_HREF = "/p/learningacademy";
 const CONNECT_HREF =
   "https://connect.poolrentalnearme.com/community/welcome";
 
