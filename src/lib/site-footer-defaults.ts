@@ -53,15 +53,19 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
     { label: "Refer Pool Owners", href: "/referral" },
   ],
+  // Slugs map to published `content_pages` (host_acq_city template) so each
+  // link resolves through the /p/$slug dispatcher. The cities table has rows
+  // for the short slugs (los-angeles-ca etc.) but the dispatcher only checks
+  // content_pages — that mismatch was 404ing every link before this fix.
   popular_markets: [
-    { name: "Los Angeles, CA", slug: "los-angeles-ca" },
-    { name: "San Diego, CA", slug: "san-diego-ca" },
-    { name: "Riverside, CA", slug: "riverside-ca" },
-    { name: "Sacramento, CA", slug: "sacramento-ca" },
-    { name: "Tampa, FL", slug: "tampa-fl" },
-    { name: "Scottsdale, AZ", slug: "scottsdale-az" },
-    { name: "Nashville, TN", slug: "nashville-tn" },
-    { name: "Katy, TX", slug: "katy-tx" },
+    { name: "Los Angeles, CA", slug: "become-a-swimming-pool-host-los-angeles-ca" },
+    { name: "San Diego, CA", slug: "become-a-swimming-pool-host-san-diego-ca" },
+    { name: "Riverside, CA", slug: "become-a-swimming-pool-host-riverside-ca" },
+    { name: "Sacramento, CA", slug: "become-a-swimming-pool-host-sacramento-ca" },
+    { name: "Tampa, FL", slug: "become-a-swimming-pool-host-tampa-fl" },
+    { name: "Scottsdale, AZ", slug: "become-a-swimming-pool-host-scottsdale-az" },
+    { name: "Phoenix, AZ", slug: "become-a-swimming-pool-host-phoenix-az" },
+    { name: "Katy, TX", slug: "become-a-swimming-pool-host-katy-tx" },
   ],
   socials: [
     { label: "Facebook", href: "https://www.facebook.com/poolrentalnearme", icon: "facebook" },
