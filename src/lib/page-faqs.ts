@@ -223,12 +223,6 @@ export function faqsForContentPage(page: ContentPage): FaqItem[] {
     const { city, stateCode } = parseCitySlug(citySlug);
     return hostAcqFaqs(city, stateCode);
   }
-  if (t === "public_pool_city") {
-    const citySlug = cityForContentPage(t, page.slug);
-    if (!citySlug) return [];
-    const { city, stateCode } = parseCitySlug(citySlug);
-    return publicPoolCityFaqs(city, stateCode);
-  }
   if (t === "swim_instructor_city") {
     const citySlug = cityForContentPage(t, page.slug);
     if (!citySlug) return [];
