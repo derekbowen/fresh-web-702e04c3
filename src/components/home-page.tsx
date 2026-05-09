@@ -337,7 +337,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   The only Pool Host Academy on the internet.
                 </h2>
                 <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-                  100+ free courses on safety, pricing, marketing, AI tools, guest experience, and the highest-paying booking niches. No other platform teaches you how to host — we wrote the playbook.
+                  135 free classes on safety, pricing, marketing, AI tools, guest experience, and the highest-paying booking niches. No other platform teaches you how to host — we wrote the playbook.
                 </p>
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {[
@@ -360,7 +360,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       href="/p/learningacademy"
                       className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                     >
-                      Browse 100+ free courses →
+                      Browse 135 free classes →
                     </a>
                   )}
                   {hostTrainingAvailable && (
