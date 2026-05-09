@@ -191,6 +191,65 @@ export const lookupContentPage = createServerFn({ method: "GET" })
       }
     }
 
+    // Fallback: published blog posts also live at /p/{slug} now (legacy
+    // /blog/{slug} URLs were retired). Render them through the dispatcher
+    // as a synthetic resource-article page so canonical, OG, and JSON-LD
+    // are all built from /p/{slug} via the existing head() pipeline.
+    const { data: blogRows } = await (supabaseAdmin as any)
+      .from("blog_posts")
+      .select(
+        "id, slug, title, excerpt, content, cover_image_url, author, seo_title, seo_description, is_published, published_at, updated_at, topic",
+      )
+      .eq("slug", slug)
+      .eq("is_published", true)
+      .limit(1);
+    const blog = (blogRows ?? [])[0] as
+      | {
+          id: string;
+          slug: string;
+          title: string | null;
+          excerpt: string | null;
+          content: string | null;
+          cover_image_url: string | null;
+          author: string | null;
+          seo_title: string | null;
+          seo_description: string | null;
+          published_at: string | null;
+          updated_at: string;
+          topic: string | null;
+        }
+      | undefined;
+    if (blog) {
+      const synthetic: ContentPage = {
+        id: blog.id,
+        slug: blog.slug,
+        url_path: `/p/${blog.slug}`,
+        source_url: `${"" /* no upstream */}`,
+        template_type: "resource",
+        category: blog.topic ?? "blog",
+        locale: "en",
+        title: blog.title,
+        seo_title: blog.seo_title,
+        seo_description: blog.seo_description,
+        hero_image_url: blog.cover_image_url,
+        body_markdown: blog.content,
+        raw_html: null,
+        status: "published",
+        scraped_at: null,
+        updated_at: blog.updated_at,
+        description: blog.excerpt,
+        content: blog.content,
+        cover_image_url: blog.cover_image_url,
+        language: "en",
+        author: blog.author,
+        published_at: blog.published_at,
+        is_published: true,
+        legacy_slugs: [],
+        hreflang_alt: null,
+      };
+      return { kind: "found", page: synthetic };
+    }
+
     return { kind: "not_found" };
   });
 
