@@ -421,6 +421,7 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
       .eq("is_deleted", false);
     if (opts.citySlug) query = query.eq("city_slug", opts.citySlug);
     else if (opts.city) query = query.ilike("city", opts.city);
+    if (opts.stateCode) query = query.eq("state_code", opts.stateCode);
 
     const { data, count, error } = await query
       .order("updated_at", { ascending: false })
