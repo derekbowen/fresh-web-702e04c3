@@ -329,7 +329,13 @@ function parseInput(value: unknown): Required<Input> {
   const tier = typeof input.tier === "string" ? input.tier : "";
   return {
     action:
-      input.action === "status" ? "status" : input.action === "preflight" ? "preflight" : "start",
+      input.action === "status"
+        ? "status"
+        : input.action === "preflight"
+          ? "preflight"
+          : input.action === "resume-paused"
+            ? "resume-paused"
+            : "start",
     count,
     tier,
     stateCode,
@@ -340,6 +346,7 @@ function parseInput(value: unknown): Required<Input> {
         : "google/gemini-3-flash-preview",
     dryRun: Boolean(input.dryRun),
     slugs: Array.isArray(input.slugs) ? input.slugs.filter((s) => typeof s === "string" && s) : [],
+    onlyStaleValidator: Boolean(input.onlyStaleValidator),
   };
 }
 
