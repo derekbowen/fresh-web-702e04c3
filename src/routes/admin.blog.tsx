@@ -172,7 +172,7 @@ function AdminBlogPage() {
                             {busy[r.slug] ? "Expanding…" : "Expand with AI"}
                           </Button>
                           <Link
-                            to="/blog/$slug"
+                            to="/p/$slug"
                             params={{ slug: r.slug }}
                             target="_blank"
                             className="text-sm underline self-center"
