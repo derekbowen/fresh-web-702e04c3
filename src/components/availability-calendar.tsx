@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronLeft, ChevronRight, Loader2, AlertCircle } from "lucide-react";
-import { getListingAvailability } from "@/lib/availability.functions";
+import { getListingAvailability, type AvailabilityResult } from "@/lib/availability.functions";
 
 type Props = {
   listingId: string;
