@@ -51,6 +51,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Privacy", href: "/p/privacy-policy" },
     { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
     { label: "Refer Pool Owners", href: "/referral" },
+    { label: "Investors", href: "/p/investors" },
   ],
   // Slugs map to published `content_pages` (host_acq_city template) so each
   // link resolves through the /p/$slug dispatcher. The cities table has rows
