@@ -541,6 +541,33 @@ async function processGeneration(
     okPages.push({ plan, body });
   }
 
+  // Helper: per-row failure update with attempt tracking + auto-pause.
+  const nowIso = new Date().toISOString();
+  const errorBySlug = new Map<string, string>();
+  for (const e of errors) {
+    const idx = e.indexOf(":");
+    if (idx > 0) {
+      const slug = e.slice(0, idx).trim();
+      const msg = e.slice(idx + 1).trim();
+      errorBySlug.set(slug, (errorBySlug.get(slug) ? errorBySlug.get(slug) + "; " : "") + msg);
+    }
+  }
+  const recordFailure = async (slug: string, msg: string, currentAttempts: number) => {
+    const newAttempts = (currentAttempts ?? 0) + 1;
+    const shouldPause = newAttempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
+    await supabase
+      .from("content_plan")
+      .update({
+        status: shouldPause ? "paused" : "pending",
+        last_error: msg.slice(0, 500),
+        attempt_count: newAttempts,
+        last_attempt_at: nowIso,
+        validator_version: VALIDATOR_VERSION,
+        paused_at: shouldPause ? nowIso : null,
+      })
+      .eq("slug", slug);
+  };
+
   if (dryRun) {
     await supabase
       .from("content_plan")
@@ -553,13 +580,15 @@ async function processGeneration(
   }
 
   if (okPages.length === 0) {
-    await supabase
-      .from("content_plan")
-      .update({ status: "pending", last_error: errors.join("; ").slice(0, 500) })
-      .in(
-        "slug",
-        planRows.map((r) => r.slug),
-      );
+    await Promise.all(
+      planRows.map((r) =>
+        recordFailure(
+          r.slug,
+          errorBySlug.get(r.slug) ?? errors.join("; ") ?? "unknown validation error",
+          r.attempt_count ?? 0,
+        ),
+      ),
+    );
     return;
   }
 
