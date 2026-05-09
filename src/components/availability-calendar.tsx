@@ -144,6 +144,13 @@ export function AvailabilityCalendar({
         </p>
       </div>
 
+      {!mounted ? (
+        <div className="mt-8 flex items-center justify-center gap-2 rounded-3xl border border-border bg-card px-6 py-16 text-sm text-muted-foreground shadow-sm">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading live availability…
+        </div>
+      ) : (
+
       <div className="mt-8 overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
         {/* Calendar header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-6">
