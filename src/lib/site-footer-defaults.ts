@@ -41,7 +41,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Earnings Calculator", href: "/p/earnings-calculator" },
     { label: "Host Pro Tools", href: "/p/free-host-tools" },
     { label: "Host Connect", href: "https://connect.poolrentalnearme.com" },
-    { label: "HOA Defense Kit", href: "/p/hoa-pool-rental-defense-kit" },
+    { label: "HOA Navigation Guide", href: "/p/elearning-academy-hoa-navigation-guide-pool-hosts" },
     { label: "Host Make More $$$", href: "/p/hosting" },
   ],
   company_links: [
