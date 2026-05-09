@@ -14,6 +14,9 @@ const PoolWaitlistForm = lazy(() =>
   import("@/components/pool-waitlist-form").then((m) => ({ default: m.PoolWaitlistForm })),
 );
 import heroPool from "@/assets/pool-hero-default.webp";
+import laSaltwaterFeatured from "@/assets/la-saltwater/hero-night.jpg";
+
+const HIDE_LISTING_RE = /swim\s*spa|aquatic|rehab/i;
 
 const NEARBY_RADIUS_MILES = 500;
 
@@ -431,15 +434,50 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   </p>
                 </div>
                 <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {listings.slice(0, 12).map((l: ListingSummary) => (
-                    <ErrorBoundary
-                      key={l.id}
-                      name={`ListingCard:${l.id}`}
-                      fallback={null}
-                    >
-                      <ListingCard listing={l} />
-                    </ErrorBoundary>
-                  ))}
+                  <a
+                    href="/p/la-saltwater-featured"
+                    className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+                  >
+                    <div className="aspect-[4/3] overflow-hidden bg-muted">
+                      <img
+                        src={laSaltwaterFeatured}
+                        alt="La Saltwater Pool & Spa, Sherman Oaks"
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-2.5 py-1 text-[11px] font-bold text-black shadow">
+                        🏆 Top 9 Pools in LA 2025
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="line-clamp-1 text-base font-semibold text-foreground">
+                        La Saltwater Pool & Spa
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Sherman Oaks, CA · Saltwater · Heated spa · Fits 45
+                      </p>
+                      <div className="mt-3 flex items-center justify-between gap-3">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                          PRNM Featured
+                        </span>
+                        <span className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
+                          View pool →
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                  {listings
+                    .filter((l: ListingSummary) => !HIDE_LISTING_RE.test(l.title || ""))
+                    .slice(0, 11)
+                    .map((l: ListingSummary) => (
+                      <ErrorBoundary
+                        key={l.id}
+                        name={`ListingCard:${l.id}`}
+                        fallback={null}
+                      >
+                        <ListingCard listing={l} />
+                      </ErrorBoundary>
+                    ))}
                 </div>
                 <div className="mt-10 text-center">
                   <a
