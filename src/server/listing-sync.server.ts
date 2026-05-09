@@ -23,6 +23,31 @@ function slugify(s: string): string {
   );
 }
 
+const US_STATES = new Set([
+  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA",
+  "KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT",
+  "VA","WA","WV","WI","WY","DC","PR",
+]);
+
+/**
+ * Extract a 2-letter US state code from a free-form address string.
+ * Examples that match: "1311 Lower Seguin Rd, Marion, TX 78124, USA"
+ *                      "..., Marion, TX, USA"
+ *                      "..., Los Angeles, CA 90001"
+ */
+export function extractStateCode(address: string | null | undefined): string | null {
+  if (!address) return null;
+  // Match a 2-letter token preceded by a comma/space, optionally followed by ZIP.
+  const matches = address.toUpperCase().match(/[, ]([A-Z]{2})(?=[ ,]|\s\d{5}|$)/g);
+  if (!matches) return null;
+  for (const m of matches) {
+    const code = m.replace(/[^A-Z]/g, "");
+    if (US_STATES.has(code)) return code;
+  }
+  return null;
+}
+
 function pickImages(
   listing: STListing,
   included: STResponse<unknown>["included"],
