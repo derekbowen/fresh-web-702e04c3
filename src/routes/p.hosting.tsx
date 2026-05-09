@@ -15,6 +15,10 @@ import {
   Scale,
   Building,
   Megaphone,
+  AlertCircle,
+  Home,
+  GitBranch,
+  Camera,
   type LucideIcon,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
@@ -37,7 +41,7 @@ const PATH = "/p/hosting";
 const TITLE =
   "List Your Pool & Earn 10% More than Swimply | Pool Rental Near Me";
 const DESCRIPTION =
-  "Earn $1,500–$8,000+ a month renting your pool. Flat 10% host fee — Swimply charges 15–30%. Free to list, $2M coverage, 100+ free classes, 24-hr payouts.";
+  "Earn $1,500–$8,000+ a month renting your pool. Flat 10% host fee — Swimply charges 15–30%. Free to list, $2M coverage, 135 free classes, 24-hr payouts.";
 
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 const ACADEMY_HREF = "/p/learningacademy";
@@ -82,9 +86,9 @@ const REASONS: Reason[] = [
   },
   {
     icon: GraduationCap,
-    title: "100+ free classes on hosting",
-    body: "Pool Host Academy is the only training platform built specifically for pool hosts. 100+ video lessons covering pricing strategy, guest screening, insurance, taxes, marketing, holiday upcharges, and difficult-guest scenarios. 100% free, English and Spanish, host certifications you can share. Swimply has webinars. We built a real curriculum.",
-    cta: { label: "Browse 100+ free classes →", href: ACADEMY_HREF },
+    title: "135 free classes on hosting",
+    body: "Pool Host Academy is the only training platform built specifically for pool hosts. 135 video lessons covering pricing strategy, guest screening, insurance, taxes, marketing, holiday upcharges, and difficult-guest scenarios. 100% free, English and Spanish, host certifications you can share. Swimply has webinars. We built a real curriculum.",
+    cta: { label: "Browse 135 free classes →", href: ACADEMY_HREF },
   },
   {
     icon: Users,
@@ -95,12 +99,12 @@ const REASONS: Reason[] = [
 ];
 
 const COURSES: Array<{ icon: LucideIcon; title: string; desc: string }> = [
-  { icon: ShieldCheck, title: "Safety & Rescue", desc: "Pool safety protocols, emergency procedures, and first-aid basics every host should know." },
-  { icon: Scale, title: "Legal & Compliance", desc: "Permits, waivers, liability, and short-term rental ordinances by state." },
-  { icon: Building, title: "HOA Navigation", desc: "How to host successfully when you're in an HOA (and what to do if your HOA pushes back)." },
-  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table. Includes holiday upcharges." },
-  { icon: Megaphone, title: "Marketing Your Listing", desc: "Photos, descriptions, and SEO tactics to get more views and bookings." },
-  { icon: Users, title: "Guest Experience", desc: "Difficult guest scenarios, communication scripts, and how to earn 5-star reviews every time." },
+  { icon: ShieldCheck, title: "Water Rescue Equipment", desc: "Life ring vs shepherd's hook — when to use each, and where to mount them." },
+  { icon: AlertCircle, title: "Managing Police Intervention", desc: "Blue lights in the driveway — what to say, what to do, what your guests should do." },
+  { icon: Home, title: "Neighbor Complaints in Real Time", desc: "Defuse problems before they become 911 calls. Scripts, scenarios, and how to keep your HOA on your side." },
+  { icon: GitBranch, title: "Multi-Platform Hosting", desc: "Cross-list on PRNM, Swimply, and Peerspace without double-bookings. The exact workflow." },
+  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table. Holiday upcharges included." },
+  { icon: Camera, title: "Creating Content the Easy Way", desc: "Photos and videos that book pools fast — even if you've never touched a camera." },
 ];
 
 const COMPARE: Array<[string, string, string]> = [
@@ -109,7 +113,7 @@ const COMPARE: Array<[string, string, string]> = [
   ["Liability coverage", "$1,000,000", "$2,000,000"],
   ["Payout speed", "48 hr + 3–7 days to bank", "24 hr + 1–3 days to bank"],
   ["Fee predictability", "Varies by tier", "Same 10% always"],
-  ["Host education", "Webinars, help articles", "100+ free classes (Pool Host Academy)"],
+  ["Host education", "Webinars, help articles", "135 free classes (Pool Host Academy)"],
   ["Host community", "Facebook group", "Private board (PRNM Connect)"],
   ["Listing fee", "Free", "Free"],
 ];
@@ -129,7 +133,7 @@ const FAQS = [
   },
   {
     q: "Are the host classes really free?",
-    a: "Yes. 100+ video lessons in the Pool Host Academy, all free, no credit card required, no upsell. We built it because Swimply hosts kept telling us they had to learn everything by trial and error. Topics include pricing strategy, guest screening, holiday upcharges, taxes, insurance, difficult guest scenarios, and booking acceleration. English and Spanish. Host certifications you can display on your listing.",
+    a: "Yes. 135 video lessons in the Pool Host Academy, all free, no credit card required, no upsell. We built it because Swimply hosts kept telling us they had to learn everything by trial and error. Topics include pricing strategy, guest screening, holiday upcharges, taxes, insurance, difficult guest scenarios, and booking acceleration. English and Spanish. Host certifications you can display on your listing.",
   },
   {
     q: "Do I need to be home during bookings?",
@@ -157,7 +161,7 @@ const FAQS = [
   },
   {
     q: "How is PRNM different from Swimply?",
-    a: "Four things hosts tell us. (1) Our host fee is a flat 10% — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 100+ free classes and a private host community board — Swimply has a Facebook group.",
+    a: "Four things hosts tell us. (1) Our host fee is a flat 10% — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 135 free classes and a private host community board — Swimply has a Facebook group.",
   },
   {
     q: "I'm currently on Swimply. Can I list on both?",
@@ -210,7 +214,7 @@ export const Route = createFileRoute("/p/hosting")({
           name: "Pool Host Academy",
           url: `${SITE_URL}${ACADEMY_HREF}`,
           description:
-            "100+ free video lessons for pool rental hosts: pricing, taxes, insurance, guest screening, holiday upcharges, difficult-guest scenarios.",
+            "135 free video lessons for pool rental hosts: pricing, taxes, insurance, guest screening, holiday upcharges, difficult-guest scenarios.",
         }),
       ],
     };
@@ -261,7 +265,7 @@ function HostingPage() {
               <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
                 Swimply's host fee runs 15% to 30% per booking. Ours is a flat
                 10%. Plus $2M coverage versus their $1M, money in your bank
-                4–7 days faster, and 100+ free classes on hosting. No
+                4–7 days faster, and 135 free classes on hosting. No
                 other platform does that.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -284,7 +288,7 @@ function HostingPage() {
                   "Free to list",
                   "10% flat host fee",
                   "$2M liability per booking",
-                  "100+ free classes",
+                  "135 free classes",
                 ].map((t) => (
                   <li key={t} className="flex items-center gap-1.5">
                     <Check className="h-4 w-4 shrink-0 text-primary" />
@@ -400,7 +404,7 @@ function HostingPage() {
         <section className="bg-amber-50/60 py-20">
           <div className="mx-auto max-w-6xl px-4 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              69 free classes. Built for pool hosts.
+              135 free classes. Built for pool hosts.
             </h2>
             <p className="mx-auto mt-4 max-w-3xl text-lg text-muted-foreground">
               No other platform teaches you how to host. We do — and we
@@ -438,7 +442,7 @@ function HostingPage() {
                 href={ACADEMY_HREF}
                 className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
-                Browse all 69 free classes →
+                Browse all 135 free classes →
               </a>
               <p className="mt-3 text-sm text-muted-foreground">
                 100% free. No signup required. English &amp; español.
@@ -558,7 +562,7 @@ function HostingPage() {
               Ready to keep more of your money?
             </h2>
             <p className="mt-4 text-lg text-primary-foreground/90">
-              Free to list. Free 100+ classes. No monthly fees. Be live in 15
+              Free to list. Free 135 classes. No monthly fees. Be live in 15
               minutes. We review every pool to keep quality high.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
