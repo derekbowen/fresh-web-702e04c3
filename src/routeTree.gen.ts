@@ -94,6 +94,7 @@ import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
+import { Route as AdminDataImportRouteImport } from './routes/admin.data-import'
 import { Route as AdminDataExportRouteImport } from './routes/admin.data-export'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContentPagesRouteImport } from './routes/admin.content-pages'
@@ -577,6 +578,11 @@ const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
   path: '/directory',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDataImportRoute = AdminDataImportRouteImport.update({
+  id: '/data-import',
+  path: '/data-import',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDataExportRoute = AdminDataExportRouteImport.update({
   id: '/data-export',
   path: '/data-export',
@@ -838,6 +844,7 @@ export interface FileRoutesByFullPath {
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-export': typeof AdminDataExportRoute
+  '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
@@ -965,6 +972,7 @@ export interface FileRoutesByTo {
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-export': typeof AdminDataExportRoute
+  '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
@@ -1093,6 +1101,7 @@ export interface FileRoutesById {
   '/admin/content-pages': typeof AdminContentPagesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/data-export': typeof AdminDataExportRoute
+  '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
@@ -1222,6 +1231,7 @@ export interface FileRouteTypes {
     | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/data-export'
+    | '/admin/data-import'
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/generate-content'
@@ -1349,6 +1359,7 @@ export interface FileRouteTypes {
     | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/data-export'
+    | '/admin/data-import'
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/generate-content'
@@ -1476,6 +1487,7 @@ export interface FileRouteTypes {
     | '/admin/content-pages'
     | '/admin/dashboard'
     | '/admin/data-export'
+    | '/admin/data-import'
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/generate-content'
@@ -2240,6 +2252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDirectoryRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/data-import': {
+      id: '/admin/data-import'
+      path: '/data-import'
+      fullPath: '/admin/data-import'
+      preLoaderRoute: typeof AdminDataImportRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/data-export': {
       id: '/admin/data-export'
       path: '/data-export'
@@ -2548,6 +2567,7 @@ interface AdminRouteChildren {
   AdminContentPagesRoute: typeof AdminContentPagesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDataExportRoute: typeof AdminDataExportRoute
+  AdminDataImportRoute: typeof AdminDataImportRoute
   AdminDirectoryRoute: typeof AdminDirectoryRoute
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
@@ -2587,6 +2607,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminContentPagesRoute: AdminContentPagesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDataExportRoute: AdminDataExportRoute,
+  AdminDataImportRoute: AdminDataImportRoute,
   AdminDirectoryRoute: AdminDirectoryRoute,
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
