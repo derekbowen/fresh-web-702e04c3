@@ -46,12 +46,10 @@ export function EventGuideTemplate({
           )}
           {page.hero_image_url && (
             <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
-              <img
+              <HeroImage
                 src={page.hero_image_url}
                 alt={title}
                 className="h-full w-full object-cover"
-                loading="eager"
-                fetchPriority="high"
               />
             </div>
           )}
