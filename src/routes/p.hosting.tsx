@@ -15,6 +15,10 @@ import {
   Scale,
   Building,
   Megaphone,
+  AlertCircle,
+  Home,
+  GitBranch,
+  Camera,
   type LucideIcon,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
