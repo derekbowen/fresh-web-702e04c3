@@ -117,10 +117,13 @@ export function AvailabilityCalendar({
 
   const selectedSlots = selectedDate ? slotsByDay.get(selectedDate) ?? [] : [];
 
-  function buildBookingUrl(startISO: string): string {
+  function buildBookingUrl(startISO: string, endISO: string): string {
     const base = bookingBaseUrl.replace(/\/$/, "");
-    const params = new URLSearchParams({ bookingStart: startISO });
-    return `${base}/l/${listingSlug}/${listingId}?${params.toString()}`;
+    const params = new URLSearchParams({
+      bookingStart: startISO,
+      bookingEnd: endISO,
+    });
+    return `${base}/l/${listingSlug}/${listingId}/checkout?${params.toString()}`;
   }
 
   return (
