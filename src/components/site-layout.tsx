@@ -65,6 +65,9 @@ const PRIMARY_NAV: NavLink[] = [
   { label: "Home Page", href: "/" },
   { label: "Find a Pool", href: "/s" },
   { label: "Locations", href: "/p/all-locations" },
+  { label: "Public Pools", href: "/public-pools" },
+  { label: "Pool Pros", href: "/p/pool-pros" },
+  { label: "How It Works", href: "/p/how-it-works" },
 ];
 
 const APP_NAV: NavLink[] = [
