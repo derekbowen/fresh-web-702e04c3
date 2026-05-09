@@ -40,6 +40,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -306,6 +307,11 @@ const LandingPageRoute = LandingPageRouteImport.update({
   path: '/landing-page',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -467,9 +473,9 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSplatRoute = BlogSplatRouteImport.update({
-  id: '/blog/$',
-  path: '/blog/$',
-  getParentRoute: () => rootRouteImport,
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => BlogRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -825,6 +831,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/referral': typeof ReferralRoute
@@ -957,6 +964,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/referral': typeof ReferralRoute
@@ -1090,6 +1098,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/blog': typeof BlogRouteWithChildren
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/referral': typeof ReferralRoute
@@ -1224,6 +1233,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/blog'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/referral'
@@ -1356,6 +1366,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/blog'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/referral'
@@ -1488,6 +1499,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/blog'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/referral'
@@ -1621,6 +1633,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  BlogRoute: typeof BlogRouteWithChildren
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   ReferralRoute: typeof ReferralRoute
@@ -1653,7 +1666,6 @@ export interface RootRouteChildren {
   SmAmenitiesDotxmlRoute: typeof SmAmenitiesDotxmlRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   AccountLearningRoute: typeof AccountLearningRoute
-  BlogSplatRoute: typeof BlogSplatRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   ForGuestsSplatRoute: typeof ForGuestsSplatRoute
   ForHostsSplatRoute: typeof ForHostsSplatRoute
@@ -1926,6 +1938,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingPageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -2145,10 +2164,10 @@ declare module '@tanstack/react-router' {
     }
     '/blog/$': {
       id: '/blog/$'
-      path: '/blog/$'
+      path: '/$'
       fullPath: '/blog/$'
       preLoaderRoute: typeof BlogSplatRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BlogRoute
     }
     '/auth/reset-password': {
       id: '/auth/reset-password'
@@ -2726,6 +2745,16 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface BlogRouteChildren {
+  BlogSplatRoute: typeof BlogSplatRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSplatRoute: BlogSplatRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
 interface PPoolProsCCategoryStateRouteChildren {
   PPoolProsCCategoryStateCityRoute: typeof PPoolProsCCategoryStateCityRoute
 }
@@ -2769,6 +2798,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  BlogRoute: BlogRouteWithChildren,
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   ReferralRoute: ReferralRoute,
@@ -2802,7 +2832,6 @@ const rootRouteChildren: RootRouteChildren = {
   SmAmenitiesDotxmlRoute: SmAmenitiesDotxmlRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   AccountLearningRoute: AccountLearningRoute,
-  BlogSplatRoute: BlogSplatRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   ForGuestsSplatRoute: ForGuestsSplatRoute,
   ForHostsSplatRoute: ForHostsSplatRoute,
