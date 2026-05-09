@@ -26,9 +26,15 @@ type GeneratedPage = {
   body_markdown: string;
 };
 
+// Bump this whenever validator rules change. Paused rows older than the
+// current version are eligible for auto-resume on operator action.
+const VALIDATOR_VERSION = "v2-faq8-2026-05-09";
+const MAX_ATTEMPTS_BEFORE_PAUSE = 3;
+
 type PlanRow = {
   slug: string;
   source_type: string;
+  attempt_count?: number | null;
   city: string | null;
   state: string | null;
   state_code: string | null;
