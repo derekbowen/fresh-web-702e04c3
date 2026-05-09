@@ -54,7 +54,8 @@ function StateHubPage() {
   const { stateName, stateCode, cities } = Route.useLoaderData();
 
   // Group cities alphabetically into A, B, C... buckets for scannability.
-  const buckets = new Map<string, typeof cities>();
+  type City = (typeof cities)[number];
+  const buckets = new Map<string, City[]>();
   for (const c of cities) {
     const letter = (c.cityName[0] ?? "#").toUpperCase();
     const key = /[A-Z]/.test(letter) ? letter : "#";
