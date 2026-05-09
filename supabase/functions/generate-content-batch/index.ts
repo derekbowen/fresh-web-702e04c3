@@ -504,7 +504,7 @@ async function processGeneration(
         [/##\s*Cuánto Puedes Ganar/i, "Cuánto Puedes Ganar"],
         [/##\s*Preguntas Frecuentes/i, "Preguntas Frecuentes"],
         [/##\s*¿Listo Para Empezar\?/i, "¿Listo Para Empezar?"],
-        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?15\.(?:\*\*)?\s/, "15 numbered FAQs"],
+        [/(?:^|\n)\s*(?:#{2,6}\s*)?(?:\*\*)?8\.(?:\*\*)?\s/, "at least 8 numbered FAQs"],
       ];
     } else {
       requiredSections = [
