@@ -158,6 +158,82 @@ function swimInstructorHubFaqs(): FaqItem[] {
   ];
 }
 
+function eventGuideFaqs(eventLabel: string, where: string): FaqItem[] {
+  return [
+    {
+      question: `How much does it cost to rent a pool for a ${eventLabel} in ${where}?`,
+      answer: `Most ${where} pool rentals run $40–$150 per hour. Total cost depends on group size, time of day, and add-ons like a hot tub, BBQ, or covered patio. You'll see the full price before booking.`,
+    },
+    {
+      question: `How many guests can I bring to a ${eventLabel} pool rental in ${where}?`,
+      answer: `Each ${where} listing sets its own guest cap, typically 10–25 people. Filter by guest count when you search to find pools that fit your group.`,
+    },
+    {
+      question: `Can I host a ${eventLabel} at a private pool with food and music?`,
+      answer: `Most hosts allow food, drinks, and reasonable music — many even include a grill or BBQ area. Check the listing's house rules and message the host before booking if you're planning catering or amplified sound.`,
+    },
+    {
+      question: `Is there liability coverage for a ${eventLabel} pool rental?`,
+      answer: `Yes. Every Pool Rental Near Me booking includes $2 million in liability coverage at no extra cost to the guest or host.`,
+    },
+    {
+      question: `How far in advance should I book a pool for a ${eventLabel} in ${where}?`,
+      answer: `For weekends in peak summer, book 2–4 weeks ahead. Mid-week and shoulder-season ${where} bookings are usually available within a few days.`,
+    },
+  ];
+}
+
+function cityMainFaqs(city: string, stateCode: string | null): FaqItem[] {
+  const where = stateCode ? `${city}, ${stateCode}` : city;
+  return [
+    {
+      question: `Can I rent a private pool by the hour in ${where}?`,
+      answer: `Yes. Pool Rental Near Me lets you book private backyard pools in ${where} by the hour, with no membership and no shared lap lanes.`,
+    },
+    {
+      question: `How much does it cost to rent a pool in ${where}?`,
+      answer: `Pool rentals in ${where} typically range from $40 to $150 per hour depending on the pool, amenities, and time of day.`,
+    },
+    {
+      question: `How much can I earn hosting my pool in ${where}?`,
+      answer: `Most ${where} hosts earn $5,000–$15,000 per month during peak season. Pool Rental Near Me charges a flat 10% host fee — significantly less than Swimply's 15%+.`,
+    },
+    {
+      question: `Is hosting a pool in ${where} insured?`,
+      answer: `Yes. Every booking includes $2 million in liability protection at no extra cost to the host.`,
+    },
+  ];
+}
+
+function genericResourceFaqs(title: string): FaqItem[] {
+  return [
+    {
+      question: `What is Pool Rental Near Me?`,
+      answer: `Pool Rental Near Me is a peer-to-peer marketplace where homeowners rent out their backyard pools by the hour. Guests get a private pool, hosts earn money, and every booking includes $2M in liability coverage.`,
+    },
+    {
+      question: `How much does a private pool rental cost?`,
+      answer: `Most pool rentals range from $40 to $150 per hour depending on the pool, amenities, location, and time of day. You see the full price before you book.`,
+    },
+    {
+      question: `How much can I earn renting out my pool?`,
+      answer: `Typical hosts earn $3,000–$10,000 per month during peak season, with top hosts clearing $15,000+. Pool Rental Near Me charges a flat 10% host fee — lower than Swimply's 15%+.`,
+    },
+    {
+      question: `Is there liability insurance included?`,
+      answer: `Yes. Every booking includes $2 million in liability protection at no extra cost to the host or guest. (Reference: ${title}.)`,
+    },
+  ];
+}
+
+/** Parse "guide-to-{event}-pool-rental-{city-slug}" → { eventLabel, citySlug }. */
+function parseEventGuideSlug(slug: string): { eventLabel: string; citySlug: string } | null {
+  const m = slug.match(/^guide-to-(.+?)-pool-rental-(.+)$/);
+  if (!m) return null;
+  const eventLabel = m[1].split("-").join(" ");
+  return { eventLabel, citySlug: m[2] };
+}
+
 /**
  * Returns FAQs for a content page, or [] if the template type doesn't get FAQs.
  */
@@ -187,6 +263,23 @@ export function faqsForContentPage(page: ContentPage): FaqItem[] {
   if (t === "host_advocacy_state" && page.slug) {
     const m = page.slug.match(/-([a-z]{2})$/i);
     if (m) return hostAdvocacyFaqs(m[1].toUpperCase());
+  }
+  if (t === "event_guide" && page.slug) {
+    const parsed = parseEventGuideSlug(page.slug);
+    if (parsed) {
+      const { city, stateCode } = parseCitySlug(parsed.citySlug);
+      const where = stateCode ? `${city}, ${stateCode}` : city;
+      return eventGuideFaqs(parsed.eventLabel, where);
+    }
+    return [];
+  }
+  if (t === "city_main" && page.slug) {
+    const { city, stateCode } = parseCitySlug(page.slug);
+    return cityMainFaqs(city, stateCode);
+  }
+  if (t === "resource" || t === "spanish_resource") {
+    const title = page.title || page.seo_title || "this guide";
+    return genericResourceFaqs(title);
   }
   return [];
 }
