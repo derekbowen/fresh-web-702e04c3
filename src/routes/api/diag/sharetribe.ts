@@ -9,7 +9,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { searchListings } from "@/server/sharetribe.server";
-import { supabaseAdmin } from "@/server/supabase-admin.server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const FALLBACK_KEY = "poolside-diag-2026";
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
