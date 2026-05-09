@@ -46,6 +46,57 @@ export function IntercomWidget() {
     let booted = false;
     let currentAppId = "";
 
+    // Diagnostic logger — prefixed so it's easy to filter in prod consoles.
+    const log = (...args: unknown[]) => {
+      // eslint-disable-next-line no-console
+      console.log("[Intercom]", ...args);
+    };
+    const warn = (...args: unknown[]) => {
+      // eslint-disable-next-line no-console
+      console.warn("[Intercom]", ...args);
+    };
+
+    // Patch fetch + XHR once to log all intercom.io network traffic
+    // (ping, launcher, messenger frames). Idempotent across remounts.
+    const w = window as unknown as { __intercomNetPatched?: boolean };
+    if (!w.__intercomNetPatched) {
+      w.__intercomNetPatched = true;
+      const isIntercom = (u: string) => /intercom(\.io|cdn|assets)/i.test(u);
+      const origFetch = window.fetch.bind(window);
+      window.fetch = async (input, init) => {
+        const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+        const t0 = performance.now();
+        try {
+          const res = await origFetch(input as RequestInfo, init);
+          if (isIntercom(url)) {
+            log("fetch", res.status, url, `${Math.round(performance.now() - t0)}ms`);
+          }
+          return res;
+        } catch (err) {
+          if (isIntercom(url)) warn("fetch failed", url, err);
+          throw err;
+        }
+      };
+      const OrigXHR = window.XMLHttpRequest;
+      class LoggedXHR extends OrigXHR {
+        private _url = "";
+        open(method: string, url: string | URL, ...rest: unknown[]) {
+          this._url = typeof url === "string" ? url : url.toString();
+          // @ts-expect-error - passthrough
+          return super.open(method, url, ...rest);
+        }
+        send(body?: Document | XMLHttpRequestBodyInit | null) {
+          if (isIntercom(this._url)) {
+            this.addEventListener("loadend", () => {
+              log("xhr", this.status, this._url);
+            });
+          }
+          return super.send(body as XMLHttpRequestBodyInit | null);
+        }
+      }
+      window.XMLHttpRequest = LoggedXHR as unknown as typeof XMLHttpRequest;
+    }
+
     const boot = async () => {
       const { data } = await supabase.auth.getUser();
       const user = data.user;
@@ -56,55 +107,96 @@ export function IntercomWidget() {
         try {
           const res = await fetchUserJwt();
           userJwt = res.token;
-        } catch {
+        } catch (err) {
+          warn("user JWT fetch failed", err);
           userJwt = null;
         }
       }
 
-      Intercom({
+      log("boot()", {
         app_id: currentAppId,
-        api_base: "https://api-iam.intercom.io",
-        session_duration: 86_400_000,
-        ...(user
-          ? {
-              user_id: user.id,
-              email: user.email ?? undefined,
-              name:
-                (user.user_metadata?.full_name as string | undefined) ??
-                (user.user_metadata?.name as string | undefined),
-              ...(user.created_at
-                ? { created_at: Math.floor(new Date(user.created_at).getTime() / 1000) }
-                : {}),
-              ...(userJwt ? { intercom_user_jwt: userJwt } : {}),
-            }
-          : {}),
-        ...ctx,
+        host: window.location.host,
+        origin: window.location.origin,
+        authState: user ? "authenticated" : "anonymous",
+        user_id: user?.id ?? null,
+        email: user?.email ?? null,
+        has_jwt: !!userJwt,
+        identity_verification: user ? (userJwt ? "signed" : "unsigned") : "n/a",
+        ctx,
       });
-      booted = true;
+
+      try {
+        Intercom({
+          app_id: currentAppId,
+          api_base: "https://api-iam.intercom.io",
+          session_duration: 86_400_000,
+          ...(user
+            ? {
+                user_id: user.id,
+                email: user.email ?? undefined,
+                name:
+                  (user.user_metadata?.full_name as string | undefined) ??
+                  (user.user_metadata?.name as string | undefined),
+                ...(user.created_at
+                  ? { created_at: Math.floor(new Date(user.created_at).getTime() / 1000) }
+                  : {}),
+                ...(userJwt ? { intercom_user_jwt: userJwt } : {}),
+              }
+            : {}),
+          ...ctx,
+        });
+        booted = true;
+        log("Intercom() called successfully — booted=true");
+
+        // Probe DOM for launcher after Intercom has had a chance to inject it.
+        window.setTimeout(() => {
+          const launcher = document.querySelector(
+            "#intercom-container, .intercom-lightweight-app, [class*='intercom-launcher']",
+          );
+          const frames = document.querySelectorAll("iframe[name^='intercom']");
+          log("launcher probe", {
+            launcher_in_dom: !!launcher,
+            launcher_tag: launcher?.tagName ?? null,
+            iframe_count: frames.length,
+          });
+          if (!launcher && frames.length === 0) {
+            warn(
+              "No launcher in DOM 3s after boot. Likely causes: (1) workspace messenger is disabled for Web, (2) host not in Intercom 'Whitelist of allowed websites', (3) identity verification enforced and anon visitor rejected, (4) ad/script blocker.",
+            );
+          }
+        }, 3000);
+      } catch (err) {
+        warn("Intercom() threw", err);
+      }
     };
 
     // Defer Intercom boot until the browser is idle (or after first user
     // interaction) to avoid blocking the main thread during initial load.
-    // Intercom ships ~350KB of JS that hurts FID/TTI when loaded eagerly.
     // Hardcoded public workspace ID — safe to ship and used as a fallback
-    // so the widget always boots even if the server fn is unreachable
-    // (e.g. cold start, network blip, or anon visitor on a CDN edge).
+    // so the widget always boots even if the server fn is unreachable.
     const FALLBACK_APP_ID = "nuuc4281";
 
     const startBoot = async () => {
       let appId = FALLBACK_APP_ID;
+      let source: "server-fn" | "fallback" = "fallback";
       try {
         const res = await fetchAppId();
-        if (res?.appId) appId = res.appId;
-      } catch {
-        // Fall back to the hardcoded public ID — anon users must still get
-        // the widget even when the server fn fails.
+        if (res?.appId) {
+          appId = res.appId;
+          source = "server-fn";
+        } else {
+          warn("getIntercomAppId returned empty appId, using fallback");
+        }
+      } catch (err) {
+        warn("getIntercomAppId failed, using fallback", err);
       }
+      log("resolved app_id", { appId, source });
       if (cancelled || !appId) return;
       currentAppId = appId;
       await boot();
 
-      const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+        log("auth state change", event);
         shutdown();
         booted = false;
         void boot();
@@ -113,17 +205,15 @@ export function IntercomWidget() {
     };
 
     let scheduled = false;
-    const schedule = () => {
+    const schedule = (reason: string) => {
       if (scheduled) return;
       scheduled = true;
+      log("scheduling boot via", reason);
       void startBoot();
     };
-    // Wait for first user interaction OR a long timeout fallback before
-    // booting Intercom. This avoids loading ~350KB of unused JS on page load
-    // for visitors who never engage with chat (improves LCP / unused JS).
-    const fallbackHandle = window.setTimeout(schedule, 8000);
+    const fallbackHandle = window.setTimeout(() => schedule("8s timeout"), 8000);
     const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "scroll", "touchstart"];
-    const onInteraction = () => schedule();
+    const onInteraction = (e: Event) => schedule(`interaction:${e.type}`);
     interactionEvents.forEach((e) =>
       window.addEventListener(e, onInteraction, { once: true, passive: true }),
     );
@@ -133,7 +223,6 @@ export function IntercomWidget() {
       interactionEvents.forEach((e) => window.removeEventListener(e, onInteraction));
     };
 
-    // Expose boot state to the path-change effect via window flag
     (window as unknown as { __intercomBooted?: () => boolean }).__intercomBooted = () => booted;
 
     return () => {
