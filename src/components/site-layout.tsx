@@ -170,25 +170,13 @@ function SiteHeaderInner() {
             <ul className="flex flex-col">
               {HEADER_LINKS.map((l) => (
                 <li key={l.label}>
-                  {l.internal ? (
-                    <Link
-                      to={l.href}
-                      onClick={close}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
-                      activeOptions={hydrated && l.exact ? { exact: true } : undefined}
-                      activeProps={hydrated ? { className: "block rounded-md px-3 py-3 text-base font-semibold bg-muted text-foreground" } : undefined}
-                    >
-                      {l.label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={rel(l.href)}
-                      onClick={close}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
-                    >
-                      {l.label}
-                    </a>
-                  )}
+                  <a
+                    href={rel(l.href)}
+                    onClick={close}
+                    className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
+                  >
+                    {l.label}
+                  </a>
                 </li>
               ))}
             </ul>
