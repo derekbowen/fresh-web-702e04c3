@@ -193,7 +193,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
         <div className="flex items-center gap-2">
           {isAuthed ? (
             <div className="hidden items-center gap-4 md:flex" ref={accountRef}>
-              <a href={marketplace("/inbox")} className={navLinkClass}>
+              <a href={marketplace("/inbox/sales")} className={navLinkClass}>
                 Inbox
               </a>
               <div className="relative">
