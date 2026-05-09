@@ -53,7 +53,7 @@ type PlanRow = {
 };
 
 type Input = {
-  action?: "start" | "status" | "preflight";
+  action?: "start" | "status" | "preflight" | "resume-paused";
   count?: number;
   tier?: string;
   stateCode?: string;
@@ -61,6 +61,8 @@ type Input = {
   model?: string;
   dryRun?: boolean;
   slugs?: string[];
+  /** When resuming paused rows, only reset rows whose validator_version differs from current. */
+  onlyStaleValidator?: boolean;
 };
 
 const SYSTEM_VA = `You are an expert SEO content writer and pool care specialist writing for Pool Rental Near Me (poolrentalnearme.com) — a marketplace where homeowners rent out private pools by the hour to earn passive income ($3,000–$15,000/year).
