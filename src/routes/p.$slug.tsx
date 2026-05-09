@@ -40,6 +40,10 @@ import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
 import { AcademyHubTemplate } from "@/components/templates/academy-hub";
 import { ACADEMY_HUB_SLUGS, academyHubPath } from "@/lib/course-urls";
+import {
+  getRelatedBlogMeta,
+  type RelatedPostMeta,
+} from "@/server/blog-enrichment.functions";
 
 function academyLangForSlug(slug: string | null | undefined): "en" | "es" | null {
   if (!slug) return null;
