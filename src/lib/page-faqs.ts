@@ -183,28 +183,6 @@ function eventGuideFaqs(eventLabel: string, where: string): FaqItem[] {
   ];
 }
 
-function cityMainFaqs(city: string, stateCode: string | null): FaqItem[] {
-  const where = stateCode ? `${city}, ${stateCode}` : city;
-  return [
-    {
-      question: `Can I rent a private pool by the hour in ${where}?`,
-      answer: `Yes. Pool Rental Near Me lets you book private backyard pools in ${where} by the hour, with no membership and no shared lap lanes.`,
-    },
-    {
-      question: `How much does it cost to rent a pool in ${where}?`,
-      answer: `Pool rentals in ${where} typically range from $40 to $150 per hour depending on the pool, amenities, and time of day.`,
-    },
-    {
-      question: `How much can I earn hosting my pool in ${where}?`,
-      answer: `Most ${where} hosts earn $5,000–$15,000 per month during peak season. Pool Rental Near Me charges a flat 10% host fee — significantly less than Swimply's 15%+.`,
-    },
-    {
-      question: `Is hosting a pool in ${where} insured?`,
-      answer: `Yes. Every booking includes $2 million in liability protection at no extra cost to the host.`,
-    },
-  ];
-}
-
 function genericResourceFaqs(title: string): FaqItem[] {
   return [
     {
