@@ -38,14 +38,17 @@ export type Database = {
           content: string | null
           cover_image_url: string | null
           created_at: string
+          enrichment_generated_at: string | null
           excerpt: string | null
           id: string
           is_published: boolean
           published_at: string | null
+          related_slugs: Json | null
           seo_description: string | null
           seo_title: string | null
           slug: string
           title: string
+          tldr_bullets: Json | null
           topic: string | null
           updated_at: string
         }
@@ -54,14 +57,17 @@ export type Database = {
           content?: string | null
           cover_image_url?: string | null
           created_at?: string
+          enrichment_generated_at?: string | null
           excerpt?: string | null
           id?: string
           is_published?: boolean
           published_at?: string | null
+          related_slugs?: Json | null
           seo_description?: string | null
           seo_title?: string | null
           slug: string
           title: string
+          tldr_bullets?: Json | null
           topic?: string | null
           updated_at?: string
         }
@@ -70,14 +76,17 @@ export type Database = {
           content?: string | null
           cover_image_url?: string | null
           created_at?: string
+          enrichment_generated_at?: string | null
           excerpt?: string | null
           id?: string
           is_published?: boolean
           published_at?: string | null
+          related_slugs?: Json | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string
           title?: string
+          tldr_bullets?: Json | null
           topic?: string | null
           updated_at?: string
         }
