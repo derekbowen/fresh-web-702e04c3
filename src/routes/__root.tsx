@@ -48,12 +48,14 @@ function NotFoundComponent() {
 
 export const Route = createRootRoute({
   loader: async () => {
-    try {
-      const footer = await getSiteFooter();
-      return { footer };
-    } catch {
-      return { footer: null };
-    }
+    const [footerRes, authRes] = await Promise.allSettled([
+      getSiteFooter(),
+      getSharetribeAuthState(),
+    ]);
+    const footer = footerRes.status === "fulfilled" ? footerRes.value : null;
+    const isAuthed =
+      authRes.status === "fulfilled" ? !!authRes.value?.isAuthed : false;
+    return { footer, isAuthed };
   },
   head: () => {
     const meta = buildMeta({
