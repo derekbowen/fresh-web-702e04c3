@@ -117,6 +117,7 @@ import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public
 import { Route as ApiPublicLinkHealthRouteImport } from './routes/api/public/link-health'
 import { Route as ApiPublicBackfillContentPagesRouteImport } from './routes/api/public/backfill-content-pages'
 import { Route as ApiDiagSharetribeRouteImport } from './routes/api/diag/sharetribe'
+import { Route as ApiAdminDataExportRouteImport } from './routes/api/admin.data-export'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as PPoolProsCCategoryRouteImport } from './routes/p.pool-pros.c.$category'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
@@ -694,6 +695,11 @@ const ApiDiagSharetribeRoute = ApiDiagSharetribeRouteImport.update({
   path: '/api/diag/sharetribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminDataExportRoute = ApiAdminDataExportRouteImport.update({
+  id: '/api/admin/data-export',
+  path: '/api/admin/data-export',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLearningUserIdRoute = AdminLearningUserIdRouteImport.update({
   id: '/$userId',
   path: '/$userId',
@@ -898,6 +904,7 @@ export interface FileRoutesByFullPath {
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
+  '/api/admin/data-export': typeof ApiAdminDataExportRoute
   '/api/diag/sharetribe': typeof ApiDiagSharetribeRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
@@ -1026,6 +1033,7 @@ export interface FileRoutesByTo {
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
+  '/api/admin/data-export': typeof ApiAdminDataExportRoute
   '/api/diag/sharetribe': typeof ApiDiagSharetribeRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
@@ -1155,6 +1163,7 @@ export interface FileRoutesById {
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
+  '/api/admin/data-export': typeof ApiAdminDataExportRoute
   '/api/diag/sharetribe': typeof ApiDiagSharetribeRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
@@ -1285,6 +1294,7 @@ export interface FileRouteTypes {
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
+    | '/api/admin/data-export'
     | '/api/diag/sharetribe'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
@@ -1413,6 +1423,7 @@ export interface FileRouteTypes {
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
+    | '/api/admin/data-export'
     | '/api/diag/sharetribe'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
@@ -1541,6 +1552,7 @@ export interface FileRouteTypes {
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
+    | '/api/admin/data-export'
     | '/api/diag/sharetribe'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
@@ -1631,6 +1643,7 @@ export interface RootRouteChildren {
   PoolManagementSplatRoute: typeof PoolManagementSplatRoute
   TechnicalSupportSplatRoute: typeof TechnicalSupportSplatRoute
   VerifyUidRoute: typeof VerifyUidRoute
+  ApiAdminDataExportRoute: typeof ApiAdminDataExportRoute
   ApiDiagSharetribeRoute: typeof ApiDiagSharetribeRoute
   ApiPublicBackfillContentPagesRoute: typeof ApiPublicBackfillContentPagesRoute
   ApiPublicLinkHealthRoute: typeof ApiPublicLinkHealthRoute
@@ -2413,6 +2426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDiagSharetribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/data-export': {
+      id: '/api/admin/data-export'
+      path: '/api/admin/data-export'
+      fullPath: '/api/admin/data-export'
+      preLoaderRoute: typeof ApiAdminDataExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/learning/$userId': {
       id: '/admin/learning/$userId'
       path: '/$userId'
@@ -2751,6 +2771,7 @@ const rootRouteChildren: RootRouteChildren = {
   PoolManagementSplatRoute: PoolManagementSplatRoute,
   TechnicalSupportSplatRoute: TechnicalSupportSplatRoute,
   VerifyUidRoute: VerifyUidRoute,
+  ApiAdminDataExportRoute: ApiAdminDataExportRoute,
   ApiDiagSharetribeRoute: ApiDiagSharetribeRoute,
   ApiPublicBackfillContentPagesRoute: ApiPublicBackfillContentPagesRoute,
   ApiPublicLinkHealthRoute: ApiPublicLinkHealthRoute,

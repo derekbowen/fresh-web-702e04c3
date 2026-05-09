@@ -3,7 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { exportTable, importTable } from "@/server/admin-data-io.functions";
+import { importTable } from "@/server/admin-data-io.functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -22,18 +22,6 @@ export const Route = createFileRoute("/admin/data-export")({
   component: DataExportPage,
 });
 
-function downloadCsv(filename: string, csv: string) {
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
 function TableCard({ table }: { table: TableName }) {
   const [busy, setBusy] = React.useState<"export" | "import" | null>(null);
   const [status, setStatus] = React.useState<string>("");
@@ -48,12 +36,26 @@ function TableCard({ table }: { table: TableName }) {
 
   const handleExport = async () => {
     setBusy("export");
-    setStatus("Fetching rows...");
+    setStatus("Downloading CSV...");
     try {
-      const res = await exportTable({ data: { table } });
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error("Not signed in");
+      const res = await fetch(`/api/admin/data-export?table=${table}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      const blob = await res.blob();
       const ts = new Date().toISOString().replace(/[:.]/g, "-");
-      downloadCsv(`${table}-${ts}.csv`, res.csv);
-      setStatus(`Exported ${res.rowCount} rows (${res.columns.length} columns)`);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${table}-${ts}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setStatus(`Exported ~${Math.round(blob.size / 1024)} KB`);
     } catch (e: any) {
       setStatus(`Error: ${e?.message ?? String(e)}`);
     } finally {
