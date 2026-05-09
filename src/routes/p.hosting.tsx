@@ -50,12 +50,12 @@ const STEPS = [
   {
     n: "2",
     title: "Approve bookings on your schedule",
-    body: "You stay in full control. Auto-approve trusted guests or review every request. Block off dates, raise prices on holidays, set group size limits. Our free \u201cDifficult Guest Scenarios\u201d course preps you for every edge case.",
+    body: "You stay in full control. Auto-approve trusted guests or review every request. Block off dates, raise prices on holidays, set group size limits. Our free “Difficult Guest Scenarios” course preps you for every edge case.",
   },
   {
     n: "3",
     title: "Get paid in 24 hours",
-    body: "We process your payout within 24 hours of each booking ending. Most banks deposit it 1\u20133 business days later. Swimply takes 48 hours just to start, then 3\u20137 more days. We handle payments, taxes (1099-K), and guest messaging. You just host.",
+    body: "We process your payout within 24 hours of each booking ending. Most banks deposit it 1–3 business days later. Swimply takes 48 hours just to start, then 3–7 more days. We handle payments, taxes (1099-K), and guest messaging. You just host.",
   },
 ];
 
@@ -65,7 +65,7 @@ const REASONS: Reason[] = [
   {
     icon: DollarSign,
     title: "Keep 10% more (or up to 20% more)",
-    body: "We charge a flat 10%. Swimply charges 15% to 30% per booking depending on which pricing structure you use. On a $1,000 weekend, you keep $900 with us versus $700\u2013$850 with them. Over a season, that's thousands in your pocket instead of theirs.",
+    body: "We charge a flat 10%. Swimply charges 15% to 30% per booking depending on which pricing structure you use. On a $1,000 weekend, you keep $900 with us versus $700–$850 with them. Over a season, that's thousands in your pocket instead of theirs.",
   },
   {
     icon: ShieldCheck,
@@ -75,19 +75,19 @@ const REASONS: Reason[] = [
   {
     icon: FileCheck,
     title: "One predictable fee, every booking",
-    body: "Swimply charges 15\u201330% per booking, depending on pricing structure, guest count, and booking type. We charge 10%. Always. You can do the math in your head before you accept a request.",
+    body: "Swimply charges 15–30% per booking, depending on pricing structure, guest count, and booking type. We charge 10%. Always. You can do the math in your head before you accept a request.",
   },
   {
     icon: GraduationCap,
     title: "100+ free classes on hosting",
     body: "Pool Host Academy is the only training platform built specifically for pool hosts. 100+ video lessons covering pricing strategy, guest screening, insurance, taxes, marketing, holiday upcharges, and difficult-guest scenarios. 100% free, English and Spanish, host certifications you can share. Swimply has webinars. We built a real curriculum.",
-    cta: { label: "Browse 100+ free classes \u2192", href: ACADEMY_HREF },
+    cta: { label: "Browse 100+ free classes →", href: ACADEMY_HREF },
   },
   {
     icon: Users,
     title: "A real host community, not a Facebook group",
-    body: "PRNM Connect is our private community board for hosts only. Local SEO playbooks, pricing strategy threads, guest-from-hell stories, and direct lines to other hosts in your market. Search it, post in it, learn from hosts who are 6 months ahead of you. Swimply has a Facebook group \u2014 we built a purpose-built tool.",
-    cta: { label: "Visit PRNM Connect \u2192", href: CONNECT_HREF },
+    body: "PRNM Connect is our private community board for hosts only. Local SEO playbooks, pricing strategy threads, guest-from-hell stories, and direct lines to other hosts in your market. Search it, post in it, learn from hosts who are 6 months ahead of you. Swimply has a Facebook group — we built a purpose-built tool.",
+    cta: { label: "Visit PRNM Connect →", href: CONNECT_HREF },
   },
 ];
 
@@ -101,10 +101,10 @@ const COURSES: Array<{ icon: LucideIcon; title: string; desc: string }> = [
 ];
 
 const COMPARE: Array<[string, string, string]> = [
-  ["Host service fee", "15\u201330% (varies)", "10% (flat)"],
-  ["Hosts keep", "70\u201385%", "90%"],
+  ["Host service fee", "15–30% (varies)", "10% (flat)"],
+  ["Hosts keep", "70–85%", "90%"],
   ["Liability coverage", "$1,000,000", "$2,000,000"],
-  ["Payout speed", "48 hr + 3\u20137 days to bank", "24 hr + 1\u20133 days to bank"],
+  ["Payout speed", "48 hr + 3–7 days to bank", "24 hr + 1–3 days to bank"],
   ["Fee predictability", "Varies by tier", "Same 10% always"],
   ["Host education", "Webinars, help articles", "100+ free classes (Pool Host Academy)"],
   ["Host community", "Facebook group", "Private board (PRNM Connect)"],
@@ -114,15 +114,15 @@ const COMPARE: Array<[string, string, string]> = [
 const FAQS = [
   {
     q: "How do I get paid?",
-    a: "Guests are charged upfront through Stripe \u2014 same as Swimply. We process your payout within 24 hours of each booking ending, minus the flat 10% host fee. Most banks deposit it 1\u20133 business days later. (Swimply takes 48 hours to start, then 3\u20137 more days. So your money lands 4\u20137 days faster with us.)",
+    a: "Guests are charged upfront through Stripe — same as Swimply. We process your payout within 24 hours of each booking ending, minus the flat 10% host fee. Most banks deposit it 1–3 business days later. (Swimply takes 48 hours to start, then 3–7 more days. So your money lands 4–7 days faster with us.)",
   },
   {
     q: "How much does it cost to list my pool?",
-    a: "$0 to list. We charge a flat 10% host fee only on confirmed bookings. Free to list, free to keep listed, free if you take a month off. You only pay when you earn. Swimply charges 15\u201330% per booking depending on the pricing structure you use \u2014 ours is 10% on every booking, no exceptions.",
+    a: "$0 to list. We charge a flat 10% host fee only on confirmed bookings. Free to list, free to keep listed, free if you take a month off. You only pay when you earn. Swimply charges 15–30% per booking depending on the pricing structure you use — ours is 10% on every booking, no exceptions.",
   },
   {
     q: "What protection do I get on every booking?",
-    a: "Up to $2 million in third-party liability insurance, automatically, on every booking. No add-ons, no extra premium, included in our 10% host fee. Most homeowner insurance policies don't cover paid pool rentals \u2014 that gap is exactly why this matters. (Swimply's coverage is $1M.)",
+    a: "Up to $2 million in third-party liability insurance, automatically, on every booking. No add-ons, no extra premium, included in our 10% host fee. Most homeowner insurance policies don't cover paid pool rentals — that gap is exactly why this matters. (Swimply's coverage is $1M.)",
   },
   {
     q: "Are the host classes really free?",
@@ -130,19 +130,19 @@ const FAQS = [
   },
   {
     q: "Do I need to be home during bookings?",
-    a: "Not at all. You can provide check-in info to confirmed guests through our app and let them self-serve. About 60% of our hosts choose to be home anyway \u2014 it's a personal preference, not a requirement.",
+    a: "Not at all. You can provide check-in info to confirmed guests through our app and let them self-serve. About 60% of our hosts choose to be home anyway — it's a personal preference, not a requirement.",
   },
   {
     q: "Can I be home during bookings?",
-    a: "Yes. It's your house. Guests only see the spaces you give them access to. Many hosts find that being around leads to better reviews and repeat bookings \u2014 especially for first-time guests.",
+    a: "Yes. It's your house. Guests only see the spaces you give them access to. Many hosts find that being around leads to better reviews and repeat bookings — especially for first-time guests.",
   },
   {
     q: "How do I price my pool?",
-    a: "Use the calculator above as a starting point, then adjust based on what similar pools in your area charge. The Pool Host Academy has a full free course on pricing strategy, holiday markups, and weekend premiums. Common starting range: $50\u2013$125/hr. Premium backyards with hot tubs, fire pits, or sound systems go higher.",
+    a: "Use the calculator above as a starting point, then adjust based on what similar pools in your area charge. The Pool Host Academy has a full free course on pricing strategy, holiday markups, and weekend premiums. Common starting range: $50–$125/hr. Premium backyards with hot tubs, fire pits, or sound systems go higher.",
   },
   {
     q: "Do I need to provide a restroom?",
-    a: "Optional, but recommended. About 80% of successful hosts provide one \u2014 they earn more and get longer bookings. Options: an outdoor bathroom dedicated to pool guests, a side-entry into a powder room, or a porta-potty rental (~$200/month and a real option for hosts who don't want guests in the house at all).",
+    a: "Optional, but recommended. About 80% of successful hosts provide one — they earn more and get longer bookings. Options: an outdoor bathroom dedicated to pool guests, a side-entry into a powder room, or a porta-potty rental (~$200/month and a real option for hosts who don't want guests in the house at all).",
   },
   {
     q: "What if something comes up during a booking?",
@@ -150,15 +150,15 @@ const FAQS = [
   },
   {
     q: "What if a guest damages my pool or property?",
-    a: "Document the damage with photos within 24 hours, file a report through our app, and we'll work directly with the guest's account to resolve charges. Severe damage is escalated to our liability insurance partner. (Note: Swimply offers $10K in property damage coverage. We're adding equivalent coverage in the next 60 days. For now, our $2M liability covers injury claims \u2014 the bigger insurance exposure for most hosts.)",
+    a: "Document the damage with photos within 24 hours, file a report through our app, and we'll work directly with the guest's account to resolve charges. Severe damage is escalated to our liability insurance partner. (Note: Swimply offers $10K in property damage coverage. We're adding equivalent coverage in the next 60 days. For now, our $2M liability covers injury claims — the bigger insurance exposure for most hosts.)",
   },
   {
     q: "How is PRNM different from Swimply?",
-    a: "Four things hosts tell us. (1) Our host fee is a flat 10% \u2014 Swimply's is 15\u201330%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4\u20137 days faster with us. (4) We have 100+ free classes and a private host community board \u2014 Swimply has a Facebook group.",
+    a: "Four things hosts tell us. (1) Our host fee is a flat 10% — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 100+ free classes and a private host community board — Swimply has a Facebook group.",
   },
   {
     q: "I'm currently on Swimply. Can I list on both?",
-    a: "Yes. We don't lock you in. Most hosts start by listing on both \u2014 it's the smart move while you're building bookings on PRNM. Just sync your calendar between platforms manually so you don't double-book. Some hosts keep both indefinitely; others delist from Swimply once their PRNM bookings are consistent. Your call.",
+    a: "Yes. We don't lock you in. Most hosts start by listing on both — it's the smart move while you're building bookings on PRNM. Just sync your calendar between platforms manually so you don't double-book. Some hosts keep both indefinitely; others delist from Swimply once their PRNM bookings are consistent. Your call.",
   },
 ];
 
@@ -253,12 +253,12 @@ function HostingPage() {
                 For Pool Owners
               </p>
               <h1 className="mt-4 text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Turn your pool into income \u2014 and keep more of it.
+                Turn your pool into income — and keep more of it.
               </h1>
               <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
                 Swimply's host fee runs 15% to 30% per booking. Ours is a flat
                 10%. Plus $2M coverage versus their $1M, money in your bank
-                4\u20137 days faster, and 100+ free classes on hosting. No
+                4–7 days faster, and 100+ free classes on hosting. No
                 other platform does that.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -266,7 +266,7 @@ function HostingPage() {
                   href={LIST_HREF}
                   className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
                 >
-                  List my pool \u2014 it's free
+                  List my pool — it's free
                 </a>
                 <button
                   type="button"
@@ -316,7 +316,7 @@ function HostingPage() {
               </h2>
               <p className="mt-3 text-lg text-muted-foreground">
                 Adjust the sliders. We'll show you what you'd take home on
-                PRNM versus Swimply's 15\u201330% range.
+                PRNM versus Swimply's 15–30% range.
               </p>
             </div>
             <EarningsCalc />
@@ -331,7 +331,7 @@ function HostingPage() {
             </h2>
             <p className="mt-3 max-w-3xl text-lg text-muted-foreground">
               Three steps. Most hosts go from signup to first booking in under
-              a week \u2014 and our free classes help you charge more from day
+              a week — and our free classes help you charge more from day
               one.
             </p>
             <div className="mt-10 grid gap-6 md:grid-cols-3">
@@ -400,7 +400,7 @@ function HostingPage() {
               100+ free classes. Built for pool hosts.
             </h2>
             <p className="mx-auto mt-4 max-w-3xl text-lg text-muted-foreground">
-              No other platform teaches you how to host. We do \u2014 and we
+              No other platform teaches you how to host. We do — and we
               don't charge for it. Sample courses:
             </p>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 text-left">
@@ -432,10 +432,10 @@ function HostingPage() {
                 href={ACADEMY_HREF}
                 className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
-                Browse all 100+ free classes \u2192
+                Browse all 100+ free classes →
               </a>
               <p className="mt-3 text-sm text-muted-foreground">
-                100% free. English &amp; espa\u00f1ol. Host certifications you
+                100% free. English &amp; español. Host certifications you
                 can share with guests.
               </p>
             </div>
@@ -561,7 +561,7 @@ function HostingPage() {
                 href={LIST_HREF}
                 className="inline-flex items-center justify-center rounded-full bg-background px-7 py-3.5 text-base font-semibold text-primary shadow-lg transition hover:bg-background/90"
               >
-                List my pool \u2014 it's free
+                List my pool — it's free
               </a>
               <a
                 href="/referral"
@@ -644,7 +644,7 @@ function EarningsCalc() {
           max={200}
           step={5}
           display={`$${rate}/hr`}
-          helper="Most pools rent for $50\u2013$125/hr. Premium backyards with hot tubs go higher."
+          helper="Most pools rent for $50–$125/hr. Premium backyards with hot tubs go higher."
           onChange={setRate}
         />
         <Slider
@@ -654,7 +654,7 @@ function EarningsCalc() {
           max={20}
           step={1}
           display={`${bookings} ${bookings === 1 ? "booking" : "bookings"}`}
-          helper="Active pools in busy markets average 6\u201310 weekend bookings."
+          helper="Active pools in busy markets average 6–10 weekend bookings."
           onChange={setBookings}
         />
         <Slider
@@ -664,7 +664,7 @@ function EarningsCalc() {
           max={8}
           step={0.5}
           display={`${hours} ${hours === 1 ? "hour" : "hours"}`}
-          helper="Most bookings are 2\u20134 hours. Birthday parties and family days run longer."
+          helper="Most bookings are 2–4 hours. Birthday parties and family days run longer."
           onChange={setHours}
         />
         <Slider
@@ -691,7 +691,7 @@ function EarningsCalc() {
               {fmt.format(grossMonthly)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              rate \u00d7 bookings/wk \u00d7 hours \u00d7 4.33
+              rate × bookings/wk × hours × 4.33
             </p>
           </div>
 
@@ -706,7 +706,7 @@ function EarningsCalc() {
               {fmt.format(prnm)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              90% of gross \u2014 flat 10% PRNM host fee
+              90% of gross — flat 10% PRNM host fee
             </p>
             <p className="mt-2 text-xs italic text-muted-foreground">
               Plus your guest pays 10% to PRNM separately. We never touch your
@@ -722,10 +722,10 @@ function EarningsCalc() {
               What you'd take home on Swimply
             </p>
             <p className="mt-1 text-3xl font-bold text-muted-foreground">
-              {fmt.format(swimplyWorst)} \u2013 {fmt.format(swimplyBest)}
+              {fmt.format(swimplyWorst)} – {fmt.format(swimplyBest)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              70\u201385% of gross \u2014 Swimply's host fee runs 15% to 30%
+              70–85% of gross — Swimply's host fee runs 15% to 30%
               per booking
             </p>
             <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm font-semibold text-destructive">
@@ -739,7 +739,7 @@ function EarningsCalc() {
           href={LIST_HREF}
           className="inline-flex w-full items-center justify-center rounded-full bg-primary px-7 py-4 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
         >
-          Start earning {fmt.format(prnm)}/month \u2192
+          Start earning {fmt.format(prnm)}/month →
         </a>
       </div>
     </div>
