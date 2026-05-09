@@ -86,8 +86,20 @@ export function IntercomWidget() {
     // Defer Intercom boot until the browser is idle (or after first user
     // interaction) to avoid blocking the main thread during initial load.
     // Intercom ships ~350KB of JS that hurts FID/TTI when loaded eagerly.
+    // Hardcoded public workspace ID — safe to ship and used as a fallback
+    // so the widget always boots even if the server fn is unreachable
+    // (e.g. cold start, network blip, or anon visitor on a CDN edge).
+    const FALLBACK_APP_ID = "nuuc4281";
+
     const startBoot = async () => {
-      const { appId } = await fetchAppId();
+      let appId = FALLBACK_APP_ID;
+      try {
+        const res = await fetchAppId();
+        if (res?.appId) appId = res.appId;
+      } catch {
+        // Fall back to the hardcoded public ID — anon users must still get
+        // the widget even when the server fn fails.
+      }
       if (cancelled || !appId) return;
       currentAppId = appId;
       await boot();
