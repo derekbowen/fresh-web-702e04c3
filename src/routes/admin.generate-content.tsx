@@ -660,6 +660,10 @@ function GenerateContentPageInner() {
                 Stop after this batch
               </button>
             )}
+            <div className="ml-auto self-center text-xs text-muted-foreground">
+              Est. spend this run: <span className="font-mono">${estCost.toFixed(2)}</span>
+              <span className="ml-1">({plannedPages} page{plannedPages === 1 ? "" : "s"} × ~${perPageCost.toFixed(3)})</span>
+            </div>
           </div>
 
           {error && (
