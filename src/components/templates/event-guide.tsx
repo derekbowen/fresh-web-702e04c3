@@ -3,6 +3,8 @@ import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { NearbyCities } from "@/components/nearby-cities";
+import { FaqBlock } from "@/components/faq-block";
+import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 
@@ -21,6 +23,7 @@ export function EventGuideTemplate({
   const title = page.title || page.seo_title || "Event pool rental guide";
   const description = page.seo_description || page.description || null;
   const body = page.body_markdown || page.content || null;
+  const faqs = faqsForContentPage(page);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -88,6 +91,8 @@ export function EventGuideTemplate({
               heading="Pool rentals in nearby cities"
             />
           )}
+
+          <FaqBlock faqs={faqs} />
 
           <RelatedPages />
         </article>

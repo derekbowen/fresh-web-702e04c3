@@ -4,6 +4,8 @@ import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { RelatedPages } from "@/components/related-pages";
+import { FaqBlock } from "@/components/faq-block";
+import { faqsForContentPage } from "@/lib/page-faqs";
 import type { LinkTarget } from "@/components/auto-linked-content";
 import type { ContentPage } from "@/server/content-pages.functions";
 
@@ -21,6 +23,7 @@ export function ResourceArticleTemplate({
 }) {
   const publishedAt = page.published_at ?? null;
   const body = (page.content || page.body_markdown || "").toString();
+  const faqs = faqsForContentPage(page);
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
@@ -76,6 +79,7 @@ export function ResourceArticleTemplate({
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
             </div>
           )}
+          <FaqBlock faqs={faqs} />
         </article>
         <RelatedPages />
         <div className="mt-12 border-t border-border pt-8">
