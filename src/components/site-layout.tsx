@@ -226,13 +226,13 @@ function SiteFooterInner() {
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-3">
-            <Link to="/" aria-label="Pool Rental Near Me" className="inline-flex">
+            <a href="/" aria-label="Pool Rental Near Me" className="inline-flex">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7" aria-hidden="true">
                   <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1v3c-1.5 0-2.5 1-4 1s-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1v-3z" />
                 </svg>
               </div>
-            </Link>
+            </a>
             {data.contact_phone_label && (
               <p className="mt-5 text-sm text-foreground">
                 {data.contact_phone ? (
