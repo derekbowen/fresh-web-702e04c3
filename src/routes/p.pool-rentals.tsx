@@ -58,7 +58,7 @@ function PoolRentalsIndex() {
         </header>
 
         <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {states.map((s) => (
+          {states.map((s: StateIndexEntry) => (
             <li key={s.stateCode}>
               <Link
                 to="/p/pool-rentals-$state"
