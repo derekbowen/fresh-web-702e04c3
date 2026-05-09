@@ -49,6 +49,8 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/blog", label: "Blog admin", icon: Newspaper },
       { to: "/admin/learning", label: "Learning admin", icon: GraduationCap },
       { to: "/admin/cities-heroes", label: "City heroes", icon: ImageIcon },
+      { to: "/admin/data-export", label: "Data export", icon: Database },
+      { to: "/admin/data-import", label: "Data import", icon: Database },
     ],
   },
   {
