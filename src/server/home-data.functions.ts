@@ -164,7 +164,15 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       ),
     ]);
 
-    const listingsResult = featuredResult;
+    // Strip listings missing a real image — they render as a blank "no image"
+    // card on the homepage and look like a broken/placeholder listing.
+    const filteredFeatured = featuredResult.listings.filter(
+      (l) => typeof l.imageUrl === "string" && l.imageUrl.length > 0,
+    );
+    const listingsResult = {
+      ...featuredResult,
+      listings: filteredFeatured.slice(0, 12),
+    };
 
     // Annotate every featured listing with approximate distance from the
     // visitor (Cloudflare-resolved lat/lng). Powers the "X mi away" badge
