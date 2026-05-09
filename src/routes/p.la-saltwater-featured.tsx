@@ -242,8 +242,8 @@ function LaSaltwaterPage() {
             </div>
             <div>
               <ShieldCheck className="mx-auto h-6 w-6 text-primary" />
-              <div className="mt-2 text-xl font-bold text-foreground">$2M coverage</div>
-              <div className="text-xs text-muted-foreground">Per booking, included</div>
+              <div className="mt-2 text-xl font-bold text-foreground">10% flat fee</div>
+              <div className="text-xs text-muted-foreground">Lowest host fee in the market</div>
             </div>
           </div>
         </section>
