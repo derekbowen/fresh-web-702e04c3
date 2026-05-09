@@ -107,8 +107,8 @@ function SiteHeaderInner() {
                 key={l.label}
                 to={l.href}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground"
-                activeOptions={l.exact ? { exact: true } : undefined}
-                activeProps={{ className: "text-foreground" }}
+                activeOptions={hydrated && l.exact ? { exact: true } : undefined}
+                activeProps={hydrated ? { className: "text-foreground" } : undefined}
               >
                 {l.label}
               </Link>
