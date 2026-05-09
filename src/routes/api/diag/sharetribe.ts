@@ -201,5 +201,3 @@ export const Route = createFileRoute("/api/diag/sharetribe")({
     },
   },
 });
-  },
-});
