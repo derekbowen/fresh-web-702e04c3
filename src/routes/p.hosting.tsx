@@ -565,7 +565,7 @@ function HostingPage() {
                     <Plus className="h-5 w-5 shrink-0 text-primary transition group-open:rotate-45" />
                   </summary>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {f.a}
+                    {"node" in f && f.node ? f.node : f.a}
                   </p>
                 </details>
               ))}
