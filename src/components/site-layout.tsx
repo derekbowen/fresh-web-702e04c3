@@ -225,6 +225,17 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
                         {l.label}
                       </a>
                     ))}
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setAccountOpen(false);
+                        handleSharetribeLogout();
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-foreground hover:bg-muted"
+                    >
+                      Logout
+                    </button>
                   </div>
                 )}
               </div>
