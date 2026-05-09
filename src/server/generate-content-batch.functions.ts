@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InputSchema = z.object({
-  action: z.enum(["start", "status", "preflight"]).default("start"),
+  action: z.enum(["start", "status", "preflight", "resume-paused"]).default("start"),
   count: z.number().int().min(1).max(10).default(10),
   tier: z
     .enum(["T1 (200k+)", "T2 (75k–199k)", "T3 (25k–74k)", "T4 (10k–24k)", "longtail"])
@@ -13,6 +13,7 @@ const InputSchema = z.object({
   model: z.string().default("google/gemini-3-flash-preview"),
   dryRun: z.boolean().default(false),
   slugs: z.array(z.string()).optional(),
+  onlyStaleValidator: z.boolean().default(false),
 });
 
 type FunctionInvokeResult = {
