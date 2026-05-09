@@ -483,7 +483,10 @@ function SiteFooterInner() {
             )}
           </div>
 
-          <FooterColumn title="Explore" items={data.explore_links} />
+          <FooterColumn
+            title="Explore"
+            items={[...data.explore_links, { label: "Blog", href: "/p/blog" }]}
+          />
           <FooterColumn title="Become a Host" items={data.host_links} />
           <FooterColumn title="Company" items={data.company_links} />
 
