@@ -45,9 +45,8 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Host Make More $$$", href: "/p/hosting" },
   ],
   company_links: [
-    { label: "About", href: "/p/about" },
+    { label: "About", href: "/p/how-it-works" },
     { label: "Careers", href: "/p/careers" },
-    { label: "Investors", href: "/p/investors" },
     { label: "Terms", href: "/p/terms-of-service" },
     { label: "Privacy", href: "/p/privacy-policy" },
     { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
