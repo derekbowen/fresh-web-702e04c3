@@ -28,7 +28,9 @@ export const Route = createFileRoute("/")({
       description:
         "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
       path: "/",
-      noindex: true,
+      // Indexability is controlled by the X-Robots-Tag HTTP header in src/start.ts
+      // (preview hosts get noindex; production www.poolrentalnearme.com is indexable).
+      // Do NOT add a noindex meta tag here — it would deindex the production homepage.
       image: HOMEPAGE_HERO_IMAGE,
     });
     const org = {
