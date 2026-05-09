@@ -35,7 +35,6 @@ import { SwimInstructorCityTemplate } from "@/components/templates/swim-instruct
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { heroPreloadLinks } from "@/lib/hero-image";
-import { resolveCityHero } from "@/lib/city-hero";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
 import { AcademyHubTemplate } from "@/components/templates/academy-hub";
