@@ -99,12 +99,12 @@ const REASONS: Reason[] = [
 ];
 
 const COURSES: Array<{ icon: LucideIcon; title: string; desc: string }> = [
-  { icon: ShieldCheck, title: "Safety & Rescue", desc: "Pool safety protocols, emergency procedures, and first-aid basics every host should know." },
-  { icon: Scale, title: "Legal & Compliance", desc: "Permits, waivers, liability, and short-term rental ordinances by state." },
-  { icon: Building, title: "HOA Navigation", desc: "How to host successfully when you're in an HOA (and what to do if your HOA pushes back)." },
-  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table. Includes holiday upcharges." },
-  { icon: Megaphone, title: "Marketing Your Listing", desc: "Photos, descriptions, and SEO tactics to get more views and bookings." },
-  { icon: Users, title: "Guest Experience", desc: "Difficult guest scenarios, communication scripts, and how to earn 5-star reviews every time." },
+  { icon: ShieldCheck, title: "Water Rescue Equipment", desc: "Life ring vs shepherd's hook — when to use each, and where to mount them." },
+  { icon: AlertCircle, title: "Managing Police Intervention", desc: "Blue lights in the driveway — what to say, what to do, what your guests should do." },
+  { icon: Home, title: "Neighbor Complaints in Real Time", desc: "Defuse problems before they become 911 calls. Scripts, scenarios, and how to keep your HOA on your side." },
+  { icon: GitBranch, title: "Multi-Platform Hosting", desc: "Cross-list on PRNM, Swimply, and Peerspace without double-bookings. The exact workflow." },
+  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table. Holiday upcharges included." },
+  { icon: Camera, title: "Creating Content the Easy Way", desc: "Photos and videos that book pools fast — even if you've never touched a camera." },
 ];
 
 const COMPARE: Array<[string, string, string]> = [
