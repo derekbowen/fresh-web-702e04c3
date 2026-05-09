@@ -183,8 +183,8 @@ function SiteHeaderInner() {
                       to={l.href}
                       onClick={close}
                       className="block rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted"
-                      activeOptions={l.exact ? { exact: true } : undefined}
-                      activeProps={{ className: "block rounded-md px-3 py-3 text-base font-semibold bg-muted text-foreground" }}
+                      activeOptions={hydrated && l.exact ? { exact: true } : undefined}
+                      activeProps={hydrated ? { className: "block rounded-md px-3 py-3 text-base font-semibold bg-muted text-foreground" } : undefined}
                     >
                       {l.label}
                     </Link>
