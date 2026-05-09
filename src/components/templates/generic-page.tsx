@@ -1,5 +1,7 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import type { ContentPage } from "@/server/content-pages.functions";
