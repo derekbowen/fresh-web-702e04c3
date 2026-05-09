@@ -62,14 +62,16 @@ function CompetitorRadar() {
 
   const load = React.useCallback(async () => {
     const [s, n, m, sp] = await Promise.all([
-      listCompetitorSites(),
-      listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } }),
-      listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } }),
+      listCompetitorSites().catch((e) => { console.error("listCompetitorSites failed:", e); return { rows: [] as CompetitorSiteRow[] }; }),
+      listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } })
+        .catch((e) => { console.error("listNewCompetitorUrls failed:", e); return { rows: [] as CompetitorUrlRow[] }; }),
+      listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } })
+        .catch((e) => { console.error("listHostMatches failed:", e); return { rows: [] as CompetitorHostMatchRow[] }; }),
       getEnrichmentSpend().catch(() => null),
     ]);
-    setSites(s.rows);
-    setNewRows(n.rows);
-    setMatches(m.rows);
+    setSites(Array.isArray(s?.rows) ? s.rows : []);
+    setNewRows(Array.isArray(n?.rows) ? n.rows : []);
+    setMatches(Array.isArray(m?.rows) ? m.rows : []);
     setSpend(sp);
   }, [showAck, matchStatus]);
 
