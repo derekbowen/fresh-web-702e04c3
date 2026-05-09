@@ -160,6 +160,20 @@ function CompetitorRadar() {
         </p>
       </div>
 
+      {loading && (
+        <div className="mb-4 flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading competitor radar…
+        </div>
+      )}
+      {loadError && !loading && (
+        <div className="mb-4 flex items-start justify-between gap-3 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+          <span>Failed to load: {loadError}</span>
+          <button onClick={() => { setLoading(true); load(); }} className="rounded-full border border-destructive/40 px-3 py-1 text-xs font-semibold">
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Add site */}
       <div className="rounded-2xl border border-border bg-card p-4">
         <p className="text-sm font-semibold">Track a new competitor sitemap</p>
