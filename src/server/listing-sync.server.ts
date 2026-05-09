@@ -79,10 +79,15 @@ function toRow(listing: STListing, included: STResponse<unknown>["included"]) {
 
   const city: string | null =
     pd.city ?? pd.location?.city ?? pd.address?.city ?? null;
-  const stateCode: string | null =
+  const rawStateCode: string | null =
     pd.state ?? pd.stateCode ?? pd.location?.state ?? pd.address?.state ?? null;
   const address: string | null =
     pd.address?.formatted ?? pd.location?.address ?? pd.fullAddress ?? null;
+  // Sharetribe public_data rarely has a discrete state field; fall back to
+  // parsing the formatted address string ("..., TX 78124, USA").
+  const stateCode: string | null =
+    (rawStateCode && rawStateCode.length === 2 ? rawStateCode.toUpperCase() : null) ??
+    extractStateCode(address);
 
   const amenities: string[] = Array.isArray(pd.amenities)
     ? pd.amenities.map(String)
