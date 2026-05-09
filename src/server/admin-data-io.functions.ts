@@ -118,6 +118,90 @@ function coerceValue(raw: string, col: string): unknown {
   return raw;
 }
 
+async function getTableColumns(table: TableName): Promise<string[]> {
+  const { data, error } = await supabaseAdmin
+    .from(table)
+    .select("*")
+    .limit(1);
+  if (error) throw new Error(`Schema lookup failed: ${error.message}`);
+  if (data && data.length > 0) return Object.keys(data[0] as object);
+  // Fall back to inserting nothing — column discovery only works with a sample row
+  return [];
+}
+
+export const previewImport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { table: TableName; csv: string }) => {
+    if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+    if (!d.csv) throw new Error("Empty CSV");
+    if (d.csv.length > 25 * 1024 * 1024) throw new Error("CSV too large (>25MB)");
+    return d;
+  })
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await assertAdmin(userId);
+
+    const parsed = parseCsv(data.csv);
+    if (parsed.length < 2) throw new Error("CSV has no data rows");
+    const header = parsed[0];
+    const dataRows = parsed.slice(1);
+
+    const tableCols = await getTableColumns(data.table);
+    const knownCols = new Set(tableCols);
+    const unknownCols = tableCols.length > 0
+      ? header.filter((c) => !knownCols.has(c))
+      : [];
+    const missingCols = tableCols.length > 0
+      ? tableCols.filter((c) => !header.includes(c))
+      : [];
+
+    const conflictColumn = data.table === "content_plan" ? "slug" : "id";
+    const conflictIdx = header.indexOf(conflictColumn);
+    const conflictValues: string[] = [];
+    if (conflictIdx >= 0) {
+      for (const r of dataRows) {
+        const v = r[conflictIdx];
+        if (v) conflictValues.push(v);
+      }
+    }
+
+    let existingCount = 0;
+    if (conflictValues.length > 0) {
+      // Chunk lookups to avoid query-size limits
+      const lookupChunk = 500;
+      for (let i = 0; i < conflictValues.length; i += lookupChunk) {
+        const slice = conflictValues.slice(i, i + lookupChunk);
+        const { count } = await supabaseAdmin
+          .from(data.table)
+          .select(conflictColumn, { count: "exact", head: true })
+          .in(conflictColumn, slice);
+        existingCount += count ?? 0;
+      }
+    }
+
+    const sampleSize = Math.min(5, dataRows.length);
+    const sample = dataRows.slice(0, sampleSize).map((r) => {
+      const obj: Record<string, any> = {};
+      header.forEach((col, i) => {
+        obj[col] = coerceValue(r[i] ?? "", col);
+      });
+      return obj;
+    });
+
+    return {
+      totalRows: dataRows.length,
+      header,
+      tableColumns: tableCols,
+      unknownColumns: unknownCols,
+      missingColumns: missingCols,
+      conflictColumn,
+      hasConflictColumn: conflictIdx >= 0,
+      existingMatches: existingCount,
+      newRowsEstimate: dataRows.length - existingCount,
+      sample,
+    };
+  });
+
 export const importTable = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
@@ -126,6 +210,8 @@ export const importTable = createServerFn({ method: "POST" })
       csv: string;
       mode: "upsert" | "insert";
       conflictColumn?: string;
+      dryRun?: boolean;
+      ignoreUnknownColumns?: boolean;
     }) => {
       if (!TABLES.includes(d.table)) throw new Error("Invalid table");
       if (!d.csv || d.csv.length === 0) throw new Error("Empty CSV");
@@ -140,9 +226,23 @@ export const importTable = createServerFn({ method: "POST" })
     const parsed = parseCsv(data.csv);
     if (parsed.length < 2) throw new Error("CSV has no data rows");
     const header = parsed[0];
+
+    let effectiveHeader = header;
+    let dropIdx: Set<number> = new Set();
+    if (data.ignoreUnknownColumns) {
+      const tableCols = new Set(await getTableColumns(data.table));
+      if (tableCols.size > 0) {
+        header.forEach((c, i) => {
+          if (!tableCols.has(c)) dropIdx.add(i);
+        });
+        effectiveHeader = header.filter((_, i) => !dropIdx.has(i));
+      }
+    }
+
     const rows = parsed.slice(1).map((r) => {
-      const obj: Record<string, unknown> = {};
-      header.forEach((col, i) => {
+      const obj: Record<string, any> = {};
+      effectiveHeader.forEach((col) => {
+        const i = header.indexOf(col);
         obj[col] = coerceValue(r[i] ?? "", col);
       });
       return obj;
@@ -150,6 +250,17 @@ export const importTable = createServerFn({ method: "POST" })
 
     const conflictColumn =
       data.conflictColumn || (data.table === "content_plan" ? "slug" : "id");
+
+    if (data.dryRun) {
+      return {
+        dryRun: true,
+        totalRows: rows.length,
+        inserted: 0,
+        errors: [] as string[],
+        columns: effectiveHeader,
+        droppedColumns: header.filter((_, i) => dropIdx.has(i)),
+      };
+    }
 
     const chunkSize = 500;
     let inserted = 0;
@@ -171,9 +282,12 @@ export const importTable = createServerFn({ method: "POST" })
     }
 
     return {
+      dryRun: false,
       totalRows: rows.length,
       inserted,
       errors,
-      columns: header,
+      columns: effectiveHeader,
+      droppedColumns: header.filter((_, i) => dropIdx.has(i)),
     };
   });
+
