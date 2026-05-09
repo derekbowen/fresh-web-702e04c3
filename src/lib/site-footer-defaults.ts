@@ -30,7 +30,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
-    { label: "Liability Waivers Guide", href: "/p/elearning-academy-liability-waivers-that-protect-you-how-to-create-course" },
+    { label: "Liability Waivers", href: "https://rentalwaivers.com" },
     { label: "Public Pools", href: "/public-pools" },
     { label: "Browse All States", href: "/p/pool-rentals" },
   ],
