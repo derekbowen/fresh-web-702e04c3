@@ -46,11 +46,23 @@ export function GenericPageTemplate({
           </div>
         )}
         {(page.content || page.body_markdown) && (
-          <AutoLinkedContent
-            text={(page.content || page.body_markdown) as string}
-            targets={linkTargets}
-            className="prose prose-lg mt-8 max-w-none whitespace-pre-line text-foreground"
-          />
+          <div
+            className="prose prose-lg mt-8 max-w-none text-foreground
+              prose-headings:font-semibold prose-headings:tracking-tight
+              prose-h1:text-3xl prose-h1:mt-10
+              prose-h2:mt-12 prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-2
+              prose-h3:mt-8 prose-h3:text-xl
+              prose-p:leading-relaxed
+              prose-a:text-primary hover:prose-a:underline
+              prose-strong:text-foreground
+              prose-ul:my-4 prose-li:my-1
+              prose-blockquote:border-l-4 prose-blockquote:border-border prose-blockquote:pl-4 prose-blockquote:italic
+              dark:prose-invert"
+          >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {(page.content || page.body_markdown) as string}
+            </ReactMarkdown>
+          </div>
         )}
         <RelatedPages />
       </main>
