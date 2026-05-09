@@ -422,4 +422,113 @@ export const importTable = createServerFn({ method: "POST" })
     };
   });
 
+// ----------------------------------------------------------------------------
+// Chunked client-driven import. Used by the data-import page so we never have
+// to push the full CSV through a single server-fn request (Workers + the JSON
+// transport choke on multi-MB payloads). The browser parses the CSV, calls
+// `getImportSchema` once, optionally `lookupExistingKeys` for the preview, and
+// then ships rows in batches via `importTableRows`.
+// ----------------------------------------------------------------------------
+
+export const getImportSchema = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { table: TableName }) => {
+    if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+    return d;
+  })
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await assertAdmin(userId);
+    const tableColumns = await getTableColumns(data.table);
+    const conflictColumn = data.table === "content_plan" ? "slug" : "id";
+    return { tableColumns, conflictColumn };
+  });
+
+export const lookupExistingKeys = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (d: { table: TableName; conflictColumn: string; values: string[] }) => {
+      if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+      if (!Array.isArray(d.values)) throw new Error("values must be an array");
+      if (d.values.length > 5000) throw new Error("Too many keys (max 5000 per call)");
+      return d;
+    },
+  )
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await assertAdmin(userId);
+    if (data.values.length === 0) return { existingCount: 0 };
+    const { count } = await supabaseAdmin
+      .from(data.table)
+      .select(data.conflictColumn, { count: "exact", head: true })
+      .in(data.conflictColumn, data.values);
+    return { existingCount: count ?? 0 };
+  });
+
+export const importTableRows = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (d: {
+      table: TableName;
+      rows: Record<string, unknown>[];
+      mode: "upsert" | "insert";
+      conflictColumn?: string;
+      rowNumbers?: number[];
+    }) => {
+      if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+      if (!Array.isArray(d.rows)) throw new Error("rows must be an array");
+      if (d.rows.length === 0) throw new Error("rows is empty");
+      if (d.rows.length > 500) throw new Error("Chunk too large (max 500 rows)");
+      return d;
+    },
+  )
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await assertAdmin(userId);
+
+    const conflictColumn =
+      data.conflictColumn || (data.table === "content_plan" ? "slug" : "id");
+    const rowNumbers = data.rowNumbers ?? data.rows.map((_, i) => i + 1);
+
+    const rowErrors: { row: number; slug?: string; reason: string }[] = [];
+    let inserted = 0;
+
+    const tbl = supabaseAdmin.from(data.table) as any;
+    const q =
+      data.mode === "upsert"
+        ? tbl.upsert(data.rows, { onConflict: conflictColumn })
+        : tbl.insert(data.rows);
+    const { error } = await q;
+
+    if (!error) {
+      inserted = data.rows.length;
+    } else {
+      // Retry per-row so good rows still land and we can pinpoint failures.
+      for (let j = 0; j < data.rows.length; j++) {
+        const tbl2 = supabaseAdmin.from(data.table) as any;
+        const q2 =
+          data.mode === "upsert"
+            ? tbl2.upsert([data.rows[j]], { onConflict: conflictColumn })
+            : tbl2.insert([data.rows[j]]);
+        const { error: rowErr } = await q2;
+        if (rowErr) {
+          const r: any = data.rows[j];
+          rowErrors.push({
+            row: rowNumbers[j],
+            slug: r?.[conflictColumn] != null ? String(r[conflictColumn]) : undefined,
+            reason: `DB: ${rowErr.message}`,
+          });
+        } else {
+          inserted++;
+        }
+      }
+    }
+
+    return {
+      inserted,
+      rowErrors,
+      chunkError: error ? error.message : null,
+    };
+  });
+
 
