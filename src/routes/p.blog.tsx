@@ -82,8 +82,63 @@ function BlogHubPage() {
         {posts.length === 0 ? (
           <p className="text-muted-foreground">No posts yet — check back soon.</p>
         ) : (
-          <div className="space-y-12">
-            {grouped.map(([topic, list]) => (
+          <>
+            {featured.length > 0 ? (
+              <section className="mb-14">
+                <div className="mb-5 flex items-baseline justify-between">
+                  <h2 className="text-2xl font-semibold">Latest posts</h2>
+                  <span className="text-sm text-muted-foreground">
+                    Fresh from the blog
+                  </span>
+                </div>
+                <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {featured.map((p) => (
+                    <li
+                      key={p.slug}
+                      className="group overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-lg"
+                    >
+                      <Link
+                        to="/p/$slug"
+                        params={{ slug: p.slug }}
+                        className="block"
+                      >
+                        {p.cover_image_url ? (
+                          <img
+                            src={p.cover_image_url}
+                            alt=""
+                            loading="lazy"
+                            className="aspect-video w-full object-cover transition-transform group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="aspect-video w-full bg-muted" />
+                        )}
+                        <div className="p-5">
+                          {p.topic ? (
+                            <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+                              {normalizeTopic(p.topic)}
+                            </p>
+                          ) : null}
+                          <h3 className="mt-2 text-lg font-semibold leading-snug group-hover:text-primary">
+                            {p.title}
+                          </h3>
+                          {p.excerpt ? (
+                            <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                              {p.excerpt}
+                            </p>
+                          ) : null}
+                          <p className="mt-4 text-sm font-medium text-primary">
+                            Read article →
+                          </p>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            <div className="space-y-12">
+              {grouped.map(([topic, list]) => (
               <section key={topic}>
                 <h2 className="mb-4 text-2xl font-semibold">
                   {topic}{" "}
