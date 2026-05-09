@@ -42,6 +42,8 @@ function CompetitorRadar() {
   const [expandedMatch, setExpandedMatch] = React.useState<string | null>(null);
   const [testReport, setTestReport] = React.useState<{ name: string; pass: boolean; rejected: boolean; expectReject: boolean; reason?: string }[] | null>(null);
   const [runningTests, setRunningTests] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
 
   async function flagFalsePositive(id: string) {
     const reason = prompt("Why is this a false positive? (optional, helps train the filter)") ?? "";
@@ -61,18 +63,25 @@ function CompetitorRadar() {
 
 
   const load = React.useCallback(async () => {
-    const [s, n, m, sp] = await Promise.all([
-      listCompetitorSites().catch((e) => { console.error("listCompetitorSites failed:", e); return { rows: [] as CompetitorSiteRow[] }; }),
-      listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } })
-        .catch((e) => { console.error("listNewCompetitorUrls failed:", e); return { rows: [] as CompetitorUrlRow[] }; }),
-      listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } })
-        .catch((e) => { console.error("listHostMatches failed:", e); return { rows: [] as CompetitorHostMatchRow[] }; }),
-      getEnrichmentSpend().catch(() => null),
-    ]);
-    setSites(Array.isArray(s?.rows) ? s.rows : []);
-    setNewRows(Array.isArray(n?.rows) ? n.rows : []);
-    setMatches(Array.isArray(m?.rows) ? m.rows : []);
-    setSpend(sp);
+    setLoadError(null);
+    try {
+      const [s, n, m, sp] = await Promise.all([
+        listCompetitorSites().catch((e) => { console.error("listCompetitorSites failed:", e); return { rows: [] as CompetitorSiteRow[] }; }),
+        listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } })
+          .catch((e) => { console.error("listNewCompetitorUrls failed:", e); return { rows: [] as CompetitorUrlRow[] }; }),
+        listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } })
+          .catch((e) => { console.error("listHostMatches failed:", e); return { rows: [] as CompetitorHostMatchRow[] }; }),
+        getEnrichmentSpend().catch(() => null),
+      ]);
+      setSites(Array.isArray(s?.rows) ? s.rows : []);
+      setNewRows(Array.isArray(n?.rows) ? n.rows : []);
+      setMatches(Array.isArray(m?.rows) ? m.rows : []);
+      setSpend(sp);
+    } catch (e) {
+      setLoadError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLoading(false);
+    }
   }, [showAck, matchStatus]);
 
   React.useEffect(() => { load(); }, [load]);
@@ -150,6 +159,20 @@ function CompetitorRadar() {
           Monitor competitor sitemaps daily. The moment Swimply, Giggster, or Peerspace ship a new page, it shows up here.
         </p>
       </div>
+
+      {loading && (
+        <div className="mb-4 flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading competitor radar…
+        </div>
+      )}
+      {loadError && !loading && (
+        <div className="mb-4 flex items-start justify-between gap-3 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+          <span>Failed to load: {loadError}</span>
+          <button onClick={() => { setLoading(true); load(); }} className="rounded-full border border-destructive/40 px-3 py-1 text-xs font-semibold">
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* Add site */}
       <div className="rounded-2xl border border-border bg-card p-4">
