@@ -86,11 +86,23 @@ const APP_NAV: NavLink[] = [
 const LIST_SPACE_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 
 const ACCOUNT_LINKS: NavLink[] = [
+  { label: "Inbox", href: "/inbox/sales" },
   { label: "Profile settings", href: "/profile-settings" },
   { label: "Account settings", href: "/account" },
   { label: "Manage listings", href: "/listings" },
-  { label: "Logout", href: "/logout" },
 ];
+
+function handleSharetribeLogout() {
+  if (typeof document === "undefined") return;
+  document.cookie.split(";").forEach((c) => {
+    const name = c.split("=")[0].trim();
+    if (name.startsWith("st-") || name === "st-authinfo") {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.poolrentalnearme.com`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    }
+  });
+  window.location.href = "/";
+}
 
 function NavAnchor({
   link,
