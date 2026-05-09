@@ -1,53 +1,79 @@
-## What's actually broken vs. already fixed
+## Goal
 
-### Confirmed bug — duplicate `<link rel="canonical">` on every page
+Fix the conversion bug: the home page header has no Sign up / Log in. Replace the hardcoded nav in `src/components/site-layout.tsx` with the canonical structure that mirrors what Sharetribe Console defines, and surface auth state when a Sharetribe session cookie is present.
 
-Verified live on `https://www.poolrentalnearme.com/p/become-a-swimming-pool-host-austin-tx`:
+## Scope
 
-```
-<link rel="canonical" href="https://www.poolrentalnearme.com/"/>
-<link rel="canonical" href="https://www.poolrentalnearme.com/p/become-a-swimming-pool-host-austin-tx"/>
-```
+- Edit only `SiteHeaderInner` (and the mobile drawer inside it) in `src/components/site-layout.tsx`.
+- Footer, hero, listings, FAQ, and every other section: untouched.
+- Marketplace links stay as relative paths per workspace rule #4.
+- The `/l/draft/00000000-0000-0000-0000-000000000000/new/details` URL is preserved verbatim.
 
-Cause: `src/routes/__root.tsx` calls `buildMeta({ path: "/" })` in its `head()`, and `src/lib/seo.ts` always returns `{ rel: "canonical", href: ... }` in its `links` array. TanStack Router dedupes `<meta>` tags by `name`/`property` (so `og:url` is correctly overridden by child routes), but it does NOT dedupe `<link>` tags by `rel`. Result: root's `/` canonical and the child route's correct canonical both ship.
+## New header structure
 
-### Already fine — `/sitemap.xml`
+Logo (left, → `/`) — unchanged.
 
-The audit said sitemap returns `text/html`. That's stale. Verified just now on prod:
+Center / left-of-center desktop nav, in this order:
+1. Home Page → `/`
+2. Find a Pool → `/s`
+3. Locations → `/p/all-locations`
+4. iOS App → `https://apps.apple.com/us/app/pool-rental-near-me/id6737762373` (`target="_blank" rel="noopener noreferrer"`)
+5. Google Play → `https://play.google.com/store/apps/details?id=com.poolrentalnearme.app.prod` (`target="_blank" rel="noopener noreferrer"`)
 
-```
-HTTP/1.1 200 OK
-Content-Type: application/xml; charset=utf-8
-<?xml version="1.0" encoding="UTF-8"?><sitemapindex …>
-```
+The current `Public Pools` / `Pool Pros` / `How It Works` / `Search` entries are removed.
 
-Same on `fresh-web.lovable.app`. No fix needed.
+Right cluster (desktop):
+- Logged out: `Sign up` (→ `/signup`), `Log in` (→ `/login`), then the existing primary pill button relabeled **List your space now** (→ existing `/l/draft/...` URL, same styles).
+- Logged in: `Inbox` (→ `/inbox`), an account dropdown (Profile settings → `/profile-settings`, Account settings → `/account`, Manage listings → `/listings`, Logout → `/logout`), then **List your space now** pill.
 
-## Fix (one change)
+## Logged-in detection (server-side, ships today)
 
-Stop emitting `<link rel="canonical">` from the root route. Every shareable route already builds its own canonical via `buildMeta({ path })`, and the workspace rule already requires it. Two safe options:
+Sharetribe sets a cookie named `st-{clientId}-token`. The proxy forwards cookies to fresh-web SSR, so we can detect it during render.
 
-**Option A (preferred): root stops emitting canonical at all.**
-Remove the `links: [...meta.links]` spread from `__root.tsx`'s `head()`, keeping only the stylesheet and favicon. `og:url` and `twitter:url` are `<meta>` tags and get correctly overridden by child routes — they can stay (or also be dropped from root for symmetry).
+Approach:
+- Add a tiny helper `isSharetribeAuthed(request)` in `src/server/canonical.server.ts` (or a new `src/server/sharetribe-session.server.ts`) that reads request cookies and returns `true` if any cookie name matches `/^st-[0-9a-f-]{8,}-token$/`. No token validation, no Sharetribe API calls — presence of the cookie is sufficient for header UI state. (If Sharetribe rejects the token later, normal redirects handle it.)
+- Expose the boolean to the layout via the root route's `loader` (or a context the existing chrome already consumes) so `SiteHeader` receives `isAuthed` as a prop. No client-side fetch, no hydration mismatch — SSR renders the correct state and hydrates identically.
+- Editor preview / no cookie present → renders logged-out (Sign up / Log in). This matches the user's stated acceptable fallback for any case detection misses.
 
-**Option B: leave root canonical but strip canonical from the spread.**
-Filter `meta.links` in root to exclude `rel === "canonical"`. Slightly more conservative if we're worried about routes that don't set their own head.
+This is the primary path — we are NOT shipping the "default logged-out for everyone" fallback. The server-side cookie sniff is straightforward in the existing TanStack Start request pipeline.
 
-I recommend A. Risk of A: any route missing its own `head()` would have zero canonical. Mitigation: grep all `src/routes/**/*.tsx` for `head: () =>` / `buildMeta` coverage before shipping; any gaps get a `head()` added (this matches workspace rule #6 anyway).
+## Mobile drawer
 
-## Implementation steps
+Same data, restructured to match the spec:
+- Home, Find a Pool, Locations
+- "Get the app" subhead → iOS App, Google Play
+- Divider
+- Logged out: Sign up, Log in
+- Logged in: Inbox, Profile settings, Manage listings, Logout
+- Divider
+- Full-width primary **List your space now** button at bottom (existing styling)
 
-1. Edit `src/routes/__root.tsx` — drop the `...meta.links` spread (keep stylesheet + favicon). Also drop `og:url` and `twitter:url` from the root `meta` array if they're sourced from `meta.meta`, since "/" as the default OG URL on every page is misleading; child routes always override these.
-2. Quick coverage check: `rg -L "buildMeta\\(|head:\\s*\\(" src/routes/**/*.tsx` to find any shareable route missing `head()`. Add `head()` to any leaf user-facing route that's missing it (skip API routes and admin).
-3. Verify after publish: `curl -s --compressed https://www.poolrentalnearme.com/p/become-a-swimming-pool-host-austin-tx | grep -oE 'rel="canonical" href="[^"]*"'` should return exactly one line, pointing at the page itself. Spot-check `/`, `/p/all-locations`, an academy page, a city page.
-
-## Out of scope
-
-- Sitemap content-type (already correct in prod).
-- Adding `<meta name="robots">` (default `index,follow` is fine; not blocking).
-- Touching `vite.config.ts`, nginx, or `X-Forwarded-Host` logic.
+Existing scroll-lock, escape-to-close, and overlay behavior preserved.
 
 ## Files touched
 
-- `src/routes/__root.tsx` — only file changed for the canonical fix.
-- Possibly a handful of leaf route files if step 2 finds gaps.
+- `src/components/site-layout.tsx` — replace `HEADER_LINKS`, rewrite desktop right cluster + dropdown, rewrite mobile drawer body. Accept `isAuthed?: boolean` prop on `SiteHeader`.
+- `src/server/sharetribe-session.server.ts` (new) — `isSharetribeAuthed(request)` cookie sniff.
+- Root route (`src/routes/__root.tsx`) — read the cookie in the loader/beforeLoad, pass `isAuthed` to `SiteHeader`. (Will read this file during implementation; if the chrome is wired through context instead of props today, I'll plumb through that context.)
+
+## Out of scope
+
+- No search bar in the header. The spec mentions "keep search bar visible" but no search input exists in the current header — adding one is a separate UX change. Calling this out so it's not silently dropped; happy to add in a follow-up if wanted.
+- No Sharetribe SDK calls, no token validation.
+- No footer changes.
+
+## Verification
+
+After deploy:
+```
+curl -s https://www.poolrentalnearme.com/ | grep -oE 'href="[^"]*signup[^"]*"|href="[^"]*login[^"]*"'
+```
+Both `/signup` and `/login` should appear.
+
+Visual checks at 1101px and mobile widths:
+- Sign up / Log in visible top-right when logged out
+- Inbox + account dropdown visible top-right when the `st-*-token` cookie is present
+- "List your space now" pill present in both states
+- Mobile drawer order matches spec, divider placement correct
+
+Run `scripts/test-global-chrome.mjs` to confirm header markers still match across the route set.
