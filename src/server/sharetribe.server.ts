@@ -366,6 +366,7 @@ export interface SearchOptions {
   address?: string;
   citySlug?: string;
   city?: string;
+  stateCode?: string; // e.g. "CA" — synced_listings only
 }
 
 export async function searchListings(opts: SearchOptions = {}): Promise<{
