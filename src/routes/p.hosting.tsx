@@ -95,12 +95,12 @@ const REASONS: Reason[] = [
 ];
 
 const COURSES: Array<{ icon: LucideIcon; title: string; desc: string }> = [
-  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table." },
-  { icon: ShieldAlert, title: "Difficult Guest Scenarios", desc: "12 real-world cases and exactly how to handle each." },
-  { icon: Calculator, title: "Taxes & 1099-K Basics", desc: "What to set aside, what to deduct, when to call a CPA." },
-  { icon: Calendar, title: "Holiday & Weekend Upcharges", desc: "When to raise prices and by how much. With actual dates." },
-  { icon: ShieldCheck, title: "Insurance & Liability", desc: "What our $2M covers, what it doesn't, and what to add yourself." },
-  { icon: TrendingUp, title: "Booking Acceleration", desc: "How top hosts go from 0 to 10 bookings/week in under 90 days." },
+  { icon: ShieldCheck, title: "Safety & Rescue", desc: "Pool safety protocols, emergency procedures, and first-aid basics every host should know." },
+  { icon: Scale, title: "Legal & Compliance", desc: "Permits, waivers, liability, and short-term rental ordinances by state." },
+  { icon: Building, title: "HOA Navigation", desc: "How to host successfully when you're in an HOA (and what to do if your HOA pushes back)." },
+  { icon: DollarSign, title: "Pricing Strategy", desc: "Set rates that maximize bookings without leaving money on the table. Includes holiday upcharges." },
+  { icon: Megaphone, title: "Marketing Your Listing", desc: "Photos, descriptions, and SEO tactics to get more views and bookings." },
+  { icon: Users, title: "Guest Experience", desc: "Difficult guest scenarios, communication scripts, and how to earn 5-star reviews every time." },
 ];
 
 const COMPARE: Array<[string, string, string]> = [
