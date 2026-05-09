@@ -15,8 +15,6 @@ export type SiteFooterSettings = {
   socials: FooterSocial[];
 };
 
-const MARKETPLACE_ORIGIN = "https://www.poolrentalnearme.com";
-const m = (p: string) => `${MARKETPLACE_ORIGIN}${p.startsWith("/") ? p : `/${p}`}`;
 
 export const DEFAULT_FOOTER: SiteFooterSettings = {
   contact_phone: "tel:18889404247",
