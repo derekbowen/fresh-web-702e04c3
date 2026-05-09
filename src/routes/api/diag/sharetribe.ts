@@ -153,9 +153,53 @@ export const Route = createFileRoute("/api/diag/sharetribe")({
           out.featuredError = describeError(e);
         }
 
+        // Wrapper checks (mirror what the home loader actually calls)
+        try {
+          const r = await searchListings({ perPage: 12 });
+          (out as Record<string, unknown>).wrapperFeaturedCount = r.listings.length;
+          (out as Record<string, unknown>).wrapperFeaturedTotal = r.total;
+        } catch (e) {
+          (out as Record<string, unknown>).wrapperFeaturedError = describeError(e);
+        }
+        try {
+          const r = await searchListings({ perPage: 6, stateCode: "CA" });
+          (out as Record<string, unknown>).wrapperCaCount = r.listings.length;
+          (out as Record<string, unknown>).wrapperCaTotal = r.total;
+        } catch (e) {
+          (out as Record<string, unknown>).wrapperCaError = describeError(e);
+        }
+
+        // Mirror table direct check
+        try {
+          const { count: totalRows, error: e1 } = await supabaseAdmin
+            .from("synced_listings")
+            .select("id", { count: "exact", head: true });
+          if (e1) throw e1;
+          const { count: publishedRows, error: e2 } = await supabaseAdmin
+            .from("synced_listings")
+            .select("id", { count: "exact", head: true })
+            .eq("state", "published")
+            .eq("is_deleted", false);
+          if (e2) throw e2;
+          const { data: latest, error: e3 } = await supabaseAdmin
+            .from("synced_listings")
+            .select("updated_at, last_synced_at")
+            .order("updated_at", { ascending: false })
+            .limit(1);
+          if (e3) throw e3;
+          (out as Record<string, unknown>).mirrorTotalRows = totalRows ?? 0;
+          (out as Record<string, unknown>).mirrorPublishedRows = publishedRows ?? 0;
+          (out as Record<string, unknown>).mirrorLastUpdated = latest?.[0]?.updated_at ?? null;
+          (out as Record<string, unknown>).mirrorLastSynced = latest?.[0]?.last_synced_at ?? null;
+        } catch (e) {
+          (out as Record<string, unknown>).mirrorError = describeError(e);
+        }
+
         out.success = !out.authError && !out.caError && !out.featuredError;
         return Response.json(out, { status: 200 });
       },
     },
+  },
+});
   },
 });
