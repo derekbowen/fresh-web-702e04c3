@@ -275,6 +275,41 @@ function GenerateContentPageInner() {
     runPreflight();
   }, [runPreflight]);
 
+  const [stats, setStats] = React.useState<GenStats | null>(null);
+  const [statsLoading, setStatsLoading] = React.useState(false);
+  const refreshStats = React.useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const res = await getGenerateStats();
+      setStats(res);
+    } catch (e) {
+      console.error("[stats] failed", e);
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+  React.useEffect(() => {
+    refreshStats();
+  }, [refreshStats]);
+  // Auto-refresh stats while a generation run is active
+  React.useEffect(() => {
+    if (!busy) return;
+    const t = window.setInterval(refreshStats, 8000);
+    return () => window.clearInterval(t);
+  }, [busy, refreshStats]);
+
+  // Rough per-page input/output token estimates × published Gemini pricing per 1M tokens.
+  // These are ballpark — meant to give the user a sense of spend, not an invoice.
+  const COST_PER_PAGE_USD: Record<string, number> = {
+    "google/gemini-3-flash-preview": 0.012,
+    "google/gemini-2.5-flash": 0.012,
+    "google/gemini-2.5-pro": 0.09,
+    "google/gemini-3.1-pro-preview": 0.12,
+  };
+  const perPageCost = COST_PER_PAGE_USD[model] ?? 0.02;
+  const plannedPages = autoLoop ? count * maxBatches : count;
+  const estCost = perPageCost * plannedPages;
+
   const run = async () => {
     if (preflight.status !== "ok") {
       const ok = await runPreflight();
