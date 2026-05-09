@@ -183,12 +183,18 @@ export function AvailabilityCalendar({
           <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
             <AlertCircle className="h-6 w-6 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              Could not load availability right now.
+              Calendar temporarily unavailable.
             </p>
+            <a
+              href={`${bookingBaseUrl.replace(/\/$/, "")}/l/${listingSlug}/${listingId}`}
+              className="inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+            >
+              Click to book directly →
+            </a>
             <button
               type="button"
               onClick={() => refetch()}
-              className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+              className="text-xs font-medium text-muted-foreground underline hover:text-foreground"
             >
               Try again
             </button>
