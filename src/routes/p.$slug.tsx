@@ -29,6 +29,7 @@ import {
 } from "@/lib/seo";
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
+import { AdvocacyTemplate } from "@/components/templates/advocacy";
 import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 
 import { EventGuideTemplate } from "@/components/templates/event-guide";
