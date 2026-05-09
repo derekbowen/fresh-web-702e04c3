@@ -25,9 +25,17 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
         <h3 className="line-clamp-1 text-base font-semibold text-foreground">
           {listing.title}
         </h3>
-        {(listing.city || listing.state) && (
-          <p className="mt-1 text-sm text-muted-foreground">
-            {[listing.city, listing.state].filter(Boolean).join(", ")}
+        {(listing.city || listing.state || listing.distanceMiles != null) && (
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+            {(listing.city || listing.state) && (
+              <span>{[listing.city, listing.state].filter(Boolean).join(", ")}</span>
+            )}
+            {listing.distanceMiles != null && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+                <span aria-hidden>📍</span>
+                {formatDistance(listing.distanceMiles)} away
+              </span>
+            )}
           </p>
         )}
         <div className="mt-3 flex items-center justify-between gap-3">
