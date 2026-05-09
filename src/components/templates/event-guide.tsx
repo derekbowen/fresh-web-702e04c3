@@ -3,6 +3,8 @@ import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { NearbyCities } from "@/components/nearby-cities";
+import { FaqBlock } from "@/components/faq-block";
+import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 
