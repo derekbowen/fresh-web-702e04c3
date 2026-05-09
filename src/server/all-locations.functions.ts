@@ -38,7 +38,7 @@ const TEMPLATE_GROUPS: Array<{
     id: "city-guides",
     title: "City Pool Rental Guides",
     description: "Local guides covering pool rentals in every major U.S. city.",
-    templateTypes: ["city_main", "public_pool_city", "public_pool_state", "public_pool"],
+    templateTypes: ["city_main"],
     basePath: "/p",
   },
   {

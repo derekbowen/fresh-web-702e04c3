@@ -45,13 +45,8 @@ function logRedirect(fromSlug: string, toSlug: string): void {
 
 export type ContentPageTemplateType =
   | "host_acq_city"
-  | "public_pool"
-  | "public_pool_city"
-  | "public_pool_state"
   | "event_guide"
   | "resource"
-  | "amenity"
-  | "amenity_hub"
   | "elearning"
   | "listing"
   | "host_advocacy_hub"

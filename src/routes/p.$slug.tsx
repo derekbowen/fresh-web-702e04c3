@@ -30,7 +30,7 @@ import {
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
-import { PublicPoolTemplate } from "@/components/templates/public-pool";
+
 import { EventGuideTemplate } from "@/components/templates/event-guide";
 import { SwimInstructorCityTemplate } from "@/components/templates/swim-instructor-city";
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
@@ -90,7 +90,6 @@ export const Route = createFileRoute("/p/$slug")({
     let city: CityRow | null = null;
     if (
       page.template_type === "host_acq_city" ||
-      page.template_type === "public_pool_city" ||
       page.template_type === "spanish_host_acq" ||
       page.template_type === "swim_instructor_city"
     ) {
@@ -399,10 +398,6 @@ function ContentPageDispatcher() {
   switch (page.template_type) {
     case "host_acq_city":
       return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} />;
-    case "public_pool":
-      return <PublicPoolTemplate page={page} linkTargets={linkTargets} />;
-    case "public_pool_city":
-      return <PublicPoolTemplate page={page} nearbyCities={nearbyCities} linkTargets={linkTargets} />;
     case "event_guide":
       return <EventGuideTemplate page={page} linkTargets={linkTargets} nearbyCities={nearbyCities} />;
     case "swim_instructor_city":

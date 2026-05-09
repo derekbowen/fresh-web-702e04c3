@@ -10,7 +10,6 @@ import { STATE_NAMES } from "@/lib/states";
 
 const STATIC_URLS: Array<{ path: string; lastmod?: Date }> = [
   { path: "/" },
-  { path: "/amenities" },
   { path: "/p/hosting" },
   { path: "/p/host-training-academy" },
   { path: "/p/become-a-host" },
