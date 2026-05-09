@@ -8,7 +8,6 @@ import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const CITY_TEMPLATE_TYPES = new Set([
   "host_acq_city",
-  "public_pool_city",
   "spanish_host_acq",
   "swim_instructor_city",
 ]);

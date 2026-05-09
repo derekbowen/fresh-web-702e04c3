@@ -34,8 +34,6 @@ export function cityForContentPage(
       }
       return null;
     }
-    case "public_pool_city":
-      return slug;
     default:
       return null;
   }

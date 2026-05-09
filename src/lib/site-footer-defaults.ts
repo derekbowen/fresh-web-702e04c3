@@ -31,7 +31,6 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
     { label: "Liability Waivers", href: "https://rentalwaivers.com" },
-    { label: "Public Pools", href: "/public-pools" },
     { label: "Browse All States", href: "/p/pool-rentals" },
   ],
   host_links: [

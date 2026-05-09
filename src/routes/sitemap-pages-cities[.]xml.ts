@@ -9,7 +9,7 @@ export const Route = createFileRoute("/sitemap-pages-cities.xml")({
       GET: async ({ request }) =>
         buildContentPagesSitemap(
           request,
-          ["city_main", "public_pool_city", "public_pool_state"],
+          ["city_main"],
           "/p",
           supabaseAdmin,
           SITE_URL,
