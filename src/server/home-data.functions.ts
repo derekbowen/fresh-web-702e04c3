@@ -107,12 +107,11 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       safe(
         Promise.resolve(
           supabaseAdmin
-            .from("content_pages")
+            .from("cities")
             .select("slug, name, state_code")
-            .eq("kind", "city")
-            .eq("status", "published")
+            .eq("is_published", true)
             .order("name")
-            .limit(72),
+            .limit(60),
         ),
         "cities query",
         { data: [] as HomeCity[] } as { data: HomeCity[] | null },
@@ -120,12 +119,11 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       safe(
         Promise.resolve(
           supabaseAdmin
-            .from("content_pages")
-            .select("slug", { count: "exact", head: true })
-            .eq("kind", "city")
-            .eq("status", "published"),
+            .from("cities")
+            .select("*", { count: "exact", head: true })
+            .eq("is_published", true),
         ),
-        "cities count query",
+        "city count query",
         { count: 0 } as { count: number | null },
       ),
       safe(
