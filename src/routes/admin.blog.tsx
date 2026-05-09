@@ -148,7 +148,7 @@ function AdminBlogPage() {
                     <tr key={r.slug} className="border-t">
                       <td className="px-3 py-2">
                         <div className="font-medium">{r.title}</div>
-                        <div className="text-xs text-muted-foreground">/blog/{r.slug}</div>
+                        <div className="text-xs text-muted-foreground">/p/{r.slug}</div>
                       </td>
                       <td className="px-3 py-2 tabular-nums">
                         <span className={r.word_count < 500 ? "text-amber-600" : ""}>
