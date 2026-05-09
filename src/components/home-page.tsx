@@ -542,18 +542,18 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
 }
 
 // --- Pool type discovery grid (12 cards with image backgrounds) ---
-import poolTypeSalt from "@/assets/la-saltwater/poolside-day.jpg";
-import poolTypeHeated from "@/assets/la-saltwater/pool-spa.jpg";
-import poolTypeResort from "@/assets/la-saltwater/hero-night.jpg";
-import poolTypeLap from "@/assets/la-saltwater/night-glow.jpg";
-import poolTypeHotTub from "@/assets/la-saltwater/pool-spa.jpg";
-import poolTypeKitchen from "@/assets/la-saltwater/dining.jpg";
-import poolTypeFire from "@/assets/la-saltwater/fire-pit.jpg";
-import poolTypePet from "@/assets/la-saltwater/poolside-day.jpg";
-import poolTypeAccessible from "@/assets/la-saltwater/balcony.jpg";
-import poolTypeTheater from "@/assets/la-saltwater/hero-night.jpg";
-import poolTypeIndoor from "@/assets/la-saltwater/bathroom.jpg";
-import poolTypeInfinity from "@/assets/la-saltwater/shell-float.jpg";
+import poolTypeSalt from "@/assets/pool-types/saltwater.jpg";
+import poolTypeHeated from "@/assets/pool-types/heated.jpg";
+import poolTypeResort from "@/assets/pool-types/resort-style.jpg";
+import poolTypeLap from "@/assets/pool-types/lap.jpg";
+import poolTypeHotTub from "@/assets/pool-types/hot-tub.jpg";
+import poolTypeKitchen from "@/assets/pool-types/outdoor-kitchen.jpg";
+import poolTypeFire from "@/assets/pool-types/fire-pit.jpg";
+import poolTypePet from "@/assets/pool-types/pet-friendly.jpg";
+import poolTypeAccessible from "@/assets/pool-types/accessible.jpg";
+import poolTypeTheater from "@/assets/pool-types/outdoor-theater.jpg";
+import poolTypeIndoor from "@/assets/pool-types/indoor.jpg";
+import poolTypeInfinity from "@/assets/pool-types/infinity.jpg";
 
 const POOL_TYPES: { name: string; slug: string; img: string }[] = [
   { name: "Saltwater Pools", slug: "saltwater", img: poolTypeSalt },
