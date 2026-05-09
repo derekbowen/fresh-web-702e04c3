@@ -33,7 +33,6 @@ import shellFloat from "@/assets/la-saltwater/shell-float.jpg";
 import nightGlow from "@/assets/la-saltwater/night-glow.jpg";
 import firePit from "@/assets/la-saltwater/fire-pit.jpg";
 import dining from "@/assets/la-saltwater/dining.jpg";
-import dining2 from "@/assets/la-saltwater/dining-2.jpg";
 import bathroom from "@/assets/la-saltwater/bathroom.jpg";
 import balcony from "@/assets/la-saltwater/balcony.jpg";
 
@@ -41,7 +40,7 @@ const PATH = "/p/la-saltwater-featured";
 const TITLE = "La Saltwater Pool & Spa | Sherman Oaks Resort Rental | PRNM";
 const DESCRIPTION =
   "Private saltwater pool & spa resort in Sherman Oaks. Free heat, heated spa, night swim, outdoor theater, fire pit. Up to 45 guests. Book on PRNM.";
-const BOOK_URL = "/s?address=Sherman+Oaks%2C+CA";
+const BOOK_URL = "https://go.poolrentalnearme.com/lasaltwater";
 
 const GALLERY = [
   { src: heroNight, alt: "La Saltwater pool at night with blue lighting and palm trees" },
@@ -51,7 +50,6 @@ const GALLERY = [
   { src: nightGlow, alt: "Pool glowing at night under string lights" },
   { src: firePit, alt: "Outdoor fire pit lounge area" },
   { src: dining, alt: "Outdoor dining set beside the pool" },
-  { src: dining2, alt: "Patio dining area with umbrella" },
   { src: bathroom, alt: "Modern marble guest bathroom" },
   { src: balcony, alt: "Shaded patio lounge overlooking the pool" },
 ];
