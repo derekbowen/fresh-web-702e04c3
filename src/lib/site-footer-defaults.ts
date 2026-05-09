@@ -15,8 +15,6 @@ export type SiteFooterSettings = {
   socials: FooterSocial[];
 };
 
-const MARKETPLACE_ORIGIN = "https://www.poolrentalnearme.com";
-const m = (p: string) => `${MARKETPLACE_ORIGIN}${p.startsWith("/") ? p : `/${p}`}`;
 
 export const DEFAULT_FOOTER: SiteFooterSettings = {
   contact_phone: "tel:18889404247",
@@ -25,7 +23,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
   contact_email: "support@poolrentalnearme.com",
   bottom_text: "© 2026 PRNM CORP Riverside, Ca 92509",
   explore_links: [
-    { label: "Search Listings", href: m("/s") },
+    { label: "Search Listings", href: "/s" },
     { label: "Pool Pros Directory", href: "/p/pool-pros" },
     { label: "How It Works", href: "/p/how-it-works" },
     { label: "Start a Business", href: "/p/hosting" },
@@ -33,11 +31,11 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
     { label: "Sign a Waiver", href: "/p/waivers" },
-    { label: "Public Pools", href: "https://www.poolrentalnearme.com/public-pools" },
+    { label: "Public Pools", href: "/public-pools" },
     { label: "Browse All States", href: "/p/pool-rentals" },
   ],
   host_links: [
-    { label: "List Your Pool for Free", href: m("/l/draft/00000000-0000-0000-0000-000000000000/new/details") },
+    { label: "List Your Pool for Free", href: "/l/draft/00000000-0000-0000-0000-000000000000/new/details" },
     { label: "How Hosting Works", href: "/p/hosting" },
     { label: "Find Locations Near You", href: "/p/all-locations" },
     { label: "Earnings Calculator", href: "/p/earnings-calculator" },

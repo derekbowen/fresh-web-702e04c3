@@ -291,7 +291,7 @@ function SiteFooterInner() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               {data.popular_markets.map((mkt: FooterMarket) => (
                 <li key={mkt.slug}>
-                  <a href={marketplace(`/s?address=${encodeURIComponent(mkt.name)}`)} className="hover:text-primary">
+                  <a href={rel(`/p/${mkt.slug}`)} className="hover:text-primary">
                     {mkt.name}
                   </a>
                 </li>
@@ -320,8 +320,9 @@ function SiteFooterInner() {
               </a>
             </div>
           </div>
-          <div className="mt-8 text-xs text-muted-foreground">
-            {data.bottom_text || `© ${FOOTER_YEAR} PRNM CORP`}
+          <div className="mt-8 flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <span>{data.bottom_text || `© ${FOOTER_YEAR} PRNM CORP`}</span>
+            <a href="/sitemap.xml" className="hover:text-primary">Sitemap</a>
           </div>
         </div>
       </div>
