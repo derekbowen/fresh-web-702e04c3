@@ -1,5 +1,9 @@
 import * as React from "react";
-import { Link } from "@tanstack/react-router";
+// Header/footer use plain <a> tags instead of TanStack <Link> to avoid React #418
+// hydration mismatches: Link auto-applies class="active" + data-status="active" +
+// aria-current="page" when its `to` matches the router's current path. Through the
+// nginx proxy SSR sees a different URL (e.g. /landing-page) than the browser (/),
+// so server and client render different markup → hydration mismatch.
 import {
   DEFAULT_FOOTER,
   type SiteFooterSettings,
