@@ -12,6 +12,9 @@ import {
   TrendingUp,
   Check,
   Plus,
+  Scale,
+  Building,
+  Megaphone,
   type LucideIcon,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
