@@ -90,6 +90,7 @@ export const Route = createFileRoute("/p/$slug")({
     const page = (context as { page: ContentPage }).page;
     let nearbyCities: NearbyCity[] = [];
     let city: CityRow | null = null;
+    let citySources: CitySource[] = [];
     if (
       page.template_type === "host_acq_city" ||
       page.template_type === "spanish_host_acq" ||
@@ -119,6 +120,13 @@ export const Route = createFileRoute("/p/$slug")({
           city = await getCityBySlug({ data: { slug: citySlug } });
         } catch {
           city = null;
+        }
+        if (page.template_type === "host_acq_city") {
+          try {
+            citySources = await getCitySources({ data: { slug: citySlug } });
+          } catch {
+            citySources = [];
+          }
         }
       }
     }
