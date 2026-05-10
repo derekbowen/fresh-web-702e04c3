@@ -415,7 +415,7 @@ function ContentPageDispatcher() {
 
   switch (page.template_type) {
     case "host_acq_city":
-      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} />;
+      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} citySources={citySources} />;
     case "event_guide":
       return <EventGuideTemplate page={page} linkTargets={linkTargets} nearbyCities={nearbyCities} />;
     case "swim_instructor_city":
