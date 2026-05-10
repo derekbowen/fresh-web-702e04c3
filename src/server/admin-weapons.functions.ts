@@ -180,17 +180,21 @@ export const listNewCompetitorUrls = createServerFn({ method: "POST" })
       onlyUnacknowledged: z.boolean().default(true),
       limit: z.number().int().min(10).max(500).default(100),
       site_id: z.string().uuid().optional(),
+      kind: z.string().optional(),
+      excludeListings: z.boolean().default(true),
     }).parse(d ?? {}),
   )
   .handler(async ({ data, context }): Promise<{ rows: CompetitorUrlRow[] }> => {
     await assertAdmin((context as any).userId);
     let q = sb()
       .from("competitor_urls")
-      .select("id, site_id, url, first_seen_at, last_seen_at, scraped_at, title, word_count, acknowledged, competitor_sites(domain)")
+      .select("id, site_id, url, first_seen_at, last_seen_at, scraped_at, title, word_count, acknowledged, kind, city_slug, state_code, summary, competitor_sites(domain)")
       .order("first_seen_at", { ascending: false })
       .limit(data.limit);
     if (data.onlyUnacknowledged) q = q.eq("acknowledged", false);
     if (data.site_id) q = q.eq("site_id", data.site_id);
+    if (data.kind) q = q.eq("kind", data.kind);
+    if (data.excludeListings && !data.kind) q = q.neq("kind", "listing");
     const { data: rows } = await q;
     const flat = (rows || []).map((r: any) => ({
       ...r,
