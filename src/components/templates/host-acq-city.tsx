@@ -331,11 +331,9 @@ export function HostAcqCityTemplate({
         <section className="border-b border-border py-16 sm:py-20">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             {body ? (
-              <AutoLinkedContent
-                text={body}
-                targets={linkTargets}
-                className="prose prose-lg max-w-none whitespace-pre-line text-foreground"
-              />
+              <div className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3 prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-primary prose-strong:text-foreground prose-table:text-sm prose-th:text-left prose-th:bg-muted prose-th:p-3 prose-td:p-3 prose-td:border prose-th:border prose-table:border prose-ul:list-disc prose-ol:list-decimal">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
+              </div>
             ) : guide ? (
               <article>
                 <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
