@@ -39,10 +39,20 @@ function AdminBlogPage() {
   const [genTopic, setGenTopic] = useState("");
   const [genHint, setGenHint] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
 
-  const generate = async () => {
+  const toggleSel = (slug: string) =>
+    setSelected((s) => {
+      const next = new Set(s);
+      next.has(slug) ? next.delete(slug) : next.add(slug);
+      return next;
+    });
+
+  const generate = async (autoPublish: boolean) => {
     const n = Math.min(Math.max(parseInt(genCount) || 1, 1), 10);
-    if (!confirm(`Generate ${n} new blog post${n > 1 ? "s" : ""} with AI? They'll be saved as drafts. Uses credits.`)) return;
+    const verb = autoPublish ? "Generate & publish" : "Generate";
+    if (!confirm(`${verb} ${n} new blog post${n > 1 ? "s" : ""} with AI?${autoPublish ? " They will go LIVE immediately." : " They'll be saved as drafts."} Uses credits.`)) return;
     setGenerating(true);
     try {
       const res = await adminGenerateBlogPost({
@@ -50,10 +60,13 @@ function AdminBlogPage() {
           count: n,
           topic: genTopic.trim() || undefined,
           titleHint: genHint.trim() || undefined,
+          autoPublish,
         },
       });
       if (res.created.length > 0) {
-        toast.success(`Created ${res.created.length} draft${res.created.length > 1 ? "s" : ""}.`);
+        toast.success(
+          `Created ${res.created.length} ${autoPublish ? "live post" : "draft"}${res.created.length > 1 ? "s" : ""}.`,
+        );
       }
       if (res.errors.length > 0) {
         toast.error(`${res.errors.length} failed: ${res.errors[0]}`);
@@ -66,6 +79,26 @@ function AdminBlogPage() {
       toast.error(e instanceof Error ? e.message : String(e));
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const bulkPublish = async (publish: boolean) => {
+    const slugs = Array.from(selected);
+    if (slugs.length === 0) {
+      toast.info("Select some posts first.");
+      return;
+    }
+    if (!confirm(`${publish ? "Publish" : "Unpublish"} ${slugs.length} post${slugs.length > 1 ? "s" : ""}?`)) return;
+    setBulkBusy(true);
+    try {
+      await adminBulkPublishBlogPosts({ data: { slugs, publish } });
+      toast.success(`${publish ? "Published" : "Unpublished"} ${slugs.length}.`);
+      setSelected(new Set());
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBulkBusy(false);
     }
   };
 
