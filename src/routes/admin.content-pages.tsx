@@ -65,6 +65,28 @@ function BulkEditor() {
     setSelected((s) => s.size === rows.length ? new Set() : new Set(rows.map((r) => r.id)));
   }
 
+  async function bulkAutoFix() {
+    if (!selected.size) return;
+    const ids = Array.from(selected).slice(0, 10);
+    if (selected.size > 10 && !confirm(`Auto-fix runs max 10 at a time. Fix the first ${ids.length} of ${selected.size} selected?`)) return;
+    if (!confirm(`Auto-fix SEO on ${ids.length} page${ids.length > 1 ? "s" : ""}? Overwrites focus keyword, SEO/OG fields, and may rewrite thin bodies. Uses AI credits.`)) return;
+    setBusy(true);
+    let ok = 0; const failed: string[] = [];
+    try {
+      for (const id of ids) {
+        try {
+          const r: any = await autoFixSeo({ data: { id } });
+          if (r?.ok) ok++; else failed.push(`${id.slice(0, 8)}: ${r?.error || "failed"}`);
+        } catch (e) {
+          failed.push(`${id.slice(0, 8)}: ${e instanceof Error ? e.message : String(e)}`);
+        }
+      }
+      alert(`Auto-fixed ${ok}/${ids.length}.${failed.length ? `\n\nFailures:\n${failed.slice(0, 5).join("\n")}` : ""}`);
+      setSelected(new Set());
+      await load();
+    } finally { setBusy(false); }
+  }
+
   async function bulk(action: "publish" | "unpublish" | "delete") {
     if (!selected.size) return;
     if (action === "delete" && !confirm(`Delete ${selected.size} pages?`)) return;
@@ -108,7 +130,8 @@ function BulkEditor() {
       {selected.size > 0 && (
         <div className="mt-4 flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/5 p-3">
           <span className="text-sm font-medium">{selected.size} selected</span>
-          <button disabled={busy} onClick={() => bulk("publish")} className="ml-auto rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Publish</button>
+          <button disabled={busy} onClick={bulkAutoFix} title="Run Auto-fix SEO on up to 10 selected pages" className="ml-auto rounded bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-50">✨ Fix {Math.min(selected.size, 10)}</button>
+          <button disabled={busy} onClick={() => bulk("publish")} className="rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Publish</button>
           <button disabled={busy} onClick={() => bulk("unpublish")} className="rounded bg-yellow-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Unpublish</button>
           <button disabled={busy} onClick={() => bulk("delete")} className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Delete</button>
           <button onClick={() => setSelected(new Set())} className="rounded border border-border px-3 py-1 text-xs">Clear</button>
