@@ -231,6 +231,12 @@ function AdminBlogPage() {
             <Button variant="secondary" onClick={expandAllShort} disabled={!rows}>
               Expand all short
             </Button>
+            <Button variant="secondary" onClick={() => bulkPublish(true)} disabled={bulkBusy || selected.size === 0}>
+              Publish selected ({selected.size})
+            </Button>
+            <Button variant="ghost" onClick={() => bulkPublish(false)} disabled={bulkBusy || selected.size === 0}>
+              Unpublish
+            </Button>
           </div>
         </div>
 
