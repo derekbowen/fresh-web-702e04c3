@@ -1370,6 +1370,45 @@ export type Database = {
         }
         Relationships: []
       }
+      host_leads: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          page: string | null
+          phone_e164: string
+          phone_raw: string
+          region: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          page?: string | null
+          phone_e164: string
+          phone_raw: string
+          region?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          page?: string | null
+          phone_e164?: string
+          phone_raw?: string
+          region?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       host_match_false_positives: {
         Row: {
           candidate_business_name: string | null
@@ -2589,6 +2628,104 @@ export type Database = {
           popular_markets?: Json
           socials?: Json
           updated_at?: string
+        }
+        Relationships: []
+      }
+      sms_inbound_log: {
+        Row: {
+          action: string | null
+          body: string | null
+          from_phone: string
+          id: string
+          received_at: string
+          to_phone: string | null
+          twilio_sid: string | null
+        }
+        Insert: {
+          action?: string | null
+          body?: string | null
+          from_phone: string
+          id?: string
+          received_at?: string
+          to_phone?: string | null
+          twilio_sid?: string | null
+        }
+        Update: {
+          action?: string | null
+          body?: string | null
+          from_phone?: string
+          id?: string
+          received_at?: string
+          to_phone?: string | null
+          twilio_sid?: string | null
+        }
+        Relationships: []
+      }
+      sms_messages: {
+        Row: {
+          body: string
+          created_at: string
+          error: string | null
+          id: string
+          lead_id: string | null
+          phone_e164: string
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          step: number
+          twilio_sid: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id?: string | null
+          phone_e164: string
+          scheduled_at: string
+          sent_at?: string | null
+          status?: string
+          step: number
+          twilio_sid?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          lead_id?: string | null
+          phone_e164?: string
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          step?: number
+          twilio_sid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_messages_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "host_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms_opt_outs: {
+        Row: {
+          created_at: string
+          phone_e164: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          phone_e164: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          phone_e164?: string
+          source?: string
         }
         Relationships: []
       }
