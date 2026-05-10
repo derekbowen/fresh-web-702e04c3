@@ -32,8 +32,8 @@ function parseGscCsv(csv: string): ParsedRow[] {
   const sep = lines[0].includes("\t") ? "\t" : ",";
   const header = lines[0].toLowerCase().split(sep).map((h) => h.trim().replace(/^"|"$/g, ""));
   const idx = {
-    page: header.findIndex((h) => h === "page" || h === "url" || h === "top pages" || h === "landing page"),
-    query: header.findIndex((h) => h === "query" || h === "queries" || h.includes("search term") || h.includes("keyword")),
+    page: header.findIndex((h) => h === "page" || h === "url" || h.includes("landing page") || h.includes("top page")),
+    query: header.findIndex((h) => h.includes("quer") || h.includes("search term") || h.includes("keyword")),
     impr: header.findIndex((h) => h.includes("impression")),
     clicks: header.findIndex((h) => h.includes("click")),
     pos: header.findIndex((h) => h.includes("position")),
