@@ -142,11 +142,35 @@ function KeywordOpportunities() {
         <StatCard label="Already in top 3" value={stats?.top3 ?? "—"} icon={Sparkles} />
       </div>
 
-      <details className="mt-6 rounded-2xl border border-border bg-card p-4">
+      <details open className="mt-6 rounded-2xl border border-border bg-card p-4">
         <summary className="cursor-pointer text-sm font-semibold">
           <Upload className="mr-2 inline h-4 w-4" /> Import GSC queries (Performance → Queries → Export → CSV)
         </summary>
         <div className="mt-3 space-y-3">
+          <div className="rounded-lg border-2 border-dashed border-border bg-muted/30 p-4 text-center">
+            <input
+              id="gsc-csv-file"
+              type="file"
+              accept=".csv,.tsv,text/csv,text/tab-separated-values,text/plain"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const text = await file.text();
+                setCsv(text);
+                setImportResult(`Loaded ${file.name} (${(file.size / 1024).toFixed(1)} KB) — click Import to upload.`);
+                e.target.value = "";
+              }}
+            />
+            <label htmlFor="gsc-csv-file"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-secondary px-5 py-2 text-sm font-semibold hover:bg-secondary/80">
+              <Upload className="h-4 w-4" /> Choose CSV file
+            </label>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Or paste CSV/TSV content into the box below. Accepts the GSC "Queries" export with columns
+              <span className="mx-1 font-mono">Page, Query, Clicks, Impressions, CTR, Position</span>.
+            </p>
+          </div>
           <textarea
             value={csv}
             onChange={(e) => setCsv(e.target.value)}
@@ -160,6 +184,10 @@ function KeywordOpportunities() {
               {importing && <Loader2 className="h-4 w-4 animate-spin" />}
               {importing ? "Importing…" : "Import"}
             </button>
+            {csv.trim() && (
+              <button onClick={() => { setCsv(""); setImportResult(null); }}
+                className="rounded-full border border-border px-4 py-2 text-xs">Clear</button>
+            )}
             {importResult && <span className="text-xs text-muted-foreground">{importResult}</span>}
           </div>
         </div>
