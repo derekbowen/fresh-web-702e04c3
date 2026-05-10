@@ -372,6 +372,97 @@ function CompetitorRadar() {
         </>
       )}
 
+      {tab === "gaps" && (
+        <div className="mt-4">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-lg font-bold">Cities competitors cover that we don't</h2>
+              <p className="text-xs text-muted-foreground">Detected from classified competitor URLs. Click "Create draft" to spawn a content_pages draft at /p/{`{slug}`}.</p>
+            </div>
+            <button onClick={loadGaps} disabled={gapsLoading}
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+              {gapsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              {gapsLoading ? "Scanning…" : "Refresh"}
+            </button>
+          </div>
+          {msg && <p className="mb-2 text-xs text-muted-foreground">{msg}</p>}
+          {gaps.length === 0 && !gapsLoading && (
+            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+              No gaps detected yet. Run "Classify all" on the New pages tab first so we can extract city slugs.
+            </p>
+          )}
+          <div className="space-y-2">
+            {gaps.map((g) => {
+              const key = `${g.city_slug}|${g.state_code || ""}`;
+              return (
+                <div key={key} className={`rounded-2xl border p-3 ${g.has_our_page ? "border-border bg-muted/30" : "border-emerald-200 bg-emerald-50/40"}`}>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-sm font-bold">{g.city_slug.replace(/-/g, " ")}{g.state_code ? `, ${g.state_code}` : ""}</span>
+                        <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{g.competitor_urls.length} competitor URL{g.competitor_urls.length === 1 ? "" : "s"}</span>
+                        {g.has_our_page
+                          ? <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">we have it</span>
+                          : <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white">GAP</span>}
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
+                        {g.competitor_urls.slice(0, 3).map((u) => (
+                          <a key={u.url} href={u.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 break-all text-primary hover:underline">
+                            <ExternalLink className="h-3 w-3 shrink-0" />{u.domain || u.url}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                    {!g.has_our_page && (
+                      <button onClick={() => createCounter(g)} disabled={creatingGap === key}
+                        className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+                        {creatingGap === key ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                        Create draft
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {tab === "digest" && (
+        <div className="mt-4">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-lg font-bold">Competitor intel digest</h2>
+              <p className="text-xs text-muted-foreground">AI summary of what competitors shipped recently, with suggested actions.</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <select value={digestDays} onChange={(e) => setDigestDays(Number(e.target.value))}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold">
+                <option value={3}>Last 3 days</option>
+                <option value={7}>Last 7 days</option>
+                <option value={14}>Last 14 days</option>
+                <option value={30}>Last 30 days</option>
+              </select>
+              <button onClick={loadDigest} disabled={digestLoading}
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+                {digestLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {digestLoading ? "Analyzing…" : "Generate digest"}
+              </button>
+            </div>
+          </div>
+          {!digest && !digestLoading && (
+            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+              Click "Generate digest" to summarize recent competitor activity.
+            </p>
+          )}
+          {digest && (
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed">{digest}</pre>
+            </div>
+          )}
+        </div>
+      )}
+
       {tab === "matches" && (
         <div className="mt-3">
           {spend && (
