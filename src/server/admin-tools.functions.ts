@@ -107,7 +107,7 @@ export const listContentPages = createServerFn({ method: "POST" })
       status: z.enum(["all", "published", "pending", "draft"]).default("all"),
       template: z.string().max(80).default(""),
       page: z.number().int().min(1).default(1),
-      pageSize: z.number().int().min(10).max(200).default(50),
+      pageSize: z.number().int().min(10).max(1000).default(50),
     }).parse(d ?? {}),
   )
   .handler(async ({ data, context }): Promise<{ rows: ContentPageRow[]; total: number }> => {
