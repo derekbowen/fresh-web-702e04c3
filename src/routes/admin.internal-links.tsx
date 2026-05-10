@@ -7,6 +7,7 @@ import {
   listLinkSuggestions,
   updateLinkSuggestionStatus,
   applyLinkSuggestion,
+  applyLinkSuggestionsBulk,
   type LinkSuggestionRow,
 } from "@/server/admin-seo-tools.functions";
 import { AdminLayout } from "@/components/admin-layout";
@@ -68,8 +69,32 @@ function InternalLinks() {
     await load();
   }
 
+  const [bulkApplying, setBulkApplying] = React.useState(false);
+  async function bulkApply(ids: string[]) {
+    if (!ids.length) return;
+    if (!confirm(`Insert ${ids.length} link${ids.length === 1 ? "" : "s"} into the page bodies? This edits content_pages.`)) return;
+    setBulkApplying(true);
+    try {
+      const r: any = await applyLinkSuggestionsBulk({ data: { ids } });
+      if (!r.ok) alert(r.error || "Bulk apply failed");
+      else setGenMsg(`Inserted ${r.applied} new links, ${r.skipped} already linked, ${r.failed} failed (of ${r.total}).`);
+      await load();
+    } finally { setBulkApplying(false); }
+  }
+
   function toggleSelect(id: string) {
     setSelected((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  }
+
+  const visiblePendingIds = React.useMemo(() => rows.filter(r => r.status === "pending").map(r => r.id), [rows]);
+  const allVisibleSelected = visiblePendingIds.length > 0 && visiblePendingIds.every(id => selected.has(id));
+  function toggleSelectAllVisible() {
+    setSelected((s) => {
+      const n = new Set(s);
+      if (allVisibleSelected) visiblePendingIds.forEach(id => n.delete(id));
+      else visiblePendingIds.forEach(id => n.add(id));
+      return n;
+    });
   }
 
   return (
@@ -109,6 +134,20 @@ function InternalLinks() {
           className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm sm:max-w-sm" />
       </div>
 
+      {visiblePendingIds.length > 0 && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2">
+          <label className="inline-flex items-center gap-2 text-xs font-semibold">
+            <input type="checkbox" checked={allVisibleSelected} onChange={toggleSelectAllVisible} className="h-4 w-4" />
+            Select all {visiblePendingIds.length} pending
+          </label>
+          <button onClick={() => bulkApply(visiblePendingIds)} disabled={bulkApplying}
+            className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+            {bulkApplying ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+            Apply all {visiblePendingIds.length}
+          </button>
+        </div>
+      )}
+
       {selected.size > 0 && (
         <div className="sticky top-12 z-20 mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2 shadow lg:top-28">
           <span className="text-xs font-semibold">{selected.size} selected</span>
@@ -116,9 +155,10 @@ function InternalLinks() {
             className="ml-auto inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-semibold">
             <X className="h-3 w-3" /> Dismiss
           </button>
-          <button onClick={() => bulkUpdate("applied")}
-            className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-            <Check className="h-3 w-3" /> Mark applied
+          <button onClick={() => bulkApply(Array.from(selected))} disabled={bulkApplying}
+            className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+            {bulkApplying ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+            Apply {selected.size}
           </button>
         </div>
       )}

@@ -411,3 +411,59 @@ export const applyLinkSuggestion = createServerFn({ method: "POST" })
     await sb().from("internal_link_suggestions").update({ status: "applied", updated_at: new Date().toISOString() }).eq("id", data.id);
     return { ok: true };
   });
+
+/** Bulk apply: actually inserts the markdown link for every selected suggestion. */
+export const applyLinkSuggestionsBulk = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ ids: z.array(z.string().uuid()).min(1).max(2500) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const client = sb();
+    const { data: sugs } = await client
+      .from("internal_link_suggestions")
+      .select("id, from_url, to_url, anchor_text, status")
+      .in("id", data.ids);
+    if (!sugs?.length) return { ok: false, error: "No suggestions found" };
+
+    // Group by from_url so each page is read+written once.
+    const byPage = new Map<string, typeof sugs>();
+    for (const s of sugs) {
+      if (!byPage.has(s.from_url)) byPage.set(s.from_url, [] as any);
+      byPage.get(s.from_url)!.push(s);
+    }
+
+    let applied = 0, skipped = 0, failed = 0;
+    const appliedIds: string[] = [];
+    const nowIso = new Date().toISOString();
+
+    for (const [fromUrl, items] of byPage) {
+      const { data: page } = await client
+        .from("content_pages")
+        .select("id, body_markdown")
+        .eq("url_path", fromUrl)
+        .maybeSingle();
+      if (!page) { failed += items.length; continue; }
+      let body = page.body_markdown || "";
+      for (const s of items) {
+        if (body.includes(s.to_url)) { skipped++; appliedIds.push(s.id); continue; }
+        const anchor = s.anchor_text || s.to_url;
+        body += `\n\nRelated: [${anchor}](${s.to_url})`;
+        applied++;
+        appliedIds.push(s.id);
+      }
+      const { error: uErr } = await client
+        .from("content_pages")
+        .update({ body_markdown: body, updated_at: nowIso })
+        .eq("id", page.id);
+      if (uErr) { failed += items.length; continue; }
+    }
+
+    if (appliedIds.length) {
+      await client.from("internal_link_suggestions")
+        .update({ status: "applied", updated_at: nowIso })
+        .in("id", appliedIds);
+    }
+    return { ok: true, applied, skipped, failed, total: sugs.length };
+  });
