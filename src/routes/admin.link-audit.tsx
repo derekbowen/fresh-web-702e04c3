@@ -136,13 +136,14 @@ function LinkAuditPage() {
                 <Th>HTTP</Th>
                 <Th>Reason</Th>
                 <Th>Source pages</Th>
+                <Th></Th>
               </tr>
             </thead>
             <tbody>
               {(data?.rows || []).map((r) => <Row key={r.path} row={r} />)}
               {!loading && data && data.rows.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
                     No problem links match the current filters.
                   </td>
                 </tr>
