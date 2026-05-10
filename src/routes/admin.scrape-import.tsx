@@ -21,7 +21,7 @@ function ScrapeImport() {
   const [urls, setUrls] = React.useState("");
   const [running, setRunning] = React.useState(false);
   const [progress, setProgress] = React.useState<{ done: number; total: number; last?: string }>({ done: 0, total: 0 });
-  const [results, setResults] = React.useState<Array<{ url: string; ok: boolean; error?: string; providerId?: string | null }>>([]);
+  const [results, setResults] = React.useState<Array<{ url: string; ok: boolean; error?: string; providerId?: string | null; count?: number }>>([]);
   const [jobs, setJobs] = React.useState<any[]>([]);
 
   const refresh = React.useCallback(async () => {
