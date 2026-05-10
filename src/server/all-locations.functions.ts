@@ -160,25 +160,28 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
     {
       const { data } = await supabaseAdmin
         .from("synced_listings")
-        .select("slug, title, city, state_code")
+        .select("slug, sharetribe_id, title, city, state_code")
         .eq("state", "published")
         .eq("is_deleted", false)
         .order("title", { ascending: true })
         .limit(1000);
       if (data && data.length > 0) {
-        groups.push({
-          id: "listings",
-          title: "Active Pool Listings",
-          description: "Individual pools currently available to book.",
-          links: data
-            .filter((l) => l.slug)
-            .map((l) => ({
-              href: `/l/${l.slug}`,
-              label: l.title,
-              sub: [l.city, l.state_code].filter(Boolean).join(", ") || null,
-            })),
-        });
-        total += data.length;
+        const links = data
+          .filter((l) => l.slug && l.sharetribe_id)
+          .map((l) => ({
+            href: `/l/${l.slug}/${l.sharetribe_id}`,
+            label: l.title,
+            sub: [l.city, l.state_code].filter(Boolean).join(", ") || null,
+          }));
+        if (links.length > 0) {
+          groups.push({
+            id: "listings",
+            title: "Active Pool Listings",
+            description: "Individual pools currently available to book.",
+            links,
+          });
+          total += links.length;
+        }
       }
     }
 
