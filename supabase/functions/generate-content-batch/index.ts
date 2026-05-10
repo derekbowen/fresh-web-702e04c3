@@ -957,10 +957,14 @@ Deno.serve(async (req) => {
       .order("priority_score", { ascending: false, nullsFirst: false })
       .limit(data.count);
 
-    if (data.tier === "longtail") query = query.eq("source_type", "longtail");
-    else if (data.tier) query = query.in("priority_tier", tierAliases(data.tier));
-    if (data.stateCode) query = query.eq("state_code", data.stateCode);
-    if (data.warmOnly) query = query.eq("warm_climate", true);
+    if (Array.isArray(data.slugs) && data.slugs.length > 0) {
+      query = query.in("slug", data.slugs.slice(0, 100));
+    } else {
+      if (data.tier === "longtail") query = query.eq("source_type", "longtail");
+      else if (data.tier) query = query.in("priority_tier", tierAliases(data.tier));
+      if (data.stateCode) query = query.eq("state_code", data.stateCode);
+      if (data.warmOnly) query = query.eq("warm_climate", true);
+    }
 
     const { data: planRowsRaw, error: planErr } = await query;
     if (planErr) throw new Error(`plan query failed: ${planErr.message}`);
