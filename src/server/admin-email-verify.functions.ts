@@ -24,7 +24,10 @@ async function assertAdmin(userId: string) {
   if (!data) throw new Error("Forbidden");
 }
 
-export const getEmailVerifyBalance = createServerFn({ method: "GET" }).handler(async () => {
+export const getEmailVerifyBalance = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin((context as { userId: string }).userId);
   const key = process.env.EMAILVERIFY_API_KEY;
   if (!key) return { ok: false, error: "EMAILVERIFY_API_KEY not configured" };
   try {
