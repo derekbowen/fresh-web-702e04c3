@@ -124,6 +124,16 @@ function BulkEditor() {
         </select>
         <input value={template} onChange={(e) => { setTemplate(e.target.value); setPage(1); }} placeholder="Template type…"
           className="w-48 rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+        <select
+          value={pageSize}
+          onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+          title="Rows per page"
+          className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+        >
+          {[50, 100, 250, 500, 1000].map((n) => (
+            <option key={n} value={n}>{n} / page</option>
+          ))}
+        </select>
         <span className="ml-auto text-sm text-muted-foreground">{total.toLocaleString()} total</span>
       </div>
 
