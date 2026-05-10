@@ -4,7 +4,7 @@ import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
   CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
-  TrendingUp, Swords, Network, Radar, Sparkles,
+  TrendingUp, Swords, Network, Radar, Sparkles, Instagram,
 } from "lucide-react";
 import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 
@@ -76,6 +76,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     label: "Users & Ops",
     items: [
       { to: "/admin/leads", label: "Lead inbox", icon: Mail },
+      { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
       { to: "/admin/email-branding", label: "Email branding", icon: Mail },
       { to: "/admin/site-footer", label: "Site footer", icon: LinkIcon },
       { to: "/admin/directory", label: "Directory moderation", icon: Building2 },
