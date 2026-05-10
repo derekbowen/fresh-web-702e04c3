@@ -37,7 +37,10 @@ function filterGroupsForDemo(groups: typeof GROUPS) {
 const GROUPS: Array<{ label: string; items: Item[] }> = [
   {
     label: "Overview",
-    items: [{ to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard }],
+    items: [
+      { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/admin/seo-coach", label: "SEO Coach 🤖", icon: Sparkles },
+    ],
   },
   {
     label: "Content",

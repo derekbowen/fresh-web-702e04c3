@@ -78,6 +78,7 @@ import { Route as AdminSocialLeadHunterRouteImport } from './routes/admin.social
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSharetribePruneRouteImport } from './routes/admin.sharetribe-prune'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
+import { Route as AdminSeoCoachRouteImport } from './routes/admin.seo-coach'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminRedirectAliasesRouteImport } from './routes/admin.redirect-aliases'
 import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
@@ -507,6 +508,11 @@ const AdminSharetribePruneRoute = AdminSharetribePruneRouteImport.update({
 const AdminSeoHealthRoute = AdminSeoHealthRouteImport.update({
   id: '/seo-health',
   path: '/seo-health',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSeoCoachRoute = AdminSeoCoachRouteImport.update({
+  id: '/seo-coach',
+  path: '/seo-coach',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
@@ -944,6 +950,7 @@ export interface FileRoutesByFullPath {
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
+  '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -1084,6 +1091,7 @@ export interface FileRoutesByTo {
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
+  '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -1225,6 +1233,7 @@ export interface FileRoutesById {
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
+  '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
@@ -1367,6 +1376,7 @@ export interface FileRouteTypes {
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
     | '/admin/scrape-import'
+    | '/admin/seo-coach'
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
@@ -1507,6 +1517,7 @@ export interface FileRouteTypes {
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
     | '/admin/scrape-import'
+    | '/admin/seo-coach'
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
@@ -1647,6 +1658,7 @@ export interface FileRouteTypes {
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
     | '/admin/scrape-import'
+    | '/admin/seo-coach'
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
@@ -2294,6 +2306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSeoHealthRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/seo-coach': {
+      id: '/admin/seo-coach'
+      path: '/seo-coach'
+      fullPath: '/admin/seo-coach'
+      preLoaderRoute: typeof AdminSeoCoachRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/scrape-import': {
       id: '/admin/scrape-import'
       path: '/scrape-import'
@@ -2829,6 +2848,7 @@ interface AdminRouteChildren {
   AdminRankTrackerRoute: typeof AdminRankTrackerRoute
   AdminRedirectAliasesRoute: typeof AdminRedirectAliasesRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
+  AdminSeoCoachRoute: typeof AdminSeoCoachRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSharetribePruneRoute: typeof AdminSharetribePruneRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
@@ -2873,6 +2893,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminRankTrackerRoute: AdminRankTrackerRoute,
   AdminRedirectAliasesRoute: AdminRedirectAliasesRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
+  AdminSeoCoachRoute: AdminSeoCoachRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSharetribePruneRoute: AdminSharetribePruneRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
