@@ -89,13 +89,17 @@ function KeywordOpportunities() {
 
   async function handleImport() {
     const parsed = parseGscCsv(csv);
-    if (!parsed.length) { setImportResult("Could not parse CSV. Need columns: Page, Query, Impressions (Clicks/Position optional)."); return; }
+    if (!parsed.length) { setImportResult("Could not parse CSV. Need a header row with at least Query and Impressions columns (Page, Clicks, Position, CTR optional)."); return; }
+    const hasPage = parsed.some((r) => r.url_path && r.url_path !== "(unknown)");
     setImporting(true);
     try {
       const r = await importGscQueries({ data: { rows: parsed } });
-      setImportResult(r.ok ? `Imported ${r.upserted} of ${r.total} queries.` : `Error: ${(r as any).error}`);
+      const pageWarn = hasPage ? "" : " ⚠️ No Page column detected — keywords imported but can't be mapped to pages. In GSC, export from Performance → Pages tab (or Queries with 'Page' filter applied) to enable AI rewrite.";
+      setImportResult(r.ok ? `Imported ${r.upserted} of ${r.total} queries.${pageWarn}` : `Error: ${(r as any).error}`);
       await loadStats();
       await loadRows();
+    } catch (e: any) {
+      setImportResult(`Error: ${e?.message || "import failed"}`);
     } finally { setImporting(false); }
   }
 
