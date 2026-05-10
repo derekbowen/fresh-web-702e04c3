@@ -162,7 +162,7 @@ function BulkEditor() {
       {selected.size > 0 && (
         <div className="mt-4 flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/5 p-3">
           <span className="text-sm font-medium">{selected.size} selected</span>
-          <button disabled={busy} onClick={bulkAutoFix} title="Run Auto-fix SEO on up to 10 selected pages" className="ml-auto rounded bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-50">✨ Fix {Math.min(selected.size, 10)}</button>
+          <button disabled={busy} onClick={bulkAutoFix} title="Queue Auto-fix SEO on all selected pages" className="ml-auto rounded bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-50">{fixProgress ? `Fixing ${fixProgress.done + fixProgress.failed}/${fixProgress.total}…` : `✨ Fix ${selected.size}`}</button>
           <button disabled={busy} onClick={() => bulk("publish")} className="rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Publish</button>
           <button disabled={busy} onClick={() => bulk("unpublish")} className="rounded bg-yellow-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Unpublish</button>
           <button disabled={busy} onClick={() => bulk("delete")} className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Delete</button>
