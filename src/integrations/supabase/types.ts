@@ -1417,6 +1417,10 @@ export type Database = {
           city: string | null
           created_at: string
           email: string
+          email_sendable: boolean | null
+          email_status: string | null
+          email_sub_status: string | null
+          email_verified_at: string | null
           id: string
           name: string
           page: string | null
@@ -1429,6 +1433,10 @@ export type Database = {
           city?: string | null
           created_at?: string
           email: string
+          email_sendable?: boolean | null
+          email_status?: string | null
+          email_sub_status?: string | null
+          email_verified_at?: string | null
           id?: string
           name: string
           page?: string | null
@@ -1441,6 +1449,10 @@ export type Database = {
           city?: string | null
           created_at?: string
           email?: string
+          email_sendable?: boolean | null
+          email_status?: string | null
+          email_sub_status?: string | null
+          email_verified_at?: string | null
           id?: string
           name?: string
           page?: string | null
