@@ -384,11 +384,12 @@ function AvailabilityCalendarInner({
       </div>
       )}
 
-      {mounted && data && (data.slots?.length ?? 0) === 0 && !isError && !isLoading && (
+      {mounted && data && (Array.isArray(data.slots) ? data.slots.length : 0) === 0 && !isError && !isLoading && (
         <p className="mt-4 text-center text-xs text-muted-foreground">
           No openings in the next {days} days. Message the host for custom dates.
         </p>
       )}
+
     </section>
   );
 }
