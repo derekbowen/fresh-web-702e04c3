@@ -16,6 +16,7 @@ import {
   type NearbyCity,
 } from "@/server/nearby-cities.functions";
 import { getCityBySlug, type CityRow } from "@/server/cities.functions";
+import { getCitySources, type CitySource } from "@/server/city-sources.functions";
 import { getInternalLinkTargets } from "@/server/internal-links.functions";
 import type { LinkTarget } from "@/components/auto-linked-content";
 import { log404 } from "@/server/content-404-log.functions";
