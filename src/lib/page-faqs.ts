@@ -72,20 +72,60 @@ function hostAcqFaqs(city: string, stateCode: string | null): FaqItem[] {
   ];
 }
 
-function hostAdvocacyFaqs(stateCode: string): FaqItem[] {
-  const stateName = STATE_NAMES[stateCode] ?? stateCode;
+function hostAdvocacyFaqs(stateName: string): FaqItem[] {
   return [
     {
       question: `Is it legal to rent out my pool in ${stateName}?`,
-      answer: `Pool rental laws vary by city and county within ${stateName}. Most jurisdictions allow short-term backyard pool rentals as a home-based use, but some require a permit, business license, or short-term-use registration. Check your local zoning rules before listing.`,
+      answer: `Renting your residential pool is legal in every US state, including ${stateName}. The specific rules come from four layers: state pool safety code, county and city ordinances, your HOA covenants, and your homeowner's insurance contract. Most ${stateName} hosts can list legally as long as their pool meets state barrier code and they notify their insurance carrier in writing.`,
     },
     {
       question: `Do I need a permit to host pool rentals in ${stateName}?`,
-      answer: `Some ${stateName} cities require a short-term-use or home-occupation permit. The fee and process vary by jurisdiction. Pool Rental Near Me's Host Academy walks you through how to research your local requirements.`,
+      answer: `Most ${stateName} cities do not require a separate permit for hourly pool rentals because guests do not stay overnight. A growing number of cities (especially in Florida, Arizona, and parts of California) fold pool rentals into their short-term rental ordinance and require a $50–$400 annual registration. Check your city or county clerk before listing.`,
+    },
+    {
+      question: `What pool barrier requirements apply in ${stateName}?`,
+      answer: `${stateName} follows some version of the International Swimming Pool and Spa Code. Expect a continuous barrier at least 48 inches high (60 inches in a few states), self-closing and self-latching gates that open outward, anti-entrapment drain covers compliant with the federal VGB Act, and in some states an additional layer such as door alarms or a safety cover.`,
     },
     {
       question: `Will hosting affect my homeowner's insurance in ${stateName}?`,
-      answer: `Pool Rental Near Me includes $2M in liability protection on every booking. We still recommend telling your homeowner's insurance carrier that you host, since requirements vary by policy.`,
+      answer: `Standard homeowner's policies contain a business-pursuits exclusion that can void coverage for guest injuries during a paid rental. Every Pool Rental Near Me booking includes $2 million in liability protection, but you should still notify your homeowner's carrier in writing so unrelated claims are not affected.`,
+    },
+    {
+      question: `How much can I earn renting my pool in ${stateName}?`,
+      answer: `${stateName} hosts typically charge $40–$150 per hour and earn $3,000–$10,000 per month during peak season, depending on location, amenities, and how many hours the pool is available. Pool Rental Near Me charges a flat 10% host fee, lower than competing platforms.`,
+    },
+    {
+      question: `Can my HOA stop me from renting my pool in ${stateName}?`,
+      answer: `An HOA can enforce its CC&Rs, which often include a "no commercial use" clause. The rule is enforceable through fines or a lien but it is private contract law, not state law. Many ${stateName} HOAs approve pool rentals when given a written hosting plan, proof of $2M liability coverage, and clear house rules.`,
+    },
+  ];
+}
+
+function hostAdvocacyHubFaqs(): FaqItem[] {
+  return [
+    {
+      question: `Is renting your pool by the hour legal in the United States?`,
+      answer: `Yes. Hourly pool rentals are legal in every US state. There is no federal law that specifically regulates private short-term pool rentals. All governance comes from state pool safety codes, county and city ordinances, HOA covenants, and your homeowner's insurance contract.`,
+    },
+    {
+      question: `What pool safety code applies to a rental pool?`,
+      answer: `Almost every state has adopted some version of the International Swimming Pool and Spa Code (ISPSC) or the federal Virginia Graeme Baker Pool and Spa Safety Act standards. The baseline: a continuous 48-inch barrier (60 inches in some states), self-closing self-latching gates, anti-entrapment drain covers, and in some states pool or door alarms.`,
+    },
+    {
+      question: `Do I need to register as a short-term rental?`,
+      answer: `Most short-term rental ordinances regulate overnight transient lodging and do not apply to pool-only rentals. A growing number of cities (Scottsdale, parts of Los Angeles County, Miami-Dade) treat any commercial use of a residence as subject to STR registration. Check your city's specific rule before listing.`,
+    },
+    {
+      question: `Does my homeowner's insurance cover pool rental income?`,
+      answer: `Standard HO-3 and HO-5 policies contain a business-pursuits exclusion that typically denies coverage for guest injuries during a paid rental. Pool Rental Near Me includes $2 million in per-booking liability coverage, and we recommend notifying your homeowner's carrier in writing as well.`,
+    },
+    {
+      question: `How is pool rental income taxed?`,
+      answer: `Federally, hosting income is reportable on Schedule C if you host actively or Schedule E if hosting is more passive. State income tax applies in any state with one. A small but growing number of cities (mostly in FL, AZ, and CA) require collection of a transient occupancy tax even on day-only pool rentals.`,
+    },
+    {
+      question: `Where do I find the rules for my state?`,
+      answer: `Use the state index on this page. Each state guide covers specific code citations, fence heights, alarm rules, HOA prevalence, short-term rental treatment, and tax notes for that state.`,
     },
   ];
 }
