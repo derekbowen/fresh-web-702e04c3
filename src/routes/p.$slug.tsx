@@ -189,11 +189,19 @@ export const Route = createFileRoute("/p/$slug")({
       hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null);
     }
 
+    const pAny = p as unknown as {
+      og_title?: string | null;
+      og_description?: string | null;
+      canonical_override?: string | null;
+    };
     const meta = buildMeta({
       title,
       description,
       path,
       canonicalPath,
+      canonicalUrl: pAny.canonical_override?.trim() || undefined,
+      ogTitle: pAny.og_title?.trim() || undefined,
+      ogDescription: pAny.og_description?.trim() || undefined,
       image: p.cover_image_url || p.hero_image_url || undefined,
       type: isArticleType(p.template_type) || academyLang ? "article" : "website",
       hreflang,

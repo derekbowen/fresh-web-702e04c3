@@ -22,6 +22,12 @@ export interface SeoMetaInput {
   description: string;
   path: string; // starts with /
   canonicalPath?: string; // overrides `path` for canonical (e.g. strip query)
+  /** Absolute URL override for canonical (e.g. cross-domain). Wins over canonicalPath. */
+  canonicalUrl?: string;
+  /** Optional override for og:title and twitter:title. Falls back to `title`. */
+  ogTitle?: string;
+  /** Optional override for og:description and twitter:description. Falls back to `description`. */
+  ogDescription?: string;
   image?: string | null;
   type?: "website" | "article" | "product";
   noindex?: boolean;
@@ -40,6 +46,9 @@ export function buildMeta({
   description,
   path,
   canonicalPath,
+  canonicalUrl: canonicalUrlOverride,
+  ogTitle,
+  ogDescription,
   image,
   type = "website",
   noindex,
@@ -47,23 +56,25 @@ export function buildMeta({
   nextPath,
   hreflang,
 }: SeoMetaInput) {
-  const canonicalUrl = `${SITE_URL}${canonicalPath ?? path}`;
+  const canonicalUrl = canonicalUrlOverride ?? `${SITE_URL}${canonicalPath ?? path}`;
   // og:url and twitter URLs should reflect the canonical location, not the
   // (potentially legacy) request path. This keeps social shares deduplicated
   // when a page is reachable via multiple URLs that 301 to one canonical.
   const url = canonicalUrl;
   const resolvedImage = image === null ? null : image ?? DEFAULT_OG_IMAGE;
+  const ogTitleResolved = ogTitle || title;
+  const ogDescriptionResolved = ogDescription || description;
   const meta: Array<Record<string, string>> = [
     { title },
     { name: "description", content: description },
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
+    { property: "og:title", content: ogTitleResolved },
+    { property: "og:description", content: ogDescriptionResolved },
     { property: "og:type", content: type },
     { property: "og:url", content: url },
     { property: "og:site_name", content: SITE_NAME },
     { name: "twitter:card", content: resolvedImage ? "summary_large_image" : "summary" },
-    { name: "twitter:title", content: title },
-    { name: "twitter:description", content: description },
+    { name: "twitter:title", content: ogTitleResolved },
+    { name: "twitter:description", content: ogDescriptionResolved },
   ];
   if (resolvedImage) {
     meta.push({ property: "og:image", content: resolvedImage });

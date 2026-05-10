@@ -418,11 +418,20 @@ export type ContentPageFull = {
   title: string | null;
   seo_title: string | null;
   seo_description: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  focus_keyword: string | null;
+  canonical_override: string | null;
+  hero_image_url: string | null;
   body_markdown: string | null;
   template_type: string | null;
   status: string;
   updated_at: string;
+  created_at: string;
 };
+
+const PAGE_SELECT =
+  "id, url_path, slug, title, seo_title, seo_description, og_title, og_description, focus_keyword, canonical_override, hero_image_url, body_markdown, template_type, status, updated_at, created_at";
 
 export const getContentPage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -431,7 +440,7 @@ export const getContentPage = createServerFn({ method: "POST" })
     await assertAdmin((context as any).userId);
     const { data: row, error } = await (supabaseAdmin as any)
       .from("content_pages")
-      .select("id, url_path, slug, title, seo_title, seo_description, body_markdown, template_type, status, updated_at")
+      .select(PAGE_SELECT)
       .eq("id", data.id)
       .maybeSingle();
     if (error) return { ok: false, error: error.message };
@@ -447,6 +456,11 @@ export const updateContentPage = createServerFn({ method: "POST" })
       title: z.string().max(300).optional(),
       seo_title: z.string().max(200).optional(),
       seo_description: z.string().max(400).optional(),
+      og_title: z.string().max(200).optional().nullable(),
+      og_description: z.string().max(400).optional().nullable(),
+      focus_keyword: z.string().max(120).optional().nullable(),
+      canonical_override: z.string().max(500).optional().nullable(),
+      hero_image_url: z.string().max(2000).optional().nullable(),
       body_markdown: z.string().max(200000).optional(),
       status: z.enum(["draft", "pending", "published"]).optional(),
     }).parse(d),
@@ -455,6 +469,10 @@ export const updateContentPage = createServerFn({ method: "POST" })
     await assertAdmin((context as any).userId);
     const { id, ...rest } = data;
     const update: any = { ...rest, updated_at: new Date().toISOString() };
+    // Normalize empty strings to null for optional fields
+    for (const k of ["og_title", "og_description", "focus_keyword", "canonical_override", "hero_image_url"]) {
+      if (typeof update[k] === "string" && update[k].trim() === "") update[k] = null;
+    }
     if (update.status === "published") update.in_sitemap = true;
     const { error } = await (supabaseAdmin as any).from("content_pages").update(update).eq("id", id);
     if (error) return { ok: false, error: error.message };
@@ -519,4 +537,262 @@ Write the new section now.`;
       .eq("id", data.id);
     if (uErr) return { ok: false, error: uErr.message };
     return { ok: true, body_markdown: newBody, added };
+  });
+
+// ============================================================================
+// AI generate / improve / SEO meta / section presets — preview-then-save model
+// ============================================================================
+
+const BRAND_VOICE = `
+Brand voice rules (apply to ALL output):
+- Sentence case headings (no Title Case).
+- Second person ("you", "your pool").
+- No em dashes; use commas, periods, or restructure.
+- Banned words: leverage, utilize, seamlessly, robust, dive into, elevate, game-changer, unlock, journey, landscape, bustling, thriving, vibrant, state-of-the-art, cutting-edge.
+- Banned phrases: "in this article", "in conclusion", "it's worth noting", "thousands of hosts", "proven track record", "Pool Rental Near Me is the leading".
+- Numbers under 10 spelled out, 10+ as numerals.
+- Dollar amounts as $X/hour, not "$X per hour".
+- Real numbers only. Typical hourly rates $40-150/hr. Never invent statistics.
+- Differentiators (mention naturally where relevant): 10% flat host fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages indexed.
+- Internal links to use where relevant: /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works
+- List Your Pool CTA URL: /l/draft/00000000-0000-0000-0000-000000000000/new/details
+`.trim();
+
+async function callAi(opts: {
+  system: string;
+  user: string;
+  model?: string;
+  json?: boolean;
+}): Promise<{ ok: true; content: string } | { ok: false; error: string }> {
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
+  const body: any = {
+    model: opts.model ?? "google/gemini-2.5-pro",
+    messages: [
+      { role: "system", content: opts.system },
+      { role: "user", content: opts.user },
+    ],
+  };
+  if (opts.json) body.response_format = { type: "json_object" };
+  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (resp.status === 402) return { ok: false, error: "AI credits exhausted" };
+  if (resp.status === 429) return { ok: false, error: "Rate limited — try again shortly" };
+  if (!resp.ok) return { ok: false, error: `AI gateway ${resp.status}` };
+  const json = await resp.json();
+  const content = (json?.choices?.[0]?.message?.content || "").trim();
+  if (!content) return { ok: false, error: "AI returned empty content" };
+  return { ok: true, content };
+}
+
+async function loadPageForAi(id: string) {
+  const { data: page } = await (supabaseAdmin as any)
+    .from("content_pages")
+    .select("id, url_path, slug, title, seo_title, seo_description, focus_keyword, template_type, body_markdown")
+    .eq("id", id)
+    .maybeSingle();
+  return page as null | {
+    id: string;
+    url_path: string | null;
+    slug: string | null;
+    title: string | null;
+    seo_title: string | null;
+    seo_description: string | null;
+    focus_keyword: string | null;
+    template_type: string | null;
+    body_markdown: string | null;
+  };
+}
+
+function pageContext(p: NonNullable<Awaited<ReturnType<typeof loadPageForAi>>>): string {
+  return `Page URL: ${p.url_path ?? "(none)"}
+Slug: ${p.slug ?? "(none)"}
+Template: ${p.template_type ?? "(generic)"}
+H1 title: ${p.title ?? "(none)"}
+Current SEO title: ${p.seo_title ?? "(none)"}
+Current SEO description: ${p.seo_description ?? "(none)"}
+Focus keyword: ${p.focus_keyword ?? "(none)"}`;
+}
+
+// Generate a complete page body. Returns proposed markdown — does NOT save.
+export const generateFullPageContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true; body_markdown: string } | { ok: false; error: string }> => {
+    await assertAdmin((context as any).userId);
+    const p = await loadPageForAi(data.id);
+    if (!p) return { ok: false, error: "Page not found" };
+    const sys = `You write SEO + brand content for Pool Rental Near Me (PRNM).
+${BRAND_VOICE}
+Output ONLY Markdown body (no frontmatter, no preamble, no closing remark). Use ## and ### headings. 800-1200 words. Include 3-5 internal links from the allowed set. End with a short CTA paragraph linking to the List Your Pool URL or /s.`;
+    const user = `Write the FULL page body from scratch for this page.
+
+${pageContext(p)}
+
+Structure suggestions by template:
+- host_acq_city / host_advocacy_state: intro, why host here, local demand signals, regulations summary, earnings range, getting started CTA.
+- event_guide: intro, what to expect, planning checklist, local venue tips, FAQ, CTA.
+- resource: intro, problem, step-by-step, common mistakes, FAQ, CTA.
+- generic: intro, 3-5 H2 sections relevant to the title, FAQ, CTA.`;
+    const r = await callAi({ system: sys, user });
+    if (!r.ok) return r;
+    return { ok: true, body_markdown: r.content };
+  });
+
+// Improve existing body: tighten copy, fix banned words, expand thin sections.
+// Returns proposed markdown — does NOT save.
+export const improvePageContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true; body_markdown: string } | { ok: false; error: string }> => {
+    await assertAdmin((context as any).userId);
+    const p = await loadPageForAi(data.id);
+    if (!p) return { ok: false, error: "Page not found" };
+    if (!p.body_markdown || p.body_markdown.trim().length < 50) {
+      return { ok: false, error: "Body is too short to improve. Use Generate full page instead." };
+    }
+    const sys = `You are an editor improving an existing PRNM content page.
+${BRAND_VOICE}
+Tasks:
+1. Remove banned words and phrases. 2. Replace em dashes. 3. Tighten verbose sentences.
+4. Convert any Title Case headings to sentence case. 5. Ensure focus keyword (if given) appears in the H1 area, first paragraph, and at least one ## heading.
+6. Expand any section with fewer than 3 sentences. 7. Keep total length within 10% of original. 8. Preserve all existing internal links unless they are in the banned set.
+Output ONLY the rewritten Markdown body. No preamble, no commentary, no diff markers.`;
+    const user = `${pageContext(p)}
+
+Current body:
+---
+${p.body_markdown}
+---
+
+Rewrite it now.`;
+    const r = await callAi({ system: sys, user });
+    if (!r.ok) return r;
+    return { ok: true, body_markdown: r.content };
+  });
+
+// Generate SEO meta (title/description + OG) from current body. Does NOT save.
+export const generateSeoMeta = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<
+    | { ok: true; seo_title: string; seo_description: string; og_title: string; og_description: string }
+    | { ok: false; error: string }
+  > => {
+    await assertAdmin((context as any).userId);
+    const p = await loadPageForAi(data.id);
+    if (!p) return { ok: false, error: "Page not found" };
+    const sys = `You write SEO + social metadata for PRNM.
+${BRAND_VOICE}
+Return ONLY a JSON object with these exact keys: seo_title, seo_description, og_title, og_description.
+- seo_title: 50-60 chars, includes focus keyword if given.
+- seo_description: 140-155 chars, compelling click-through copy.
+- og_title: 40-60 chars, punchier social headline (can be different from seo_title).
+- og_description: 100-150 chars, social-share friendly.`;
+    const user = `${pageContext(p)}
+
+First 1500 chars of body:
+---
+${(p.body_markdown ?? "").slice(0, 1500)}
+---
+
+Return the JSON now.`;
+    const r = await callAi({ system: sys, user, json: true });
+    if (!r.ok) return r;
+    try {
+      const parsed = JSON.parse(r.content) as Record<string, unknown>;
+      const s = (k: string) => (typeof parsed[k] === "string" ? (parsed[k] as string).trim() : "");
+      const seo_title = s("seo_title");
+      const seo_description = s("seo_description");
+      const og_title = s("og_title") || seo_title;
+      const og_description = s("og_description") || seo_description;
+      if (!seo_title || !seo_description) return { ok: false, error: "AI returned incomplete metadata" };
+      return { ok: true, seo_title, seo_description, og_title, og_description };
+    } catch {
+      return { ok: false, error: "AI returned invalid JSON" };
+    }
+  });
+
+// Quick-add section presets. Returns proposed markdown block — does NOT save.
+export const SECTION_PRESETS = [
+  { key: "faq", label: "FAQ (5 questions)", prompt: "Write a 5-question FAQ section. Use ## FAQ as the heading and **bold** for each question. Tailor questions to this page's topic." },
+  { key: "pricing_table", label: "Pricing table", prompt: "Add a pricing comparison section. Use a Markdown table with columns: Pool size, Typical hourly rate, Best for. Use realistic PRNM ranges ($40-150/hr)." },
+  { key: "what_to_expect", label: "What to expect checklist", prompt: 'Add a "What to expect" section with a checklist of 6-8 items using `- [ ]` Markdown task list syntax, tailored to this page topic.' },
+  { key: "landmarks", label: "Local landmarks (city pages)", prompt: "Add a 'Things to do nearby' section listing 5-7 well-known local landmarks, parks, or attractions for this city. Each as a bullet with a one-sentence note on why pool guests would care." },
+  { key: "insurance", label: "Insurance & liability", prompt: "Add an 'Insurance and liability' section explaining PRNM's $2M liability coverage, what it covers, what it doesn't, and how it compares to Swimply." },
+  { key: "host_tips", label: "Host tips & safety", prompt: "Add a 'Host tips and safety' section with 5 actionable tips a new pool host should follow before their first booking. Use a numbered list." },
+  { key: "comparison", label: "PRNM vs Swimply", prompt: "Add a comparison section using a Markdown table with rows: Host fee, Liability insurance, Payout speed, Support, Listing approval time. Be factual and PRNM-favorable." },
+  { key: "internal_links", label: "Related cities (auto)", prompt: "__INTERNAL_LINKS__" },
+  { key: "testimonials", label: "Testimonials block", prompt: "Add a 'What hosts are saying' section with 3 short testimonial-style quotes (placeholder names like 'Sarah, host in [generic city]'). Mark clearly that they are placeholders so the admin can replace them." },
+] as const;
+
+export type SectionPresetKey = (typeof SECTION_PRESETS)[number]["key"];
+
+async function buildInternalLinksMarkdown(slug: string | null): Promise<string> {
+  if (!slug) return "";
+  // Try nearby cities first if this slug matches a city page
+  try {
+    const { data: nearby } = await (supabaseAdmin as any)
+      .rpc("nearby_cities_by_distance", { _slug: slug, _limit: 6 });
+    const list = (nearby ?? []) as Array<{ out_slug: string; out_name: string; out_state_code: string }>;
+    if (list.length >= 3) {
+      const items = list.map((c) => `- [Pool rentals in ${c.out_name}, ${c.out_state_code}](/p/${c.out_slug})`).join("\n");
+      return `## Nearby cities to explore\n\n${items}\n`;
+    }
+  } catch { /* fall through */ }
+  // Fallback: random recent published pages
+  const { data: rows } = await (supabaseAdmin as any)
+    .from("content_pages")
+    .select("slug, title, url_path")
+    .eq("status", "published")
+    .like("url_path", "/p/%")
+    .neq("slug", slug)
+    .order("updated_at", { ascending: false })
+    .limit(6);
+  const list = (rows ?? []) as Array<{ slug: string; title: string | null; url_path: string }>;
+  if (!list.length) return "";
+  const items = list.map((r) => `- [${r.title ?? r.slug}](${r.url_path})`).join("\n");
+  return `## Related guides\n\n${items}\n`;
+}
+
+export const generateSectionPreset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      preset_key: z.string().min(1).max(50),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }): Promise<{ ok: true; markdown: string } | { ok: false; error: string }> => {
+    await assertAdmin((context as any).userId);
+    const preset = SECTION_PRESETS.find((p) => p.key === data.preset_key);
+    if (!preset) return { ok: false, error: "Unknown preset" };
+    const p = await loadPageForAi(data.id);
+    if (!p) return { ok: false, error: "Page not found" };
+
+    // Special case: internal_links is purely deterministic, no AI call needed.
+    if (preset.prompt === "__INTERNAL_LINKS__") {
+      const md = await buildInternalLinksMarkdown(p.slug);
+      if (!md) return { ok: false, error: "No related pages found to link to" };
+      return { ok: true, markdown: md };
+    }
+
+    const sys = `You add a single new section to an existing PRNM page.
+${BRAND_VOICE}
+Output ONLY the Markdown for the new section. Start with a ## heading. 150-450 words. No preamble, no commentary, no closing remark.`;
+    const user = `${pageContext(p)}
+
+Existing body excerpt (first 1500 chars):
+---
+${(p.body_markdown ?? "").slice(0, 1500)}
+---
+
+Section to write:
+${preset.prompt}`;
+    const r = await callAi({ system: sys, user });
+    if (!r.ok) return r;
+    return { ok: true, markdown: r.content };
   });

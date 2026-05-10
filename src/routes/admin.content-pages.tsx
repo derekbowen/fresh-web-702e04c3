@@ -9,6 +9,11 @@ import {
   getContentPage,
   updateContentPage,
   appendAiContentToPage,
+  generateFullPageContent,
+  improvePageContent,
+  generateSeoMeta,
+  generateSectionPreset,
+  SECTION_PRESETS,
   type ContentPageRow,
   type ContentPageFull,
 } from "@/server/admin-tools.functions";
@@ -154,11 +159,17 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
   const [page, setPage] = React.useState<ContentPageFull | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
-  const [aiBusy, setAiBusy] = React.useState(false);
+  const [aiBusy, setAiBusy] = React.useState<string | null>(null);
   const [aiPrompt, setAiPrompt] = React.useState("");
   const [aiAppend, setAiAppend] = React.useState(true);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [err, setErr] = React.useState<string | null>(null);
+  const [preview, setPreview] = React.useState<
+    | null
+    | { kind: "body"; markdown: string; label: string }
+    | { kind: "meta"; seo_title: string; seo_description: string; og_title: string; og_description: string }
+    | { kind: "section"; markdown: string; label: string }
+  >(null);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -184,6 +195,11 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
           title: page.title ?? undefined,
           seo_title: page.seo_title ?? undefined,
           seo_description: page.seo_description ?? undefined,
+          og_title: page.og_title ?? null,
+          og_description: page.og_description ?? null,
+          focus_keyword: page.focus_keyword ?? null,
+          canonical_override: page.canonical_override ?? null,
+          hero_image_url: page.hero_image_url ?? null,
           body_markdown: page.body_markdown ?? undefined,
           status: page.status as any,
         },
@@ -193,25 +209,105 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
     } finally { setSaving(false); }
   }
 
-  async function runAi() {
-    if (!page || !aiPrompt.trim()) return;
-    setAiBusy(true); setMsg(null); setErr(null);
+  async function runSection(presetKeyOrPrompt: { presetKey: string } | { prompt: string }) {
+    if (!page) return;
+    setAiBusy("section"); setMsg(null); setErr(null); setPreview(null);
     try {
-      const r = await appendAiContentToPage({ data: { id: page.id, prompt: aiPrompt.trim(), append: aiAppend } });
-      if (r.ok) {
-        setPage({ ...page, body_markdown: r.body_markdown });
-        setAiPrompt("");
-        setMsg(aiAppend ? "Section appended and saved." : "Body replaced and saved.");
-        onSaved();
+      if ("presetKey" in presetKeyOrPrompt) {
+        const r = await generateSectionPreset({ data: { id: page.id, preset_key: presetKeyOrPrompt.presetKey } });
+        if (r.ok) {
+          const label = SECTION_PRESETS.find((p) => p.key === presetKeyOrPrompt.presetKey)?.label ?? "Section";
+          setPreview({ kind: "section", markdown: r.markdown, label });
+        } else setErr(r.error);
       } else {
-        setErr(r.error || "AI failed");
+        const r = await appendAiContentToPage({ data: { id: page.id, prompt: presetKeyOrPrompt.prompt, append: aiAppend } });
+        if (r.ok) {
+          setPage({ ...page, body_markdown: r.body_markdown });
+          setAiPrompt("");
+          setMsg(aiAppend ? "Section appended and saved." : "Body replaced and saved.");
+          onSaved();
+        } else setErr(r.error);
       }
-    } finally { setAiBusy(false); }
+    } finally { setAiBusy(null); }
+  }
+
+  async function runFullPage() {
+    if (!page) return;
+    setAiBusy("full"); setMsg(null); setErr(null); setPreview(null);
+    try {
+      const r = await generateFullPageContent({ data: { id: page.id } });
+      if (r.ok) setPreview({ kind: "body", markdown: r.body_markdown, label: "Generated full page" });
+      else setErr(r.error);
+    } finally { setAiBusy(null); }
+  }
+
+  async function runImprove() {
+    if (!page) return;
+    setAiBusy("improve"); setMsg(null); setErr(null); setPreview(null);
+    try {
+      const r = await improvePageContent({ data: { id: page.id } });
+      if (r.ok) setPreview({ kind: "body", markdown: r.body_markdown, label: "Improved page" });
+      else setErr(r.error);
+    } finally { setAiBusy(null); }
+  }
+
+  async function runMeta() {
+    if (!page) return;
+    setAiBusy("meta"); setMsg(null); setErr(null); setPreview(null);
+    try {
+      const r = await generateSeoMeta({ data: { id: page.id } });
+      if (r.ok) setPreview({ kind: "meta", seo_title: r.seo_title, seo_description: r.seo_description, og_title: r.og_title, og_description: r.og_description });
+      else setErr(r.error);
+    } finally { setAiBusy(null); }
+  }
+
+  function acceptPreview() {
+    if (!page || !preview) return;
+    if (preview.kind === "body") {
+      setPage({ ...page, body_markdown: preview.markdown });
+    } else if (preview.kind === "section") {
+      const next = aiAppend
+        ? `${(page.body_markdown ?? "").trimEnd()}\n\n${preview.markdown}\n`
+        : preview.markdown;
+      setPage({ ...page, body_markdown: next });
+    } else if (preview.kind === "meta") {
+      setPage({
+        ...page,
+        seo_title: preview.seo_title,
+        seo_description: preview.seo_description,
+        og_title: preview.og_title,
+        og_description: preview.og_description,
+      });
+    }
+    setPreview(null);
+    setMsg("Applied. Don't forget to click Save changes.");
+  }
+
+  // ── SEO score calculations ───────────────────────────────────────────────
+  const score = React.useMemo(() => {
+    if (!page) return null;
+    const body = page.body_markdown ?? "";
+    const wordCount = body.split(/\s+/).filter(Boolean).length;
+    const titleLen = (page.seo_title ?? "").length;
+    const descLen = (page.seo_description ?? "").length;
+    const fk = (page.focus_keyword ?? "").trim().toLowerCase();
+    const hasH1 = !!(page.title && page.title.trim());
+    const internalLinks = (body.match(/\]\(\/[^)]+\)/g) ?? []).length;
+    const fkInTitle = !!fk && (page.seo_title ?? "").toLowerCase().includes(fk);
+    const fkInDesc = !!fk && (page.seo_description ?? "").toLowerCase().includes(fk);
+    const fkInBody = !!fk && body.slice(0, 800).toLowerCase().includes(fk);
+    return { wordCount, titleLen, descLen, fk, hasH1, internalLinks, fkInTitle, fkInDesc, fkInBody };
+  }, [page]);
+
+  function ScoreRow({ ok, warn, label }: { ok: boolean; warn?: boolean; label: string }) {
+    const cls = ok ? "text-green-600" : warn ? "text-amber-600" : "text-red-600";
+    const icon = ok ? "✓" : warn ? "⚠" : "✗";
+    return <div className={`flex items-start gap-1.5 text-xs ${cls}`}><span className="font-bold">{icon}</span><span>{label}</span></div>;
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
-      <div className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-xl" onClick={(e) => e.stopPropagation()}>
+      <div className="flex max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
           <div>
             <h2 className="text-lg font-semibold">Edit page</h2>
@@ -231,63 +327,201 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
           {msg && <div className="mb-3 rounded border border-green-500/40 bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-300">{msg}</div>}
 
           {page && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <label className="text-sm">
-                  <span className="mb-1 block font-medium">Title (H1)</span>
-                  <input value={page.title || ""} onChange={(e) => setPage({ ...page, title: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
-                </label>
-                <label className="text-sm">
-                  <span className="mb-1 block font-medium">Status</span>
-                  <select value={page.status} onChange={(e) => setPage({ ...page, status: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm">
-                    <option value="draft">draft</option>
-                    <option value="pending">pending</option>
-                    <option value="published">published</option>
-                  </select>
-                </label>
-                <label className="text-sm">
-                  <span className="mb-1 block font-medium">SEO title <span className="text-xs text-muted-foreground">(≤60)</span></span>
-                  <input value={page.seo_title || ""} onChange={(e) => setPage({ ...page, seo_title: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
-                </label>
-                <label className="text-sm">
-                  <span className="mb-1 block font-medium">SEO description <span className="text-xs text-muted-foreground">(≤155)</span></span>
-                  <input value={page.seo_description || ""} onChange={(e) => setPage({ ...page, seo_description: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
-                </label>
-              </div>
-
-              <div className="rounded-lg border border-primary/40 bg-primary/5 p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium">Add a section with AI</span>
-                  <label className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <input type="checkbox" checked={aiAppend} onChange={(e) => setAiAppend(e.target.checked)} />
-                    Append (uncheck to replace body)
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_240px]">
+              {/* LEFT — fields */}
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">Title (H1)</span>
+                    <input value={page.title || ""} onChange={(e) => setPage({ ...page, title: e.target.value })}
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">Status</span>
+                    <select value={page.status} onChange={(e) => setPage({ ...page, status: e.target.value })}
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm">
+                      <option value="draft">draft</option>
+                      <option value="pending">pending</option>
+                      <option value="published">published</option>
+                    </select>
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">SEO title <span className="text-xs text-muted-foreground">(50–60)</span></span>
+                    <input value={page.seo_title || ""} onChange={(e) => setPage({ ...page, seo_title: e.target.value })}
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">SEO description <span className="text-xs text-muted-foreground">(140–155)</span></span>
+                    <input value={page.seo_description || ""} onChange={(e) => setPage({ ...page, seo_description: e.target.value })}
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">OG title <span className="text-xs text-muted-foreground">(social share)</span></span>
+                    <input value={page.og_title || ""} onChange={(e) => setPage({ ...page, og_title: e.target.value })}
+                      placeholder="Falls back to SEO title"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">OG description <span className="text-xs text-muted-foreground">(social share)</span></span>
+                    <input value={page.og_description || ""} onChange={(e) => setPage({ ...page, og_description: e.target.value })}
+                      placeholder="Falls back to SEO description"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">Hero / OG image URL</span>
+                    <input value={page.hero_image_url || ""} onChange={(e) => setPage({ ...page, hero_image_url: e.target.value })}
+                      placeholder="https://…/image.jpg"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">Focus keyword</span>
+                    <input value={page.focus_keyword || ""} onChange={(e) => setPage({ ...page, focus_keyword: e.target.value })}
+                      placeholder="e.g. pool rental Los Angeles"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+                  </label>
+                  <label className="text-sm md:col-span-2">
+                    <span className="mb-1 block font-medium">Canonical URL override <span className="text-xs text-muted-foreground">(rare)</span></span>
+                    <input value={page.canonical_override || ""} onChange={(e) => setPage({ ...page, canonical_override: e.target.value })}
+                      placeholder="Leave empty unless this page should canonical to a different URL"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
                   </label>
                 </div>
-                <textarea value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder="e.g. Add an FAQ section with 5 common questions about pool rental insurance in this city."
-                  rows={3}
-                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
-                <div className="mt-2 flex justify-end">
-                  <button disabled={aiBusy || !aiPrompt.trim()} onClick={runAi}
-                    className="rounded bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
-                    {aiBusy ? "Generating…" : "Generate & save"}
-                  </button>
+
+                {/* AI tools */}
+                <div className="rounded-lg border border-primary/40 bg-primary/5 p-3">
+                  <div className="mb-2 text-sm font-semibold">AI tools</div>
+                  <div className="flex flex-wrap gap-2">
+                    <button disabled={!!aiBusy} onClick={runFullPage}
+                      className="rounded bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+                      {aiBusy === "full" ? "Generating…" : "✨ Generate full page"}
+                    </button>
+                    <button disabled={!!aiBusy} onClick={runImprove}
+                      className="rounded border border-primary px-3 py-1.5 text-xs font-semibold text-primary disabled:opacity-50">
+                      {aiBusy === "improve" ? "Improving…" : "🪄 Improve this page"}
+                    </button>
+                    <button disabled={!!aiBusy} onClick={runMeta}
+                      className="rounded border border-primary px-3 py-1.5 text-xs font-semibold text-primary disabled:opacity-50">
+                      {aiBusy === "meta" ? "Generating…" : "🏷️ Generate SEO meta"}
+                    </button>
+                  </div>
+                  <p className="mt-2 text-[11px] text-muted-foreground">Each shows a preview before changing your page. Click Save changes to persist.</p>
                 </div>
+
+                {/* Preview pane */}
+                {preview && (
+                  <div className="rounded-lg border border-amber-500/50 bg-amber-50 p-3 dark:bg-amber-950/30">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-semibold">
+                        Preview: {preview.kind === "meta" ? "SEO metadata" : preview.kind === "body" ? preview.label : `Section — ${preview.label}`}
+                      </span>
+                      <div className="flex gap-2">
+                        <button onClick={acceptPreview}
+                          className="rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white hover:bg-green-700">
+                          Accept
+                        </button>
+                        <button onClick={() => setPreview(null)}
+                          className="rounded border border-border px-3 py-1 text-xs hover:bg-muted">
+                          Reject
+                        </button>
+                      </div>
+                    </div>
+                    {preview.kind === "meta" ? (
+                      <div className="space-y-1.5 text-xs">
+                        <div><span className="font-semibold">SEO title:</span> {preview.seo_title}</div>
+                        <div><span className="font-semibold">SEO description:</span> {preview.seo_description}</div>
+                        <div><span className="font-semibold">OG title:</span> {preview.og_title}</div>
+                        <div><span className="font-semibold">OG description:</span> {preview.og_description}</div>
+                      </div>
+                    ) : (
+                      <pre className="max-h-72 overflow-auto whitespace-pre-wrap rounded bg-background p-2 font-mono text-[11px]">{preview.markdown}</pre>
+                    )}
+                  </div>
+                )}
+
+                {/* Add a section — preset chips + custom */}
+                <div className="rounded-lg border border-border bg-card p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-medium">Add a section with AI</span>
+                    <label className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <input type="checkbox" checked={aiAppend} onChange={(e) => setAiAppend(e.target.checked)} />
+                      Append (uncheck to replace body)
+                    </label>
+                  </div>
+                  <div className="mb-3 flex flex-wrap gap-1.5">
+                    {SECTION_PRESETS.map((p) => (
+                      <button key={p.key} disabled={!!aiBusy}
+                        onClick={() => runSection({ presetKey: p.key })}
+                        className="rounded-full border border-border bg-background px-3 py-1 text-xs hover:border-primary hover:bg-primary/10 disabled:opacity-50">
+                        + {p.label}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder="Or write a custom prompt. e.g. Add an FAQ about pool rental insurance in this city."
+                    rows={3}
+                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+                  <div className="mt-2 flex justify-end">
+                    <button disabled={!!aiBusy || !aiPrompt.trim()} onClick={() => runSection({ prompt: aiPrompt.trim() })}
+                      className="rounded bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+                      {aiBusy === "section" ? "Generating…" : "Generate & save"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <label className="block text-sm">
+                  <span className="mb-1 flex items-center justify-between font-medium">
+                    <span>Body (Markdown)</span>
+                    <span className="text-xs text-muted-foreground">{(page.body_markdown || "").split(/\s+/).filter(Boolean).length} words</span>
+                  </span>
+                  <textarea value={page.body_markdown || ""} onChange={(e) => setPage({ ...page, body_markdown: e.target.value })}
+                    rows={20}
+                    className="w-full rounded-md border border-border bg-background px-3 py-2 font-mono text-xs" />
+                  <span className="mt-1 block text-[11px] text-muted-foreground">
+                    Markdown is required so headings and lists render correctly. Use <code>##</code> for H2, <code>**bold**</code>, <code>- item</code> for bullets, <code>[text](/p/slug)</code> for links.
+                  </span>
+                </label>
               </div>
 
-              <label className="block text-sm">
-                <span className="mb-1 flex items-center justify-between font-medium">
-                  <span>Body (Markdown)</span>
-                  <span className="text-xs text-muted-foreground">{(page.body_markdown || "").split(/\s+/).filter(Boolean).length} words</span>
-                </span>
-                <textarea value={page.body_markdown || ""} onChange={(e) => setPage({ ...page, body_markdown: e.target.value })}
-                  rows={20}
-                  className="w-full rounded-md border border-border bg-background px-3 py-2 font-mono text-xs" />
-              </label>
+              {/* RIGHT — SEO score panel */}
+              <aside className="hidden lg:block">
+                <div className="sticky top-0 space-y-3">
+                  <div className="rounded-lg border border-border bg-card p-3">
+                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">SEO score</div>
+                    {score && (
+                      <div className="space-y-1.5">
+                        <ScoreRow ok={score.titleLen >= 50 && score.titleLen <= 60}
+                          warn={score.titleLen >= 40 && score.titleLen < 50}
+                          label={`Title length: ${score.titleLen}/60`} />
+                        <ScoreRow ok={score.descLen >= 140 && score.descLen <= 155}
+                          warn={score.descLen >= 120 && score.descLen < 140}
+                          label={`Description: ${score.descLen}/155`} />
+                        <ScoreRow ok={score.hasH1} label="H1 present" />
+                        <ScoreRow ok={score.wordCount >= 800}
+                          warn={score.wordCount >= 400 && score.wordCount < 800}
+                          label={`Word count: ${score.wordCount}`} />
+                        <ScoreRow ok={score.internalLinks >= 3}
+                          warn={score.internalLinks >= 1 && score.internalLinks < 3}
+                          label={`Internal links: ${score.internalLinks}`} />
+                        {score.fk ? (
+                          <>
+                            <ScoreRow ok={score.fkInTitle} label="Keyword in SEO title" />
+                            <ScoreRow ok={score.fkInDesc} label="Keyword in description" />
+                            <ScoreRow ok={score.fkInBody} label="Keyword in first 800 chars" />
+                          </>
+                        ) : (
+                          <ScoreRow ok={false} warn label="No focus keyword set" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
+                    <div>Last edited: {new Date(page.updated_at).toLocaleDateString()}</div>
+                    <div>Created: {new Date(page.created_at).toLocaleDateString()}</div>
+                    <div className="mt-2 break-all font-mono text-[10px]">{page.url_path}</div>
+                  </div>
+                </div>
+              </aside>
             </div>
           )}
         </div>
