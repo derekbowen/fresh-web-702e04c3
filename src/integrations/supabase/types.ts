@@ -525,10 +525,12 @@ export type Database = {
       content_pages: {
         Row: {
           body_markdown: string | null
+          canonical_override: string | null
           category: string
           content: string | null
           created_at: string
           description: string | null
+          focus_keyword: string | null
           gsc_clicks: number | null
           gsc_impressions: number | null
           gsc_position: number | null
@@ -540,6 +542,8 @@ export type Database = {
           legacy_slugs: string[] | null
           locale: string
           migrated_at: string | null
+          og_description: string | null
+          og_title: string | null
           priority: number
           raw_html: string | null
           redirect_to: string | null
@@ -557,10 +561,12 @@ export type Database = {
         }
         Insert: {
           body_markdown?: string | null
+          canonical_override?: string | null
           category?: string
           content?: string | null
           created_at?: string
           description?: string | null
+          focus_keyword?: string | null
           gsc_clicks?: number | null
           gsc_impressions?: number | null
           gsc_position?: number | null
@@ -572,6 +578,8 @@ export type Database = {
           legacy_slugs?: string[] | null
           locale?: string
           migrated_at?: string | null
+          og_description?: string | null
+          og_title?: string | null
           priority?: number
           raw_html?: string | null
           redirect_to?: string | null
@@ -589,10 +597,12 @@ export type Database = {
         }
         Update: {
           body_markdown?: string | null
+          canonical_override?: string | null
           category?: string
           content?: string | null
           created_at?: string
           description?: string | null
+          focus_keyword?: string | null
           gsc_clicks?: number | null
           gsc_impressions?: number | null
           gsc_position?: number | null
@@ -604,6 +614,8 @@ export type Database = {
           legacy_slugs?: string[] | null
           locale?: string
           migrated_at?: string | null
+          og_description?: string | null
+          og_title?: string | null
           priority?: number
           raw_html?: string | null
           redirect_to?: string | null
