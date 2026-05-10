@@ -10,6 +10,7 @@
  */
 import type { ContentPage } from "@/server/content-pages.functions";
 import { cityForContentPage } from "@/server/nearby-cities.functions";
+import { findAdvocacyState } from "@/lib/advocacy-states";
 
 export interface FaqItem {
   question: string;
