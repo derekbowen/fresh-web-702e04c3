@@ -66,6 +66,30 @@ export const setIgLeadContacted = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const bulkSetIgLeadsContacted = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      ids: z.array(z.string().uuid()).min(1).max(500),
+      contacted: z.boolean(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const { error, count } = await sb()
+      .from("ig_leads")
+      .update(
+        {
+          contacted: data.contacted,
+          contacted_at: data.contacted ? new Date().toISOString() : null,
+        },
+        { count: "exact" },
+      )
+      .in("id", data.ids);
+    if (error) return { ok: false, updated: 0, error: error.message };
+    return { ok: true, updated: count ?? data.ids.length };
+  });
+
 export const updateIgLeadNotes = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), notes: z.string().max(2000) }).parse(d))

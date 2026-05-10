@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import {
   listIgLeads, runIgLeadHuntNow, setIgLeadContacted, updateIgLeadNotes, deleteIgLead,
+  bulkSetIgLeadsContacted,
   type IgLeadRow,
 } from "@/server/ig-lead-hunter.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Loader2, RefreshCw, ExternalLink, Trash2, Instagram, Search } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Trash2, Instagram, Search, CheckSquare, Square } from "lucide-react";
 
 export const Route = createFileRoute("/admin/ig-lead-hunter")({
   beforeLoad: async () => {
@@ -28,6 +29,8 @@ function IgLeadHunter() {
   const [running, setRunning] = React.useState(false);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [search, setSearch] = React.useState("");
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [bulking, setBulking] = React.useState(false);
 
   async function load() {
     setLoading(true);
@@ -81,6 +84,48 @@ function IgLeadHunter() {
     : rows;
 
   const totalNew = rows.filter((r) => !r.contacted).length;
+  const visibleIds = filtered.map((r) => r.id);
+  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
+  const someVisibleSelected = visibleIds.some((id) => selected.has(id));
+
+  function toggleSelect(id: string) {
+    setSelected((s) => {
+      const n = new Set(s);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  }
+  function toggleSelectAllVisible() {
+    setSelected((s) => {
+      const n = new Set(s);
+      if (allVisibleSelected) visibleIds.forEach((id) => n.delete(id));
+      else visibleIds.forEach((id) => n.add(id));
+      return n;
+    });
+  }
+  function clearSelection() { setSelected(new Set()); }
+
+  async function bulkMark(contacted: boolean) {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    setBulking(true); setMsg(null);
+    try {
+      const r: any = await bulkSetIgLeadsContacted({ data: { ids, contacted } });
+      if (r.ok) {
+        const nowIso = new Date().toISOString();
+        setRows((rs) => rs.map((x) => ids.includes(x.id)
+          ? { ...x, contacted, contacted_at: contacted ? nowIso : null }
+          : x));
+        setMsg(`Marked ${r.updated} lead${r.updated === 1 ? "" : "s"} as ${contacted ? "contacted" : "not contacted"}.`);
+        clearSelection();
+        if (filter !== "all") load();
+      } else {
+        setMsg(r.error || "Bulk update failed");
+      }
+    } finally {
+      setBulking(false);
+    }
+  }
 
   return (
     <AdminLayout>
@@ -140,18 +185,59 @@ function IgLeadHunter() {
             No leads {filter !== "all" ? `in "${filter}"` : ""}. Click <strong>Run hunt now</strong> to fetch fresh results from Google.
           </div>
         ) : (
-          <ul className="divide-y rounded-md border">
+          <>
+            <div className="flex flex-wrap items-center gap-3 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <button
+                onClick={toggleSelectAllVisible}
+                className="inline-flex items-center gap-2 hover:text-primary"
+                title={allVisibleSelected ? "Deselect all visible" : "Select all visible"}
+              >
+                {allVisibleSelected ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+                {allVisibleSelected ? "Deselect all" : "Select all"} ({filtered.length})
+              </button>
+              <span className="text-muted-foreground">{selected.size} selected</span>
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  onClick={() => bulkMark(true)}
+                  disabled={selected.size === 0 || bulking}
+                  className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                >
+                  {bulking ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckSquare className="h-4 w-4" />}
+                  Mark contacted
+                </button>
+                <button
+                  onClick={() => bulkMark(false)}
+                  disabled={selected.size === 0 || bulking}
+                  className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-50"
+                >
+                  Mark not contacted
+                </button>
+                {selected.size > 0 && (
+                  <button onClick={clearSelection} className="text-xs text-muted-foreground hover:underline">Clear</button>
+                )}
+              </div>
+            </div>
+            <ul className="divide-y rounded-md border">
             {filtered.map((row) => (
-              <li key={row.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:gap-4">
-                <label className="flex shrink-0 items-center gap-2 pt-1">
+              <li key={row.id} className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:gap-4 ${selected.has(row.id) ? "bg-primary/5" : ""}`}>
+                <div className="flex shrink-0 items-center gap-3 pt-1">
                   <input
                     type="checkbox"
-                    checked={row.contacted}
-                    onChange={() => toggle(row)}
+                    checked={selected.has(row.id)}
+                    onChange={() => toggleSelect(row.id)}
                     className="h-4 w-4 cursor-pointer accent-primary"
+                    title="Select for bulk action"
                   />
-                  <span className="text-xs text-muted-foreground sm:hidden">Contacted</span>
-                </label>
+                  <label className="flex items-center gap-1 text-xs text-muted-foreground" title="Contacted">
+                    <input
+                      type="checkbox"
+                      checked={row.contacted}
+                      onChange={() => toggle(row)}
+                      className="h-4 w-4 cursor-pointer accent-primary"
+                    />
+                    <span className="sm:hidden">Contacted</span>
+                  </label>
+                </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                     <a
@@ -213,6 +299,7 @@ function IgLeadHunter() {
               </li>
             ))}
           </ul>
+          </>
         )}
       </div>
     </AdminLayout>
