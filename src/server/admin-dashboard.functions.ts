@@ -7,8 +7,9 @@ export type DashboardStats = {
     total: number;
     published: number;
     pending: number;
-    needsContent: number; // published but body too short OR not published
+    needsContent: number;
     last24h: number;
+    publishedPerDay: Array<{ date: string; count: number }>; // last 7 days oldest→newest
   };
   byTemplate: Array<{ template_type: string | null; total: number; published: number }>;
   recentlyPublished: Array<{ url_path: string; title: string | null; updated_at: string; words: number }>;
@@ -16,12 +17,38 @@ export type DashboardStats = {
   courses: { total: number; published: number };
   helpArticles: { total: number; published: number };
   cities: { total: number; published: number };
-  providers: { total: number; published: number };
-  listings: { total: number; lastSync: string | null };
-  users: { profiles: number; admins: number };
+  providers: { total: number; published: number; pending: number };
+  listings: { total: number; lastSync: string | null; createdLast7d: number; createdToday: number };
+  users: {
+    profiles: number;
+    admins: number;
+    newProfilesToday: number;
+    newProfiles7d: number;
+    newProfiles30d: number;
+  };
   waitlist: { total: number; last7d: number };
-  leads: { total: number; new: number };
+  leads: {
+    total: number;
+    new: number;
+    oldestAgeHours: number | null; // oldest unactioned provider_lead
+    hostLeadsTotal: number;
+    hostLeadsLast7d: number;
+  };
+  claims: { pending: number; oldestAgeHours: number | null };
+  planRequests: { pending: number; oldestAgeHours: number | null };
   missing404s: { total: number; unresolved: number };
+  gsc: {
+    lastCapturedAt: string | null;
+    indexedPages: number;
+    clicks7d: number;
+    clicksPrior7d: number;
+    impressions7d: number;
+    impressionsPrior7d: number;
+    avgPosition7d: number | null;
+    avgPositionPrior7d: number | null;
+    winners: Array<{ url_path: string; clicks: number; delta: number }>;
+    losers: Array<{ url_path: string; clicks: number; delta: number }>;
+  };
   quality: {
     siteIssues: {
       missing_meta_published: number;
