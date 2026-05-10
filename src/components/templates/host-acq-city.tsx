@@ -8,6 +8,7 @@ import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
 import { RelatedPages } from "@/components/related-pages";
 import { EarningsCalculator } from "@/components/earnings-calculator";
+import { HostLeadPopup } from "@/components/host-lead-popup";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -474,6 +475,8 @@ export function HostAcqCityTemplate({
           </a>
         </div>
       </div>
+
+      <HostLeadPopup cityName={cityName} stateCode={stateCode} />
 
       <SiteFooter />
     </div>
