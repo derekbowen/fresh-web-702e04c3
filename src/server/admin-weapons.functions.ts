@@ -129,17 +129,22 @@ export const runCompetitorScan = createServerFn({ method: "POST" })
         const existingSet = new Set(((existing || []) as { url: string }[]).map((r) => r.url));
 
         const newOnes = unique.filter((u) => !existingSet.has(u));
-        const allRows = unique.map((url) => ({
-          site_id: site.id,
-          url,
-          first_seen_at: existingSet.has(url) ? undefined : now,
-          last_seen_at: now,
-        })).filter((r) => r.first_seen_at !== undefined ? true : true);
 
-        // Upsert (set last_seen_at) + insert new
+        // Upsert (set last_seen_at) + insert new with quick classification
         if (newOnes.length) {
           await sb().from("competitor_urls").insert(
-            newOnes.map((url) => ({ site_id: site.id, url, first_seen_at: now, last_seen_at: now })),
+            newOnes.map((url) => {
+              const c = quickClassifyUrl(url);
+              return {
+                site_id: site.id,
+                url,
+                first_seen_at: now,
+                last_seen_at: now,
+                kind: c.kind,
+                city_slug: c.city_slug,
+                state_code: c.state_code,
+              };
+            }),
           );
         }
         // Touch last_seen_at for existing ones we still saw
