@@ -2592,6 +2592,66 @@ export type Database = {
         }
         Relationships: []
       }
+      social_leads: {
+        Row: {
+          contacted: boolean
+          contacted_at: string | null
+          created_at: string
+          display_name: string | null
+          first_seen_at: string
+          handle: string | null
+          id: string
+          last_seen_at: string
+          location_hint: string | null
+          notes: string | null
+          profile_url: string | null
+          query: string | null
+          snippet: string | null
+          source: string
+          source_url: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          contacted?: boolean
+          contacted_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          first_seen_at?: string
+          handle?: string | null
+          id?: string
+          last_seen_at?: string
+          location_hint?: string | null
+          notes?: string | null
+          profile_url?: string | null
+          query?: string | null
+          snippet?: string | null
+          source: string
+          source_url: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contacted?: boolean
+          contacted_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          first_seen_at?: string
+          handle?: string | null
+          id?: string
+          last_seen_at?: string
+          location_hint?: string | null
+          notes?: string | null
+          profile_url?: string | null
+          query?: string | null
+          snippet?: string | null
+          source?: string
+          source_url?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       state_pool_regulations: {
         Row: {
           authority_name: string | null
