@@ -28,7 +28,7 @@ type GeneratedPage = {
 
 // Bump this whenever validator rules change. Paused rows older than the
 // current version are eligible for auto-resume on operator action.
-const VALIDATOR_VERSION = "v2-faq8-2026-05-09";
+const VALIDATOR_VERSION = "v3-citations-2026-05-10";
 const MAX_ATTEMPTS_BEFORE_PAUSE = 3;
 
 type PlanRow = {
@@ -205,9 +205,98 @@ ESTRUCTURA OBLIGATORIA:
 
 Devuelve SOLO el cuerpo final en markdown para esta página. No uses JSON. No uses bloques de código.`;
 
+const SYSTEM_HOST_ACQ_CITY = `You are Derek Bowen, founder of Pool Rental Near Me, writing a 2,500-3,500-word host-acquisition page for ONE specific U.S. city. The reader owns a backyard pool in that city and is deciding whether to list it. EEAT, citations and city specificity are non-negotiable.
+
+ABSOLUTE LOCAL RULE: If a sentence still makes sense after swapping the city name, REWRITE it. Every paragraph names a real neighborhood, real ordinance §, real climate stat, real local price.
+
+CITATIONS — HARDEST RULE:
+- You will be given a numbered SOURCES DOSSIER. Use ONLY those URLs.
+- Every claim about climate, ordinances, fence/pool law, HOA/STR rules, population, or income MUST end with an inline citation in the form ([Source N](URL)) where URL is copied verbatim from the dossier.
+- Minimum 4 distinct inline citations across at least 2 different source buckets.
+- Add a final \`## Sources\` H2 with a markdown bullet list of EVERY dossier source: \`- [Title](URL) — Publisher\`.
+- Do NOT cite or link any URL that is not in the dossier. Do NOT invent .gov pages, NOAA station IDs, or §-numbers.
+
+BRAND DIFFERENTIATORS (weave in naturally — never stack): 10% flat host fee vs Swimply 15%+, $2M liability per booking, 24-hour payouts, full host control.
+
+MANDATORY STRUCTURE:
+
+# {H1}
+
+## Why {city} is a strong hourly-rental market (200-300 words; cite NOAA + demand sources)
+
+## What {city} hosts actually earn (300-400 words; real local hourly range $40-150/hr; one mini-table; cite demand source)
+
+## Local rules every {city} pool host should know (400-500 words; cite ordinance + HOA/STR sources; cover fencing, noise, STR registration)
+
+## How Pool Rental Near Me protects you in {city} (250-350 words; $2M coverage, host approval, payouts)
+
+## Best {city} neighborhoods for hourly pool rentals (250-350 words; 5-7 REAL named neighborhoods)
+
+## What it takes to get your first booking in {city} (300-400 words; numbered 5-step process)
+
+## Frequently Asked Questions (8-12 \`### Q:\` items, each answer 3+ sentences, each at least one fact tied to {city})
+
+## Sources
+
+(Bulleted dossier list — every URL exactly as provided.)
+
+Return ONLY the final markdown body. No JSON. No code fences.`;
+
 function isEventSource(row: PlanRow): boolean {
   return row.source_type === "event_guide" || row.source_type === "event-city";
 }
+
+type CitySource = {
+  id: string;
+  bucket: string;
+  title: string;
+  url: string;
+  publisher: string;
+  key_fact: string;
+};
+
+const US_STATE_CODES = new Set([
+  "al","ak","az","ar","ca","co","ct","de","fl","ga","hi","id","il","in","ia",
+  "ks","ky","la","me","md","ma","mi","mn","ms","mo","mt","ne","nv","nh","nj",
+  "nm","ny","nc","nd","oh","ok","or","pa","ri","sc","sd","tn","tx","ut","vt",
+  "va","wa","wv","wi","wy","dc",
+]);
+
+/** Map a content_plan slug -> the cities.slug to look up for sources. */
+function citySlugForPlan(row: PlanRow): string | null {
+  if (!row.slug) return null;
+  for (const p of ["become-a-swimming-pool-host-", "become-a-pool-host-"]) {
+    if (row.slug.startsWith(p)) {
+      const rest = row.slug.slice(p.length); // e.g. "boise-id"
+      const m = rest.match(/^(.+)-([a-z]{2})$/);
+      if (m && US_STATE_CODES.has(m[2])) return m[1]; // try base "boise"
+      return rest;
+    }
+  }
+  return null;
+}
+
+async function fetchCitySources(
+  supabase: ReturnType<typeof createClient>,
+  citySlug: string,
+): Promise<CitySource[]> {
+  const { data } = await supabase
+    .from("city_sources")
+    .select("id, bucket, title, url, publisher, key_fact")
+    .eq("city_slug", citySlug)
+    .order("bucket", { ascending: true });
+  return (data ?? []) as CitySource[];
+}
+
+function dossierBlock(sources: CitySource[]): string {
+  if (sources.length === 0) return "";
+  const lines = sources.map(
+    (s, i) =>
+      `${i + 1}. [${s.bucket}] ${s.publisher} — ${s.title} — KEY FACT: ${s.key_fact} — URL: ${s.url}`,
+  );
+  return `\n\nSOURCES DOSSIER (cite ONLY these URLs, all of them must appear in your final ## Sources section):\n${lines.join("\n")}\n`;
+}
+
 
 /**
  * Per-source content budget (target words + required FAQ count).
@@ -284,13 +373,14 @@ function tierAliases(tier: string): string[] {
   return tier ? [tier] : [];
 }
 
-function pickSystem(row: PlanRow): string {
+function pickSystem(row: PlanRow, sources: CitySource[]): string {
   if (isEventSource(row)) return SYSTEM_EVENT_GUIDE;
   if (row.source_type === "hosting_es") return SYSTEM_HOSTING_ES;
+  if (row.source_type === "city" && sources.length > 0) return SYSTEM_HOST_ACQ_CITY;
   return SYSTEM_VA;
 }
 
-function buildPrompt(row: PlanRow) {
+function buildPrompt(row: PlanRow, sources: CitySource[] = []) {
   const links = (row.internal_links ?? "")
     .split(/\n|,/)
     .map((s) => s.trim())
@@ -312,10 +402,10 @@ ${row.population_2024 ? `population: ${row.population_2024.toLocaleString()}` : 
 ${row.warm_climate === true ? "climate: warm/long swim season" : row.warm_climate === false ? "climate: short/seasonal swim window" : ""}
 ${row.search_intent ? `search_intent: ${row.search_intent}` : ""}
 ${row.notes ? `notes: ${row.notes}` : ""}
-
+${dossierBlock(sources)}
 Return only the final markdown body for plan_slug ${row.slug}. Start with the exact H1. Do not wrap the answer in JSON or code fences.`;
 
-  return { system: pickSystem(row), user };
+  return { system: pickSystem(row, sources), user };
 }
 
 function parseInput(value: unknown): Required<Input> {
@@ -401,8 +491,9 @@ async function generateOne(
   model: string,
   apiKey: string,
   maxTokens?: number,
+  sources: CitySource[] = [],
 ): Promise<GeneratedPage | null> {
-  const { system, user } = buildPrompt(plan);
+  const { system, user } = buildPrompt(plan, sources);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 115_000);
   try {
@@ -456,17 +547,34 @@ async function processGeneration(
 ) {
   const errors: string[] = [];
 
+  // Pre-fetch citation dossiers for all city pages in this batch.
+  const sourcesBySlug = new Map<string, CitySource[]>();
+  await Promise.all(
+    planRows.map(async (row) => {
+      if (row.source_type !== "city") return;
+      const cs = citySlugForPlan(row);
+      if (!cs) return;
+      try {
+        const list = await fetchCitySources(supabase, cs);
+        if (list.length > 0) sourcesBySlug.set(row.slug, list);
+      } catch (e) {
+        console.warn(`[generate-content-batch:${row.slug}] dossier fetch failed: ${errorMessage(e)}`);
+      }
+    }),
+  );
+
   const generated = (
     await Promise.all(
       planRows.map((row) => {
         // Token-budget gate: estimate output length and auto-promote model if needed.
         const pick = pickModelForBudget(row, model);
+        const sources = sourcesBySlug.get(row.slug) ?? [];
         if (pick.switched) {
           console.log(`[generate-content-batch:${row.slug}] model auto-switch — ${pick.reason}`);
         } else {
-          console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok)`);
+          console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok, ${sources.length} sources)`);
         }
-        return generateOne(row, pick.model, apiKey, pick.maxTokens);
+        return generateOne(row, pick.model, apiKey, pick.maxTokens, sources);
       }),
     )
   ).filter((page): page is GeneratedPage => Boolean(page));
@@ -538,6 +646,29 @@ async function processGeneration(
       errors.push(`${plan.slug}: missing ${missingSections.join(", ")}`);
       continue;
     }
+
+    // Citation validator for host_acq_city pages with a dossier.
+    const dossier = sourcesBySlug.get(plan.slug) ?? [];
+    if (plan.source_type === "city" && dossier.length > 0) {
+      const dossierUrls = new Set(dossier.map((s) => s.url));
+      const allUrls = Array.from(body.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)).map((m) => m[1]);
+      const citedDossier = new Set(allUrls.filter((u) => dossierUrls.has(u)));
+      const hasSourcesH2 = /##\s*Sources\b/i.test(body);
+      const missingDossierUrls = dossier.filter((s) => !body.includes(s.url));
+      if (citedDossier.size < 4) {
+        errors.push(`${plan.slug}: only ${citedDossier.size} dossier citations (need 4+)`);
+        continue;
+      }
+      if (!hasSourcesH2) {
+        errors.push(`${plan.slug}: missing ## Sources section`);
+        continue;
+      }
+      if (missingDossierUrls.length > 0) {
+        errors.push(`${plan.slug}: Sources missing ${missingDossierUrls.length} dossier URL(s)`);
+        continue;
+      }
+    }
+
     okPages.push({ plan, body });
   }
 

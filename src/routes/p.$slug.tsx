@@ -16,6 +16,7 @@ import {
   type NearbyCity,
 } from "@/server/nearby-cities.functions";
 import { getCityBySlug, type CityRow } from "@/server/cities.functions";
+import { getCitySources, type CitySource } from "@/server/city-sources.functions";
 import { getInternalLinkTargets } from "@/server/internal-links.functions";
 import type { LinkTarget } from "@/components/auto-linked-content";
 import { log404 } from "@/server/content-404-log.functions";
@@ -89,6 +90,7 @@ export const Route = createFileRoute("/p/$slug")({
     const page = (context as { page: ContentPage }).page;
     let nearbyCities: NearbyCity[] = [];
     let city: CityRow | null = null;
+    let citySources: CitySource[] = [];
     if (
       page.template_type === "host_acq_city" ||
       page.template_type === "spanish_host_acq" ||
@@ -118,6 +120,13 @@ export const Route = createFileRoute("/p/$slug")({
           city = await getCityBySlug({ data: { slug: citySlug } });
         } catch {
           city = null;
+        }
+        if (page.template_type === "host_acq_city") {
+          try {
+            citySources = await getCitySources({ data: { slug: citySlug } });
+          } catch {
+            citySources = [];
+          }
         }
       }
     }
@@ -161,7 +170,7 @@ export const Route = createFileRoute("/p/$slug")({
         relatedPosts = [];
       }
     }
-    return { page, nearbyCities, city, linkTargets, academyHub, hreflangSibling, relatedPosts };
+    return { page, nearbyCities, city, citySources, linkTargets, academyHub, hreflangSibling, relatedPosts };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -387,7 +396,7 @@ function buildHreflangLinks(
 }
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city, linkTargets, academyHub, relatedPosts } = Route.useLoaderData();
+  const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts } = Route.useLoaderData();
 
   // Academy hubs (en + es) override their stored template_type so they always
   // render the rich hub UI even though the row's template_type may be
@@ -406,7 +415,7 @@ function ContentPageDispatcher() {
 
   switch (page.template_type) {
     case "host_acq_city":
-      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} />;
+      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} citySources={citySources} />;
     case "event_guide":
       return <EventGuideTemplate page={page} linkTargets={linkTargets} nearbyCities={nearbyCities} />;
     case "swim_instructor_city":
