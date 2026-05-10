@@ -353,19 +353,25 @@ function AvailabilityCalendarInner({
                     })}
                   </div>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                    {selectedSlots.map((s) => (
-                      <a
-                        key={s.start}
-                        href={buildBookingUrl(s.start, s.end)}
-                        className="group flex items-center justify-center rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground transition hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow"
-                      >
-                        {formatHour(s.start)}
-                        <span className="mx-1 text-muted-foreground group-hover:text-primary-foreground/80">
-                          –
-                        </span>
-                        {formatHour(s.end)}
-                      </a>
-                    ))}
+                    {selectedSlots.map((s) => {
+                      const startLabel = formatHour(s.start);
+                      const endLabel = formatHour(s.end);
+                      if (startLabel === "--" || endLabel === "--") return null;
+                      return (
+                        <a
+                          key={s.start}
+                          href={buildBookingUrl(s.start, s.end)}
+                          className="group flex items-center justify-center rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground transition hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow"
+                        >
+                          {startLabel}
+                          <span className="mx-1 text-muted-foreground group-hover:text-primary-foreground/80">
+                            –
+                          </span>
+                          {endLabel}
+                        </a>
+                      );
+                    })}
+
                   </div>
                   <p className="mt-3 text-center text-xs text-muted-foreground">
                     Tap a time to continue checkout on poolrentalnearme.com.
