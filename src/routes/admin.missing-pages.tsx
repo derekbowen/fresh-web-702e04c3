@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   list404s,
   resolve404,
+  redirect404,
+  createPageFor404,
   type Content404Row,
 } from "@/server/content-404-log.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
