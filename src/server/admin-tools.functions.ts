@@ -418,11 +418,20 @@ export type ContentPageFull = {
   title: string | null;
   seo_title: string | null;
   seo_description: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  focus_keyword: string | null;
+  canonical_override: string | null;
+  hero_image_url: string | null;
   body_markdown: string | null;
   template_type: string | null;
   status: string;
   updated_at: string;
+  created_at: string;
 };
+
+const PAGE_SELECT =
+  "id, url_path, slug, title, seo_title, seo_description, og_title, og_description, focus_keyword, canonical_override, hero_image_url, body_markdown, template_type, status, updated_at, created_at";
 
 export const getContentPage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -431,7 +440,7 @@ export const getContentPage = createServerFn({ method: "POST" })
     await assertAdmin((context as any).userId);
     const { data: row, error } = await (supabaseAdmin as any)
       .from("content_pages")
-      .select("id, url_path, slug, title, seo_title, seo_description, body_markdown, template_type, status, updated_at")
+      .select(PAGE_SELECT)
       .eq("id", data.id)
       .maybeSingle();
     if (error) return { ok: false, error: error.message };
@@ -447,6 +456,11 @@ export const updateContentPage = createServerFn({ method: "POST" })
       title: z.string().max(300).optional(),
       seo_title: z.string().max(200).optional(),
       seo_description: z.string().max(400).optional(),
+      og_title: z.string().max(200).optional().nullable(),
+      og_description: z.string().max(400).optional().nullable(),
+      focus_keyword: z.string().max(120).optional().nullable(),
+      canonical_override: z.string().max(500).optional().nullable(),
+      hero_image_url: z.string().max(2000).optional().nullable(),
       body_markdown: z.string().max(200000).optional(),
       status: z.enum(["draft", "pending", "published"]).optional(),
     }).parse(d),
@@ -455,6 +469,10 @@ export const updateContentPage = createServerFn({ method: "POST" })
     await assertAdmin((context as any).userId);
     const { id, ...rest } = data;
     const update: any = { ...rest, updated_at: new Date().toISOString() };
+    // Normalize empty strings to null for optional fields
+    for (const k of ["og_title", "og_description", "focus_keyword", "canonical_override", "hero_image_url"]) {
+      if (typeof update[k] === "string" && update[k].trim() === "") update[k] = null;
+    }
     if (update.status === "published") update.in_sitemap = true;
     const { error } = await (supabaseAdmin as any).from("content_pages").update(update).eq("id", id);
     if (error) return { ok: false, error: error.message };
