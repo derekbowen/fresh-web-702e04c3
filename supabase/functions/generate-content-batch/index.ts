@@ -491,8 +491,9 @@ async function generateOne(
   model: string,
   apiKey: string,
   maxTokens?: number,
+  sources: CitySource[] = [],
 ): Promise<GeneratedPage | null> {
-  const { system, user } = buildPrompt(plan);
+  const { system, user } = buildPrompt(plan, sources);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 115_000);
   try {
