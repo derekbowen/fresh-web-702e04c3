@@ -339,6 +339,23 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
                   </div>
                 </section>
               )}
+
+              {/* FAQ block (matches FAQPage JSON-LD emitted by dispatcher) */}
+              {faqs.length > 0 && (
+                <section aria-label="Frequently asked questions" className="mt-14">
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    Frequently asked questions
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {isHub
+                      ? "Quick answers about hosting a pool legally in the US."
+                      : `Quick answers for ${state?.name ?? "your state"} hosts.`}
+                  </p>
+                  <div className="mt-6">
+                    <FaqBlock faqs={faqs} />
+                  </div>
+                </section>
+              )}
             </article>
 
             {/* Sidebar */}
