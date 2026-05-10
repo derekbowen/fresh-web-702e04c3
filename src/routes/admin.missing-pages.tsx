@@ -55,9 +55,36 @@ function AdminMissingPages() {
     void load();
   }, [load]);
 
-  const markResolved = async (id: string) => {
-    await resolve404({ data: { id } });
-    await load();
+  const [busyId, setBusyId] = React.useState<string | null>(null);
+
+  const dismiss = async (id: string) => {
+    if (!confirm("Dismiss this 404? It just hides the row — the URL will still 404 for visitors.")) return;
+    setBusyId(id);
+    try { await resolve404({ data: { id, notes: "dismissed by admin" } }); await load(); }
+    finally { setBusyId(null); }
+  };
+
+  const doRedirect = async (id: string, currentPath: string) => {
+    const target = prompt(`Redirect ${currentPath} to which path? (e.g. /p/hosting)`, "/p/all-locations");
+    if (!target) return;
+    setBusyId(id);
+    try {
+      const r: any = await redirect404({ data: { id, target } });
+      if (!r.ok) alert(r.error || "Redirect failed"); else alert(`Redirect saved: ${currentPath} → ${r.target}`);
+      await load();
+    } finally { setBusyId(null); }
+  };
+
+  const doCreate = async (id: string, currentPath: string) => {
+    if (!confirm(`Generate a real page at ${currentPath} with AI? This takes ~30s and will publish to the live site.`)) return;
+    setBusyId(id);
+    try {
+      const r: any = await createPageFor404({ data: { id } });
+      if (!r.ok) alert(r.error || "Create failed");
+      else if (r.alreadyExists) alert("A page already exists at that URL — marked resolved.");
+      else alert(`Created /p/${r.slug} (${r.words} words). It's live now.`);
+      await load();
+    } finally { setBusyId(null); }
   };
 
   const totalHits = rows.reduce((acc, r) => acc + (r.hit_count ?? 0), 0);
