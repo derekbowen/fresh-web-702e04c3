@@ -200,9 +200,16 @@ function AdminBlogPage() {
                 onChange={(e) => setGenHint(e.target.value)}
               />
             </label>
-            <Button onClick={generate} disabled={generating}>
+            <Button onClick={() => generate(false)} disabled={generating} variant="secondary">
               {generating ? "Generating…" : "Generate drafts"}
             </Button>
+            <Button onClick={() => generate(true)} disabled={generating}>
+              {generating ? "Generating…" : "Generate & publish"}
+            </Button>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Daily auto-generation runs in the background — drafts appear here for review.
+          </p>
           </div>
         </section>
 
