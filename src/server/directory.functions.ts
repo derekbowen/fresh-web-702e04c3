@@ -307,7 +307,7 @@ export const adminScrapeProviderUrl = createServerFn({ method: "POST" })
         body: JSON.stringify({
           url: data.url,
           formats: [
-            { type: "json", prompt: "Extract a single business listing as JSON with fields: name (string), description (string, 2-4 sentences), website (string|null), phone (string|null), email (string|null), address (string|null), city (string|null), state_code (2-letter US state, string|null), services (string[]), rating (number|null), rating_count (integer|null), logo_url (string|null), hero_image_url (string|null), gallery_urls (string[])." }
+            { type: "json", prompt: "Extract EVERY business listing visible on the page (search results, map results, directory pages may contain dozens). Return JSON: { listings: [ { name (string, required), description (string, 1-3 sentences, may be empty), website (string|null), phone (string|null), email (string|null), address (string|null), city (string|null), state_code (2-letter US state, string|null), services (string[]), rating (number|null), rating_count (integer|null), logo_url (string|null), hero_image_url (string|null), gallery_urls (string[]) } ] }. If the page is a single business listing, return one item in the array. Never invent businesses; only include those actually on the page." }
           ],
           onlyMainContent: true,
         }),
@@ -315,44 +315,53 @@ export const adminScrapeProviderUrl = createServerFn({ method: "POST" })
       const payload: any = await res.json();
       if (!res.ok || !payload?.success) throw new Error(payload?.error || `Firecrawl ${res.status}`);
       const j = payload.data?.json ?? payload.json ?? {};
+      let listings: any[] = Array.isArray(j?.listings) ? j.listings
+        : Array.isArray(j?.businesses) ? j.businesses
+        : Array.isArray(j?.results) ? j.results
+        : (j?.name ? [j] : []);
+      listings = listings.filter((l) => l && typeof l.name === "string" && l.name.trim().length > 1);
 
-      let providerId: string | null = null;
-      if (data.autoCreate && j?.name) {
-        const slug = slugify(`${j.name}-${j.city ?? ""}-${j.state_code ?? ""}`);
-        const upsert = await supabaseAdmin
-          .from("providers")
-          .upsert({
-            slug,
-            name: j.name,
-            description: j.description ?? null,
-            website_url: j.website ?? null,
-            phone: j.phone ?? null,
-            email: j.email ?? null,
-            address: j.address ?? null,
-            city: j.city ?? null,
-            state_code: j.state_code ?? null,
-            services: Array.isArray(j.services) ? j.services : [],
-            rating: typeof j.rating === "number" ? j.rating : null,
-            rating_count: typeof j.rating_count === "number" ? j.rating_count : null,
-            logo_url: j.logo_url ?? null,
-            hero_image_url: j.hero_image_url ?? null,
-            gallery_urls: Array.isArray(j.gallery_urls) ? j.gallery_urls : [],
-            source_url: data.url,
-            source_type: sourceType,
-            scraped_at: new Date().toISOString(),
-            submission_status: "pending",
-            is_published: false,
-          }, { onConflict: "slug" })
-          .select("id")
-          .single();
-        providerId = (upsert.data as any)?.id ?? null;
+      const providerIds: string[] = [];
+      if (data.autoCreate && listings.length) {
+        for (const it of listings) {
+          const slug = slugify(`${it.name}-${it.city ?? ""}-${it.state_code ?? ""}`);
+          if (!slug) continue;
+          const upsert = await supabaseAdmin
+            .from("providers")
+            .upsert({
+              slug,
+              name: it.name,
+              description: it.description ?? null,
+              website_url: it.website ?? null,
+              phone: it.phone ?? null,
+              email: it.email ?? null,
+              address: it.address ?? null,
+              city: it.city ?? null,
+              state_code: it.state_code ?? null,
+              services: Array.isArray(it.services) ? it.services : [],
+              rating: typeof it.rating === "number" ? it.rating : null,
+              rating_count: typeof it.rating_count === "number" ? it.rating_count : null,
+              logo_url: it.logo_url ?? null,
+              hero_image_url: it.hero_image_url ?? null,
+              gallery_urls: Array.isArray(it.gallery_urls) ? it.gallery_urls : [],
+              source_url: data.url,
+              source_type: sourceType,
+              scraped_at: new Date().toISOString(),
+              submission_status: "pending",
+              is_published: false,
+            }, { onConflict: "slug" })
+            .select("id")
+            .single();
+          const id = (upsert.data as any)?.id;
+          if (id) providerIds.push(id);
+        }
       }
 
       await supabaseAdmin.from("provider_scrape_jobs").update({
-        status: "success", provider_id: providerId, raw: j,
+        status: "success", provider_id: providerIds[0] ?? null, raw: { count: listings.length, listings },
       }).eq("id", jobId);
 
-      return { ok: true, jobId, providerId, extracted: j };
+      return { ok: true, jobId, providerId: providerIds[0] ?? null, providerIds, count: providerIds.length, extracted: listings };
     } catch (e: any) {
       await supabaseAdmin.from("provider_scrape_jobs").update({
         status: "failed", error: String(e?.message ?? e),
