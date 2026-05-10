@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   adminListBlogPosts,
   adminExpandBlogPost,
+  adminGenerateBlogPost,
   type AdminBlogRow,
 } from "@/server/admin-blog.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
@@ -33,6 +34,39 @@ function AdminBlogPage() {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState<Record<string, boolean>>({});
   const [filter, setFilter] = useState("");
+  const [genCount, setGenCount] = useState("3");
+  const [genTopic, setGenTopic] = useState("");
+  const [genHint, setGenHint] = useState("");
+  const [generating, setGenerating] = useState(false);
+
+  const generate = async () => {
+    const n = Math.min(Math.max(parseInt(genCount) || 1, 1), 10);
+    if (!confirm(`Generate ${n} new blog post${n > 1 ? "s" : ""} with AI? They'll be saved as drafts. Uses credits.`)) return;
+    setGenerating(true);
+    try {
+      const res = await adminGenerateBlogPost({
+        data: {
+          count: n,
+          topic: genTopic.trim() || undefined,
+          titleHint: genHint.trim() || undefined,
+        },
+      });
+      if (res.created.length > 0) {
+        toast.success(`Created ${res.created.length} draft${res.created.length > 1 ? "s" : ""}.`);
+      }
+      if (res.errors.length > 0) {
+        toast.error(`${res.errors.length} failed: ${res.errors[0]}`);
+      }
+      if (res.created.length === 0 && res.errors.length === 0) {
+        toast.info("No posts generated. Try a different topic.");
+      }
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : String(e));
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const refresh = () => {
     adminListBlogPosts({ data: undefined as never })
@@ -96,6 +130,49 @@ function AdminBlogPage() {
 
   return (
     <AdminLayout>
+        <section className="mb-6 rounded-lg border bg-card p-4">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold">Auto-generate posts with AI</h2>
+            <p className="text-xs text-muted-foreground">
+              Brainstorms titles, writes full ~900-word drafts, saves as unpublished. Optional category and topic hint focus the output.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-end gap-2">
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="text-muted-foreground">How many</span>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={genCount}
+                onChange={(e) => setGenCount(e.target.value)}
+                className="w-20"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="text-muted-foreground">Category (optional)</span>
+              <Input
+                placeholder="e.g. Hosting, Pricing, Insurance"
+                value={genTopic}
+                onChange={(e) => setGenTopic(e.target.value)}
+                className="w-56"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs flex-1 min-w-[220px]">
+              <span className="text-muted-foreground">Topic hint (optional)</span>
+              <Input
+                placeholder="e.g. winterizing, pet-friendly rentals, LLC setup"
+                value={genHint}
+                onChange={(e) => setGenHint(e.target.value)}
+              />
+            </label>
+            <Button onClick={generate} disabled={generating}>
+              {generating ? "Generating…" : "Generate drafts"}
+            </Button>
+          </div>
+        </section>
+
+
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-semibold">Blog admin</h1>
