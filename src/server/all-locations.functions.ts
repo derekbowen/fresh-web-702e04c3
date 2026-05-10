@@ -35,17 +35,17 @@ const TEMPLATE_GROUPS: Array<{
   basePath: string;
 }> = [
   {
-    id: "city-guides",
-    title: "City Pool Rental Guides",
-    description: "Local guides covering pool rentals in every major U.S. city.",
-    templateTypes: ["city_main"],
-    basePath: "/p",
-  },
-  {
     id: "host-acquisition",
     title: "Become a Host by City",
     description: "Earnings potential, regulations, and how to list a pool in each market.",
     templateTypes: ["host_acq_city", "host_acq_hub"],
+    basePath: "/p",
+  },
+  {
+    id: "swim-instructors",
+    title: "Swim Instructors by City",
+    description: "Local swim instructor directories for parents and lesson seekers.",
+    templateTypes: ["swim_instructor_city", "swim_instructor_hub"],
     basePath: "/p",
   },
   {
@@ -73,7 +73,7 @@ const TEMPLATE_GROUPS: Array<{
     id: "resources",
     title: "Articles & Resources",
     description: "How-to guides, safety, maintenance, and platform comparisons.",
-    templateTypes: ["resource", "other"],
+    templateTypes: ["resource", "resource_article", "other"],
     basePath: "/p",
   },
   {
@@ -87,7 +87,7 @@ const TEMPLATE_GROUPS: Array<{
     id: "spanish",
     title: "Guías en Español",
     description: "Recursos completos para anfitriones hispanohablantes.",
-    templateTypes: ["spanish_host_acq", "spanish_resource"],
+    templateTypes: ["spanish_host_acq", "spanish_resource", "host_acq_city_es"],
     basePath: "/p",
   },
 ];
@@ -150,10 +150,47 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
       }
     }
 
-    // 2. cities — removed: /pool-rental/* is not forwarded by the production
-    //    nginx proxy so those links 404 in production.
-
-
+    // 2. cities — published city pages live in the `cities` table and resolve at /p/{slug}
+    {
+      const links: DirectoryLink[] = [];
+      const pageSize = 1000;
+      let from = 0;
+      while (true) {
+        const { data, error } = await supabaseAdmin
+          .from("cities")
+          .select("slug, name, state_code")
+          .eq("is_published", true)
+          .not("slug", "is", null)
+          .order("name", { ascending: true })
+          .range(from, from + pageSize - 1);
+        if (error) {
+          console.error("[all-locations] cities", error.message);
+          break;
+        }
+        if (!data || data.length === 0) break;
+        for (const row of data) {
+          if (!row.slug) continue;
+          links.push({
+            href: `/p/${row.slug}`,
+            label: row.name,
+            sub: row.state_code ?? null,
+          });
+        }
+        if (data.length < pageSize) break;
+        from += pageSize;
+      }
+      if (links.length > 0) {
+        // Insert cities at the top of the directory (right after Main Pages)
+        const cityGroup: DirectoryGroup = {
+          id: "cities",
+          title: "City Pool Rental Guides",
+          description: "Local guides covering pool rentals in every published U.S. city.",
+          links,
+        };
+        groups.splice(1, 0, cityGroup);
+        total += links.length;
+      }
+    }
     // 4. live listings (synced)
     {
       const { data } = await supabaseAdmin
