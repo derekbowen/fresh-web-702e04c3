@@ -84,6 +84,48 @@ function IgLeadHunter() {
     : rows;
 
   const totalNew = rows.filter((r) => !r.contacted).length;
+  const visibleIds = filtered.map((r) => r.id);
+  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
+  const someVisibleSelected = visibleIds.some((id) => selected.has(id));
+
+  function toggleSelect(id: string) {
+    setSelected((s) => {
+      const n = new Set(s);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  }
+  function toggleSelectAllVisible() {
+    setSelected((s) => {
+      const n = new Set(s);
+      if (allVisibleSelected) visibleIds.forEach((id) => n.delete(id));
+      else visibleIds.forEach((id) => n.add(id));
+      return n;
+    });
+  }
+  function clearSelection() { setSelected(new Set()); }
+
+  async function bulkMark(contacted: boolean) {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    setBulking(true); setMsg(null);
+    try {
+      const r: any = await bulkSetIgLeadsContacted({ data: { ids, contacted } });
+      if (r.ok) {
+        const nowIso = new Date().toISOString();
+        setRows((rs) => rs.map((x) => ids.includes(x.id)
+          ? { ...x, contacted, contacted_at: contacted ? nowIso : null }
+          : x));
+        setMsg(`Marked ${r.updated} lead${r.updated === 1 ? "" : "s"} as ${contacted ? "contacted" : "not contacted"}.`);
+        clearSelection();
+        if (filter !== "all") load();
+      } else {
+        setMsg(r.error || "Bulk update failed");
+      }
+    } finally {
+      setBulking(false);
+    }
+  }
 
   return (
     <AdminLayout>
