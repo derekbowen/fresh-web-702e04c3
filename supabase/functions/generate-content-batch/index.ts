@@ -547,17 +547,34 @@ async function processGeneration(
 ) {
   const errors: string[] = [];
 
+  // Pre-fetch citation dossiers for all city pages in this batch.
+  const sourcesBySlug = new Map<string, CitySource[]>();
+  await Promise.all(
+    planRows.map(async (row) => {
+      if (row.source_type !== "city") return;
+      const cs = citySlugForPlan(row);
+      if (!cs) return;
+      try {
+        const list = await fetchCitySources(supabase, cs);
+        if (list.length > 0) sourcesBySlug.set(row.slug, list);
+      } catch (e) {
+        console.warn(`[generate-content-batch:${row.slug}] dossier fetch failed: ${errorMessage(e)}`);
+      }
+    }),
+  );
+
   const generated = (
     await Promise.all(
       planRows.map((row) => {
         // Token-budget gate: estimate output length and auto-promote model if needed.
         const pick = pickModelForBudget(row, model);
+        const sources = sourcesBySlug.get(row.slug) ?? [];
         if (pick.switched) {
           console.log(`[generate-content-batch:${row.slug}] model auto-switch — ${pick.reason}`);
         } else {
-          console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok)`);
+          console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok, ${sources.length} sources)`);
         }
-        return generateOne(row, pick.model, apiKey, pick.maxTokens);
+        return generateOne(row, pick.model, apiKey, pick.maxTokens, sources);
       }),
     )
   ).filter((page): page is GeneratedPage => Boolean(page));
