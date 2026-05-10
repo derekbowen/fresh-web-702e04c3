@@ -65,8 +65,10 @@ export const getEmailVerifyStats = createServerFn({ method: "GET" })
 });
 
 export const verifyHostLeadBatch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator(z.object({ limit: z.number().min(1).max(100).default(25) }).parse)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as { userId: string }).userId);
     const key = process.env.EMAILVERIFY_API_KEY;
     if (!key) return { ok: false, error: "EMAILVERIFY_API_KEY not configured", processed: 0, results: [] };
 
