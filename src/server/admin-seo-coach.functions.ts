@@ -128,6 +128,7 @@ export const seoCoachChat = createServerFn({ method: "POST" })
         role: z.enum(["user", "assistant"]),
         content: z.string().min(1).max(8000),
       })).min(1).max(40),
+      completedRoutes: z.array(z.string().max(120)).max(40).optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }): Promise<{ ok: true; reply: string } | { ok: false; error: string }> => {
@@ -136,10 +137,14 @@ export const seoCoachChat = createServerFn({ method: "POST" })
     if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
     const snapshot = await buildSnapshot();
+    const completedNote = data.completedRoutes?.length
+      ? `STEPS THE USER HAS ALREADY COMPLETED THIS SESSION (do NOT recommend them again — move to the next priority): ${data.completedRoutes.join(", ")}`
+      : "No steps completed yet this session.";
 
     const messages = [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "system", content: snapshot },
+      { role: "system", content: completedNote },
       ...data.messages.map((m: ChatMsg) => ({ role: m.role, content: m.content })),
     ];
 
