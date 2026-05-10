@@ -260,6 +260,7 @@ function AdminBlogPage() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-left">
                   <tr>
+                    <th className="px-3 py-2 w-8"></th>
                     <th className="px-3 py-2">Title</th>
                     <th className="px-3 py-2 w-24">Words</th>
                     <th className="px-3 py-2 w-20">Status</th>
