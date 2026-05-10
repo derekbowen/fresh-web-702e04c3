@@ -24,8 +24,8 @@ export type CityClickReport = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function assertAdmin(supabase: any, userId: string) {
-  const { data, error } = await supabase
+async function assertAdmin(userId: string) {
+  const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
@@ -39,8 +39,8 @@ export const getCityClickReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data, context }): Promise<CityClickReport> => {
-    const { supabase, userId } = context as { supabase: any; userId: string };
-    await assertAdmin(supabase, userId);
+    const { userId } = context as { userId: string };
+    await assertAdmin(userId);
 
     const since = new Date(Date.now() - data.days * 24 * 60 * 60 * 1000).toISOString();
 
