@@ -165,6 +165,7 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
       : `What you need to know about hosting a private pool in ${state?.name ?? "your state"}: local rules, HOA tips, taxes, and what we do when neighbors have questions.`);
   const body = (page.content || page.body_markdown || "") as string;
   const toc = useMemo(() => extractToc(body), [body]);
+  const faqs = useMemo(() => faqsForContentPage(page), [page]);
 
   const breadcrumbs = isHub
     ? [
