@@ -34,6 +34,39 @@ function AdminBlogPage() {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState<Record<string, boolean>>({});
   const [filter, setFilter] = useState("");
+  const [genCount, setGenCount] = useState("3");
+  const [genTopic, setGenTopic] = useState("");
+  const [genHint, setGenHint] = useState("");
+  const [generating, setGenerating] = useState(false);
+
+  const generate = async () => {
+    const n = Math.min(Math.max(parseInt(genCount) || 1, 1), 10);
+    if (!confirm(`Generate ${n} new blog post${n > 1 ? "s" : ""} with AI? They'll be saved as drafts. Uses credits.`)) return;
+    setGenerating(true);
+    try {
+      const res = await adminGenerateBlogPost({
+        data: {
+          count: n,
+          topic: genTopic.trim() || undefined,
+          titleHint: genHint.trim() || undefined,
+        },
+      });
+      if (res.created.length > 0) {
+        toast.success(`Created ${res.created.length} draft${res.created.length > 1 ? "s" : ""}.`);
+      }
+      if (res.errors.length > 0) {
+        toast.error(`${res.errors.length} failed: ${res.errors[0]}`);
+      }
+      if (res.created.length === 0 && res.errors.length === 0) {
+        toast.info("No posts generated. Try a different topic.");
+      }
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : String(e));
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const refresh = () => {
     adminListBlogPosts({ data: undefined as never })
