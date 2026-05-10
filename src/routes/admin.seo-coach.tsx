@@ -2,11 +2,44 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
-import { Sparkles, Send, RotateCcw } from "lucide-react";
+import { Sparkles, Send, RotateCcw, ExternalLink, Check } from "lucide-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { seoCoachChat } from "@/server/admin-seo-coach.functions";
 
 type Msg = { role: "user" | "assistant"; content: string };
+
+// Pull /admin/* routes mentioned in coach replies so we can offer one-click "Do it now"
+function extractAdminRoutes(text: string): string[] {
+  const re = /\/admin\/[a-z0-9][a-z0-9-/]*/gi;
+  const found = new Set<string>();
+  for (const m of text.matchAll(re)) {
+    // strip trailing punctuation
+    const clean = m[0].replace(/[).,;:`'"]+$/, "").toLowerCase();
+    if (clean !== "/admin" && clean !== "/admin/") found.add(clean);
+  }
+  return Array.from(found);
+}
+
+const ROUTE_LABELS: Record<string, string> = {
+  "/admin/missing-pages": "Triage 404s",
+  "/admin/page-auditor": "Audit a page",
+  "/admin/listing-auditor": "Audit a listing",
+  "/admin/keyword-opportunities": "Find keyword wins",
+  "/admin/internal-links": "Add internal links",
+  "/admin/seo-health": "Open SEO health",
+  "/admin/content-pages": "Bulk-fix pages",
+  "/admin/quick-page": "Build a new page",
+  "/admin/generate-content": "Batch generate",
+  "/admin/gsc-import": "Re-sync GSC",
+  "/admin/competitor-radar": "Open competitor radar",
+  "/admin/rank-tracker": "Open rank tracker",
+  "/admin/indexing": "Open sitemap & indexing",
+  "/admin/link-checker": "Run link checker",
+  "/admin/competitors": "Open competitor tracker",
+};
+function labelFor(route: string): string {
+  return ROUTE_LABELS[route] || `Open ${route}`;
+}
 
 const STARTER_PROMPTS = [
   "What's my single biggest SEO problem right now?",
@@ -25,6 +58,7 @@ function SeoCoachPage() {
   const [input, setInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [completed, setCompleted] = React.useState<Set<string>>(new Set());
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -46,7 +80,7 @@ function SeoCoachPage() {
     setInput("");
     setLoading(true);
     try {
-      const res = await chat({ data: { messages: next } });
+      const res = await chat({ data: { messages: next, completedRoutes: Array.from(completed) } });
       if (res.ok) setMessages([...next, { role: "assistant", content: res.reply }]);
       else setError(res.error);
     } catch (e) {
@@ -58,12 +92,25 @@ function SeoCoachPage() {
 
   function reset() {
     setMessages([]);
+    setCompleted(new Set());
     setError(null);
     setTimeout(() => void send("Start. Show me my most urgent SEO issue and ask the first yes/no question."), 50);
   }
 
   function answerYesNo(answer: "Yes" | "No") {
     void send(answer);
+  }
+
+  function doItNow(route: string) {
+    // Open the recommended admin tool in a new tab
+    if (typeof window !== "undefined") window.open(route, "_blank", "noopener,noreferrer");
+    // Mark this step complete and tell the coach to advance
+    setCompleted((prev) => {
+      const next = new Set(prev);
+      next.add(route);
+      return next;
+    });
+    void send(`✅ Done — I just opened ${route} and started working on it. Mark this step as completed and ask me the next yes/no question for the next priority.`);
   }
 
   return (
@@ -87,33 +134,62 @@ function SeoCoachPage() {
           {messages.length === 0 && (
             <div className="text-sm text-muted-foreground">Loading your snapshot…</div>
           )}
-          {messages.map((m, i) => (
-            <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
-              <div
-                className={
-                  m.role === "user"
-                    ? "max-w-[80%] rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm"
-                    : "max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm prose prose-sm dark:prose-invert max-w-none"
-                }
-              >
-                {m.role === "assistant" ? (
-                  <ReactMarkdown
-                    components={{
-                      a: ({ href, children }) => (
-                        <a href={href} className="text-primary underline" target={href?.startsWith("/admin") ? undefined : "_blank"}>
-                          {children}
-                        </a>
-                      ),
-                    }}
-                  >
-                    {m.content}
-                  </ReactMarkdown>
-                ) : (
-                  m.content
-                )}
+          {messages.map((m, i) => {
+            const routes = m.role === "assistant" ? extractAdminRoutes(m.content) : [];
+            return (
+              <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
+                <div
+                  className={
+                    m.role === "user"
+                      ? "max-w-[80%] rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm"
+                      : "max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm space-y-3"
+                  }
+                >
+                  {m.role === "assistant" ? (
+                    <>
+                      <div className="prose prose-sm dark:prose-invert max-w-none">
+                        <ReactMarkdown
+                          components={{
+                            a: ({ href, children }) => (
+                              <a href={href} className="text-primary underline" target={href?.startsWith("/admin") ? undefined : "_blank"}>
+                                {children}
+                              </a>
+                            ),
+                          }}
+                        >
+                          {m.content}
+                        </ReactMarkdown>
+                      </div>
+                      {routes.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-2 border-t border-border/40">
+                          {routes.map((route) => {
+                            const isDone = completed.has(route);
+                            return (
+                              <button
+                                key={route}
+                                onClick={() => !isDone && doItNow(route)}
+                                disabled={isDone}
+                                className={
+                                  isDone
+                                    ? "inline-flex items-center gap-1.5 rounded-md bg-green-600/10 text-green-700 dark:text-green-400 px-3 py-1.5 text-xs font-medium cursor-default"
+                                    : "inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90 px-3 py-1.5 text-xs font-semibold"
+                                }
+                                title={route}
+                              >
+                                {isDone ? <><Check className="h-3 w-3" /> Done — {labelFor(route)}</> : <><ExternalLink className="h-3 w-3" /> Do it now: {labelFor(route)}</>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    m.content
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {loading && (
             <div className="flex justify-start">
               <div className="rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground">Thinking…</div>
