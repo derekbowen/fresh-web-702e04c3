@@ -185,7 +185,6 @@ export const adminBulkPublishBlogPosts = createServerFn({ method: "POST" })
     return { ok: true, count: data.slugs.length };
   });
 
-function slugify(input: string): string {
   return String(input)
     .toLowerCase()
     .normalize("NFKD")
