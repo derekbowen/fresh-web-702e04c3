@@ -138,11 +138,33 @@ export const bulkUpdateContentPages = createServerFn({ method: "POST" })
     await assertAdmin((context as any).userId);
     if (data.action === "delete") {
       const { error } = await (supabaseAdmin as any).from("content_pages").delete().in("id", data.ids);
-      return error ? { ok: false, error: error.message } : { ok: true, count: data.ids.length };
+      return error ? { ok: false, error: error.message } : { ok: true, count: data.ids.length, skipped: 0, skippedSlugs: [] as string[] };
     }
-    const status = data.action === "publish" ? "published" : "pending";
-    const { error } = await (supabaseAdmin as any).from("content_pages").update({ status, updated_at: new Date().toISOString() }).in("id", data.ids);
-    return error ? { ok: false, error: error.message } : { ok: true, count: data.ids.length };
+    if (data.action === "publish") {
+      // Thin-content guard: only publish pages with >= 300 words. Thin pages stay as draft.
+      const MIN_WORDS = 300;
+      const { data: rows, error: fetchErr } = await (supabaseAdmin as any)
+        .from("content_pages")
+        .select("id, slug, body_markdown")
+        .in("id", data.ids);
+      if (fetchErr) return { ok: false, error: fetchErr.message };
+      const eligible: string[] = [];
+      const skipped: string[] = [];
+      for (const r of rows || []) {
+        const wc = String(r.body_markdown || "").split(/\s+/).filter(Boolean).length;
+        if (wc >= MIN_WORDS) eligible.push(r.id);
+        else skipped.push(r.slug || r.id);
+      }
+      if (eligible.length === 0) {
+        return { ok: true, count: 0, skipped: skipped.length, skippedSlugs: skipped, reason: `All selected pages have fewer than ${MIN_WORDS} words and were kept as draft.` };
+      }
+      const { error } = await (supabaseAdmin as any).from("content_pages").update({ status: "published", updated_at: new Date().toISOString() }).in("id", eligible);
+      if (error) return { ok: false, error: error.message };
+      return { ok: true, count: eligible.length, skipped: skipped.length, skippedSlugs: skipped };
+    }
+    // unpublish → set status to draft (was 'pending'; "draft" matches the user's mental model and the editor option)
+    const { error } = await (supabaseAdmin as any).from("content_pages").update({ status: "draft", updated_at: new Date().toISOString() }).in("id", data.ids);
+    return error ? { ok: false, error: error.message } : { ok: true, count: data.ids.length, skipped: 0, skippedSlugs: [] as string[] };
   });
 
 export type IndexingStats = {
