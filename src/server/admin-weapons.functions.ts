@@ -39,6 +39,10 @@ export type CompetitorUrlRow = {
   word_count: number | null;
   acknowledged: boolean;
   domain?: string | null;
+  kind?: string | null;
+  city_slug?: string | null;
+  state_code?: string | null;
+  summary?: string | null;
 };
 
 export const listCompetitorSites = createServerFn({ method: "GET" })
@@ -129,17 +133,22 @@ export const runCompetitorScan = createServerFn({ method: "POST" })
         const existingSet = new Set(((existing || []) as { url: string }[]).map((r) => r.url));
 
         const newOnes = unique.filter((u) => !existingSet.has(u));
-        const allRows = unique.map((url) => ({
-          site_id: site.id,
-          url,
-          first_seen_at: existingSet.has(url) ? undefined : now,
-          last_seen_at: now,
-        })).filter((r) => r.first_seen_at !== undefined ? true : true);
 
-        // Upsert (set last_seen_at) + insert new
+        // Upsert (set last_seen_at) + insert new with quick classification
         if (newOnes.length) {
           await sb().from("competitor_urls").insert(
-            newOnes.map((url) => ({ site_id: site.id, url, first_seen_at: now, last_seen_at: now })),
+            newOnes.map((url) => {
+              const c = quickClassifyUrl(url);
+              return {
+                site_id: site.id,
+                url,
+                first_seen_at: now,
+                last_seen_at: now,
+                kind: c.kind,
+                city_slug: c.city_slug,
+                state_code: c.state_code,
+              };
+            }),
           );
         }
         // Touch last_seen_at for existing ones we still saw
@@ -175,17 +184,21 @@ export const listNewCompetitorUrls = createServerFn({ method: "POST" })
       onlyUnacknowledged: z.boolean().default(true),
       limit: z.number().int().min(10).max(500).default(100),
       site_id: z.string().uuid().optional(),
+      kind: z.string().optional(),
+      excludeListings: z.boolean().default(true),
     }).parse(d ?? {}),
   )
   .handler(async ({ data, context }): Promise<{ rows: CompetitorUrlRow[] }> => {
     await assertAdmin((context as any).userId);
     let q = sb()
       .from("competitor_urls")
-      .select("id, site_id, url, first_seen_at, last_seen_at, scraped_at, title, word_count, acknowledged, competitor_sites(domain)")
+      .select("id, site_id, url, first_seen_at, last_seen_at, scraped_at, title, word_count, acknowledged, kind, city_slug, state_code, summary, competitor_sites(domain)")
       .order("first_seen_at", { ascending: false })
       .limit(data.limit);
     if (data.onlyUnacknowledged) q = q.eq("acknowledged", false);
     if (data.site_id) q = q.eq("site_id", data.site_id);
+    if (data.kind) q = q.eq("kind", data.kind);
+    if (data.excludeListings && !data.kind) q = q.neq("kind", "listing");
     const { data: rows } = await q;
     const flat = (rows || []).map((r: any) => ({
       ...r,
@@ -708,4 +721,234 @@ export const listRecentAudits = createServerFn({ method: "POST" })
     if (data.url_path) q = q.eq("url_path", data.url_path);
     const { data: rows } = await q;
     return { rows: (rows || []) as PageAuditRow[] };
+  });
+
+// ============================================================================
+// COMPETITOR INTEL — classify, city-gap detection, digest, listing-url filter
+// ============================================================================
+
+/** Patterns that identify low-signal listing/profile URLs we usually want to skip. */
+const LISTING_URL_PATTERNS = [
+  /\/pooldetails\//i,
+  /\/pool\/\d+/i,
+  /\/listings?\/[^/]+\/?$/i,
+  /\/l\/[a-z0-9-]{6,}/i,
+  /\/space\/[^/]+\/?$/i,
+  /\/venue\/[^/]+\/?$/i,
+  /\/host\/[^/]+\/?$/i,
+  /\/users?\/[^/]+\/?$/i,
+];
+
+export function isListingDetailUrl(url: string): boolean {
+  return LISTING_URL_PATTERNS.some((rx) => rx.test(url));
+}
+
+/** Heuristic classifier — fast, free, no AI call. */
+export function quickClassifyUrl(url: string): { kind: string; city_slug: string | null; state_code: string | null } {
+  if (isListingDetailUrl(url)) return { kind: "listing", city_slug: null, state_code: null };
+  const u = url.toLowerCase();
+  if (/\/blog\//.test(u) || /\/article(s)?\//.test(u) || /\/posts?\//.test(u) || /\/guide(s)?\//.test(u)) {
+    return { kind: "blog", city_slug: null, state_code: null };
+  }
+  // City page patterns: /pool-rental-{city}-{state}, /{city}-{state}, /city/{slug}, /location/{slug}
+  const cityPatterns = [
+    /\/(?:pool-rentals?|pool-party|swimming-pool)-(?:in-|near-)?([a-z][a-z-]+)-([a-z]{2})\/?$/i,
+    /\/(?:cities|locations?|city|area)\/([a-z][a-z-]+?)(?:-([a-z]{2}))?\/?$/i,
+    /\/([a-z][a-z-]+)-([a-z]{2})\/?$/,
+    /\/p\/([a-z][a-z-]+?)(?:-([a-z]{2}))?\/?$/,
+  ];
+  for (const rx of cityPatterns) {
+    const m = u.match(rx);
+    if (m) {
+      const slug = m[1];
+      const state = m[2] || null;
+      if (slug.length >= 3 && slug.length <= 60) {
+        return { kind: "city_page", city_slug: slug, state_code: state ? state.toUpperCase() : null };
+      }
+    }
+  }
+  if (/\/(?:category|categories|tag|topics?)\//.test(u)) {
+    return { kind: "category", city_slug: null, state_code: null };
+  }
+  if (/\/(?:about|pricing|how-it-works|faq|trust|safety|insurance|help)/.test(u)) {
+    return { kind: "feature", city_slug: null, state_code: null };
+  }
+  return { kind: "other", city_slug: null, state_code: null };
+}
+
+/** Backfill classification for any rows missing `kind`. Fast — pure heuristic. */
+export const classifyCompetitorUrls = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ limit: z.number().int().min(10).max(5000).default(2000), force: z.boolean().default(false) }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    let q = sb().from("competitor_urls").select("id, url, kind").limit(data.limit);
+    if (!data.force) q = q.is("kind", null);
+    const { data: rows } = await q;
+    const list = (rows || []) as { id: string; url: string }[];
+    let updated = 0;
+    for (let i = 0; i < list.length; i += 100) {
+      const chunk = list.slice(i, i + 100);
+      await Promise.all(chunk.map(async (r) => {
+        const c = quickClassifyUrl(r.url);
+        const { error } = await sb().from("competitor_urls")
+          .update({ kind: c.kind, city_slug: c.city_slug, state_code: c.state_code })
+          .eq("id", r.id);
+        if (!error) updated += 1;
+      }));
+    }
+    return { ok: true, updated, total: list.length };
+  });
+
+/** City-gap detector: cities competitors cover that we don't. */
+export type CityGapRow = {
+  city_slug: string;
+  state_code: string | null;
+  competitor_urls: { url: string; domain: string | null }[];
+  has_our_page: boolean;
+  our_slug: string | null;
+};
+
+export const detectCityGaps = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ minCompetitors: z.number().int().min(1).max(5).default(1) }).parse(d ?? {}),
+  )
+  .handler(async ({ context }): Promise<{ rows: CityGapRow[] }> => {
+    await assertAdmin((context as any).userId);
+    const { data: cityRows } = await sb()
+      .from("competitor_urls")
+      .select("url, city_slug, state_code, competitor_sites(domain)")
+      .eq("kind", "city_page")
+      .not("city_slug", "is", null)
+      .limit(5000);
+    const grouped = new Map<string, { city_slug: string; state_code: string | null; urls: { url: string; domain: string | null }[] }>();
+    for (const r of (cityRows || []) as any[]) {
+      const key = `${r.city_slug}|${r.state_code || ""}`;
+      if (!grouped.has(key)) grouped.set(key, { city_slug: r.city_slug, state_code: r.state_code, urls: [] });
+      grouped.get(key)!.urls.push({ url: r.url, domain: r.competitor_sites?.domain ?? null });
+    }
+    // Check our content_pages — slug or url_path containing the city slug
+    const slugs = Array.from(grouped.keys()).map((k) => k.split("|")[0]);
+    const { data: ours } = await sb()
+      .from("content_pages")
+      .select("slug, url_path")
+      .or(slugs.slice(0, 200).map((s) => `slug.ilike.%${s}%,url_path.ilike.%${s}%`).join(","));
+    const oursMap = new Map<string, string>();
+    for (const o of (ours || []) as any[]) {
+      for (const s of slugs) {
+        if ((o.slug || "").includes(s) || (o.url_path || "").includes(s)) {
+          oursMap.set(s, o.slug || o.url_path);
+        }
+      }
+    }
+    const out: CityGapRow[] = Array.from(grouped.values())
+      .filter((g) => g.urls.length >= 1)
+      .map((g) => ({
+        city_slug: g.city_slug,
+        state_code: g.state_code,
+        competitor_urls: g.urls.slice(0, 5),
+        has_our_page: oursMap.has(g.city_slug),
+        our_slug: oursMap.get(g.city_slug) || null,
+      }))
+      .sort((a, b) => {
+        if (a.has_our_page !== b.has_our_page) return a.has_our_page ? 1 : -1;
+        return b.competitor_urls.length - a.competitor_urls.length;
+      })
+      .slice(0, 200);
+    return { rows: out };
+  });
+
+/** Create a content_pages draft for a city the competitors cover. */
+export const createCounterPageFromGap = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      city_slug: z.string().min(2).max(80),
+      state_code: z.string().length(2).nullable().optional(),
+      competitor_url: z.string().url().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const stateSuffix = data.state_code ? `-${data.state_code.toLowerCase()}` : "";
+    const slug = `${data.city_slug}${stateSuffix}`;
+    const url_path = `/p/${slug}`;
+    // Already exists?
+    const { data: existing } = await sb()
+      .from("content_pages")
+      .select("id, url_path")
+      .or(`slug.eq.${slug},url_path.eq.${url_path}`)
+      .maybeSingle();
+    if (existing) return { ok: false, error: "Page already exists", url_path: existing.url_path };
+    const cityName = data.city_slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    const stateLabel = data.state_code ? `, ${data.state_code.toUpperCase()}` : "";
+    const { data: ins, error } = await sb().from("content_pages").insert({
+      slug,
+      url_path,
+      title: `Pool rental in ${cityName}${stateLabel}`,
+      seo_title: `Pool rental ${cityName}${stateLabel} — book hourly swim time`,
+      seo_description: `Find heated, private pools to rent by the hour in ${cityName}${stateLabel}. Book a backyard pool for your party, family, or workout — vetted hosts, $2M insurance included.`,
+      status: "draft",
+      category: "city",
+      template_type: "city",
+      locale: "en",
+      in_sitemap: false,
+      source_url: data.competitor_url || null,
+    }).select("id, url_path").maybeSingle();
+    if (error) return { ok: false, error: error.message };
+    return { ok: true, id: ins?.id, url_path: ins?.url_path };
+  });
+
+/** Generate a competitor intel digest from the last N days of new URLs. */
+export const generateCompetitorDigest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ days: z.number().int().min(1).max(30).default(7) }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const since = new Date(Date.now() - data.days * 86400_000).toISOString();
+    const { data: rows } = await sb()
+      .from("competitor_urls")
+      .select("url, kind, city_slug, first_seen_at, competitor_sites(domain)")
+      .gte("first_seen_at", since)
+      .neq("kind", "listing")
+      .limit(1000);
+    const list = (rows || []) as any[];
+    if (list.length === 0) {
+      return { ok: true, digest: "_No new content pages from competitors in the selected window._", count: 0 };
+    }
+    // Group by domain + kind
+    const groups = new Map<string, { domain: string; kind: string; urls: string[] }>();
+    for (const r of list) {
+      const key = `${r.competitor_sites?.domain || "unknown"}|${r.kind || "other"}`;
+      if (!groups.has(key)) groups.set(key, { domain: r.competitor_sites?.domain || "unknown", kind: r.kind || "other", urls: [] });
+      groups.get(key)!.urls.push(r.url);
+    }
+    const summary = Array.from(groups.values())
+      .map((g) => `${g.domain} · ${g.kind} (${g.urls.length}): ${g.urls.slice(0, 8).join(", ")}`)
+      .join("\n");
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: true, digest: `## Last ${data.days} days\n\n\`\`\`\n${summary}\n\`\`\``, count: list.length };
+    try {
+      const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: "You are a competitive intelligence analyst for a pool-rental marketplace. Be terse, founder-to-founder, no fluff." },
+            { role: "user", content: `Summarize what these competitors shipped in the last ${data.days} days. Identify themes (city expansion, new features, content angles), call out which competitor is moving fastest, and end with 2-3 specific actions we should take this week. Markdown, under 250 words.\n\n${summary}` },
+          ],
+        }),
+      });
+      const j = await resp.json();
+      const md = j?.choices?.[0]?.message?.content || `## Last ${data.days} days\n\n${summary}`;
+      return { ok: true, digest: md, count: list.length };
+    } catch (e: any) {
+      return { ok: true, digest: `## Last ${data.days} days\n\n\`\`\`\n${summary}\n\`\`\``, count: list.length, warning: e?.message };
+    }
   });

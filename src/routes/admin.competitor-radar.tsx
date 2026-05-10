@@ -7,10 +7,11 @@ import {
   runCompetitorScan, listNewCompetitorUrls, acknowledgeCompetitorUrls,
   scrapeCompetitorUrlRow, listHostMatches, updateHostMatchStatus, runHostMatchOne,
   enrichHostMatchOne, getEnrichmentSpend, reportFalsePositive, runValidatorSelfTests,
-  type CompetitorSiteRow, type CompetitorUrlRow, type CompetitorHostMatchRow,
+  classifyCompetitorUrls, detectCityGaps, createCounterPageFromGap, generateCompetitorDigest,
+  type CompetitorSiteRow, type CompetitorUrlRow, type CompetitorHostMatchRow, type CityGapRow,
 } from "@/server/admin-weapons.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X, Sparkles, DollarSign, AlertTriangle, ChevronDown, FlaskConical } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X, Sparkles, DollarSign, AlertTriangle, ChevronDown, FlaskConical, MapPin, FileText, Tags } from "lucide-react";
 
 export const Route = createFileRoute("/admin/competitor-radar")({
   beforeLoad: async () => {
@@ -29,11 +30,14 @@ function CompetitorRadar() {
   const [newRows, setNewRows] = React.useState<CompetitorUrlRow[]>([]);
   const [matches, setMatches] = React.useState<CompetitorHostMatchRow[]>([]);
   const [matchStatus, setMatchStatus] = React.useState<"new" | "review" | "contacted" | "converted" | "dismissed" | "all">("new");
-  const [tab, setTab] = React.useState<"feed" | "matches">("feed");
+  const [tab, setTab] = React.useState<"feed" | "matches" | "gaps" | "digest">("feed");
+  const [kindFilter, setKindFilter] = React.useState<string>("");
+  const [includeListings, setIncludeListings] = React.useState(false);
   const [domain, setDomain] = React.useState("");
   const [sitemap, setSitemap] = React.useState("");
   const [label, setLabel] = React.useState("");
   const [scanning, setScanning] = React.useState(false);
+  const [classifying, setClassifying] = React.useState(false);
   const [matchingId, setMatchingId] = React.useState<string | null>(null);
   const [enrichingId, setEnrichingId] = React.useState<string | null>(null);
   const [spend, setSpend] = React.useState<{ today_spend_usd: number; today_calls: number; today_hits: number; month_spend_usd: number; daily_cap_usd: number; monthly_target_usd: number } | null>(null);
@@ -44,6 +48,12 @@ function CompetitorRadar() {
   const [runningTests, setRunningTests] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [loadError, setLoadError] = React.useState<string | null>(null);
+  const [gaps, setGaps] = React.useState<CityGapRow[]>([]);
+  const [gapsLoading, setGapsLoading] = React.useState(false);
+  const [creatingGap, setCreatingGap] = React.useState<string | null>(null);
+  const [digest, setDigest] = React.useState<string | null>(null);
+  const [digestDays, setDigestDays] = React.useState(7);
+  const [digestLoading, setDigestLoading] = React.useState(false);
 
   async function flagFalsePositive(id: string) {
     const reason = prompt("Why is this a false positive? (optional, helps train the filter)") ?? "";
@@ -67,7 +77,7 @@ function CompetitorRadar() {
     try {
       const [s, n, m, sp] = await Promise.all([
         listCompetitorSites().catch((e) => { console.error("listCompetitorSites failed:", e); return { rows: [] as CompetitorSiteRow[] }; }),
-        listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } })
+        listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 300, kind: kindFilter || undefined, excludeListings: !includeListings } })
           .catch((e) => { console.error("listNewCompetitorUrls failed:", e); return { rows: [] as CompetitorUrlRow[] }; }),
         listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } })
           .catch((e) => { console.error("listHostMatches failed:", e); return { rows: [] as CompetitorHostMatchRow[] }; }),
@@ -82,9 +92,47 @@ function CompetitorRadar() {
     } finally {
       setLoading(false);
     }
-  }, [showAck, matchStatus]);
+  }, [showAck, matchStatus, kindFilter, includeListings]);
 
   React.useEffect(() => { load(); }, [load]);
+
+  async function classifyAll() {
+    setClassifying(true); setMsg(null);
+    try {
+      const r: any = await classifyCompetitorUrls({ data: { force: false, limit: 5000 } });
+      setMsg(`Classified ${r.updated}/${r.total} URLs.`);
+      await load();
+    } catch (e: any) { setMsg(e?.message || "classify failed"); }
+    finally { setClassifying(false); }
+  }
+
+  async function loadGaps() {
+    setGapsLoading(true);
+    try {
+      const r: any = await detectCityGaps({ data: { minCompetitors: 1 } });
+      setGaps(Array.isArray(r?.rows) ? r.rows : []);
+    } finally { setGapsLoading(false); }
+  }
+  React.useEffect(() => { if (tab === "gaps" && gaps.length === 0) loadGaps(); }, [tab]); // eslint-disable-line
+
+  async function createCounter(g: CityGapRow) {
+    const key = `${g.city_slug}|${g.state_code || ""}`;
+    setCreatingGap(key);
+    try {
+      const r: any = await createCounterPageFromGap({ data: { city_slug: g.city_slug, state_code: g.state_code, competitor_url: g.competitor_urls[0]?.url } });
+      setMsg(r.ok ? `Draft created at ${r.url_path}` : `Failed: ${r.error}`);
+      if (r.ok) await loadGaps();
+    } finally { setCreatingGap(null); }
+  }
+
+  async function loadDigest() {
+    setDigestLoading(true); setDigest(null);
+    try {
+      const r: any = await generateCompetitorDigest({ data: { days: digestDays } });
+      setDigest(r.digest || "_(empty)_");
+    } catch (e: any) { setDigest(`Error: ${e?.message || "digest failed"}`); }
+    finally { setDigestLoading(false); }
+  }
 
   async function findHostFor(id: string) {
     setMatchingId(id);
@@ -214,9 +262,15 @@ function CompetitorRadar() {
       </div>
 
       {/* Tabs */}
-      <div className="mt-6 flex gap-2 border-b border-border">
+      <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
         <button onClick={() => setTab("feed")} className={`px-4 py-2 text-sm font-semibold ${tab === "feed" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
           New pages
+        </button>
+        <button onClick={() => setTab("gaps")} className={`px-4 py-2 text-sm font-semibold ${tab === "gaps" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
+          <MapPin className="mr-1 inline h-3.5 w-3.5" /> City gaps
+        </button>
+        <button onClick={() => setTab("digest")} className={`px-4 py-2 text-sm font-semibold ${tab === "digest" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
+          <FileText className="mr-1 inline h-3.5 w-3.5" /> Intel digest
         </button>
         <button onClick={() => setTab("matches")} className={`px-4 py-2 text-sm font-semibold ${tab === "matches" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
           <Target className="mr-1 inline h-3.5 w-3.5" /> Host matches ({matches.length})
@@ -228,6 +282,20 @@ function CompetitorRadar() {
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-lg font-bold">{showAck ? "All competitor URLs" : "🚨 New pages discovered"}</h2>
             <div className="flex flex-wrap items-center gap-2">
+              <select value={kindFilter} onChange={(e) => setKindFilter(e.target.value)}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold">
+                <option value="">All kinds</option>
+                <option value="city_page">City pages</option>
+                <option value="blog">Blog</option>
+                <option value="category">Category</option>
+                <option value="feature">Feature</option>
+                <option value="listing">Listings</option>
+                <option value="other">Other</option>
+              </select>
+              <label className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
+                <input type="checkbox" checked={includeListings} onChange={(e) => setIncludeListings(e.target.checked)} />
+                Include listings
+              </label>
               <button onClick={() => setShowAck((s) => !s)} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
                 {showAck ? "Show new only" : "Show all"}
               </button>
@@ -236,6 +304,11 @@ function CompetitorRadar() {
                   <Check className="mr-1 inline h-3 w-3" /> Acknowledge all
                 </button>
               )}
+              <button onClick={classifyAll} disabled={classifying}
+                className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
+                {classifying ? <Loader2 className="h-3 w-3 animate-spin" /> : <Tags className="h-3 w-3" />}
+                Classify all
+              </button>
               <button onClick={scan} disabled={scanning}
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
                 {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
@@ -260,6 +333,11 @@ function CompetitorRadar() {
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                         {new Date(r.first_seen_at).toLocaleDateString()}
                       </span>
+                      {r.kind && (
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${r.kind === "city_page" ? "bg-emerald-100 text-emerald-800" : r.kind === "blog" ? "bg-sky-100 text-sky-800" : r.kind === "listing" ? "bg-muted text-muted-foreground" : "bg-secondary"}`}>
+                          {r.kind.replace("_", " ")}
+                        </span>
+                      )}
                       {r.word_count != null && (
                         <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{r.word_count} words</span>
                       )}
@@ -292,6 +370,97 @@ function CompetitorRadar() {
             ))}
           </div>
         </>
+      )}
+
+      {tab === "gaps" && (
+        <div className="mt-4">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-lg font-bold">Cities competitors cover that we don't</h2>
+              <p className="text-xs text-muted-foreground">Detected from classified competitor URLs. Click "Create draft" to spawn a content_pages draft at /p/{`{slug}`}.</p>
+            </div>
+            <button onClick={loadGaps} disabled={gapsLoading}
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+              {gapsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              {gapsLoading ? "Scanning…" : "Refresh"}
+            </button>
+          </div>
+          {msg && <p className="mb-2 text-xs text-muted-foreground">{msg}</p>}
+          {gaps.length === 0 && !gapsLoading && (
+            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+              No gaps detected yet. Run "Classify all" on the New pages tab first so we can extract city slugs.
+            </p>
+          )}
+          <div className="space-y-2">
+            {gaps.map((g) => {
+              const key = `${g.city_slug}|${g.state_code || ""}`;
+              return (
+                <div key={key} className={`rounded-2xl border p-3 ${g.has_our_page ? "border-border bg-muted/30" : "border-emerald-200 bg-emerald-50/40"}`}>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-sm font-bold">{g.city_slug.replace(/-/g, " ")}{g.state_code ? `, ${g.state_code}` : ""}</span>
+                        <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{g.competitor_urls.length} competitor URL{g.competitor_urls.length === 1 ? "" : "s"}</span>
+                        {g.has_our_page
+                          ? <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">we have it</span>
+                          : <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white">GAP</span>}
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
+                        {g.competitor_urls.slice(0, 3).map((u) => (
+                          <a key={u.url} href={u.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 break-all text-primary hover:underline">
+                            <ExternalLink className="h-3 w-3 shrink-0" />{u.domain || u.url}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                    {!g.has_our_page && (
+                      <button onClick={() => createCounter(g)} disabled={creatingGap === key}
+                        className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+                        {creatingGap === key ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                        Create draft
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {tab === "digest" && (
+        <div className="mt-4">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-lg font-bold">Competitor intel digest</h2>
+              <p className="text-xs text-muted-foreground">AI summary of what competitors shipped recently, with suggested actions.</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <select value={digestDays} onChange={(e) => setDigestDays(Number(e.target.value))}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold">
+                <option value={3}>Last 3 days</option>
+                <option value={7}>Last 7 days</option>
+                <option value={14}>Last 14 days</option>
+                <option value={30}>Last 30 days</option>
+              </select>
+              <button onClick={loadDigest} disabled={digestLoading}
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+                {digestLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {digestLoading ? "Analyzing…" : "Generate digest"}
+              </button>
+            </div>
+          </div>
+          {!digest && !digestLoading && (
+            <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+              Click "Generate digest" to summarize recent competitor activity.
+            </p>
+          )}
+          {digest && (
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed">{digest}</pre>
+            </div>
+          )}
+        </div>
       )}
 
       {tab === "matches" && (

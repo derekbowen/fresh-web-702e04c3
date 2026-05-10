@@ -514,33 +514,45 @@ export type Database = {
       competitor_urls: {
         Row: {
           acknowledged: boolean
+          city_slug: string | null
           first_seen_at: string
           id: string
+          kind: string | null
           last_seen_at: string
           scraped_at: string | null
           site_id: string
+          state_code: string | null
+          summary: string | null
           title: string | null
           url: string
           word_count: number | null
         }
         Insert: {
           acknowledged?: boolean
+          city_slug?: string | null
           first_seen_at?: string
           id?: string
+          kind?: string | null
           last_seen_at?: string
           scraped_at?: string | null
           site_id: string
+          state_code?: string | null
+          summary?: string | null
           title?: string | null
           url: string
           word_count?: number | null
         }
         Update: {
           acknowledged?: boolean
+          city_slug?: string | null
           first_seen_at?: string
           id?: string
+          kind?: string | null
           last_seen_at?: string
           scraped_at?: string | null
           site_id?: string
+          state_code?: string | null
+          summary?: string | null
           title?: string | null
           url?: string
           word_count?: number | null
