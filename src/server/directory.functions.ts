@@ -326,6 +326,36 @@ export const adminScrapeProviderUrl = createServerFn({ method: "POST" })
         for (const it of listings) {
           const slug = slugify(`${it.name}-${it.city ?? ""}-${it.state_code ?? ""}`);
           if (!slug) continue;
+
+          // Image enrichment: if we have a website but no images, scrape the site for branding/images
+          let logo_url: string | null = it.logo_url ?? null;
+          let hero_image_url: string | null = it.hero_image_url ?? null;
+          let gallery_urls: string[] = Array.isArray(it.gallery_urls) ? it.gallery_urls.filter(Boolean) : [];
+          if (it.website && (!logo_url || !hero_image_url || gallery_urls.length === 0)) {
+            try {
+              const er = await fetch("https://api.firecrawl.dev/v2/scrape", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+                body: JSON.stringify({
+                  url: it.website,
+                  formats: [
+                    "branding",
+                    { type: "json", prompt: "From this business website, return JSON: { logo_url (string|null, the company logo image URL), hero_image_url (string|null, the main hero/banner photo URL), gallery_urls (string[], up to 6 representative photo URLs of pools, work, or the business — absolute https URLs only). Use absolute URLs from <img src> attributes. No data: URIs, no SVG sprites, no tracking pixels." }
+                  ],
+                  onlyMainContent: false,
+                }),
+              });
+              const ep: any = await er.json().catch(() => null);
+              const ej = ep?.data?.json ?? ep?.json ?? {};
+              const branding = ep?.data?.branding ?? ep?.branding ?? {};
+              const isHttp = (u: any) => typeof u === "string" && /^https?:\/\//i.test(u) && !/\.svg(\?|$)/i.test(u);
+              logo_url = logo_url || (isHttp(ej.logo_url) ? ej.logo_url : null) || (isHttp(branding?.logo) ? branding.logo : null) || (isHttp(branding?.images?.logo) ? branding.images.logo : null);
+              hero_image_url = hero_image_url || (isHttp(ej.hero_image_url) ? ej.hero_image_url : null) || (isHttp(branding?.images?.ogImage) ? branding.images.ogImage : null);
+              const extra = Array.isArray(ej.gallery_urls) ? ej.gallery_urls.filter(isHttp) : [];
+              gallery_urls = Array.from(new Set([...gallery_urls, ...extra])).slice(0, 8);
+            } catch {/* image enrichment is best-effort */}
+          }
+
           const upsert = await supabaseAdmin
             .from("providers")
             .upsert({
@@ -341,9 +371,9 @@ export const adminScrapeProviderUrl = createServerFn({ method: "POST" })
               services: Array.isArray(it.services) ? it.services : [],
               rating: typeof it.rating === "number" ? it.rating : null,
               rating_count: typeof it.rating_count === "number" ? it.rating_count : null,
-              logo_url: it.logo_url ?? null,
-              hero_image_url: it.hero_image_url ?? null,
-              gallery_urls: Array.isArray(it.gallery_urls) ? it.gallery_urls : [],
+              logo_url,
+              hero_image_url,
+              gallery_urls,
               source_url: data.url,
               source_type: sourceType,
               scraped_at: new Date().toISOString(),

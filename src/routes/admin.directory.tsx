@@ -312,7 +312,7 @@ function AdminDirectory() {
                       {p.email && <span>📧 {p.email}</span>}
                       {p.phone && <span>📞 {p.phone}</span>}
                       {p.website_url && <a href={p.website_url} target="_blank" rel="noreferrer" className="text-primary hover:underline">🔗 site</a>}
-                      <a href={`/providers/${p.slug}`} target="_blank" rel="noreferrer" className="text-primary hover:underline">/providers/{p.slug}</a>
+                      <a href={`/p/pool-pros/${p.slug}`} target="_blank" rel="noreferrer" className="text-primary hover:underline">/p/pool-pros/{p.slug}</a>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-3 text-xs">
                       <TimestampPill label="Paid until" value={p.listing_paid_until} activeClass="text-green-700" />
