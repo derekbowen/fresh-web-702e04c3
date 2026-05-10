@@ -127,8 +127,10 @@ export const verifyHostLeadBatch = createServerFn({ method: "POST" })
   });
 
 export const listVerifiedLeads = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator(z.object({ filter: z.enum(["all", "sendable", "invalid", "unverified"]).default("all") }).parse)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as { userId: string }).userId);
     try {
       let q = supabaseAdmin
         .from("host_leads")
