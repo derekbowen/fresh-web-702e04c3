@@ -41,7 +41,7 @@ function BulkEditor() {
   const [status, setStatus] = React.useState<"all" | "published" | "pending" | "draft">("all");
   const [template, setTemplate] = React.useState("");
   const [page, setPage] = React.useState(1);
-  const pageSize = 50;
+  const [pageSize, setPageSize] = React.useState<number>(50);
   const [rows, setRows] = React.useState<ContentPageRow[]>([]);
   const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
@@ -55,7 +55,7 @@ function BulkEditor() {
       const r = await listContentPages({ data: { q, status, template, page, pageSize } });
       setRows(r.rows); setTotal(r.total);
     } finally { setLoading(false); }
-  }, [q, status, template, page]);
+  }, [q, status, template, page, pageSize]);
   React.useEffect(() => { void load(); }, [load]);
 
   function toggle(id: string) {
@@ -124,6 +124,16 @@ function BulkEditor() {
         </select>
         <input value={template} onChange={(e) => { setTemplate(e.target.value); setPage(1); }} placeholder="Template type…"
           className="w-48 rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
+        <select
+          value={pageSize}
+          onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+          title="Rows per page"
+          className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+        >
+          {[50, 100, 250, 500, 1000].map((n) => (
+            <option key={n} value={n}>{n} / page</option>
+          ))}
+        </select>
         <span className="ml-auto text-sm text-muted-foreground">{total.toLocaleString()} total</span>
       </div>
 
