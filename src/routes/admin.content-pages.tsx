@@ -68,26 +68,45 @@ function BulkEditor() {
     setSelected((s) => s.size === rows.length ? new Set() : new Set(rows.map((r) => r.id)));
   }
 
+  const [fixProgress, setFixProgress] = React.useState<{ done: number; failed: number; total: number } | null>(null);
+
   async function bulkAutoFix() {
     if (!selected.size) return;
-    const ids = Array.from(selected).slice(0, 10);
-    if (selected.size > 10 && !confirm(`Auto-fix runs max 10 at a time. Fix the first ${ids.length} of ${selected.size} selected?`)) return;
-    if (!confirm(`Auto-fix SEO on ${ids.length} page${ids.length > 1 ? "s" : ""}? Overwrites focus keyword, SEO/OG fields, and may rewrite thin bodies. Uses AI credits.`)) return;
+    const ids = Array.from(selected);
+    if (!confirm(`Auto-fix SEO on ${ids.length} page${ids.length > 1 ? "s" : ""}? This runs in the background via a queue. Overwrites focus keyword, SEO/OG fields, and may rewrite thin bodies. Uses AI credits.`)) return;
     setBusy(true);
-    let ok = 0; const failed: string[] = [];
+    setFixProgress({ done: 0, failed: 0, total: ids.length });
     try {
-      for (const id of ids) {
-        try {
-          const r: any = await autoFixSeo({ data: { id } });
-          if (r?.ok) ok++; else failed.push(`${id.slice(0, 8)}: ${r?.error || "failed"}`);
-        } catch (e) {
-          failed.push(`${id.slice(0, 8)}: ${e instanceof Error ? e.message : String(e)}`);
-        }
+      // Enqueue in chunks of 500 (server validator cap)
+      let batchId: string | undefined;
+      for (let i = 0; i < ids.length; i += 500) {
+        const chunk = ids.slice(i, i + 500);
+        const r: any = await enqueueSeoFixJobs({ data: { pageIds: chunk, mode: "full" } });
+        if (!r?.ok) throw new Error(r?.error || "Failed to enqueue");
+        if (!batchId) batchId = r.batchId;
       }
-      alert(`Auto-fixed ${ok}/${ids.length}.${failed.length ? `\n\nFailures:\n${failed.slice(0, 5).join("\n")}` : ""}`);
+      if (!batchId) throw new Error("No batch created");
+      // Drain the queue, polling status between passes
+      // Each pass processes up to 10 jobs server-side
+      let safety = 0;
+      while (safety++ < 1000) {
+        await processSeoFixQueue({ data: { batchId, max: 10 } });
+        const status: any = await getSeoJobStatus({ data: { batchId } });
+        const s = status?.summary || {};
+        setFixProgress({ done: s.done || 0, failed: s.failed || 0, total: ids.length });
+        if (((s.queued || 0) + (s.processing || 0)) === 0) break;
+      }
+      const status: any = await getSeoJobStatus({ data: { batchId } });
+      const s = status?.summary || {};
+      alert(`Auto-fix complete. Done: ${s.done || 0}, failed: ${s.failed || 0}, cancelled: ${s.cancelled || 0}.`);
       setSelected(new Set());
       await load();
-    } finally { setBusy(false); }
+    } catch (e) {
+      alert(`Auto-fix error: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setBusy(false);
+      setFixProgress(null);
+    }
   }
 
   async function bulk(action: "publish" | "unpublish" | "delete") {
