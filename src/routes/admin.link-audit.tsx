@@ -136,7 +136,7 @@ function LinkAuditPage() {
                 <Th>HTTP</Th>
                 <Th>Reason</Th>
                 <Th>Source pages</Th>
-                <Th></Th>
+                <Th>{""}</Th>
               </tr>
             </thead>
             <tbody>
