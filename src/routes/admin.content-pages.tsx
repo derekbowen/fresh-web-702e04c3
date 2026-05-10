@@ -55,7 +55,7 @@ function BulkEditor() {
       const r = await listContentPages({ data: { q, status, template, page, pageSize } });
       setRows(r.rows); setTotal(r.total);
     } finally { setLoading(false); }
-  }, [q, status, template, page]);
+  }, [q, status, template, page, pageSize]);
   React.useEffect(() => { void load(); }, [load]);
 
   function toggle(id: string) {
