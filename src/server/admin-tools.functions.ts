@@ -818,3 +818,181 @@ ${preset.prompt}`;
     if (!r.ok) return r;
     return { ok: true, markdown: r.content };
   });
+
+// ─── Custom AI section presets (admin-managed) ───────────────────────────────
+export type CustomSectionPreset = {
+  id: string;
+  label: string;
+  prompt: string;
+  sort_order: number;
+  updated_at: string;
+};
+
+export const listSectionPresets = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ rows: CustomSectionPreset[] }> => {
+    await assertAdmin((context as any).userId);
+    const { data } = await (supabaseAdmin as any)
+      .from("admin_section_presets")
+      .select("id, label, prompt, sort_order, updated_at")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+    return { rows: (data ?? []) as CustomSectionPreset[] };
+  });
+
+export const saveSectionPreset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid().optional(),
+      label: z.string().min(1).max(80),
+      prompt: z.string().min(5).max(4000),
+      sort_order: z.number().int().min(0).max(9999).default(0),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }): Promise<{ ok: true; id: string } | { ok: false; error: string }> => {
+    const userId = (context as any).userId as string;
+    await assertAdmin(userId);
+    if (data.id) {
+      const { error } = await (supabaseAdmin as any)
+        .from("admin_section_presets")
+        .update({ label: data.label, prompt: data.prompt, sort_order: data.sort_order, updated_at: new Date().toISOString() })
+        .eq("id", data.id);
+      if (error) return { ok: false, error: error.message };
+      return { ok: true, id: data.id };
+    }
+    const { data: row, error } = await (supabaseAdmin as any)
+      .from("admin_section_presets")
+      .insert({ label: data.label, prompt: data.prompt, sort_order: data.sort_order, created_by: userId })
+      .select("id")
+      .single();
+    if (error) return { ok: false, error: error.message };
+    return { ok: true, id: row.id };
+  });
+
+export const deleteSectionPreset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true } | { ok: false; error: string }> => {
+    await assertAdmin((context as any).userId);
+    const { error } = await (supabaseAdmin as any).from("admin_section_presets").delete().eq("id", data.id);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  });
+
+// Run a saved custom prompt (returns proposed markdown — does NOT save).
+export const generateCustomSection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), preset_id: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }): Promise<{ ok: true; markdown: string; label: string } | { ok: false; error: string }> => {
+    await assertAdmin((context as any).userId);
+    const { data: preset } = await (supabaseAdmin as any)
+      .from("admin_section_presets")
+      .select("label, prompt")
+      .eq("id", data.preset_id)
+      .maybeSingle();
+    if (!preset) return { ok: false, error: "Preset not found" };
+    const p = await loadPageForAi(data.id);
+    if (!p) return { ok: false, error: "Page not found" };
+    const sys = `You add a single new section to an existing PRNM page.
+${BRAND_VOICE}
+Output ONLY the Markdown for the new section. Start with a ## heading. 150-450 words. No preamble, no commentary, no closing remark.`;
+    const user = `${pageContext(p)}
+
+Existing body excerpt (first 1500 chars):
+---
+${(p.body_markdown ?? "").slice(0, 1500)}
+---
+
+Section to write:
+${preset.prompt}`;
+    const r = await callAi({ system: sys, user });
+    if (!r.ok) return r;
+    return { ok: true, markdown: r.content, label: preset.label };
+  });
+
+// ─── Auto-fix SEO: one-click "make all checks green" ─────────────────────────
+// Generates focus_keyword (if missing), perfect-length seo_title/description,
+// og_*, and (if needed) rewrites/expands the body so it has 800+ words, the
+// focus keyword in the first 800 chars, and at least 3 internal links.
+export const autoFixSeo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<
+    | { ok: true; page: NonNullable<Awaited<ReturnType<typeof loadPageForAi>>>; changed: string[] }
+    | { ok: false; error: string }
+  > => {
+    await assertAdmin((context as any).userId);
+    const p = await loadPageForAi(data.id);
+    if (!p) return { ok: false, error: "Page not found" };
+
+    const body = (p.body_markdown ?? "");
+    const wordCount = body.split(/\s+/).filter(Boolean).length;
+    const internalLinks = (body.match(/\]\(\/[^)]+\)/g) ?? []).length;
+    const needsBodyRewrite = wordCount < 800 || internalLinks < 3;
+
+    const sys = `You are an SEO specialist for Pool Rental Near Me (PRNM).
+${BRAND_VOICE}
+
+Your job: produce a JSON object that makes EVERY SEO check pass for this page.
+
+Required checks (you MUST satisfy all):
+- focus_keyword: 2-5 word phrase, lowercase, naturally describes the page topic.
+- seo_title: 50-60 characters, includes focus_keyword near the start.
+- seo_description: 140-155 characters, includes focus_keyword, compelling click copy.
+- og_title: 40-60 characters.
+- og_description: 100-150 characters.
+${needsBodyRewrite ? `- body_markdown: rewritten/expanded to 850-1100 words. MUST contain at least 4 markdown links to internal /p/ or /s or /l/ paths from the allowed list. Focus keyword MUST appear in the first paragraph and at least one ## heading. Sentence-case headings only. End with a CTA paragraph.` : `- body_markdown: keep as-is (return null).`}
+
+Return ONLY a JSON object with these exact keys:
+{ "focus_keyword": string, "seo_title": string, "seo_description": string, "og_title": string, "og_description": string, "body_markdown": string | null }`;
+
+    const user = `${pageContext(p)}
+
+Word count: ${wordCount}
+Internal link count: ${internalLinks}
+
+${needsBodyRewrite ? `Current body to rewrite/expand:\n---\n${body || "(empty)"}\n---` : `(Body already meets length and link checks; return body_markdown: null.)`}
+
+Return the JSON now.`;
+
+    const r = await callAi({ system: sys, user, json: true });
+    if (!r.ok) return r;
+
+    let parsed: any;
+    try { parsed = JSON.parse(r.content); } catch { return { ok: false, error: "AI returned invalid JSON" }; }
+
+    const s = (k: string) => (typeof parsed?.[k] === "string" ? (parsed[k] as string).trim() : "");
+    const focus_keyword = s("focus_keyword").toLowerCase();
+    const seo_title = s("seo_title");
+    const seo_description = s("seo_description");
+    const og_title = s("og_title") || seo_title;
+    const og_description = s("og_description") || seo_description;
+    const newBody = typeof parsed?.body_markdown === "string" && parsed.body_markdown.trim().length > 200
+      ? (parsed.body_markdown as string)
+      : null;
+
+    if (!seo_title || !seo_description || !focus_keyword) {
+      return { ok: false, error: "AI returned incomplete SEO fields" };
+    }
+
+    const update: any = {
+      focus_keyword,
+      seo_title,
+      seo_description,
+      og_title,
+      og_description,
+      updated_at: new Date().toISOString(),
+    };
+    const changed = ["focus_keyword", "seo_title", "seo_description", "og_title", "og_description"];
+    if (newBody) { update.body_markdown = newBody; changed.push("body_markdown"); }
+
+    const { error } = await (supabaseAdmin as any).from("content_pages").update(update).eq("id", p.id);
+    if (error) return { ok: false, error: error.message };
+
+    const refreshed = await loadPageForAi(p.id);
+    if (!refreshed) return { ok: false, error: "Failed to reload page" };
+    return { ok: true, page: refreshed, changed };
+  });
