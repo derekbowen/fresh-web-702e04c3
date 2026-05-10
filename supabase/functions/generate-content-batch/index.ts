@@ -373,13 +373,14 @@ function tierAliases(tier: string): string[] {
   return tier ? [tier] : [];
 }
 
-function pickSystem(row: PlanRow): string {
+function pickSystem(row: PlanRow, sources: CitySource[]): string {
   if (isEventSource(row)) return SYSTEM_EVENT_GUIDE;
   if (row.source_type === "hosting_es") return SYSTEM_HOSTING_ES;
+  if (row.source_type === "city" && sources.length > 0) return SYSTEM_HOST_ACQ_CITY;
   return SYSTEM_VA;
 }
 
-function buildPrompt(row: PlanRow) {
+function buildPrompt(row: PlanRow, sources: CitySource[] = []) {
   const links = (row.internal_links ?? "")
     .split(/\n|,/)
     .map((s) => s.trim())
@@ -401,10 +402,10 @@ ${row.population_2024 ? `population: ${row.population_2024.toLocaleString()}` : 
 ${row.warm_climate === true ? "climate: warm/long swim season" : row.warm_climate === false ? "climate: short/seasonal swim window" : ""}
 ${row.search_intent ? `search_intent: ${row.search_intent}` : ""}
 ${row.notes ? `notes: ${row.notes}` : ""}
-
+${dossierBlock(sources)}
 Return only the final markdown body for plan_slug ${row.slug}. Start with the exact H1. Do not wrap the answer in JSON or code fences.`;
 
-  return { system: pickSystem(row), user };
+  return { system: pickSystem(row, sources), user };
 }
 
 function parseInput(value: unknown): Required<Input> {
