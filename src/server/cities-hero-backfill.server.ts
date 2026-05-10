@@ -102,28 +102,78 @@ const STATE_NAME_TO_CODE: Record<string, string> = {
 };
 
 /**
- * Resolve the source URL for a given city: override > directory map > null.
+ * Bulk-load the canonical /p/* URL path for each city from `content_pages`.
+ *
+ * For each city slug we look up the published content page that actually
+ * renders that city, in priority order:
+ *   1. A page whose slug equals the city slug exactly (e.g. `los-angeles-ca`)
+ *   2. `become-a-swimming-pool-host-{citySlug}`
+ *   3. `become-a-pool-host-{citySlug}`
+ *
+ * If none of those exist, the city has no canonical landing page and the
+ * backfill should skip it instead of guessing a 404 URL like `/p/{citySlug}`.
+ */
+export async function loadCanonicalUrlPaths(
+  citySlugs: string[],
+): Promise<Map<string, string>> {
+  if (citySlugs.length === 0) return new Map();
+
+  const candidates = new Set<string>();
+  for (const s of citySlugs) {
+    candidates.add(s);
+    candidates.add(`become-a-swimming-pool-host-${s}`);
+    candidates.add(`become-a-pool-host-${s}`);
+  }
+
+  const { data } = await supabaseAdmin
+    .from("content_pages")
+    .select("slug,url_path,status")
+    .in("slug", Array.from(candidates))
+    .eq("status", "published");
+
+  const bySlug = new Map<string, string>();
+  for (const row of (data ?? []) as Array<{ slug: string; url_path: string | null }>) {
+    if (row.url_path) bySlug.set(row.slug, row.url_path);
+  }
+
+  const out = new Map<string, string>();
+  for (const s of citySlugs) {
+    const path =
+      bySlug.get(s) ??
+      bySlug.get(`become-a-swimming-pool-host-${s}`) ??
+      bySlug.get(`become-a-pool-host-${s}`);
+    if (path) out.set(s, path);
+  }
+  return out;
+}
+
+/**
+ * Resolve the source URL for a given city, in priority order:
+ *   1. URL_OVERRIDES (curated large markets)
+ *   2. content_pages.url_path lookup (authoritative — page actually exists)
+ *   3. /p/all-locations directory harvest (may be stale)
+ *   4. null  (no real page → skip; do NOT guess /p/{slug})
  */
 export function resolveSourceUrl(
   citySlug: string,
   cityStateCode: string | null | undefined,
   directory: Map<string, string>,
+  canonical?: Map<string, string>,
 ): string | null {
   if (URL_OVERRIDES[citySlug]) return URL_OVERRIDES[citySlug];
 
-  // Direct slug match.
+  const fromDb = canonical?.get(citySlug);
+  if (fromDb) return `https://www.poolrentalnearme.com${fromDb}`;
+
+  // Direct slug match in scraped directory.
   const direct = directory.get(citySlug);
   if (direct) return direct;
 
-  // Try with state suffix (some DB slugs are bare city names like "birmingham"
-  // but the directory key is "birmingham-al").
   if (cityStateCode) {
     const withState = directory.get(`${citySlug}-${cityStateCode.toLowerCase()}`);
     if (withState) return withState;
   }
 
-  // Try the city portion of a "city-state" DB slug (e.g. our slug
-  // "kansas-city-mo" should match directory key "kansas-city").
   const segs = citySlug.split("-");
   if (segs.length > 1) {
     const last = segs[segs.length - 1];
