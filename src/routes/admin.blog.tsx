@@ -210,7 +210,6 @@ function AdminBlogPage() {
           <p className="mt-3 text-xs text-muted-foreground">
             Daily auto-generation runs in the background — drafts appear here for review.
           </p>
-          </div>
         </section>
 
 
