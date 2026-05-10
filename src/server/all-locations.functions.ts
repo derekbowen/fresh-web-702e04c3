@@ -150,47 +150,12 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
       }
     }
 
-    // 2. cities — published city pages live in the `cities` table and resolve at /p/{slug}
-    {
-      const links: DirectoryLink[] = [];
-      const pageSize = 1000;
-      let from = 0;
-      while (true) {
-        const { data, error } = await supabaseAdmin
-          .from("cities")
-          .select("slug, name, state_code")
-          .eq("is_published", true)
-          .not("slug", "is", null)
-          .order("name", { ascending: true })
-          .range(from, from + pageSize - 1);
-        if (error) {
-          console.error("[all-locations] cities", error.message);
-          break;
-        }
-        if (!data || data.length === 0) break;
-        for (const row of data) {
-          if (!row.slug) continue;
-          links.push({
-            href: `/p/${row.slug}`,
-            label: row.name,
-            sub: row.state_code ?? null,
-          });
-        }
-        if (data.length < pageSize) break;
-        from += pageSize;
-      }
-      if (links.length > 0) {
-        // Insert cities at the top of the directory (right after Main Pages)
-        const cityGroup: DirectoryGroup = {
-          id: "cities",
-          title: "City Pool Rental Guides",
-          description: "Local guides covering pool rentals in every published U.S. city.",
-          links,
-        };
-        groups.splice(1, 0, cityGroup);
-        total += links.length;
-      }
-    }
+    // (Cities table block removed: only ~1 of 1030 published `cities` rows
+    // had a matching /p/{slug} content_pages entry, so the rest produced
+    // broken links. The 200 canonical city pages are already surfaced via
+    // the `host_acq_city` group above. If/when standalone city landing pages
+    // exist as real routes, re-introduce a filtered version here.)
+
     // 4. live listings (synced)
     {
       const { data } = await supabaseAdmin
