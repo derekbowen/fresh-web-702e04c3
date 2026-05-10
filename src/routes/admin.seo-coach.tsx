@@ -134,33 +134,62 @@ function SeoCoachPage() {
           {messages.length === 0 && (
             <div className="text-sm text-muted-foreground">Loading your snapshot…</div>
           )}
-          {messages.map((m, i) => (
-            <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
-              <div
-                className={
-                  m.role === "user"
-                    ? "max-w-[80%] rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm"
-                    : "max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm prose prose-sm dark:prose-invert max-w-none"
-                }
-              >
-                {m.role === "assistant" ? (
-                  <ReactMarkdown
-                    components={{
-                      a: ({ href, children }) => (
-                        <a href={href} className="text-primary underline" target={href?.startsWith("/admin") ? undefined : "_blank"}>
-                          {children}
-                        </a>
-                      ),
-                    }}
-                  >
-                    {m.content}
-                  </ReactMarkdown>
-                ) : (
-                  m.content
-                )}
+          {messages.map((m, i) => {
+            const routes = m.role === "assistant" ? extractAdminRoutes(m.content) : [];
+            return (
+              <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
+                <div
+                  className={
+                    m.role === "user"
+                      ? "max-w-[80%] rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm"
+                      : "max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm space-y-3"
+                  }
+                >
+                  {m.role === "assistant" ? (
+                    <>
+                      <div className="prose prose-sm dark:prose-invert max-w-none">
+                        <ReactMarkdown
+                          components={{
+                            a: ({ href, children }) => (
+                              <a href={href} className="text-primary underline" target={href?.startsWith("/admin") ? undefined : "_blank"}>
+                                {children}
+                              </a>
+                            ),
+                          }}
+                        >
+                          {m.content}
+                        </ReactMarkdown>
+                      </div>
+                      {routes.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-2 border-t border-border/40">
+                          {routes.map((route) => {
+                            const isDone = completed.has(route);
+                            return (
+                              <button
+                                key={route}
+                                onClick={() => !isDone && doItNow(route)}
+                                disabled={isDone}
+                                className={
+                                  isDone
+                                    ? "inline-flex items-center gap-1.5 rounded-md bg-green-600/10 text-green-700 dark:text-green-400 px-3 py-1.5 text-xs font-medium cursor-default"
+                                    : "inline-flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90 px-3 py-1.5 text-xs font-semibold"
+                                }
+                                title={route}
+                              >
+                                {isDone ? <><Check className="h-3 w-3" /> Done — {labelFor(route)}</> : <><ExternalLink className="h-3 w-3" /> Do it now: {labelFor(route)}</>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    m.content
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {loading && (
             <div className="flex justify-start">
               <div className="rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground">Thinking…</div>
