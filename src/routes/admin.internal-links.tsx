@@ -69,8 +69,32 @@ function InternalLinks() {
     await load();
   }
 
+  const [bulkApplying, setBulkApplying] = React.useState(false);
+  async function bulkApply(ids: string[]) {
+    if (!ids.length) return;
+    if (!confirm(`Insert ${ids.length} link${ids.length === 1 ? "" : "s"} into the page bodies? This edits content_pages.`)) return;
+    setBulkApplying(true);
+    try {
+      const r: any = await applyLinkSuggestionsBulk({ data: { ids } });
+      if (!r.ok) alert(r.error || "Bulk apply failed");
+      else setGenMsg(`Inserted ${r.applied} new links, ${r.skipped} already linked, ${r.failed} failed (of ${r.total}).`);
+      await load();
+    } finally { setBulkApplying(false); }
+  }
+
   function toggleSelect(id: string) {
     setSelected((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  }
+
+  const visiblePendingIds = React.useMemo(() => rows.filter(r => r.status === "pending").map(r => r.id), [rows]);
+  const allVisibleSelected = visiblePendingIds.length > 0 && visiblePendingIds.every(id => selected.has(id));
+  function toggleSelectAllVisible() {
+    setSelected((s) => {
+      const n = new Set(s);
+      if (allVisibleSelected) visiblePendingIds.forEach(id => n.delete(id));
+      else visiblePendingIds.forEach(id => n.add(id));
+      return n;
+    });
   }
 
   return (
