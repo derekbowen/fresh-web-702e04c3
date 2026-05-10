@@ -7,6 +7,7 @@ import {
   listLinkSuggestions,
   updateLinkSuggestionStatus,
   applyLinkSuggestion,
+  applyLinkSuggestionsBulk,
   type LinkSuggestionRow,
 } from "@/server/admin-seo-tools.functions";
 import { AdminLayout } from "@/components/admin-layout";
