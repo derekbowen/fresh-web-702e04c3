@@ -558,7 +558,7 @@ export const runSerpCheck = createServerFn({ method: "POST" })
         const delta = (kw.last_position != null && position != null) ? kw.last_position - position : null;
         results.push({ keyword: kw.keyword, position, delta });
       } catch (e: any) {
-        results.push({ keyword: kw.keyword, position: null, delta: null });
+        results.push({ keyword: kw.keyword, position: null, delta: null, error: e?.message || String(e) });
       }
     }
     return { ok: true, results };
