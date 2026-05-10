@@ -250,14 +250,14 @@ function AdminMissingPages() {
             <tbody className="divide-y divide-border bg-background">
               {loading && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
                     Loading…
                   </td>
                 </tr>
               )}
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
                     No 404s logged. Nice.
                   </td>
                 </tr>
@@ -265,6 +265,14 @@ function AdminMissingPages() {
               {!loading &&
                 rows.map((r) => (
                   <tr key={r.id} className="align-top">
+                    <td className="px-3 py-3">
+                      {!r.resolved_at && (
+                        <input type="checkbox" checked={selected.has(r.id)}
+                          onChange={() => toggleOne(r.id)}
+                          disabled={bulkRunning}
+                          aria-label={`Select ${r.url_path}`} />
+                      )}
+                    </td>
                     <td className="px-4 py-3 font-mono text-xs">
                       <a
                         href={r.url_path}
