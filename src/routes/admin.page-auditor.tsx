@@ -25,12 +25,15 @@ function scoreColor(s: number | null) {
   return "text-destructive";
 }
 
+type Suggestion = { url_path: string; title: string | null; status: string };
+
 function PageAuditor() {
   const [path, setPath] = React.useState("/p/");
   const [busy, setBusy] = React.useState(false);
   const [current, setCurrent] = React.useState<PageAuditRow | null>(null);
   const [history, setHistory] = React.useState<PageAuditRow[]>([]);
   const [err, setErr] = React.useState<string | null>(null);
+  const [suggestions, setSuggestions] = React.useState<Suggestion[]>([]);
 
   const load = React.useCallback(async () => {
     const r = await listRecentAudits({ data: { limit: 30 } });
@@ -38,13 +41,21 @@ function PageAuditor() {
   }, []);
   React.useEffect(() => { load(); }, [load]);
 
-  async function run() {
-    if (!path.trim().startsWith("/")) { setErr("Path must start with /"); return; }
-    setBusy(true); setErr(null); setCurrent(null);
+  async function run(overridePath?: string) {
+    const target = (overridePath ?? path).trim();
+    if (!target.startsWith("/") && !/^https?:\/\//i.test(target)) {
+      setErr("Path must start with / (or be a full URL)");
+      return;
+    }
+    if (overridePath) setPath(overridePath);
+    setBusy(true); setErr(null); setCurrent(null); setSuggestions([]);
     try {
-      const r: any = await auditPage({ data: { url_path: path.trim() } });
+      const r: any = await auditPage({ data: { url_path: target } });
       if (r.ok) { setCurrent(r.audit); await load(); }
-      else setErr(r.error || "audit failed");
+      else {
+        setErr(r.error || "audit failed");
+        if (Array.isArray(r.suggestions)) setSuggestions(r.suggestions);
+      }
     } catch (e: any) { setErr(e?.message || "failed"); }
     finally { setBusy(false); }
   }
@@ -64,14 +75,31 @@ function PageAuditor() {
         <label className="block text-xs font-medium text-muted-foreground">Page URL path</label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
           <input value={path} onChange={(e) => setPath(e.target.value)} placeholder="/p/austin-tx"
+            onKeyDown={(e) => { if (e.key === "Enter") run(); }}
             className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm font-mono" />
-          <button onClick={run} disabled={busy}
+          <button onClick={() => run()} disabled={busy}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             {busy ? "Auditing…" : "Audit page"}
           </button>
         </div>
         {err && <p className="mt-2 text-xs text-destructive">{err}</p>}
+        {suggestions.length > 0 && (
+          <div className="mt-3 rounded-lg border border-border bg-muted/30 p-3">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Did you mean?</p>
+            <ul className="space-y-1">
+              {suggestions.map((s) => (
+                <li key={s.url_path}>
+                  <button onClick={() => run(s.url_path)}
+                    className="group flex w-full items-center justify-between gap-3 rounded px-2 py-1 text-left text-xs hover:bg-muted">
+                    <span className="font-mono group-hover:underline">{s.url_path}</span>
+                    <span className="shrink-0 text-[10px] text-muted-foreground">{s.title || "—"} · {s.status}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {current && (
