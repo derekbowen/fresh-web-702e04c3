@@ -160,6 +160,20 @@ function meta(stateName: string | null) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  // Require shared driver token to prevent unauthenticated AI cost burn.
+  const expectedToken = Deno.env.get("DRIVE_TOKEN") ?? "";
+  if (!expectedToken) {
+    return new Response("Server misconfigured: DRIVE_TOKEN not set", { status: 500, headers: corsHeaders });
+  }
+  const reqUrl0 = new URL(req.url);
+  const provided = req.headers.get("x-driver-token")
+    ?? req.headers.get("authorization")?.replace(/^Bearer\s+/i, "")
+    ?? reqUrl0.searchParams.get("token")
+    ?? "";
+  if (provided !== expectedToken) {
+    return new Response("Unauthorized", { status: 401, headers: corsHeaders });
+  }
+
   const sb = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
   const url = new URL(req.url);
   const limit = Math.max(1, Math.min(15, Number(url.searchParams.get("limit") ?? "6")));
