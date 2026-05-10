@@ -21,7 +21,7 @@ function ScrapeImport() {
   const [urls, setUrls] = React.useState("");
   const [running, setRunning] = React.useState(false);
   const [progress, setProgress] = React.useState<{ done: number; total: number; last?: string }>({ done: 0, total: 0 });
-  const [results, setResults] = React.useState<Array<{ url: string; ok: boolean; error?: string; providerId?: string | null }>>([]);
+  const [results, setResults] = React.useState<Array<{ url: string; ok: boolean; error?: string; providerId?: string | null; count?: number }>>([]);
   const [jobs, setJobs] = React.useState<any[]>([]);
 
   const refresh = React.useCallback(async () => {
@@ -40,8 +40,8 @@ function ScrapeImport() {
       const u = list[i];
       setProgress({ done: i, total: list.length, last: u });
       try {
-        const res = await adminScrapeProviderUrl({ data: { url: u, autoCreate: true } });
-        out.push({ url: u, ok: true, providerId: res.providerId });
+        const res: any = await adminScrapeProviderUrl({ data: { url: u, autoCreate: true } });
+        out.push({ url: u, ok: true, providerId: res.providerId, count: res.count ?? (res.providerId ? 1 : 0) });
       } catch (e: any) {
         out.push({ url: u, ok: false, error: e?.message || String(e) });
       }
@@ -87,6 +87,7 @@ function ScrapeImport() {
                 <li key={r.url} className="flex items-start gap-2">
                   <span className={r.ok ? "text-green-600" : "text-red-600"}>{r.ok ? "✓" : "✗"}</span>
                   <span className="truncate">{r.url}</span>
+                  {r.ok && <span className="text-xs text-muted-foreground">— {r.count ?? 0} provider{(r.count ?? 0) === 1 ? "" : "s"}</span>}
                   {r.error && <span className="text-xs text-red-600">— {r.error}</span>}
                 </li>
               ))}
