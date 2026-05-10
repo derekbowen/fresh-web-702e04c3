@@ -80,7 +80,7 @@ function SeoCoachPage() {
     setInput("");
     setLoading(true);
     try {
-      const res = await chat({ data: { messages: next } });
+      const res = await chat({ data: { messages: next, completedRoutes: Array.from(completed) } });
       if (res.ok) setMessages([...next, { role: "assistant", content: res.reply }]);
       else setError(res.error);
     } catch (e) {
