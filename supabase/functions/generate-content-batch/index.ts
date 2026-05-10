@@ -28,7 +28,7 @@ type GeneratedPage = {
 
 // Bump this whenever validator rules change. Paused rows older than the
 // current version are eligible for auto-resume on operator action.
-const VALIDATOR_VERSION = "v2-faq8-2026-05-09";
+const VALIDATOR_VERSION = "v3-citations-2026-05-10";
 const MAX_ATTEMPTS_BEFORE_PAUSE = 3;
 
 type PlanRow = {
