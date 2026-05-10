@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const API_BASE = "https://app.emailverify.io/api";
 
@@ -11,6 +12,16 @@ const VALID_STATUSES = new Set(["valid"]);
 function isSendable(status: string | null | undefined): boolean {
   if (!status) return false;
   return VALID_STATUSES.has(status.toLowerCase());
+}
+
+async function assertAdmin(userId: string) {
+  const { data } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (!data) throw new Error("Forbidden");
 }
 
 export const getEmailVerifyBalance = createServerFn({ method: "GET" }).handler(async () => {
