@@ -333,6 +333,11 @@ function CompetitorRadar() {
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                         {new Date(r.first_seen_at).toLocaleDateString()}
                       </span>
+                      {r.kind && (
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${r.kind === "city_page" ? "bg-emerald-100 text-emerald-800" : r.kind === "blog" ? "bg-sky-100 text-sky-800" : r.kind === "listing" ? "bg-muted text-muted-foreground" : "bg-secondary"}`}>
+                          {r.kind.replace("_", " ")}
+                        </span>
+                      )}
                       {r.word_count != null && (
                         <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold">{r.word_count} words</span>
                       )}
