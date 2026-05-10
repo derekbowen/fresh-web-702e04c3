@@ -475,6 +475,12 @@ export async function backfillCityHeroes(opts: {
   const { data: cities, error } = await dataQuery.limit(effectiveLimit);
   if (error) throw new Error(`Failed to load cities: ${error.message}`);
 
+  // Bulk-load canonical content_pages.url_path for this batch so resolveSourceUrl
+  // can prefer real pages over scraped/guessed URLs.
+  const canonical = await loadCanonicalUrlPaths(
+    (cities ?? []).map((c: { slug: string }) => c.slug),
+  );
+
   async function logAttempt(r: BackfillResult) {
     await supabaseAdmin.from("cities_hero_backfill_log").insert({
       city_slug: r.slug,
@@ -492,7 +498,11 @@ export async function backfillCityHeroes(opts: {
 
   async function maybeFallback(r: BackfillResult, cityState: string | null): Promise<BackfillResult> {
     if (!opts.generateFallback) return r;
-    if (r.status !== "miss" && r.status !== "skipped") return r;
+    // Only generate AI heroes when a real page existed and the scrape didn't
+    // find a usable image. NEVER generate for cities with no canonical page —
+    // those should remain "skipped" so the admin can see the gap and decide
+    // whether to create the missing content_page.
+    if (r.status !== "miss") return r;
     if (fallbacksUsed >= fallbackBudget) return r;
     fallbacksUsed++;
     const gen = await generateAndUploadHero(r.slug, r.name, cityState);
@@ -521,16 +531,27 @@ export async function backfillCityHeroes(opts: {
         const c = cities![i];
         const now = Date.now();
         if (cooldownUntil > now) await sleep(cooldownUntil - now);
-        const url = resolveSourceUrl(c.slug, c.state_code, directory);
-        // Even when no directory match exists, scrapeOne will still try our
-        // own rendered city pages (/p/{slug}, /p/host-acquisition/{slug}).
-        const seedUrl =
-          url ?? `https://www.poolrentalnearme.com/p/${c.slug}`;
-        let r = await scrapeOne(client, c.slug, c.name, seedUrl);
+        const url = resolveSourceUrl(c.slug, c.state_code, directory, canonical);
+
+        // No real /p/* page exists for this city — skip cleanly. Don't scrape
+        // a guessed URL and don't generate an AI hero for a page that doesn't
+        // exist on the site.
+        if (!url) {
+          const r: BackfillResult = {
+            slug: c.slug, name: c.name, source_url: null,
+            status: "skipped", error: "no canonical content_pages url_path",
+          };
+          results.push(r);
+          try { await logAttempt(r); } catch { /* swallow */ }
+          continue;
+        }
+
+        let r = await scrapeOne(client, c.slug, c.name, url);
         if (r.status === "error" && /\b429\b|rate.?limit/i.test(r.error || "")) {
           cooldownUntil = Date.now() + 10_000;
         }
-        // Fallback: generate an AI hero when scraping couldn't find one.
+        // Fallback: generate an AI hero when scraping a real page returned
+        // no usable image. (Skipped cities are excluded above.)
         r = await maybeFallback(r, c.state_code);
         results.push(r);
         try { await logAttempt(r); } catch { /* swallow */ }
