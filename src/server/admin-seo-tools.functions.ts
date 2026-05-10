@@ -156,13 +156,22 @@ export const scrapeCompetitorUrl = createServerFn({ method: "POST" })
     const fcKey = process.env.FIRECRAWL_API_KEY;
     if (!fcKey) return { ok: false, error: "FIRECRAWL_API_KEY not configured" };
 
+    // Sharetribe (poolrentalnearme.com /l/, swimply.com/pooldetails, peerspace, giggster)
+    // are JS-rendered SPAs — Firecrawl returns empty markdown without waiting.
+    let isSpa = false;
+    try {
+      const h = new URL(data.url).hostname.replace(/^www\./, "");
+      isSpa = /poolrentalnearme\.com|swimply\.com|peerspace\.com|giggster\.com/.test(h);
+    } catch { /* noop */ }
+
     const resp = await fetch("https://api.firecrawl.dev/v2/scrape", {
       method: "POST",
       headers: { Authorization: `Bearer ${fcKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         url: data.url,
         formats: ["markdown"],
-        onlyMainContent: true,
+        onlyMainContent: !isSpa, // SPAs need full DOM, main-content extraction strips listing details
+        waitFor: isSpa ? 4000 : 0,
       }),
     });
     if (resp.status === 402) return { ok: false, error: "Firecrawl credits exhausted" };
@@ -171,6 +180,9 @@ export const scrapeCompetitorUrl = createServerFn({ method: "POST" })
     const doc = json?.data || json;
     const markdown: string = doc?.markdown || "";
     const meta = doc?.metadata || {};
+    if (!markdown || markdown.trim().length < 50) {
+      return { ok: false, error: `Scrape returned ${markdown.length} chars. Page may block bots or render entirely client-side. Try a different URL.` };
+    }
     let domain: string | null = null;
     try { domain = new URL(data.url).hostname.replace(/^www\./, ""); } catch { /* noop */ }
     const h1Match = markdown.match(/^#\s+(.+)$/m);
