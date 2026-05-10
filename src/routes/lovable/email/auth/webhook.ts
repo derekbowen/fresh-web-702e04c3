@@ -32,10 +32,10 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "fresh-web"
-const SENDER_DOMAIN = "notify.poolfriends.poolrentalnearme.com"
-const ROOT_DOMAIN = "poolfriends.poolrentalnearme.com"
-const FROM_DOMAIN = "notify.poolfriends.poolrentalnearme.com"
+const SITE_NAME = "Pool Rental Near Me"
+const SENDER_DOMAIN = "poolrentalnearme.online"
+const ROOT_DOMAIN = "poolrentalnearme.online"
+const FROM_DOMAIN = "poolrentalnearme.online"
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return '***'
