@@ -1,77 +1,63 @@
-# Per-city sources plan + required citations for pilot host pages
-
 ## Goal
 
-Every pilot `host_acq_city` page is grounded in real, named, linkable sources so it earns EEAT trust and stops sounding interchangeable. The generator must (a) be fed a city-specific source dossier and (b) be forced to cite from it inline.
+Make the availability calendar render safely for every payload shape the Sharetribe `/timeslots/query` endpoint (or its cache row) can return — including missing fields, non-array `data`, malformed ISO strings, null `attributes`, HTTP failures, empty results, and bad cached rows. The page must never crash or render `Invalid Date`.
 
-## Source categories (4 buckets per city)
+## Files to change
 
-For each pilot city we collect 4–6 sources spanning these buckets:
+1. `src/server/sharetribe.server.ts` — `fetchAvailableTimeSlots`
+2. `src/lib/availability.functions.ts` — `getListingAvailability` + `expandToHourlySlots`
+3. `src/components/availability-calendar.tsx`
 
-1. **City ordinances / pool & noise law** — municipal code section (e.g. "Boise City Code Title 5, Ch. 1: Noise"; "Nashville Metro Code §10.36 Pool Fencing"). Real URL on the city's `.gov` site.
-2. **HOA / short-term rental policy** — county or city STR registry, HOA disclosure rules, or zoning page that governs hourly pool rentals (e.g. Arlington County STR program, Davidson County BZA).
-3. **NOAA / climate** — NOAA Climate Normals page for the nearest station (gives real avg July high, swim-season length, rainfall). Always link the actual NOAA URL.
-4. **Local demand signal** — one of: census QuickFacts (population/median income), state tourism board, parks & rec public-pool list (proves alternatives + pricing context).
+## Changes
 
-Optional 5th: insurance / liability — state insurance commissioner page on personal liability + short-term rental.
+### 1. `fetchAvailableTimeSlots` (sharetribe.server.ts)
 
-## Storage shape
+Tolerate every malformed branch from the upstream API:
+- Treat non-object `json`, missing `json.data`, or non-array `json.data` as `[]`.
+- Use optional chaining on each item: `d?.attributes?.start`, `d?.attributes?.end`.
+- Validate each pair with `isValidIsoPair(start, end)` helper (parse to `Date`, check `!isNaN`, ensure `end > start`); drop slots that fail.
+- Coerce `seats` to a finite positive number, default `1`.
+- Wrap the entire `.map().filter().sort()` chain in try/catch returning `[]`.
+- Keep existing outer try/catch returning `[]`.
 
-New table `city_sources` (one row per source, many per city):
+### 2. `availability.functions.ts`
 
-```
-id            uuid pk
-city_slug     text   -- references cities.slug (resolved canonical)
-bucket        text   -- 'ordinance' | 'hoa_str' | 'noaa' | 'demand' | 'insurance'
-title         text   -- "Boise City Code Title 5, Ch. 1 — Noise"
-url           text   -- full https URL
-publisher     text   -- "City of Boise" / "NOAA NCEI" / "U.S. Census Bureau"
-key_fact      text   -- one-sentence fact the writer must cite (e.g. "July avg high 92°F")
-retrieved_at  date
-notes         text   -- editor notes, not for output
-```
+`getListingAvailability`:
+- When reading `availability_cache`, after the `Array.isArray(row.slots)` check, normalize each cached slot through the same `isValidIsoPair` filter. If the normalized array is empty AND the raw cache had entries, treat the cache as stale (skip and refetch).
+- Wrap `new Date(row.fetched_at).getTime()` in a finite check; if invalid, ignore the cache row.
+- In the catch block for the Sharetribe call, also catch synchronous errors from `expandToHourlySlots` (move the call inside the try, which it already is — confirm).
+- Return shape stays `{ listingId, fetchedAt, slots: [], error }` on any failure (already correct).
 
-Server-only access via `supabaseAdmin` (same posture as `content_pages` / `ig_leads`).
+`expandToHourlySlots`:
+- Guard `blocks` with `Array.isArray(blocks) ? blocks : []` at the top.
+- Inside the loop, also guard `b?.start` / `b?.end` (currently assumes block has them).
+- Cap output length at a sane limit (e.g. 24 * days) to prevent runaway loops if `bEnd - bStart` is huge from bad data.
 
-Pilot seeding is manual: 4–6 rows per pilot city written by us, no scraper. Once the format proves out we expand to the 200-keep list.
+### 3. `availability-calendar.tsx`
 
-## Generator changes
+- Treat `data` as `Partial<AvailabilityResult> | null` defensively. Coerce `data?.slots` to `Array.isArray(data?.slots) ? data.slots : []` everywhere it's read (currently uses `data?.slots ?? []`, which fails if `slots` is a non-array value).
+- In `slotsByDay` builder, validate each slot:
+  - `s?.start` and `s?.end` are non-empty strings,
+  - `new Date(s.start)` is a valid date (`!isNaN(d.getTime())`),
+  - `new Date(s.end) > new Date(s.start)`.
+  Drop invalid slots silently.
+- In `formatHour`, return `"--"` (or empty) for invalid ISO inputs instead of `NaNAM`.
+- In `buildBookingUrl`, guard `bookingBaseUrl` with `String(bookingBaseUrl ?? "https://poolrentalnearme.com")` before `.replace`.
+- In `selectedSlots.map`, skip slots whose `formatHour` returns the fallback (defense in depth).
+- Wrap the entire returned `<section>` body in a try/catch via a small inner `<CalendarBody />` component plus a top-level error boundary fallback that renders the same "Calendar temporarily unavailable" panel with the direct-book CTA. (TanStack/React doesn't catch render errors without a boundary — use a tiny class component `AvailabilityErrorBoundary` colocated in the same file.)
 
-In `supabase/functions/generate-content-batch/index.ts`:
+### 4. Shared helper
 
-1. Add a `host_acq_city` system prompt (today the source falls through to the generic `SYSTEM_VA`). New system prompt enforces:
-   - Mandatory **Sources** section at the bottom with bullet markdown links to each provided source.
-   - Inline citations: every claim about climate, ordinances, fencing law, HOA/STR rules, and population must end with `([Source N](url))` referencing the bullet number in the Sources section.
-   - At least 4 distinct sources cited inline; at least 2 different buckets.
-   - No fabricated URLs — only URLs from the dossier.
-2. `buildPrompt` for `host_acq_city` injects a `SOURCES DOSSIER:` block: numbered list of `{publisher} — {title} — {key_fact} — {url}` pulled from `city_sources` for the resolved city slug.
-3. New post-generation validator `validateCitations(body, dossier)` that:
-   - Counts inline `(...](http...))` citations whose URL appears in the dossier — must be ≥ 4.
-   - Confirms `## Sources` section exists and lists every dossier URL.
-   - Rejects any URL in body that is not in the dossier (no hallucinated links).
-   - Failure → page goes to `paused` with `last_error = 'citations_missing: ...'` exactly like the existing FAQ-count gate.
+Add `isValidIsoPair(start: unknown, end: unknown): { start: string; end: string } | null` to `availability.functions.ts` (or a small `src/lib/availability.utils.ts` if both files need it). Export from there and re-use in `fetchAvailableTimeSlots` to keep validation consistent across server and client paths.
 
-## Page rendering
+## Out of scope
 
-`HostAcqCityTemplate` already renders the markdown body via `react-markdown` + `remark-gfm`, so a `## Sources` section and inline links Just Work. One small addition:
+- No UI/visual redesign, no new copy beyond the existing error panel.
+- No changes to caching TTL or DB schema.
+- No changes to Sharetribe auth or request shape.
 
-- Add a small "Sources" sidebar/footer chip on the page that pulls the same `city_sources` rows and renders them as a clean list with publisher names — gives Googlebot a structured citation block independent of how the LLM formatted them.
+## Verification
 
-## Pilot scope
-
-Apply to the 3 live pilots first (Boise ID, Nashville TN, Arlington VA), regenerate with the new prompt + dossier, then expand to the next 7 before rolling to the rest of the 200-keep list.
-
-## Acceptance
-
-A pilot page is "shipped" only when:
-- ≥ 4 inline citations to dossier URLs
-- `## Sources` section present, every dossier URL listed
-- Zero non-dossier external URLs in body
-- City name, July high °F, one ordinance §, and one STR/HOA fact all appear and each cites the matching dossier source
-- Validator passes; page status = `published`
-
-## Non-goals
-
-- No scraper. Sources are hand-curated for the pilot batch.
-- No frontend admin UI yet — `city_sources` rows are inserted via migration / SQL.
-- No change to nearby-cities, FAQ, or calculator behavior.
+- `bunx vitest` if any availability tests exist (none currently — skip).
+- Manually invoke server function with: valid listingId, listingId returning empty `data`, simulated bad payload by temporarily forcing `fetchAvailableTimeSlots` to return `[{}]` / `[{ attributes: null }]` / `null` — confirm component renders the empty-state message and never throws.
+- Use `stack_modern--server-function-logs` after deploy to confirm no new exceptions.
