@@ -476,6 +476,8 @@ export function HostAcqCityTemplate({
         </div>
       </div>
 
+      <HostLeadPopup cityName={cityName} stateCode={stateCode} />
+
       <SiteFooter />
     </div>
   );
