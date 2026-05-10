@@ -299,6 +299,7 @@ function IgLeadHunter() {
               </li>
             ))}
           </ul>
+          </>
         )}
       </div>
     </AdminLayout>
