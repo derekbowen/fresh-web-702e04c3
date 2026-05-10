@@ -1867,6 +1867,48 @@ export type Database = {
         }
         Relationships: []
       }
+      prnm_200_build_new: {
+        Row: {
+          attempt_count: number
+          city: string
+          generated_at: string | null
+          last_error: string | null
+          slug: string
+          state: string
+          status: string
+        }
+        Insert: {
+          attempt_count?: number
+          city: string
+          generated_at?: string | null
+          last_error?: string | null
+          slug: string
+          state: string
+          status?: string
+        }
+        Update: {
+          attempt_count?: number
+          city?: string
+          generated_at?: string | null
+          last_error?: string | null
+          slug?: string
+          state?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      prnm_200_keep_slugs: {
+        Row: {
+          slug: string
+        }
+        Insert: {
+          slug: string
+        }
+        Update: {
+          slug?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
