@@ -109,6 +109,19 @@ Deno.serve(async (req) => {
   };
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
 
+  // Auth gate: require DRIVE_TOKEN to prevent anonymous AI credit burn / DB writes.
+  const expectedToken = Deno.env.get("DRIVE_TOKEN") ?? "";
+  if (!expectedToken) {
+    return new Response("Server misconfigured: DRIVE_TOKEN not set", { status: 500, headers: cors });
+  }
+  const provided = req.headers.get("x-driver-token")
+    ?? req.headers.get("authorization")?.replace(/^Bearer\s+/i, "")
+    ?? new URL(req.url).searchParams.get("token")
+    ?? "";
+  if (provided !== expectedToken) {
+    return new Response("Unauthorized", { status: 401, headers: cors });
+  }
+
   try {
     const body = await req.json().catch(() => ({}));
     const slug = String(body.slug ?? "");

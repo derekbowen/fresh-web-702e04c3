@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const API_BASE = "https://app.emailverify.io/api";
 
@@ -13,7 +14,20 @@ function isSendable(status: string | null | undefined): boolean {
   return VALID_STATUSES.has(status.toLowerCase());
 }
 
-export const getEmailVerifyBalance = createServerFn({ method: "GET" }).handler(async () => {
+async function assertAdmin(userId: string) {
+  const { data } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (!data) throw new Error("Forbidden");
+}
+
+export const getEmailVerifyBalance = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin((context as { userId: string }).userId);
   const key = process.env.EMAILVERIFY_API_KEY;
   if (!key) return { ok: false, error: "EMAILVERIFY_API_KEY not configured" };
   try {
@@ -26,7 +40,10 @@ export const getEmailVerifyBalance = createServerFn({ method: "GET" }).handler(a
   }
 });
 
-export const getEmailVerifyStats = createServerFn({ method: "GET" }).handler(async () => {
+export const getEmailVerifyStats = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin((context as { userId: string }).userId);
   try {
     const { data, error } = await supabaseAdmin
       .from("host_leads")
@@ -48,8 +65,10 @@ export const getEmailVerifyStats = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const verifyHostLeadBatch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator(z.object({ limit: z.number().min(1).max(100).default(25) }).parse)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as { userId: string }).userId);
     const key = process.env.EMAILVERIFY_API_KEY;
     if (!key) return { ok: false, error: "EMAILVERIFY_API_KEY not configured", processed: 0, results: [] };
 
@@ -108,8 +127,10 @@ export const verifyHostLeadBatch = createServerFn({ method: "POST" })
   });
 
 export const listVerifiedLeads = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator(z.object({ filter: z.enum(["all", "sendable", "invalid", "unverified"]).default("all") }).parse)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as { userId: string }).userId);
     try {
       let q = supabaseAdmin
         .from("host_leads")

@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { runBlogAutogen } from "@/server/blog-autogen.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 export const Route = createFileRoute("/api/public/hooks/blog-autogen")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
         let body: any = {};
         try {
           body = await request.json();
