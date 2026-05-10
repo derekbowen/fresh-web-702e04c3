@@ -96,9 +96,24 @@ function LinkAuditPage() {
             onChange={(e) => setLimit(Number(e.target.value) || 100)}
           />
         </div>
-        <div className="flex items-end">
-          <Button onClick={load} disabled={loading}>
+        <div className="flex items-end gap-2">
+          <Button onClick={load} disabled={loading} variant="outline">
             {loading ? "Loading…" : "Refresh"}
+          </Button>
+          <Button
+            onClick={async () => {
+              setLoading(true);
+              try {
+                const r = await fetch("/api/public/link-health?persist=1&source=manual&max=60", { method: "POST" });
+                const j = await r.json();
+                toast.success(`Checked ${j.checked} URLs · ${j.brokenCount} broken · ${j.durationMs}ms`);
+                await load();
+              } catch (e: any) {
+                toast.error(e?.message || "Check failed");
+              } finally { setLoading(false); }
+            }}
+            disabled={loading}>
+            ▶ Run check now
           </Button>
         </div>
       </div>
