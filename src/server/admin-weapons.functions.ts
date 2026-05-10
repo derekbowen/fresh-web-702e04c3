@@ -505,46 +505,41 @@ export const runSerpCheck = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin((context as any).userId);
-    const fcKey = process.env.FIRECRAWL_API_KEY;
-    if (!fcKey) return { ok: false, error: "FIRECRAWL_API_KEY not configured" };
+    const serpKey = process.env.SERPAPI_KEY;
+    if (!serpKey) return { ok: false, error: "SERPAPI_KEY not configured" };
 
     let q = sb().from("tracked_keywords").select("*").eq("is_active", true);
     if (data.id) q = q.eq("id", data.id);
     else q = q.order("last_checked_at", { ascending: true, nullsFirst: true }).limit(data.limit);
     const { data: kws } = await q;
 
-    const results: { keyword: string; position: number | null; delta: number | null }[] = [];
+    const results: { keyword: string; position: number | null; delta: number | null; error?: string }[] = [];
 
     for (const kw of (kws || []) as TrackedKeywordRow[]) {
       try {
-        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(kw.keyword)}&gl=${kw.market || "us"}&num=100`;
-        const resp = await fetch("https://api.firecrawl.dev/v2/scrape", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${fcKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ url: searchUrl, formats: ["html"], onlyMainContent: false }),
+        const params = new URLSearchParams({
+          engine: "google",
+          q: kw.keyword,
+          gl: kw.market || "us",
+          hl: "en",
+          num: "100",
+          api_key: serpKey,
         });
+        const resp = await fetch(`https://serpapi.com/search.json?${params.toString()}`);
         if (!resp.ok) {
-          results.push({ keyword: kw.keyword, position: null, delta: null });
+          const txt = await resp.text().catch(() => "");
+          results.push({ keyword: kw.keyword, position: null, delta: null, error: `serpapi ${resp.status}: ${txt.slice(0, 120)}` });
           continue;
         }
-        const json = await resp.json();
-        const html: string = json?.data?.html || json?.html || "";
-        // Extract result URLs in order. Google wraps each in /url?q= or direct hrefs.
-        const urlMatches = Array.from(html.matchAll(/href="(https?:\/\/[^"]+)"/g)).map((m) => m[1]);
-        const seen = new Set<string>();
-        const ordered: string[] = [];
-        for (const u of urlMatches) {
-          if (u.includes("google.com") || u.includes("/search?") || u.includes("webcache.")) continue;
-          if (seen.has(u)) continue;
-          seen.add(u);
-          ordered.push(u);
-        }
+        const json: any = await resp.json();
+        const organic: any[] = Array.isArray(json?.organic_results) ? json.organic_results : [];
         let position: number | null = null;
         let urlFound: string | null = null;
-        for (let i = 0; i < ordered.length; i++) {
-          if (ordered[i].includes("poolrentalnearme.com")) {
-            position = i + 1;
-            urlFound = ordered[i];
+        for (const r of organic) {
+          const link: string = r?.link || "";
+          if (link.includes("poolrentalnearme.com")) {
+            position = typeof r?.position === "number" ? r.position : (organic.indexOf(r) + 1);
+            urlFound = link;
             break;
           }
         }
