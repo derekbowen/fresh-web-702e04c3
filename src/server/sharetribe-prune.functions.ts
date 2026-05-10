@@ -106,7 +106,7 @@ async function fetchAllSharetribeCityKeys(): Promise<{
 
 export const previewSharetribePrune = createServerFn({ method: "POST" })
   .handler(async () => {
-    await requireAdmin();
+    const { userId } = ctx.context as { userId: string }; await assertAdmin(userId);
     const { keys, totalListings, skipped, pagesScanned } =
       await fetchAllSharetribeCityKeys();
 
@@ -161,7 +161,7 @@ export const previewSharetribePrune = createServerFn({ method: "POST" })
 export const executeSharetribePrune = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ confirm: z.literal("DELETE") }).parse(d))
   .handler(async () => {
-    await requireAdmin();
+    const { userId } = ctx.context as { userId: string }; await assertAdmin(userId);
     const { keys } = await fetchAllSharetribeCityKeys();
 
     const { data: pages, error } = await supabaseAdmin
