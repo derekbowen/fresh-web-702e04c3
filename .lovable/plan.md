@@ -1,54 +1,103 @@
-## Scope
+## Quick answers to your questions
 
-Blog posts live in `blog_posts` and render at `/p/{slug}` via the dispatcher in `src/routes/p.$slug.tsx`, which synthesizes a `ContentPage` (template_type `resource`, category = topic) and renders `ResourceArticleTemplate`. All work below targets that flow.
+**Does the body need to be markdown?** Yes, keep it markdown. The public page renders it with ReactMarkdown, which turns `##` into real `<h2>`s, `-` into `<ul>`s, `**bold**` into `<strong>`, etc. That's what gives Google proper heading structure. If we switched to plain text we'd lose all of that and the pages would tank in search. I'll add a tiny "Markdown cheat sheet" hint under the textarea so it's friendlier to write.
 
-## 1. AI-generated cards (pre-generated, stored in DB)
+**What other SEO fields can we add?** Plenty. See section 1 below.
 
-**Migration** — new columns on `blog_posts`:
-- `tldr_bullets jsonb` — array of 3–5 short strings
-- `related_slugs jsonb` — array of 4–6 sibling blog slugs
-- `enrichment_generated_at timestamptz`
+---
 
-**Server functions** (`src/server/blog-enrichment.functions.ts`):
-- `enrichBlogPost({ slug })` — calls Lovable AI Gateway (`google/gemini-3-flash-preview`) using tool-calling for structured TL;DR. Picks related slugs via in-DB keyword/title overlap on same topic + recency (deterministic, free). Writes back to `blog_posts`.
-- `enrichBlogBatch({ limit, onlyMissing })` — backfills posts missing enrichment.
+## 1. New SEO fields in the editor
 
-**Wire-through**: in `lookupContentPage` (`content-pages.functions.ts`), include the new fields on the synthetic `ContentPage` (extend `ContentPage` type with optional `tldr_bullets` + `related_slugs`).
+Add these inputs (all optional, all save to `content_pages`):
 
-**UI components**:
-- `src/components/blog/tldr-card.tsx` — bordered card under H1, "Key takeaways" + bullets.
-- `src/components/blog/related-posts-card.tsx` — card grid with title + topic + cover, hits `/p/{slug}`.
-- Render both in `ResourceArticleTemplate` when fields present.
+- **Hero image URL** (already in DB as `hero_image_url`, just not exposed) — used for `og:image` / Twitter card. Single biggest social-share win.
+- **Canonical URL override** — for the rare case a page should canonical to a different URL.
+- **Focus keyword** — single phrase the page targets. We'll use it for AI prompts and show a live "title contains keyword" / "description contains keyword" / "H1 contains keyword" check.
+- **Live SEO score panel** on the right side of the modal:
+  - Title length (green 50–60, yellow 40–49, red otherwise)
+  - Description length (green 140–155)
+  - H1 present
+  - Word count (green 800+ for city pages)
+  - Internal links count
+  - Focus keyword appears in title / description / first 100 words
+- **Slug / URL path** — read-only display with a "copy" button (we don't let admins change it; it would break links).
+- **OG title / OG description** — optional overrides separate from SEO title/description (some pages want a punchier social headline). Stored as new columns `og_title`, `og_description`.
+- **Last edited** + **Published date** — read-only timestamps.
 
-**Admin**: add a "Regenerate enrichment" button on `admin.blog.tsx` per post + bulk backfill action.
+We will NOT add: noindex toggle (status=draft already does that), redirect_to (already managed elsewhere), or schema.org JSON-LD per-page (handled programmatically based on template_type).
 
-## 2. Internal linking improvements
+## 2. AI generate / improve buttons
 
-- **Breadcrumbs (resource template)**: `Home › Blog › {Topic} › {Title}`, with topic linking to `/p/blog?topic={slug}`. Update breadcrumb JSON-LD to match.
-- **Topic hub filter**: extend `/p/blog` (`p.blog.tsx`) to accept `?topic=` and filter; topic chips at top.
-- **Auto-link keywords in body**: replace `<ReactMarkdown>` body with the existing `<AutoLinkedContent>` (already passed `linkTargets` but ignored as `_linkTargets`). Auto-links cities/topics/other posts mentioned in the text.
-- **Inline 'Related' callout**: insert one styled callout after ~50% of article body pointing to the top 1–2 related posts.
+Replace the current single "Add a section" box with three primary actions:
 
-## 3. GSC redirect / canonical hardening
+1. **Generate full page** — only enabled when body is empty or short (<200 words). Uses title + slug + focus keyword to write the entire page from scratch, following the template_type's section structure.
+2. **Improve this page** — sends the current body to the AI with instructions to: tighten copy, fix banned words from the brand voice rules, add missing H2s, expand thin sections, ensure focus keyword density. Returns a diff-style preview before saving.
+3. **Generate SEO meta** — fills SEO title + SEO description (and OG variants if blank) from the current body. Useful when you've written content but the meta is empty or generic.
 
-- **Confirm `/blog/*` 301**: already wired in `src/routes/blog.$.ts` and `blog.ts` — verified.
-- **Canonical**: `head()` already sets canonical to `/p/{slug}` for blog posts — verified, no change.
-- **Trailing slash**: add `src/routes/p.blog.index.ts` redirect for `/p/blog/` variants if needed (TanStack normalizes most; add only if missing).
-- **GSC 404 audit**: query `content_404_log` for top legacy patterns; add prefix mappings to `src/lib/legacy-redirects.ts` for any new clusters found (no-op if none).
+Each button shows the AI's proposed output in a preview pane with **Accept** / **Reject** before it overwrites anything. No more "generate & save" surprise.
 
-## What we are NOT doing (callouts)
+## 3. Quick-add section preset buttons
 
-- No AI on related-posts (deterministic title/topic similarity is faster, free, and still high-quality for ~124 posts). Easy upgrade to embeddings later if desired.
-- No FAQ card or CTA card this pass (you skipped them).
-- No edge-function infra; pre-generation runs through a server fn callable from admin.
+Above the AI prompt box, a row of one-click chips that pre-fill the prompt and run it:
 
-## Deliverables order
+- FAQ (5 questions)
+- Pricing table
+- "What to expect" checklist
+- Local landmarks / things to do nearby (city pages)
+- Insurance & liability section
+- Host tips / safety rules
+- Comparison table (PRNM vs Swimply)
+- Testimonials placeholder block
+- Internal links to related cities (auto-pulls 6 nearby cities from `content_pages`)
+- Custom prompt (existing free-text box stays)
 
-1. DB migration (blog_posts columns)
-2. Enrichment server fn + lookup wire-through
-3. UI cards + template integration
-4. Internal-linking upgrades (breadcrumbs, topic filter, auto-link, inline callout)
-5. GSC audit + any new legacy redirect entries
-6. Backfill all 124 published posts with enrichment
+Clicking a chip fills the textarea with a tuned prompt the user can edit before hitting Generate, OR they can hold shift-click to run it immediately.
 
-After approval I'll execute steps 1–6 in order, batching file edits where safe.
+All AI section generations append by default; the Append/Replace toggle stays.
+
+## 4. Layout changes
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ Edit page  /p/host-advocacy            [Open ↗] [Close]     │
+├──────────────────────────────────┬──────────────────────────┤
+│ Title (H1)         Status        │  SEO score               │
+│ SEO title          SEO desc      │  ✓ Title 58/60           │
+│ OG title           OG desc       │  ✓ Desc 142/155          │
+│ Hero image URL     Canonical     │  ✗ Focus keyword missing │
+│ Focus keyword                    │     in description       │
+│                                  │  ✓ 1,476 words           │
+│ ── AI tools ──                   │  ✓ H1 present            │
+│ [Generate full page]             │  ⚠ Only 2 internal links │
+│ [Improve this page]              │                          │
+│ [Generate SEO meta]              │  Last edited: 2 days ago │
+│                                  │  Published: 14 Jan 2026  │
+│ ── Add a section ──              │                          │
+│ [FAQ] [Pricing] [Checklist]      │                          │
+│ [Landmarks] [Insurance] [Tips]   │                          │
+│ [PRNM vs Swimply] [Internal links]│                         │
+│ ☑ Append   [textarea]  [Generate]│                          │
+│                                  │                          │
+│ Body (Markdown)        1476 words│                          │
+│ [textarea]                       │                          │
+└──────────────────────────────────┴──────────────────────────┘
+```
+
+## 5. Backend / data
+
+- **Migration**: add `og_title TEXT`, `og_description TEXT`, `focus_keyword TEXT`, `canonical_override TEXT` to `content_pages`.
+- **`updateContentPage`**: accept the four new fields.
+- **New server fns** (all server-only, use Lovable AI Gateway, model `google/gemini-2.5-pro`):
+  - `generateFullPageContent({ id })`
+  - `improvePageContent({ id })` → returns proposed body, doesn't save
+  - `generateSeoMeta({ id })` → returns `{ seo_title, seo_description, og_title, og_description }`, doesn't save
+  - `generateSectionPreset({ id, presetKey })` → returns markdown block for the requested preset
+- **Brand voice guardrails**: each AI prompt includes the workspace banned-words list and tone rules so output matches the rest of the site automatically.
+- **SSR rendering** of the public page: also use `og_title` / `og_description` in `head()` when set, falling back to `seo_title` / `seo_description`. Use `hero_image_url` for `og:image` / `twitter:image` when set.
+
+## What I'm NOT touching
+
+- The route file `src/routes/p.$slug.tsx` and the templates' visual layout — only metadata wiring.
+- The sitemap / canonical helper — already correct.
+- Status workflow (draft / pending / published) stays as-is.
+- No new dependencies needed; ReactMarkdown is already in the project.
