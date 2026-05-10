@@ -7,10 +7,11 @@ import {
   runCompetitorScan, listNewCompetitorUrls, acknowledgeCompetitorUrls,
   scrapeCompetitorUrlRow, listHostMatches, updateHostMatchStatus, runHostMatchOne,
   enrichHostMatchOne, getEnrichmentSpend, reportFalsePositive, runValidatorSelfTests,
-  type CompetitorSiteRow, type CompetitorUrlRow, type CompetitorHostMatchRow,
+  classifyCompetitorUrls, detectCityGaps, createCounterPageFromGap, generateCompetitorDigest,
+  type CompetitorSiteRow, type CompetitorUrlRow, type CompetitorHostMatchRow, type CityGapRow,
 } from "@/server/admin-weapons.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X, Sparkles, DollarSign, AlertTriangle, ChevronDown, FlaskConical } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Target, Mail, Phone, X, Sparkles, DollarSign, AlertTriangle, ChevronDown, FlaskConical, MapPin, FileText, Tags } from "lucide-react";
 
 export const Route = createFileRoute("/admin/competitor-radar")({
   beforeLoad: async () => {
