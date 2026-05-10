@@ -2,11 +2,44 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
-import { Sparkles, Send, RotateCcw } from "lucide-react";
+import { Sparkles, Send, RotateCcw, ExternalLink, Check } from "lucide-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { seoCoachChat } from "@/server/admin-seo-coach.functions";
 
 type Msg = { role: "user" | "assistant"; content: string };
+
+// Pull /admin/* routes mentioned in coach replies so we can offer one-click "Do it now"
+function extractAdminRoutes(text: string): string[] {
+  const re = /\/admin\/[a-z0-9][a-z0-9-/]*/gi;
+  const found = new Set<string>();
+  for (const m of text.matchAll(re)) {
+    // strip trailing punctuation
+    const clean = m[0].replace(/[).,;:`'"]+$/, "").toLowerCase();
+    if (clean !== "/admin" && clean !== "/admin/") found.add(clean);
+  }
+  return Array.from(found);
+}
+
+const ROUTE_LABELS: Record<string, string> = {
+  "/admin/missing-pages": "Triage 404s",
+  "/admin/page-auditor": "Audit a page",
+  "/admin/listing-auditor": "Audit a listing",
+  "/admin/keyword-opportunities": "Find keyword wins",
+  "/admin/internal-links": "Add internal links",
+  "/admin/seo-health": "Open SEO health",
+  "/admin/content-pages": "Bulk-fix pages",
+  "/admin/quick-page": "Build a new page",
+  "/admin/generate-content": "Batch generate",
+  "/admin/gsc-import": "Re-sync GSC",
+  "/admin/competitor-radar": "Open competitor radar",
+  "/admin/rank-tracker": "Open rank tracker",
+  "/admin/indexing": "Open sitemap & indexing",
+  "/admin/link-checker": "Run link checker",
+  "/admin/competitors": "Open competitor tracker",
+};
+function labelFor(route: string): string {
+  return ROUTE_LABELS[route] || `Open ${route}`;
+}
 
 const STARTER_PROMPTS = [
   "What's my single biggest SEO problem right now?",
