@@ -40,8 +40,8 @@ function ScrapeImport() {
       const u = list[i];
       setProgress({ done: i, total: list.length, last: u });
       try {
-        const res = await adminScrapeProviderUrl({ data: { url: u, autoCreate: true } });
-        out.push({ url: u, ok: true, providerId: res.providerId });
+        const res: any = await adminScrapeProviderUrl({ data: { url: u, autoCreate: true } });
+        out.push({ url: u, ok: true, providerId: res.providerId, count: res.count ?? (res.providerId ? 1 : 0) });
       } catch (e: any) {
         out.push({ url: u, ok: false, error: e?.message || String(e) });
       }
