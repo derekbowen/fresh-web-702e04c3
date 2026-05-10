@@ -64,7 +64,16 @@ function BulkEditor() {
     if (action === "delete" && !confirm(`Delete ${selected.size} pages?`)) return;
     setBusy(true);
     try {
-      await bulkUpdateContentPages({ data: { ids: Array.from(selected), action } });
+      const r: any = await bulkUpdateContentPages({ data: { ids: Array.from(selected), action } });
+      if (action === "publish" && r?.ok) {
+        const skipped = r.skipped ?? 0;
+        const count = r.count ?? 0;
+        if (skipped > 0) {
+          const sample = (r.skippedSlugs || []).slice(0, 5).join(", ");
+          const more = (r.skippedSlugs || []).length > 5 ? ` (+${r.skippedSlugs.length - 5} more)` : "";
+          alert(`Published ${count}. Kept ${skipped} as draft (fewer than 300 words):\n${sample}${more}`);
+        }
+      }
       setSelected(new Set());
       await load();
     } finally { setBusy(false); }
