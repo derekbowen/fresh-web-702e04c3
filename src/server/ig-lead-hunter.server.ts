@@ -118,25 +118,27 @@ export async function runIgLeadHunt(opts: { queries?: string[]; perQuery?: numbe
     for (const r of results) {
       resultsSeen++;
       if (!r.link) continue;
-      const parsed = extractIgHandle(r.link);
+      const parsed = parseIgResult(r.link, r.title);
       if (!parsed) continue;
-      if (seenUrls.has(parsed.profileUrl)) continue;
-      seenUrls.add(parsed.profileUrl);
+      // Dedupe by source URL — same post shouldn't get re-inserted, but multiple
+      // posts from one profile are kept as separate leads (each is its own DM hook).
+      if (seenUrls.has(parsed.sourceUrl)) continue;
+      seenUrls.add(parsed.sourceUrl);
 
       const profile_name = extractProfileName(r.title, parsed.handle);
       const snippet = r.snippet?.slice(0, 600) || null;
 
-      // Upsert: insert new, refresh last_seen_at if exists
+      // Upsert by source_url so the actual post link is the unique key.
       const { data: existing } = await sb()
         .from("ig_leads")
         .select("id")
-        .eq("instagram_url", parsed.profileUrl)
+        .eq("source_url", parsed.sourceUrl)
         .maybeSingle();
 
       if (existing) {
         await sb().from("ig_leads").update({
           last_seen_at: new Date().toISOString(),
-          // Refresh snippet/profile_name only if we now have richer data
+          instagram_url: parsed.profileUrl,
           ...(snippet ? { snippet } : {}),
           ...(profile_name ? { profile_name } : {}),
           query: q,
@@ -145,6 +147,7 @@ export async function runIgLeadHunt(opts: { queries?: string[]; perQuery?: numbe
       } else {
         const { error } = await sb().from("ig_leads").insert({
           instagram_url: parsed.profileUrl,
+          source_url: parsed.sourceUrl,
           profile_handle: parsed.handle,
           profile_name,
           snippet,
