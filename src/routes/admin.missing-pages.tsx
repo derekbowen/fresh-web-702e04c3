@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   list404s,
   resolve404,
+  redirect404,
+  createPageFor404,
   type Content404Row,
 } from "@/server/content-404-log.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
@@ -53,9 +55,36 @@ function AdminMissingPages() {
     void load();
   }, [load]);
 
-  const markResolved = async (id: string) => {
-    await resolve404({ data: { id } });
-    await load();
+  const [busyId, setBusyId] = React.useState<string | null>(null);
+
+  const dismiss = async (id: string) => {
+    if (!confirm("Dismiss this 404? It just hides the row — the URL will still 404 for visitors.")) return;
+    setBusyId(id);
+    try { await resolve404({ data: { id, notes: "dismissed by admin" } }); await load(); }
+    finally { setBusyId(null); }
+  };
+
+  const doRedirect = async (id: string, currentPath: string) => {
+    const target = prompt(`Redirect ${currentPath} to which path? (e.g. /p/hosting)`, "/p/all-locations");
+    if (!target) return;
+    setBusyId(id);
+    try {
+      const r: any = await redirect404({ data: { id, target } });
+      if (!r.ok) alert(r.error || "Redirect failed"); else alert(`Redirect saved: ${currentPath} → ${r.target}`);
+      await load();
+    } finally { setBusyId(null); }
+  };
+
+  const doCreate = async (id: string, currentPath: string) => {
+    if (!confirm(`Generate a real page at ${currentPath} with AI? This takes ~30s and will publish to the live site.`)) return;
+    setBusyId(id);
+    try {
+      const r: any = await createPageFor404({ data: { id } });
+      if (!r.ok) alert(r.error || "Create failed");
+      else if (r.alreadyExists) alert("A page already exists at that URL — marked resolved.");
+      else alert(`Created /p/${r.slug} (${r.words} words). It's live now.`);
+      await load();
+    } finally { setBusyId(null); }
   };
 
   const totalHits = rows.reduce((acc, r) => acc + (r.hit_count ?? 0), 0);
@@ -156,12 +185,23 @@ function AdminMissingPages() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {!r.resolved_at && (
-                        <button
-                          onClick={() => markResolved(r.id)}
-                          className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted"
-                        >
-                          Mark resolved
-                        </button>
+                        <div className="inline-flex flex-wrap justify-end gap-1.5">
+                          <button onClick={() => doCreate(r.id, r.url_path)} disabled={busyId === r.id}
+                            className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                            title="Generate a real page with AI and publish it">
+                            ✨ Create page
+                          </button>
+                          <button onClick={() => doRedirect(r.id, r.url_path)} disabled={busyId === r.id}
+                            className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted disabled:opacity-50"
+                            title="Send this URL to an existing page (301 redirect)">
+                            ↪ Redirect
+                          </button>
+                          <button onClick={() => dismiss(r.id)} disabled={busyId === r.id}
+                            className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50"
+                            title="Just hide this row — does NOT fix the 404">
+                            Dismiss
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
