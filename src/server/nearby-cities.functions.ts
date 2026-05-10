@@ -40,8 +40,13 @@ export const getNearbyCitiesForPage = createServerFn({ method: "GET" })
       .parse(data),
   )
   .handler(async ({ data }): Promise<NearbyCity[]> => {
-    const citySlug = cityForContentPage(data.templateType, data.slug);
-    if (!citySlug) return [];
+    const rawSlug = cityForContentPage(data.templateType, data.slug);
+    if (!rawSlug) return [];
+
+    // Resolve to canonical cities.slug — handles "boise-id" -> "boise" and
+    // "arlington-va" -> name+state lookup so the RPC actually finds neighbors.
+    const resolved = await resolveCityRow(rawSlug);
+    const citySlug = resolved?.slug ?? rawSlug;
 
     const limit = data.limit ?? 6;
     // Fetch a wider pool so filtering still leaves enough results.
