@@ -77,7 +77,7 @@ function CompetitorRadar() {
     try {
       const [s, n, m, sp] = await Promise.all([
         listCompetitorSites().catch((e) => { console.error("listCompetitorSites failed:", e); return { rows: [] as CompetitorSiteRow[] }; }),
-        listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 200 } })
+        listNewCompetitorUrls({ data: { onlyUnacknowledged: !showAck, limit: 300, kind: kindFilter || undefined, excludeListings: !includeListings } })
           .catch((e) => { console.error("listNewCompetitorUrls failed:", e); return { rows: [] as CompetitorUrlRow[] }; }),
         listHostMatches({ data: { status: matchStatus, minConfidence: 40, limit: 200 } })
           .catch((e) => { console.error("listHostMatches failed:", e); return { rows: [] as CompetitorHostMatchRow[] }; }),
@@ -92,9 +92,47 @@ function CompetitorRadar() {
     } finally {
       setLoading(false);
     }
-  }, [showAck, matchStatus]);
+  }, [showAck, matchStatus, kindFilter, includeListings]);
 
   React.useEffect(() => { load(); }, [load]);
+
+  async function classifyAll() {
+    setClassifying(true); setMsg(null);
+    try {
+      const r: any = await classifyCompetitorUrls({ data: { force: false, limit: 5000 } });
+      setMsg(`Classified ${r.updated}/${r.total} URLs.`);
+      await load();
+    } catch (e: any) { setMsg(e?.message || "classify failed"); }
+    finally { setClassifying(false); }
+  }
+
+  async function loadGaps() {
+    setGapsLoading(true);
+    try {
+      const r: any = await detectCityGaps({ data: { minCompetitors: 1 } });
+      setGaps(Array.isArray(r?.rows) ? r.rows : []);
+    } finally { setGapsLoading(false); }
+  }
+  React.useEffect(() => { if (tab === "gaps" && gaps.length === 0) loadGaps(); }, [tab]); // eslint-disable-line
+
+  async function createCounter(g: CityGapRow) {
+    const key = `${g.city_slug}|${g.state_code || ""}`;
+    setCreatingGap(key);
+    try {
+      const r: any = await createCounterPageFromGap({ data: { city_slug: g.city_slug, state_code: g.state_code, competitor_url: g.competitor_urls[0]?.url } });
+      setMsg(r.ok ? `Draft created at ${r.url_path}` : `Failed: ${r.error}`);
+      if (r.ok) await loadGaps();
+    } finally { setCreatingGap(null); }
+  }
+
+  async function loadDigest() {
+    setDigestLoading(true); setDigest(null);
+    try {
+      const r: any = await generateCompetitorDigest({ data: { days: digestDays } });
+      setDigest(r.digest || "_(empty)_");
+    } catch (e: any) { setDigest(`Error: ${e?.message || "digest failed"}`); }
+    finally { setDigestLoading(false); }
+  }
 
   async function findHostFor(id: string) {
     setMatchingId(id);
