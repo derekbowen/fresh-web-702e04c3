@@ -13,6 +13,15 @@ import { buildHostCityGuide } from "@/lib/host-city-guide";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 import type { CityRow } from "@/server/cities.functions";
+import type { CitySource } from "@/server/city-sources.functions";
+
+const SOURCE_BUCKET_LABEL: Record<string, string> = {
+  ordinance: "City ordinances",
+  hoa_str: "HOA & short-term rental rules",
+  noaa: "Climate & swim season",
+  demand: "Local demand",
+  insurance: "Insurance & liability",
+};
 
 /**
  * Premium Airbnb-style template for /p/become-a-pool-host-{city}-{state}.
@@ -25,11 +34,13 @@ export function HostAcqCityTemplate({
   nearbyCities = [],
   city = null,
   linkTargets = [],
+  citySources = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
   city?: CityRow | null;
   linkTargets?: LinkTarget[];
+  citySources?: CitySource[];
 }) {
   const title = page.title || page.seo_title || "Become a pool host";
   const description = page.seo_description || page.description || null;
