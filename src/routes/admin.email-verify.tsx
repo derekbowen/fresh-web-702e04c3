@@ -59,7 +59,7 @@ function EmailVerifyPage() {
   }
 
   return (
-    <AdminLayout title="Email verify" subtitle="Clean host_leads emails via EmailVerify.io">
+    <AdminLayout title="Email verify">
       <div className="space-y-6">
         {/* Top bar */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
