@@ -15,6 +15,16 @@ export const Route = createFileRoute("/admin/link-audit")({
   component: LinkAuditPage,
 });
 
+type RunPhase = "idle" | "crawling" | "refreshing";
+type LastRun = { checked: number; brokenCount: number; durationMs: number; at: number } | null;
+
+function secondsAgo(at: number) {
+  const s = Math.max(0, Math.round((Date.now() - at) / 1000));
+  if (s < 60) return `${s}s`;
+  if (s < 3600) return `${Math.round(s / 60)}m`;
+  return `${Math.round(s / 3600)}h`;
+}
+
 function LinkAuditPage() {
   const [data, setData] = React.useState<AuditDashboard | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -22,33 +32,81 @@ function LinkAuditPage() {
   const [templateType, setTemplateType] = React.useState<string>("");
   const [runs, setRuns] = React.useState<number>(10);
   const [limit, setLimit] = React.useState<number>(100);
+  const [maxToCheck, setMaxToCheck] = React.useState<number>(60);
 
-  const load = React.useCallback(async () => {
-    setLoading(true);
+  const [phase, setPhase] = React.useState<RunPhase>("idle");
+  const [elapsed, setElapsed] = React.useState(0);
+  const [lastRun, setLastRun] = React.useState<LastRun>(null);
+  const [autoRefresh, setAutoRefresh] = React.useState(false);
+  const [, forceTick] = React.useReducer((x) => x + 1, 0);
+
+  const load = React.useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await getLinkAuditDashboard({
-        data: {
-          limit,
-          runs,
-          klass,
-          templateType: templateType || undefined,
-        },
+        data: { limit, runs, klass, templateType: templateType || undefined },
       });
       setData(res);
     } catch (e: any) {
-      toast.error(e.message ?? "Failed to load audit");
+      if (!silent) toast.error(e.message ?? "Failed to load audit");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [klass, templateType, runs, limit]);
 
+  React.useEffect(() => { void load(); }, [load]);
+
+  // Live elapsed counter while crawling
   React.useEffect(() => {
-    load();
-  }, [load]);
+    if (phase !== "crawling") return;
+    const start = Date.now();
+    setElapsed(0);
+    const id = setInterval(() => setElapsed(Math.round((Date.now() - start) / 100) / 10), 100);
+    return () => clearInterval(id);
+  }, [phase]);
+
+  // Re-tick "X ago" label every 5s when there's a last run
+  React.useEffect(() => {
+    if (!lastRun) return;
+    const id = setInterval(forceTick, 5_000);
+    return () => clearInterval(id);
+  }, [lastRun]);
+
+  // Auto-refresh dashboard every 30s when enabled
+  React.useEffect(() => {
+    if (!autoRefresh) return;
+    const id = setInterval(() => { void load(true); }, 30_000);
+    return () => clearInterval(id);
+  }, [autoRefresh, load]);
+
+  async function runCheck() {
+    setPhase("crawling");
+    try {
+      const r = await fetch(`/api/public/link-health?persist=1&source=manual&max=${maxToCheck}`, { method: "POST" });
+      const j = await r.json();
+      const at = Date.now();
+      setLastRun({ checked: j.checked, brokenCount: j.brokenCount, durationMs: j.durationMs, at });
+      toast.success(`Checked ${j.checked} URLs · ${j.brokenCount} broken · ${(j.durationMs / 1000).toFixed(1)}s`);
+      setPhase("refreshing");
+      await load(true);
+    } catch (e: any) {
+      toast.error(e?.message || "Check failed");
+    } finally {
+      setPhase("idle");
+    }
+  }
+
+  const phaseLabel =
+    phase === "crawling" ? `Crawling… ${elapsed.toFixed(1)}s · up to ${maxToCheck} URLs`
+    : phase === "refreshing" ? "Refreshing results…"
+    : lastRun ? `Last run ${secondsAgo(lastRun.at)} ago · ${lastRun.checked} checked · ${lastRun.brokenCount} broken · ${(lastRun.durationMs / 1000).toFixed(1)}s`
+    : "Idle — click Run check now to start a crawl";
 
   return (
     <AdminLayout title="Link Audit">
-      <div className="mb-6 grid gap-4 md:grid-cols-[1fr_1fr_auto_auto_auto]">
+      <style>{`@keyframes la_progress { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }`}</style>
+
+      <div className="mb-6 grid gap-4 md:grid-cols-[1fr_1fr_auto_auto_auto_auto]">
         <div>
           <label className="text-xs text-muted-foreground">Status</label>
           <select
@@ -76,46 +134,51 @@ function LinkAuditPage() {
         </div>
         <div>
           <label className="text-xs text-muted-foreground">Runs</label>
-          <input
-            type="number"
-            min={1}
-            max={50}
+          <input type="number" min={1} max={50}
             className="mt-1 h-10 w-20 rounded-md border border-input bg-background px-3 text-sm"
-            value={runs}
-            onChange={(e) => setRuns(Number(e.target.value) || 10)}
-          />
+            value={runs} onChange={(e) => setRuns(Number(e.target.value) || 10)} />
         </div>
         <div>
           <label className="text-xs text-muted-foreground">Limit</label>
-          <input
-            type="number"
-            min={10}
-            max={500}
+          <input type="number" min={10} max={500}
             className="mt-1 h-10 w-20 rounded-md border border-input bg-background px-3 text-sm"
-            value={limit}
-            onChange={(e) => setLimit(Number(e.target.value) || 100)}
-          />
+            value={limit} onChange={(e) => setLimit(Number(e.target.value) || 100)} />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground">Crawl max</label>
+          <input type="number" min={10} max={150}
+            className="mt-1 h-10 w-20 rounded-md border border-input bg-background px-3 text-sm"
+            value={maxToCheck} onChange={(e) => setMaxToCheck(Number(e.target.value) || 60)} />
         </div>
         <div className="flex items-end gap-2">
-          <Button onClick={load} disabled={loading} variant="outline">
+          <Button onClick={() => load()} disabled={loading || phase !== "idle"} variant="outline">
             {loading ? "Loading…" : "Refresh"}
           </Button>
-          <Button
-            onClick={async () => {
-              setLoading(true);
-              try {
-                const r = await fetch("/api/public/link-health?persist=1&source=manual&max=60", { method: "POST" });
-                const j = await r.json();
-                toast.success(`Checked ${j.checked} URLs · ${j.brokenCount} broken · ${j.durationMs}ms`);
-                await load();
-              } catch (e: any) {
-                toast.error(e?.message || "Check failed");
-              } finally { setLoading(false); }
-            }}
-            disabled={loading}>
-            ▶ Run check now
+          <Button onClick={runCheck} disabled={phase !== "idle"}>
+            {phase === "crawling" ? `Crawling ${elapsed.toFixed(1)}s…` : phase === "refreshing" ? "Refreshing…" : "▶ Run check now"}
           </Button>
         </div>
+      </div>
+
+      <div className="mb-4 rounded-md border border-border bg-card p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm">
+            <span className={`inline-block h-2 w-2 rounded-full ${
+              phase === "crawling" ? "animate-pulse bg-amber-500"
+              : phase === "refreshing" ? "animate-pulse bg-blue-500"
+              : "bg-emerald-500"}`} />
+            <span className="font-medium">{phaseLabel}</span>
+          </div>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} />
+            Auto-refresh dashboard every 30s
+          </label>
+        </div>
+        {phase !== "idle" && (
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="h-full w-1/3 bg-primary" style={{ animation: "la_progress 1.2s ease-in-out infinite" }} />
+          </div>
+        )}
       </div>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
@@ -182,8 +245,7 @@ function Row({ row }: { row: AuditLinkRow }) {
     setRecheck({ status: 0, ok: false, loading: true });
     try {
       const url = "https://www.poolrentalnearme.com" + row.path;
-      const res = await fetch(url, { method: "HEAD", redirect: "follow", mode: "no-cors" });
-      // no-cors means status is 0 / opaque — fall back to GET via our own check endpoint
+      await fetch(url, { method: "HEAD", redirect: "follow", mode: "no-cors" });
       const r2 = await fetch(`/api/public/link-health?seeds=${encodeURIComponent(row.path)}&max=1&persist=0`);
       const j = await r2.json();
       const entry = (j.broken || []).find((b: any) => b.path === row.path);
