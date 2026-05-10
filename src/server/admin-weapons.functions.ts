@@ -666,7 +666,7 @@ Return ONLY JSON, no markdown fences.`;
     }
 
     const { data: row, error } = await sb().from("page_audits").insert({
-      url_path: data.url_path,
+      url_path: page.url_path || path,
       score: Math.max(0, Math.min(100, Number(parsed.score) || 0)),
       summary: String(parsed.summary || "").slice(0, 1000),
       strengths: Array.isArray(parsed.strengths) ? parsed.strengths.slice(0, 20) : [],
