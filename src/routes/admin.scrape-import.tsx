@@ -87,6 +87,7 @@ function ScrapeImport() {
                 <li key={r.url} className="flex items-start gap-2">
                   <span className={r.ok ? "text-green-600" : "text-red-600"}>{r.ok ? "✓" : "✗"}</span>
                   <span className="truncate">{r.url}</span>
+                  {r.ok && <span className="text-xs text-muted-foreground">— {r.count ?? 0} provider{(r.count ?? 0) === 1 ? "" : "s"}</span>}
                   {r.error && <span className="text-xs text-red-600">— {r.error}</span>}
                 </li>
               ))}
