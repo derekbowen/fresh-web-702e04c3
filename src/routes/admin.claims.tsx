@@ -75,7 +75,7 @@ function Section({ title, claims, busyId, act, compact = false }: { title: strin
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <a href={`/providers/${c.provider_slug}`} target="_blank" rel="noreferrer" className="font-semibold text-foreground hover:text-primary">
+                  <a href={`/p/pool-pros/${c.provider_slug}`} target="_blank" rel="noreferrer" className="font-semibold text-foreground hover:text-primary">
                     {c.provider_slug}
                   </a>
                   <StatusBadge status={c.status} />
