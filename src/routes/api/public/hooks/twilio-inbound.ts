@@ -2,12 +2,32 @@
 // Configure in Twilio: Phone Number → Messaging → "A message comes in" →
 //   POST https://fresh-web.lovable.app/api/public/hooks/twilio-inbound
 import { createFileRoute } from "@tanstack/react-router";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { recordOptOut, recordOptIn, toE164 } from "@/server/sms.server";
 
 const STOP_WORDS = new Set(["stop", "stopall", "unsubscribe", "cancel", "end", "quit"]);
 const START_WORDS = new Set(["start", "unstop", "yes"]);
 const HELP_WORDS = new Set(["help", "info"]);
+
+/**
+ * Validate the X-Twilio-Signature header per
+ * https://www.twilio.com/docs/usage/webhooks/webhooks-security
+ * Signature = base64(HMAC-SHA1(authToken, fullUrl + sortedKey+value pairs))
+ */
+function verifyTwilioSignature(authToken: string, url: string, params: Record<string, string>, signature: string): boolean {
+  const sortedKeys = Object.keys(params).sort();
+  let data = url;
+  for (const k of sortedKeys) data += k + params[k];
+  const expected = createHmac("sha1", authToken).update(data).digest("base64");
+  try {
+    const a = Buffer.from(expected);
+    const b = Buffer.from(signature);
+    return a.length === b.length && timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
 
 function twiml(message?: string): Response {
   const body = message
@@ -28,10 +48,30 @@ export const Route = createFileRoute("/api/public/hooks/twilio-inbound")({
     handlers: {
       POST: async ({ request }) => {
         const form = await request.formData();
-        const fromRaw = String(form.get("From") || "");
-        const to = String(form.get("To") || "");
-        const body = String(form.get("Body") || "").trim();
-        const sid = String(form.get("MessageSid") || "");
+        const params: Record<string, string> = {};
+        for (const [k, v] of form.entries()) params[k] = typeof v === "string" ? v : "";
+
+        // Verify Twilio signature so attackers can't forge STOP/START messages.
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
+        if (!authToken) {
+          console.error("[twilio-inbound] TWILIO_AUTH_TOKEN not set");
+          return new Response("Server misconfigured", { status: 500 });
+        }
+        const signature = request.headers.get("x-twilio-signature") ?? "";
+        // Twilio signs the full external URL Twilio called. Reconstruct it from
+        // X-Forwarded-* if present (we run behind nginx).
+        const fwdProto = request.headers.get("x-forwarded-proto") ?? "https";
+        const fwdHost = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? new URL(request.url).host;
+        const path = new URL(request.url).pathname + new URL(request.url).search;
+        const fullUrl = `${fwdProto}://${fwdHost}${path}`;
+        if (!signature || !verifyTwilioSignature(authToken, fullUrl, params, signature)) {
+          return new Response("Invalid signature", { status: 403 });
+        }
+
+        const fromRaw = params["From"] ?? "";
+        const to = params["To"] ?? "";
+        const body = (params["Body"] ?? "").trim();
+        const sid = params["MessageSid"] ?? "";
         const fromE164 = toE164(fromRaw) ?? fromRaw;
         const keyword = body.toLowerCase().replace(/[^a-z]/g, "");
 

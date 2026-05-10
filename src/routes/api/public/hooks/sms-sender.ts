@@ -2,11 +2,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { sendSms, isOptedOut } from "@/server/sms.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 export const Route = createFileRoute("/api/public/hooks/sms-sender")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
         const nowIso = new Date().toISOString();
         const { data: due, error } = await supabaseAdmin
           .from("sms_messages")

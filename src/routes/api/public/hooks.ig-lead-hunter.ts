@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { runIgLeadHunt } from "@/server/ig-lead-hunter.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 export const Route = createFileRoute("/api/public/hooks/ig-lead-hunter")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const unauth = authorizeHookRequest(request);
+        if (unauth) return unauth;
         try {
           const result = await runIgLeadHunt();
           return new Response(JSON.stringify(result), {

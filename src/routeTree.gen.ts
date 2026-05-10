@@ -125,7 +125,6 @@ import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
 import { Route as ApiPublicLinkHealthRouteImport } from './routes/api/public/link-health'
 import { Route as ApiPublicBackfillContentPagesRouteImport } from './routes/api/public/backfill-content-pages'
-import { Route as ApiDiagSharetribeRouteImport } from './routes/api/diag/sharetribe'
 import { Route as ApiAdminDataExportRouteImport } from './routes/api/admin.data-export'
 import { Route as AdminLearningUserIdRouteImport } from './routes/admin.learning.$userId'
 import { Route as PPoolProsCCategoryRouteImport } from './routes/p.pool-pros.c.$category'
@@ -748,11 +747,6 @@ const ApiPublicBackfillContentPagesRoute =
     path: '/api/public/backfill-content-pages',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiDiagSharetribeRoute = ApiDiagSharetribeRouteImport.update({
-  id: '/api/diag/sharetribe',
-  path: '/api/diag/sharetribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiAdminDataExportRoute = ApiAdminDataExportRouteImport.update({
   id: '/api/admin/data-export',
   path: '/api/admin/data-export',
@@ -995,7 +989,6 @@ export interface FileRoutesByFullPath {
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/admin/data-export': typeof ApiAdminDataExportRoute
-  '/api/diag/sharetribe': typeof ApiDiagSharetribeRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
@@ -1137,7 +1130,6 @@ export interface FileRoutesByTo {
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/admin/data-export': typeof ApiAdminDataExportRoute
-  '/api/diag/sharetribe': typeof ApiDiagSharetribeRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
@@ -1280,7 +1272,6 @@ export interface FileRoutesById {
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
   '/api/admin/data-export': typeof ApiAdminDataExportRoute
-  '/api/diag/sharetribe': typeof ApiDiagSharetribeRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
@@ -1424,7 +1415,6 @@ export interface FileRouteTypes {
     | '/verify/$uid'
     | '/admin/learning/$userId'
     | '/api/admin/data-export'
-    | '/api/diag/sharetribe'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
     | '/api/public/track-city-click'
@@ -1566,7 +1556,6 @@ export interface FileRouteTypes {
     | '/verify/$uid'
     | '/admin/learning/$userId'
     | '/api/admin/data-export'
-    | '/api/diag/sharetribe'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
     | '/api/public/track-city-click'
@@ -1708,7 +1697,6 @@ export interface FileRouteTypes {
     | '/verify/$uid'
     | '/admin/learning/$userId'
     | '/api/admin/data-export'
-    | '/api/diag/sharetribe'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
     | '/api/public/track-city-click'
@@ -1805,7 +1793,6 @@ export interface RootRouteChildren {
   TechnicalSupportSplatRoute: typeof TechnicalSupportSplatRoute
   VerifyUidRoute: typeof VerifyUidRoute
   ApiAdminDataExportRoute: typeof ApiAdminDataExportRoute
-  ApiDiagSharetribeRoute: typeof ApiDiagSharetribeRoute
   ApiPublicBackfillContentPagesRoute: typeof ApiPublicBackfillContentPagesRoute
   ApiPublicLinkHealthRoute: typeof ApiPublicLinkHealthRoute
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
@@ -2647,13 +2634,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBackfillContentPagesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/diag/sharetribe': {
-      id: '/api/diag/sharetribe'
-      path: '/api/diag/sharetribe'
-      fullPath: '/api/diag/sharetribe'
-      preLoaderRoute: typeof ApiDiagSharetribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/admin/data-export': {
       id: '/api/admin/data-export'
       path: '/api/admin/data-export'
@@ -3052,7 +3032,6 @@ const rootRouteChildren: RootRouteChildren = {
   TechnicalSupportSplatRoute: TechnicalSupportSplatRoute,
   VerifyUidRoute: VerifyUidRoute,
   ApiAdminDataExportRoute: ApiAdminDataExportRoute,
-  ApiDiagSharetribeRoute: ApiDiagSharetribeRoute,
   ApiPublicBackfillContentPagesRoute: ApiPublicBackfillContentPagesRoute,
   ApiPublicLinkHealthRoute: ApiPublicLinkHealthRoute,
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
