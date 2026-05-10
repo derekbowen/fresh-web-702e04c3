@@ -75,6 +75,7 @@ import { Route as BlogSplatRouteImport } from './routes/blog.$'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
+import { Route as AdminSharetribePruneRouteImport } from './routes/admin.sharetribe-prune'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
 import { Route as AdminRedirectAliasesRouteImport } from './routes/admin.redirect-aliases'
@@ -486,6 +487,11 @@ const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
   path: '/site-footer',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSharetribePruneRoute = AdminSharetribePruneRouteImport.update({
+  id: '/sharetribe-prune',
+  path: '/sharetribe-prune',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSeoHealthRoute = AdminSeoHealthRouteImport.update({
   id: '/seo-health',
   path: '/seo-health',
@@ -892,6 +898,7 @@ export interface FileRoutesByFullPath {
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -1024,6 +1031,7 @@ export interface FileRoutesByTo {
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -1157,6 +1165,7 @@ export interface FileRoutesById {
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -1291,6 +1300,7 @@ export interface FileRouteTypes {
     | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
+    | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/team'
     | '/auth/reset-password'
@@ -1423,6 +1433,7 @@ export interface FileRouteTypes {
     | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
+    | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/team'
     | '/auth/reset-password'
@@ -1555,6 +1566,7 @@ export interface FileRouteTypes {
     | '/admin/redirect-aliases'
     | '/admin/scrape-import'
     | '/admin/seo-health'
+    | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/team'
     | '/auth/reset-password'
@@ -2170,6 +2182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSiteFooterRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sharetribe-prune': {
+      id: '/admin/sharetribe-prune'
+      path: '/sharetribe-prune'
+      fullPath: '/admin/sharetribe-prune'
+      preLoaderRoute: typeof AdminSharetribePruneRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/seo-health': {
       id: '/admin/seo-health'
       path: '/seo-health'
@@ -2669,6 +2688,7 @@ interface AdminRouteChildren {
   AdminRedirectAliasesRoute: typeof AdminRedirectAliasesRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
+  AdminSharetribePruneRoute: typeof AdminSharetribePruneRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
   AdminTeamRoute: typeof AdminTeamRoute
 }
@@ -2709,6 +2729,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminRedirectAliasesRoute: AdminRedirectAliasesRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
+  AdminSharetribePruneRoute: AdminSharetribePruneRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
   AdminTeamRoute: AdminTeamRoute,
 }
