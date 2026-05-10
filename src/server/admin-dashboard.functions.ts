@@ -110,10 +110,15 @@ export const getDashboardStats = createServerFn({ method: "GET" })
     await requireAdmin(userId);
 
     const sb = supabaseAdmin;
-    const day = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const week = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const now = Date.now();
+    const day = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+    const week = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const twoWeeks = new Date(now - 14 * 24 * 60 * 60 * 1000).toISOString();
+    const month = new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const startOfTodayIso = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
 
     const cnt = (q: any) => q.then((r: any) => r.count ?? 0);
+    const cntSafe = (q: any) => q.then((r: any) => r.count ?? 0).catch(() => 0);
 
     const [
       cpTotal,
@@ -132,19 +137,27 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       providersTotal,
       providersPub,
       listingsTotal,
+      listingsCreated7d,
+      listingsCreatedToday,
       profilesTotal,
+      profilesToday,
+      profiles7d,
+      profiles30d,
       adminsRows,
       waitlistTotal,
       waitlist7d,
       leadsTotal,
       leadsNew,
+      hostLeadsTotal,
+      hostLeadsLast7d,
+      claimsPending,
+      planRequestsPending,
       missingTotal,
       missingUnresolved,
     ] = await Promise.all([
       cnt(sb.from("content_pages").select("*", { count: "exact", head: true }).like("url_path", "/p/%")),
       cnt(sb.from("content_pages").select("*", { count: "exact", head: true }).like("url_path", "/p/%").eq("status", "published")),
       cnt(sb.from("content_pages").select("*", { count: "exact", head: true }).like("url_path", "/p/%").neq("status", "published")),
-      // needs content: not published yet (proxy)
       cnt(sb.from("content_pages").select("*", { count: "exact", head: true }).like("url_path", "/p/%").neq("status", "published")),
       cnt(sb.from("content_pages").select("*", { count: "exact", head: true }).like("url_path", "/p/%").eq("status", "published").gte("updated_at", day)),
       cnt(sb.from("blog_posts").select("*", { count: "exact", head: true })),
@@ -158,15 +171,103 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       cnt(sb.from("providers").select("*", { count: "exact", head: true })),
       cnt(sb.from("providers").select("*", { count: "exact", head: true }).eq("is_published", true)),
       cnt(sb.from("synced_listings").select("*", { count: "exact", head: true }).eq("is_deleted", false)),
+      cntSafe(sb.from("synced_listings").select("*", { count: "exact", head: true }).eq("is_deleted", false).gte("created_at", week)),
+      cntSafe(sb.from("synced_listings").select("*", { count: "exact", head: true }).eq("is_deleted", false).gte("created_at", startOfTodayIso)),
       cnt(sb.from("profiles").select("*", { count: "exact", head: true })),
+      cntSafe(sb.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", startOfTodayIso)),
+      cntSafe(sb.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", week)),
+      cntSafe(sb.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", month)),
       sb.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "admin").then((r: any) => r.count ?? 0),
       cnt(sb.from("pool_waitlist").select("*", { count: "exact", head: true })),
       cnt(sb.from("pool_waitlist").select("*", { count: "exact", head: true }).gte("created_at", week)),
       cnt(sb.from("provider_leads").select("*", { count: "exact", head: true })),
       cnt(sb.from("provider_leads").select("*", { count: "exact", head: true }).eq("status", "new")),
+      cntSafe(sb.from("host_leads").select("*", { count: "exact", head: true })),
+      cntSafe(sb.from("host_leads").select("*", { count: "exact", head: true }).gte("created_at", week)),
+      cntSafe(sb.from("provider_claims").select("*", { count: "exact", head: true }).eq("status", "pending")),
+      cntSafe(sb.from("provider_plan_requests").select("*", { count: "exact", head: true }).eq("status", "pending")),
       cnt(sb.from("content_404_log").select("*", { count: "exact", head: true })),
       cnt(sb.from("content_404_log").select("*", { count: "exact", head: true }).is("resolved_at", null)),
     ]);
+
+    const [oldestLead, oldestClaim, oldestPlanReq] = await Promise.all([
+      sb.from("provider_leads").select("created_at").eq("status", "new").order("created_at", { ascending: true }).limit(1).maybeSingle(),
+      sb.from("provider_claims").select("created_at").eq("status", "pending").order("created_at", { ascending: true }).limit(1).maybeSingle(),
+      sb.from("provider_plan_requests").select("created_at").eq("status", "pending").order("created_at", { ascending: true }).limit(1).maybeSingle(),
+    ]);
+    const ageHours = (iso?: string | null) =>
+      iso ? Math.max(0, Math.round((now - new Date(iso).getTime()) / 36e5)) : null;
+
+    const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+    const { data: pubRecent } = await sb
+      .from("content_pages")
+      .select("updated_at")
+      .like("url_path", "/p/%")
+      .eq("status", "published")
+      .gte("updated_at", sevenDaysAgo.toISOString())
+      .limit(10000);
+    const ppdMap = new Map<string, number>();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now - i * 86400000);
+      ppdMap.set(d.toISOString().slice(0, 10), 0);
+    }
+    for (const r of pubRecent || []) {
+      const k = (r as any).updated_at?.slice(0, 10);
+      if (k && ppdMap.has(k)) ppdMap.set(k, (ppdMap.get(k) || 0) + 1);
+    }
+    const publishedPerDay = Array.from(ppdMap.entries()).map(([date, count]) => ({ date, count }));
+
+    const gscData = {
+      lastCapturedAt: null as string | null,
+      indexedPages: 0,
+      clicks7d: 0, clicksPrior7d: 0,
+      impressions7d: 0, impressionsPrior7d: 0,
+      avgPosition7d: null as number | null, avgPositionPrior7d: null as number | null,
+      winners: [] as Array<{ url_path: string; clicks: number; delta: number }>,
+      losers: [] as Array<{ url_path: string; clicks: number; delta: number }>,
+    };
+    try {
+      const { data: gscRows } = await sb
+        .from("gsc_query_data")
+        .select("url_path, clicks, impressions, position, captured_at")
+        .gte("captured_at", twoWeeks)
+        .limit(50000);
+      if (gscRows && gscRows.length) {
+        const last = (gscRows as any[]).reduce((acc: string | null, r: any) =>
+          !acc || r.captured_at > acc ? r.captured_at : acc, null as string | null);
+        gscData.lastCapturedAt = last;
+        const pageSet = new Set<string>();
+        const cur = new Map<string, number>();
+        const prior = new Map<string, number>();
+        let posSumCur = 0, posCntCur = 0, posSumPrior = 0, posCntPrior = 0;
+        for (const r of gscRows as any[]) {
+          pageSet.add(r.url_path);
+          if (r.captured_at >= week) {
+            gscData.clicks7d += r.clicks || 0;
+            gscData.impressions7d += r.impressions || 0;
+            cur.set(r.url_path, (cur.get(r.url_path) || 0) + (r.clicks || 0));
+            if (r.position != null) { posSumCur += Number(r.position); posCntCur++; }
+          } else {
+            gscData.clicksPrior7d += r.clicks || 0;
+            gscData.impressionsPrior7d += r.impressions || 0;
+            prior.set(r.url_path, (prior.get(r.url_path) || 0) + (r.clicks || 0));
+            if (r.position != null) { posSumPrior += Number(r.position); posCntPrior++; }
+          }
+        }
+        gscData.indexedPages = pageSet.size;
+        gscData.avgPosition7d = posCntCur ? posSumCur / posCntCur : null;
+        gscData.avgPositionPrior7d = posCntPrior ? posSumPrior / posCntPrior : null;
+        const allPaths = new Set<string>([...cur.keys(), ...prior.keys()]);
+        const diffs = Array.from(allPaths).map((p) => {
+          const c = cur.get(p) || 0;
+          const pr = prior.get(p) || 0;
+          return { url_path: p, clicks: c, delta: c - pr };
+        });
+        gscData.winners = diffs.filter((d) => d.delta > 0).sort((a, b) => b.delta - a.delta).slice(0, 5);
+        gscData.losers = diffs.filter((d) => d.delta < 0).sort((a, b) => a.delta - b.delta).slice(0, 5);
+      }
+    } catch { /* gsc data optional */ }
+
 
     const { data: byTemplateRaw } = await sb
       .from("content_pages")
