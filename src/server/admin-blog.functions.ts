@@ -147,7 +147,43 @@ const generateSchema = z.object({
   topic: z.string().max(120).optional(),
   titleHint: z.string().max(200).optional(),
   model: z.string().optional(),
+  autoPublish: z.boolean().optional(),
 });
+
+export type { GeneratedBlogRow } from "./blog-autogen.server";
+
+export const adminGenerateBlogPost = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => generateSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await requireAdmin(userId);
+    const { runBlogAutogen } = await import("./blog-autogen.server");
+    return runBlogAutogen(data);
+  });
+
+const bulkPublishSchema = z.object({
+  slugs: z.array(z.string().min(1).max(160)).min(1).max(100),
+  publish: z.boolean(),
+});
+
+export const adminBulkPublishBlogPosts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => bulkPublishSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    const { userId } = context as { userId: string };
+    await requireAdmin(userId);
+    const update: Record<string, unknown> = {
+      is_published: data.publish,
+      published_at: data.publish ? new Date().toISOString() : null,
+    };
+    const { error } = await supabaseAdmin
+      .from("blog_posts")
+      .update(update as never)
+      .in("slug", data.slugs);
+    if (error) throw new Error(error.message);
+    return { ok: true, count: data.slugs.length };
+  });
 
 function slugify(input: string): string {
   return String(input)
