@@ -132,6 +132,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
+import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public/hooks/sms-sender'
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
@@ -781,6 +782,11 @@ const ApiPublicHooksSyncListingsRoute =
     path: '/api/public/hooks/sync-listings',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSmsSenderRoute = ApiPublicHooksSmsSenderRouteImport.update({
+  id: '/api/public/hooks/sms-sender',
+  path: '/api/public/hooks/sms-sender',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSeoSelfTestRoute =
   ApiPublicHooksSeoSelfTestRouteImport.update({
     id: '/api/public/hooks/seo-self-test',
@@ -972,6 +978,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
+  '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1108,6 +1115,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
+  '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1245,6 +1253,7 @@ export interface FileRoutesById {
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
+  '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1383,6 +1392,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
+    | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-listings'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1519,6 +1529,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
+    | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-listings'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1655,6 +1666,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
+    | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-listings'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1748,6 +1760,7 @@ export interface RootRouteChildren {
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
+  ApiPublicHooksSmsSenderRoute: typeof ApiPublicHooksSmsSenderRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -2619,6 +2632,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/sms-sender': {
+      id: '/api/public/hooks/sms-sender'
+      path: '/api/public/hooks/sms-sender'
+      fullPath: '/api/public/hooks/sms-sender'
+      preLoaderRoute: typeof ApiPublicHooksSmsSenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/seo-self-test': {
       id: '/api/public/hooks/seo-self-test'
       path: '/api/public/hooks/seo-self-test'
@@ -2945,6 +2965,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
+  ApiPublicHooksSmsSenderRoute: ApiPublicHooksSmsSenderRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
