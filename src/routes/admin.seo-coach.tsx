@@ -92,12 +92,25 @@ function SeoCoachPage() {
 
   function reset() {
     setMessages([]);
+    setCompleted(new Set());
     setError(null);
     setTimeout(() => void send("Start. Show me my most urgent SEO issue and ask the first yes/no question."), 50);
   }
 
   function answerYesNo(answer: "Yes" | "No") {
     void send(answer);
+  }
+
+  function doItNow(route: string) {
+    // Open the recommended admin tool in a new tab
+    if (typeof window !== "undefined") window.open(route, "_blank", "noopener,noreferrer");
+    // Mark this step complete and tell the coach to advance
+    setCompleted((prev) => {
+      const next = new Set(prev);
+      next.add(route);
+      return next;
+    });
+    void send(`✅ Done — I just opened ${route} and started working on it. Mark this step as completed and ask me the next yes/no question for the next priority.`);
   }
 
   return (
