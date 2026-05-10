@@ -512,29 +512,36 @@ export async function fetchAvailableTimeSlots(
   endISO: string,
 ): Promise<AvailableTimeSlot[]> {
   try {
-    const json = await integGet<{
-      data: Array<{
-        attributes: { start: string; end: string; seats: number; type?: string };
-      }>;
-    }>("/timeslots/query", {
+    const json = await integGet<unknown>("/timeslots/query", {
       listingId,
       start: startISO,
       end: endISO,
       per_page: 100,
     });
 
-    const slots = (json?.data ?? [])
-      .map((d) => ({
-        start: d.attributes.start,
-        end: d.attributes.end,
-        seats: d.attributes.seats ?? 1,
-      }))
-      .filter((s) => s.start && s.end)
-      .sort((a, b) => a.start.localeCompare(b.start));
+    try {
+      const rawList =
+        json && typeof json === "object" && Array.isArray((json as any).data)
+          ? (json as any).data
+          : [];
 
-    return slots;
+      const { isValidIsoPair } = await import("@/lib/availability.utils");
+      const slots: AvailableTimeSlot[] = [];
+      for (const d of rawList) {
+        const attrs = (d as any)?.attributes;
+        if (!attrs) continue;
+        const v = isValidIsoPair(attrs.start, attrs.end, attrs.seats);
+        if (v) slots.push(v);
+      }
+      slots.sort((a, b) => a.start.localeCompare(b.start));
+      return slots;
+    } catch (parseErr) {
+      console.error("fetchAvailableTimeSlots parse error:", parseErr);
+      return [];
+    }
   } catch (err) {
     console.error("fetchAvailableTimeSlots error:", err);
     return [];
   }
 }
+
