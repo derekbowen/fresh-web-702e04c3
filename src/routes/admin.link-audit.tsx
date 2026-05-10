@@ -172,14 +172,44 @@ function StatCard({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 function Row({ row }: { row: AuditLinkRow }) {
+  const [recheck, setRecheck] = React.useState<{ status: number; ok: boolean; loading: boolean } | null>(null);
   const tone =
     row.klass === "broken" ? "destructive"
     : row.klass === "redirected" ? "secondary"
     : "outline";
+
+  async function doRecheck() {
+    setRecheck({ status: 0, ok: false, loading: true });
+    try {
+      const url = "https://www.poolrentalnearme.com" + row.path;
+      const res = await fetch(url, { method: "HEAD", redirect: "follow", mode: "no-cors" });
+      // no-cors means status is 0 / opaque — fall back to GET via our own check endpoint
+      const r2 = await fetch(`/api/public/link-health?seeds=${encodeURIComponent(row.path)}&max=1&persist=0`);
+      const j = await r2.json();
+      const entry = (j.broken || []).find((b: any) => b.path === row.path);
+      const status = entry ? entry.status : 200;
+      const ok = !entry;
+      setRecheck({ status, ok, loading: false });
+      toast[ok ? "success" : "error"](`${row.path}: ${ok ? "200 OK" : entry?.reason || `HTTP ${status}`}`);
+    } catch (e: any) {
+      setRecheck({ status: 0, ok: false, loading: false });
+      toast.error(e?.message || "Recheck failed");
+    }
+  }
+
   return (
     <tr className="border-t border-border align-top">
-      <td className="px-3 py-2"><Badge variant={tone as any}>{row.klass}</Badge></td>
-      <td className="px-3 py-2 font-mono text-xs break-all">{row.path}</td>
+      <td className="px-3 py-2">
+        <Badge variant={tone as any}>{row.klass}</Badge>
+        {recheck && !recheck.loading && (
+          <Badge variant={recheck.ok ? "secondary" : "destructive"} className="ml-1 text-[10px]">
+            now: {recheck.ok ? "200" : recheck.status || "fail"}
+          </Badge>
+        )}
+      </td>
+      <td className="px-3 py-2 font-mono text-xs break-all">
+        <a href={"https://www.poolrentalnearme.com" + row.path} target="_blank" rel="noreferrer" className="hover:underline">{row.path}</a>
+      </td>
       <td className="px-3 py-2 text-right tabular-nums">{row.hits}</td>
       <td className="px-3 py-2 tabular-nums">{row.status ?? "—"}</td>
       <td className="px-3 py-2 text-xs text-muted-foreground max-w-[280px] break-words">{row.reason || "—"}</td>
@@ -199,6 +229,11 @@ function Row({ row }: { row: AuditLinkRow }) {
             )}
           </ul>
         )}
+      </td>
+      <td className="px-3 py-2 text-right">
+        <Button size="sm" variant="outline" onClick={doRecheck} disabled={recheck?.loading}>
+          {recheck?.loading ? "…" : "Recheck"}
+        </Button>
       </td>
     </tr>
   );
