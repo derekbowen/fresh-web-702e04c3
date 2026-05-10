@@ -14,6 +14,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { cityForContentPage } from "@/lib/city-slug";
+import { resolveCityRow } from "@/server/cities.functions";
 
 export { cityForContentPage };
 
