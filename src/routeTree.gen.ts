@@ -74,6 +74,7 @@ import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe
 import { Route as BlogSplatRouteImport } from './routes/blog.$'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
+import { Route as AdminSocialLeadHunterRouteImport } from './routes/admin.social-lead-hunter'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSharetribePruneRouteImport } from './routes/admin.sharetribe-prune'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
@@ -482,6 +483,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
 const AdminTeamRoute = AdminTeamRouteImport.update({
   id: '/team',
   path: '/team',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSocialLeadHunterRoute = AdminSocialLeadHunterRouteImport.update({
+  id: '/social-lead-hunter',
+  path: '/social-lead-hunter',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
@@ -914,6 +920,7 @@ export interface FileRoutesByFullPath {
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$': typeof BlogSplatRoute
@@ -1049,6 +1056,7 @@ export interface FileRoutesByTo {
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$': typeof BlogSplatRoute
@@ -1185,6 +1193,7 @@ export interface FileRoutesById {
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$': typeof BlogSplatRoute
@@ -1322,6 +1331,7 @@ export interface FileRouteTypes {
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
+    | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/auth/reset-password'
     | '/blog/$'
@@ -1457,6 +1467,7 @@ export interface FileRouteTypes {
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
+    | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/auth/reset-password'
     | '/blog/$'
@@ -1592,6 +1603,7 @@ export interface FileRouteTypes {
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
+    | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/auth/reset-password'
     | '/blog/$'
@@ -2201,6 +2213,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTeamRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/social-lead-hunter': {
+      id: '/admin/social-lead-hunter'
+      path: '/social-lead-hunter'
+      fullPath: '/admin/social-lead-hunter'
+      preLoaderRoute: typeof AdminSocialLeadHunterRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/site-footer': {
       id: '/admin/site-footer'
       path: '/site-footer'
@@ -2731,6 +2750,7 @@ interface AdminRouteChildren {
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSharetribePruneRoute: typeof AdminSharetribePruneRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
+  AdminSocialLeadHunterRoute: typeof AdminSocialLeadHunterRoute
   AdminTeamRoute: typeof AdminTeamRoute
 }
 
@@ -2773,6 +2793,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSharetribePruneRoute: AdminSharetribePruneRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
+  AdminSocialLeadHunterRoute: AdminSocialLeadHunterRoute,
   AdminTeamRoute: AdminTeamRoute,
 }
 
