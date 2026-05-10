@@ -56,6 +56,22 @@ function AdminMissingPages() {
   }, [load]);
 
   const [busyId, setBusyId] = React.useState<string | null>(null);
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [bulkRunning, setBulkRunning] = React.useState(false);
+  const [bulkProgress, setBulkProgress] = React.useState<{ done: number; total: number; current: string } | null>(null);
+
+  const openRows = React.useMemo(() => rows.filter((r) => !r.resolved_at), [rows]);
+  const allSelected = openRows.length > 0 && openRows.every((r) => selected.has(r.id));
+
+  const toggleOne = (id: string) =>
+    setSelected((s) => {
+      const next = new Set(s);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+
+  const toggleAll = () =>
+    setSelected(allSelected ? new Set() : new Set(openRows.map((r) => r.id)));
 
   const dismiss = async (id: string) => {
     if (!confirm("Dismiss this 404? It just hides the row — the URL will still 404 for visitors.")) return;
@@ -87,7 +103,69 @@ function AdminMissingPages() {
     } finally { setBusyId(null); }
   };
 
+  const bulkCreate = async () => {
+    const ids = openRows.filter((r) => selected.has(r.id));
+    if (ids.length === 0) return;
+    if (!confirm(`Generate ${ids.length} pages with AI sequentially? Roughly ~30s each. They will publish live as they finish.`)) return;
+    setBulkRunning(true);
+    let ok = 0, skipped = 0, failed = 0;
+    for (let i = 0; i < ids.length; i++) {
+      const row = ids[i];
+      setBulkProgress({ done: i, total: ids.length, current: row.url_path });
+      try {
+        const r: any = await createPageFor404({ data: { id: row.id } });
+        if (!r.ok) failed++;
+        else if (r.alreadyExists) skipped++;
+        else ok++;
+      } catch { failed++; }
+    }
+    setBulkProgress(null);
+    setBulkRunning(false);
+    setSelected(new Set());
+    alert(`Bulk create finished — ${ok} created, ${skipped} already existed, ${failed} failed.`);
+    await load();
+  };
+
+  const bulkRedirect = async () => {
+    const ids = openRows.filter((r) => selected.has(r.id));
+    if (ids.length === 0) return;
+    const target = prompt(`Redirect ${ids.length} URLs to which path? (e.g. /p/all-locations)`, "/p/all-locations");
+    if (!target) return;
+    setBulkRunning(true);
+    let ok = 0, failed = 0;
+    for (let i = 0; i < ids.length; i++) {
+      const row = ids[i];
+      setBulkProgress({ done: i, total: ids.length, current: row.url_path });
+      try {
+        const r: any = await redirect404({ data: { id: row.id, target } });
+        if (r.ok) ok++; else failed++;
+      } catch { failed++; }
+    }
+    setBulkProgress(null);
+    setBulkRunning(false);
+    setSelected(new Set());
+    alert(`Bulk redirect finished — ${ok} saved, ${failed} failed (→ ${target}).`);
+    await load();
+  };
+
+  const bulkDismiss = async () => {
+    const ids = openRows.filter((r) => selected.has(r.id));
+    if (ids.length === 0) return;
+    if (!confirm(`Dismiss ${ids.length} rows? This only hides them — URLs still 404 for visitors.`)) return;
+    setBulkRunning(true);
+    for (let i = 0; i < ids.length; i++) {
+      const row = ids[i];
+      setBulkProgress({ done: i, total: ids.length, current: row.url_path });
+      try { await resolve404({ data: { id: row.id, notes: "bulk dismissed" } }); } catch {}
+    }
+    setBulkProgress(null);
+    setBulkRunning(false);
+    setSelected(new Set());
+    await load();
+  };
+
   const totalHits = rows.reduce((acc, r) => acc + (r.hit_count ?? 0), 0);
+  const selectedCount = selected.size;
 
   return (
     <AdminLayout>
@@ -125,10 +203,42 @@ function AdminMissingPages() {
           </div>
         )}
 
+        {(selectedCount > 0 || bulkRunning) && (
+          <div className="sticky top-2 z-10 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-4 py-3 text-sm">
+            <div className="font-medium">
+              {bulkRunning && bulkProgress
+                ? `Working ${bulkProgress.done + 1} / ${bulkProgress.total} — ${bulkProgress.current}`
+                : `${selectedCount} selected`}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={bulkCreate} disabled={bulkRunning || selectedCount === 0}
+                className="rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                ✨ Create {selectedCount} page{selectedCount === 1 ? "" : "s"}
+              </button>
+              <button onClick={bulkRedirect} disabled={bulkRunning || selectedCount === 0}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold hover:bg-muted disabled:opacity-50">
+                ↪ Redirect {selectedCount} to…
+              </button>
+              <button onClick={bulkDismiss} disabled={bulkRunning || selectedCount === 0}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50">
+                Dismiss {selectedCount}
+              </button>
+              <button onClick={() => setSelected(new Set())} disabled={bulkRunning}
+                className="rounded-full px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50">
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="mt-6 overflow-x-auto rounded-2xl border border-border">
           <table className="min-w-full divide-y divide-border text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
+                <th className="px-3 py-3 w-8">
+                  <input type="checkbox" checked={allSelected} onChange={toggleAll}
+                    aria-label="Select all open rows" disabled={openRows.length === 0 || bulkRunning} />
+                </th>
                 <th className="px-4 py-3">URL</th>
                 <th className="px-4 py-3">Hits</th>
                 <th className="px-4 py-3">Last seen</th>
@@ -140,14 +250,14 @@ function AdminMissingPages() {
             <tbody className="divide-y divide-border bg-background">
               {loading && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
                     Loading…
                   </td>
                 </tr>
               )}
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
                     No 404s logged. Nice.
                   </td>
                 </tr>
@@ -155,6 +265,14 @@ function AdminMissingPages() {
               {!loading &&
                 rows.map((r) => (
                   <tr key={r.id} className="align-top">
+                    <td className="px-3 py-3">
+                      {!r.resolved_at && (
+                        <input type="checkbox" checked={selected.has(r.id)}
+                          onChange={() => toggleOne(r.id)}
+                          disabled={bulkRunning}
+                          aria-label={`Select ${r.url_path}`} />
+                      )}
+                    </td>
                     <td className="px-4 py-3 font-mono text-xs">
                       <a
                         href={r.url_path}
