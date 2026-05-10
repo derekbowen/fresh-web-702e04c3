@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import {
   listIgLeads, runIgLeadHuntNow, setIgLeadContacted, updateIgLeadNotes, deleteIgLead,
+  bulkSetIgLeadsContacted,
   type IgLeadRow,
 } from "@/server/ig-lead-hunter.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Loader2, RefreshCw, ExternalLink, Trash2, Instagram, Search } from "lucide-react";
+import { Loader2, RefreshCw, ExternalLink, Trash2, Instagram, Search, CheckSquare, Square } from "lucide-react";
 
 export const Route = createFileRoute("/admin/ig-lead-hunter")({
   beforeLoad: async () => {
