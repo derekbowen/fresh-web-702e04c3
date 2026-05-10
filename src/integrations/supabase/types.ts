@@ -1673,6 +1673,66 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_audits: {
+        Row: {
+          audited_at: string
+          created_by: string | null
+          email_status: string | null
+          emailed_at: string | null
+          host_email: string | null
+          host_name: string | null
+          id: string
+          listing_title: string | null
+          listing_url: string
+          photo_notes: string | null
+          pricing_notes: string | null
+          raw_excerpt: string | null
+          recommendations: Json
+          score: number | null
+          strengths: Json
+          summary: string | null
+          weaknesses: Json
+        }
+        Insert: {
+          audited_at?: string
+          created_by?: string | null
+          email_status?: string | null
+          emailed_at?: string | null
+          host_email?: string | null
+          host_name?: string | null
+          id?: string
+          listing_title?: string | null
+          listing_url: string
+          photo_notes?: string | null
+          pricing_notes?: string | null
+          raw_excerpt?: string | null
+          recommendations?: Json
+          score?: number | null
+          strengths?: Json
+          summary?: string | null
+          weaknesses?: Json
+        }
+        Update: {
+          audited_at?: string
+          created_by?: string | null
+          email_status?: string | null
+          emailed_at?: string | null
+          host_email?: string | null
+          host_name?: string | null
+          id?: string
+          listing_title?: string | null
+          listing_url?: string
+          photo_notes?: string | null
+          pricing_notes?: string | null
+          raw_excerpt?: string | null
+          recommendations?: Json
+          score?: number | null
+          strengths?: Json
+          summary?: string | null
+          weaknesses?: Json
+        }
+        Relationships: []
+      }
       listing_sync_log: {
         Row: {
           created_at: string
