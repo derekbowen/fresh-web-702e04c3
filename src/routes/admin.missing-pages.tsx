@@ -203,10 +203,42 @@ function AdminMissingPages() {
           </div>
         )}
 
+        {(selectedCount > 0 || bulkRunning) && (
+          <div className="sticky top-2 z-10 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-4 py-3 text-sm">
+            <div className="font-medium">
+              {bulkRunning && bulkProgress
+                ? `Working ${bulkProgress.done + 1} / ${bulkProgress.total} — ${bulkProgress.current}`
+                : `${selectedCount} selected`}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={bulkCreate} disabled={bulkRunning || selectedCount === 0}
+                className="rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                ✨ Create {selectedCount} page{selectedCount === 1 ? "" : "s"}
+              </button>
+              <button onClick={bulkRedirect} disabled={bulkRunning || selectedCount === 0}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold hover:bg-muted disabled:opacity-50">
+                ↪ Redirect {selectedCount} to…
+              </button>
+              <button onClick={bulkDismiss} disabled={bulkRunning || selectedCount === 0}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50">
+                Dismiss {selectedCount}
+              </button>
+              <button onClick={() => setSelected(new Set())} disabled={bulkRunning}
+                className="rounded-full px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50">
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="mt-6 overflow-x-auto rounded-2xl border border-border">
           <table className="min-w-full divide-y divide-border text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
+                <th className="px-3 py-3 w-8">
+                  <input type="checkbox" checked={allSelected} onChange={toggleAll}
+                    aria-label="Select all open rows" disabled={openRows.length === 0 || bulkRunning} />
+                </th>
                 <th className="px-4 py-3">URL</th>
                 <th className="px-4 py-3">Hits</th>
                 <th className="px-4 py-3">Last seen</th>
