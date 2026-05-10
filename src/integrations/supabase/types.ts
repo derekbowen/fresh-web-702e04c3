@@ -1483,6 +1483,7 @@ export type Database = {
           profile_name: string | null
           query: string | null
           snippet: string | null
+          source_url: string | null
           updated_at: string
         }
         Insert: {
@@ -1498,6 +1499,7 @@ export type Database = {
           profile_name?: string | null
           query?: string | null
           snippet?: string | null
+          source_url?: string | null
           updated_at?: string
         }
         Update: {
@@ -1513,6 +1515,7 @@ export type Database = {
           profile_name?: string | null
           query?: string | null
           snippet?: string | null
+          source_url?: string | null
           updated_at?: string
         }
         Relationships: []
