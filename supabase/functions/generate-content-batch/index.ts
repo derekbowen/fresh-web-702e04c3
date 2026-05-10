@@ -816,6 +816,7 @@ Deno.serve(async (req) => {
     // so we don't need a new secret.
     const providedDriver = req.headers.get("x-driver-secret");
     const isDriver = !!providedDriver && providedDriver === serviceKey;
+    console.log(`[generate-content-batch] driver-check provided.len=${providedDriver?.length ?? 0} svc.len=${serviceKey.length} match=${isDriver}`);
 
     if (!isDriver) {
       const authHeader = req.headers.get("Authorization") ?? "";
