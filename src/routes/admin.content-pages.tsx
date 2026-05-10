@@ -41,7 +41,7 @@ function BulkEditor() {
   const [status, setStatus] = React.useState<"all" | "published" | "pending" | "draft">("all");
   const [template, setTemplate] = React.useState("");
   const [page, setPage] = React.useState(1);
-  const pageSize = 50;
+  const [pageSize, setPageSize] = React.useState<number>(50);
   const [rows, setRows] = React.useState<ContentPageRow[]>([]);
   const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
