@@ -30,11 +30,14 @@ function CompetitorRadar() {
   const [newRows, setNewRows] = React.useState<CompetitorUrlRow[]>([]);
   const [matches, setMatches] = React.useState<CompetitorHostMatchRow[]>([]);
   const [matchStatus, setMatchStatus] = React.useState<"new" | "review" | "contacted" | "converted" | "dismissed" | "all">("new");
-  const [tab, setTab] = React.useState<"feed" | "matches">("feed");
+  const [tab, setTab] = React.useState<"feed" | "matches" | "gaps" | "digest">("feed");
+  const [kindFilter, setKindFilter] = React.useState<string>("");
+  const [includeListings, setIncludeListings] = React.useState(false);
   const [domain, setDomain] = React.useState("");
   const [sitemap, setSitemap] = React.useState("");
   const [label, setLabel] = React.useState("");
   const [scanning, setScanning] = React.useState(false);
+  const [classifying, setClassifying] = React.useState(false);
   const [matchingId, setMatchingId] = React.useState<string | null>(null);
   const [enrichingId, setEnrichingId] = React.useState<string | null>(null);
   const [spend, setSpend] = React.useState<{ today_spend_usd: number; today_calls: number; today_hits: number; month_spend_usd: number; daily_cap_usd: number; monthly_target_usd: number } | null>(null);
@@ -45,6 +48,12 @@ function CompetitorRadar() {
   const [runningTests, setRunningTests] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [loadError, setLoadError] = React.useState<string | null>(null);
+  const [gaps, setGaps] = React.useState<CityGapRow[]>([]);
+  const [gapsLoading, setGapsLoading] = React.useState(false);
+  const [creatingGap, setCreatingGap] = React.useState<string | null>(null);
+  const [digest, setDigest] = React.useState<string | null>(null);
+  const [digestDays, setDigestDays] = React.useState(7);
+  const [digestLoading, setDigestLoading] = React.useState(false);
 
   async function flagFalsePositive(id: string) {
     const reason = prompt("Why is this a false positive? (optional, helps train the filter)") ?? "";
