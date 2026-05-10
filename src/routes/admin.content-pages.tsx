@@ -276,6 +276,55 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
     } finally { setAiBusy(null); }
   }
 
+  async function runAutoFix() {
+    if (!page) return;
+    if (!confirm("Auto-fix SEO will overwrite focus keyword, SEO title/description, OG fields — and may rewrite the body if it's thin or under-linked. Continue?")) return;
+    setAiBusy("autofix"); setMsg(null); setErr(null); setPreview(null);
+    try {
+      const r = await autoFixSeo({ data: { id: page.id } });
+      if (r.ok) {
+        setPage({ ...page, ...r.page });
+        setMsg(`Auto-fix saved. Updated: ${r.changed.join(", ")}.`);
+        onSaved();
+      } else setErr(r.error);
+    } finally { setAiBusy(null); }
+  }
+
+  // ─── Custom AI section presets ─────────────────────────────────────────────
+  const [customPresets, setCustomPresets] = React.useState<CustomSectionPreset[]>([]);
+  const [presetMgrOpen, setPresetMgrOpen] = React.useState(false);
+  const [editingPreset, setEditingPreset] = React.useState<{ id?: string; label: string; prompt: string }>({ label: "", prompt: "" });
+
+  const loadPresets = React.useCallback(async () => {
+    try { const r = await listSectionPresets(); setCustomPresets(r.rows); } catch {/* ignore */}
+  }, []);
+  React.useEffect(() => { void loadPresets(); }, [loadPresets]);
+
+  async function runCustomPreset(presetId: string) {
+    if (!page) return;
+    setAiBusy("section"); setMsg(null); setErr(null); setPreview(null);
+    try {
+      const r = await generateCustomSection({ data: { id: page.id, preset_id: presetId } });
+      if (r.ok) setPreview({ kind: "section", markdown: r.markdown, label: r.label });
+      else setErr(r.error);
+    } finally { setAiBusy(null); }
+  }
+
+  async function savePreset() {
+    if (!editingPreset.label.trim() || editingPreset.prompt.trim().length < 5) {
+      setErr("Label and prompt are required (prompt at least 5 chars)."); return;
+    }
+    const r = await saveSectionPreset({ data: { id: editingPreset.id, label: editingPreset.label.trim(), prompt: editingPreset.prompt.trim(), sort_order: 0 } });
+    if (r.ok) { setEditingPreset({ label: "", prompt: "" }); await loadPresets(); }
+    else setErr(r.error);
+  }
+
+  async function removePreset(id: string) {
+    if (!confirm("Delete this custom prompt?")) return;
+    const r = await deleteSectionPreset({ data: { id } });
+    if (r.ok) await loadPresets();
+    else setErr(r.error);
+  }
   function acceptPreview() {
     if (!page || !preview) return;
     if (preview.kind === "body") {
