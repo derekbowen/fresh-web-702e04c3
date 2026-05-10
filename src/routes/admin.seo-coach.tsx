@@ -58,6 +58,7 @@ function SeoCoachPage() {
   const [input, setInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [completed, setCompleted] = React.useState<Set<string>>(new Set());
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
