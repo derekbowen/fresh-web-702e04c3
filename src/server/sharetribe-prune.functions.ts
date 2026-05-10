@@ -105,8 +105,9 @@ async function fetchAllSharetribeCityKeys(): Promise<{
 }
 
 export const previewSharetribePrune = createServerFn({ method: "POST" })
-  .handler(async () => {
-    const { userId } = ctx.context as { userId: string }; await assertAdmin(userId);
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin((context as { userId: string }).userId);
     const { keys, totalListings, skipped, pagesScanned } =
       await fetchAllSharetribeCityKeys();
 
