@@ -40,7 +40,10 @@ export const getEmailVerifyBalance = createServerFn({ method: "GET" })
   }
 });
 
-export const getEmailVerifyStats = createServerFn({ method: "GET" }).handler(async () => {
+export const getEmailVerifyStats = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin((context as { userId: string }).userId);
   try {
     const { data, error } = await supabaseAdmin
       .from("host_leads")
