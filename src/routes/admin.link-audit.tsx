@@ -244,15 +244,19 @@ function Row({ row }: { row: AuditLinkRow }) {
   async function doRecheck() {
     setRecheck({ status: 0, ok: false, loading: true });
     try {
-      const url = "https://www.poolrentalnearme.com" + row.path;
-      await fetch(url, { method: "HEAD", redirect: "follow", mode: "no-cors" });
-      const r2 = await fetch(`/api/public/link-health?seeds=${encodeURIComponent(row.path)}&max=1&persist=0`);
+      const r2 = await fetch(
+        `/api/public/link-health?seeds=${encodeURIComponent(row.path)}&max=1&persist=0`,
+        { method: "POST" }
+      );
+      if (!r2.ok) throw new Error(`Health endpoint returned HTTP ${r2.status}`);
       const j = await r2.json();
       const entry = (j.broken || []).find((b: any) => b.path === row.path);
       const status = entry ? entry.status : 200;
       const ok = !entry;
       setRecheck({ status, ok, loading: false });
-      toast[ok ? "success" : "error"](`${row.path}: ${ok ? "200 OK" : entry?.reason || `HTTP ${status}`}`);
+      toast[ok ? "success" : "error"](
+        `${row.path}: ${ok ? "200 OK" : entry?.reason || `HTTP ${status}`}`
+      );
     } catch (e: any) {
       setRecheck({ status: 0, ok: false, loading: false });
       toast.error(e?.message || "Recheck failed");
