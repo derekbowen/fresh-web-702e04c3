@@ -268,21 +268,19 @@ export function extractHeroUrl(html: string): string | null {
 }
 
 /**
- * Build the list of source URLs to try for a city, in priority order:
- *   1. The resolved Sharetribe-style landing page (if any)
- *   2. Our own rendered city page at /p/{slug} on the production site
- *   3. The host-acquisition city page at /p/host-acquisition/{slug}
+ * Build the list of source URLs to try for a city.
+ *
+ * Only uses the resolved canonical URL (from URL_OVERRIDES, content_pages,
+ * or the /p/all-locations directory). Does NOT guess `/p/{citySlug}` or
+ * `/p/host-acquisition/{citySlug}` — those routes don't exist for most
+ * cities and just cause 404s + generic AI fallback heroes.
  */
 export function buildSourceUrlCandidates(
-  citySlug: string,
+  _citySlug: string,
   primary: string | null,
 ): string[] {
-  const own = `https://www.poolrentalnearme.com/p/${citySlug}`;
-  const hostAcq = `https://www.poolrentalnearme.com/p/host-acquisition/${citySlug}`;
-  const list = [primary, own, hostAcq].filter(
-    (u): u is string => !!u && typeof u === "string",
-  );
-  return Array.from(new Set(list));
+  if (!primary) return [];
+  return [primary];
 }
 
 export function normalizeHeroUrl(url: string): string {
