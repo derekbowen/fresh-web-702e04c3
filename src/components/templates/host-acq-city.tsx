@@ -1,7 +1,9 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { HeroImage } from "@/components/hero-image";
-import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { type LinkTarget } from "@/components/auto-linked-content";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
 import { RelatedPages } from "@/components/related-pages";
