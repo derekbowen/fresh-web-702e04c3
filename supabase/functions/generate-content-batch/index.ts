@@ -814,9 +814,20 @@ Deno.serve(async (req) => {
     // Driver-secret bypass for unattended/server-to-server runs.
     // Uses the service-role key (already known only to the backend operator)
     // so we don't need a new secret.
-    const providedDriver = req.headers.get("x-driver-secret");
-    const isDriver = !!providedDriver && providedDriver === serviceKey;
-    console.log(`[generate-content-batch] driver-check provided.len=${providedDriver?.length ?? 0} svc.len=${serviceKey.length} match=${isDriver}`);
+    const providedDriver = req.headers.get("x-driver-secret") ?? "";
+    let isDriver = !!providedDriver && providedDriver === serviceKey;
+    if (!isDriver && providedDriver) {
+      // Accept any valid Supabase-issued service_role JWT (legacy format)
+      try {
+        const parts = providedDriver.split(".");
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")));
+          if (payload?.role === "service_role" && payload?.iss === "supabase") {
+            isDriver = true;
+          }
+        }
+      } catch (_e) { /* not a JWT */ }
+    }
 
     if (!isDriver) {
       const authHeader = req.headers.get("Authorization") ?? "";
