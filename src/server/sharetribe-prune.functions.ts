@@ -160,9 +160,10 @@ export const previewSharetribePrune = createServerFn({ method: "POST" })
   });
 
 export const executeSharetribePrune = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ confirm: z.literal("DELETE") }).parse(d))
-  .handler(async () => {
-    const { userId } = ctx.context as { userId: string }; await assertAdmin(userId);
+  .handler(async ({ context }) => {
+    await assertAdmin((context as { userId: string }).userId);
     const { keys } = await fetchAllSharetribeCityKeys();
 
     const { data: pages, error } = await supabaseAdmin
