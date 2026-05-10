@@ -155,14 +155,28 @@ function IgLeadHunter() {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                     <a
-                      href={row.instagram_url}
+                      href={row.source_url || row.instagram_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                      title={row.source_url ? "Open the exact post" : "Open the profile"}
                     >
                       @{row.profile_handle}
+                      {row.source_url && /\/(p|reel|reels|tv)\//.test(row.source_url) && (
+                        <span className="rounded bg-primary/10 px-1 text-[10px] font-semibold uppercase tracking-wide text-primary">post</span>
+                      )}
                       <ExternalLink className="h-3 w-3" />
                     </a>
+                    {row.source_url && row.source_url !== row.instagram_url && (
+                      <a
+                        href={row.instagram_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-muted-foreground hover:underline"
+                      >
+                        profile
+                      </a>
+                    )}
                     {row.profile_name && row.profile_name !== row.profile_handle && (
                       <span className="text-sm text-muted-foreground">{row.profile_name}</span>
                     )}
