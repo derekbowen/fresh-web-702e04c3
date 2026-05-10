@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { fetchAvailableTimeSlots, type AvailableTimeSlot } from "@/server/sharetribe.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { normalizeSlotArray } from "@/lib/availability.utils";
 
 export interface AvailabilityResult {
   listingId: string;
@@ -11,18 +12,22 @@ export interface AvailabilityResult {
 }
 
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+const HOUR_MS = 60 * 60 * 1000;
 
 function expandToHourlySlots(
   blocks: AvailableTimeSlot[],
   windowEndMs: number,
+  maxSlots: number,
 ): AvailableTimeSlot[] {
-  const HOUR_MS = 60 * 60 * 1000;
+  const safeBlocks = Array.isArray(blocks) ? blocks : [];
   const nowMs = Date.now();
   const out: AvailableTimeSlot[] = [];
-  for (const b of blocks) {
-    const bStart = new Date(b.start).getTime();
-    const bEnd = new Date(b.end).getTime();
+  for (const b of safeBlocks) {
+    if (!b || typeof b.start !== "string" || typeof b.end !== "string") continue;
+    const bStart = Date.parse(b.start);
+    const bEnd = Date.parse(b.end);
     if (!Number.isFinite(bStart) || !Number.isFinite(bEnd)) continue;
+    if (bEnd <= bStart) continue;
     const firstSlotStart = Math.ceil(bStart / HOUR_MS) * HOUR_MS;
     for (let t = firstSlotStart; t + HOUR_MS <= bEnd; t += HOUR_MS) {
       if (t < nowMs) continue;
@@ -32,6 +37,7 @@ function expandToHourlySlots(
         end: new Date(t + HOUR_MS).toISOString(),
         seats: b.seats ?? 1,
       });
+      if (out.length >= maxSlots) return out;
     }
   }
   return out;
@@ -53,6 +59,8 @@ export const getListingAvailability = createServerFn({ method: "GET" })
     return { listingId: id, days };
   })
   .handler(async ({ data }): Promise<AvailabilityResult> => {
+    const maxSlots = 24 * data.days;
+
     // 1. Try cache
     try {
       const { data: row } = await supabaseAdmin
@@ -62,15 +70,23 @@ export const getListingAvailability = createServerFn({ method: "GET" })
         .maybeSingle();
 
       if (row && row.fetched_at) {
-        const ageMs = Date.now() - new Date(row.fetched_at).getTime();
-        if (ageMs < CACHE_TTL_MS && Array.isArray(row.slots)) {
-          return {
-            listingId: data.listingId,
-            fetchedAt: row.fetched_at,
-            slots: row.slots as unknown as AvailableTimeSlot[],
-            error: null,
-            cached: true,
-          };
+        const fetchedMs = Date.parse(row.fetched_at as unknown as string);
+        if (Number.isFinite(fetchedMs)) {
+          const ageMs = Date.now() - fetchedMs;
+          if (ageMs < CACHE_TTL_MS) {
+            const normalized = normalizeSlotArray(row.slots);
+            const rawHadEntries = Array.isArray(row.slots) && row.slots.length > 0;
+            // If cache had entries but all were invalid, treat as stale and refetch.
+            if (!(rawHadEntries && normalized.length === 0)) {
+              return {
+                listingId: data.listingId,
+                fetchedAt: row.fetched_at as unknown as string,
+                slots: normalized,
+                error: null,
+                cached: true,
+              };
+            }
+          }
         }
       }
     } catch (err) {
@@ -89,7 +105,7 @@ export const getListingAvailability = createServerFn({ method: "GET" })
         start.toISOString(),
         end.toISOString(),
       );
-      const hourly = expandToHourlySlots(blocks, end.getTime());
+      const hourly = expandToHourlySlots(blocks, end.getTime(), maxSlots);
       const fetchedAt = new Date().toISOString();
 
       // 3. Update cache (best-effort)
@@ -121,3 +137,4 @@ export const getListingAvailability = createServerFn({ method: "GET" })
       };
     }
   });
+

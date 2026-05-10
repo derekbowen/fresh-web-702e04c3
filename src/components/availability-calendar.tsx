@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { Component, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronLeft, ChevronRight, Loader2, AlertCircle } from "lucide-react";
 import { getListingAvailability, type AvailabilityResult } from "@/lib/availability.functions";
+import { isValidIsoPair } from "@/lib/availability.utils";
 
 type Props = {
   listingId: string;
@@ -24,7 +25,9 @@ function ymd(d: Date): string {
 }
 
 function formatHour(iso: string): string {
-  const d = new Date(iso);
+  const ms = Date.parse(iso);
+  if (!Number.isFinite(ms)) return "--";
+  const d = new Date(ms);
   let h = d.getHours();
   const m = d.getMinutes();
   const period = h >= 12 ? "PM" : "AM";
@@ -32,7 +35,47 @@ function formatHour(iso: string): string {
   return m === 0 ? `${h}${period}` : `${h}:${String(m).padStart(2, "0")}${period}`;
 }
 
-export function AvailabilityCalendar({
+class AvailabilityErrorBoundary extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err: unknown) {
+    console.error("AvailabilityCalendar render error:", err);
+  }
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children;
+  }
+}
+
+export function AvailabilityCalendar(props: Props) {
+  const baseUrl = String(props.bookingBaseUrl ?? "https://poolrentalnearme.com").replace(/\/$/, "");
+  const fallback = (
+    <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="flex flex-col items-center gap-3 rounded-3xl border border-border bg-card px-6 py-12 text-center shadow-sm">
+        <AlertCircle className="h-6 w-6 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">Calendar temporarily unavailable.</p>
+        <a
+          href={`${baseUrl}/l/${props.listingSlug}/${props.listingId}`}
+          className="inline-flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+        >
+          Click to book directly →
+        </a>
+      </div>
+    </section>
+  );
+  return (
+    <AvailabilityErrorBoundary fallback={fallback}>
+      <AvailabilityCalendarInner {...props} />
+    </AvailabilityErrorBoundary>
+  );
+}
+
+function AvailabilityCalendarInner({
+
   listingId,
   listingSlug,
   bookingBaseUrl = "https://poolrentalnearme.com",
@@ -66,8 +109,18 @@ export function AvailabilityCalendar({
     fetchAvailability({ data: { listingId, days } })
       .then((res) => {
         if (cancelled) return;
-        setData(res);
-        setIsError(!!res.error);
+        const safe: AvailabilityResult =
+          res && typeof res === "object"
+            ? {
+                listingId: String((res as any).listingId ?? listingId),
+                fetchedAt: String((res as any).fetchedAt ?? new Date().toISOString()),
+                slots: Array.isArray((res as any).slots) ? (res as any).slots : [],
+                error: (res as any).error ?? null,
+                cached: (res as any).cached,
+              }
+            : { listingId, fetchedAt: new Date().toISOString(), slots: [], error: "Bad response" };
+        setData(safe);
+        setIsError(!!safe.error);
       })
       .catch(() => {
         if (cancelled) return;
@@ -83,17 +136,23 @@ export function AvailabilityCalendar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listingId, days, reloadKey]);
 
-  // Group slots by YYYY-MM-DD
+  // Group slots by YYYY-MM-DD (validating each slot defensively)
   const slotsByDay = useMemo(() => {
     const map = new Map<string, { start: string; end: string }[]>();
-    (data?.slots ?? []).forEach((s) => {
-      const key = ymd(new Date(s.start));
+    const rawSlots = Array.isArray(data?.slots) ? data!.slots : [];
+    for (const s of rawSlots) {
+      const v = isValidIsoPair((s as any)?.start, (s as any)?.end);
+      if (!v) continue;
+      const dt = new Date(v.start);
+      if (isNaN(dt.getTime())) continue;
+      const key = ymd(dt);
       const arr = map.get(key) ?? [];
-      arr.push({ start: s.start, end: s.end });
+      arr.push({ start: v.start, end: v.end });
       map.set(key, arr);
-    });
+    }
     return map;
   }, [data]);
+
 
   const maxDate = useMemo(() => {
     const d = new Date(today);
@@ -122,13 +181,14 @@ export function AvailabilityCalendar({
   const selectedSlots = selectedDate ? slotsByDay.get(selectedDate) ?? [] : [];
 
   function buildBookingUrl(startISO: string, endISO: string): string {
-    const base = bookingBaseUrl.replace(/\/$/, "");
+    const base = String(bookingBaseUrl ?? "https://poolrentalnearme.com").replace(/\/$/, "");
     const params = new URLSearchParams({
       bookingStart: startISO,
       bookingEnd: endISO,
     });
     return `${base}/l/${listingSlug}/${listingId}/checkout?${params.toString()}`;
   }
+
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
@@ -293,19 +353,25 @@ export function AvailabilityCalendar({
                     })}
                   </div>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                    {selectedSlots.map((s) => (
-                      <a
-                        key={s.start}
-                        href={buildBookingUrl(s.start, s.end)}
-                        className="group flex items-center justify-center rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground transition hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow"
-                      >
-                        {formatHour(s.start)}
-                        <span className="mx-1 text-muted-foreground group-hover:text-primary-foreground/80">
-                          –
-                        </span>
-                        {formatHour(s.end)}
-                      </a>
-                    ))}
+                    {selectedSlots.map((s) => {
+                      const startLabel = formatHour(s.start);
+                      const endLabel = formatHour(s.end);
+                      if (startLabel === "--" || endLabel === "--") return null;
+                      return (
+                        <a
+                          key={s.start}
+                          href={buildBookingUrl(s.start, s.end)}
+                          className="group flex items-center justify-center rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground transition hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow"
+                        >
+                          {startLabel}
+                          <span className="mx-1 text-muted-foreground group-hover:text-primary-foreground/80">
+                            –
+                          </span>
+                          {endLabel}
+                        </a>
+                      );
+                    })}
+
                   </div>
                   <p className="mt-3 text-center text-xs text-muted-foreground">
                     Tap a time to continue checkout on poolrentalnearme.com.
@@ -318,11 +384,12 @@ export function AvailabilityCalendar({
       </div>
       )}
 
-      {mounted && data && (data.slots?.length ?? 0) === 0 && !isError && !isLoading && (
+      {mounted && data && (Array.isArray(data.slots) ? data.slots.length : 0) === 0 && !isError && !isLoading && (
         <p className="mt-4 text-center text-xs text-muted-foreground">
           No openings in the next {days} days. Message the host for custom dates.
         </p>
       )}
+
     </section>
   );
 }
