@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_section_presets: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          label: string
+          prompt: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          label: string
+          prompt: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          label?: string
+          prompt?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       availability_cache: {
         Row: {
           fetched_at: string

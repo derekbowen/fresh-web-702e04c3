@@ -14,8 +14,14 @@ import {
   generateSeoMeta,
   generateSectionPreset,
   SECTION_PRESETS,
+  autoFixSeo,
+  listSectionPresets,
+  saveSectionPreset,
+  deleteSectionPreset,
+  generateCustomSection,
   type ContentPageRow,
   type ContentPageFull,
+  type CustomSectionPreset,
 } from "@/server/admin-tools.functions";
 
 export const Route = createFileRoute("/admin/content-pages")({
@@ -270,6 +276,55 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
     } finally { setAiBusy(null); }
   }
 
+  async function runAutoFix() {
+    if (!page) return;
+    if (!confirm("Auto-fix SEO will overwrite focus keyword, SEO title/description, OG fields — and may rewrite the body if it's thin or under-linked. Continue?")) return;
+    setAiBusy("autofix"); setMsg(null); setErr(null); setPreview(null);
+    try {
+      const r = await autoFixSeo({ data: { id: page.id } });
+      if (r.ok) {
+        setPage({ ...page, ...r.page });
+        setMsg(`Auto-fix saved. Updated: ${r.changed.join(", ")}.`);
+        onSaved();
+      } else setErr(r.error);
+    } finally { setAiBusy(null); }
+  }
+
+  // ─── Custom AI section presets ─────────────────────────────────────────────
+  const [customPresets, setCustomPresets] = React.useState<CustomSectionPreset[]>([]);
+  const [presetMgrOpen, setPresetMgrOpen] = React.useState(false);
+  const [editingPreset, setEditingPreset] = React.useState<{ id?: string; label: string; prompt: string }>({ label: "", prompt: "" });
+
+  const loadPresets = React.useCallback(async () => {
+    try { const r = await listSectionPresets(); setCustomPresets(r.rows); } catch {/* ignore */}
+  }, []);
+  React.useEffect(() => { void loadPresets(); }, [loadPresets]);
+
+  async function runCustomPreset(presetId: string) {
+    if (!page) return;
+    setAiBusy("section"); setMsg(null); setErr(null); setPreview(null);
+    try {
+      const r = await generateCustomSection({ data: { id: page.id, preset_id: presetId } });
+      if (r.ok) setPreview({ kind: "section", markdown: r.markdown, label: r.label });
+      else setErr(r.error);
+    } finally { setAiBusy(null); }
+  }
+
+  async function savePreset() {
+    if (!editingPreset.label.trim() || editingPreset.prompt.trim().length < 5) {
+      setErr("Label and prompt are required (prompt at least 5 chars)."); return;
+    }
+    const r = await saveSectionPreset({ data: { id: editingPreset.id, label: editingPreset.label.trim(), prompt: editingPreset.prompt.trim(), sort_order: 0 } });
+    if (r.ok) { setEditingPreset({ label: "", prompt: "" }); await loadPresets(); }
+    else setErr(r.error);
+  }
+
+  async function removePreset(id: string) {
+    if (!confirm("Delete this custom prompt?")) return;
+    const r = await deleteSectionPreset({ data: { id } });
+    if (r.ok) await loadPresets();
+    else setErr(r.error);
+  }
   function acceptPreview() {
     if (!page || !preview) return;
     if (preview.kind === "body") {
@@ -464,9 +519,52 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
                         + {p.label}
                       </button>
                     ))}
+                    {customPresets.map((cp) => (
+                      <span key={cp.id} className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 pr-1 text-xs">
+                        <button disabled={!!aiBusy}
+                          onClick={() => runCustomPreset(cp.id)}
+                          className="rounded-l-full px-3 py-1 hover:bg-primary/10 disabled:opacity-50">
+                          ★ {cp.label}
+                        </button>
+                        <button title="Edit" onClick={() => { setEditingPreset({ id: cp.id, label: cp.label, prompt: cp.prompt }); setPresetMgrOpen(true); }}
+                          className="px-1 text-muted-foreground hover:text-foreground">✎</button>
+                        <button title="Delete" onClick={() => removePreset(cp.id)}
+                          className="px-1 text-muted-foreground hover:text-red-600">✕</button>
+                      </span>
+                    ))}
+                    <button onClick={() => { setPresetMgrOpen((v) => !v); setEditingPreset({ label: "", prompt: "" }); }}
+                      className="rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:border-primary hover:text-primary">
+                      ⚙ {presetMgrOpen ? "Close manager" : "Manage prompts"}
+                    </button>
                   </div>
+
+                  {presetMgrOpen && (
+                    <div className="mb-3 rounded-md border border-border bg-muted/30 p-2 space-y-2">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {editingPreset.id ? "Edit custom prompt" : "New custom prompt"}
+                      </div>
+                      <input value={editingPreset.label} onChange={(e) => setEditingPreset({ ...editingPreset, label: e.target.value })}
+                        placeholder="Button label (e.g. Local SEO block)"
+                        className="w-full rounded-md border border-border bg-background px-2 py-1 text-xs" />
+                      <textarea value={editingPreset.prompt} onChange={(e) => setEditingPreset({ ...editingPreset, prompt: e.target.value })}
+                        placeholder="Prompt sent to AI. e.g. 'Add a section listing 5 local pool-permit rules with citations.'"
+                        rows={3}
+                        className="w-full rounded-md border border-border bg-background px-2 py-1 text-xs" />
+                      <div className="flex justify-end gap-2">
+                        {editingPreset.id && (
+                          <button onClick={() => setEditingPreset({ label: "", prompt: "" })}
+                            className="rounded border border-border px-2 py-1 text-[11px]">Cancel edit</button>
+                        )}
+                        <button onClick={savePreset}
+                          className="rounded bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground">
+                          {editingPreset.id ? "Update prompt" : "Save prompt"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   <textarea value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder="Or write a custom prompt. e.g. Add an FAQ about pool rental insurance in this city."
+                    placeholder="Or write a one-off prompt. e.g. Add an FAQ about pool rental insurance in this city."
                     rows={3}
                     className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
                   <div className="mt-2 flex justify-end">
@@ -496,7 +594,14 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
               <aside className="hidden lg:block">
                 <div className="sticky top-0 space-y-3">
                   <div className="rounded-lg border border-border bg-card p-3">
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">SEO score</div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">SEO score</div>
+                      <button disabled={!!aiBusy} onClick={runAutoFix}
+                        title="Use AI to set focus keyword, perfect-length meta, and (if needed) rewrite the body so every check passes."
+                        className="rounded bg-green-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-green-700 disabled:opacity-50">
+                        {aiBusy === "autofix" ? "Fixing…" : "✨ Auto-fix all"}
+                      </button>
+                    </div>
                     {score && (
                       <div className="space-y-1.5">
                         <ScoreRow ok={score.titleLen >= 50 && score.titleLen <= 60}
