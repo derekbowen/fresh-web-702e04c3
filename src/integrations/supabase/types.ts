@@ -251,6 +251,48 @@ export type Database = {
         }
         Relationships: []
       }
+      city_sources: {
+        Row: {
+          bucket: string
+          city_slug: string
+          created_at: string
+          id: string
+          key_fact: string
+          notes: string | null
+          publisher: string
+          retrieved_at: string
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          bucket: string
+          city_slug: string
+          created_at?: string
+          id?: string
+          key_fact: string
+          notes?: string | null
+          publisher: string
+          retrieved_at?: string
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          bucket?: string
+          city_slug?: string
+          created_at?: string
+          id?: string
+          key_fact?: string
+          notes?: string | null
+          publisher?: string
+          retrieved_at?: string
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       competitor_host_matches: {
         Row: {
           admin_notes: string | null
