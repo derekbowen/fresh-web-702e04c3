@@ -3,6 +3,8 @@ import remarkGfm from "remark-gfm";
 import { useMemo } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { FaqBlock } from "@/components/faq-block";
+import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 import {
   ADVOCACY_HUB_PATH,
@@ -163,6 +165,7 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
       : `What you need to know about hosting a private pool in ${state?.name ?? "your state"}: local rules, HOA tips, taxes, and what we do when neighbors have questions.`);
   const body = (page.content || page.body_markdown || "") as string;
   const toc = useMemo(() => extractToc(body), [body]);
+  const faqs = useMemo(() => faqsForContentPage(page), [page]);
 
   const breadcrumbs = isHub
     ? [
@@ -333,6 +336,23 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
                         </span>
                       </a>
                     ))}
+                  </div>
+                </section>
+              )}
+
+              {/* FAQ block (matches FAQPage JSON-LD emitted by dispatcher) */}
+              {faqs.length > 0 && (
+                <section aria-label="Frequently asked questions" className="mt-14">
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    Frequently asked questions
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {isHub
+                      ? "Quick answers about hosting a pool legally in the US."
+                      : `Quick answers for ${state?.name ?? "your state"} hosts.`}
+                  </p>
+                  <div className="mt-6">
+                    <FaqBlock faqs={faqs} />
                   </div>
                 </section>
               )}
