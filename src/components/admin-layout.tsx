@@ -77,6 +77,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     items: [
       { to: "/admin/leads", label: "Lead inbox", icon: Mail },
       { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
+      { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
       { to: "/admin/email-branding", label: "Email branding", icon: Mail },
       { to: "/admin/site-footer", label: "Site footer", icon: LinkIcon },
       { to: "/admin/directory", label: "Directory moderation", icon: Building2 },
