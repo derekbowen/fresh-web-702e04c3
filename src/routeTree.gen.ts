@@ -94,6 +94,7 @@ import { Route as AdminLandingLinkCheckRouteImport } from './routes/admin.landin
 import { Route as AdminKeywordOpportunitiesRouteImport } from './routes/admin.keyword-opportunities'
 import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
+import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
@@ -133,6 +134,7 @@ import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
+import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiPublicHooksAliasBackfillRouteImport } from './routes/api/public/hooks/alias-backfill'
@@ -583,6 +585,11 @@ const AdminIndexingRoute = AdminIndexingRouteImport.update({
   path: '/indexing',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminIgLeadHunterRoute = AdminIgLeadHunterRouteImport.update({
+  id: '/ig-lead-hunter',
+  path: '/ig-lead-hunter',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGscImportRoute = AdminGscImportRouteImport.update({
   id: '/gsc-import',
   path: '/gsc-import',
@@ -786,6 +793,12 @@ const ApiPublicHooksProviderAiWorkerRoute =
     path: '/api/public/hooks/provider-ai-worker',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksIgLeadHunterRoute =
+  ApiPublicHooksIgLeadHunterRouteImport.update({
+    id: '/api/public/hooks/ig-lead-hunter',
+    path: '/api/public/hooks/ig-lead-hunter',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailySeoDigestRoute =
   ApiPublicHooksDailySeoDigestRouteImport.update({
     id: '/api/public/hooks/daily-seo-digest',
@@ -880,6 +893,7 @@ export interface FileRoutesByFullPath {
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
@@ -947,6 +961,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1013,6 +1028,7 @@ export interface FileRoutesByTo {
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
@@ -1080,6 +1096,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1147,6 +1164,7 @@ export interface FileRoutesById {
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
@@ -1214,6 +1232,7 @@ export interface FileRoutesById {
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1282,6 +1301,7 @@ export interface FileRouteTypes {
     | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
@@ -1349,6 +1369,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -1415,6 +1436,7 @@ export interface FileRouteTypes {
     | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
@@ -1482,6 +1504,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -1548,6 +1571,7 @@ export interface FileRouteTypes {
     | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
@@ -1615,6 +1639,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -1707,6 +1732,7 @@ export interface RootRouteChildren {
   ApiPublicHooksAliasBackfillRoute: typeof ApiPublicHooksAliasBackfillRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
+  ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
@@ -2315,6 +2341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexingRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ig-lead-hunter': {
+      id: '/admin/ig-lead-hunter'
+      path: '/ig-lead-hunter'
+      fullPath: '/admin/ig-lead-hunter'
+      preLoaderRoute: typeof AdminIgLeadHunterRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/gsc-import': {
       id: '/admin/gsc-import'
       path: '/gsc-import'
@@ -2588,6 +2621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksProviderAiWorkerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/ig-lead-hunter': {
+      id: '/api/public/hooks/ig-lead-hunter'
+      path: '/api/public/hooks/ig-lead-hunter'
+      fullPath: '/api/public/hooks/ig-lead-hunter'
+      preLoaderRoute: typeof ApiPublicHooksIgLeadHunterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-seo-digest': {
       id: '/api/public/hooks/daily-seo-digest'
       path: '/api/public/hooks/daily-seo-digest'
@@ -2670,6 +2710,7 @@ interface AdminRouteChildren {
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
+  AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminInternalLinksRoute: typeof AdminInternalLinksRoute
   AdminKeywordOpportunitiesRoute: typeof AdminKeywordOpportunitiesRoute
@@ -2711,6 +2752,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
+  AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
   AdminIndexingRoute: AdminIndexingRoute,
   AdminInternalLinksRoute: AdminInternalLinksRoute,
   AdminKeywordOpportunitiesRoute: AdminKeywordOpportunitiesRoute,
@@ -2878,6 +2920,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
+  ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,

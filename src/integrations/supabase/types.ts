@@ -1415,6 +1415,54 @@ export type Database = {
         }
         Relationships: []
       }
+      ig_leads: {
+        Row: {
+          contacted: boolean
+          contacted_at: string | null
+          created_at: string
+          first_seen_at: string
+          id: string
+          instagram_url: string
+          last_seen_at: string
+          notes: string | null
+          profile_handle: string | null
+          profile_name: string | null
+          query: string | null
+          snippet: string | null
+          updated_at: string
+        }
+        Insert: {
+          contacted?: boolean
+          contacted_at?: string | null
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          instagram_url: string
+          last_seen_at?: string
+          notes?: string | null
+          profile_handle?: string | null
+          profile_name?: string | null
+          query?: string | null
+          snippet?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contacted?: boolean
+          contacted_at?: string | null
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          instagram_url?: string
+          last_seen_at?: string
+          notes?: string | null
+          profile_handle?: string | null
+          profile_name?: string | null
+          query?: string | null
+          snippet?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       internal_link_suggestions: {
         Row: {
           anchor_text: string | null
