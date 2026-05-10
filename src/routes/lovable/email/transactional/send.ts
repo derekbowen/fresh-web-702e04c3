@@ -4,14 +4,11 @@ import { createClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 import { TEMPLATES } from '@/lib/email-templates/registry'
 
-// Configuration baked in at scaffold time
-const SITE_NAME = "fresh-web"
-// SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
-// It MUST match the subdomain delegated to Lovable's nameservers. NEVER use the root domain.
-const SENDER_DOMAIN = "notify.poolfriends.poolrentalnearme.com"
-// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
-// Can be the root domain when display_from_root is enabled — this is cosmetic only.
-const FROM_DOMAIN = "notify.poolfriends.poolrentalnearme.com"
+// Configuration
+const SITE_NAME = "Pool Rental Near Me"
+// Verified sending domain in Emailit. From header uses noreply@<FROM_DOMAIN>.
+const SENDER_DOMAIN = "poolrentalnearme.online"
+const FROM_DOMAIN = "poolrentalnearme.online"
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return '***'
