@@ -134,6 +134,20 @@ function InternalLinks() {
           className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm sm:max-w-sm" />
       </div>
 
+      {visiblePendingIds.length > 0 && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2">
+          <label className="inline-flex items-center gap-2 text-xs font-semibold">
+            <input type="checkbox" checked={allVisibleSelected} onChange={toggleSelectAllVisible} className="h-4 w-4" />
+            Select all {visiblePendingIds.length} pending
+          </label>
+          <button onClick={() => bulkApply(visiblePendingIds)} disabled={bulkApplying}
+            className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+            {bulkApplying ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+            Apply all {visiblePendingIds.length}
+          </button>
+        </div>
+      )}
+
       {selected.size > 0 && (
         <div className="sticky top-12 z-20 mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-2 shadow lg:top-28">
           <span className="text-xs font-semibold">{selected.size} selected</span>
@@ -141,9 +155,10 @@ function InternalLinks() {
             className="ml-auto inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-semibold">
             <X className="h-3 w-3" /> Dismiss
           </button>
-          <button onClick={() => bulkUpdate("applied")}
-            className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-            <Check className="h-3 w-3" /> Mark applied
+          <button onClick={() => bulkApply(Array.from(selected))} disabled={bulkApplying}
+            className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+            {bulkApplying ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+            Apply {selected.size}
           </button>
         </div>
       )}
