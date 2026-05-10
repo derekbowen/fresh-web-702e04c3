@@ -39,6 +39,10 @@ export type CompetitorUrlRow = {
   word_count: number | null;
   acknowledged: boolean;
   domain?: string | null;
+  kind?: string | null;
+  city_slug?: string | null;
+  state_code?: string | null;
+  summary?: string | null;
 };
 
 export const listCompetitorSites = createServerFn({ method: "GET" })
