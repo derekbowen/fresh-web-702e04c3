@@ -391,6 +391,38 @@ export function HostAcqCityTemplate({
         <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
+            {citySources.length > 0 ? (
+              <aside className="mt-12 rounded-2xl border border-border bg-muted/40 p-6">
+                <h2 className="text-xl font-semibold text-foreground">
+                  Sources for this {cityName} guide
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Every local rule, climate stat and demand figure on this page
+                  is grounded in a public, primary source.
+                </p>
+                <ul className="mt-4 space-y-3 text-sm">
+                  {citySources.map((s) => (
+                    <li key={s.id}>
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-primary underline-offset-4 hover:underline"
+                      >
+                        {s.title}
+                      </a>
+                      <span className="ml-1 text-muted-foreground">
+                        — {s.publisher}
+                        {SOURCE_BUCKET_LABEL[s.bucket]
+                          ? ` · ${SOURCE_BUCKET_LABEL[s.bucket]}`
+                          : ""}
+                      </span>
+                      <p className="mt-1 text-muted-foreground">{s.key_fact}</p>
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+            ) : null}
             <RelatedPages />
           </div>
         </section>
