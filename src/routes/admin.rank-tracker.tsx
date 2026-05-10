@@ -45,7 +45,10 @@ function RankTracker() {
     setBusy("all"); setMsg(null);
     try {
       const r: any = await runSerpCheck({ data: { limit: 20 } });
-      setMsg(`Checked ${r.results?.length ?? 0} keywords.`);
+      if (r?.ok === false) { setMsg(`Error: ${r.error}`); return; }
+      const found = (r.results || []).filter((x: any) => x.position != null).length;
+      const errs = (r.results || []).filter((x: any) => x.error).slice(0, 2).map((x: any) => `${x.keyword}: ${x.error}`).join(" | ");
+      setMsg(`Checked ${r.results?.length ?? 0} keywords, ${found} ranked.${errs ? " " + errs : ""}`);
       await load();
     } finally { setBusy(null); }
   }
