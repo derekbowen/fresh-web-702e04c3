@@ -519,9 +519,52 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
                         + {p.label}
                       </button>
                     ))}
+                    {customPresets.map((cp) => (
+                      <span key={cp.id} className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 pr-1 text-xs">
+                        <button disabled={!!aiBusy}
+                          onClick={() => runCustomPreset(cp.id)}
+                          className="rounded-l-full px-3 py-1 hover:bg-primary/10 disabled:opacity-50">
+                          ★ {cp.label}
+                        </button>
+                        <button title="Edit" onClick={() => { setEditingPreset({ id: cp.id, label: cp.label, prompt: cp.prompt }); setPresetMgrOpen(true); }}
+                          className="px-1 text-muted-foreground hover:text-foreground">✎</button>
+                        <button title="Delete" onClick={() => removePreset(cp.id)}
+                          className="px-1 text-muted-foreground hover:text-red-600">✕</button>
+                      </span>
+                    ))}
+                    <button onClick={() => { setPresetMgrOpen((v) => !v); setEditingPreset({ label: "", prompt: "" }); }}
+                      className="rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:border-primary hover:text-primary">
+                      ⚙ {presetMgrOpen ? "Close manager" : "Manage prompts"}
+                    </button>
                   </div>
+
+                  {presetMgrOpen && (
+                    <div className="mb-3 rounded-md border border-border bg-muted/30 p-2 space-y-2">
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {editingPreset.id ? "Edit custom prompt" : "New custom prompt"}
+                      </div>
+                      <input value={editingPreset.label} onChange={(e) => setEditingPreset({ ...editingPreset, label: e.target.value })}
+                        placeholder="Button label (e.g. Local SEO block)"
+                        className="w-full rounded-md border border-border bg-background px-2 py-1 text-xs" />
+                      <textarea value={editingPreset.prompt} onChange={(e) => setEditingPreset({ ...editingPreset, prompt: e.target.value })}
+                        placeholder="Prompt sent to AI. e.g. 'Add a section listing 5 local pool-permit rules with citations.'"
+                        rows={3}
+                        className="w-full rounded-md border border-border bg-background px-2 py-1 text-xs" />
+                      <div className="flex justify-end gap-2">
+                        {editingPreset.id && (
+                          <button onClick={() => setEditingPreset({ label: "", prompt: "" })}
+                            className="rounded border border-border px-2 py-1 text-[11px]">Cancel edit</button>
+                        )}
+                        <button onClick={savePreset}
+                          className="rounded bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground">
+                          {editingPreset.id ? "Update prompt" : "Save prompt"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   <textarea value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder="Or write a custom prompt. e.g. Add an FAQ about pool rental insurance in this city."
+                    placeholder="Or write a one-off prompt. e.g. Add an FAQ about pool rental insurance in this city."
                     rows={3}
                     className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
                   <div className="mt-2 flex justify-end">
