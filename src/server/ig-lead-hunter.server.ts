@@ -43,24 +43,44 @@ async function googleSearch(query: string, num = 30): Promise<SerpResult[]> {
   return (json?.organic_results || []) as SerpResult[];
 }
 
-/** Parse an instagram.com URL → handle. Skip post / reel / explore URLs. */
-function extractIgHandle(url: string): { handle: string; profileUrl: string } | null {
-  try {
-    const u = new URL(url);
-    if (!/(^|\.)instagram\.com$/.test(u.hostname)) return null;
-    const seg = u.pathname.split("/").filter(Boolean);
-    if (!seg.length) return null;
-    const first = seg[0].toLowerCase();
-    // Skip system / non-profile paths
-    if (["p", "reel", "reels", "tv", "explore", "stories", "directory", "accounts", "developer", "about", "legal"].includes(first)) {
-      return null;
-    }
-    const handle = seg[0];
-    if (!/^[a-zA-Z0-9._]{2,30}$/.test(handle)) return null;
-    return { handle, profileUrl: `https://www.instagram.com/${handle}/` };
-  } catch {
-    return null;
+/**
+ * Parse an instagram.com URL.
+ * - Profile URL → handle from path, source = profile URL.
+ * - Post / reel / tv URL → handle from result title (`Name (@handle) ...`),
+ *   source = the actual post URL so admins can open the exact post.
+ * Returns null only when we can't recover a usable handle.
+ */
+function parseIgResult(url: string, title: string | undefined): { handle: string; profileUrl: string; sourceUrl: string } | null {
+  let u: URL;
+  try { u = new URL(url); } catch { return null; }
+  if (!/(^|\.)instagram\.com$/.test(u.hostname)) return null;
+
+  const seg = u.pathname.split("/").filter(Boolean);
+  if (!seg.length) return null;
+  const first = seg[0].toLowerCase();
+  const skipSystem = ["explore", "stories", "directory", "accounts", "developer", "about", "legal"];
+  if (skipSystem.includes(first)) return null;
+
+  // Normalize: strip query/hash
+  const cleanUrl = `https://www.instagram.com${u.pathname}${u.pathname.endsWith("/") ? "" : "/"}`;
+
+  const postLike = ["p", "reel", "reels", "tv"].includes(first);
+  if (postLike) {
+    // Recover handle from title: "Jane Doe (@janedoe) on Instagram..."
+    const m = title?.match(/\(@([a-zA-Z0-9._]{2,30})\)/);
+    if (!m) return null;
+    const handle = m[1];
+    return {
+      handle,
+      profileUrl: `https://www.instagram.com/${handle}/`,
+      sourceUrl: cleanUrl,
+    };
   }
+
+  const handle = seg[0];
+  if (!/^[a-zA-Z0-9._]{2,30}$/.test(handle)) return null;
+  const profileUrl = `https://www.instagram.com/${handle}/`;
+  return { handle, profileUrl, sourceUrl: cleanUrl };
 }
 
 function extractProfileName(title: string | undefined, handle: string): string | null {
