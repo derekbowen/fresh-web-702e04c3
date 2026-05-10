@@ -262,9 +262,15 @@ function CompetitorRadar() {
       </div>
 
       {/* Tabs */}
-      <div className="mt-6 flex gap-2 border-b border-border">
+      <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
         <button onClick={() => setTab("feed")} className={`px-4 py-2 text-sm font-semibold ${tab === "feed" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
           New pages
+        </button>
+        <button onClick={() => setTab("gaps")} className={`px-4 py-2 text-sm font-semibold ${tab === "gaps" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
+          <MapPin className="mr-1 inline h-3.5 w-3.5" /> City gaps
+        </button>
+        <button onClick={() => setTab("digest")} className={`px-4 py-2 text-sm font-semibold ${tab === "digest" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
+          <FileText className="mr-1 inline h-3.5 w-3.5" /> Intel digest
         </button>
         <button onClick={() => setTab("matches")} className={`px-4 py-2 text-sm font-semibold ${tab === "matches" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>
           <Target className="mr-1 inline h-3.5 w-3.5" /> Host matches ({matches.length})
@@ -276,6 +282,20 @@ function CompetitorRadar() {
           <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-lg font-bold">{showAck ? "All competitor URLs" : "🚨 New pages discovered"}</h2>
             <div className="flex flex-wrap items-center gap-2">
+              <select value={kindFilter} onChange={(e) => setKindFilter(e.target.value)}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold">
+                <option value="">All kinds</option>
+                <option value="city_page">City pages</option>
+                <option value="blog">Blog</option>
+                <option value="category">Category</option>
+                <option value="feature">Feature</option>
+                <option value="listing">Listings</option>
+                <option value="other">Other</option>
+              </select>
+              <label className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
+                <input type="checkbox" checked={includeListings} onChange={(e) => setIncludeListings(e.target.checked)} />
+                Include listings
+              </label>
               <button onClick={() => setShowAck((s) => !s)} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">
                 {showAck ? "Show new only" : "Show all"}
               </button>
@@ -284,6 +304,11 @@ function CompetitorRadar() {
                   <Check className="mr-1 inline h-3 w-3" /> Acknowledge all
                 </button>
               )}
+              <button onClick={classifyAll} disabled={classifying}
+                className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
+                {classifying ? <Loader2 className="h-3 w-3 animate-spin" /> : <Tags className="h-3 w-3" />}
+                Classify all
+              </button>
               <button onClick={scan} disabled={scanning}
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
                 {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
