@@ -221,7 +221,7 @@ export const createPageFor404 = createServerFn({ method: "POST" })
     if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
     // Derive a human title from the slug
-    const title = slug.split("-").map((w) => w[0]?.toUpperCase() + w.slice(1)).join(" ");
+    const title = slug.split("-").map((w: string) => w[0]?.toUpperCase() + w.slice(1)).join(" ");
 
     const SYSTEM = `You write SEO content for Pool Rental Near Me, a marketplace where homeowners rent private pools by the hour. 10% flat host fee, $2M liability insurance included. Voice: confident, friendly, host-first. Markdown only with ## and ### headings. Include 2-4 internal links from: /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works. End with a CTA paragraph linking to /l/draft/00000000-0000-0000-0000-000000000000/new/details. Return ONLY by calling write_page.`;
     const userPrompt = `Write a page for the URL ${row.url_path}. Inferred title: "${title}". Build the article around what someone landing on that URL would want. 600-1000 words. seo_title ≤60 chars, seo_description ≤155 chars.`;
