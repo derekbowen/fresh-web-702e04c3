@@ -554,6 +554,19 @@ export type PageAuditRow = {
   audited_at: string;
 };
 
+function normalizeAuditPath(input: string): string {
+  let p = (input || "").trim();
+  // Strip protocol+host if user pasted a full URL
+  p = p.replace(/^https?:\/\/[^/]+/i, "");
+  // Drop query/hash
+  p = p.replace(/[?#].*$/, "");
+  // Drop trailing slash (except root)
+  if (p.length > 1) p = p.replace(/\/+$/, "");
+  // Ensure leading slash
+  if (!p.startsWith("/")) p = "/" + p;
+  return p;
+}
+
 export const auditPage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
@@ -564,12 +577,50 @@ export const auditPage = createServerFn({ method: "POST" })
     const lovKey = process.env.LOVABLE_API_KEY;
     if (!lovKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
-    const { data: page } = await sb()
+    const path = normalizeAuditPath(data.url_path);
+    const slugFromPath = path.replace(/^\/p\//, "");
+
+    // 1. Exact url_path match
+    let { data: page } = await sb()
       .from("content_pages")
       .select("url_path, title, seo_description, body_markdown")
-      .eq("url_path", data.url_path)
+      .eq("url_path", path)
       .maybeSingle();
-    if (!page) return { ok: false, error: "Page not found" };
+
+    // 2. Exact slug match
+    if (!page && slugFromPath && slugFromPath !== path) {
+      const { data: bySlug } = await sb()
+        .from("content_pages")
+        .select("url_path, title, seo_description, body_markdown")
+        .eq("slug", slugFromPath)
+        .maybeSingle();
+      page = bySlug;
+    }
+
+    // 3. legacy_slugs alias match
+    if (!page && slugFromPath) {
+      const { data: byLegacy } = await sb()
+        .from("content_pages")
+        .select("url_path, title, seo_description, body_markdown")
+        .contains("legacy_slugs", [slugFromPath])
+        .maybeSingle();
+      page = byLegacy;
+    }
+
+    // 4. Fuzzy suggestions
+    if (!page) {
+      const needle = slugFromPath || path.replace(/^\//, "");
+      const { data: similar } = await sb()
+        .from("content_pages")
+        .select("url_path, title, status")
+        .or(`url_path.ilike.%${needle}%,slug.ilike.%${needle}%,title.ilike.%${needle}%`)
+        .limit(8);
+      return {
+        ok: false,
+        error: `Page not found for "${path}".`,
+        suggestions: (similar || []).map((r: any) => ({ url_path: r.url_path, title: r.title, status: r.status })),
+      };
+    }
 
     // Get competitor pages on same topic for context
     const { data: comps } = await sb()
@@ -615,7 +666,7 @@ Return ONLY JSON, no markdown fences.`;
     }
 
     const { data: row, error } = await sb().from("page_audits").insert({
-      url_path: data.url_path,
+      url_path: page.url_path || path,
       score: Math.max(0, Math.min(100, Number(parsed.score) || 0)),
       summary: String(parsed.summary || "").slice(0, 1000),
       strengths: Array.isArray(parsed.strengths) ? parsed.strengths.slice(0, 20) : [],
