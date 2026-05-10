@@ -109,8 +109,18 @@ function AvailabilityCalendarInner({
     fetchAvailability({ data: { listingId, days } })
       .then((res) => {
         if (cancelled) return;
-        setData(res);
-        setIsError(!!res.error);
+        const safe: AvailabilityResult =
+          res && typeof res === "object"
+            ? {
+                listingId: String((res as any).listingId ?? listingId),
+                fetchedAt: String((res as any).fetchedAt ?? new Date().toISOString()),
+                slots: Array.isArray((res as any).slots) ? (res as any).slots : [],
+                error: (res as any).error ?? null,
+                cached: (res as any).cached,
+              }
+            : { listingId, fetchedAt: new Date().toISOString(), slots: [], error: "Bad response" };
+        setData(safe);
+        setIsError(!!safe.error);
       })
       .catch(() => {
         if (cancelled) return;
@@ -126,17 +136,23 @@ function AvailabilityCalendarInner({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listingId, days, reloadKey]);
 
-  // Group slots by YYYY-MM-DD
+  // Group slots by YYYY-MM-DD (validating each slot defensively)
   const slotsByDay = useMemo(() => {
     const map = new Map<string, { start: string; end: string }[]>();
-    (data?.slots ?? []).forEach((s) => {
-      const key = ymd(new Date(s.start));
+    const rawSlots = Array.isArray(data?.slots) ? data!.slots : [];
+    for (const s of rawSlots) {
+      const v = isValidIsoPair((s as any)?.start, (s as any)?.end);
+      if (!v) continue;
+      const dt = new Date(v.start);
+      if (isNaN(dt.getTime())) continue;
+      const key = ymd(dt);
       const arr = map.get(key) ?? [];
-      arr.push({ start: s.start, end: s.end });
+      arr.push({ start: v.start, end: v.end });
       map.set(key, arr);
-    });
+    }
     return map;
   }, [data]);
+
 
   const maxDate = useMemo(() => {
     const d = new Date(today);
