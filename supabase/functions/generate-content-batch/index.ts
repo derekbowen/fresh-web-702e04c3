@@ -646,6 +646,29 @@ async function processGeneration(
       errors.push(`${plan.slug}: missing ${missingSections.join(", ")}`);
       continue;
     }
+
+    // Citation validator for host_acq_city pages with a dossier.
+    const dossier = sourcesBySlug.get(plan.slug) ?? [];
+    if (plan.source_type === "city" && dossier.length > 0) {
+      const dossierUrls = new Set(dossier.map((s) => s.url));
+      const allUrls = Array.from(body.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)).map((m) => m[1]);
+      const citedDossier = new Set(allUrls.filter((u) => dossierUrls.has(u)));
+      const hasSourcesH2 = /##\s*Sources\b/i.test(body);
+      const missingDossierUrls = dossier.filter((s) => !body.includes(s.url));
+      if (citedDossier.size < 4) {
+        errors.push(`${plan.slug}: only ${citedDossier.size} dossier citations (need 4+)`);
+        continue;
+      }
+      if (!hasSourcesH2) {
+        errors.push(`${plan.slug}: missing ## Sources section`);
+        continue;
+      }
+      if (missingDossierUrls.length > 0) {
+        errors.push(`${plan.slug}: Sources missing ${missingDossierUrls.length} dossier URL(s)`);
+        continue;
+      }
+    }
+
     okPages.push({ plan, body });
   }
 
