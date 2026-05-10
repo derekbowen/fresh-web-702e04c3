@@ -94,6 +94,7 @@ import { Route as AdminLandingLinkCheckRouteImport } from './routes/admin.landin
 import { Route as AdminKeywordOpportunitiesRouteImport } from './routes/admin.keyword-opportunities'
 import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
+import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
@@ -584,6 +585,11 @@ const AdminIndexingRoute = AdminIndexingRouteImport.update({
   path: '/indexing',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminIgLeadHunterRoute = AdminIgLeadHunterRouteImport.update({
+  id: '/ig-lead-hunter',
+  path: '/ig-lead-hunter',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGscImportRoute = AdminGscImportRouteImport.update({
   id: '/gsc-import',
   path: '/gsc-import',
@@ -887,6 +893,7 @@ export interface FileRoutesByFullPath {
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
@@ -1021,6 +1028,7 @@ export interface FileRoutesByTo {
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
@@ -1156,6 +1164,7 @@ export interface FileRoutesById {
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
@@ -1292,6 +1301,7 @@ export interface FileRouteTypes {
     | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
@@ -1426,6 +1436,7 @@ export interface FileRouteTypes {
     | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
@@ -1560,6 +1571,7 @@ export interface FileRouteTypes {
     | '/admin/email-branding'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
     | '/admin/keyword-opportunities'
@@ -2329,6 +2341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexingRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ig-lead-hunter': {
+      id: '/admin/ig-lead-hunter'
+      path: '/ig-lead-hunter'
+      fullPath: '/admin/ig-lead-hunter'
+      preLoaderRoute: typeof AdminIgLeadHunterRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/gsc-import': {
       id: '/admin/gsc-import'
       path: '/gsc-import'
@@ -2691,6 +2710,7 @@ interface AdminRouteChildren {
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
+  AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminInternalLinksRoute: typeof AdminInternalLinksRoute
   AdminKeywordOpportunitiesRoute: typeof AdminKeywordOpportunitiesRoute
@@ -2732,6 +2752,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
+  AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
   AdminIndexingRoute: AdminIndexingRoute,
   AdminInternalLinksRoute: AdminInternalLinksRoute,
   AdminKeywordOpportunitiesRoute: AdminKeywordOpportunitiesRoute,
