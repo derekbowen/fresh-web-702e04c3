@@ -594,7 +594,14 @@ function PageEditorModal({ id, onClose, onSaved }: { id: string; onClose: () => 
               <aside className="hidden lg:block">
                 <div className="sticky top-0 space-y-3">
                   <div className="rounded-lg border border-border bg-card p-3">
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">SEO score</div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">SEO score</div>
+                      <button disabled={!!aiBusy} onClick={runAutoFix}
+                        title="Use AI to set focus keyword, perfect-length meta, and (if needed) rewrite the body so every check passes."
+                        className="rounded bg-green-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-green-700 disabled:opacity-50">
+                        {aiBusy === "autofix" ? "Fixing…" : "✨ Auto-fix all"}
+                      </button>
+                    </div>
                     {score && (
                       <div className="space-y-1.5">
                         <ScoreRow ok={score.titleLen >= 50 && score.titleLen <= 60}
