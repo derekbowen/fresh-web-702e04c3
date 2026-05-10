@@ -251,9 +251,18 @@ export function faqsForContentPage(page: ContentPage): FaqItem[] {
   if (t === "swim_instructor_hub") {
     return swimInstructorHubFaqs();
   }
+  if (t === "host_advocacy_hub") {
+    return hostAdvocacyHubFaqs();
+  }
   if (t === "host_advocacy_state" && page.slug) {
+    const state = findAdvocacyState(page.slug);
+    if (state) return hostAdvocacyFaqs(state.name);
+    // Fallback: legacy slugs ending in -XX state code
     const m = page.slug.match(/-([a-z]{2})$/i);
-    if (m) return hostAdvocacyFaqs(m[1].toUpperCase());
+    if (m) {
+      const code = m[1].toUpperCase();
+      return hostAdvocacyFaqs(STATE_NAMES[code] ?? code);
+    }
   }
   if (t === "event_guide" && page.slug) {
     const parsed = parseEventGuideSlug(page.slug);
