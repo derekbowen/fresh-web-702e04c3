@@ -406,3 +406,117 @@ export const cancelQueuedSeoJobs = createServerFn({ method: "POST" })
     if (error) return { ok: false, error: error.message };
     return { ok: true, cancelled: count || 0 };
   });
+
+// ============================================================================
+// Single-page editor: fetch full row, save manual edits, append AI section
+// ============================================================================
+
+export type ContentPageFull = {
+  id: string;
+  url_path: string | null;
+  slug: string | null;
+  title: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  body_markdown: string | null;
+  template_type: string | null;
+  status: string;
+  updated_at: string;
+};
+
+export const getContentPage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true; page: ContentPageFull } | { ok: false; error: string }> => {
+    await assertAdmin((context as any).userId);
+    const { data: row, error } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .select("id, url_path, slug, title, seo_title, seo_description, body_markdown, template_type, status, updated_at")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) return { ok: false, error: error.message };
+    if (!row) return { ok: false, error: "Not found" };
+    return { ok: true, page: row as ContentPageFull };
+  });
+
+export const updateContentPage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      title: z.string().max(300).optional(),
+      seo_title: z.string().max(200).optional(),
+      seo_description: z.string().max(400).optional(),
+      body_markdown: z.string().max(200000).optional(),
+      status: z.enum(["draft", "pending", "published"]).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin((context as any).userId);
+    const { id, ...rest } = data;
+    const update: any = { ...rest, updated_at: new Date().toISOString() };
+    if (update.status === "published") update.in_sitemap = true;
+    const { error } = await (supabaseAdmin as any).from("content_pages").update(update).eq("id", id);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  });
+
+export const appendAiContentToPage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      prompt: z.string().min(3).max(2000),
+      append: z.boolean().default(true),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }): Promise<{ ok: true; body_markdown: string; added: string } | { ok: false; error: string }> => {
+    await assertAdmin((context as any).userId);
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
+
+    const { data: page } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .select("id, url_path, title, body_markdown")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!page) return { ok: false, error: "Page not found" };
+
+    const sys = `${SEO_SYSTEM}\n\nYou are ADDING a new section to an existing page. Match the page topic and existing tone. Output Markdown only, starting with a ## heading. 200-600 words. No frontmatter, no preamble.`;
+    const user = `Page URL: ${page.url_path}
+Page title: ${page.title || "(none)"}
+Existing body excerpt (first 1500 chars):
+---
+${(page.body_markdown || "").slice(0, 1500)}
+---
+
+User request for the new section:
+${data.prompt}
+
+Write the new section now.`;
+
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [{ role: "system", content: sys }, { role: "user", content: user }],
+      }),
+    });
+    if (resp.status === 402) return { ok: false, error: "AI credits exhausted" };
+    if (resp.status === 429) return { ok: false, error: "Rate limited — try again shortly" };
+    if (!resp.ok) return { ok: false, error: `AI gateway ${resp.status}` };
+    const json = await resp.json();
+    const added = (json?.choices?.[0]?.message?.content || "").trim();
+    if (!added) return { ok: false, error: "AI returned empty content" };
+
+    const newBody = data.append
+      ? `${(page.body_markdown || "").trimEnd()}\n\n${added}\n`
+      : added;
+    const { error: uErr } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .update({ body_markdown: newBody, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+    if (uErr) return { ok: false, error: uErr.message };
+    return { ok: true, body_markdown: newBody, added };
+  });
