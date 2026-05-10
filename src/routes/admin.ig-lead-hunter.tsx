@@ -29,6 +29,8 @@ function IgLeadHunter() {
   const [running, setRunning] = React.useState(false);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [search, setSearch] = React.useState("");
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [bulking, setBulking] = React.useState(false);
 
   async function load() {
     setLoading(true);
