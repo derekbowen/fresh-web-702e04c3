@@ -104,7 +104,7 @@ export const listContentPages = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       q: z.string().max(200).default(""),
-      status: z.enum(["all", "published", "pending", "draft"]).default("all"),
+      status: z.enum(["all", "published", "pending", "draft", "scraped"]).default("all"),
       template: z.string().max(80).default(""),
       page: z.number().int().min(1).default(1),
       pageSize: z.number().int().min(10).max(1000).default(50),

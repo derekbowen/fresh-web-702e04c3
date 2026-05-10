@@ -41,7 +41,7 @@ export const Route = createFileRoute("/admin/content-pages")({
 
 function BulkEditor() {
   const [q, setQ] = React.useState("");
-  const [status, setStatus] = React.useState<"all" | "published" | "pending" | "draft">("all");
+  const [status, setStatus] = React.useState<"all" | "published" | "pending" | "draft" | "scraped">("all");
   const [template, setTemplate] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState<number>(50);
@@ -141,8 +141,11 @@ function BulkEditor() {
           className="w-64 rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
         <select value={status} onChange={(e) => { setStatus(e.target.value as any); setPage(1); }}
           className="rounded-md border border-border bg-background px-3 py-1.5 text-sm">
-          <option value="all">All status</option><option value="published">Published</option>
-          <option value="pending">Pending</option><option value="draft">Draft</option>
+          <option value="all">All status</option>
+          <option value="published">Published</option>
+          <option value="draft">Unpublished (draft)</option>
+          <option value="pending">Pending</option>
+          <option value="scraped">Scraped</option>
         </select>
         <input value={template} onChange={(e) => { setTemplate(e.target.value); setPage(1); }} placeholder="Template type…"
           className="w-48 rounded-md border border-border bg-background px-3 py-1.5 text-sm" />
