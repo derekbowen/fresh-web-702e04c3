@@ -41,7 +41,7 @@ export const Route = createFileRoute("/admin/content-pages")({
 
 function BulkEditor() {
   const [q, setQ] = React.useState("");
-  const [status, setStatus] = React.useState<"all" | "published" | "pending" | "draft">("all");
+  const [status, setStatus] = React.useState<"all" | "published" | "pending" | "draft" | "scraped">("all");
   const [template, setTemplate] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState<number>(50);
