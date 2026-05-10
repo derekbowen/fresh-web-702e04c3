@@ -185,12 +185,23 @@ function AdminMissingPages() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {!r.resolved_at && (
-                        <button
-                          onClick={() => markResolved(r.id)}
-                          className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted"
-                        >
-                          Mark resolved
-                        </button>
+                        <div className="inline-flex flex-wrap justify-end gap-1.5">
+                          <button onClick={() => doCreate(r.id, r.url_path)} disabled={busyId === r.id}
+                            className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                            title="Generate a real page with AI and publish it">
+                            ✨ Create page
+                          </button>
+                          <button onClick={() => doRedirect(r.id, r.url_path)} disabled={busyId === r.id}
+                            className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:bg-muted disabled:opacity-50"
+                            title="Send this URL to an existing page (301 redirect)">
+                            ↪ Redirect
+                          </button>
+                          <button onClick={() => dismiss(r.id)} disabled={busyId === r.id}
+                            className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50"
+                            title="Just hide this row — does NOT fix the 404">
+                            Dismiss
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
