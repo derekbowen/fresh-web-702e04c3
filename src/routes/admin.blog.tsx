@@ -5,6 +5,7 @@ import {
   adminListBlogPosts,
   adminExpandBlogPost,
   adminGenerateBlogPost,
+  adminBulkPublishBlogPosts,
   type AdminBlogRow,
 } from "@/server/admin-blog.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
