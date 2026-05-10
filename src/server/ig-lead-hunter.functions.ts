@@ -14,6 +14,7 @@ async function assertAdmin(userId: string) {
 export type IgLeadRow = {
   id: string;
   instagram_url: string;
+  source_url: string | null;
   profile_handle: string | null;
   profile_name: string | null;
   snippet: string | null;
