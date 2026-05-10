@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   adminListBlogPosts,
   adminExpandBlogPost,
+  adminGenerateBlogPost,
   type AdminBlogRow,
 } from "@/server/admin-blog.functions";
 import { checkAdminRole } from "@/server/admin-auth.functions";
