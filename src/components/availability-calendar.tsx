@@ -181,13 +181,14 @@ function AvailabilityCalendarInner({
   const selectedSlots = selectedDate ? slotsByDay.get(selectedDate) ?? [] : [];
 
   function buildBookingUrl(startISO: string, endISO: string): string {
-    const base = bookingBaseUrl.replace(/\/$/, "");
+    const base = String(bookingBaseUrl ?? "https://poolrentalnearme.com").replace(/\/$/, "");
     const params = new URLSearchParams({
       bookingStart: startISO,
       bookingEnd: endISO,
     });
     return `${base}/l/${listingSlug}/${listingId}/checkout?${params.toString()}`;
   }
+
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
