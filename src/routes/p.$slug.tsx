@@ -170,7 +170,7 @@ export const Route = createFileRoute("/p/$slug")({
         relatedPosts = [];
       }
     }
-    return { page, nearbyCities, city, linkTargets, academyHub, hreflangSibling, relatedPosts };
+    return { page, nearbyCities, city, citySources, linkTargets, academyHub, hreflangSibling, relatedPosts };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
