@@ -415,6 +415,63 @@ export const getSeoJobStatus = createServerFn({ method: "POST" })
     return { jobs: latest, summary };
   });
 
+export const processSeoFixQueue = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      batchId: z.string().uuid().optional(),
+      max: z.number().int().min(1).max(25).default(10),
+    }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }): Promise<{ processed: number; results: Array<{ id: string; ok: boolean; error?: string }> }> => {
+    await assertAdmin((context as any).userId);
+    const sb = supabaseAdmin as any;
+    let q = sb
+      .from("seo_fix_jobs")
+      .select("id, page_id, mode, attempts, max_attempts, batch_id")
+      .eq("status", "queued")
+      .order("created_at", { ascending: true })
+      .limit(data.max);
+    if (data.batchId) q = q.eq("batch_id", data.batchId);
+    const { data: jobs } = await q;
+    const list = (jobs || []) as Array<{ id: string; page_id: string; mode: "full" | "meta_only" | "title_only"; attempts: number; max_attempts: number }>;
+    const results: Array<{ id: string; ok: boolean; error?: string }> = [];
+    for (const job of list) {
+      const { data: claimed } = await sb
+        .from("seo_fix_jobs")
+        .update({ status: "processing", started_at: new Date().toISOString(), attempts: job.attempts + 1 })
+        .eq("id", job.id)
+        .eq("status", "queued")
+        .select("id")
+        .maybeSingle();
+      if (!claimed) continue;
+      try {
+        const res = await runSeoFix(job.page_id, job.mode);
+        if (res.ok) {
+          await sb.from("seo_fix_jobs").update({ status: "done", result: res, finished_at: new Date().toISOString(), error: null }).eq("id", job.id);
+          results.push({ id: job.id, ok: true });
+        } else {
+          const giveUp = job.attempts + 1 >= job.max_attempts;
+          await sb.from("seo_fix_jobs").update({
+            status: giveUp ? "failed" : "queued",
+            error: res.error,
+            finished_at: giveUp ? new Date().toISOString() : null,
+          }).eq("id", job.id);
+          results.push({ id: job.id, ok: false, error: res.error });
+        }
+      } catch (e: any) {
+        const giveUp = job.attempts + 1 >= job.max_attempts;
+        await sb.from("seo_fix_jobs").update({
+          status: giveUp ? "failed" : "queued",
+          error: e?.message || "Worker exception",
+          finished_at: giveUp ? new Date().toISOString() : null,
+        }).eq("id", job.id);
+        results.push({ id: job.id, ok: false, error: e?.message });
+      }
+    }
+    return { processed: results.length, results };
+  });
+
 export const cancelQueuedSeoJobs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ batchId: z.string().uuid() }).parse(d))
