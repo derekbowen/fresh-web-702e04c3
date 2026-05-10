@@ -185,18 +185,59 @@ function IgLeadHunter() {
             No leads {filter !== "all" ? `in "${filter}"` : ""}. Click <strong>Run hunt now</strong> to fetch fresh results from Google.
           </div>
         ) : (
-          <ul className="divide-y rounded-md border">
+          <>
+            <div className="flex flex-wrap items-center gap-3 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <button
+                onClick={toggleSelectAllVisible}
+                className="inline-flex items-center gap-2 hover:text-primary"
+                title={allVisibleSelected ? "Deselect all visible" : "Select all visible"}
+              >
+                {allVisibleSelected ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+                {allVisibleSelected ? "Deselect all" : "Select all"} ({filtered.length})
+              </button>
+              <span className="text-muted-foreground">{selected.size} selected</span>
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  onClick={() => bulkMark(true)}
+                  disabled={selected.size === 0 || bulking}
+                  className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                >
+                  {bulking ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckSquare className="h-4 w-4" />}
+                  Mark contacted
+                </button>
+                <button
+                  onClick={() => bulkMark(false)}
+                  disabled={selected.size === 0 || bulking}
+                  className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-50"
+                >
+                  Mark not contacted
+                </button>
+                {selected.size > 0 && (
+                  <button onClick={clearSelection} className="text-xs text-muted-foreground hover:underline">Clear</button>
+                )}
+              </div>
+            </div>
+            <ul className="divide-y rounded-md border">
             {filtered.map((row) => (
-              <li key={row.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:gap-4">
-                <label className="flex shrink-0 items-center gap-2 pt-1">
+              <li key={row.id} className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:gap-4 ${selected.has(row.id) ? "bg-primary/5" : ""}`}>
+                <div className="flex shrink-0 items-center gap-3 pt-1">
                   <input
                     type="checkbox"
-                    checked={row.contacted}
-                    onChange={() => toggle(row)}
+                    checked={selected.has(row.id)}
+                    onChange={() => toggleSelect(row.id)}
                     className="h-4 w-4 cursor-pointer accent-primary"
+                    title="Select for bulk action"
                   />
-                  <span className="text-xs text-muted-foreground sm:hidden">Contacted</span>
-                </label>
+                  <label className="flex items-center gap-1 text-xs text-muted-foreground" title="Contacted">
+                    <input
+                      type="checkbox"
+                      checked={row.contacted}
+                      onChange={() => toggle(row)}
+                      className="h-4 w-4 cursor-pointer accent-primary"
+                    />
+                    <span className="sm:hidden">Contacted</span>
+                  </label>
+                </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                     <a
