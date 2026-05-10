@@ -320,7 +320,24 @@ export const runHostMatchOne = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin((context as any).userId);
     const { matchCompetitorUrl } = await import("./host-matcher.server");
-    return matchCompetitorUrl(data.competitor_url_id);
+    const { runReverseImageMatch } = await import("./reverse-image-host-matcher.server");
+
+    // Run text-based matcher and reverse-image matcher in parallel.
+    // Both insert into competitor_host_matches; UI's Host matches tab picks them up.
+    const [textRes, imgRes] = await Promise.allSettled([
+      matchCompetitorUrl(data.competitor_url_id),
+      runReverseImageMatch(data.competitor_url_id),
+    ]);
+
+    const text = textRes.status === "fulfilled" ? textRes.value : { ok: false, inserted: 0, reason: (textRes as any).reason?.message };
+    const img = imgRes.status === "fulfilled" ? imgRes.value : { ok: false, inserted: 0, reason: (imgRes as any).reason?.message };
+
+    return {
+      ok: text.ok || img.ok,
+      inserted: (text.inserted || 0) + (img.inserted || 0),
+      text_pipeline: text,
+      reverse_image_pipeline: img,
+    };
   });
 
 export const enrichHostMatchOne = createServerFn({ method: "POST" })
