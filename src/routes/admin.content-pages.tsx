@@ -65,6 +65,28 @@ function BulkEditor() {
     setSelected((s) => s.size === rows.length ? new Set() : new Set(rows.map((r) => r.id)));
   }
 
+  async function bulkAutoFix() {
+    if (!selected.size) return;
+    const ids = Array.from(selected).slice(0, 10);
+    if (selected.size > 10 && !confirm(`Auto-fix runs max 10 at a time. Fix the first ${ids.length} of ${selected.size} selected?`)) return;
+    if (!confirm(`Auto-fix SEO on ${ids.length} page${ids.length > 1 ? "s" : ""}? Overwrites focus keyword, SEO/OG fields, and may rewrite thin bodies. Uses AI credits.`)) return;
+    setBusy(true);
+    let ok = 0; const failed: string[] = [];
+    try {
+      for (const id of ids) {
+        try {
+          const r: any = await autoFixSeo({ data: { id } });
+          if (r?.ok) ok++; else failed.push(`${id.slice(0, 8)}: ${r?.error || "failed"}`);
+        } catch (e) {
+          failed.push(`${id.slice(0, 8)}: ${e instanceof Error ? e.message : String(e)}`);
+        }
+      }
+      alert(`Auto-fixed ${ok}/${ids.length}.${failed.length ? `\n\nFailures:\n${failed.slice(0, 5).join("\n")}` : ""}`);
+      setSelected(new Set());
+      await load();
+    } finally { setBusy(false); }
+  }
+
   async function bulk(action: "publish" | "unpublish" | "delete") {
     if (!selected.size) return;
     if (action === "delete" && !confirm(`Delete ${selected.size} pages?`)) return;
