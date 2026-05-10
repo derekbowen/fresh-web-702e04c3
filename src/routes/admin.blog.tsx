@@ -130,6 +130,49 @@ function AdminBlogPage() {
 
   return (
     <AdminLayout>
+        <section className="mb-6 rounded-lg border bg-card p-4">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold">Auto-generate posts with AI</h2>
+            <p className="text-xs text-muted-foreground">
+              Brainstorms titles, writes full ~900-word drafts, saves as unpublished. Optional category and topic hint focus the output.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-end gap-2">
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="text-muted-foreground">How many</span>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={genCount}
+                onChange={(e) => setGenCount(e.target.value)}
+                className="w-20"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="text-muted-foreground">Category (optional)</span>
+              <Input
+                placeholder="e.g. Hosting, Pricing, Insurance"
+                value={genTopic}
+                onChange={(e) => setGenTopic(e.target.value)}
+                className="w-56"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs flex-1 min-w-[220px]">
+              <span className="text-muted-foreground">Topic hint (optional)</span>
+              <Input
+                placeholder="e.g. winterizing, pet-friendly rentals, LLC setup"
+                value={genHint}
+                onChange={(e) => setGenHint(e.target.value)}
+              />
+            </label>
+            <Button onClick={generate} disabled={generating}>
+              {generating ? "Generating…" : "Generate drafts"}
+            </Button>
+          </div>
+        </section>
+
+
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-semibold">Blog admin</h1>
