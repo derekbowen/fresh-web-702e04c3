@@ -128,6 +128,7 @@ import { Route as AdminCitiesHeroesReportRouteImport } from './routes/admin.citi
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminAutoRefreshRouteImport } from './routes/admin.auto-refresh'
+import { Route as AdminAutoOutreachRouteImport } from './routes/admin.auto-outreach'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
 import { Route as PEsSlugRouteImport } from './routes/p.es.$slug'
@@ -157,6 +158,7 @@ import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/h
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiPublicHooksBlogAutogenRouteImport } from './routes/api/public/hooks/blog-autogen'
+import { Route as ApiPublicHooksAutoOutreachWorkerRouteImport } from './routes/api/public/hooks/auto-outreach-worker'
 import { Route as ApiPublicHooksAliasBackfillRouteImport } from './routes/api/public/hooks/alias-backfill'
 import { Route as ApiPublicHooksAcademyHealthRouteImport } from './routes/api/public/hooks.academy-health'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
@@ -776,6 +778,11 @@ const AdminAutoRefreshRoute = AdminAutoRefreshRouteImport.update({
   path: '/auto-refresh',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAutoOutreachRoute = AdminAutoOutreachRouteImport.update({
+  id: '/auto-outreach',
+  path: '/auto-outreach',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AccountLearningRoute = AccountLearningRouteImport.update({
   id: '/account/learning',
   path: '/account/learning',
@@ -935,6 +942,12 @@ const ApiPublicHooksBlogAutogenRoute =
     path: '/api/public/hooks/blog-autogen',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAutoOutreachWorkerRoute =
+  ApiPublicHooksAutoOutreachWorkerRouteImport.update({
+    id: '/api/public/hooks/auto-outreach-worker',
+    path: '/api/public/hooks/auto-outreach-worker',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksAliasBackfillRoute =
   ApiPublicHooksAliasBackfillRouteImport.update({
     id: '/api/public/hooks/alias-backfill',
@@ -1000,6 +1013,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
@@ -1098,6 +1112,7 @@ export interface FileRoutesByFullPath {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
+  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
@@ -1155,6 +1170,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
@@ -1253,6 +1269,7 @@ export interface FileRoutesByTo {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
+  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
@@ -1311,6 +1328,7 @@ export interface FileRoutesById {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
@@ -1409,6 +1427,7 @@ export interface FileRoutesById {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
+  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
@@ -1468,6 +1487,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
@@ -1566,6 +1586,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
+    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
@@ -1623,6 +1644,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
@@ -1721,6 +1743,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
+    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
@@ -1778,6 +1801,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
@@ -1876,6 +1900,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
+    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
@@ -1975,6 +2000,7 @@ export interface RootRouteChildren {
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
   ApiPublicHooksAliasBackfillRoute: typeof ApiPublicHooksAliasBackfillRoute
+  ApiPublicHooksAutoOutreachWorkerRoute: typeof ApiPublicHooksAutoOutreachWorkerRoute
   ApiPublicHooksBlogAutogenRoute: typeof ApiPublicHooksBlogAutogenRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
@@ -2829,6 +2855,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAutoRefreshRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/auto-outreach': {
+      id: '/admin/auto-outreach'
+      path: '/auto-outreach'
+      fullPath: '/admin/auto-outreach'
+      preLoaderRoute: typeof AdminAutoOutreachRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/account/learning': {
       id: '/account/learning'
       path: '/account/learning'
@@ -3032,6 +3065,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBlogAutogenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/auto-outreach-worker': {
+      id: '/api/public/hooks/auto-outreach-worker'
+      path: '/api/public/hooks/auto-outreach-worker'
+      fullPath: '/api/public/hooks/auto-outreach-worker'
+      preLoaderRoute: typeof ApiPublicHooksAutoOutreachWorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/alias-backfill': {
       id: '/api/public/hooks/alias-backfill'
       path: '/api/public/hooks/alias-backfill'
@@ -3083,6 +3123,7 @@ const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminAutoOutreachRoute: typeof AdminAutoOutreachRoute
   AdminAutoRefreshRoute: typeof AdminAutoRefreshRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
@@ -3139,6 +3180,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAutoOutreachRoute: AdminAutoOutreachRoute,
   AdminAutoRefreshRoute: AdminAutoRefreshRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
@@ -3336,6 +3378,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
   ApiPublicHooksAliasBackfillRoute: ApiPublicHooksAliasBackfillRoute,
+  ApiPublicHooksAutoOutreachWorkerRoute: ApiPublicHooksAutoOutreachWorkerRoute,
   ApiPublicHooksBlogAutogenRoute: ApiPublicHooksBlogAutogenRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,

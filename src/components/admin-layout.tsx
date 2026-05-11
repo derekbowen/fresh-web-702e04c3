@@ -89,6 +89,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/leads", label: "Lead inbox", icon: Mail },
       { to: "/admin/follow-ups", label: "Follow-ups 📞", icon: Activity },
       { to: "/admin/followup-performance", label: "Follow-up performance 📊", icon: TrendingUp },
+      { to: "/admin/auto-outreach", label: "Auto-outreach 🤖", icon: Bot },
       { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
       { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
       { to: "/admin/email-branding", label: "Email branding", icon: Mail },
