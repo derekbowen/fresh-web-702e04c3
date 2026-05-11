@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin-layout";
@@ -59,7 +59,7 @@ function FollowupPerformancePage() {
           </div>
         )}
         {isLoading && <div className="text-sm text-muted-foreground">Loading…</div>}
-        {data && <DashboardBody data={data} />}
+        {data && <DashboardBody data={data} rangeDays={rangeDays} />}
       </div>
     </AdminLayout>
   );
@@ -75,7 +75,7 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
   );
 }
 
-function DashboardBody({ data }: { data: DashboardData }) {
+function DashboardBody({ data, rangeDays }: { data: DashboardData; rangeDays: number }) {
   const { summary, bySource, byCity, scoreDist } = data;
   const maxScore = Math.max(1, ...scoreDist.map((b) => b.count));
 
@@ -117,8 +117,16 @@ function DashboardBody({ data }: { data: DashboardData }) {
                 <tr><td colSpan={5} className="py-4 text-center text-muted-foreground">No data.</td></tr>
               )}
               {bySource.map((b) => (
-                <tr key={b.source} className="border-t border-border">
-                  <td className="py-2 font-medium">{b.source}</td>
+                <tr key={b.source} className="border-t border-border hover:bg-muted/30">
+                  <td className="py-2 font-medium">
+                    <Link
+                      to="/admin/followup-drilldown"
+                      search={{ source: b.source, rangeDays, page: 1, pageSize: 25 }}
+                      className="text-primary hover:underline"
+                    >
+                      {b.source}
+                    </Link>
+                  </td>
                   <td className="text-right">{b.total}</td>
                   <td className="text-right">{pct(b.responseRate)}</td>
                   <td className="text-right">{pct(b.conversionRate)}</td>
@@ -167,8 +175,16 @@ function DashboardBody({ data }: { data: DashboardData }) {
                 <tr><td colSpan={8} className="py-4 text-center text-muted-foreground">No data.</td></tr>
               )}
               {byCity.map((c) => (
-                <tr key={`${c.city}-${c.region}`} className="border-t border-border">
-                  <td className="py-2 font-medium">{c.city}</td>
+                <tr key={`${c.city}-${c.region}`} className="border-t border-border hover:bg-muted/30">
+                  <td className="py-2 font-medium">
+                    <Link
+                      to="/admin/followup-drilldown"
+                      search={{ city: c.city, rangeDays, page: 1, pageSize: 25 }}
+                      className="text-primary hover:underline"
+                    >
+                      {c.city}
+                    </Link>
+                  </td>
                   <td className="text-muted-foreground">{c.region ?? "—"}</td>
                   <td className="text-right">{c.total}</td>
                   <td className="text-right">{c.responded}</td>
