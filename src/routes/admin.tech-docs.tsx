@@ -232,7 +232,7 @@ function TechDocsPage() {
           }).map((flow) => (
             <article
               key={flow.id}
-              id={`flow-${flow.id}`}
+              id={flowId(flow.id)}
               className="space-y-3 rounded-lg border border-border bg-card p-5 shadow-sm"
             >
               <header>
