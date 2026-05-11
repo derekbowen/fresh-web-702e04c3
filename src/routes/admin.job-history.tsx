@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, ChevronDown, ChevronRight, CheckCircle2, XCircle, Clock, Ban, RefreshCw, ExternalLink } from "lucide-react";
 import { listSeoBatches, getSeoBatchDetails, type SeoBatchSummary, type SeoBatchJobDetail } from "@/server/admin-tools.functions";
