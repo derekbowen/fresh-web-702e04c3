@@ -47,10 +47,54 @@ export function BgJobsRunner() {
     if (!inAdmin || typeof window === "undefined") return;
     let stopped = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
+    let sinceReconcile = 0;
+
+    async function reconcileFromServer() {
+      try {
+        const { batches } = await listSeoBatches({ data: { sinceHours: 72 } });
+        const local = new Map(loadJobs().map((j) => [j.id, j] as const));
+        for (const b of batches) {
+          const queued = b.queued + b.processing;
+          const status: BgJob["status"] = queued > 0
+            ? "running"
+            : b.cancelled > 0 && b.done === 0 ? "cancelled" : "done";
+          const existing = local.get(b.batchId);
+          // Hide finished jobs the user already dismissed locally? No — server is
+          // truth across browsers. We only skip if local already shows finished
+          // matching state (avoids re-adding dismissed jobs). Track dismissals
+          // separately so they don't pop back.
+          if (!existing && status !== "running" && wasDismissed(b.batchId)) continue;
+          const merged: BgJob = {
+            id: b.batchId,
+            kind: "seo_fix",
+            label: existing?.label || labelFor(b.mode, b.total),
+            total: b.total,
+            done: b.done,
+            failed: b.failed,
+            cancelled: b.cancelled,
+            status,
+            startedAt: existing?.startedAt ?? new Date(b.startedAt).getTime(),
+            finishedAt: status !== "running"
+              ? (b.finishedAt ? new Date(b.finishedAt).getTime() : Date.now())
+              : undefined,
+          };
+          upsertJob(merged);
+        }
+      } catch { /* ignore */ }
+    }
 
     async function tick() {
       if (stopped) return;
       const isLeader = claimLeader();
+
+      // Periodically reconcile with server (every ~15s, and immediately on first
+      // tick) so jobs surface even if localStorage was cleared or the user is on
+      // a different browser.
+      if (Date.now() - sinceReconcile > 15000) {
+        sinceReconcile = Date.now();
+        await reconcileFromServer();
+      }
+
       const jobs = loadJobs().filter((j) => j.status === "running");
       if (jobs.length === 0 || !isLeader) {
         timer = setTimeout(tick, 3000);
