@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
-import { Sparkles, Send, RotateCcw, ExternalLink, Check, Wrench } from "lucide-react";
+import { Sparkles, Send, RotateCcw, ExternalLink, Check, Wrench, Telescope } from "lucide-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { prnmCoachChat, getCoachRole, setCoachRole } from "@/server/admin-prnm-coach.functions";
 
