@@ -480,7 +480,7 @@ ADMIN TOOLS YOU CAN RECOMMEND (route → purpose):
 - /admin/feature-requests → user-submitted feature ideas
 - /admin/sms → SMS follow-up sequences for host leads`;
 
-function buildSystemPrompt(role: Role): string {
+function buildSystemPrompt(role: Role, agentMode = false): string {
   return `You are the **PRNM Coach** — embedded inside the poolrentalnearme.com admin panel.
 
 You are NOT just an SEO bot. You are a platform advisor for the whole business: SEO, marketplace listings, host outreach, customer success, support, and revenue.
