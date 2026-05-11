@@ -546,14 +546,15 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
       ? `STEPS ALREADY COMPLETED THIS SESSION (do NOT recommend again): ${data.completedRoutes.join(", ")}`
       : "No steps completed yet this session.";
 
+    const agentMode = !!data.agentMode;
     const messages: ChatMsg[] = [
-      { role: "system", content: buildSystemPrompt(role) },
+      { role: "system", content: buildSystemPrompt(role, agentMode) },
       { role: "system", content: completedNote },
       ...data.messages.map((m) => ({ role: m.role, content: m.content })),
     ];
 
     const toolsUsed: string[] = [];
-    const MAX_ITERATIONS = 6;
+    const MAX_ITERATIONS = agentMode ? 12 : 6;
 
     for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
       let resp: Response;
