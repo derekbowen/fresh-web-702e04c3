@@ -1,14 +1,24 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, ChevronDown, ChevronRight, CheckCircle2, XCircle, Clock, Ban, RefreshCw, ExternalLink } from "lucide-react";
 import { listSeoBatches, getSeoBatchDetails, type SeoBatchSummary, type SeoBatchJobDetail } from "@/server/admin-tools.functions";
 
 export const Route = createFileRoute("/admin/job-history")({
   head: () => ({ meta: [{ title: "Job history — Admin" }] }),
-  component: JobHistoryPage,
+  component: JobHistoryRoute,
 });
+
+const queryClient = new QueryClient();
+
+function JobHistoryRoute() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <JobHistoryPage />
+    </QueryClientProvider>
+  );
+}
 
 const RANGES = [
   { label: "24h", hours: 24 },
@@ -67,7 +77,6 @@ function JobHistoryPage() {
   const [status, setStatus] = React.useState<StatusFilter>("all");
   const [search, setSearch] = React.useState("");
   const list = useServerFn(listSeoBatches);
-  const qc = useQueryClient();
 
   const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["seo-batches", hours],
