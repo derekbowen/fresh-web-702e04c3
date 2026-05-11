@@ -32,6 +32,7 @@ export async function loadSiteFooter(): Promise<SiteFooterSettings> {
       explore_links: arr(row.explore_links, DEFAULT_FOOTER.explore_links),
       host_links: arr(row.host_links, DEFAULT_FOOTER.host_links),
       company_links: arr(row.company_links, DEFAULT_FOOTER.company_links),
+      compare_links: arr(row.compare_links, DEFAULT_FOOTER.compare_links),
       popular_markets: arr(row.popular_markets, DEFAULT_FOOTER.popular_markets),
       socials: arr(row.socials, DEFAULT_FOOTER.socials),
     };
@@ -61,6 +62,7 @@ const UpdateSchema = z.object({
   explore_links: z.array(LinkSchema).max(50),
   host_links: z.array(LinkSchema).max(50),
   company_links: z.array(LinkSchema).max(50),
+  compare_links: z.array(LinkSchema).max(50),
   popular_markets: z.array(MarketSchema).max(50),
   socials: z.array(SocialSchema).max(20),
 });

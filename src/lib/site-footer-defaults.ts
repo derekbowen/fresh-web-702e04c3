@@ -11,6 +11,7 @@ export type SiteFooterSettings = {
   explore_links: FooterLink[];
   host_links: FooterLink[];
   company_links: FooterLink[];
+  compare_links: FooterLink[];
   popular_markets: FooterMarket[];
   socials: FooterSocial[];
 };
@@ -28,11 +29,16 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "How It Works", href: "/p/how-it-works" },
     { label: "Neighbors", href: "/p/neighbors" },
     { label: "Start a Business", href: "/p/hosting" },
+    { label: "Liability Waivers", href: "https://rentalwaivers.com" },
+    { label: "Browse All States", href: "/p/pool-rentals" },
+  ],
+  compare_links: [
     { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
-    { label: "Liability Waivers", href: "https://rentalwaivers.com" },
-    { label: "Browse All States", href: "/p/pool-rentals" },
+    { label: "Pool Rental Near Me vs ResortPass", href: "/p/resortpass-vs-pool-rental-near-me" },
+    { label: "Pool Rental Near Me vs Airbnb", href: "/p/airbnb-vs-pool-rental-near-me" },
+    { label: "Pool Rental Near Me vs Vrbo", href: "/p/vrbo-vs-pool-rental-near-me" },
   ],
   host_links: [
     { label: "List Your Pool for Free", href: "/l/draft/00000000-0000-0000-0000-000000000000/new/details" },

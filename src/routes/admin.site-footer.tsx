@@ -188,6 +188,7 @@ function SiteFooterAdmin() {
 
         <LinkColumnEditor title="Explore" field="explore_links" data={data} setData={setData} />
         <LinkColumnEditor title="Become a Host" field="host_links" data={data} setData={setData} />
+        <LinkColumnEditor title="Compare" field="compare_links" data={data} setData={setData} />
         <LinkColumnEditor title="Company" field="company_links" data={data} setData={setData} />
 
         <Card>
@@ -253,7 +254,7 @@ function LinkColumnEditor({
   setData,
 }: {
   title: string;
-  field: "explore_links" | "host_links" | "company_links";
+  field: "explore_links" | "host_links" | "company_links" | "compare_links";
   data: SiteFooterSettings;
   setData: React.Dispatch<React.SetStateAction<SiteFooterSettings | null>>;
 }) {
