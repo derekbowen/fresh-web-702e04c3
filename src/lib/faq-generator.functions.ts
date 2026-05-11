@@ -255,9 +255,8 @@ async function insertFaqsIntoPath(
   const block = buildMarkdown(faqs).trim();
   let body: string = page.body_markdown ?? "";
 
-  const faqHeadingRe = /(^|\n)(##\s+frequently\s+asked\s+questions[\s\S]*?)(?=\n##\s|\n#\s|$)/i;
-  if (replace_existing && faqHeadingRe.test(body)) {
-    body = body.replace(faqHeadingRe, `\n\n${block}\n`);
+  if (replace_existing && hasFaqHeading(body)) {
+    body = replaceFaqSection(body, block);
   } else {
     body = `${body.replace(/\s+$/, "")}\n\n${block}\n`;
   }
