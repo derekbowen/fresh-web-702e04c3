@@ -213,20 +213,6 @@ function TechDocsPage() {
             </div>
           )}
         </section>
-                  className="rounded-full bg-muted px-2.5 py-1 text-foreground hover:bg-muted/70"
-                >
-                  {g.label} ({g.items.length})
-                </a>
-              ))}
-            </nav>
-          )}
-        </div>
-
-        {filteredGroups.length === 0 && filteredCross.length === 0 && (
-          <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-            No matches for &ldquo;{q}&rdquo;.
-          </div>
-        )}
 
         <section id="flows" className="space-y-6">
           <div>
