@@ -4,7 +4,7 @@ import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import { Sparkles, Send, RotateCcw, ExternalLink, Check, Wrench } from "lucide-react";
 import { AdminLayout } from "@/components/admin-layout";
-import { prnmCoachChat } from "@/server/admin-prnm-coach.functions";
+import { prnmCoachChat, getCoachRole, setCoachRole } from "@/server/admin-prnm-coach.functions";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type Role = "ceo" | "coo" | "cs";
@@ -62,6 +62,8 @@ export const Route = createFileRoute("/admin/prnm-coach")({
 
 function PrnmCoachPage() {
   const chat = useServerFn(prnmCoachChat);
+  const fetchRole = useServerFn(getCoachRole);
+  const persistRole = useServerFn(setCoachRole);
   const [messages, setMessages] = React.useState<Msg[]>([]);
   const [input, setInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -69,6 +71,10 @@ function PrnmCoachPage() {
   const [completed, setCompleted] = React.useState<Set<string>>(new Set());
   const [roleSel, setRoleSel] = React.useState<Role | "auto">("auto");
   const [activeRole, setActiveRole] = React.useState<Role | null>(null);
+  const [roleSource, setRoleSource] = React.useState<"auto" | "override" | "admin_set" | null>(null);
+  const [detectedName, setDetectedName] = React.useState<string | null>(null);
+  const [detectedEmail, setDetectedEmail] = React.useState<string | null>(null);
+  const [roleReady, setRoleReady] = React.useState(false);
   const [lastTools, setLastTools] = React.useState<string[]>([]);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -76,16 +82,47 @@ function PrnmCoachPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
+  // Load persisted role on mount, then auto-start the conversation
   React.useEffect(() => {
-    if (messages.length === 0) void send("Start. Look at my role's data, find the single highest-leverage thing for me to do today, and ask the first yes/no question.");
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetchRole({ data: {} });
+        if (cancelled) return;
+        setActiveRole(r.role);
+        setRoleSource(r.source);
+        setDetectedName(r.name);
+        setDetectedEmail(r.email);
+        setRoleSel(r.source === "auto" ? "auto" : r.role);
+      } catch { /* ignore — fall back to auto */ }
+      finally {
+        if (!cancelled) setRoleReady(true);
+      }
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Restart whenever role changes
   React.useEffect(() => {
-    if (messages.length > 0) reset();
+    if (!roleReady) return;
+    if (messages.length === 0) void send("Start. Look at my role's data, find the single highest-leverage thing for me to do today, and ask the first yes/no question.");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roleSel]);
+  }, [roleReady]);
+
+  // Persist + restart whenever the user changes the role selection
+  async function changeRole(next: Role | "auto") {
+    if (next === roleSel) return;
+    setRoleSel(next);
+    try {
+      const r = await persistRole({ data: { role: next === "auto" ? null : next } });
+      setActiveRole(r.role);
+      setRoleSource(r.source);
+      setDetectedName(r.name);
+      setDetectedEmail(r.email);
+    } catch { /* ignore */ }
+    if (messages.length > 0) reset();
+  }
+
 
   async function send(text: string) {
     const trimmed = text.trim();
@@ -145,7 +182,7 @@ function PrnmCoachPage() {
           <div className="flex items-center gap-2">
             <select
               value={roleSel}
-              onChange={(e) => setRoleSel(e.target.value as any)}
+              onChange={(e) => void changeRole(e.target.value as Role | "auto")}
               className="text-xs rounded-md border bg-background px-2 py-1.5"
               title="Switch role"
             >
@@ -154,8 +191,14 @@ function PrnmCoachPage() {
               ))}
             </select>
             {activeRole && (
-              <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary font-medium">
+              <span
+                className="text-xs px-2 py-1 rounded bg-primary/10 text-primary font-medium"
+                title={`${roleSource === "override" ? "Manual override" : roleSource === "admin_set" ? "Set by admin" : "Auto-detected"}${detectedName ? ` · ${detectedName}` : ""}${detectedEmail ? ` · ${detectedEmail}` : ""}`}
+              >
                 {activeRole.toUpperCase()}
+                {roleSource && roleSource !== "override" && (
+                  <span className="ml-1 opacity-70 font-normal">({roleSource === "auto" ? "auto" : "set"})</span>
+                )}
               </span>
             )}
             <button onClick={reset} className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground">
