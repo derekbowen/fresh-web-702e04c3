@@ -58,7 +58,7 @@ function FollowupDrilldownPage() {
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
 
-  const filterChips: Array<{ key: keyof typeof search; label: string }> = [];
+  const filterChips: Array<{ key: "source" | "city" | "region"; label: string }> = [];
   if (search.source) filterChips.push({ key: "source", label: `Source: ${search.source}` });
   if (search.city) filterChips.push({ key: "city", label: `City: ${search.city}` });
   if (search.region) filterChips.push({ key: "region", label: `Region: ${search.region}` });

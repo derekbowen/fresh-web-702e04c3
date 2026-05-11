@@ -111,6 +111,7 @@ import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminFollowupRemindersRouteImport } from './routes/admin.followup-reminders'
 import { Route as AdminFollowupPerformanceRouteImport } from './routes/admin.followup-performance'
+import { Route as AdminFollowupDrilldownRouteImport } from './routes/admin.followup-drilldown'
 import { Route as AdminFollowUpsRouteImport } from './routes/admin.follow-ups'
 import { Route as AdminFaqGeneratorRouteImport } from './routes/admin.faq-generator'
 import { Route as AdminEmailVerifyRouteImport } from './routes/admin.email-verify'
@@ -696,6 +697,11 @@ const AdminFollowupPerformanceRoute =
     path: '/followup-performance',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminFollowupDrilldownRoute = AdminFollowupDrilldownRouteImport.update({
+  id: '/followup-drilldown',
+  path: '/followup-drilldown',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFollowUpsRoute = AdminFollowUpsRouteImport.update({
   id: '/follow-ups',
   path: '/follow-ups',
@@ -1052,6 +1058,7 @@ export interface FileRoutesByFullPath {
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
+  '/admin/followup-drilldown': typeof AdminFollowupDrilldownRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
   '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
@@ -1212,6 +1219,7 @@ export interface FileRoutesByTo {
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
+  '/admin/followup-drilldown': typeof AdminFollowupDrilldownRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
   '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
@@ -1373,6 +1381,7 @@ export interface FileRoutesById {
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
+  '/admin/followup-drilldown': typeof AdminFollowupDrilldownRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
   '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
@@ -1535,6 +1544,7 @@ export interface FileRouteTypes {
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
+    | '/admin/followup-drilldown'
     | '/admin/followup-performance'
     | '/admin/followup-reminders'
     | '/admin/generate-content'
@@ -1695,6 +1705,7 @@ export interface FileRouteTypes {
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
+    | '/admin/followup-drilldown'
     | '/admin/followup-performance'
     | '/admin/followup-reminders'
     | '/admin/generate-content'
@@ -1855,6 +1866,7 @@ export interface FileRouteTypes {
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
+    | '/admin/followup-drilldown'
     | '/admin/followup-performance'
     | '/admin/followup-reminders'
     | '/admin/generate-content'
@@ -2774,6 +2786,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFollowupPerformanceRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/followup-drilldown': {
+      id: '/admin/followup-drilldown'
+      path: '/followup-drilldown'
+      fullPath: '/admin/followup-drilldown'
+      preLoaderRoute: typeof AdminFollowupDrilldownRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/follow-ups': {
       id: '/admin/follow-ups'
       path: '/follow-ups'
@@ -3202,6 +3221,7 @@ interface AdminRouteChildren {
   AdminEmailVerifyRoute: typeof AdminEmailVerifyRoute
   AdminFaqGeneratorRoute: typeof AdminFaqGeneratorRoute
   AdminFollowUpsRoute: typeof AdminFollowUpsRoute
+  AdminFollowupDrilldownRoute: typeof AdminFollowupDrilldownRoute
   AdminFollowupPerformanceRoute: typeof AdminFollowupPerformanceRoute
   AdminFollowupRemindersRoute: typeof AdminFollowupRemindersRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
@@ -3261,6 +3281,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEmailVerifyRoute: AdminEmailVerifyRoute,
   AdminFaqGeneratorRoute: AdminFaqGeneratorRoute,
   AdminFollowUpsRoute: AdminFollowUpsRoute,
+  AdminFollowupDrilldownRoute: AdminFollowupDrilldownRoute,
   AdminFollowupPerformanceRoute: AdminFollowupPerformanceRoute,
   AdminFollowupRemindersRoute: AdminFollowupRemindersRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
