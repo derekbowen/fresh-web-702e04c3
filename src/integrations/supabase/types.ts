@@ -3134,6 +3134,7 @@ export type Database = {
         Row: {
           bottom_text: string | null
           company_links: Json
+          compare_links: Json
           contact_email: string | null
           contact_phone: string | null
           contact_phone_hours: string | null
@@ -3148,6 +3149,7 @@ export type Database = {
         Insert: {
           bottom_text?: string | null
           company_links?: Json
+          compare_links?: Json
           contact_email?: string | null
           contact_phone?: string | null
           contact_phone_hours?: string | null
@@ -3162,6 +3164,7 @@ export type Database = {
         Update: {
           bottom_text?: string | null
           company_links?: Json
+          compare_links?: Json
           contact_email?: string | null
           contact_phone?: string | null
           contact_phone_hours?: string | null

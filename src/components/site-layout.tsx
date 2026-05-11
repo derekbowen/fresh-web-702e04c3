@@ -488,6 +488,7 @@ function SiteFooterInner() {
             items={[...data.explore_links, { label: "Blog", href: "/p/blog" }]}
           />
           <FooterColumn title="Become a Host" items={data.host_links} />
+          <FooterColumn title="Compare" items={data.compare_links} />
           <FooterColumn title="Company" items={data.company_links} />
 
           <div className="lg:col-span-2">
