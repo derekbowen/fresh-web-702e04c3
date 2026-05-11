@@ -206,7 +206,14 @@ export const createPageFor404 = createServerFn({ method: "POST" })
       .from("content_404_log").select("url_path, slug").eq("id", data.id).maybeSingle();
     if (!row) return { ok: false, error: "404 row not found" };
 
+    if (!row.url_path.startsWith("/p/")) {
+      return { ok: false, error: `Only /p/* paths can be auto-built (got ${row.url_path}). Use Redirect or Dismiss.` };
+    }
+
     const slug = (row.slug || row.url_path.replace(/^\/p\//, "")).replace(/\/+$/, "");
+    if (!slug || slug.includes("/") === false ? !/^[a-z0-9-]+$/.test(slug) : false) {
+      // allow nested /p/foo/bar slugs but reject empty
+    }
     if (!slug) return { ok: false, error: "Cannot derive slug from URL" };
 
     // Check it's not already there
@@ -222,10 +229,23 @@ export const createPageFor404 = createServerFn({ method: "POST" })
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
-    // Derive a human title from the slug
-    const title = slug.split("-").map((w: string) => w[0]?.toUpperCase() + w.slice(1)).join(" ");
+    // Fetch up to 30 real published /p/* pages so internal links actually resolve.
+    const { data: linkPool } = await (supabaseAdmin as any)
+      .from("content_pages")
+      .select("url_path, title")
+      .eq("status", "published")
+      .like("url_path", "/p/%")
+      .neq("url_path", row.url_path)
+      .order("updated_at", { ascending: false })
+      .limit(30);
+    const linkLines = (linkPool ?? [])
+      .map((p: any) => `- ${p.url_path} — ${p.title || p.url_path}`)
+      .join("\n");
 
-    const SYSTEM = `You write SEO content for Pool Rental Near Me, a marketplace where homeowners rent private pools by the hour. 10% flat host fee, $2M liability insurance included. Voice: confident, friendly, host-first. Markdown only with ## and ### headings. Include 2-4 internal links from: /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works. End with a CTA paragraph linking to /l/draft/00000000-0000-0000-0000-000000000000/new/details. Return ONLY by calling write_page.`;
+    // Derive a human title from the slug
+    const title = slug.split(/[-/]/).filter(Boolean).map((w: string) => w[0]?.toUpperCase() + w.slice(1)).join(" ");
+
+    const SYSTEM = `You write SEO content for Pool Rental Near Me, a marketplace where homeowners rent private pools by the hour. 10% flat host fee, $2M liability insurance included. Voice: confident, friendly, host-first, second person. Sentence case headings. No em dashes. Markdown only with ## and ### headings. Include 2-4 internal links chosen ONLY from the candidate list below (use exact url_path). Also include the marketplace CTAs: search /s, list a pool /l/draft/00000000-0000-0000-0000-000000000000/new/details. End with a CTA paragraph linking to the list-a-pool URL. Do NOT invent any other internal URLs. Return ONLY by calling write_page.\n\nCandidate internal links:\n${linkLines || "(none yet — use only /s and the list-a-pool CTA)"}`;
     const userPrompt = `Write a page for the URL ${row.url_path}. Inferred title: "${title}". Build the article around what someone landing on that URL would want. 600-1000 words. seo_title ≤60 chars, seo_description ≤155 chars.`;
 
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
