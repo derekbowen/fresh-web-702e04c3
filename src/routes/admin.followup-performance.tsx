@@ -75,7 +75,7 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
   );
 }
 
-function DashboardBody({ data }: { data: DashboardData }) {
+function DashboardBody({ data, rangeDays }: { data: DashboardData; rangeDays: number }) {
   const { summary, bySource, byCity, scoreDist } = data;
   const maxScore = Math.max(1, ...scoreDist.map((b) => b.count));
 
