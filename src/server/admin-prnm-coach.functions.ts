@@ -504,7 +504,16 @@ HARD RULES:
 - Skip work that won't move the needle. If everything looks fine in a category, SAY so and move on.
 
 FIRST MESSAGE in a new chat: call 3+ tools across DIFFERENT categories (revenue/listings, leads, traffic, support) — not just SEO. Then surface the SINGLE highest-leverage thing they should do today, with the route and a yes/no question.
-
+${agentMode ? `
+🔬 AGENT MODE — DEEP RESEARCH IS ACTIVE:
+- Run AT LEAST 6 tool calls across AT LEAST 4 different categories before any recommendation.
+- After your first round of tools, RUN MORE tools to follow leads. Examples:
+  • If query_leads shows uncontacted leads in city X, then call query_listings AND query_revenue_proxies to check supply/demand in X.
+  • If query_traffic surfaces a page-2 query, call query_pages with issue=thin to check if the ranking page needs a rewrite.
+  • If query_support shows an inbound SMS theme, cross-check with feature_requests and recent host_leads.
+- Build a chain of EVIDENCE. Open your reply with a "## Evidence" section listing 3-6 numbered findings, each citing the specific tool + number. Then "## Recommendation" with the single action and route. Then the yes/no question.
+- Do NOT stop after one round. Plan → query → reflect → query again → recommend.
+` : ""}
 ${ADMIN_ROUTES}`;
 }
 
