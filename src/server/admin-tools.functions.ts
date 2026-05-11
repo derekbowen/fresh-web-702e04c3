@@ -526,6 +526,64 @@ export const cancelQueuedSeoJobs = createServerFn({ method: "POST" })
     return { ok: true, cancelled: count || 0 };
   });
 
+export type SeoBatchSummary = {
+  batchId: string;
+  total: number;
+  queued: number;
+  processing: number;
+  done: number;
+  failed: number;
+  cancelled: number;
+  mode: "full" | "meta_only" | "title_only" | "mixed";
+  startedAt: string;
+  finishedAt: string | null;
+  enqueuedBy: string | null;
+};
+
+export const listSeoBatches = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      sinceHours: z.number().int().min(1).max(720).default(72),
+      onlyActive: z.boolean().default(false),
+    }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }): Promise<{ batches: SeoBatchSummary[] }> => {
+    await assertAdmin((context as any).userId);
+    const sb = supabaseAdmin as any;
+    const since = new Date(Date.now() - data.sinceHours * 3600_000).toISOString();
+    const { data: rows } = await sb
+      .from("seo_fix_jobs")
+      .select("batch_id, status, mode, created_at, finished_at, enqueued_by")
+      .gte("created_at", since)
+      .not("batch_id", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(5000);
+    const map = new Map<string, SeoBatchSummary>();
+    for (const r of (rows || []) as Array<{ batch_id: string; status: string; mode: string; created_at: string; finished_at: string | null; enqueued_by: string | null }>) {
+      let b = map.get(r.batch_id);
+      if (!b) {
+        b = {
+          batchId: r.batch_id,
+          total: 0, queued: 0, processing: 0, done: 0, failed: 0, cancelled: 0,
+          mode: r.mode as any,
+          startedAt: r.created_at,
+          finishedAt: r.finished_at,
+          enqueuedBy: r.enqueued_by,
+        };
+        map.set(r.batch_id, b);
+      }
+      b.total += 1;
+      (b as any)[r.status] = ((b as any)[r.status] || 0) + 1;
+      if (r.created_at < b.startedAt) b.startedAt = r.created_at;
+      if (r.finished_at && (!b.finishedAt || r.finished_at > b.finishedAt)) b.finishedAt = r.finished_at;
+      if (b.mode !== "mixed" && b.mode !== r.mode) b.mode = "mixed";
+    }
+    let batches = Array.from(map.values()).sort((a, b) => b.startedAt.localeCompare(a.startedAt));
+    if (data.onlyActive) batches = batches.filter((b) => b.queued + b.processing > 0);
+    return { batches };
+  });
+
 // ============================================================================
 // Single-page editor: fetch full row, save manual edits, append AI section
 // ============================================================================

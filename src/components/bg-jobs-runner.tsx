@@ -1,15 +1,39 @@
 import * as React from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Loader2, X, CheckCircle2, AlertCircle } from "lucide-react";
-import { processSeoFixQueue, getSeoJobStatus, cancelQueuedSeoJobs } from "@/server/admin-tools.functions";
+import { processSeoFixQueue, getSeoJobStatus, cancelQueuedSeoJobs, listSeoBatches } from "@/server/admin-tools.functions";
 import { loadJobs, upsertJob, removeJob, useBgJobs, type BgJob } from "@/lib/bg-jobs";
 
 // Single tab leader election: only one tab pumps the queue at a time.
 // Uses BroadcastChannel + localStorage heartbeat. Other tabs still display
 // progress (read from localStorage) but stay idle as workers.
 const LEADER_KEY = "prnm_bg_jobs_leader";
+const DISMISS_KEY = "prnm_bg_jobs_dismissed_v1";
 const HEARTBEAT_MS = 4000;
 const STALE_MS = 12000;
+
+function readDismissed(): Set<string> {
+  try {
+    const raw = localStorage.getItem(DISMISS_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch { return new Set(); }
+}
+function wasDismissed(id: string): boolean {
+  if (typeof window === "undefined") return false;
+  return readDismissed().has(id);
+}
+function markDismissed(id: string) {
+  if (typeof window === "undefined") return;
+  const s = readDismissed(); s.add(id);
+  // Cap at 200 ids to avoid unbounded growth
+  const arr = Array.from(s).slice(-200);
+  localStorage.setItem(DISMISS_KEY, JSON.stringify(arr));
+}
+function labelFor(mode: string, total: number): string {
+  const m = mode === "meta_only" ? "Meta fix" : mode === "title_only" ? "Title fix" : mode === "mixed" ? "Bulk fix" : "Auto-fix";
+  return `${m} · ${total} page${total === 1 ? "" : "s"}`;
+}
 
 function tabId(): string {
   if (typeof window === "undefined") return "ssr";
@@ -47,10 +71,54 @@ export function BgJobsRunner() {
     if (!inAdmin || typeof window === "undefined") return;
     let stopped = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
+    let sinceReconcile = 0;
+
+    async function reconcileFromServer() {
+      try {
+        const { batches } = await listSeoBatches({ data: { sinceHours: 72 } });
+        const local = new Map(loadJobs().map((j) => [j.id, j] as const));
+        for (const b of batches) {
+          const queued = b.queued + b.processing;
+          const status: BgJob["status"] = queued > 0
+            ? "running"
+            : b.cancelled > 0 && b.done === 0 ? "cancelled" : "done";
+          const existing = local.get(b.batchId);
+          // Hide finished jobs the user already dismissed locally? No — server is
+          // truth across browsers. We only skip if local already shows finished
+          // matching state (avoids re-adding dismissed jobs). Track dismissals
+          // separately so they don't pop back.
+          if (!existing && status !== "running" && wasDismissed(b.batchId)) continue;
+          const merged: BgJob = {
+            id: b.batchId,
+            kind: "seo_fix",
+            label: existing?.label || labelFor(b.mode, b.total),
+            total: b.total,
+            done: b.done,
+            failed: b.failed,
+            cancelled: b.cancelled,
+            status,
+            startedAt: existing?.startedAt ?? new Date(b.startedAt).getTime(),
+            finishedAt: status !== "running"
+              ? (b.finishedAt ? new Date(b.finishedAt).getTime() : Date.now())
+              : undefined,
+          };
+          upsertJob(merged);
+        }
+      } catch { /* ignore */ }
+    }
 
     async function tick() {
       if (stopped) return;
       const isLeader = claimLeader();
+
+      // Periodically reconcile with server (every ~15s, and immediately on first
+      // tick) so jobs surface even if localStorage was cleared or the user is on
+      // a different browser.
+      if (Date.now() - sinceReconcile > 15000) {
+        sinceReconcile = Date.now();
+        await reconcileFromServer();
+      }
+
       const jobs = loadJobs().filter((j) => j.status === "running");
       if (jobs.length === 0 || !isLeader) {
         timer = setTimeout(tick, 3000);
@@ -142,7 +210,7 @@ function JobRow({ job, onCurrentPage }: { job: BgJob; onCurrentPage: boolean }) 
         ) : job.status === "error" ? (
           <AlertCircle className="h-3.5 w-3.5 text-red-500" />
         ) : (
-          <button onClick={() => removeJob(job.id)} className="shrink-0 rounded p-0.5 hover:bg-muted" aria-label="Dismiss">
+          <button onClick={() => { markDismissed(job.id); removeJob(job.id); }} className="shrink-0 rounded p-0.5 hover:bg-muted" aria-label="Dismiss">
             <X className="h-3 w-3" />
           </button>
         )}
