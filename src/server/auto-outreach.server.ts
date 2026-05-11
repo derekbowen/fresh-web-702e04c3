@@ -28,7 +28,7 @@ type LeadCtx = {
   snippet: string | null;
 };
 
-async function loadLead(source: string, lead_id: string): Promise<Omit<LeadCtx, "followup_id" | "source"> | null> {
+async function loadLead(source: string, lead_id: string): Promise<Omit<LeadCtx, "followup_id" | "source" | "lead_id"> | null> {
   if (source === "host_lead") {
     const { data } = await sb().from("host_leads").select("name,email,phone_e164,city,region").eq("id", lead_id).maybeSingle();
     if (!data) return null;
