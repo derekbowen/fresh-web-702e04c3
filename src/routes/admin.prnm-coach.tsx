@@ -138,6 +138,7 @@ function PrnmCoachPage() {
         messages: next,
         completedRoutes: Array.from(completed),
         roleOverride: roleSel === "auto" ? undefined : roleSel,
+        agentMode,
       } });
       if (res.ok) {
         setMessages([...next, { role: "assistant", content: res.reply }]);
