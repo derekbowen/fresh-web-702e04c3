@@ -3,7 +3,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin-layout";
-import { previewFaqForUrl, insertFaqIntoPage, type FaqPreview, type FaqItem } from "@/lib/faq-generator.functions";
+import {
+  previewFaqForUrl,
+  insertFaqIntoPage,
+  bulkGenerateFaqs,
+  type FaqPreview,
+  type FaqItem,
+  type BulkFaqResponse,
+} from "@/lib/faq-generator.functions";
 
 export const Route = createFileRoute("/admin/faq-generator")({
   component: FaqGeneratorPage,
