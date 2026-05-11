@@ -260,7 +260,7 @@ function TechDocsPage() {
         {filteredGroups.map((group) => (
           <section
             key={group.label}
-            id={`group-${group.label.replace(/\s+/g, "-").toLowerCase()}`}
+            id={groupId(group.label)}
             className="space-y-3"
           >
             <h2 className="border-b border-border pb-1 text-xl font-semibold text-foreground">
