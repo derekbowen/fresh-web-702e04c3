@@ -713,6 +713,7 @@ export type Database = {
           content_refreshed_at: string | null
           created_at: string
           description: string | null
+          faq_items: Json | null
           focus_keyword: string | null
           gsc_clicks: number | null
           gsc_impressions: number | null
@@ -755,6 +756,7 @@ export type Database = {
           content_refreshed_at?: string | null
           created_at?: string
           description?: string | null
+          faq_items?: Json | null
           focus_keyword?: string | null
           gsc_clicks?: number | null
           gsc_impressions?: number | null
@@ -797,6 +799,7 @@ export type Database = {
           content_refreshed_at?: string | null
           created_at?: string
           description?: string | null
+          faq_items?: Json | null
           focus_keyword?: string | null
           gsc_clicks?: number | null
           gsc_impressions?: number | null

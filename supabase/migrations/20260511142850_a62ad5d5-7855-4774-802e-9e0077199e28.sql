@@ -1,0 +1,1 @@
+ALTER TABLE public.content_pages ADD COLUMN IF NOT EXISTS faq_items jsonb;
