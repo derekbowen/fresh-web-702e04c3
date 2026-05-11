@@ -8,8 +8,32 @@ import { loadJobs, upsertJob, removeJob, useBgJobs, type BgJob } from "@/lib/bg-
 // Uses BroadcastChannel + localStorage heartbeat. Other tabs still display
 // progress (read from localStorage) but stay idle as workers.
 const LEADER_KEY = "prnm_bg_jobs_leader";
+const DISMISS_KEY = "prnm_bg_jobs_dismissed_v1";
 const HEARTBEAT_MS = 4000;
 const STALE_MS = 12000;
+
+function readDismissed(): Set<string> {
+  try {
+    const raw = localStorage.getItem(DISMISS_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch { return new Set(); }
+}
+function wasDismissed(id: string): boolean {
+  if (typeof window === "undefined") return false;
+  return readDismissed().has(id);
+}
+function markDismissed(id: string) {
+  if (typeof window === "undefined") return;
+  const s = readDismissed(); s.add(id);
+  // Cap at 200 ids to avoid unbounded growth
+  const arr = Array.from(s).slice(-200);
+  localStorage.setItem(DISMISS_KEY, JSON.stringify(arr));
+}
+function labelFor(mode: string, total: number): string {
+  const m = mode === "meta_only" ? "Meta fix" : mode === "title_only" ? "Title fix" : mode === "mixed" ? "Bulk fix" : "Auto-fix";
+  return `${m} · ${total} page${total === 1 ? "" : "s"}`;
+}
 
 function tabId(): string {
   if (typeof window === "undefined") return "ssr";
