@@ -95,8 +95,20 @@ export interface ContentPage {
 
 export type ContentPageLookupResult =
   | { kind: "found"; page: ContentPage }
-  | { kind: "redirect"; canonicalSlug: string }
+  | { kind: "redirect"; canonicalSlug: string; redirectPath?: string }
   | { kind: "not_found" };
+
+function redirectLookup(fromSlug: string, rawTarget: string): ContentPageLookupResult {
+  const target = rawTarget.trim();
+  const redirectPath = target.startsWith("http") || target.startsWith("/")
+    ? target
+    : `/p/${target.replace(/^p\//, "")}`;
+  const canonicalSlug = redirectPath.startsWith("/p/")
+    ? redirectPath.slice(3).replace(/^\/+|\/+$/g, "")
+    : target;
+  if (canonicalSlug && canonicalSlug !== fromSlug) logRedirect(fromSlug, canonicalSlug);
+  return { kind: "redirect", canonicalSlug: canonicalSlug || target, redirectPath };
+}
 
 /**
  * Looks up a content page by slug. If the slug is in another row's
@@ -109,19 +121,33 @@ export const lookupContentPage = createServerFn({ method: "GET" })
     const { slug } = data;
 
     // Prefer canonical /p/{slug} url_path; multiple rows may share a slug
-    // (e.g. nested legacy paths like /p/foo/become-a-pool-host-...)
+    // (e.g. nested legacy paths like /p/foo/become-a-pool-host-...). Include
+    // redirect rows, otherwise admin-created 404 repairs keep returning 404.
     const canonicalPath = `/p/${slug}`;
     const { data: rows } = await (supabaseAdmin as any)
       .from("content_pages")
       .select("*")
       .eq("slug", slug)
-      .eq("status", "published")
+      .in("status", ["published", "redirect"])
       .order("priority", { ascending: false })
       .limit(5);
 
     const list = (rows ?? []) as ContentPage[];
+    const exactRedirect = list.find((r) => {
+      const redirectTo = (r as unknown as { redirect_to?: string | null }).redirect_to;
+      return r.url_path === canonicalPath && r.status === "redirect" && typeof redirectTo === "string" && redirectTo.trim();
+    });
+    if (exactRedirect) {
+      return redirectLookup(
+        slug,
+        (exactRedirect as unknown as { redirect_to: string }).redirect_to,
+      );
+    }
+
     const page =
-      list.find((r) => r.url_path === canonicalPath) ?? list[0] ?? null;
+      list.find((r) => r.url_path === canonicalPath && r.status === "published") ??
+      list.find((r) => r.status === "published") ??
+      null;
 
     if (page) {
       // Honor an explicit redirect_to on the canonical row.
@@ -130,10 +156,7 @@ export const lookupContentPage = createServerFn({ method: "GET" })
         const target = redirectTo.startsWith("/p/")
           ? redirectTo.slice(3)
           : redirectTo;
-        if (target && target !== slug) {
-          logRedirect(slug, target);
-          return { kind: "redirect", canonicalSlug: target };
-        }
+        if (target && target !== slug) return redirectLookup(slug, target);
       }
       return { kind: "found", page };
     }
@@ -144,12 +167,11 @@ export const lookupContentPage = createServerFn({ method: "GET" })
       .from("content_pages")
       .select("slug")
       .contains("legacy_slugs", [slug])
-      .eq("status", "published")
+      .in("status", ["published", "redirect"])
       .limit(1);
     const alias = (aliasRows ?? [])[0] as { slug: string | null } | undefined;
     if (alias?.slug && alias.slug !== slug) {
-      logRedirect(slug, alias.slug);
-      return { kind: "redirect", canonicalSlug: alias.slug };
+      return redirectLookup(slug, alias.slug);
     }
 
     // Fallback: many host-acq / swim-instructor slugs are stored with a
@@ -180,11 +202,10 @@ export const lookupContentPage = createServerFn({ method: "GET" })
             .from("content_pages")
             .select("slug")
             .eq("slug", candidate)
-            .eq("status", "published")
+            .in("status", ["published", "redirect"])
             .limit(1);
           if ((candRows ?? []).length > 0) {
-            logRedirect(slug, candidate);
-            return { kind: "redirect", canonicalSlug: candidate };
+            return redirectLookup(slug, candidate);
           }
         }
       }

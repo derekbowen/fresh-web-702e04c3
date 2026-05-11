@@ -70,6 +70,9 @@ export const Route = createFileRoute("/p/$slug")({
   beforeLoad: async ({ params }) => {
     const result = await lookupContentPage({ data: { slug: params.slug } });
     if (result.kind === "redirect") {
+      if (result.redirectPath?.startsWith("/")) {
+        throw redirect({ href: result.redirectPath, statusCode: 301, replace: true });
+      }
       throw redirect({
         to: "/p/$slug",
         params: { slug: result.canonicalSlug },
