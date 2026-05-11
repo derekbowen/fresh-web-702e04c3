@@ -4,7 +4,7 @@ import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import { Sparkles, Send, RotateCcw, ExternalLink, Check, Wrench } from "lucide-react";
 import { AdminLayout } from "@/components/admin-layout";
-import { prnmCoachChat } from "@/server/admin-prnm-coach.functions";
+import { prnmCoachChat, getCoachRole, setCoachRole } from "@/server/admin-prnm-coach.functions";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type Role = "ceo" | "coo" | "cs";
