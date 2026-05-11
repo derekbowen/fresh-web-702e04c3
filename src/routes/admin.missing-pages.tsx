@@ -189,6 +189,14 @@ function AdminMissingPages() {
               />
               Unresolved only
             </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={pPathsOnly}
+                onChange={(e) => setPPathsOnly(e.target.checked)}
+              />
+              /p/* only (buildable)
+            </label>
             <button
               onClick={load}
               className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted"
