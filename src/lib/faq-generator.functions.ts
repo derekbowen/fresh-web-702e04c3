@@ -262,9 +262,13 @@ async function insertFaqsIntoPath(
     body = `${body.replace(/\s+$/, "")}\n\n${block}\n`;
   }
 
-  const { error: uErr } = await supabaseAdmin
+  const { error: uErr } = await (supabaseAdmin as any)
     .from("content_pages")
-    .update({ body_markdown: body, content_refreshed_at: new Date().toISOString() })
+    .update({
+      body_markdown: body,
+      faq_items: faqs,
+      content_refreshed_at: new Date().toISOString(),
+    })
     .eq("id", page.id);
   if (uErr) return { success: false, error: uErr.message };
 
