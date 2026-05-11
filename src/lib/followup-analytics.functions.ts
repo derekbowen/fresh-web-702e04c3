@@ -227,3 +227,147 @@ export const getFollowupDashboard = createServerFn({ method: "GET" })
       scoreDist: Object.entries(scoreBuckets).map(([bucket, count]) => ({ bucket, count })),
     };
   });
+
+// ---------- drilldown ----------
+
+export interface DrilldownItem {
+  id: string;
+  source: LeadSource;
+  lead_id: string;
+  status: FollowupStatus;
+  ai_score: number | null;
+  last_outcome: TouchOutcome | null;
+  last_touch_at: string | null;
+  next_action_at: string | null;
+  touch_count: number;
+  created_at: string;
+  display_name: string | null;
+  display_subtitle: string | null;
+  city: string | null;
+  region: string | null;
+}
+
+export interface DrilldownResult {
+  items: DrilldownItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  filter: {
+    source: string | null;
+    city: string | null;
+    region: string | null;
+    rangeDays: number;
+  };
+}
+
+type LeadSource = "host_lead" | "ig_lead" | "social_lead" | "provider_lead";
+type FollowupStatus =
+  | "new" | "attempting" | "connected" | "no_response"
+  | "not_interested" | "converted" | "do_not_contact";
+type TouchOutcome =
+  | "sent" | "delivered" | "replied" | "bounced" | "no_answer"
+  | "voicemail" | "interested" | "not_interested" | "meeting_booked" | "converted";
+
+export const getFollowupDrilldown = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) =>
+    z.object({
+      source: z.string().nullish(),
+      city: z.string().nullish(),
+      region: z.string().nullish(),
+      rangeDays: z.number().int().min(1).max(365).default(90),
+      page: z.number().int().min(1).default(1),
+      pageSize: z.number().int().min(10).max(100).default(25),
+    }).parse(data ?? {}),
+  )
+  .handler(async ({ data }): Promise<DrilldownResult> => {
+    const since = new Date(Date.now() - data.rangeDays * 86400_000).toISOString();
+    let q = supabaseAdmin
+      .from("lead_followups")
+      .select("id, source, lead_id, status, ai_score, last_outcome, last_touch_at, next_action_at, touch_count, created_at")
+      .gte("created_at", since)
+      .order("ai_score", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(5000);
+    if (data.source) q = q.eq("source", data.source);
+    const { data: fups } = await q;
+    let followups = fups ?? [];
+
+    // City filter requires lead lookup
+    const hostIds = followups.filter((f) => f.source === "host_lead").map((f) => f.lead_id);
+    const igIds = followups.filter((f) => f.source === "ig_lead").map((f) => f.lead_id);
+    const leadInfo = new Map<string, { city: string | null; region: string | null; name: string | null; subtitle: string | null }>();
+
+    if (hostIds.length) {
+      const { data: hl } = await supabaseAdmin
+        .from("host_leads")
+        .select("id, city, region, owner_name, address")
+        .in("id", hostIds);
+      for (const r of hl ?? []) {
+        leadInfo.set(`host_lead:${r.id}`, {
+          city: r.city, region: r.region,
+          name: r.owner_name ?? r.address ?? null,
+          subtitle: r.address ?? null,
+        });
+      }
+    }
+    if (igIds.length) {
+      const { data: il } = await supabaseAdmin
+        .from("ig_leads")
+        .select("id, query, username, full_name")
+        .in("id", igIds);
+      for (const r of il ?? []) {
+        leadInfo.set(`ig_lead:${r.id}`, {
+          city: r.query ?? null, region: null,
+          name: r.full_name ?? r.username ?? null,
+          subtitle: r.username ? `@${r.username}` : null,
+        });
+      }
+    }
+
+    if (data.city) {
+      const want = data.city.trim().toLowerCase();
+      followups = followups.filter((f) => {
+        const li = leadInfo.get(`${f.source}:${f.lead_id}`);
+        const c = (li?.city ?? "Unknown").trim().toLowerCase();
+        return c === want;
+      });
+    }
+
+    const total = followups.length;
+    const start = (data.page - 1) * data.pageSize;
+    const pageItems = followups.slice(start, start + data.pageSize);
+
+    const items: DrilldownItem[] = pageItems.map((f) => {
+      const li = leadInfo.get(`${f.source}:${f.lead_id}`);
+      return {
+        id: f.id,
+        source: f.source as LeadSource,
+        lead_id: f.lead_id,
+        status: f.status as FollowupStatus,
+        ai_score: f.ai_score,
+        last_outcome: (f.last_outcome ?? null) as TouchOutcome | null,
+        last_touch_at: f.last_touch_at,
+        next_action_at: f.next_action_at,
+        touch_count: f.touch_count ?? 0,
+        created_at: f.created_at,
+        display_name: li?.name ?? null,
+        display_subtitle: li?.subtitle ?? null,
+        city: li?.city ?? null,
+        region: li?.region ?? null,
+      };
+    });
+
+    return {
+      items,
+      total,
+      page: data.page,
+      pageSize: data.pageSize,
+      filter: {
+        source: data.source ?? null,
+        city: data.city ?? null,
+        region: data.region ?? null,
+        rangeDays: data.rangeDays,
+      },
+    };
+  });
