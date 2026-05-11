@@ -26,6 +26,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Search Listings", href: "/s" },
     { label: "Pool Pros Directory", href: "/p/pool-pros" },
     { label: "How It Works", href: "/p/how-it-works" },
+    { label: "Neighbors", href: "/p/neighbors" },
     { label: "Start a Business", href: "/p/hosting" },
     { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
     { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
