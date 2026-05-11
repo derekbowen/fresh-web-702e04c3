@@ -41,6 +41,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     items: [
       { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/admin/prnm-coach", label: "PRNM Coach 🤖", icon: Sparkles },
+      { to: "/admin/opportunities", label: "Opportunities", icon: CheckCircle2 },
       { to: "/admin/tech-docs", label: "Technical docs", icon: FileText },
       { to: "/admin/job-history", label: "Job history", icon: Activity },
     ],
