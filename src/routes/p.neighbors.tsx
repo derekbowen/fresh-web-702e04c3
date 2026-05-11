@@ -95,7 +95,7 @@ function NeighborsPage() {
       </div>
 
       <main className="mx-auto max-w-6xl px-4 py-10">
-        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Neighbors" }]} />
+        <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "Neighbors", path: PATH }]} />
 
         {/* Hero */}
         <section className="mt-6 grid gap-8 md:grid-cols-2 md:items-center">
