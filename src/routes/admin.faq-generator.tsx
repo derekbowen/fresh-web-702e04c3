@@ -3,7 +3,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin-layout";
-import { previewFaqForUrl, insertFaqIntoPage, type FaqPreview, type FaqItem } from "@/lib/faq-generator.functions";
+import {
+  previewFaqForUrl,
+  insertFaqIntoPage,
+  bulkGenerateFaqs,
+  type FaqPreview,
+  type FaqItem,
+  type BulkFaqResponse,
+} from "@/lib/faq-generator.functions";
 
 export const Route = createFileRoute("/admin/faq-generator")({
   component: FaqGeneratorPage,
@@ -152,7 +159,140 @@ function FaqGeneratorPage() {
             <pre className="mt-3 overflow-x-auto rounded bg-muted p-3 text-xs">{preview.jsonLd}</pre>
           </details>
         )}
+
+        <BulkFaqSection />
       </div>
     </AdminLayout>
+  );
+}
+
+function BulkFaqSection() {
+  const [text, setText] = React.useState("");
+  const [count, setCount] = React.useState(6);
+  const [replace, setReplace] = React.useState(true);
+  const [skipExisting, setSkipExisting] = React.useState(true);
+  const [result, setResult] = React.useState<BulkFaqResponse | null>(null);
+
+  const bulkFn = useServerFn(bulkGenerateFaqs);
+  const bulkMut = useMutation({
+    mutationFn: () => {
+      const url_paths = text
+        .split(/\r?\n/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+      return bulkFn({
+        data: {
+          url_paths,
+          count,
+          replace_existing: replace,
+          skip_if_has_faq: skipExisting,
+          delay_ms: 800,
+        },
+      });
+    },
+    onSuccess: (res) => setResult(res),
+  });
+
+  const paths = text.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+      <div>
+        <h2 className="text-lg font-semibold">Bulk generate FAQs</h2>
+        <p className="text-xs text-muted-foreground">
+          Paste up to 50 url_paths (one per line). For each page, this pulls top GSC queries,
+          generates FAQs with AI, and inserts the block into the page body.
+        </p>
+      </div>
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        rows={6}
+        placeholder={"/p/los-angeles-ca\n/p/dallas-tx\n/p/host-acquisition/jurupa-valley-ca"}
+        className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-xs"
+      />
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <span className="text-xs text-muted-foreground">{paths.length} url_paths</span>
+        <select
+          value={count}
+          onChange={(e) => setCount(Number(e.target.value))}
+          className="rounded-md border border-input bg-background px-2 py-1 text-sm"
+        >
+          {[3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+            <option key={n} value={n}>{n} FAQs each</option>
+          ))}
+        </select>
+        <label className="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
+          Replace existing FAQ
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={skipExisting}
+            onChange={(e) => setSkipExisting(e.target.checked)}
+          />
+          Skip pages that already have a FAQ
+        </label>
+        <button
+          onClick={() => bulkMut.mutate()}
+          disabled={paths.length === 0 || bulkMut.isPending || paths.length > 50}
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+        >
+          {bulkMut.isPending ? `Processing ${paths.length}…` : `Generate & insert (${paths.length})`}
+        </button>
+      </div>
+      {bulkMut.error && (
+        <div className="text-sm text-destructive">{(bulkMut.error as Error).message}</div>
+      )}
+      {result && (
+        <div className="space-y-2">
+          <div className="text-sm">
+            <span className="font-medium text-emerald-600 dark:text-emerald-400">{result.inserted} inserted</span>
+            {" • "}
+            <span className="font-medium text-red-600 dark:text-red-400">{result.failed} failed</span>
+            {" • "}
+            <span className="text-muted-foreground">{result.total} total</span>
+            {result.error && <span className="ml-2 text-destructive">{result.error}</span>}
+          </div>
+          <div className="overflow-x-auto rounded border border-border">
+            <table className="w-full text-xs">
+              <thead className="bg-muted/40 text-muted-foreground">
+                <tr>
+                  <th className="px-2 py-1 text-left">URL path</th>
+                  <th className="px-2 py-1 text-left">Status</th>
+                  <th className="px-2 py-1 text-right">FAQs</th>
+                  <th className="px-2 py-1 text-right">Queries</th>
+                  <th className="px-2 py-1 text-left">Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.results.map((r) => (
+                  <tr key={r.url_path} className="border-t border-border">
+                    <td className="px-2 py-1 font-mono">{r.url_path}</td>
+                    <td className="px-2 py-1">
+                      <span
+                        className={
+                          r.status === "inserted"
+                            ? "rounded bg-emerald-500/15 px-2 py-0.5 text-emerald-700 dark:text-emerald-300"
+                            : r.status === "skipped"
+                              ? "rounded bg-muted px-2 py-0.5 text-muted-foreground"
+                              : "rounded bg-red-500/15 px-2 py-0.5 text-red-700 dark:text-red-300"
+                        }
+                      >
+                        {r.status}
+                      </span>
+                    </td>
+                    <td className="px-2 py-1 text-right tabular-nums">{r.faq_count ?? "—"}</td>
+                    <td className="px-2 py-1 text-right tabular-nums">{r.queries ?? "—"}</td>
+                    <td className="px-2 py-1 text-muted-foreground">{r.error ?? ""}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

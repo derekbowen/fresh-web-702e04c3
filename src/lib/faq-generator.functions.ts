@@ -60,26 +60,23 @@ function buildJsonLd(faqs: FaqItem[]): string {
   );
 }
 
-// ---------- preview ----------
+// ---------- internal helpers (admin-checked at call sites) ----------
 
-export const previewFaqForUrl = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
-    z.object({ url_path: z.string().min(1), count: z.number().int().min(3).max(10).default(6) }).parse(d),
-  )
-  .handler(async ({ data, context }): Promise<FaqPreview> => {
-    const empty: FaqPreview = {
-      faqs: [],
-      markdown: "",
-      jsonLd: "",
-      queries: [],
-      page: { url_path: data.url_path, title: null, focus_keyword: null },
-    };
-    const { userId } = context as { userId: string };
-    if (!(await isAdmin(userId))) return { ...empty, error: "Forbidden" };
+async function generateFaqPreview(
+  url_path: string,
+  count: number,
+): Promise<FaqPreview> {
+  const empty: FaqPreview = {
+    faqs: [],
+    markdown: "",
+    jsonLd: "",
+    queries: [],
+    page: { url_path, title: null, focus_keyword: null },
+  };
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) return { ...empty, error: "LOVABLE_API_KEY not configured" };
 
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) return { ...empty, error: "LOVABLE_API_KEY not configured" };
+  const data = { url_path, count };
 
     const { data: page } = await (supabaseAdmin as any)
       .from("content_pages")
@@ -220,9 +217,59 @@ Generate ${data.count} FAQ items grounded in these queries. Prefer the highest-i
         error: e instanceof Error ? e.message : "AI request failed",
       };
     }
+}
+
+// ---------- preview server fn ----------
+
+export const previewFaqForUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ url_path: z.string().min(1), count: z.number().int().min(3).max(10).default(6) }).parse(d),
+  )
+  .handler(async ({ data, context }): Promise<FaqPreview> => {
+    const { userId } = context as { userId: string };
+    if (!(await isAdmin(userId))) {
+      return {
+        faqs: [], markdown: "", jsonLd: "", queries: [],
+        page: { url_path: data.url_path, title: null, focus_keyword: null },
+        error: "Forbidden",
+      };
+    }
+    return generateFaqPreview(data.url_path, data.count);
   });
 
 // ---------- insert ----------
+
+async function insertFaqsIntoPath(
+  url_path: string,
+  faqs: FaqItem[],
+  replace_existing: boolean,
+): Promise<{ success: boolean; error: string | null }> {
+  const { data: page, error: pErr } = await (supabaseAdmin as any)
+    .from("content_pages")
+    .select("id, body_markdown")
+    .eq("url_path", url_path)
+    .maybeSingle();
+  if (pErr || !page) return { success: false, error: pErr?.message ?? "Page not found" };
+
+  const block = buildMarkdown(faqs).trim();
+  let body: string = page.body_markdown ?? "";
+
+  const faqHeadingRe = /(^|\n)(##\s+frequently\s+asked\s+questions[\s\S]*?)(?=\n##\s|\n#\s|$)/i;
+  if (replace_existing && faqHeadingRe.test(body)) {
+    body = body.replace(faqHeadingRe, `\n\n${block}\n`);
+  } else {
+    body = `${body.replace(/\s+$/, "")}\n\n${block}\n`;
+  }
+
+  const { error: uErr } = await supabaseAdmin
+    .from("content_pages")
+    .update({ body_markdown: body, content_refreshed_at: new Date().toISOString() })
+    .eq("id", page.id);
+  if (uErr) return { success: false, error: uErr.message };
+
+  return { success: true, error: null };
+}
 
 export const insertFaqIntoPage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -241,30 +288,108 @@ export const insertFaqIntoPage = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { userId } = context as { userId: string };
     if (!(await isAdmin(userId))) return { success: false, error: "Forbidden" };
+    return insertFaqsIntoPath(data.url_path, data.faqs, data.replace_existing);
+  });
 
-    const { data: page, error: pErr } = await (supabaseAdmin as any)
-      .from("content_pages")
-      .select("id, body_markdown")
-      .eq("url_path", data.url_path)
-      .maybeSingle();
-    if (pErr || !page) return { success: false, error: pErr?.message ?? "Page not found" };
+// ---------- bulk ----------
 
-    const block = buildMarkdown(data.faqs).trim();
-    let body: string = page.body_markdown ?? "";
+export interface BulkFaqResult {
+  url_path: string;
+  status: "inserted" | "skipped" | "error";
+  error?: string;
+  faq_count?: number;
+  queries?: number;
+}
 
-    // If the page already has an FAQ section, optionally replace it.
-    const faqHeadingRe = /(^|\n)(##\s+frequently\s+asked\s+questions[\s\S]*?)(?=\n##\s|\n#\s|$)/i;
-    if (data.replace_existing && faqHeadingRe.test(body)) {
-      body = body.replace(faqHeadingRe, `\n\n${block}\n`);
-    } else {
-      body = `${body.replace(/\s+$/, "")}\n\n${block}\n`;
+export interface BulkFaqResponse {
+  results: BulkFaqResult[];
+  total: number;
+  inserted: number;
+  failed: number;
+  error?: string;
+}
+
+export const bulkGenerateFaqs = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        url_paths: z.array(z.string().min(1)).min(1).max(50),
+        count: z.number().int().min(3).max(10).default(6),
+        replace_existing: z.boolean().default(true),
+        skip_if_has_faq: z.boolean().default(false),
+        delay_ms: z.number().int().min(0).max(5000).default(800),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }): Promise<BulkFaqResponse> => {
+    const { userId } = context as { userId: string };
+    if (!(await isAdmin(userId))) {
+      return { results: [], total: 0, inserted: 0, failed: 0, error: "Forbidden" };
     }
 
-    const { error: uErr } = await supabaseAdmin
-      .from("content_pages")
-      .update({ body_markdown: body, content_refreshed_at: new Date().toISOString() })
-      .eq("id", page.id);
-    if (uErr) return { success: false, error: uErr.message };
+    const seen = new Set<string>();
+    const paths = data.url_paths
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0 && !seen.has(p) && (seen.add(p), true));
 
-    return { success: true, error: null };
+    const results: BulkFaqResult[] = [];
+    let inserted = 0;
+    let failed = 0;
+
+    for (const url_path of paths) {
+      try {
+        if (data.skip_if_has_faq) {
+          const { data: page } = await (supabaseAdmin as any)
+            .from("content_pages")
+            .select("body_markdown")
+            .eq("url_path", url_path)
+            .maybeSingle();
+          if (page?.body_markdown && /##\s+frequently\s+asked\s+questions/i.test(page.body_markdown)) {
+            results.push({ url_path, status: "skipped", error: "Already has FAQ" });
+            continue;
+          }
+        }
+
+        const preview = await generateFaqPreview(url_path, data.count);
+        if (preview.error || preview.faqs.length === 0) {
+          failed++;
+          results.push({
+            url_path,
+            status: "error",
+            error: preview.error ?? "No FAQs generated",
+            queries: preview.queries.length,
+          });
+          continue;
+        }
+
+        const ins = await insertFaqsIntoPath(url_path, preview.faqs, data.replace_existing);
+        if (!ins.success) {
+          failed++;
+          results.push({ url_path, status: "error", error: ins.error ?? "Insert failed" });
+          continue;
+        }
+
+        inserted++;
+        results.push({
+          url_path,
+          status: "inserted",
+          faq_count: preview.faqs.length,
+          queries: preview.queries.length,
+        });
+      } catch (e) {
+        failed++;
+        results.push({
+          url_path,
+          status: "error",
+          error: e instanceof Error ? e.message : "Unknown error",
+        });
+      }
+
+      if (data.delay_ms > 0) {
+        await new Promise((r) => setTimeout(r, data.delay_ms));
+      }
+    }
+
+    return { results, total: paths.length, inserted, failed };
   });
