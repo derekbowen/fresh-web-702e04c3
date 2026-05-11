@@ -88,7 +88,7 @@ function FollowupDrilldownPage() {
           {filterChips.map((c) => (
             <button
               key={c.key}
-              onClick={() => navigate({ search: (p) => ({ ...p, [c.key]: undefined, page: 1 }) })}
+              onClick={() => navigate({ search: (p: typeof search) => ({ ...p, [c.key]: undefined, page: 1 }) })}
               className="rounded-full border border-border bg-card px-3 py-1 text-xs hover:bg-muted"
             >
               {c.label} ✕
@@ -137,14 +137,14 @@ function FollowupDrilldownPage() {
               <div className="flex gap-1">
                 <button
                   disabled={data.page <= 1}
-                  onClick={() => navigate({ search: (p) => ({ ...p, page: Math.max(1, p.page - 1) }) })}
+                  onClick={() => navigate({ search: (p: typeof search) => ({ ...p, page: Math.max(1, p.page - 1) }) })}
                   className="rounded border border-border bg-card px-3 py-1 text-xs disabled:opacity-50 hover:bg-muted"
                 >
                   ← Prev
                 </button>
                 <button
                   disabled={data.page >= totalPages}
-                  onClick={() => navigate({ search: (p) => ({ ...p, page: p.page + 1 }) })}
+                  onClick={() => navigate({ search: (p: typeof search) => ({ ...p, page: p.page + 1 }) })}
                   className="rounded border border-border bg-card px-3 py-1 text-xs disabled:opacity-50 hover:bg-muted"
                 >
                   Next →
