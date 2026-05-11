@@ -77,7 +77,6 @@ function JobHistoryPage() {
   const [status, setStatus] = React.useState<StatusFilter>("all");
   const [search, setSearch] = React.useState("");
   const list = useServerFn(listSeoBatches);
-  const qc = useQueryClient();
 
   const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["seo-batches", hours],
