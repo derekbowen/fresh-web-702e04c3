@@ -117,8 +117,16 @@ function DashboardBody({ data, rangeDays }: { data: DashboardData; rangeDays: nu
                 <tr><td colSpan={5} className="py-4 text-center text-muted-foreground">No data.</td></tr>
               )}
               {bySource.map((b) => (
-                <tr key={b.source} className="border-t border-border">
-                  <td className="py-2 font-medium">{b.source}</td>
+                <tr key={b.source} className="border-t border-border hover:bg-muted/30">
+                  <td className="py-2 font-medium">
+                    <Link
+                      to="/admin/followup-drilldown"
+                      search={{ source: b.source, rangeDays, page: 1, pageSize: 25 }}
+                      className="text-primary hover:underline"
+                    >
+                      {b.source}
+                    </Link>
+                  </td>
                   <td className="text-right">{b.total}</td>
                   <td className="text-right">{pct(b.responseRate)}</td>
                   <td className="text-right">{pct(b.conversionRate)}</td>
