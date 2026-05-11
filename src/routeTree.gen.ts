@@ -158,6 +158,7 @@ import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
 import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/hooks/gsc-sync'
+import { Route as ApiPublicHooksGenHostPagesRouteImport } from './routes/api/public/hooks/gen-host-pages'
 import { Route as ApiPublicHooksFollowupRemindersRouteImport } from './routes/api/public/hooks/followup-reminders'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
@@ -943,6 +944,12 @@ const ApiPublicHooksGscSyncRoute = ApiPublicHooksGscSyncRouteImport.update({
   path: '/api/public/hooks/gsc-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksGenHostPagesRoute =
+  ApiPublicHooksGenHostPagesRouteImport.update({
+    id: '/api/public/hooks/gen-host-pages',
+    path: '/api/public/hooks/gen-host-pages',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksFollowupRemindersRoute =
   ApiPublicHooksFollowupRemindersRouteImport.update({
     id: '/api/public/hooks/followup-reminders',
@@ -1145,6 +1152,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
+  '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
@@ -1306,6 +1314,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
+  '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
@@ -1468,6 +1477,7 @@ export interface FileRoutesById {
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
+  '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
@@ -1631,6 +1641,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/followup-reminders'
+    | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
@@ -1792,6 +1803,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/followup-reminders'
+    | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
@@ -1953,6 +1965,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/followup-reminders'
+    | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
@@ -2054,6 +2067,7 @@ export interface RootRouteChildren {
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
   ApiPublicHooksFollowupRemindersRoute: typeof ApiPublicHooksFollowupRemindersRoute
+  ApiPublicHooksGenHostPagesRoute: typeof ApiPublicHooksGenHostPagesRoute
   ApiPublicHooksGscSyncRoute: typeof ApiPublicHooksGscSyncRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
@@ -3115,6 +3129,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGscSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/gen-host-pages': {
+      id: '/api/public/hooks/gen-host-pages'
+      path: '/api/public/hooks/gen-host-pages'
+      fullPath: '/api/public/hooks/gen-host-pages'
+      preLoaderRoute: typeof ApiPublicHooksGenHostPagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/followup-reminders': {
       id: '/api/public/hooks/followup-reminders'
       path: '/api/public/hooks/followup-reminders'
@@ -3468,6 +3489,7 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
   ApiPublicHooksFollowupRemindersRoute: ApiPublicHooksFollowupRemindersRoute,
+  ApiPublicHooksGenHostPagesRoute: ApiPublicHooksGenHostPagesRoute,
   ApiPublicHooksGscSyncRoute: ApiPublicHooksGscSyncRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
