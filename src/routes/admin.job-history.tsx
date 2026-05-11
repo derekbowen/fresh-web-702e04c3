@@ -7,8 +7,18 @@ import { listSeoBatches, getSeoBatchDetails, type SeoBatchSummary, type SeoBatch
 
 export const Route = createFileRoute("/admin/job-history")({
   head: () => ({ meta: [{ title: "Job history — Admin" }] }),
-  component: JobHistoryPage,
+  component: JobHistoryRoute,
 });
+
+const queryClient = new QueryClient();
+
+function JobHistoryRoute() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <JobHistoryPage />
+    </QueryClientProvider>
+  );
+}
 
 const RANGES = [
   { label: "24h", hours: 24 },
