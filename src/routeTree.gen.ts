@@ -97,6 +97,7 @@ import { Route as AdminLearningRouteImport } from './routes/admin.learning'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLandingLinkCheckRouteImport } from './routes/admin.landing-link-check'
 import { Route as AdminKeywordOpportunitiesRouteImport } from './routes/admin.keyword-opportunities'
+import { Route as AdminJobHistoryRouteImport } from './routes/admin.job-history'
 import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
@@ -608,6 +609,11 @@ const AdminKeywordOpportunitiesRoute =
     path: '/keyword-opportunities',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminJobHistoryRoute = AdminJobHistoryRouteImport.update({
+  id: '/job-history',
+  path: '/job-history',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminInternalLinksRoute = AdminInternalLinksRouteImport.update({
   id: '/internal-links',
   path: '/internal-links',
@@ -947,6 +953,7 @@ export interface FileRoutesByFullPath {
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
+  '/admin/job-history': typeof AdminJobHistoryRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
   '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -1090,6 +1097,7 @@ export interface FileRoutesByTo {
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
+  '/admin/job-history': typeof AdminJobHistoryRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
   '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -1234,6 +1242,7 @@ export interface FileRoutesById {
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
+  '/admin/job-history': typeof AdminJobHistoryRoute
   '/admin/keyword-opportunities': typeof AdminKeywordOpportunitiesRoute
   '/admin/landing-link-check': typeof AdminLandingLinkCheckRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -1379,6 +1388,7 @@ export interface FileRouteTypes {
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
+    | '/admin/job-history'
     | '/admin/keyword-opportunities'
     | '/admin/landing-link-check'
     | '/admin/leads'
@@ -1522,6 +1532,7 @@ export interface FileRouteTypes {
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
+    | '/admin/job-history'
     | '/admin/keyword-opportunities'
     | '/admin/landing-link-check'
     | '/admin/leads'
@@ -1665,6 +1676,7 @@ export interface FileRouteTypes {
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
+    | '/admin/job-history'
     | '/admin/keyword-opportunities'
     | '/admin/landing-link-check'
     | '/admin/leads'
@@ -2462,6 +2474,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminKeywordOpportunitiesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/job-history': {
+      id: '/admin/job-history'
+      path: '/job-history'
+      fullPath: '/admin/job-history'
+      preLoaderRoute: typeof AdminJobHistoryRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/internal-links': {
       id: '/admin/internal-links'
       path: '/internal-links'
@@ -2870,6 +2889,7 @@ interface AdminRouteChildren {
   AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminInternalLinksRoute: typeof AdminInternalLinksRoute
+  AdminJobHistoryRoute: typeof AdminJobHistoryRoute
   AdminKeywordOpportunitiesRoute: typeof AdminKeywordOpportunitiesRoute
   AdminLandingLinkCheckRoute: typeof AdminLandingLinkCheckRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
@@ -2918,6 +2938,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
   AdminIndexingRoute: AdminIndexingRoute,
   AdminInternalLinksRoute: AdminInternalLinksRoute,
+  AdminJobHistoryRoute: AdminJobHistoryRoute,
   AdminKeywordOpportunitiesRoute: AdminKeywordOpportunitiesRoute,
   AdminLandingLinkCheckRoute: AdminLandingLinkCheckRoute,
   AdminLeadsRoute: AdminLeadsRoute,
