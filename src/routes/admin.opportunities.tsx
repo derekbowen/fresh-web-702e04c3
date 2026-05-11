@@ -25,7 +25,7 @@ type Opp = {
 };
 
 const ROLE_TABS: Array<{ value: Role; label: string; sub: string }> = [
-  { value: "ceo", label: "CEO",   sub: "Mike — strategy & growth" },
+  { value: "ceo", label: "CEO",   sub: "Derek — strategy & growth" },
   { value: "coo", label: "COO",   sub: "Brandon — outreach & ops" },
   { value: "cs",  label: "CS",    sub: "Michelle — replies & follow-ups" },
 ];
