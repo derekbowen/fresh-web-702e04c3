@@ -6,6 +6,8 @@ import {
   ADMIN_DOC_CROSS_CUTTING,
   type AdminDoc,
 } from "@/lib/admin-tech-docs";
+import { ADMIN_FLOWS } from "@/lib/admin-tech-flows";
+import { Mermaid } from "@/components/mermaid";
 
 export const Route = createFileRoute("/admin/tech-docs")({
   head: () => ({
