@@ -612,6 +612,7 @@ export type Database = {
           canonical_override: string | null
           category: string
           content: string | null
+          content_refreshed_at: string | null
           created_at: string
           description: string | null
           focus_keyword: string | null
@@ -619,6 +620,8 @@ export type Database = {
           gsc_impressions: number | null
           gsc_position: number | null
           gsc_updated_at: string | null
+          hero_backfill_attempts: number
+          hero_backfill_last_error: string | null
           hero_image_url: string | null
           hreflang_group: string | null
           id: string
@@ -631,6 +634,8 @@ export type Database = {
           priority: number
           raw_html: string | null
           redirect_to: string | null
+          refresh_attempts: number
+          refresh_last_error: string | null
           scraped_at: string | null
           seo_description: string | null
           seo_title: string | null
@@ -648,6 +653,7 @@ export type Database = {
           canonical_override?: string | null
           category?: string
           content?: string | null
+          content_refreshed_at?: string | null
           created_at?: string
           description?: string | null
           focus_keyword?: string | null
@@ -655,6 +661,8 @@ export type Database = {
           gsc_impressions?: number | null
           gsc_position?: number | null
           gsc_updated_at?: string | null
+          hero_backfill_attempts?: number
+          hero_backfill_last_error?: string | null
           hero_image_url?: string | null
           hreflang_group?: string | null
           id?: string
@@ -667,6 +675,8 @@ export type Database = {
           priority?: number
           raw_html?: string | null
           redirect_to?: string | null
+          refresh_attempts?: number
+          refresh_last_error?: string | null
           scraped_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
@@ -684,6 +694,7 @@ export type Database = {
           canonical_override?: string | null
           category?: string
           content?: string | null
+          content_refreshed_at?: string | null
           created_at?: string
           description?: string | null
           focus_keyword?: string | null
@@ -691,6 +702,8 @@ export type Database = {
           gsc_impressions?: number | null
           gsc_position?: number | null
           gsc_updated_at?: string | null
+          hero_backfill_attempts?: number
+          hero_backfill_last_error?: string | null
           hero_image_url?: string | null
           hreflang_group?: string | null
           id?: string
@@ -703,6 +716,8 @@ export type Database = {
           priority?: number
           raw_html?: string | null
           redirect_to?: string | null
+          refresh_attempts?: number
+          refresh_last_error?: string | null
           scraped_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
