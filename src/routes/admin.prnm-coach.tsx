@@ -287,7 +287,8 @@ function PrnmCoachPage() {
           {loading && (
             <div className="flex justify-start">
               <div className="rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground flex items-center gap-2">
-                <Sparkles className="h-3 w-3 animate-pulse" /> Thinking & querying data…
+                <Sparkles className="h-3 w-3 animate-pulse" />
+                {agentMode ? "Agent mode — running deep multi-step research…" : "Thinking & querying data…"}
               </div>
             </div>
           )}
