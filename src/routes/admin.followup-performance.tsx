@@ -175,8 +175,16 @@ function DashboardBody({ data, rangeDays }: { data: DashboardData; rangeDays: nu
                 <tr><td colSpan={8} className="py-4 text-center text-muted-foreground">No data.</td></tr>
               )}
               {byCity.map((c) => (
-                <tr key={`${c.city}-${c.region}`} className="border-t border-border">
-                  <td className="py-2 font-medium">{c.city}</td>
+                <tr key={`${c.city}-${c.region}`} className="border-t border-border hover:bg-muted/30">
+                  <td className="py-2 font-medium">
+                    <Link
+                      to="/admin/followup-drilldown"
+                      search={{ city: c.city, rangeDays, page: 1, pageSize: 25 }}
+                      className="text-primary hover:underline"
+                    >
+                      {c.city}
+                    </Link>
+                  </td>
                   <td className="text-muted-foreground">{c.region ?? "—"}</td>
                   <td className="text-right">{c.total}</td>
                   <td className="text-right">{c.responded}</td>
