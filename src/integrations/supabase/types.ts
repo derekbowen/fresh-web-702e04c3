@@ -1742,6 +1742,101 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_followups: {
+        Row: {
+          ai_score: number | null
+          ai_score_reason: string | null
+          ai_scored_at: string | null
+          created_at: string
+          id: string
+          last_outcome: Database["public"]["Enums"]["touch_outcome"] | null
+          last_touch_at: string | null
+          lead_id: string
+          next_action_at: string | null
+          notes: string | null
+          owner_id: string | null
+          source: Database["public"]["Enums"]["lead_source"]
+          status: Database["public"]["Enums"]["followup_status"]
+          touch_count: number
+          updated_at: string
+        }
+        Insert: {
+          ai_score?: number | null
+          ai_score_reason?: string | null
+          ai_scored_at?: string | null
+          created_at?: string
+          id?: string
+          last_outcome?: Database["public"]["Enums"]["touch_outcome"] | null
+          last_touch_at?: string | null
+          lead_id: string
+          next_action_at?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          source: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["followup_status"]
+          touch_count?: number
+          updated_at?: string
+        }
+        Update: {
+          ai_score?: number | null
+          ai_score_reason?: string | null
+          ai_scored_at?: string | null
+          created_at?: string
+          id?: string
+          last_outcome?: Database["public"]["Enums"]["touch_outcome"] | null
+          last_touch_at?: string | null
+          lead_id?: string
+          next_action_at?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["followup_status"]
+          touch_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lead_touches: {
+        Row: {
+          body: string | null
+          by_user_id: string | null
+          channel: Database["public"]["Enums"]["touch_channel"]
+          created_at: string
+          followup_id: string
+          id: string
+          occurred_at: string
+          outcome: Database["public"]["Enums"]["touch_outcome"] | null
+        }
+        Insert: {
+          body?: string | null
+          by_user_id?: string | null
+          channel: Database["public"]["Enums"]["touch_channel"]
+          created_at?: string
+          followup_id: string
+          id?: string
+          occurred_at?: string
+          outcome?: Database["public"]["Enums"]["touch_outcome"] | null
+        }
+        Update: {
+          body?: string | null
+          by_user_id?: string | null
+          channel?: Database["public"]["Enums"]["touch_channel"]
+          created_at?: string
+          followup_id?: string
+          id?: string
+          occurred_at?: string
+          outcome?: Database["public"]["Enums"]["touch_outcome"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_touches_followup_id_fkey"
+            columns: ["followup_id"]
+            isOneToOne: false
+            referencedRelation: "lead_followups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       link_health_runs: {
         Row: {
           broken: Json
@@ -3531,6 +3626,27 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "user"
+      followup_status:
+        | "new"
+        | "attempting"
+        | "connected"
+        | "no_response"
+        | "not_interested"
+        | "converted"
+        | "do_not_contact"
+      lead_source: "host_lead" | "ig_lead" | "social_lead" | "provider_lead"
+      touch_channel: "sms" | "call" | "email" | "dm" | "note" | "other"
+      touch_outcome:
+        | "sent"
+        | "delivered"
+        | "replied"
+        | "bounced"
+        | "no_answer"
+        | "voicemail"
+        | "interested"
+        | "not_interested"
+        | "meeting_booked"
+        | "converted"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3659,6 +3775,29 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "user"],
+      followup_status: [
+        "new",
+        "attempting",
+        "connected",
+        "no_response",
+        "not_interested",
+        "converted",
+        "do_not_contact",
+      ],
+      lead_source: ["host_lead", "ig_lead", "social_lead", "provider_lead"],
+      touch_channel: ["sms", "call", "email", "dm", "note", "other"],
+      touch_outcome: [
+        "sent",
+        "delivered",
+        "replied",
+        "bounced",
+        "no_answer",
+        "voicemail",
+        "interested",
+        "not_interested",
+        "meeting_booked",
+        "converted",
+      ],
     },
   },
 } as const
