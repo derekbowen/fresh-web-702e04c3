@@ -12,11 +12,16 @@ async function assertAdmin(userId: string) {
 type ChatMsg = { role: "user" | "assistant" | "tool" | "system"; content: string; tool_call_id?: string; tool_calls?: any };
 type Role = "ceo" | "coo" | "cs";
 
-// ---------------- Role detection (auto by email + override) ----------------
-function autoDetectRole(email: string | null | undefined): Role {
+// ---------------- Role detection (auto by email/name + override) ----------------
+function autoDetectRole(email: string | null | undefined, name: string | null | undefined): Role {
   const e = (email || "").toLowerCase();
-  if (e.startsWith("brandon") || e.includes("+brandon")) return "coo";
-  if (e.startsWith("michelle") || e.includes("+michelle")) return "cs";
+  const n = (name || "").toLowerCase();
+  const hay = `${e} ${n}`;
+  // COO: Brandon
+  if (/(^|[^a-z])brandon([^a-z]|$)/.test(hay)) return "coo";
+  // CS: Michelle
+  if (/(^|[^a-z])(michelle|lupo)([^a-z]|$)/.test(hay)) return "cs";
+  // Default: CEO (Mike, Matthew, Derek, anyone else with admin)
   return "ceo";
 }
 
@@ -31,6 +36,75 @@ const ROLE_PRIORITIES: Record<Role, string> = {
   coo: "Prioritize: outreach pipeline (host_leads & ig_leads not yet contacted, stalled SMS sequences, low-quality listings to coach, support backlog). Practical to-dos.",
   cs:  "Prioritize: unanswered inbound SMS, recent feature_requests, host_leads from last 48h that need a personal reply, listing audits emailed but no follow-up.",
 };
+
+// Resolve & persist the user's role. Order:
+//  1. Stored override / admin_set in prnm_coach_user_roles (sticky)
+//  2. Auto-detected from email + display_name + full_name (persisted as 'auto')
+async function resolveRole(userId: string): Promise<{
+  role: Role; source: "auto" | "override" | "admin_set"; email: string | null; name: string | null;
+}> {
+  const sbAny = supabaseAdmin as any;
+  const { data: existing } = await sbAny
+    .from("prnm_coach_user_roles")
+    .select("role, source, detected_email, detected_name")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (existing && (existing.source === "override" || existing.source === "admin_set")) {
+    return { role: existing.role as Role, source: existing.source, email: existing.detected_email, name: existing.detected_name };
+  }
+
+  // Look up email + name
+  let email: string | null = null;
+  let name: string | null = null;
+  try {
+    const { data: u } = await sbAny.auth.admin.getUserById(userId);
+    email = u?.user?.email ?? null;
+    name = (u?.user?.user_metadata?.full_name as string | undefined)
+      ?? (u?.user?.user_metadata?.name as string | undefined)
+      ?? null;
+  } catch {}
+  if (!name) {
+    const { data: prof } = await sbAny
+      .from("profiles").select("display_name, full_name").eq("user_id", userId).maybeSingle();
+    name = prof?.full_name || prof?.display_name || null;
+  }
+
+  const role = autoDetectRole(email, name);
+  // Upsert as auto so we don't re-query auth.users on every turn
+  await sbAny.from("prnm_coach_user_roles").upsert({
+    user_id: userId, role, source: "auto", detected_email: email, detected_name: name,
+  }, { onConflict: "user_id" });
+  return { role, source: "auto", email, name };
+}
+
+export const getCoachRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({}).parse(d ?? {}))
+  .handler(async ({ context }) => {
+    const ctx = context as any;
+    await assertAdmin(ctx.userId);
+    return resolveRole(ctx.userId);
+  });
+
+export const setCoachRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    role: z.enum(["ceo", "coo", "cs"]).nullable(),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const ctx = context as any;
+    await assertAdmin(ctx.userId);
+    const sbAny = supabaseAdmin as any;
+    if (data.role === null) {
+      // Clear override → re-run auto detection on next call
+      await sbAny.from("prnm_coach_user_roles").delete().eq("user_id", ctx.userId);
+      return resolveRole(ctx.userId);
+    }
+    await sbAny.from("prnm_coach_user_roles").upsert({
+      user_id: ctx.userId, role: data.role, source: "override",
+    }, { onConflict: "user_id" });
+    return resolveRole(ctx.userId);
+  });
 
 // ---------------- Tools the agent can call ----------------
 type ToolResult = Record<string, unknown> | { error: string };
