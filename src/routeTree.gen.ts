@@ -88,6 +88,7 @@ import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
 import { Route as AdminPrnmCoachRouteImport } from './routes/admin.prnm-coach'
 import { Route as AdminPrivacyRequestsRouteImport } from './routes/admin.privacy-requests'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
+import { Route as AdminPageHealthRouteImport } from './routes/admin.page-health'
 import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-auditor'
 import { Route as AdminOpportunitiesRouteImport } from './routes/admin.opportunities'
 import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
@@ -567,6 +568,11 @@ const AdminPlanRequestsRoute = AdminPlanRequestsRouteImport.update({
   path: '/plan-requests',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPageHealthRoute = AdminPageHealthRouteImport.update({
+  id: '/page-health',
+  path: '/page-health',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPageAuditorRoute = AdminPageAuditorRouteImport.update({
   id: '/page-auditor',
   path: '/page-auditor',
@@ -990,6 +996,7 @@ export interface FileRoutesByFullPath {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/opportunities': typeof AdminOpportunitiesRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
+  '/admin/page-health': typeof AdminPageHealthRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/prnm-coach': typeof AdminPrnmCoachRoute
@@ -1138,6 +1145,7 @@ export interface FileRoutesByTo {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/opportunities': typeof AdminOpportunitiesRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
+  '/admin/page-health': typeof AdminPageHealthRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/prnm-coach': typeof AdminPrnmCoachRoute
@@ -1287,6 +1295,7 @@ export interface FileRoutesById {
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/opportunities': typeof AdminOpportunitiesRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
+  '/admin/page-health': typeof AdminPageHealthRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
   '/admin/prnm-coach': typeof AdminPrnmCoachRoute
@@ -1437,6 +1446,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/opportunities'
     | '/admin/page-auditor'
+    | '/admin/page-health'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
     | '/admin/prnm-coach'
@@ -1585,6 +1595,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/opportunities'
     | '/admin/page-auditor'
+    | '/admin/page-health'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
     | '/admin/prnm-coach'
@@ -1733,6 +1744,7 @@ export interface FileRouteTypes {
     | '/admin/no-access'
     | '/admin/opportunities'
     | '/admin/page-auditor'
+    | '/admin/page-health'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
     | '/admin/prnm-coach'
@@ -2463,6 +2475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPlanRequestsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/page-health': {
+      id: '/admin/page-health'
+      path: '/page-health'
+      fullPath: '/admin/page-health'
+      preLoaderRoute: typeof AdminPageHealthRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/page-auditor': {
       id: '/admin/page-auditor'
       path: '/page-auditor'
@@ -2981,6 +3000,7 @@ interface AdminRouteChildren {
   AdminNoAccessRoute: typeof AdminNoAccessRoute
   AdminOpportunitiesRoute: typeof AdminOpportunitiesRoute
   AdminPageAuditorRoute: typeof AdminPageAuditorRoute
+  AdminPageHealthRoute: typeof AdminPageHealthRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminPrivacyRequestsRoute: typeof AdminPrivacyRequestsRoute
   AdminPrnmCoachRoute: typeof AdminPrnmCoachRoute
@@ -3031,6 +3051,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminNoAccessRoute: AdminNoAccessRoute,
   AdminOpportunitiesRoute: AdminOpportunitiesRoute,
   AdminPageAuditorRoute: AdminPageAuditorRoute,
+  AdminPageHealthRoute: AdminPageHealthRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminPrivacyRequestsRoute: AdminPrivacyRequestsRoute,
   AdminPrnmCoachRoute: AdminPrnmCoachRoute,
