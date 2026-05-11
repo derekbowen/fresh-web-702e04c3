@@ -59,7 +59,7 @@ function FollowupPerformancePage() {
           </div>
         )}
         {isLoading && <div className="text-sm text-muted-foreground">Loading…</div>}
-        {data && <DashboardBody data={data} />}
+        {data && <DashboardBody data={data} rangeDays={rangeDays} />}
       </div>
     </AdminLayout>
   );
