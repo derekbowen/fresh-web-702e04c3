@@ -203,6 +203,17 @@ function PrnmCoachPage() {
                 )}
               </span>
             )}
+            <button
+              onClick={() => setAgentMode((v) => !v)}
+              className={
+                agentMode
+                  ? "text-xs flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2 py-1.5 font-medium"
+                  : "text-xs flex items-center gap-1 rounded-md border bg-background px-2 py-1.5 text-muted-foreground hover:text-foreground"
+              }
+              title={agentMode ? "Agent mode ON — runs deeper multi-step research (slower, more thorough)" : "Turn on agent mode for deeper multi-step research"}
+            >
+              <Telescope className="h-3 w-3" /> Agent {agentMode ? "ON" : "OFF"}
+            </button>
             <button onClick={reset} className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground">
               <RotateCcw className="h-3 w-3" /> Restart
             </button>
