@@ -1388,6 +1388,78 @@ export type Database = {
         }
         Relationships: []
       }
+      followup_reminder_log: {
+        Row: {
+          channel: string
+          created_at: string
+          due_count: number
+          error: string | null
+          id: string
+          owner_id: string | null
+          recipient: string | null
+          status: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          due_count?: number
+          error?: string | null
+          id?: string
+          owner_id?: string | null
+          recipient?: string | null
+          status: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          due_count?: number
+          error?: string | null
+          id?: string
+          owner_id?: string | null
+          recipient?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      followup_reminder_settings: {
+        Row: {
+          created_at: string
+          email: string | null
+          email_enabled: boolean
+          last_notified_at: string | null
+          min_interval_minutes: number
+          owner_id: string
+          paused: boolean
+          phone_e164: string | null
+          sms_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          email_enabled?: boolean
+          last_notified_at?: string | null
+          min_interval_minutes?: number
+          owner_id: string
+          paused?: boolean
+          phone_e164?: string | null
+          sms_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          email_enabled?: boolean
+          last_notified_at?: string | null
+          min_interval_minutes?: number
+          owner_id?: string
+          paused?: boolean
+          phone_e164?: string | null
+          sms_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gsc_daily_pages: {
         Row: {
           captured_at: string
