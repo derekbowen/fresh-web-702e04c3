@@ -1290,6 +1290,42 @@ export type Database = {
         }
         Relationships: []
       }
+      gsc_daily_pages: {
+        Row: {
+          captured_at: string
+          clicks: number
+          created_at: string
+          ctr: number | null
+          date: string
+          id: string
+          impressions: number
+          position: number | null
+          url_path: string
+        }
+        Insert: {
+          captured_at?: string
+          clicks?: number
+          created_at?: string
+          ctr?: number | null
+          date: string
+          id?: string
+          impressions?: number
+          position?: number | null
+          url_path: string
+        }
+        Update: {
+          captured_at?: string
+          clicks?: number
+          created_at?: string
+          ctr?: number | null
+          date?: string
+          id?: string
+          impressions?: number
+          position?: number | null
+          url_path?: string
+        }
+        Relationships: []
+      }
       gsc_query_data: {
         Row: {
           captured_at: string
@@ -1323,6 +1359,45 @@ export type Database = {
           position?: number | null
           query?: string
           url_path?: string
+        }
+        Relationships: []
+      }
+      gsc_sync_runs: {
+        Row: {
+          end_date: string | null
+          error: string | null
+          finished_at: string | null
+          id: string
+          pages_synced: number
+          queries_synced: number
+          start_date: string | null
+          started_at: string
+          status: string
+          trigger_source: string
+        }
+        Insert: {
+          end_date?: string | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          pages_synced?: number
+          queries_synced?: number
+          start_date?: string | null
+          started_at?: string
+          status?: string
+          trigger_source?: string
+        }
+        Update: {
+          end_date?: string | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          pages_synced?: number
+          queries_synced?: number
+          start_date?: string | null
+          started_at?: string
+          status?: string
+          trigger_source?: string
         }
         Relationships: []
       }
