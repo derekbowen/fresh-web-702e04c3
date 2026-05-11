@@ -75,6 +75,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/auto-refresh", label: "Auto-refresh queue 🔄", icon: Sparkles },
       { to: "/admin/link-checker", label: "Link checker", icon: LinkIcon },
       { to: "/admin/link-audit", label: "Link audit dashboard", icon: LinkIcon },
+      { to: "/admin/link-auto-repair", label: "Link auto-repair 🪄", icon: Wand2 },
       { to: "/admin/missing-pages", label: "Missing pages (404s)", icon: AlertTriangle },
       { to: "/admin/indexing", label: "Sitemap & indexing", icon: Search },
       { to: "/admin/gsc-import", label: "GSC import", icon: Search },
