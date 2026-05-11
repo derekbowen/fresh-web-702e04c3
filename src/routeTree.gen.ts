@@ -146,6 +146,7 @@ import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
+import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/hooks/gsc-sync'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiPublicHooksBlogAutogenRouteImport } from './routes/api/public/hooks/blog-autogen'
@@ -868,6 +869,11 @@ const ApiPublicHooksIgLeadHunterRoute =
     path: '/api/public/hooks/ig-lead-hunter',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksGscSyncRoute = ApiPublicHooksGscSyncRouteImport.update({
+  id: '/api/public/hooks/gsc-sync',
+  path: '/api/public/hooks/gsc-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksDailySeoDigestRoute =
   ApiPublicHooksDailySeoDigestRouteImport.update({
     id: '/api/public/hooks/daily-seo-digest',
@@ -1045,6 +1051,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1192,6 +1199,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1340,6 +1348,7 @@ export interface FileRoutesById {
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1489,6 +1498,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
@@ -1636,6 +1646,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
@@ -1783,6 +1794,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
@@ -1880,6 +1892,7 @@ export interface RootRouteChildren {
   ApiPublicHooksBlogAutogenRoute: typeof ApiPublicHooksBlogAutogenRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
+  ApiPublicHooksGscSyncRoute: typeof ApiPublicHooksGscSyncRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
@@ -2856,6 +2869,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksIgLeadHunterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/gsc-sync': {
+      id: '/api/public/hooks/gsc-sync'
+      path: '/api/public/hooks/gsc-sync'
+      fullPath: '/api/public/hooks/gsc-sync'
+      preLoaderRoute: typeof ApiPublicHooksGscSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-seo-digest': {
       id: '/api/public/hooks/daily-seo-digest'
       path: '/api/public/hooks/daily-seo-digest'
@@ -3172,6 +3192,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
+  ApiPublicHooksGscSyncRoute: ApiPublicHooksGscSyncRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
@@ -3189,3 +3210,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
