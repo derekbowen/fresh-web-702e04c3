@@ -21,12 +21,12 @@ function autoDetectRole(email: string | null | undefined, name: string | null | 
   if (/(^|[^a-z])brandon([^a-z]|$)/.test(hay)) return "coo";
   // CS: Michelle
   if (/(^|[^a-z])(michelle|lupo)([^a-z]|$)/.test(hay)) return "cs";
-  // Default: CEO (Mike, Matthew, Derek, anyone else with admin)
+  // Default: CEO (Derek, anyone else with admin)
   return "ceo";
 }
 
 const ROLE_LABELS: Record<Role, string> = {
-  ceo: "Mike (CEO) — strategy, growth, revenue, SEO",
+  ceo: "Derek (CEO) — strategy, growth, revenue, SEO",
   coo: "Brandon (COO) — outreach, customer success, operations",
   cs:  "Michelle (CS) — replies, follow-ups, host onboarding",
 };

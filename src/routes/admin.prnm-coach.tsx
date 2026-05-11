@@ -11,7 +11,7 @@ type Role = "ceo" | "coo" | "cs";
 
 const ROLE_OPTIONS: Array<{ value: Role | "auto"; label: string; hint: string }> = [
   { value: "auto", label: "Auto-detect", hint: "By email" },
-  { value: "ceo",  label: "Mike (CEO)",     hint: "Growth, revenue, SEO" },
+  { value: "ceo",  label: "Derek (CEO)",    hint: "Growth, revenue, SEO" },
   { value: "coo",  label: "Brandon (COO)",  hint: "Outreach, ops" },
   { value: "cs",   label: "Michelle (CS)",  hint: "Replies, follow-ups" },
 ];
