@@ -97,15 +97,122 @@ function TechDocsPage() {
           {filteredGroups.length > 0 && (
             <nav className="mt-2 flex flex-wrap gap-2 text-xs">
               <a
-                href="#flows"
+                href="#toc"
                 className="rounded-full bg-primary/15 px-2.5 py-1 font-semibold text-primary hover:bg-primary/25"
+              >
+                Table of contents
+              </a>
+              <a
+                href="#flows"
+                className="rounded-full bg-muted px-2.5 py-1 text-foreground hover:bg-muted/70"
               >
                 Diagrams & flows
               </a>
               {filteredGroups.map((g) => (
                 <a
                   key={g.label}
-                  href={`#group-${g.label.replace(/\s+/g, "-").toLowerCase()}`}
+                  href={`#${groupId(g.label)}`}
+                  className="rounded-full bg-muted px-2.5 py-1 text-foreground hover:bg-muted/70"
+                >
+                  {g.label} ({g.items.length})
+                </a>
+              ))}
+            </nav>
+          )}
+        </div>
+
+        {filteredGroups.length === 0 && filteredCross.length === 0 && (
+          <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+            No matches for &ldquo;{q}&rdquo;.
+          </div>
+        )}
+
+        <section
+          id="toc"
+          className="rounded-lg border border-border bg-card p-5 shadow-sm"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Table of contents</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Jump to any admin tool, diagram, or cross-cutting concern.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setTocOpen((v) => !v)}
+              className="rounded-md border border-border px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-muted"
+            >
+              {tocOpen ? "Collapse" : "Expand"}
+            </button>
+          </div>
+
+          {tocOpen && (
+            <div className="mt-4 grid gap-5 md:grid-cols-2">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  Diagrams & flows
+                </h3>
+                <ul className="mt-2 space-y-1 text-sm">
+                  {ADMIN_FLOWS.map((f) => (
+                    <li key={f.id}>
+                      <a
+                        href={`#${flowId(f.id)}`}
+                        className="text-primary hover:underline"
+                      >
+                        {f.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {filteredCross.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                    Cross-cutting concerns
+                  </h3>
+                  <ul className="mt-2 space-y-1 text-sm">
+                    {filteredCross.map((c) => (
+                      <li key={c.title}>
+                        <a
+                          href={`#${crossId(c.title)}`}
+                          className="text-primary hover:underline"
+                        >
+                          {c.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {filteredGroups.map((g) => (
+                <div key={g.label}>
+                  <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                    <a href={`#${groupId(g.label)}`} className="hover:underline">
+                      {g.label}
+                    </a>{" "}
+                    <span className="text-muted-foreground/70">({g.items.length})</span>
+                  </h3>
+                  <ul className="mt-2 space-y-1 text-sm">
+                    {g.items.map((it) => (
+                      <li key={it.route} className="flex items-baseline gap-2">
+                        <a
+                          href={`#${toolId(it.route)}`}
+                          className="text-primary hover:underline"
+                        >
+                          {it.label}
+                        </a>
+                        <code className="text-xs text-muted-foreground">{it.route}</code>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
                   className="rounded-full bg-muted px-2.5 py-1 text-foreground hover:bg-muted/70"
                 >
                   {g.label} ({g.items.length})
