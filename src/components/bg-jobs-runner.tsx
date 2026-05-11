@@ -124,8 +124,15 @@ export function BgJobsRunner() {
         timer = setTimeout(tick, 3000);
         return;
       }
+      const UUID_RE = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
       for (const job of jobs) {
         if (stopped) return;
+        if (!UUID_RE.test(job.id)) {
+          // Stale local job from older code paths — its id isn't a server batch UUID.
+          // Mark cancelled so the user can dismiss it instead of looping on a 400.
+          upsertJob({ ...job, status: "cancelled", finishedAt: Date.now(), error: "Stale local job (not a server batch)" });
+          continue;
+        }
         try {
           // Pump up to 10 queued items, then re-check status.
           await processSeoFixQueue({ data: { batchId: job.id, max: 10 } });
