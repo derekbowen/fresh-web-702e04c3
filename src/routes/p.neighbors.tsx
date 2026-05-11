@@ -201,7 +201,6 @@ function NeighborsPage() {
       </main>
 
       <SiteFooter />
-      <script type="application/ld+json" dangerouslySetInnerHTML={ldJsonScript(ld)} />
     </div>
   );
 }
