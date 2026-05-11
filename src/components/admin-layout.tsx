@@ -40,7 +40,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     label: "Overview",
     items: [
       { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { to: "/admin/seo-coach", label: "SEO Coach 🤖", icon: Sparkles },
+      { to: "/admin/prnm-coach", label: "PRNM Coach 🤖", icon: Sparkles },
       { to: "/admin/tech-docs", label: "Technical docs", icon: FileText },
     ],
   },
