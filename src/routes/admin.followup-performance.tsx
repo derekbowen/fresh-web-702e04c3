@@ -1,5 +1,6 @@
 import * as React from "react";
-import { createFileRoute, useServerFn } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin-layout";
 import { getFollowupDashboard, type DashboardData } from "@/lib/followup-analytics.functions";
