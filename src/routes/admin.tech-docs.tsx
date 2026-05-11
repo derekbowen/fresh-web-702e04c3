@@ -60,6 +60,15 @@ function TechDocsPage() {
 
   const matchCount = filteredGroups.reduce((n, g) => n + g.items.length, 0);
 
+  const slug = (s: string) =>
+    s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const toolId = (route: string) => `tool-${slug(route)}`;
+  const groupId = (label: string) => `group-${slug(label)}`;
+  const crossId = (title: string) => `cross-${slug(title)}`;
+  const flowId = (id: string) => `flow-${id}`;
+
+  const [tocOpen, setTocOpen] = React.useState(true);
+
   return (
     <AdminLayout>
       <div className="mx-auto max-w-5xl space-y-6 p-6">
