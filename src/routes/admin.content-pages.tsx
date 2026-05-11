@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { AdminLayout } from "@/components/admin-layout";
+import { upsertJob, useBgJobs } from "@/lib/bg-jobs";
 import {
   listContentPages,
   bulkUpdateContentPages,
