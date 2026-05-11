@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Loader2, X, CheckCircle2, AlertCircle } from "lucide-react";
-import { processSeoFixQueue, getSeoJobStatus, cancelQueuedSeoJobs } from "@/server/admin-tools.functions";
+import { processSeoFixQueue, getSeoJobStatus, cancelQueuedSeoJobs, listSeoBatches } from "@/server/admin-tools.functions";
 import { loadJobs, upsertJob, removeJob, useBgJobs, type BgJob } from "@/lib/bg-jobs";
 
 // Single tab leader election: only one tab pumps the queue at a time.
