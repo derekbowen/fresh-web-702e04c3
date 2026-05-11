@@ -71,6 +71,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/competitors", label: "Competitor tracker", icon: Swords },
       { to: "/admin/internal-links", label: "Internal link recommender", icon: Network },
       { to: "/admin/seo-health", label: "SEO health", icon: Activity },
+      { to: "/admin/auto-refresh", label: "Auto-refresh queue 🔄", icon: Sparkles },
       { to: "/admin/link-checker", label: "Link checker", icon: LinkIcon },
       { to: "/admin/link-audit", label: "Link audit dashboard", icon: LinkIcon },
       { to: "/admin/missing-pages", label: "Missing pages (404s)", icon: AlertTriangle },

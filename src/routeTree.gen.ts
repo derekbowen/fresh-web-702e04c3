@@ -122,6 +122,7 @@ import { Route as AdminClaimsRouteImport } from './routes/admin.claims'
 import { Route as AdminCitiesHeroesReportRouteImport } from './routes/admin.cities-heroes-report'
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
+import { Route as AdminAutoRefreshRouteImport } from './routes/admin.auto-refresh'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
 import { Route as PEsSlugRouteImport } from './routes/p.es.$slug'
@@ -739,6 +740,11 @@ const AdminBlogRoute = AdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAutoRefreshRoute = AdminAutoRefreshRouteImport.update({
+  id: '/auto-refresh',
+  path: '/auto-refresh',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AccountLearningRoute = AccountLearningRouteImport.update({
   id: '/account/learning',
   path: '/account/learning',
@@ -963,6 +969,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/cities-heroes-report': typeof AdminCitiesHeroesReportRoute
@@ -1112,6 +1119,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/cities-heroes-report': typeof AdminCitiesHeroesReportRoute
@@ -1262,6 +1270,7 @@ export interface FileRoutesById {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
   '/admin/cities-heroes-report': typeof AdminCitiesHeroesReportRoute
@@ -1413,6 +1422,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/cities-heroes-report'
@@ -1562,6 +1572,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/cities-heroes-report'
@@ -1711,6 +1722,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
     | '/admin/cities-heroes-report'
@@ -2713,6 +2725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlogRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/auto-refresh': {
+      id: '/admin/auto-refresh'
+      path: '/auto-refresh'
+      fullPath: '/admin/auto-refresh'
+      preLoaderRoute: typeof AdminAutoRefreshRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/account/learning': {
       id: '/account/learning'
       path: '/account/learning'
@@ -2967,6 +2986,7 @@ const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminAutoRefreshRoute: typeof AdminAutoRefreshRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
   AdminCitiesHeroesReportRoute: typeof AdminCitiesHeroesReportRoute
@@ -3018,6 +3038,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAutoRefreshRoute: AdminAutoRefreshRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
   AdminCitiesHeroesReportRoute: AdminCitiesHeroesReportRoute,

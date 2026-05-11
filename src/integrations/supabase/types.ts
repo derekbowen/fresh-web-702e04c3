@@ -2710,6 +2710,63 @@ export type Database = {
         }
         Relationships: []
       }
+      refresh_jobs: {
+        Row: {
+          after_seo_description: string | null
+          after_seo_title: string | null
+          after_word_count: number | null
+          before_seo_description: string | null
+          before_seo_title: string | null
+          before_word_count: number | null
+          completed_at: string | null
+          created_at: string
+          diff_summary: string | null
+          error_message: string | null
+          id: string
+          model: string | null
+          reason: string | null
+          status: string
+          triggered_by: string | null
+          url_path: string
+        }
+        Insert: {
+          after_seo_description?: string | null
+          after_seo_title?: string | null
+          after_word_count?: number | null
+          before_seo_description?: string | null
+          before_seo_title?: string | null
+          before_word_count?: number | null
+          completed_at?: string | null
+          created_at?: string
+          diff_summary?: string | null
+          error_message?: string | null
+          id?: string
+          model?: string | null
+          reason?: string | null
+          status?: string
+          triggered_by?: string | null
+          url_path: string
+        }
+        Update: {
+          after_seo_description?: string | null
+          after_seo_title?: string | null
+          after_word_count?: number | null
+          before_seo_description?: string | null
+          before_seo_title?: string | null
+          before_word_count?: number | null
+          completed_at?: string | null
+          created_at?: string
+          diff_summary?: string | null
+          error_message?: string | null
+          id?: string
+          model?: string | null
+          reason?: string | null
+          status?: string
+          triggered_by?: string | null
+          url_path?: string
+        }
+        Relationships: []
+      }
       seo_fix_jobs: {
         Row: {
           attempts: number
