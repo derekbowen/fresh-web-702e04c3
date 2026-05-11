@@ -97,7 +97,35 @@ export const updateLeadStatus = createServerFn({ method: "POST" })
 export type ContentPageRow = {
   id: string; url_path: string | null; title: string | null;
   template_type: string | null; status: string; words: number; updated_at: string;
+  seo_title_len: number; seo_desc_len: number;
+  has_keyword: boolean; has_hero: boolean; internal_links: number;
+  score: number; // 0-100 SEO health
 };
+
+function computePageScore(r: any) {
+  const body: string = r.body_markdown || "";
+  const words = body.split(/\s+/).filter(Boolean).length;
+  const titleLen = (r.seo_title || "").length;
+  const descLen = (r.seo_description || "").length;
+  const fk = String(r.focus_keyword || "").trim().toLowerCase();
+  const internal = (body.match(/\]\(\/[^)]+\)/g) || []).length;
+  const hasH1 = !!(r.title && String(r.title).trim());
+  const hasHero = !!(r.hero_image_url && String(r.hero_image_url).trim());
+  let s = 0;
+  if (titleLen >= 50 && titleLen <= 60) s += 15; else if (titleLen >= 40 && titleLen <= 65) s += 8;
+  if (descLen >= 140 && descLen <= 155) s += 15; else if (descLen >= 120 && descLen <= 165) s += 8;
+  if (hasH1) s += 10;
+  if (words >= 800) s += 20; else if (words >= 400) s += 10;
+  if (internal >= 3) s += 10; else if (internal >= 1) s += 5;
+  if (hasHero) s += 5;
+  if (fk) {
+    s += 5;
+    if ((r.seo_title || "").toLowerCase().includes(fk)) s += 7;
+    if ((r.seo_description || "").toLowerCase().includes(fk)) s += 7;
+    if (body.slice(0, 800).toLowerCase().includes(fk)) s += 6;
+  }
+  return { words, titleLen, descLen, internal, hasHero, hasFk: !!fk, score: Math.min(100, s) };
+}
 
 export const listContentPages = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -112,17 +140,29 @@ export const listContentPages = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<{ rows: ContentPageRow[]; total: number }> => {
     await assertAdmin((context as any).userId);
-    let base: any = (supabaseAdmin as any).from("content_pages").select("id, url_path, title, template_type, status, body_markdown, updated_at", { count: "exact" }).like("url_path", "/p/%");
+    let base: any = (supabaseAdmin as any)
+      .from("content_pages")
+      .select(
+        "id, url_path, title, template_type, status, body_markdown, updated_at, seo_title, seo_description, focus_keyword, hero_image_url",
+        { count: "exact" },
+      )
+      .like("url_path", "/p/%");
     if (data.status !== "all") base = base.eq("status", data.status);
     if (data.template) base = base.eq("template_type", data.template);
     if (data.q) base = base.or(`url_path.ilike.%${data.q}%,title.ilike.%${data.q}%`);
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
     const { data: rows, count } = await base.order("updated_at", { ascending: false }).range(from, to);
-    const mapped: ContentPageRow[] = (rows || []).map((r: any) => ({
-      id: r.id, url_path: r.url_path, title: r.title, template_type: r.template_type,
-      status: r.status, words: (r.body_markdown || "").split(/\s+/).filter(Boolean).length, updated_at: r.updated_at,
-    }));
+    const mapped: ContentPageRow[] = (rows || []).map((r: any) => {
+      const m = computePageScore(r);
+      return {
+        id: r.id, url_path: r.url_path, title: r.title, template_type: r.template_type,
+        status: r.status, words: m.words, updated_at: r.updated_at,
+        seo_title_len: m.titleLen, seo_desc_len: m.descLen,
+        has_keyword: m.hasFk, has_hero: m.hasHero, internal_links: m.internal,
+        score: m.score,
+      };
+    });
     return { rows: mapped, total: count || 0 };
   });
 
