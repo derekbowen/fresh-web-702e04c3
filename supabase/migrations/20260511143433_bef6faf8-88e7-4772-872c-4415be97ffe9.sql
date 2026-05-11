@@ -1,0 +1,1 @@
+revoke execute on function public.auto_resolve_404_for_page() from public, anon, authenticated;
