@@ -1,8 +1,11 @@
 import * as React from "react";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { adminImportGscRows } from "@/server/directory.functions";
+import { adminGetGscSyncOverview, adminRunGscSync } from "@/lib/gsc-sync.functions";
 import { AdminLayout } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/gsc-import")({
@@ -20,11 +23,23 @@ export const Route = createFileRoute("/admin/gsc-import")({
 type Row = { slug: string; impressions: number; clicks: number; position: number | null; kind: "provider" | "page" };
 
 function GscImport() {
+  const getOverview = useServerFn(adminGetGscSyncOverview);
+  const runSync = useServerFn(adminRunGscSync);
   const [csv, setCsv] = React.useState("");
   const [parsed, setParsed] = React.useState<Row[]>([]);
   const [busy, setBusy] = React.useState(false);
+  const [syncing, setSyncing] = React.useState(false);
   const [result, setResult] = React.useState<{ updated: number; total: number } | null>(null);
   const [fileName, setFileName] = React.useState<string | null>(null);
+  const [overview, setOverview] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    getOverview()
+      .then((data) => { if (!cancelled) setOverview(data); })
+      .catch(() => { if (!cancelled) setOverview(null); });
+    return () => { cancelled = true; };
+  }, [getOverview]);
 
   async function handleFiles(files: FileList | null) {
     if (!files || !files.length) return;
@@ -96,19 +111,71 @@ function GscImport() {
     } finally { setBusy(false); }
   }
 
+  async function syncNow() {
+    setSyncing(true);
+    try {
+      const r = await runSync({ data: { days: 3, rowLimit: 25000 } });
+      if (!r.ok) {
+        toast.error(r.error || "Search Console sync failed");
+      } else {
+        toast.success(`Synced ${r.pagesSynced} page rows and ${r.queriesSynced} query rows`);
+      }
+      setOverview(await getOverview());
+    } catch (e: any) {
+      toast.error(e?.message || "Search Console sync failed");
+    } finally { setSyncing(false); }
+  }
+
   return (
     <AdminLayout>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Import Google Search Console</h1>
+            <h1 className="text-3xl font-bold">Google Search Console sync</h1>
             <p className="text-sm text-muted-foreground">
-              Export from GSC: Performance → Pages → filter URL contains <code className="rounded bg-secondary px-1">/providers/</code> → Export → CSV. Paste below.
+              Automatically pull clicks, impressions, CTR, and average position for poolrentalnearme.com.
             </p>
           </div>
           <Link to="/admin/directory" className="text-sm text-primary hover:underline">← Directory</Link>
         </div>
 
         <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">Automatic sync</h2>
+              <p className="text-sm text-muted-foreground">
+                Runs nightly and can be started manually here. Last run: {overview?.latestRun?.started_at ? new Date(overview.latestRun.started_at).toLocaleString() : "never"}.
+              </p>
+              {overview?.latestRun?.error && <p className="mt-2 text-sm text-red-600">{overview.latestRun.error}</p>}
+            </div>
+            <button onClick={syncNow} disabled={syncing}
+              className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+              {syncing ? "Syncing…" : "Sync now"}
+            </button>
+          </div>
+          <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+            <div className="rounded-lg border border-border bg-background p-3">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">Status</div>
+              <div className="mt-1 font-semibold">{overview?.latestRun?.status ?? "Not synced"}</div>
+            </div>
+            <div className="rounded-lg border border-border bg-background p-3">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">Page rows</div>
+              <div className="mt-1 font-semibold">{(overview?.dailyRows ?? 0).toLocaleString()}</div>
+            </div>
+            <div className="rounded-lg border border-border bg-background p-3">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">Query rows</div>
+              <div className="mt-1 font-semibold">{(overview?.queryRows ?? 0).toLocaleString()}</div>
+            </div>
+          </div>
+          {!overview?.configured && (
+            <p className="mt-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3 text-sm">
+              Add the Search Console service account JSON secret before sync can run.
+            </p>
+          )}
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <h2 className="text-lg font-semibold">Manual CSV fallback</h2>
+          <p className="mb-4 text-sm text-muted-foreground">Use this only if the automatic sync needs a one-off backfill.</p>
           <label className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border p-8 text-center hover:bg-secondary/40 cursor-pointer">
             <input
               type="file"
