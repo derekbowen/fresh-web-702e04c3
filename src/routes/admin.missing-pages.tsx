@@ -36,20 +36,21 @@ function AdminMissingPages() {
   const [rows, setRows] = React.useState<Content404Row[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [unresolvedOnly, setUnresolvedOnly] = React.useState(true);
+  const [pPathsOnly, setPPathsOnly] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   const load = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await list404s({ data: { unresolvedOnly, limit: 200 } });
+      const res = await list404s({ data: { unresolvedOnly, pPathsOnly, limit: 200 } });
       setRows(res.rows);
     } catch (e: any) {
       setError(e?.message ?? "Failed to load");
     } finally {
       setLoading(false);
     }
-  }, [unresolvedOnly]);
+  }, [unresolvedOnly, pPathsOnly]);
 
   React.useEffect(() => {
     void load();
@@ -187,6 +188,14 @@ function AdminMissingPages() {
                 onChange={(e) => setUnresolvedOnly(e.target.checked)}
               />
               Unresolved only
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={pPathsOnly}
+                onChange={(e) => setPPathsOnly(e.target.checked)}
+              />
+              /p/* only (buildable)
             </label>
             <button
               onClick={load}
