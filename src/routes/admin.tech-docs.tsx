@@ -310,7 +310,8 @@ function TechDocsPage() {
               {filteredCross.map((c) => (
                 <li
                   key={c.title}
-                  className="rounded-lg border border-border bg-card p-4 shadow-sm"
+                  id={crossId(c.title)}
+                  className="scroll-mt-32 rounded-lg border border-border bg-card p-4 shadow-sm"
                 >
                   <h3 className="text-base font-semibold text-foreground">
                     {highlight(c.title, q)}
