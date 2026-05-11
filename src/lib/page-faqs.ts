@@ -235,6 +235,16 @@ function parseEventGuideSlug(slug: string): { eventLabel: string; citySlug: stri
  * Returns FAQs for a content page, or [] if the template type doesn't get FAQs.
  */
 export function faqsForContentPage(page: ContentPage): FaqItem[] {
+  // Stored per-page FAQs (AI generator) take precedence over template defaults.
+  const stored = (page as { faq_items?: Array<{ question?: unknown; answer?: unknown }> | null }).faq_items;
+  if (Array.isArray(stored) && stored.length > 0) {
+    const cleaned = stored
+      .filter((f): f is { question: string; answer: string } =>
+        !!f && typeof f.question === "string" && typeof f.answer === "string" &&
+        f.question.trim() !== "" && f.answer.trim() !== "")
+      .map((f) => ({ question: f.question, answer: f.answer }));
+    if (cleaned.length > 0) return cleaned;
+  }
   const t = page.template_type;
   if (t === "host_acq_city" || t === "spanish_host_acq") {
     const citySlug = cityForContentPage(t, page.slug);
