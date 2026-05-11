@@ -2065,6 +2065,63 @@ export type Database = {
         }
         Relationships: []
       }
+      prnm_coach_opportunities: {
+        Row: {
+          action_label: string | null
+          action_route: string | null
+          batch_id: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          dismissed_at: string | null
+          effort: string | null
+          evidence: Json | null
+          generated_by: string | null
+          id: string
+          impact: string | null
+          role: string
+          title: string
+          updated_at: string
+          why: string | null
+        }
+        Insert: {
+          action_label?: string | null
+          action_route?: string | null
+          batch_id?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          dismissed_at?: string | null
+          effort?: string | null
+          evidence?: Json | null
+          generated_by?: string | null
+          id?: string
+          impact?: string | null
+          role: string
+          title: string
+          updated_at?: string
+          why?: string | null
+        }
+        Update: {
+          action_label?: string | null
+          action_route?: string | null
+          batch_id?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          dismissed_at?: string | null
+          effort?: string | null
+          evidence?: Json | null
+          generated_by?: string | null
+          id?: string
+          impact?: string | null
+          role?: string
+          title?: string
+          updated_at?: string
+          why?: string | null
+        }
+        Relationships: []
+      }
       prnm_coach_user_roles: {
         Row: {
           created_at: string
