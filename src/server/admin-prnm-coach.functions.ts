@@ -519,6 +519,7 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
       })).min(1).max(40),
       completedRoutes: z.array(z.string().max(120)).max(40).optional(),
       roleOverride: z.enum(["ceo", "coo", "cs"]).optional(),
+      agentMode: z.boolean().optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }): Promise<{ ok: true; reply: string; role: Role; toolsUsed: string[] } | { ok: false; error: string }> => {
