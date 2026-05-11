@@ -62,18 +62,24 @@ const HOST_RULES = [
 ];
 
 export const Route = createFileRoute("/p/neighbors")({
-  head: () => ({
-    meta: buildMeta({ title: TITLE, description: DESCRIPTION, path: PATH, image: `${SITE_URL}${heroImage}` }),
-  }),
+  head: () => {
+    const meta = buildMeta({ title: TITLE, description: DESCRIPTION, path: PATH, type: "article" });
+    return {
+      ...meta,
+      scripts: [
+        ldJsonScript(
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Neighbors", path: PATH },
+          ]),
+        ),
+      ],
+    };
+  },
   component: NeighborsPage,
 });
 
 function NeighborsPage() {
-  const ld = breadcrumbJsonLd([
-    { name: "Home", url: `${SITE_URL}/` },
-    { name: "Neighbors", url: `${SITE_URL}${PATH}` },
-  ]);
-
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
