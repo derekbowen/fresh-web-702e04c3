@@ -6,6 +6,8 @@ import {
   ADMIN_DOC_CROSS_CUTTING,
   type AdminDoc,
 } from "@/lib/admin-tech-docs";
+import { ADMIN_FLOWS } from "@/lib/admin-tech-flows";
+import { Mermaid } from "@/components/mermaid";
 
 export const Route = createFileRoute("/admin/tech-docs")({
   head: () => ({
@@ -85,6 +87,12 @@ function TechDocsPage() {
           </div>
           {filteredGroups.length > 0 && (
             <nav className="mt-2 flex flex-wrap gap-2 text-xs">
+              <a
+                href="#flows"
+                className="rounded-full bg-primary/15 px-2.5 py-1 font-semibold text-primary hover:bg-primary/25"
+              >
+                Diagrams & flows
+              </a>
               {filteredGroups.map((g) => (
                 <a
                   key={g.label}
@@ -103,6 +111,49 @@ function TechDocsPage() {
             No matches for &ldquo;{q}&rdquo;.
           </div>
         )}
+
+        <section id="flows" className="space-y-6">
+          <div>
+            <h2 className="border-b border-border pb-1 text-xl font-semibold text-foreground">
+              Diagrams & data flows
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Step-by-step walk-throughs of the moving parts behind scraping, status changes,
+              publishing, and redirects.
+            </p>
+          </div>
+
+          {ADMIN_FLOWS.filter((f) => {
+            if (!q) return true;
+            const hay = `${f.title} ${f.blurb} ${f.steps.map((s) => s.name + " " + s.detail).join(" ")}`.toLowerCase();
+            return hay.includes(q.toLowerCase());
+          }).map((flow) => (
+            <article
+              key={flow.id}
+              id={`flow-${flow.id}`}
+              className="space-y-3 rounded-lg border border-border bg-card p-5 shadow-sm"
+            >
+              <header>
+                <h3 className="text-lg font-semibold text-foreground">{flow.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{flow.blurb}</p>
+              </header>
+              <Mermaid chart={flow.diagram} />
+              <ol className="space-y-2 text-sm">
+                {flow.steps.map((s, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <div className="font-semibold text-foreground">{s.name}</div>
+                      <div className="text-muted-foreground">{s.detail}</div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </article>
+          ))}
+        </section>
 
         {filteredGroups.map((group) => (
           <section
