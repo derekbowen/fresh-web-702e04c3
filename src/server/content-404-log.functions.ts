@@ -210,24 +210,11 @@ export const createPageFor404 = createServerFn({ method: "POST" })
     // Check it's not already there
     const { data: existing } = await (supabaseAdmin as any)
       .from("content_pages").select("id, status").eq("url_path", row.url_path).maybeSingle();
-    if (existing) {
-      if (existing.status === "published") {
-        await (supabaseAdmin as any).from("content_404_log")
-          .update({ resolved_at: new Date().toISOString(), resolution_notes: "page already exists" })
-          .eq("id", data.id);
-        return { ok: true, alreadyExists: true };
-      }
-      const { error: upErr } = await (supabaseAdmin as any).from("content_pages").update({
-        status: "published", in_sitemap: true,
-        title: gen.title, seo_title: gen.seo_title, seo_description: gen.seo_description,
-        body_markdown: gen.body_markdown, template_type: "resource",
-        updated_at: new Date().toISOString(),
-      }).eq("id", existing.id);
-      if (upErr) return { ok: false, error: upErr.message };
+    if (existing?.status === "published") {
       await (supabaseAdmin as any).from("content_404_log")
-        .update({ resolved_at: new Date().toISOString(), resolution_notes: "existing row published via AI" })
+        .update({ resolved_at: new Date().toISOString(), resolution_notes: "page already exists" })
         .eq("id", data.id);
-      return { ok: true, slug, words: (gen.body_markdown || "").split(/\s+/).length };
+      return { ok: true, alreadyExists: true };
     }
 
     const apiKey = process.env.LOVABLE_API_KEY;
@@ -261,6 +248,20 @@ export const createPageFor404 = createServerFn({ method: "POST" })
     const tc = json?.choices?.[0]?.message?.tool_calls?.[0];
     if (!tc?.function?.arguments) return { ok: false, error: "AI response missing tool call" };
     const gen = JSON.parse(tc.function.arguments);
+
+    if (existing) {
+      const { error: upErr } = await (supabaseAdmin as any).from("content_pages").update({
+        status: "published", in_sitemap: true,
+        title: gen.title, seo_title: gen.seo_title, seo_description: gen.seo_description,
+        body_markdown: gen.body_markdown, template_type: "resource",
+        updated_at: new Date().toISOString(),
+      }).eq("id", existing.id);
+      if (upErr) return { ok: false, error: upErr.message };
+      await (supabaseAdmin as any).from("content_404_log")
+        .update({ resolved_at: new Date().toISOString(), resolution_notes: "existing row published via AI" })
+        .eq("id", data.id);
+      return { ok: true, slug, words: (gen.body_markdown || "").split(/\s+/).length };
+    }
 
     const { error: insErr } = await (supabaseAdmin as any).from("content_pages").insert({
       url_path: row.url_path, slug, status: "published", in_sitemap: true,
