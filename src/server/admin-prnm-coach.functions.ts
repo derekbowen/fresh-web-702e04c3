@@ -167,6 +167,14 @@ const TOOLS = [
   {
     type: "function",
     function: {
+      name: "query_revenue_proxies",
+      description: "Revenue & marketplace value signals: total inventory $ value (sum of listing prices), avg/median price by state, top-priced listings, AND supply/demand gaps — cities with host_leads (demand to host) or ig_leads but few/no published listings.",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "query_pages",
       description: "Search content_pages for a specific issue: low word count, missing seo_description, missing focus_keyword, or by template_type.",
       parameters: {
