@@ -313,19 +313,15 @@ function BulkEditor() {
           <button onClick={() => setSelected(new Set())} className="rounded border border-border bg-background px-2 py-1 text-xs hover:bg-muted">Clear</button>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            {fixProgress ? (
-              <>
-                <span className="text-xs tabular-nums">{fixProgress.mode}: {fixProgress.done + fixProgress.failed}/{fixProgress.total} ({fixProgress.failed} failed)</span>
-                <button onClick={() => setCancelRequested(true)} className="rounded border border-border bg-background px-2 py-1 text-xs">Cancel</button>
-              </>
-            ) : (
-              <>
-                <BulkAiMenu disabled={busy} onPick={bulkAi} count={selected.size} />
-                <button disabled={busy} onClick={() => bulk("publish")} className="rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Publish</button>
-                <button disabled={busy} onClick={() => bulk("unpublish")} className="rounded bg-yellow-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Unpublish</button>
-                <button disabled={busy} onClick={() => bulk("delete")} className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Delete</button>
-              </>
+            {activeBgJob && (
+              <span className="text-xs tabular-nums text-muted-foreground">
+                Background: {activeBgJob.done + activeBgJob.failed}/{activeBgJob.total}
+              </span>
             )}
+            <BulkAiMenu disabled={busy} onPick={bulkAi} count={selected.size} />
+            <button disabled={busy} onClick={() => bulk("publish")} className="rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Publish</button>
+            <button disabled={busy} onClick={() => bulk("unpublish")} className="rounded bg-yellow-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Unpublish</button>
+            <button disabled={busy} onClick={() => bulk("delete")} className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Delete</button>
           </div>
         </div>
       )}
