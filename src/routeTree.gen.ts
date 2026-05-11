@@ -157,6 +157,7 @@ import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/h
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiPublicHooksBlogAutogenRouteImport } from './routes/api/public/hooks/blog-autogen'
+import { Route as ApiPublicHooksAutoOutreachWorkerRouteImport } from './routes/api/public/hooks/auto-outreach-worker'
 import { Route as ApiPublicHooksAliasBackfillRouteImport } from './routes/api/public/hooks/alias-backfill'
 import { Route as ApiPublicHooksAcademyHealthRouteImport } from './routes/api/public/hooks.academy-health'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
@@ -935,6 +936,12 @@ const ApiPublicHooksBlogAutogenRoute =
     path: '/api/public/hooks/blog-autogen',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAutoOutreachWorkerRoute =
+  ApiPublicHooksAutoOutreachWorkerRouteImport.update({
+    id: '/api/public/hooks/auto-outreach-worker',
+    path: '/api/public/hooks/auto-outreach-worker',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksAliasBackfillRoute =
   ApiPublicHooksAliasBackfillRouteImport.update({
     id: '/api/public/hooks/alias-backfill',
@@ -1098,6 +1105,7 @@ export interface FileRoutesByFullPath {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
+  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
@@ -1253,6 +1261,7 @@ export interface FileRoutesByTo {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
+  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
@@ -1409,6 +1418,7 @@ export interface FileRoutesById {
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
+  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
@@ -1566,6 +1576,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
+    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
@@ -1721,6 +1732,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
+    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
@@ -1876,6 +1888,7 @@ export interface FileRouteTypes {
     | '/api/certificates/$uid/pdf'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
+    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
@@ -1975,6 +1988,7 @@ export interface RootRouteChildren {
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
   ApiPublicHooksAliasBackfillRoute: typeof ApiPublicHooksAliasBackfillRoute
+  ApiPublicHooksAutoOutreachWorkerRoute: typeof ApiPublicHooksAutoOutreachWorkerRoute
   ApiPublicHooksBlogAutogenRoute: typeof ApiPublicHooksBlogAutogenRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
@@ -3032,6 +3046,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBlogAutogenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/auto-outreach-worker': {
+      id: '/api/public/hooks/auto-outreach-worker'
+      path: '/api/public/hooks/auto-outreach-worker'
+      fullPath: '/api/public/hooks/auto-outreach-worker'
+      preLoaderRoute: typeof ApiPublicHooksAutoOutreachWorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/alias-backfill': {
       id: '/api/public/hooks/alias-backfill'
       path: '/api/public/hooks/alias-backfill'
@@ -3336,6 +3357,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
   ApiPublicHooksAliasBackfillRoute: ApiPublicHooksAliasBackfillRoute,
+  ApiPublicHooksAutoOutreachWorkerRoute: ApiPublicHooksAutoOutreachWorkerRoute,
   ApiPublicHooksBlogAutogenRoute: ApiPublicHooksBlogAutogenRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
