@@ -240,6 +240,42 @@ export const previewFaqForUrl = createServerFn({ method: "POST" })
 
 // ---------- insert ----------
 
+// Match a wide range of FAQ-style headings so existing blocks are reliably
+// replaced even if the heading text varies slightly. Tolerates leading emoji,
+// bold/italic markers, trailing punctuation, and heading levels h1-h4.
+function buildFaqHeadingLineRe(): RegExp {
+  return /^[ \t]*#{1,4}[ \t]+[*_~`]*\s*(?:[^\w\s#]+\s*)?(?:frequently\s+asked\s+questions?|frequent(?:ly)?\s+questions?|common(?:ly\s+asked)?\s+questions?|questions?\s*(?:&|and)\s*answers?|q\s*&\s*a|f\s*\.?\s*a\s*\.?\s*q\s*\.?s?|got\s+questions|have\s+questions)[*_~`:?!.\s]*$/im;
+}
+
+export function hasFaqHeading(body: string): boolean {
+  if (!body) return false;
+  return buildFaqHeadingLineRe().test(body);
+}
+
+/**
+ * Replace the existing FAQ section (heading + content up to the next
+ * same-or-higher-level heading) with the provided block. If no FAQ heading
+ * is found, returns the body unchanged.
+ */
+export function replaceFaqSection(body: string, block: string): string {
+  const headingRe = buildFaqHeadingLineRe();
+  const m = headingRe.exec(body);
+  if (!m) return body;
+  const start = m.index;
+  const headingLine = m[0];
+  const levelMatch = headingLine.match(/^[ \t]*(#{1,4})[ \t]+/);
+  const level = levelMatch ? levelMatch[1].length : 2;
+  const afterStart = start + headingLine.length;
+  const rest = body.slice(afterStart);
+  const levelPattern = new RegExp(`\\n[ \\t]*#{1,${level}}[ \\t]+\\S`);
+  const nextRel = rest.search(levelPattern);
+  const end = nextRel === -1 ? body.length : afterStart + nextRel;
+  const before = body.slice(0, start).replace(/\s+$/, "");
+  const after = body.slice(end).replace(/^\s+/, "");
+  const trailing = after ? `\n\n${after}` : "\n";
+  return `${before}\n\n${block}\n${trailing}`;
+}
+
 async function insertFaqsIntoPath(
   url_path: string,
   faqs: FaqItem[],
