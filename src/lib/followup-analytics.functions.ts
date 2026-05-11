@@ -301,26 +301,26 @@ export const getFollowupDrilldown = createServerFn({ method: "GET" })
     if (hostIds.length) {
       const { data: hl } = await supabaseAdmin
         .from("host_leads")
-        .select("id, city, region, owner_name, address")
+        .select("id, city, region, name, email, phone_e164")
         .in("id", hostIds);
       for (const r of hl ?? []) {
         leadInfo.set(`host_lead:${r.id}`, {
           city: r.city, region: r.region,
-          name: r.owner_name ?? r.address ?? null,
-          subtitle: r.address ?? null,
+          name: r.name ?? null,
+          subtitle: r.email ?? r.phone_e164 ?? null,
         });
       }
     }
     if (igIds.length) {
       const { data: il } = await supabaseAdmin
         .from("ig_leads")
-        .select("id, query, username, full_name")
+        .select("id, query, profile_handle, profile_name")
         .in("id", igIds);
       for (const r of il ?? []) {
         leadInfo.set(`ig_lead:${r.id}`, {
           city: r.query ?? null, region: null,
-          name: r.full_name ?? r.username ?? null,
-          subtitle: r.username ? `@${r.username}` : null,
+          name: r.profile_name ?? r.profile_handle ?? null,
+          subtitle: r.profile_handle ? `@${r.profile_handle}` : null,
         });
       }
     }
