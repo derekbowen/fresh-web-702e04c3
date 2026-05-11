@@ -88,6 +88,7 @@ import { Route as AdminPrnmCoachRouteImport } from './routes/admin.prnm-coach'
 import { Route as AdminPrivacyRequestsRouteImport } from './routes/admin.privacy-requests'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
 import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-auditor'
+import { Route as AdminOpportunitiesRouteImport } from './routes/admin.opportunities'
 import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
 import { Route as AdminListingAuditorRouteImport } from './routes/admin.listing-auditor'
@@ -563,6 +564,11 @@ const AdminPageAuditorRoute = AdminPageAuditorRouteImport.update({
   path: '/page-auditor',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminOpportunitiesRoute = AdminOpportunitiesRouteImport.update({
+  id: '/opportunities',
+  path: '/opportunities',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminNoAccessRoute = AdminNoAccessRouteImport.update({
   id: '/no-access',
   path: '/no-access',
@@ -963,6 +969,7 @@ export interface FileRoutesByFullPath {
   '/admin/listing-auditor': typeof AdminListingAuditorRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
+  '/admin/opportunities': typeof AdminOpportunitiesRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
@@ -1107,6 +1114,7 @@ export interface FileRoutesByTo {
   '/admin/listing-auditor': typeof AdminListingAuditorRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
+  '/admin/opportunities': typeof AdminOpportunitiesRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
@@ -1252,6 +1260,7 @@ export interface FileRoutesById {
   '/admin/listing-auditor': typeof AdminListingAuditorRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
+  '/admin/opportunities': typeof AdminOpportunitiesRoute
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
@@ -1398,6 +1407,7 @@ export interface FileRouteTypes {
     | '/admin/listing-auditor'
     | '/admin/missing-pages'
     | '/admin/no-access'
+    | '/admin/opportunities'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
@@ -1542,6 +1552,7 @@ export interface FileRouteTypes {
     | '/admin/listing-auditor'
     | '/admin/missing-pages'
     | '/admin/no-access'
+    | '/admin/opportunities'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
@@ -1686,6 +1697,7 @@ export interface FileRouteTypes {
     | '/admin/listing-auditor'
     | '/admin/missing-pages'
     | '/admin/no-access'
+    | '/admin/opportunities'
     | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
@@ -2411,6 +2423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPageAuditorRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/opportunities': {
+      id: '/admin/opportunities'
+      path: '/opportunities'
+      fullPath: '/admin/opportunities'
+      preLoaderRoute: typeof AdminOpportunitiesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/no-access': {
       id: '/admin/no-access'
       path: '/no-access'
@@ -2899,6 +2918,7 @@ interface AdminRouteChildren {
   AdminListingAuditorRoute: typeof AdminListingAuditorRoute
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminNoAccessRoute: typeof AdminNoAccessRoute
+  AdminOpportunitiesRoute: typeof AdminOpportunitiesRoute
   AdminPageAuditorRoute: typeof AdminPageAuditorRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminPrivacyRequestsRoute: typeof AdminPrivacyRequestsRoute
@@ -2948,6 +2968,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminListingAuditorRoute: AdminListingAuditorRoute,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminNoAccessRoute: AdminNoAccessRoute,
+  AdminOpportunitiesRoute: AdminOpportunitiesRoute,
   AdminPageAuditorRoute: AdminPageAuditorRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminPrivacyRequestsRoute: AdminPrivacyRequestsRoute,
