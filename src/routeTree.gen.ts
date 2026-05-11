@@ -60,6 +60,7 @@ import { Route as PGiggsterVsPoolRentalNearMeInChar123cityChar125RouteImport } f
 import { Route as PGiggsterVsPoolRentalNearMeRouteImport } from './routes/p.giggster-vs-pool-rental-near-me'
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
 import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-calculator'
+import { Route as PDogRouteImport } from './routes/p.dog'
 import { Route as PBlogRouteImport } from './routes/p.blog'
 import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
@@ -422,6 +423,11 @@ const PFreeHostToolsRoute = PFreeHostToolsRouteImport.update({
 const PEarningsCalculatorRoute = PEarningsCalculatorRouteImport.update({
   id: '/p/earnings-calculator',
   path: '/p/earnings-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PDogRoute = PDogRouteImport.update({
+  id: '/p/dog',
+  path: '/p/dog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PBlogRoute = PBlogRouteImport.update({
@@ -998,6 +1004,7 @@ export interface FileRoutesByFullPath {
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
+  '/p/dog': typeof PDogRoute
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
@@ -1143,6 +1150,7 @@ export interface FileRoutesByTo {
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
+  '/p/dog': typeof PDogRoute
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
@@ -1289,6 +1297,7 @@ export interface FileRoutesById {
   '/p/$slug': typeof PSlugRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
+  '/p/dog': typeof PDogRoute
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
@@ -1436,6 +1445,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/p/all-locations'
     | '/p/blog'
+    | '/p/dog'
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
@@ -1581,6 +1591,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/p/all-locations'
     | '/p/blog'
+    | '/p/dog'
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
@@ -1726,6 +1737,7 @@ export interface FileRouteTypes {
     | '/p/$slug'
     | '/p/all-locations'
     | '/p/blog'
+    | '/p/dog'
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
@@ -1823,6 +1835,7 @@ export interface RootRouteChildren {
   PSlugRoute: typeof PSlugRoute
   PAllLocationsRoute: typeof PAllLocationsRoute
   PBlogRoute: typeof PBlogRoute
+  PDogRoute: typeof PDogRoute
   PEarningsCalculatorRoute: typeof PEarningsCalculatorRoute
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PGiggsterVsPoolRentalNearMeRoute: typeof PGiggsterVsPoolRentalNearMeRoute
@@ -2225,6 +2238,13 @@ declare module '@tanstack/react-router' {
       path: '/p/earnings-calculator'
       fullPath: '/p/earnings-calculator'
       preLoaderRoute: typeof PEarningsCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/dog': {
+      id: '/p/dog'
+      path: '/p/dog'
+      fullPath: '/p/dog'
+      preLoaderRoute: typeof PDogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/blog': {
@@ -3095,6 +3115,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSlugRoute: PSlugRoute,
   PAllLocationsRoute: PAllLocationsRoute,
   PBlogRoute: PBlogRoute,
+  PDogRoute: PDogRoute,
   PEarningsCalculatorRoute: PEarningsCalculatorRoute,
   PFreeHostToolsRoute: PFreeHostToolsRoute,
   PGiggsterVsPoolRentalNearMeRoute: PGiggsterVsPoolRentalNearMeRoute,
