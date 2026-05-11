@@ -76,6 +76,7 @@ function PrnmCoachPage() {
   const [detectedEmail, setDetectedEmail] = React.useState<string | null>(null);
   const [roleReady, setRoleReady] = React.useState(false);
   const [lastTools, setLastTools] = React.useState<string[]>([]);
+  const [agentMode, setAgentMode] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
