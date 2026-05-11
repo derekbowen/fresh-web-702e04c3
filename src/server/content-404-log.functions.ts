@@ -209,12 +209,25 @@ export const createPageFor404 = createServerFn({ method: "POST" })
 
     // Check it's not already there
     const { data: existing } = await (supabaseAdmin as any)
-      .from("content_pages").select("id").eq("url_path", row.url_path).maybeSingle();
+      .from("content_pages").select("id, status").eq("url_path", row.url_path).maybeSingle();
     if (existing) {
+      if (existing.status === "published") {
+        await (supabaseAdmin as any).from("content_404_log")
+          .update({ resolved_at: new Date().toISOString(), resolution_notes: "page already exists" })
+          .eq("id", data.id);
+        return { ok: true, alreadyExists: true };
+      }
+      const { error: upErr } = await (supabaseAdmin as any).from("content_pages").update({
+        status: "published", in_sitemap: true,
+        title: gen.title, seo_title: gen.seo_title, seo_description: gen.seo_description,
+        body_markdown: gen.body_markdown, template_type: "resource",
+        updated_at: new Date().toISOString(),
+      }).eq("id", existing.id);
+      if (upErr) return { ok: false, error: upErr.message };
       await (supabaseAdmin as any).from("content_404_log")
-        .update({ resolved_at: new Date().toISOString(), resolution_notes: "page already exists" })
+        .update({ resolved_at: new Date().toISOString(), resolution_notes: "existing row published via AI" })
         .eq("id", data.id);
-      return { ok: true, alreadyExists: true };
+      return { ok: true, slug, words: (gen.body_markdown || "").split(/\s+/).length };
     }
 
     const apiKey = process.env.LOVABLE_API_KEY;
