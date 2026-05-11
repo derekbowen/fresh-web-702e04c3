@@ -91,6 +91,8 @@ export interface ContentPage {
   tldr_bullets?: string[] | null;
   related_slugs?: string[] | null;
   topic?: string | null;
+  /** AI-generated FAQ Q&A list, stored per page. Renders FAQPage JSON-LD when present. */
+  faq_items?: Array<{ question: string; answer: string }> | null;
 }
 
 export type ContentPageLookupResult =
