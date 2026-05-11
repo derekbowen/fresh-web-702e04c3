@@ -53,6 +53,7 @@ import { Route as PPoolRentalsRouteImport } from './routes/p.pool-rentals'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
 import { Route as PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport } from './routes/p.peerspace-vs-pool-rental-near-me-in-{$city}'
 import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me'
+import { Route as PNeighborsRouteImport } from './routes/p.neighbors'
 import { Route as PLaSaltwaterFeaturedRouteImport } from './routes/p.la-saltwater-featured'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
@@ -392,6 +393,11 @@ const PPeerspaceVsPoolRentalNearMeRoute =
     path: '/p/peerspace-vs-pool-rental-near-me',
     getParentRoute: () => rootRouteImport,
   } as any)
+const PNeighborsRoute = PNeighborsRouteImport.update({
+  id: '/p/neighbors',
+  path: '/p/neighbors',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PLaSaltwaterFeaturedRoute = PLaSaltwaterFeaturedRouteImport.update({
   id: '/p/la-saltwater-featured',
   path: '/p/la-saltwater-featured',
@@ -1039,6 +1045,7 @@ export interface FileRoutesByFullPath {
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
+  '/p/neighbors': typeof PNeighborsRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
@@ -1189,6 +1196,7 @@ export interface FileRoutesByTo {
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
+  '/p/neighbors': typeof PNeighborsRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
@@ -1340,6 +1348,7 @@ export interface FileRoutesById {
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
+  '/p/neighbors': typeof PNeighborsRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
@@ -1492,6 +1501,7 @@ export interface FileRouteTypes {
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/la-saltwater-featured'
+    | '/p/neighbors'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
@@ -1642,6 +1652,7 @@ export interface FileRouteTypes {
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/la-saltwater-featured'
+    | '/p/neighbors'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
@@ -1792,6 +1803,7 @@ export interface FileRouteTypes {
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/la-saltwater-featured'
+    | '/p/neighbors'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
@@ -1892,6 +1904,7 @@ export interface RootRouteChildren {
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
   PLaSaltwaterFeaturedRoute: typeof PLaSaltwaterFeaturedRoute
+  PNeighborsRoute: typeof PNeighborsRoute
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route: typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
@@ -2240,6 +2253,13 @@ declare module '@tanstack/react-router' {
       path: '/p/peerspace-vs-pool-rental-near-me'
       fullPath: '/p/peerspace-vs-pool-rental-near-me'
       preLoaderRoute: typeof PPeerspaceVsPoolRentalNearMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/neighbors': {
+      id: '/p/neighbors'
+      path: '/p/neighbors'
+      fullPath: '/p/neighbors'
+      preLoaderRoute: typeof PNeighborsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/la-saltwater-featured': {
@@ -3207,6 +3227,7 @@ const rootRouteChildren: RootRouteChildren = {
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
   PLaSaltwaterFeaturedRoute: PLaSaltwaterFeaturedRoute,
+  PNeighborsRoute: PNeighborsRoute,
   PPeerspaceVsPoolRentalNearMeRoute: PPeerspaceVsPoolRentalNearMeRoute,
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route:
     PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route,
