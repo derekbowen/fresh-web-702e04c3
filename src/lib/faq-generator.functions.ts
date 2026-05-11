@@ -217,6 +217,25 @@ Generate ${data.count} FAQ items grounded in these queries. Prefer the highest-i
         error: e instanceof Error ? e.message : "AI request failed",
       };
     }
+}
+
+// ---------- preview server fn ----------
+
+export const previewFaqForUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ url_path: z.string().min(1), count: z.number().int().min(3).max(10).default(6) }).parse(d),
+  )
+  .handler(async ({ data, context }): Promise<FaqPreview> => {
+    const { userId } = context as { userId: string };
+    if (!(await isAdmin(userId))) {
+      return {
+        faqs: [], markdown: "", jsonLd: "", queries: [],
+        page: { url_path: data.url_path, title: null, focus_keyword: null },
+        error: "Forbidden",
+      };
+    }
+    return generateFaqPreview(data.url_path, data.count);
   });
 
 // ---------- insert ----------
