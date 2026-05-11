@@ -622,6 +622,7 @@ export type Database = {
           gsc_updated_at: string | null
           hero_backfill_attempts: number
           hero_backfill_last_error: string | null
+          hero_image_alt: string | null
           hero_image_url: string | null
           hreflang_group: string | null
           id: string
@@ -663,6 +664,7 @@ export type Database = {
           gsc_updated_at?: string | null
           hero_backfill_attempts?: number
           hero_backfill_last_error?: string | null
+          hero_image_alt?: string | null
           hero_image_url?: string | null
           hreflang_group?: string | null
           id?: string
@@ -704,6 +706,7 @@ export type Database = {
           gsc_updated_at?: string | null
           hero_backfill_attempts?: number
           hero_backfill_last_error?: string | null
+          hero_image_alt?: string | null
           hero_image_url?: string | null
           hreflang_group?: string | null
           id?: string
