@@ -44,6 +44,104 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_outreach_messages: {
+        Row: {
+          body: string
+          channel: string
+          created_at: string
+          error: string | null
+          followup_id: string | null
+          id: string
+          lead_id: string
+          provider_id: string | null
+          scheduled_at: string
+          sent_at: string | null
+          source: Database["public"]["Enums"]["lead_source"]
+          status: string
+          step: number
+          subject: string | null
+          to_address: string | null
+        }
+        Insert: {
+          body: string
+          channel: string
+          created_at?: string
+          error?: string | null
+          followup_id?: string | null
+          id?: string
+          lead_id: string
+          provider_id?: string | null
+          scheduled_at?: string
+          sent_at?: string | null
+          source: Database["public"]["Enums"]["lead_source"]
+          status?: string
+          step?: number
+          subject?: string | null
+          to_address?: string | null
+        }
+        Update: {
+          body?: string
+          channel?: string
+          created_at?: string
+          error?: string | null
+          followup_id?: string | null
+          id?: string
+          lead_id?: string
+          provider_id?: string | null
+          scheduled_at?: string
+          sent_at?: string | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: string
+          step?: number
+          subject?: string | null
+          to_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_outreach_messages_followup_id_fkey"
+            columns: ["followup_id"]
+            isOneToOne: false
+            referencedRelation: "lead_followups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      auto_outreach_settings: {
+        Row: {
+          dm_drafts_enabled: boolean
+          email_enabled: boolean
+          from_email: string
+          from_name: string
+          id: number
+          max_per_hour: number
+          reply_to: string | null
+          sms_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          dm_drafts_enabled?: boolean
+          email_enabled?: boolean
+          from_email?: string
+          from_name?: string
+          id?: number
+          max_per_hour?: number
+          reply_to?: string | null
+          sms_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          dm_drafts_enabled?: boolean
+          email_enabled?: boolean
+          from_email?: string
+          from_name?: string
+          id?: number
+          max_per_hour?: number
+          reply_to?: string | null
+          sms_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       availability_cache: {
         Row: {
           fetched_at: string
