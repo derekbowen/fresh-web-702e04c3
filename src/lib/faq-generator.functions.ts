@@ -60,26 +60,23 @@ function buildJsonLd(faqs: FaqItem[]): string {
   );
 }
 
-// ---------- preview ----------
+// ---------- internal helpers (admin-checked at call sites) ----------
 
-export const previewFaqForUrl = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
-    z.object({ url_path: z.string().min(1), count: z.number().int().min(3).max(10).default(6) }).parse(d),
-  )
-  .handler(async ({ data, context }): Promise<FaqPreview> => {
-    const empty: FaqPreview = {
-      faqs: [],
-      markdown: "",
-      jsonLd: "",
-      queries: [],
-      page: { url_path: data.url_path, title: null, focus_keyword: null },
-    };
-    const { userId } = context as { userId: string };
-    if (!(await isAdmin(userId))) return { ...empty, error: "Forbidden" };
+async function generateFaqPreview(
+  url_path: string,
+  count: number,
+): Promise<FaqPreview> {
+  const empty: FaqPreview = {
+    faqs: [],
+    markdown: "",
+    jsonLd: "",
+    queries: [],
+    page: { url_path, title: null, focus_keyword: null },
+  };
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) return { ...empty, error: "LOVABLE_API_KEY not configured" };
 
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) return { ...empty, error: "LOVABLE_API_KEY not configured" };
+  const data = { url_path, count };
 
     const { data: page } = await (supabaseAdmin as any)
       .from("content_pages")
