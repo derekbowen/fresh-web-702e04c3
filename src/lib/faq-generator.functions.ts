@@ -384,7 +384,7 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
             .select("body_markdown")
             .eq("url_path", url_path)
             .maybeSingle();
-          if (page?.body_markdown && /##\s+frequently\s+asked\s+questions/i.test(page.body_markdown)) {
+          if (page?.body_markdown && hasFaqHeading(page.body_markdown)) {
             results.push({ url_path, status: "skipped", error: "Already has FAQ" });
             continue;
           }
