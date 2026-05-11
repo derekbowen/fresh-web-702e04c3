@@ -67,6 +67,7 @@ const PRIMARY_NAV: NavLink[] = [
   { label: "Locations", href: "/p/all-locations" },
   { label: "Pool Pros", href: "/p/pool-pros" },
   { label: "How It Works", href: "/p/how-it-works" },
+  { label: "Neighbors", href: "/p/neighbors" },
 ];
 
 const APP_NAV: NavLink[] = [
