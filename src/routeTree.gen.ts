@@ -144,6 +144,7 @@ import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
+import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
@@ -855,6 +856,12 @@ const ApiPublicHooksProviderAiWorkerRoute =
     path: '/api/public/hooks/provider-ai-worker',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksLinkAutoFixRoute =
+  ApiPublicHooksLinkAutoFixRouteImport.update({
+    id: '/api/public/hooks/link-auto-fix',
+    path: '/api/public/hooks/link-auto-fix',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksIgLeadHunterRoute =
   ApiPublicHooksIgLeadHunterRouteImport.update({
     id: '/api/public/hooks/ig-lead-hunter',
@@ -1039,6 +1046,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
+  '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1185,6 +1193,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
+  '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1332,6 +1341,7 @@ export interface FileRoutesById {
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
+  '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1480,6 +1490,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/ig-lead-hunter'
+    | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -1626,6 +1637,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/ig-lead-hunter'
+    | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -1772,6 +1784,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/ig-lead-hunter'
+    | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -1868,6 +1881,7 @@ export interface RootRouteChildren {
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
+  ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
@@ -2828,6 +2842,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksProviderAiWorkerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/link-auto-fix': {
+      id: '/api/public/hooks/link-auto-fix'
+      path: '/api/public/hooks/link-auto-fix'
+      fullPath: '/api/public/hooks/link-auto-fix'
+      preLoaderRoute: typeof ApiPublicHooksLinkAutoFixRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/ig-lead-hunter': {
       id: '/api/public/hooks/ig-lead-hunter'
       path: '/api/public/hooks/ig-lead-hunter'
@@ -3152,6 +3173,7 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
+  ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
