@@ -465,10 +465,10 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
-    // Resolve user email for auto role detect
-    const { data: userInfo } = await sb.auth.admin.getUserById(ctx.userId).catch(() => ({ data: null }));
-    const email = userInfo?.user?.email as string | undefined;
-    const role: Role = data.roleOverride || autoDetectRole(email);
+    // Resolve role: explicit override (one-shot, this turn only) wins over the
+    // persisted role; otherwise use the stored override or auto-detected role.
+    const resolved = await resolveRole(ctx.userId);
+    const role: Role = data.roleOverride || resolved.role;
 
     const completedNote = data.completedRoutes?.length
       ? `STEPS ALREADY COMPLETED THIS SESSION (do NOT recommend again): ${data.completedRoutes.join(", ")}`
