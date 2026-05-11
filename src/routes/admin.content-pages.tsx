@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { AdminLayout } from "@/components/admin-layout";
+import { upsertJob, useBgJobs } from "@/lib/bg-jobs";
 import {
   listContentPages,
   bulkUpdateContentPages,
@@ -16,8 +17,6 @@ import {
   SECTION_PRESETS,
   autoFixSeo,
   enqueueSeoFixJobs,
-  processSeoFixQueue,
-  getSeoJobStatus,
   listSectionPresets,
   saveSectionPreset,
   deleteSectionPreset,
@@ -170,18 +169,16 @@ function BulkEditor() {
     return () => window.removeEventListener("keydown", onKey);
   }, [visibleRows, cursor, editingId, inlineEditing]);
 
-  // ── Bulk AI (mode-aware) ──────────────────────────────────────────────────
-  const [fixProgress, setFixProgress] = React.useState<{ done: number; failed: number; total: number; mode: string } | null>(null);
-  const [cancelRequested, setCancelRequested] = React.useState(false);
+  // ── Bulk AI (mode-aware) — fire-and-forget into background runner ────────
+  const bgJobs = useBgJobs();
+  const activeBgJob = bgJobs.find((j) => j.status === "running");
 
   async function bulkAi(mode: "full" | "meta_only" | "title_only") {
     if (!selected.size) return;
     const ids = Array.from(selected);
     const label = mode === "full" ? "Auto-fix everything (meta + body if thin)" : mode === "meta_only" ? "Generate SEO meta only" : "Rewrite title only";
-    if (!confirm(`${label} on ${ids.length} page${ids.length > 1 ? "s" : ""}? Runs in background queue. Uses AI credits.`)) return;
+    if (!confirm(`${label} on ${ids.length} page${ids.length > 1 ? "s" : ""}? Runs in the background — you can navigate freely while it works. Uses AI credits.`)) return;
     setBusy(true);
-    setCancelRequested(false);
-    setFixProgress({ done: 0, failed: 0, total: ids.length, mode });
     try {
       let batchId: string | undefined;
       for (let i = 0; i < ids.length; i += 500) {
@@ -191,26 +188,23 @@ function BulkEditor() {
         if (!batchId) batchId = r.batchId;
       }
       if (!batchId) throw new Error("No batch created");
-      let safety = 0;
-      while (safety++ < 2000) {
-        if (cancelRequested) break;
-        await processSeoFixQueue({ data: { batchId, max: 10 } });
-        const status: any = await getSeoJobStatus({ data: { batchId } });
-        const s = status?.summary || {};
-        setFixProgress({ done: s.done || 0, failed: s.failed || 0, total: ids.length, mode });
-        if (((s.queued || 0) + (s.processing || 0)) === 0) break;
-      }
-      const status: any = await getSeoJobStatus({ data: { batchId } });
-      const s = status?.summary || {};
-      alert(`Done. Ok: ${s.done || 0}, failed: ${s.failed || 0}, cancelled: ${s.cancelled || 0}.`);
+      // Register in the global background runner (persists across navigation).
+      upsertJob({
+        id: batchId,
+        kind: "seo_fix",
+        label,
+        total: ids.length,
+        done: 0,
+        failed: 0,
+        cancelled: 0,
+        status: "running",
+        startedAt: Date.now(),
+      });
       setSelected(new Set());
-      await load();
     } catch (e) {
       alert(`Bulk AI error: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setBusy(false);
-      setFixProgress(null);
-      setCancelRequested(false);
     }
   }
 
@@ -317,19 +311,15 @@ function BulkEditor() {
           <button onClick={() => setSelected(new Set())} className="rounded border border-border bg-background px-2 py-1 text-xs hover:bg-muted">Clear</button>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            {fixProgress ? (
-              <>
-                <span className="text-xs tabular-nums">{fixProgress.mode}: {fixProgress.done + fixProgress.failed}/{fixProgress.total} ({fixProgress.failed} failed)</span>
-                <button onClick={() => setCancelRequested(true)} className="rounded border border-border bg-background px-2 py-1 text-xs">Cancel</button>
-              </>
-            ) : (
-              <>
-                <BulkAiMenu disabled={busy} onPick={bulkAi} count={selected.size} />
-                <button disabled={busy} onClick={() => bulk("publish")} className="rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Publish</button>
-                <button disabled={busy} onClick={() => bulk("unpublish")} className="rounded bg-yellow-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Unpublish</button>
-                <button disabled={busy} onClick={() => bulk("delete")} className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Delete</button>
-              </>
+            {activeBgJob && (
+              <span className="text-xs tabular-nums text-muted-foreground">
+                Background: {activeBgJob.done + activeBgJob.failed}/{activeBgJob.total}
+              </span>
             )}
+            <BulkAiMenu disabled={busy} onPick={bulkAi} count={selected.size} />
+            <button disabled={busy} onClick={() => bulk("publish")} className="rounded bg-green-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Publish</button>
+            <button disabled={busy} onClick={() => bulk("unpublish")} className="rounded bg-yellow-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Unpublish</button>
+            <button disabled={busy} onClick={() => bulk("delete")} className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50">Delete</button>
           </div>
         </div>
       )}
