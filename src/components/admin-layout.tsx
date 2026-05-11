@@ -66,6 +66,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/competitor-radar", label: "Competitor radar 🚨", icon: Radar },
       { to: "/admin/rank-tracker", label: "Rank tracker", icon: TrendingUp },
       { to: "/admin/page-auditor", label: "AI page auditor", icon: Sparkles },
+      { to: "/admin/seo-critic", label: "AI SEO critic 🔍", icon: Sparkles },
       { to: "/admin/faq-generator", label: "FAQ generator ✨", icon: Sparkles },
       { to: "/admin/listing-auditor", label: "Listing auditor", icon: Sparkles },
       { to: "/admin/keyword-opportunities", label: "Keyword opportunities", icon: TrendingUp },
