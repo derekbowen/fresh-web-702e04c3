@@ -167,12 +167,11 @@ export const lookupContentPage = createServerFn({ method: "GET" })
       .from("content_pages")
       .select("slug")
       .contains("legacy_slugs", [slug])
-      .eq("status", "published")
+      .in("status", ["published", "redirect"])
       .limit(1);
     const alias = (aliasRows ?? [])[0] as { slug: string | null } | undefined;
     if (alias?.slug && alias.slug !== slug) {
-      logRedirect(slug, alias.slug);
-      return { kind: "redirect", canonicalSlug: alias.slug };
+      return redirectLookup(slug, alias.slug);
     }
 
     // Fallback: many host-acq / swim-instructor slugs are stored with a
@@ -203,11 +202,10 @@ export const lookupContentPage = createServerFn({ method: "GET" })
             .from("content_pages")
             .select("slug")
             .eq("slug", candidate)
-            .eq("status", "published")
+            .in("status", ["published", "redirect"])
             .limit(1);
           if ((candRows ?? []).length > 0) {
-            logRedirect(slug, candidate);
-            return { kind: "redirect", canonicalSlug: candidate };
+            return redirectLookup(slug, candidate);
           }
         }
       }
