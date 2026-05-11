@@ -73,6 +73,7 @@ import { Route as ForGuestsSplatRouteImport } from './routes/for-guests.$'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as BlogSplatRouteImport } from './routes/blog.$'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AdminTechDocsRouteImport } from './routes/admin.tech-docs'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSocialLeadHunterRouteImport } from './routes/admin.social-lead-hunter'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
@@ -484,6 +485,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
+} as any)
+const AdminTechDocsRoute = AdminTechDocsRouteImport.update({
+  id: '/tech-docs',
+  path: '/tech-docs',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminTeamRoute = AdminTeamRouteImport.update({
   id: '/team',
@@ -957,6 +963,7 @@ export interface FileRoutesByFullPath {
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
+  '/admin/tech-docs': typeof AdminTechDocsRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$': typeof BlogSplatRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -1098,6 +1105,7 @@ export interface FileRoutesByTo {
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
+  '/admin/tech-docs': typeof AdminTechDocsRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$': typeof BlogSplatRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -1240,6 +1248,7 @@ export interface FileRoutesById {
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
+  '/admin/tech-docs': typeof AdminTechDocsRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/blog/$': typeof BlogSplatRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -1383,6 +1392,7 @@ export interface FileRouteTypes {
     | '/admin/site-footer'
     | '/admin/social-lead-hunter'
     | '/admin/team'
+    | '/admin/tech-docs'
     | '/auth/reset-password'
     | '/blog/$'
     | '/email/unsubscribe'
@@ -1524,6 +1534,7 @@ export interface FileRouteTypes {
     | '/admin/site-footer'
     | '/admin/social-lead-hunter'
     | '/admin/team'
+    | '/admin/tech-docs'
     | '/auth/reset-password'
     | '/blog/$'
     | '/email/unsubscribe'
@@ -1665,6 +1676,7 @@ export interface FileRouteTypes {
     | '/admin/site-footer'
     | '/admin/social-lead-hunter'
     | '/admin/team'
+    | '/admin/tech-docs'
     | '/auth/reset-password'
     | '/blog/$'
     | '/email/unsubscribe'
@@ -2270,6 +2282,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/admin/tech-docs': {
+      id: '/admin/tech-docs'
+      path: '/tech-docs'
+      fullPath: '/admin/tech-docs'
+      preLoaderRoute: typeof AdminTechDocsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/team': {
       id: '/admin/team'
       path: '/team'
@@ -2854,6 +2873,7 @@ interface AdminRouteChildren {
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
   AdminSocialLeadHunterRoute: typeof AdminSocialLeadHunterRoute
   AdminTeamRoute: typeof AdminTeamRoute
+  AdminTechDocsRoute: typeof AdminTechDocsRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -2900,6 +2920,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSiteFooterRoute: AdminSiteFooterRoute,
   AdminSocialLeadHunterRoute: AdminSocialLeadHunterRoute,
   AdminTeamRoute: AdminTeamRoute,
+  AdminTechDocsRoute: AdminTechDocsRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
