@@ -584,6 +584,51 @@ export const listSeoBatches = createServerFn({ method: "POST" })
     return { batches };
   });
 
+export type SeoBatchJobDetail = {
+  id: string;
+  page_id: string;
+  url_path: string | null;
+  title: string | null;
+  mode: string;
+  status: string;
+  attempts: number;
+  error: string | null;
+  created_at: string;
+  finished_at: string | null;
+  result: any;
+};
+
+export const getSeoBatchDetails = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ batchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<{ jobs: SeoBatchJobDetail[] }> => {
+    await assertAdmin((context as any).userId);
+    const sb = supabaseAdmin as any;
+    const { data: rows } = await sb
+      .from("seo_fix_jobs")
+      .select("id, page_id, mode, status, attempts, error, created_at, finished_at, result")
+      .eq("batch_id", data.batchId)
+      .order("created_at", { ascending: true })
+      .limit(1000);
+    const list = (rows || []) as Array<Omit<SeoBatchJobDetail, "url_path" | "title">>;
+    const ids = Array.from(new Set(list.map((r) => r.page_id)));
+    let pages = new Map<string, { url_path: string | null; title: string | null }>();
+    if (ids.length) {
+      const { data: pgs } = await sb
+        .from("content_pages")
+        .select("id, url_path, title")
+        .in("id", ids);
+      pages = new Map((pgs || []).map((p: any) => [p.id, { url_path: p.url_path, title: p.title }]));
+    }
+    return {
+      jobs: list.map((j) => ({
+        ...j,
+        url_path: pages.get(j.page_id)?.url_path ?? null,
+        title: pages.get(j.page_id)?.title ?? null,
+      })),
+    };
+  });
+
 // ============================================================================
 // Single-page editor: fetch full row, save manual edits, append AI section
 // ============================================================================
