@@ -284,6 +284,7 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
           </main>
         </div>
       </div>
+      <BgJobsRunner />
     </div>
   );
 }
