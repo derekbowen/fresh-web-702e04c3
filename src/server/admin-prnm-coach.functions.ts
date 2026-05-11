@@ -606,3 +606,206 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
 
     return { ok: false, error: "Agent exceeded max iterations without final answer" };
   });
+
+// ============================================================================
+// PRIORITIZED OPPORTUNITIES — durable to-do list per role with check-off
+// ============================================================================
+
+type OppRow = {
+  id: string;
+  role: Role;
+  title: string;
+  why: string | null;
+  impact: "high" | "medium" | "low";
+  effort: "quick" | "medium" | "deep";
+  action_label: string | null;
+  action_route: string | null;
+  evidence: any;
+  batch_id: string | null;
+  completed_at: string | null;
+  dismissed_at: string | null;
+  created_at: string;
+};
+
+const ALLOWED_ROUTES = new Set([
+  "/admin/missing-pages","/admin/page-auditor","/admin/keyword-opportunities",
+  "/admin/internal-links","/admin/seo-health","/admin/content-pages",
+  "/admin/quick-page","/admin/generate-content","/admin/gsc-import",
+  "/admin/competitor-radar","/admin/rank-tracker","/admin/indexing",
+  "/admin/link-checker","/admin/listing-auditor","/admin/leads",
+  "/admin/ig-lead-hunter","/admin/contact-enricher","/admin/feature-requests",
+  "/admin/sms","/admin/dashboard","/admin/job-history","/admin/prnm-coach",
+]);
+
+export const listOpportunities = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    role: z.enum(["ceo", "coo", "cs"]).optional(),
+    includeCompleted: z.boolean().optional(),
+  }).parse(d ?? {}))
+  .handler(async ({ data, context }) => {
+    const ctx = context as any;
+    await assertAdmin(ctx.userId);
+    let q = (sb as any).from("prnm_coach_opportunities").select("*").is("dismissed_at", null);
+    if (data.role) q = q.eq("role", data.role);
+    if (!data.includeCompleted) q = q.is("completed_at", null);
+    const { data: rows, error } = await q.order("completed_at", { ascending: true, nullsFirst: true })
+      .order("impact", { ascending: true })
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const, items: (rows || []) as OppRow[] };
+  });
+
+export const markOpportunity = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    id: z.string().uuid(),
+    action: z.enum(["complete", "reopen", "dismiss"]),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const ctx = context as any;
+    await assertAdmin(ctx.userId);
+    const patch: any = {};
+    if (data.action === "complete") { patch.completed_at = new Date().toISOString(); patch.completed_by = ctx.userId; }
+    else if (data.action === "reopen") { patch.completed_at = null; patch.completed_by = null; }
+    else if (data.action === "dismiss") { patch.dismissed_at = new Date().toISOString(); }
+    const { error } = await (sb as any).from("prnm_coach_opportunities").update(patch).eq("id", data.id);
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+const OPP_SCHEMA_PROMPT = `Return ONLY a JSON object with this exact shape — no prose, no markdown fences:
+{
+  "opportunities": [
+    {
+      "title": "<short imperative — max 80 chars>",
+      "why": "<1-2 sentence rationale citing a specific NUMBER from a tool>",
+      "impact": "high" | "medium" | "low",
+      "effort": "quick" | "medium" | "deep",
+      "action_label": "<short button label, e.g. 'Triage 404s'>",
+      "action_route": "<one of the allowed /admin/... routes>"
+    }
+  ]
+}
+Rules:
+- 4 to 7 opportunities. ONLY high or medium impact — skip low-value busywork.
+- Sort by impact DESC, then effort ASC (quick wins float up).
+- Every "why" MUST cite a real number you saw from a tool (e.g. "247 uncontacted ig_leads").
+- action_route MUST be from the admin route list. No invented routes. No /blog, /academy, /providers.
+- Tailor strictly to the role's priorities.`;
+
+export const generateOpportunities = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    role: z.enum(["ceo", "coo", "cs"]).optional(),
+  }).parse(d ?? {}))
+  .handler(async ({ data, context }): Promise<{ ok: true; count: number; role: Role; batchId: string } | { ok: false; error: string }> => {
+    const ctx = context as any;
+    await assertAdmin(ctx.userId);
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
+
+    const resolved = await resolveRole(ctx.userId);
+    const role: Role = data.role || resolved.role;
+
+    const sysPrompt = `${buildSystemPrompt(role, true)}
+
+YOU ARE NOW IN OPPORTUNITY-LIST MODE.
+Run AT LEAST 5 tools across DIFFERENT categories, then output the prioritized opportunity list.
+${OPP_SCHEMA_PROMPT}`;
+
+    const messages: ChatMsg[] = [
+      { role: "system", content: sysPrompt },
+      { role: "user", content: `Generate today's prioritized opportunity list for ${ROLE_LABELS[role]}. Use tools first, then output JSON only.` },
+    ];
+
+    const toolsUsed: string[] = [];
+    const MAX_ITER = 10;
+    let finalContent = "";
+
+    for (let iter = 0; iter < MAX_ITER; iter++) {
+      let resp: Response;
+      try {
+        resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages,
+            tools: TOOLS,
+            tool_choice: iter === 0 ? "required" : "auto",
+            response_format: iter > 2 ? { type: "json_object" } : undefined,
+          }),
+        });
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : "Network error" };
+      }
+      if (resp.status === 402) return { ok: false, error: "AI credits exhausted." };
+      if (resp.status === 429) return { ok: false, error: "Rate limited. Try again soon." };
+      if (!resp.ok) return { ok: false, error: `AI gateway ${resp.status}: ${(await resp.text()).slice(0, 300)}` };
+
+      const json = await resp.json();
+      const choice = json?.choices?.[0]?.message;
+      if (!choice) return { ok: false, error: "AI returned no message" };
+      const toolCalls = choice.tool_calls as Array<{ id: string; function: { name: string; arguments: string } }> | undefined;
+
+      if (!toolCalls || toolCalls.length === 0) {
+        finalContent = (choice.content || "").trim();
+        break;
+      }
+      messages.push({ role: "assistant", content: choice.content || "", tool_calls: toolCalls } as any);
+      const results = await Promise.all(toolCalls.map(async (tc) => {
+        let args: any = {};
+        try { args = JSON.parse(tc.function.arguments || "{}"); } catch {}
+        toolsUsed.push(tc.function.name);
+        const result = await runTool(tc.function.name, args);
+        return { tool_call_id: tc.id, role: "tool" as const, content: JSON.stringify(result).slice(0, 12000) };
+      }));
+      messages.push(...results as any);
+    }
+
+    if (!finalContent) return { ok: false, error: "AI did not return final list" };
+
+    // Parse JSON (strip code fences if present)
+    let parsed: any = null;
+    const cleaned = finalContent.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+    try { parsed = JSON.parse(cleaned); } catch {
+      // fall back: find first { ... }
+      const m = cleaned.match(/\{[\s\S]*\}/);
+      if (m) { try { parsed = JSON.parse(m[0]); } catch {} }
+    }
+    const opps = Array.isArray(parsed?.opportunities) ? parsed.opportunities : [];
+    if (opps.length === 0) return { ok: false, error: "Could not parse opportunities from AI output" };
+
+    const batchId = crypto.randomUUID();
+    const rows = opps
+      .map((o: any) => {
+        const route = typeof o.action_route === "string" ? o.action_route.toLowerCase().trim() : null;
+        return {
+          role,
+          title: String(o.title || "").slice(0, 200),
+          why: o.why ? String(o.why).slice(0, 1000) : null,
+          impact: ["high","medium","low"].includes(o.impact) ? o.impact : "high",
+          effort: ["quick","medium","deep"].includes(o.effort) ? o.effort : "medium",
+          action_label: o.action_label ? String(o.action_label).slice(0, 80) : null,
+          action_route: route && ALLOWED_ROUTES.has(route) ? route : null,
+          evidence: { tools_used: toolsUsed },
+          batch_id: batchId,
+          generated_by: ctx.userId,
+        };
+      })
+      .filter((r: any) => r.title);
+
+    if (rows.length === 0) return { ok: false, error: "No valid opportunities to save" };
+
+    // Auto-dismiss prior open items for this role so the list stays focused
+    await (sb as any).from("prnm_coach_opportunities")
+      .update({ dismissed_at: new Date().toISOString() })
+      .eq("role", role).is("completed_at", null).is("dismissed_at", null);
+
+    const { error } = await (sb as any).from("prnm_coach_opportunities").insert(rows);
+    if (error) return { ok: false, error: error.message };
+
+    return { ok: true, count: rows.length, role, batchId };
+  });
