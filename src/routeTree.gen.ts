@@ -109,6 +109,7 @@ import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
+import { Route as AdminFollowupRemindersRouteImport } from './routes/admin.followup-reminders'
 import { Route as AdminFollowupPerformanceRouteImport } from './routes/admin.followup-performance'
 import { Route as AdminFollowUpsRouteImport } from './routes/admin.follow-ups'
 import { Route as AdminFaqGeneratorRouteImport } from './routes/admin.faq-generator'
@@ -156,6 +157,7 @@ import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
 import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/hooks/gsc-sync'
+import { Route as ApiPublicHooksFollowupRemindersRouteImport } from './routes/api/public/hooks/followup-reminders'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiPublicHooksBlogAutogenRouteImport } from './routes/api/public/hooks/blog-autogen'
@@ -683,6 +685,11 @@ const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
   path: '/generate-content',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFollowupRemindersRoute = AdminFollowupRemindersRouteImport.update({
+  id: '/followup-reminders',
+  path: '/followup-reminders',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFollowupPerformanceRoute =
   AdminFollowupPerformanceRouteImport.update({
     id: '/followup-performance',
@@ -930,6 +937,12 @@ const ApiPublicHooksGscSyncRoute = ApiPublicHooksGscSyncRouteImport.update({
   path: '/api/public/hooks/gsc-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksFollowupRemindersRoute =
+  ApiPublicHooksFollowupRemindersRouteImport.update({
+    id: '/api/public/hooks/followup-reminders',
+    path: '/api/public/hooks/followup-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailySeoDigestRoute =
   ApiPublicHooksDailySeoDigestRouteImport.update({
     id: '/api/public/hooks/daily-seo-digest',
@@ -1040,6 +1053,7 @@ export interface FileRoutesByFullPath {
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
+  '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1123,6 +1137,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
@@ -1198,6 +1213,7 @@ export interface FileRoutesByTo {
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
+  '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1281,6 +1297,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
@@ -1357,6 +1374,7 @@ export interface FileRoutesById {
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
+  '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1440,6 +1458,7 @@ export interface FileRoutesById {
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
+  '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
@@ -1517,6 +1536,7 @@ export interface FileRouteTypes {
     | '/admin/faq-generator'
     | '/admin/follow-ups'
     | '/admin/followup-performance'
+    | '/admin/followup-reminders'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -1600,6 +1620,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
@@ -1675,6 +1696,7 @@ export interface FileRouteTypes {
     | '/admin/faq-generator'
     | '/admin/follow-ups'
     | '/admin/followup-performance'
+    | '/admin/followup-reminders'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -1758,6 +1780,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
@@ -1833,6 +1856,7 @@ export interface FileRouteTypes {
     | '/admin/faq-generator'
     | '/admin/follow-ups'
     | '/admin/followup-performance'
+    | '/admin/followup-reminders'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -1916,6 +1940,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/daily-seo-digest'
+    | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
@@ -2016,6 +2041,7 @@ export interface RootRouteChildren {
   ApiPublicHooksBlogAutogenRoute: typeof ApiPublicHooksBlogAutogenRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
+  ApiPublicHooksFollowupRemindersRoute: typeof ApiPublicHooksFollowupRemindersRoute
   ApiPublicHooksGscSyncRoute: typeof ApiPublicHooksGscSyncRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
@@ -2734,6 +2760,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGenerateContentRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/followup-reminders': {
+      id: '/admin/followup-reminders'
+      path: '/followup-reminders'
+      fullPath: '/admin/followup-reminders'
+      preLoaderRoute: typeof AdminFollowupRemindersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/followup-performance': {
       id: '/admin/followup-performance'
       path: '/followup-performance'
@@ -3063,6 +3096,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGscSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/followup-reminders': {
+      id: '/api/public/hooks/followup-reminders'
+      path: '/api/public/hooks/followup-reminders'
+      fullPath: '/api/public/hooks/followup-reminders'
+      preLoaderRoute: typeof ApiPublicHooksFollowupRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-seo-digest': {
       id: '/api/public/hooks/daily-seo-digest'
       path: '/api/public/hooks/daily-seo-digest'
@@ -3163,6 +3203,7 @@ interface AdminRouteChildren {
   AdminFaqGeneratorRoute: typeof AdminFaqGeneratorRoute
   AdminFollowUpsRoute: typeof AdminFollowUpsRoute
   AdminFollowupPerformanceRoute: typeof AdminFollowupPerformanceRoute
+  AdminFollowupRemindersRoute: typeof AdminFollowupRemindersRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
   AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
@@ -3221,6 +3262,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFaqGeneratorRoute: AdminFaqGeneratorRoute,
   AdminFollowUpsRoute: AdminFollowUpsRoute,
   AdminFollowupPerformanceRoute: AdminFollowupPerformanceRoute,
+  AdminFollowupRemindersRoute: AdminFollowupRemindersRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
   AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
@@ -3404,6 +3446,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
+  ApiPublicHooksFollowupRemindersRoute: ApiPublicHooksFollowupRemindersRoute,
   ApiPublicHooksGscSyncRoute: ApiPublicHooksGscSyncRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,

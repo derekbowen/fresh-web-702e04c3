@@ -4,7 +4,7 @@ import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
   CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
-  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2,
+  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell,
 } from "lucide-react";
 import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 import { BgJobsRunner } from "@/components/bg-jobs-runner";
@@ -90,6 +90,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/leads", label: "Lead inbox", icon: Mail },
       { to: "/admin/follow-ups", label: "Follow-ups 📞", icon: Activity },
       { to: "/admin/followup-performance", label: "Follow-up performance 📊", icon: TrendingUp },
+      { to: "/admin/followup-reminders", label: "Follow-up reminders 🔔", icon: Bell },
       { to: "/admin/auto-outreach", label: "Auto-outreach 🤖", icon: Bot },
       { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
       { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
