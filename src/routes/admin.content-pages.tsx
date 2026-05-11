@@ -17,8 +17,6 @@ import {
   SECTION_PRESETS,
   autoFixSeo,
   enqueueSeoFixJobs,
-  processSeoFixQueue,
-  getSeoJobStatus,
   listSectionPresets,
   saveSectionPreset,
   deleteSectionPreset,
