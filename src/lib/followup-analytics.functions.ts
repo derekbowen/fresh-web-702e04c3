@@ -289,7 +289,7 @@ export const getFollowupDrilldown = createServerFn({ method: "GET" })
       .order("ai_score", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false })
       .limit(5000);
-    if (data.source) q = q.eq("source", data.source);
+    if (data.source) q = q.eq("source", data.source as LeadSource);
     const { data: fups } = await q;
     let followups = fups ?? [];
 
