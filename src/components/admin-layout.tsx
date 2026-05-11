@@ -7,6 +7,7 @@ import {
   TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2,
 } from "lucide-react";
 import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
+import { BgJobsRunner } from "@/components/bg-jobs-runner";
 
 type Item = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
