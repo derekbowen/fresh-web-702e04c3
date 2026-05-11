@@ -107,6 +107,7 @@ import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
+import { Route as AdminFollowUpsRouteImport } from './routes/admin.follow-ups'
 import { Route as AdminEmailVerifyRouteImport } from './routes/admin.email-verify'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
@@ -666,6 +667,11 @@ const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
   path: '/generate-content',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFollowUpsRoute = AdminFollowUpsRouteImport.update({
+  id: '/follow-ups',
+  path: '/follow-ups',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEmailVerifyRoute = AdminEmailVerifyRouteImport.update({
   id: '/email-verify',
   path: '/email-verify',
@@ -992,6 +998,7 @@ export interface FileRoutesByFullPath {
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
+  '/admin/follow-ups': typeof AdminFollowUpsRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1143,6 +1150,7 @@ export interface FileRoutesByTo {
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
+  '/admin/follow-ups': typeof AdminFollowUpsRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1295,6 +1303,7 @@ export interface FileRoutesById {
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
+  '/admin/follow-ups': typeof AdminFollowUpsRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1448,6 +1457,7 @@ export interface FileRouteTypes {
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/email-verify'
+    | '/admin/follow-ups'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -1599,6 +1609,7 @@ export interface FileRouteTypes {
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/email-verify'
+    | '/admin/follow-ups'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -1750,6 +1761,7 @@ export interface FileRouteTypes {
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/email-verify'
+    | '/admin/follow-ups'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -2633,6 +2645,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGenerateContentRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/follow-ups': {
+      id: '/admin/follow-ups'
+      path: '/follow-ups'
+      fullPath: '/admin/follow-ups'
+      preLoaderRoute: typeof AdminFollowUpsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/email-verify': {
       id: '/admin/email-verify'
       path: '/email-verify'
@@ -3023,6 +3042,7 @@ interface AdminRouteChildren {
   AdminDirectoryRoute: typeof AdminDirectoryRoute
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminEmailVerifyRoute: typeof AdminEmailVerifyRoute
+  AdminFollowUpsRoute: typeof AdminFollowUpsRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
   AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
@@ -3075,6 +3095,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDirectoryRoute: AdminDirectoryRoute,
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminEmailVerifyRoute: AdminEmailVerifyRoute,
+  AdminFollowUpsRoute: AdminFollowUpsRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
   AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
