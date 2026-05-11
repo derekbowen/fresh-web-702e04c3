@@ -167,6 +167,14 @@ const TOOLS = [
   {
     type: "function",
     function: {
+      name: "query_revenue_proxies",
+      description: "Revenue & marketplace value signals: total inventory $ value (sum of listing prices), avg/median price by state, top-priced listings, AND supply/demand gaps — cities with host_leads (demand to host) or ig_leads but few/no published listings.",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "query_pages",
       description: "Search content_pages for a specific issue: low word count, missing seo_description, missing focus_keyword, or by template_type.",
       parameters: {
@@ -380,15 +388,68 @@ async function tool_query_pages(issue: string, template_type?: string, limit = 1
   }, { count: 0, samples: [] });
 }
 
+async function tool_query_revenue_proxies(): Promise<ToolResult> {
+  const [inventory, byState, topPriced, supplyDemand] = await Promise.all([
+    safe(async () => {
+      const { data } = await sb.from("synced_listings").select("price_amount, price_currency").eq("is_deleted", false).eq("state", "published").limit(5000);
+      const rows = (data || []).filter((r: any) => typeof r.price_amount === "number" && r.price_amount > 0);
+      const total = rows.reduce((a: number, r: any) => a + (r.price_amount || 0), 0);
+      const avg = rows.length ? Math.round(total / rows.length) : 0;
+      const sorted = rows.map((r: any) => r.price_amount).sort((a: number, b: number) => a - b);
+      const median = sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
+      // Sharetribe stores price in cents; show dollars
+      return { listingsWithPrice: rows.length, totalInventoryValue: Math.round(total / 100), avgHourlyPrice: Math.round(avg / 100), medianHourlyPrice: Math.round(median / 100), currency: rows[0]?.price_currency || "USD" };
+    }, { listingsWithPrice: 0, totalInventoryValue: 0, avgHourlyPrice: 0, medianHourlyPrice: 0, currency: "USD" }),
+    safe(async () => {
+      const { data } = await sb.from("synced_listings").select("state_code, price_amount").eq("is_deleted", false).eq("state", "published").limit(5000);
+      const agg: Record<string, { sum: number; n: number }> = {};
+      (data || []).forEach((r: any) => {
+        if (!r.state_code || !r.price_amount) return;
+        agg[r.state_code] = agg[r.state_code] || { sum: 0, n: 0 };
+        agg[r.state_code].sum += r.price_amount; agg[r.state_code].n += 1;
+      });
+      return Object.entries(agg).map(([s, v]) => ({ state: s, listings: v.n, avgHourly: Math.round(v.sum / v.n / 100) })).sort((a, b) => b.listings - a.listings).slice(0, 10);
+    }, []),
+    safe(async () => {
+      const { data } = await sb.from("synced_listings").select("title, city, state_code, price_amount, slug").eq("is_deleted", false).eq("state", "published").not("price_amount", "is", null).order("price_amount", { ascending: false }).limit(8);
+      return (data || []).map((r: any) => ({ title: r.title, city: r.city, state: r.state_code, hourly: Math.round((r.price_amount || 0) / 100), slug: r.slug }));
+    }, []),
+    safe(async () => {
+      // Demand: host_leads + ig_leads grouped by city. Supply: published listings per city.
+      const [{ data: hl }, { data: il }, { data: sl }] = await Promise.all([
+        sb.from("host_leads").select("city, region").not("city", "is", null).limit(2000),
+        sb.from("ig_leads").select("query, snippet").limit(1000),
+        sb.from("synced_listings").select("city, state_code").eq("is_deleted", false).eq("state", "published").limit(5000),
+      ]);
+      const supply: Record<string, number> = {};
+      (sl || []).forEach((r: any) => { const k = `${(r.city || "").toLowerCase()}|${r.state_code || ""}`; supply[k] = (supply[k] || 0) + 1; });
+      const demand: Record<string, { city: string; state: string; n: number }> = {};
+      (hl || []).forEach((r: any) => {
+        const k = `${(r.city || "").toLowerCase()}|${r.region || ""}`;
+        demand[k] = demand[k] || { city: r.city, state: r.region, n: 0 };
+        demand[k].n += 1;
+      });
+      const gaps = Object.entries(demand)
+        .map(([k, v]) => ({ city: v.city, state: v.state, hostLeads: v.n, listings: supply[k] || 0 }))
+        .filter((r) => r.hostLeads >= 1 && r.listings <= 1)
+        .sort((a, b) => b.hostLeads - a.hostLeads)
+        .slice(0, 10);
+      return { gapCities: gaps, totalIgProspects: (il || []).length };
+    }, { gapCities: [], totalIgProspects: 0 }),
+  ]);
+  return { inventory, byState, topPriced, supplyDemandGaps: supplyDemand };
+}
+
 async function runTool(name: string, args: any): Promise<ToolResult> {
   try {
     switch (name) {
-      case "get_seo_snapshot": return await tool_get_seo_snapshot();
-      case "query_leads":      return await tool_query_leads(Number(args?.days ?? 14));
-      case "query_listings":   return await tool_query_listings();
-      case "query_support":    return await tool_query_support(Number(args?.days ?? 7));
-      case "query_traffic":    return await tool_query_traffic(Number(args?.days ?? 14));
-      case "query_pages":      return await tool_query_pages(String(args?.issue || "thin"), args?.template_type, Number(args?.limit ?? 15));
+      case "get_seo_snapshot":      return await tool_get_seo_snapshot();
+      case "query_leads":           return await tool_query_leads(Number(args?.days ?? 14));
+      case "query_listings":        return await tool_query_listings();
+      case "query_support":         return await tool_query_support(Number(args?.days ?? 7));
+      case "query_traffic":         return await tool_query_traffic(Number(args?.days ?? 14));
+      case "query_revenue_proxies": return await tool_query_revenue_proxies();
+      case "query_pages":           return await tool_query_pages(String(args?.issue || "thin"), args?.template_type, Number(args?.limit ?? 15));
       default: return { error: `Unknown tool: ${name}` };
     }
   } catch (e) {
@@ -428,10 +489,11 @@ CURRENT USER: ${ROLE_LABELS[role]}
 ${ROLE_PRIORITIES[role]}
 
 HOW YOU WORK:
-1. You have TOOLS. CALL THEM before giving advice. Never invent numbers — query first, then reason.
-2. Use 2-5 tool calls per turn to dig in. Cross-reference (e.g., listings + leads in same city = host outreach opportunity).
-3. After gathering, give ONE focused recommendation with the EXACT admin route.
-4. Ask ONE yes/no follow-up: **Q: <yes/no question>** then a one-line "Why I'm asking:".
+1. You have TOOLS spanning SEO, leads/outreach, listings quality, support inbox, traffic, AND revenue/marketplace value. CALL THEM before giving advice. Never invent numbers.
+2. On the FIRST turn of a chat, call AT LEAST 3 tools across DIFFERENT categories (e.g., one revenue/listings, one leads, one traffic/SEO) so your recommendation reflects the whole platform — not just SEO.
+3. Cross-reference signals. Examples: cities with host_leads but zero listings = host outreach gap; high-impression page-2 queries on a thin page = rewrite + republish; uncontacted ig_leads in a high-supply state = outbound priority.
+4. After gathering, give ONE focused recommendation with the EXACT admin route, grounded in specific numbers from the tools.
+5. Ask ONE yes/no follow-up: **Q: <yes/no question>** then a one-line "Why I'm asking:".
 
 HARD RULES:
 - Ground EVERY claim in tool data. If you say "X is broken", quote the count.
@@ -441,7 +503,7 @@ HARD RULES:
 - Match priorities to the user's ROLE above. Don't send the COO into a meta-description audit. Don't send CS into competitor research.
 - Skip work that won't move the needle. If everything looks fine in a category, SAY so and move on.
 
-FIRST MESSAGE in a new chat: call 2-3 tools relevant to the user's role, then surface the SINGLE highest-leverage thing they should do today, with the route and a yes/no question.
+FIRST MESSAGE in a new chat: call 3+ tools across DIFFERENT categories (revenue/listings, leads, traffic, support) — not just SEO. Then surface the SINGLE highest-leverage thing they should do today, with the route and a yes/no question.
 
 ${ADMIN_ROUTES}`;
 }
