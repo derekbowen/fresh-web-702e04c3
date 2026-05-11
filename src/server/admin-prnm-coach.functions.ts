@@ -480,7 +480,7 @@ ADMIN TOOLS YOU CAN RECOMMEND (route → purpose):
 - /admin/feature-requests → user-submitted feature ideas
 - /admin/sms → SMS follow-up sequences for host leads`;
 
-function buildSystemPrompt(role: Role): string {
+function buildSystemPrompt(role: Role, agentMode = false): string {
   return `You are the **PRNM Coach** — embedded inside the poolrentalnearme.com admin panel.
 
 You are NOT just an SEO bot. You are a platform advisor for the whole business: SEO, marketplace listings, host outreach, customer success, support, and revenue.
@@ -504,7 +504,16 @@ HARD RULES:
 - Skip work that won't move the needle. If everything looks fine in a category, SAY so and move on.
 
 FIRST MESSAGE in a new chat: call 3+ tools across DIFFERENT categories (revenue/listings, leads, traffic, support) — not just SEO. Then surface the SINGLE highest-leverage thing they should do today, with the route and a yes/no question.
-
+${agentMode ? `
+🔬 AGENT MODE — DEEP RESEARCH IS ACTIVE:
+- Run AT LEAST 6 tool calls across AT LEAST 4 different categories before any recommendation.
+- After your first round of tools, RUN MORE tools to follow leads. Examples:
+  • If query_leads shows uncontacted leads in city X, then call query_listings AND query_revenue_proxies to check supply/demand in X.
+  • If query_traffic surfaces a page-2 query, call query_pages with issue=thin to check if the ranking page needs a rewrite.
+  • If query_support shows an inbound SMS theme, cross-check with feature_requests and recent host_leads.
+- Build a chain of EVIDENCE. Open your reply with a "## Evidence" section listing 3-6 numbered findings, each citing the specific tool + number. Then "## Recommendation" with the single action and route. Then the yes/no question.
+- Do NOT stop after one round. Plan → query → reflect → query again → recommend.
+` : ""}
 ${ADMIN_ROUTES}`;
 }
 
@@ -519,6 +528,7 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
       })).min(1).max(40),
       completedRoutes: z.array(z.string().max(120)).max(40).optional(),
       roleOverride: z.enum(["ceo", "coo", "cs"]).optional(),
+      agentMode: z.boolean().optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }): Promise<{ ok: true; reply: string; role: Role; toolsUsed: string[] } | { ok: false; error: string }> => {
@@ -536,14 +546,15 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
       ? `STEPS ALREADY COMPLETED THIS SESSION (do NOT recommend again): ${data.completedRoutes.join(", ")}`
       : "No steps completed yet this session.";
 
+    const agentMode = !!data.agentMode;
     const messages: ChatMsg[] = [
-      { role: "system", content: buildSystemPrompt(role) },
+      { role: "system", content: buildSystemPrompt(role, agentMode) },
       { role: "system", content: completedNote },
       ...data.messages.map((m) => ({ role: m.role, content: m.content })),
     ];
 
     const toolsUsed: string[] = [];
-    const MAX_ITERATIONS = 6;
+    const MAX_ITERATIONS = agentMode ? 12 : 6;
 
     for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
       let resp: Response;

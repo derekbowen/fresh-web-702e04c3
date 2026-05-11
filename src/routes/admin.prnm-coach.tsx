@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
-import { Sparkles, Send, RotateCcw, ExternalLink, Check, Wrench } from "lucide-react";
+import { Sparkles, Send, RotateCcw, ExternalLink, Check, Wrench, Telescope } from "lucide-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { prnmCoachChat, getCoachRole, setCoachRole } from "@/server/admin-prnm-coach.functions";
 
@@ -76,6 +76,7 @@ function PrnmCoachPage() {
   const [detectedEmail, setDetectedEmail] = React.useState<string | null>(null);
   const [roleReady, setRoleReady] = React.useState(false);
   const [lastTools, setLastTools] = React.useState<string[]>([]);
+  const [agentMode, setAgentMode] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -137,6 +138,7 @@ function PrnmCoachPage() {
         messages: next,
         completedRoutes: Array.from(completed),
         roleOverride: roleSel === "auto" ? undefined : roleSel,
+        agentMode,
       } });
       if (res.ok) {
         setMessages([...next, { role: "assistant", content: res.reply }]);
@@ -201,6 +203,17 @@ function PrnmCoachPage() {
                 )}
               </span>
             )}
+            <button
+              onClick={() => setAgentMode((v) => !v)}
+              className={
+                agentMode
+                  ? "text-xs flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-2 py-1.5 font-medium"
+                  : "text-xs flex items-center gap-1 rounded-md border bg-background px-2 py-1.5 text-muted-foreground hover:text-foreground"
+              }
+              title={agentMode ? "Agent mode ON — runs deeper multi-step research (slower, more thorough)" : "Turn on agent mode for deeper multi-step research"}
+            >
+              <Telescope className="h-3 w-3" /> Agent {agentMode ? "ON" : "OFF"}
+            </button>
             <button onClick={reset} className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground">
               <RotateCcw className="h-3 w-3" /> Restart
             </button>
@@ -274,7 +287,8 @@ function PrnmCoachPage() {
           {loading && (
             <div className="flex justify-start">
               <div className="rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground flex items-center gap-2">
-                <Sparkles className="h-3 w-3 animate-pulse" /> Thinking & querying data…
+                <Sparkles className="h-3 w-3 animate-pulse" />
+                {agentMode ? "Agent mode — running deep multi-step research…" : "Thinking & querying data…"}
               </div>
             </div>
           )}
