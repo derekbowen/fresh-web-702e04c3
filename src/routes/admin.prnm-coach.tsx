@@ -182,7 +182,7 @@ function PrnmCoachPage() {
           <div className="flex items-center gap-2">
             <select
               value={roleSel}
-              onChange={(e) => setRoleSel(e.target.value as any)}
+              onChange={(e) => void changeRole(e.target.value as Role | "auto")}
               className="text-xs rounded-md border bg-background px-2 py-1.5"
               title="Switch role"
             >
@@ -191,8 +191,14 @@ function PrnmCoachPage() {
               ))}
             </select>
             {activeRole && (
-              <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary font-medium">
+              <span
+                className="text-xs px-2 py-1 rounded bg-primary/10 text-primary font-medium"
+                title={`${roleSource === "override" ? "Manual override" : roleSource === "admin_set" ? "Set by admin" : "Auto-detected"}${detectedName ? ` · ${detectedName}` : ""}${detectedEmail ? ` · ${detectedEmail}` : ""}`}
+              >
                 {activeRole.toUpperCase()}
+                {roleSource && roleSource !== "override" && (
+                  <span className="ml-1 opacity-70 font-normal">({roleSource === "auto" ? "auto" : "set"})</span>
+                )}
               </span>
             )}
             <button onClick={reset} className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground">
