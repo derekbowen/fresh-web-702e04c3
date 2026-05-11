@@ -70,11 +70,10 @@ export function subscribe(cb: () => void): () => void {
   };
 }
 
+import * as React from "react";
+
 export function useBgJobs(): BgJob[] {
-  // Lightweight hook without bringing in a store lib.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const React = require("react") as typeof import("react");
-  const [jobs, setJobs] = React.useState<BgJob[]>(() => loadJobs());
+  const [jobs, setJobs] = React.useState<BgJob[]>(() => (typeof window === "undefined" ? [] : loadJobs()));
   React.useEffect(() => subscribe(() => setJobs(loadJobs())), []);
   return jobs;
 }
