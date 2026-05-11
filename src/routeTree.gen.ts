@@ -84,6 +84,7 @@ import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-imp
 import { Route as AdminRedirectAliasesRouteImport } from './routes/admin.redirect-aliases'
 import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
+import { Route as AdminPrnmCoachRouteImport } from './routes/admin.prnm-coach'
 import { Route as AdminPrivacyRequestsRouteImport } from './routes/admin.privacy-requests'
 import { Route as AdminPlanRequestsRouteImport } from './routes/admin.plan-requests'
 import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-auditor'
@@ -541,6 +542,11 @@ const AdminQuickPageRoute = AdminQuickPageRouteImport.update({
   path: '/quick-page',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPrnmCoachRoute = AdminPrnmCoachRouteImport.update({
+  id: '/prnm-coach',
+  path: '/prnm-coach',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPrivacyRequestsRoute = AdminPrivacyRequestsRouteImport.update({
   id: '/privacy-requests',
   path: '/privacy-requests',
@@ -953,6 +959,7 @@ export interface FileRoutesByFullPath {
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
+  '/admin/prnm-coach': typeof AdminPrnmCoachRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
@@ -1095,6 +1102,7 @@ export interface FileRoutesByTo {
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
+  '/admin/prnm-coach': typeof AdminPrnmCoachRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
@@ -1238,6 +1246,7 @@ export interface FileRoutesById {
   '/admin/page-auditor': typeof AdminPageAuditorRoute
   '/admin/plan-requests': typeof AdminPlanRequestsRoute
   '/admin/privacy-requests': typeof AdminPrivacyRequestsRoute
+  '/admin/prnm-coach': typeof AdminPrnmCoachRoute
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
@@ -1382,6 +1391,7 @@ export interface FileRouteTypes {
     | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
+    | '/admin/prnm-coach'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
@@ -1524,6 +1534,7 @@ export interface FileRouteTypes {
     | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
+    | '/admin/prnm-coach'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
@@ -1666,6 +1677,7 @@ export interface FileRouteTypes {
     | '/admin/page-auditor'
     | '/admin/plan-requests'
     | '/admin/privacy-requests'
+    | '/admin/prnm-coach'
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
@@ -2359,6 +2371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminQuickPageRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/prnm-coach': {
+      id: '/admin/prnm-coach'
+      path: '/prnm-coach'
+      fullPath: '/admin/prnm-coach'
+      preLoaderRoute: typeof AdminPrnmCoachRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/privacy-requests': {
       id: '/admin/privacy-requests'
       path: '/privacy-requests'
@@ -2863,6 +2882,7 @@ interface AdminRouteChildren {
   AdminPageAuditorRoute: typeof AdminPageAuditorRoute
   AdminPlanRequestsRoute: typeof AdminPlanRequestsRoute
   AdminPrivacyRequestsRoute: typeof AdminPrivacyRequestsRoute
+  AdminPrnmCoachRoute: typeof AdminPrnmCoachRoute
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminRankTrackerRoute: typeof AdminRankTrackerRoute
   AdminRedirectAliasesRoute: typeof AdminRedirectAliasesRoute
@@ -2910,6 +2930,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPageAuditorRoute: AdminPageAuditorRoute,
   AdminPlanRequestsRoute: AdminPlanRequestsRoute,
   AdminPrivacyRequestsRoute: AdminPrivacyRequestsRoute,
+  AdminPrnmCoachRoute: AdminPrnmCoachRoute,
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminRankTrackerRoute: AdminRankTrackerRoute,
   AdminRedirectAliasesRoute: AdminRedirectAliasesRoute,
