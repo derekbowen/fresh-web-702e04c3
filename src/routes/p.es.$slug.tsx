@@ -43,6 +43,9 @@ export const Route = createFileRoute("/p/es/$slug")({
     const compositeSlug = `es/${params.slug}`;
     const result = await lookupContentPage({ data: { slug: compositeSlug } });
     if (result.kind === "redirect") {
+      if (result.redirectPath?.startsWith("/")) {
+        throw redirect({ href: result.redirectPath, statusCode: 301, replace: true });
+      }
       const stripped = result.canonicalSlug.startsWith("es/")
         ? result.canonicalSlug.slice(3)
         : result.canonicalSlug;
