@@ -99,6 +99,7 @@ export const list404s = createServerFn({ method: "POST" })
     z
       .object({
         unresolvedOnly: z.boolean().optional().default(true),
+        pPathsOnly: z.boolean().optional().default(false),
         limit: z.number().int().min(1).max(500).optional().default(100),
       })
       .parse(data ?? {}),
@@ -113,6 +114,7 @@ export const list404s = createServerFn({ method: "POST" })
       .order("last_seen_at", { ascending: false })
       .limit(data.limit);
     if (data.unresolvedOnly) q = q.is("resolved_at", null);
+    if (data.pPathsOnly) q = q.like("url_path", "/p/%");
     const { data: rows, error } = await q;
     if (error) {
       console.error("[404-log] list failed", error);
