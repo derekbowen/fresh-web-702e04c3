@@ -210,7 +210,7 @@ function JobRow({ job, onCurrentPage }: { job: BgJob; onCurrentPage: boolean }) 
         ) : job.status === "error" ? (
           <AlertCircle className="h-3.5 w-3.5 text-red-500" />
         ) : (
-          <button onClick={() => removeJob(job.id)} className="shrink-0 rounded p-0.5 hover:bg-muted" aria-label="Dismiss">
+          <button onClick={() => { markDismissed(job.id); removeJob(job.id); }} className="shrink-0 rounded p-0.5 hover:bg-muted" aria-label="Dismiss">
             <X className="h-3 w-3" />
           </button>
         )}
