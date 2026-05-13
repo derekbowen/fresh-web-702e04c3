@@ -64,6 +64,7 @@ import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-cal
 import { Route as PDogRouteImport } from './routes/p.dog'
 import { Route as PBlogRouteImport } from './routes/p.blog'
 import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
+import { Route as PAboutOurCompanyRouteImport } from './routes/p.about-our-company'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
 import { Route as MarketingAndGrowthSplatRouteImport } from './routes/marketing-and-growth.$'
@@ -459,6 +460,11 @@ const PBlogRoute = PBlogRouteImport.update({
 const PAllLocationsRoute = PAllLocationsRouteImport.update({
   id: '/p/all-locations',
   path: '/p/all-locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PAboutOurCompanyRoute = PAboutOurCompanyRouteImport.update({
+  id: '/p/about-our-company',
+  path: '/p/about-our-company',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PSlugRoute = PSlugRouteImport.update({
@@ -1113,6 +1119,7 @@ export interface FileRoutesByFullPath {
   '/marketing-and-growth/$': typeof MarketingAndGrowthSplatRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
+  '/p/about-our-company': typeof PAboutOurCompanyRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
   '/p/dog': typeof PDogRoute
@@ -1275,6 +1282,7 @@ export interface FileRoutesByTo {
   '/marketing-and-growth/$': typeof MarketingAndGrowthSplatRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
+  '/p/about-our-company': typeof PAboutOurCompanyRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
   '/p/dog': typeof PDogRoute
@@ -1438,6 +1446,7 @@ export interface FileRoutesById {
   '/marketing-and-growth/$': typeof MarketingAndGrowthSplatRoute
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
+  '/p/about-our-company': typeof PAboutOurCompanyRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
   '/p/dog': typeof PDogRoute
@@ -1602,6 +1611,7 @@ export interface FileRouteTypes {
     | '/marketing-and-growth/$'
     | '/p/$'
     | '/p/$slug'
+    | '/p/about-our-company'
     | '/p/all-locations'
     | '/p/blog'
     | '/p/dog'
@@ -1764,6 +1774,7 @@ export interface FileRouteTypes {
     | '/marketing-and-growth/$'
     | '/p/$'
     | '/p/$slug'
+    | '/p/about-our-company'
     | '/p/all-locations'
     | '/p/blog'
     | '/p/dog'
@@ -1926,6 +1937,7 @@ export interface FileRouteTypes {
     | '/marketing-and-growth/$'
     | '/p/$'
     | '/p/$slug'
+    | '/p/about-our-company'
     | '/p/all-locations'
     | '/p/blog'
     | '/p/dog'
@@ -2030,6 +2042,7 @@ export interface RootRouteChildren {
   MarketingAndGrowthSplatRoute: typeof MarketingAndGrowthSplatRoute
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
+  PAboutOurCompanyRoute: typeof PAboutOurCompanyRoute
   PAllLocationsRoute: typeof PAllLocationsRoute
   PBlogRoute: typeof PBlogRoute
   PDogRoute: typeof PDogRoute
@@ -2469,6 +2482,13 @@ declare module '@tanstack/react-router' {
       path: '/p/all-locations'
       fullPath: '/p/all-locations'
       preLoaderRoute: typeof PAllLocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/about-our-company': {
+      id: '/p/about-our-company'
+      path: '/p/about-our-company'
+      fullPath: '/p/about-our-company'
+      preLoaderRoute: typeof PAboutOurCompanyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$slug': {
@@ -3448,6 +3468,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketingAndGrowthSplatRoute: MarketingAndGrowthSplatRoute,
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
+  PAboutOurCompanyRoute: PAboutOurCompanyRoute,
   PAllLocationsRoute: PAllLocationsRoute,
   PBlogRoute: PBlogRoute,
   PDogRoute: PDogRoute,
@@ -3508,13 +3529,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -525,7 +525,13 @@ function SiteFooterInner() {
               </a>
             </div>
           </div>
-          <div className="mt-8 flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-8 border-t border-border pt-6 text-xs leading-relaxed text-muted-foreground">
+            Pool Rental Near Me is operated by PRNM Corp, a Delaware C-Corporation.{" "}
+            <a href={rel("/p/about-our-company")} className="font-medium text-foreground hover:text-primary">
+              Learn more about our company →
+            </a>
+          </div>
+          <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <span>{data.bottom_text || `© ${FOOTER_YEAR} PRNM CORP`}</span>
             <div className="flex items-center gap-4">
               <a href="/p/blog" className="hover:text-primary">Blog</a>
