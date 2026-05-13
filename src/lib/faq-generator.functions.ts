@@ -470,7 +470,15 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<BulkFaqResponse> => {
     const { userId } = context as { userId: string };
+    const bulkStartedAt = Date.now();
     if (!(await isAdmin(userId))) {
+      await logFaqEvent({
+        endpoint: "bulkGenerateFaqs",
+        userId,
+        payload: { url_count: data.url_paths.length, count: data.count },
+        status: "forbidden",
+        durationMs: Date.now() - bulkStartedAt,
+      });
       return { results: [], total: 0, inserted: 0, failed: 0, error: "Forbidden" };
     }
 
@@ -484,6 +492,7 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
     let failed = 0;
 
     for (const url_path of paths) {
+      const itemStartedAt = Date.now();
       try {
         if (data.skip_if_has_faq) {
           const { data: page } = await (supabaseAdmin as any)
@@ -493,6 +502,14 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
             .maybeSingle();
           if (page?.body_markdown && hasFaqHeading(page.body_markdown)) {
             results.push({ url_path, status: "skipped", error: "Already has FAQ" });
+            await logFaqEvent({
+              endpoint: "bulkGenerateFaqs",
+              userId,
+              url_path,
+              payload: { count: data.count, replace_existing: data.replace_existing, skip_if_has_faq: true },
+              status: "skipped",
+              durationMs: Date.now() - itemStartedAt,
+            });
             continue;
           }
         }
@@ -500,11 +517,22 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
         const preview = await generateFaqPreview(url_path, data.count);
         if (preview.error || preview.faqs.length === 0) {
           failed++;
+          const errMsg = preview.error ?? "No FAQs generated";
           results.push({
             url_path,
             status: "error",
-            error: preview.error ?? "No FAQs generated",
+            error: errMsg,
             queries: preview.queries.length,
+          });
+          await logFaqEvent({
+            endpoint: "bulkGenerateFaqs",
+            userId,
+            url_path,
+            payload: { count: data.count, replace_existing: data.replace_existing },
+            status: "error",
+            error: new Error(errMsg),
+            durationMs: Date.now() - itemStartedAt,
+            meta: { phase: "preview", query_count: preview.queries.length },
           });
           continue;
         }
@@ -512,7 +540,18 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
         const ins = await insertFaqsIntoPath(url_path, preview.faqs, data.replace_existing);
         if (!ins.success) {
           failed++;
-          results.push({ url_path, status: "error", error: ins.error ?? "Insert failed" });
+          const errMsg = ins.error ?? "Insert failed";
+          results.push({ url_path, status: "error", error: errMsg });
+          await logFaqEvent({
+            endpoint: "bulkGenerateFaqs",
+            userId,
+            url_path,
+            payload: { count: data.count, replace_existing: data.replace_existing },
+            status: "error",
+            error: new Error(errMsg),
+            durationMs: Date.now() - itemStartedAt,
+            meta: { phase: "insert", faq_count: preview.faqs.length },
+          });
           continue;
         }
 
@@ -523,6 +562,15 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
           faq_count: preview.faqs.length,
           queries: preview.queries.length,
         });
+        await logFaqEvent({
+          endpoint: "bulkGenerateFaqs",
+          userId,
+          url_path,
+          payload: { count: data.count, replace_existing: data.replace_existing },
+          status: "ok",
+          durationMs: Date.now() - itemStartedAt,
+          meta: { faq_count: preview.faqs.length, query_count: preview.queries.length },
+        });
       } catch (e) {
         failed++;
         results.push({
@@ -530,12 +578,36 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
           status: "error",
           error: e instanceof Error ? e.message : "Unknown error",
         });
+        await logFaqEvent({
+          endpoint: "bulkGenerateFaqs",
+          userId,
+          url_path,
+          payload: { count: data.count, replace_existing: data.replace_existing },
+          status: "error",
+          error: e,
+          durationMs: Date.now() - itemStartedAt,
+          meta: { phase: "exception" },
+        });
       }
 
       if (data.delay_ms > 0) {
         await new Promise((r) => setTimeout(r, data.delay_ms));
       }
     }
+
+    await logFaqEvent({
+      endpoint: "bulkGenerateFaqs:summary",
+      userId,
+      payload: {
+        url_count: data.url_paths.length,
+        count: data.count,
+        replace_existing: data.replace_existing,
+        skip_if_has_faq: data.skip_if_has_faq,
+      },
+      status: failed === 0 ? "ok" : "error",
+      durationMs: Date.now() - bulkStartedAt,
+      meta: { total: paths.length, inserted, failed },
+    });
 
     return { results, total: paths.length, inserted, failed };
   });
