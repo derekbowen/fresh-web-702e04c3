@@ -268,14 +268,47 @@ export const previewFaqForUrl = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<FaqPreview> => {
     const { userId } = context as { userId: string };
+    const startedAt = Date.now();
     if (!(await isAdmin(userId))) {
+      await logFaqEvent({
+        endpoint: "previewFaqForUrl",
+        userId,
+        url_path: data.url_path,
+        payload: data,
+        status: "forbidden",
+        durationMs: Date.now() - startedAt,
+      });
       return {
         faqs: [], markdown: "", jsonLd: "", queries: [],
         page: { url_path: data.url_path, title: null, focus_keyword: null },
         error: "Forbidden",
       };
     }
-    return generateFaqPreview(data.url_path, data.count);
+    try {
+      const result = await generateFaqPreview(data.url_path, data.count);
+      await logFaqEvent({
+        endpoint: "previewFaqForUrl",
+        userId,
+        url_path: data.url_path,
+        payload: data,
+        status: result.error ? "error" : "ok",
+        error: result.error ? new Error(result.error) : undefined,
+        durationMs: Date.now() - startedAt,
+        meta: { faq_count: result.faqs.length, query_count: result.queries.length },
+      });
+      return result;
+    } catch (e) {
+      await logFaqEvent({
+        endpoint: "previewFaqForUrl",
+        userId,
+        url_path: data.url_path,
+        payload: data,
+        status: "error",
+        error: e,
+        durationMs: Date.now() - startedAt,
+      });
+      throw e;
+    }
   });
 
 // ---------- insert ----------
