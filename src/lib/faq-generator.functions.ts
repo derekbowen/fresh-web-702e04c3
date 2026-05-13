@@ -36,6 +36,46 @@ async function isAdmin(userId: string): Promise<boolean> {
   return !!data;
 }
 
+/**
+ * Fire-and-forget debug logger. Writes one row to faq_generator_logs per call
+ * so admins can see request payloads, durations, and stack traces when the
+ * FAQ generator misbehaves. Failures here are swallowed — logging must never
+ * break the actual endpoint.
+ */
+async function logFaqEvent(entry: {
+  endpoint: string;
+  userId?: string | null;
+  url_path?: string | null;
+  payload?: unknown;
+  status: "ok" | "error" | "skipped" | "forbidden";
+  error?: unknown;
+  durationMs?: number;
+  httpStatus?: number;
+  meta?: Record<string, unknown>;
+}): Promise<void> {
+  try {
+    const err = entry.error;
+    const errorMessage =
+      err instanceof Error ? err.message : err == null ? null : String(err);
+    const errorStack =
+      err instanceof Error && err.stack ? err.stack.slice(0, 8000) : null;
+    await (supabaseAdmin as any).from("faq_generator_logs").insert({
+      endpoint: entry.endpoint,
+      user_id: entry.userId ?? null,
+      url_path: entry.url_path ?? null,
+      payload: entry.payload ?? null,
+      status: entry.status,
+      error_message: errorMessage,
+      error_stack: errorStack,
+      duration_ms: entry.durationMs ?? null,
+      http_status: entry.httpStatus ?? null,
+      meta: entry.meta ?? null,
+    });
+  } catch (logErr) {
+    console.error("[faq-generator] failed to write debug log", logErr);
+  }
+}
+
 function buildMarkdown(faqs: FaqItem[]): string {
   const lines = ["", "## Frequently asked questions", ""];
   for (const f of faqs) {
