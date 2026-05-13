@@ -425,7 +425,30 @@ export function HostAcqCityTemplate({
                 </ul>
               </aside>
             ) : null}
-            <RelatedPages />
+            <RelatedPages
+              heading={`More for ${cityName} pool hosts`}
+              items={(() => {
+                const items: RelatedPagesItem[] = [];
+                const advocacy = stateCode
+                  ? ADVOCACY_STATES.find((s) => s.code === stateCode)
+                  : null;
+                if (advocacy) {
+                  items.push({
+                    to: `/p/${advocacy.slug}`,
+                    label: `${advocacy.name} pool host laws & advocacy`,
+                    description: `Permits, HOA defense, and what's legal in ${advocacy.name}`,
+                  });
+                }
+                items.push(
+                  { to: "/p/earnings-calculator", label: "Pool host earnings calculator", description: `Estimate your monthly income in ${cityName}` },
+                  { to: "/p/hosting", label: "Become a pool host", description: "Everything new hosts should know before listing" },
+                  { to: "/p/pool-maintenance", label: "Pool maintenance guide", description: "Keep your water guest-ready, week after week" },
+                  { to: "/p/free-host-tools", label: "Free host tools", description: "Calculators, checklists, and templates" },
+                  { to: "/p/all-locations", label: "All pool rental locations", description: "Browse host pools across the US" },
+                );
+                return items;
+              })()}
+            />
           </div>
         </section>
 
