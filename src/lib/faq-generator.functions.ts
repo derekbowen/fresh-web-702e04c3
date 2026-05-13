@@ -399,8 +399,42 @@ export const insertFaqIntoPage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { userId } = context as { userId: string };
-    if (!(await isAdmin(userId))) return { success: false, error: "Forbidden" };
-    return insertFaqsIntoPath(data.url_path, data.faqs, data.replace_existing);
+    const startedAt = Date.now();
+    if (!(await isAdmin(userId))) {
+      await logFaqEvent({
+        endpoint: "insertFaqIntoPage",
+        userId,
+        url_path: data.url_path,
+        payload: { url_path: data.url_path, faq_count: data.faqs.length, replace_existing: data.replace_existing },
+        status: "forbidden",
+        durationMs: Date.now() - startedAt,
+      });
+      return { success: false, error: "Forbidden" };
+    }
+    try {
+      const result = await insertFaqsIntoPath(data.url_path, data.faqs, data.replace_existing);
+      await logFaqEvent({
+        endpoint: "insertFaqIntoPage",
+        userId,
+        url_path: data.url_path,
+        payload: { url_path: data.url_path, faq_count: data.faqs.length, replace_existing: data.replace_existing },
+        status: result.success ? "ok" : "error",
+        error: result.error ? new Error(result.error) : undefined,
+        durationMs: Date.now() - startedAt,
+      });
+      return result;
+    } catch (e) {
+      await logFaqEvent({
+        endpoint: "insertFaqIntoPage",
+        userId,
+        url_path: data.url_path,
+        payload: { url_path: data.url_path, faq_count: data.faqs.length, replace_existing: data.replace_existing },
+        status: "error",
+        error: e,
+        durationMs: Date.now() - startedAt,
+      });
+      throw e;
+    }
   });
 
 // ---------- bulk ----------
