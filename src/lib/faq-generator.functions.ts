@@ -36,6 +36,46 @@ async function isAdmin(userId: string): Promise<boolean> {
   return !!data;
 }
 
+/**
+ * Fire-and-forget debug logger. Writes one row to faq_generator_logs per call
+ * so admins can see request payloads, durations, and stack traces when the
+ * FAQ generator misbehaves. Failures here are swallowed — logging must never
+ * break the actual endpoint.
+ */
+async function logFaqEvent(entry: {
+  endpoint: string;
+  userId?: string | null;
+  url_path?: string | null;
+  payload?: unknown;
+  status: "ok" | "error" | "skipped" | "forbidden";
+  error?: unknown;
+  durationMs?: number;
+  httpStatus?: number;
+  meta?: Record<string, unknown>;
+}): Promise<void> {
+  try {
+    const err = entry.error;
+    const errorMessage =
+      err instanceof Error ? err.message : err == null ? null : String(err);
+    const errorStack =
+      err instanceof Error && err.stack ? err.stack.slice(0, 8000) : null;
+    await (supabaseAdmin as any).from("faq_generator_logs").insert({
+      endpoint: entry.endpoint,
+      user_id: entry.userId ?? null,
+      url_path: entry.url_path ?? null,
+      payload: entry.payload ?? null,
+      status: entry.status,
+      error_message: errorMessage,
+      error_stack: errorStack,
+      duration_ms: entry.durationMs ?? null,
+      http_status: entry.httpStatus ?? null,
+      meta: entry.meta ?? null,
+    });
+  } catch (logErr) {
+    console.error("[faq-generator] failed to write debug log", logErr);
+  }
+}
+
 function buildMarkdown(faqs: FaqItem[]): string {
   const lines = ["", "## Frequently asked questions", ""];
   for (const f of faqs) {
@@ -228,14 +268,47 @@ export const previewFaqForUrl = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<FaqPreview> => {
     const { userId } = context as { userId: string };
+    const startedAt = Date.now();
     if (!(await isAdmin(userId))) {
+      await logFaqEvent({
+        endpoint: "previewFaqForUrl",
+        userId,
+        url_path: data.url_path,
+        payload: data,
+        status: "forbidden",
+        durationMs: Date.now() - startedAt,
+      });
       return {
         faqs: [], markdown: "", jsonLd: "", queries: [],
         page: { url_path: data.url_path, title: null, focus_keyword: null },
         error: "Forbidden",
       };
     }
-    return generateFaqPreview(data.url_path, data.count);
+    try {
+      const result = await generateFaqPreview(data.url_path, data.count);
+      await logFaqEvent({
+        endpoint: "previewFaqForUrl",
+        userId,
+        url_path: data.url_path,
+        payload: data,
+        status: result.error ? "error" : "ok",
+        error: result.error ? new Error(result.error) : undefined,
+        durationMs: Date.now() - startedAt,
+        meta: { faq_count: result.faqs.length, query_count: result.queries.length },
+      });
+      return result;
+    } catch (e) {
+      await logFaqEvent({
+        endpoint: "previewFaqForUrl",
+        userId,
+        url_path: data.url_path,
+        payload: data,
+        status: "error",
+        error: e,
+        durationMs: Date.now() - startedAt,
+      });
+      throw e;
+    }
   });
 
 // ---------- insert ----------
@@ -326,8 +399,42 @@ export const insertFaqIntoPage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { userId } = context as { userId: string };
-    if (!(await isAdmin(userId))) return { success: false, error: "Forbidden" };
-    return insertFaqsIntoPath(data.url_path, data.faqs, data.replace_existing);
+    const startedAt = Date.now();
+    if (!(await isAdmin(userId))) {
+      await logFaqEvent({
+        endpoint: "insertFaqIntoPage",
+        userId,
+        url_path: data.url_path,
+        payload: { url_path: data.url_path, faq_count: data.faqs.length, replace_existing: data.replace_existing },
+        status: "forbidden",
+        durationMs: Date.now() - startedAt,
+      });
+      return { success: false, error: "Forbidden" };
+    }
+    try {
+      const result = await insertFaqsIntoPath(data.url_path, data.faqs, data.replace_existing);
+      await logFaqEvent({
+        endpoint: "insertFaqIntoPage",
+        userId,
+        url_path: data.url_path,
+        payload: { url_path: data.url_path, faq_count: data.faqs.length, replace_existing: data.replace_existing },
+        status: result.success ? "ok" : "error",
+        error: result.error ? new Error(result.error) : undefined,
+        durationMs: Date.now() - startedAt,
+      });
+      return result;
+    } catch (e) {
+      await logFaqEvent({
+        endpoint: "insertFaqIntoPage",
+        userId,
+        url_path: data.url_path,
+        payload: { url_path: data.url_path, faq_count: data.faqs.length, replace_existing: data.replace_existing },
+        status: "error",
+        error: e,
+        durationMs: Date.now() - startedAt,
+      });
+      throw e;
+    }
   });
 
 // ---------- bulk ----------
@@ -363,7 +470,15 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<BulkFaqResponse> => {
     const { userId } = context as { userId: string };
+    const bulkStartedAt = Date.now();
     if (!(await isAdmin(userId))) {
+      await logFaqEvent({
+        endpoint: "bulkGenerateFaqs",
+        userId,
+        payload: { url_count: data.url_paths.length, count: data.count },
+        status: "forbidden",
+        durationMs: Date.now() - bulkStartedAt,
+      });
       return { results: [], total: 0, inserted: 0, failed: 0, error: "Forbidden" };
     }
 
@@ -377,6 +492,7 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
     let failed = 0;
 
     for (const url_path of paths) {
+      const itemStartedAt = Date.now();
       try {
         if (data.skip_if_has_faq) {
           const { data: page } = await (supabaseAdmin as any)
@@ -386,6 +502,14 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
             .maybeSingle();
           if (page?.body_markdown && hasFaqHeading(page.body_markdown)) {
             results.push({ url_path, status: "skipped", error: "Already has FAQ" });
+            await logFaqEvent({
+              endpoint: "bulkGenerateFaqs",
+              userId,
+              url_path,
+              payload: { count: data.count, replace_existing: data.replace_existing, skip_if_has_faq: true },
+              status: "skipped",
+              durationMs: Date.now() - itemStartedAt,
+            });
             continue;
           }
         }
@@ -393,11 +517,22 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
         const preview = await generateFaqPreview(url_path, data.count);
         if (preview.error || preview.faqs.length === 0) {
           failed++;
+          const errMsg = preview.error ?? "No FAQs generated";
           results.push({
             url_path,
             status: "error",
-            error: preview.error ?? "No FAQs generated",
+            error: errMsg,
             queries: preview.queries.length,
+          });
+          await logFaqEvent({
+            endpoint: "bulkGenerateFaqs",
+            userId,
+            url_path,
+            payload: { count: data.count, replace_existing: data.replace_existing },
+            status: "error",
+            error: new Error(errMsg),
+            durationMs: Date.now() - itemStartedAt,
+            meta: { phase: "preview", query_count: preview.queries.length },
           });
           continue;
         }
@@ -405,7 +540,18 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
         const ins = await insertFaqsIntoPath(url_path, preview.faqs, data.replace_existing);
         if (!ins.success) {
           failed++;
-          results.push({ url_path, status: "error", error: ins.error ?? "Insert failed" });
+          const errMsg = ins.error ?? "Insert failed";
+          results.push({ url_path, status: "error", error: errMsg });
+          await logFaqEvent({
+            endpoint: "bulkGenerateFaqs",
+            userId,
+            url_path,
+            payload: { count: data.count, replace_existing: data.replace_existing },
+            status: "error",
+            error: new Error(errMsg),
+            durationMs: Date.now() - itemStartedAt,
+            meta: { phase: "insert", faq_count: preview.faqs.length },
+          });
           continue;
         }
 
@@ -416,6 +562,15 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
           faq_count: preview.faqs.length,
           queries: preview.queries.length,
         });
+        await logFaqEvent({
+          endpoint: "bulkGenerateFaqs",
+          userId,
+          url_path,
+          payload: { count: data.count, replace_existing: data.replace_existing },
+          status: "ok",
+          durationMs: Date.now() - itemStartedAt,
+          meta: { faq_count: preview.faqs.length, query_count: preview.queries.length },
+        });
       } catch (e) {
         failed++;
         results.push({
@@ -423,12 +578,36 @@ export const bulkGenerateFaqs = createServerFn({ method: "POST" })
           status: "error",
           error: e instanceof Error ? e.message : "Unknown error",
         });
+        await logFaqEvent({
+          endpoint: "bulkGenerateFaqs",
+          userId,
+          url_path,
+          payload: { count: data.count, replace_existing: data.replace_existing },
+          status: "error",
+          error: e,
+          durationMs: Date.now() - itemStartedAt,
+          meta: { phase: "exception" },
+        });
       }
 
       if (data.delay_ms > 0) {
         await new Promise((r) => setTimeout(r, data.delay_ms));
       }
     }
+
+    await logFaqEvent({
+      endpoint: "bulkGenerateFaqs:summary",
+      userId,
+      payload: {
+        url_count: data.url_paths.length,
+        count: data.count,
+        replace_existing: data.replace_existing,
+        skip_if_has_faq: data.skip_if_has_faq,
+      },
+      status: failed === 0 ? "ok" : "error",
+      durationMs: Date.now() - bulkStartedAt,
+      meta: { total: paths.length, inserted, failed },
+    });
 
     return { results, total: paths.length, inserted, failed };
   });

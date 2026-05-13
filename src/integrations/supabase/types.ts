@@ -1343,6 +1343,51 @@ export type Database = {
         }
         Relationships: []
       }
+      faq_generator_logs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          endpoint: string
+          error_message: string | null
+          error_stack: string | null
+          http_status: number | null
+          id: string
+          meta: Json | null
+          payload: Json | null
+          status: string
+          url_path: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          endpoint: string
+          error_message?: string | null
+          error_stack?: string | null
+          http_status?: number | null
+          id?: string
+          meta?: Json | null
+          payload?: Json | null
+          status: string
+          url_path?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          endpoint?: string
+          error_message?: string | null
+          error_stack?: string | null
+          http_status?: number | null
+          id?: string
+          meta?: Json | null
+          payload?: Json | null
+          status?: string
+          url_path?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       feature_requests: {
         Row: {
           city: string | null
