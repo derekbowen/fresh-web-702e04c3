@@ -320,6 +320,21 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
             {/* PRNM CTA */}
             <PrnmCta />
 
+            {/* Cross-funnel related pages — keep readers on-site after the article ends */}
+            <RelatedPages
+              heading={isHub ? "Turn your maintenance know-how into income" : "Related on Pool Rental Near Me"}
+              items={[
+                { to: "/p/hosting", label: "Become a pool host", description: "Earn $3K–$10K/month renting your pool by the hour" },
+                { to: "/p/earnings-calculator", label: "Pool host earnings calculator", description: "See what your pool could make this month" },
+                { to: "/p/free-host-tools", label: "Free host tools", description: "Calculators, checklists, and templates" },
+                { to: "/p/all-locations", label: "Browse all pool rental cities", description: "5,000+ city pages across the US" },
+                { to: "/p/how-it-works", label: "How pool rental works", description: "Booking, payouts, and insurance, end to end" },
+                ...(isHub
+                  ? []
+                  : [{ to: "/p/pool-maintenance", label: "Back to the Pool Maintenance Guide", description: "Pillar guide and every chapter in one place" }]),
+              ]}
+            />
+
             {/* Author box */}
             <section className="mt-10 rounded-2xl border border-border bg-muted/30 p-6">
               <p className="text-sm font-semibold text-foreground">Written by the PRNM team</p>
