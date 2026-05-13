@@ -84,6 +84,13 @@ const TEMPLATE_GROUPS: Array<{
     basePath: "/p",
   },
   {
+    id: "pool-maintenance",
+    title: "Pool Maintenance Hub",
+    description: "Pillar guide and step-by-step tutorials for pool care, chemistry, and seasonal upkeep.",
+    templateTypes: ["pool_maintenance_hub", "pool_maintenance"],
+    basePath: "/p",
+  },
+  {
     id: "spanish",
     title: "Guías en Español",
     description: "Recursos completos para anfitriones hispanohablantes.",
