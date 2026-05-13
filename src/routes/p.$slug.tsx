@@ -365,15 +365,16 @@ export const Route = createFileRoute("/p/$slug")({
 });
 
 function isArticleType(t: ContentPage["template_type"]): boolean {
+  const v = t as string | null;
   return (
-    t === "resource" ||
-    t === "elearning" ||
-    t === "event_guide" ||
-    t === "host_advocacy_hub" ||
-    t === "host_advocacy_state" ||
-    t === "spanish_resource" ||
-    t === "pool_maintenance" ||
-    t === "pool_maintenance_hub"
+    v === "resource" ||
+    v === "elearning" ||
+    v === "event_guide" ||
+    v === "host_advocacy_hub" ||
+    v === "host_advocacy_state" ||
+    v === "spanish_resource" ||
+    v === "pool_maintenance" ||
+    v === "pool_maintenance_hub"
   );
 }
 
