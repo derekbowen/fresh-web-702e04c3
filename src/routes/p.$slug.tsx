@@ -371,7 +371,9 @@ function isArticleType(t: ContentPage["template_type"]): boolean {
     t === "event_guide" ||
     t === "host_advocacy_hub" ||
     t === "host_advocacy_state" ||
-    t === "spanish_resource"
+    t === "spanish_resource" ||
+    t === "pool_maintenance" ||
+    t === "pool_maintenance_hub"
   );
 }
 
