@@ -428,6 +428,9 @@ function ContentPageDispatcher() {
       return <SwimInstructorHubTemplate page={page} linkTargets={linkTargets} />;
     case "resource":
       return <ResourceArticleTemplate page={page} linkTargets={linkTargets} relatedPosts={relatedPosts} />;
+    case "pool_maintenance":
+    case "pool_maintenance_hub":
+      return <PoolMaintenanceTemplate page={page} />;
     case "host_advocacy_hub":
     case "host_advocacy_state":
       return <AdvocacyTemplate page={page} />;
