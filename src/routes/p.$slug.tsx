@@ -36,6 +36,7 @@ import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 import { EventGuideTemplate } from "@/components/templates/event-guide";
 import { SwimInstructorCityTemplate } from "@/components/templates/swim-instructor-city";
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
+import { PoolMaintenanceTemplate } from "@/components/templates/pool-maintenance";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { heroPreloadLinks } from "@/lib/hero-image";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
