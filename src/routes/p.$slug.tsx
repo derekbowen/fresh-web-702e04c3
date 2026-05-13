@@ -420,7 +420,7 @@ function ContentPageDispatcher() {
     );
   }
 
-  switch (page.template_type) {
+  switch (page.template_type as string | null) {
     case "host_acq_city":
       return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} citySources={citySources} />;
     case "event_guide":
