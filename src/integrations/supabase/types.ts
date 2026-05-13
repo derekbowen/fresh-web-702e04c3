@@ -736,6 +736,8 @@ export type Database = {
           redirect_to: string | null
           refresh_attempts: number
           refresh_last_error: string | null
+          related_slugs: string[] | null
+          schema_type: string | null
           scraped_at: string | null
           seo_description: string | null
           seo_title: string | null
@@ -747,6 +749,7 @@ export type Database = {
           title: string | null
           updated_at: string
           url_path: string | null
+          youtube_video_id: string | null
         }
         Insert: {
           body_markdown?: string | null
@@ -779,6 +782,8 @@ export type Database = {
           redirect_to?: string | null
           refresh_attempts?: number
           refresh_last_error?: string | null
+          related_slugs?: string[] | null
+          schema_type?: string | null
           scraped_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
@@ -790,6 +795,7 @@ export type Database = {
           title?: string | null
           updated_at?: string
           url_path?: string | null
+          youtube_video_id?: string | null
         }
         Update: {
           body_markdown?: string | null
@@ -822,6 +828,8 @@ export type Database = {
           redirect_to?: string | null
           refresh_attempts?: number
           refresh_last_error?: string | null
+          related_slugs?: string[] | null
+          schema_type?: string | null
           scraped_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
@@ -833,6 +841,7 @@ export type Database = {
           title?: string | null
           updated_at?: string
           url_path?: string | null
+          youtube_video_id?: string | null
         }
         Relationships: []
       }
