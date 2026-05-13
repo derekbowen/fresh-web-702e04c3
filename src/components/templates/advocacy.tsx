@@ -357,6 +357,21 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
                   </div>
                 </section>
               )}
+
+              <RelatedPages
+                heading="Keep building your hosting business"
+                items={(() => {
+                  const items: RelatedPagesItem[] = [
+                    { to: "/p/hosting", label: "Become a pool host", description: "What it takes to list your backyard pool" },
+                    { to: "/p/earnings-calculator", label: "Pool host earnings calculator", description: "Estimate your monthly income before you list" },
+                    { to: "/p/hoa-pool-rental-defense-kit", label: "HOA defense kit", description: "Templates and citations for tough HOA conversations" },
+                    { to: "/p/pool-maintenance", label: "Pool maintenance hub", description: "Keep your rental water pristine for paying guests" },
+                    { to: "/p/sign-a-waiver", label: "Liability waiver template", description: "What to require before any guest swims" },
+                    { to: "/p/free-host-tools", label: "Free host tools", description: "Calculators, checklists, and templates" },
+                  ];
+                  return items;
+                })()}
+              />
             </article>
 
             {/* Sidebar */}
