@@ -116,7 +116,7 @@ Return ONLY JSON, no markdown fences.`;
   const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${lovKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "google/gemini-2.5-flash", messages: [{ role: "user", content: prompt }] }),
+    body: JSON.stringify({ model: "google/gemini-3-flash-preview", messages: [{ role: "user", content: prompt }] }),
   });
   if (!aiResp.ok) return { error: `AI ${aiResp.status}: ${(await aiResp.text()).slice(0, 200)}` };
   const aiJson = await aiResp.json();

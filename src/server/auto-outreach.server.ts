@@ -12,7 +12,7 @@ import { sendSms, isOptedOut, toE164 } from "@/server/sms.server";
 
 const sb = () => supabaseAdmin as any;
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const AI_MODEL = "google/gemini-2.5-flash";
+const AI_MODEL = "google/gemini-3-flash-preview";
 
 type LeadCtx = {
   source: "host_lead" | "ig_lead" | "social_lead" | "provider_lead";

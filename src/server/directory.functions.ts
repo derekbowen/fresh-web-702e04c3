@@ -471,7 +471,7 @@ Return JSON with shape: { "long_description": string (700-900 words, markdown, n
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3-flash-preview",
         messages: [{ role: "system", content: sys }, { role: "user", content: user }],
         response_format: { type: "json_object" },
       }),
@@ -530,7 +530,7 @@ export const adminBulkGenerateProviderContent = createServerFn({ method: "POST" 
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
+            model: "google/gemini-3-flash-preview",
             messages: [{ role: "system", content: sys }, { role: "user", content: user }],
             response_format: { type: "json_object" },
           }),

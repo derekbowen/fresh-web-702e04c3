@@ -677,7 +677,7 @@ Return ONLY JSON, no markdown fences.`;
       method: "POST",
       headers: { Authorization: `Bearer ${lovKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3-flash-preview",
         messages: [{ role: "user", content: prompt }],
       }),
     });
@@ -933,7 +933,7 @@ export const generateCompetitorDigest = createServerFn({ method: "POST" })
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "google/gemini-3-flash-preview",
           messages: [
             { role: "system", content: "You are a competitive intelligence analyst for a pool-rental marketplace. Be terse, founder-to-founder, no fluff." },
             { role: "user", content: `Summarize what these competitors shipped in the last ${data.days} days. Identify themes (city expansion, new features, content angles), call out which competitor is moving fastest, and end with 2-3 specific actions we should take this week. Markdown, under 250 words.\n\n${summary}` },
