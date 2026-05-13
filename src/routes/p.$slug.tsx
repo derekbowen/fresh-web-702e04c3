@@ -36,6 +36,7 @@ import { HostAcqCityTemplate } from "@/components/templates/host-acq-city";
 import { EventGuideTemplate } from "@/components/templates/event-guide";
 import { SwimInstructorCityTemplate } from "@/components/templates/swim-instructor-city";
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
+import { PoolMaintenanceTemplate } from "@/components/templates/pool-maintenance";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { heroPreloadLinks } from "@/lib/hero-image";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
@@ -364,13 +365,16 @@ export const Route = createFileRoute("/p/$slug")({
 });
 
 function isArticleType(t: ContentPage["template_type"]): boolean {
+  const v = t as string | null;
   return (
-    t === "resource" ||
-    t === "elearning" ||
-    t === "event_guide" ||
-    t === "host_advocacy_hub" ||
-    t === "host_advocacy_state" ||
-    t === "spanish_resource"
+    v === "resource" ||
+    v === "elearning" ||
+    v === "event_guide" ||
+    v === "host_advocacy_hub" ||
+    v === "host_advocacy_state" ||
+    v === "spanish_resource" ||
+    v === "pool_maintenance" ||
+    v === "pool_maintenance_hub"
   );
 }
 
@@ -416,7 +420,7 @@ function ContentPageDispatcher() {
     );
   }
 
-  switch (page.template_type) {
+  switch (page.template_type as string | null) {
     case "host_acq_city":
       return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} citySources={citySources} />;
     case "event_guide":
@@ -427,6 +431,9 @@ function ContentPageDispatcher() {
       return <SwimInstructorHubTemplate page={page} linkTargets={linkTargets} />;
     case "resource":
       return <ResourceArticleTemplate page={page} linkTargets={linkTargets} relatedPosts={relatedPosts} />;
+    case "pool_maintenance":
+    case "pool_maintenance_hub":
+      return <PoolMaintenanceTemplate page={page} />;
     case "host_advocacy_hub":
     case "host_advocacy_state":
       return <AdvocacyTemplate page={page} />;

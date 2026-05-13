@@ -302,7 +302,6 @@ function GenerateContentPageInner() {
   // These are ballpark — meant to give the user a sense of spend, not an invoice.
   const COST_PER_PAGE_USD: Record<string, number> = {
     "google/gemini-3-flash-preview": 0.012,
-    "google/gemini-3-flash-preview": 0.012,
     "google/gemini-2.5-pro": 0.09,
     "google/gemini-3.1-pro-preview": 0.12,
   };
