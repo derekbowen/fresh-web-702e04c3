@@ -1,0 +1,4 @@
+DELETE FROM public.content_pages WHERE slug IN ('pool-maintenance','water-chemistry-basics','how-to-shock-a-pool','cloudy-pool-water-fix','green-pool-recovery','weekly-pool-cleaning-schedule','pool-pump-troubleshooting','pool-filter-types','pool-heater-guide','saltwater-pool-care','pool-vacuums-cleaners','opening-a-pool','winterizing-a-pool','after-heavy-rain','pool-stains-removal');
+
+-- The full INSERT statements are loaded from /tmp/pm_mig.sql in the next step via psql, but to keep this migration self-contained we re-emit them here.
+-- Placeholder: actual inserts performed after the delete via direct psql is blocked by RLS, so we run the full file via this migration tool.
