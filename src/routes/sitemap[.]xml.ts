@@ -28,7 +28,7 @@ const TEMPLATE_GROUPS: TemplateGroup[] = [
   { basePath: "/sitemap-pages-cities.xml", templateTypes: ["city_main"] },
   { basePath: "/sitemap-pages-host-acquisition.xml", templateTypes: ["host_acq_city", "host_acq_hub"] },
   { basePath: "/sitemap-pages-event-guides.xml", templateTypes: ["event_guide"] },
-  { basePath: "/sitemap-pages-articles.xml", templateTypes: ["resource", "other"] },
+  { basePath: "/sitemap-pages-articles.xml", templateTypes: ["resource", "other", "pool_maintenance", "pool_maintenance_hub"] },
   { basePath: "/sitemap-pages-academy.xml", templateTypes: ["elearning"] },
   { basePath: "/sitemap-pages-advocacy.xml", templateTypes: ["host_advocacy_hub", "host_advocacy_state"] },
   { basePath: "/sitemap-pages-spanish.xml", templateTypes: ["spanish_host_acq", "spanish_resource", "host_acq_city_es"] },
