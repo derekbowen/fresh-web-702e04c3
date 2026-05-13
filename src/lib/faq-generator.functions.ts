@@ -10,7 +10,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const FAQ_MODEL = "google/gemini-2.5-flash";
+const FAQ_MODEL = "google/gemini-3-flash-preview";
 
 export interface FaqItem {
   question: string;

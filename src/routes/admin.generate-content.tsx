@@ -302,7 +302,7 @@ function GenerateContentPageInner() {
   // These are ballpark — meant to give the user a sense of spend, not an invoice.
   const COST_PER_PAGE_USD: Record<string, number> = {
     "google/gemini-3-flash-preview": 0.012,
-    "google/gemini-2.5-flash": 0.012,
+    "google/gemini-3-flash-preview": 0.012,
     "google/gemini-2.5-pro": 0.09,
     "google/gemini-3.1-pro-preview": 0.12,
   };
@@ -598,7 +598,7 @@ function GenerateContentPageInner() {
                 <option value="google/gemini-3-flash-preview">Gemini 3 Flash Preview</option>
                 <option value="google/gemini-2.5-pro">Gemini 2.5 Pro</option>
                 <option value="google/gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
-                <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
+                <option value="google/gemini-3-flash-preview">Gemini 2.5 Flash</option>
               </select>
             </div>
           </div>

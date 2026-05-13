@@ -563,7 +563,7 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
+            model: "google/gemini-3-flash-preview",
             messages,
             tools: TOOLS,
             tool_choice: iter === 0 ? "required" : "auto",
@@ -731,7 +731,7 @@ ${OPP_SCHEMA_PROMPT}`;
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
+            model: "google/gemini-3-flash-preview",
             messages,
             tools: TOOLS,
             tool_choice: iter === 0 ? "required" : "auto",

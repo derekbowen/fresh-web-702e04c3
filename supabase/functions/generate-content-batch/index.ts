@@ -317,7 +317,7 @@ function contentBudget(row: PlanRow): { minWords: number; targetWords: number; f
  */
 const MODEL_OUTPUT_BUDGET: Record<string, number> = {
   "google/gemini-2.5-flash-lite": 8000,
-  "google/gemini-2.5-flash": 8000,
+  "google/gemini-3-flash-preview": 8000,
   "google/gemini-3-flash-preview": 8000,
   "google/gemini-3.1-flash-image-preview": 8000,
   "google/gemini-2.5-pro": 32000,

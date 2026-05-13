@@ -138,7 +138,7 @@ function AdminQuickPage() {
               <option value="openai/gpt-5">GPT-5 (best quality)</option>
               <option value="openai/gpt-5-mini">GPT-5 mini (faster)</option>
               <option value="google/gemini-2.5-pro">Gemini 2.5 Pro</option>
-              <option value="google/gemini-2.5-flash">Gemini 2.5 Flash (fastest)</option>
+              <option value="google/gemini-3-flash-preview">Gemini 2.5 Flash (fastest)</option>
             </select>
           </div>
 

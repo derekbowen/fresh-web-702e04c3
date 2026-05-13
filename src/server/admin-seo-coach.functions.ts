@@ -152,7 +152,7 @@ export const seoCoachChat = createServerFn({ method: "POST" })
       const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "google/gemini-2.5-flash", messages }),
+        body: JSON.stringify({ model: "google/gemini-3-flash-preview", messages }),
       });
       if (resp.status === 402) return { ok: false, error: "AI credits exhausted — top up in Settings → Workspace → Usage." };
       if (resp.status === 429) return { ok: false, error: "Rate limited. Try again in a moment." };
