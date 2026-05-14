@@ -3807,6 +3807,7 @@ export type Database = {
         Returns: number
       }
       generate_certificate_uid: { Args: never; Returns: string }
+      get_hooks_admin_token: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
