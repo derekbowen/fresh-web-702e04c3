@@ -130,7 +130,7 @@ export const Route = createFileRoute("/p/course/$slug")({
   ),
 });
 
-const ACADEMY_HUB_PATH_TYPED = "/p/$slug" as const;
+const ACADEMY_HUB_PATH_TYPED = "/p/learningacademy";
 
 function CoursePage() {
   const { course, related } = Route.useLoaderData();
