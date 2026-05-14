@@ -811,11 +811,15 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // Driver-secret bypass for unattended/server-to-server runs.
-    // Uses the service-role key (already known only to the backend operator)
-    // so we don't need a new secret.
+    // Driver-secret bypass for unattended/server-to-server runs (e.g., pg_cron).
+    // Accepts either the service-role key OR HOOKS_ADMIN_TOKEN (the same token
+    // used by other admin hooks, present in vault for SQL-side access).
     const providedDriver = req.headers.get("x-driver-secret") ?? "";
-    const isDriver = !!providedDriver && providedDriver === serviceKey;
+    const providedAdmin = req.headers.get("x-admin-token") ?? "";
+    const adminToken = Deno.env.get("HOOKS_ADMIN_TOKEN") ?? "";
+    const isDriver =
+      (!!providedDriver && providedDriver === serviceKey) ||
+      (!!providedAdmin && !!adminToken && providedAdmin === adminToken);
 
     if (!isDriver) {
       const authHeader = req.headers.get("Authorization") ?? "";
