@@ -25,7 +25,7 @@ const SearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search) => SearchSchema.parse(search),
+  validateSearch: zodValidator(SearchSchema),
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
