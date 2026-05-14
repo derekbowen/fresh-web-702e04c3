@@ -63,7 +63,7 @@ function AdminPlanRequestsPage() {
           {pending.map((r) => (
             <li key={r.id} className="rounded-2xl border bg-card p-4 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
-                <Link to="/providers/$slug" params={{ slug: r.provider_slug }} className="font-semibold text-primary underline">{r.provider_slug}</Link>
+                <a href={`/providers/${r.provider_slug}`} className="font-semibold text-primary underline">{r.provider_slug}</a>
                 <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 capitalize">{r.requested_plan}</span>
                 <span className="text-sm">${r.amount_usd ?? "—"}</span>
                 <span className="ml-auto text-xs text-muted-foreground">{fmt(r.created_at)}</span>
