@@ -812,14 +812,23 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, serviceKey);
 
     // Driver-secret bypass for unattended/server-to-server runs (e.g., pg_cron).
-    // Accepts either the service-role key OR HOOKS_ADMIN_TOKEN (the same token
-    // used by other admin hooks, present in vault for SQL-side access).
+    // Accepts the service-role key OR the hooks_admin_token read from vault.
     const providedDriver = req.headers.get("x-driver-secret") ?? "";
     const providedAdmin = req.headers.get("x-admin-token") ?? "";
-    const adminToken = Deno.env.get("HOOKS_ADMIN_TOKEN") ?? "";
+    let vaultAdminToken = "";
+    if (providedAdmin) {
+      const { data: vaultRow } = await supabase
+        .schema("vault" as never)
+        .from("decrypted_secrets")
+        .select("decrypted_secret")
+        .eq("name", "hooks_admin_token")
+        .maybeSingle();
+      vaultAdminToken =
+        (vaultRow as { decrypted_secret?: string } | null)?.decrypted_secret ?? "";
+    }
     const isDriver =
       (!!providedDriver && providedDriver === serviceKey) ||
-      (!!providedAdmin && !!adminToken && providedAdmin === adminToken);
+      (!!providedAdmin && !!vaultAdminToken && providedAdmin === vaultAdminToken);
 
     if (!isDriver) {
       const authHeader = req.headers.get("Authorization") ?? "";
