@@ -93,7 +93,7 @@ function AdminPlanRequestsPage() {
         <ul className="mt-3 space-y-2">
           {reviewed.map((r) => (
             <li key={r.id} className="flex flex-wrap items-center gap-2 rounded-lg border bg-card px-4 py-2 text-sm">
-              <Link to="/providers/$slug" params={{ slug: r.provider_slug }} className="font-semibold text-primary underline">{r.provider_slug}</Link>
+              <a href={`/providers/${r.provider_slug}`} className="font-semibold text-primary underline">{r.provider_slug}</a>
               <span className="capitalize">{r.requested_plan}</span>
               <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${r.status === "approved" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}`}>{r.status}</span>
               <span className="text-muted-foreground">${r.amount_usd ?? "—"}</span>
