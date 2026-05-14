@@ -122,7 +122,7 @@ export function FooterBlock({ city }: { city?: string }) {
       </p>
       <p className="text-sm text-muted-foreground">
         © 2026 PRNM Corp. All rights reserved. ·{" "}
-        <Link to="/p/privacy-policy">Privacy Policy</Link> ·{" "}
+        <a href="/p/privacy-policy">Privacy Policy</a> ·{" "}
         <a href="/p/terms-of-service">
           Terms of Service
         </a>

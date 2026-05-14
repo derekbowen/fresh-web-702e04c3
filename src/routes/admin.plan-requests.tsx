@@ -63,7 +63,7 @@ function AdminPlanRequestsPage() {
           {pending.map((r) => (
             <li key={r.id} className="rounded-2xl border bg-card p-4 shadow-sm">
               <div className="flex flex-wrap items-center gap-2">
-                <Link to="/providers/$slug" params={{ slug: r.provider_slug }} className="font-semibold text-primary underline">{r.provider_slug}</Link>
+                <a href={`/providers/${r.provider_slug}`} className="font-semibold text-primary underline">{r.provider_slug}</a>
                 <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 capitalize">{r.requested_plan}</span>
                 <span className="text-sm">${r.amount_usd ?? "—"}</span>
                 <span className="ml-auto text-xs text-muted-foreground">{fmt(r.created_at)}</span>
@@ -93,7 +93,7 @@ function AdminPlanRequestsPage() {
         <ul className="mt-3 space-y-2">
           {reviewed.map((r) => (
             <li key={r.id} className="flex flex-wrap items-center gap-2 rounded-lg border bg-card px-4 py-2 text-sm">
-              <Link to="/providers/$slug" params={{ slug: r.provider_slug }} className="font-semibold text-primary underline">{r.provider_slug}</Link>
+              <a href={`/providers/${r.provider_slug}`} className="font-semibold text-primary underline">{r.provider_slug}</a>
               <span className="capitalize">{r.requested_plan}</span>
               <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${r.status === "approved" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}`}>{r.status}</span>
               <span className="text-muted-foreground">${r.amount_usd ?? "—"}</span>
