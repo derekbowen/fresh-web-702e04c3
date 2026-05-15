@@ -26,6 +26,12 @@ type GeneratedPage = {
   body_markdown: string;
 };
 
+type GenerationFailure = {
+  plan_slug: string;
+  error: string;
+  retryable: boolean;
+};
+
 // Bump this whenever validator rules change. Paused rows older than the
 // current version are eligible for auto-resume on operator action.
 const VALIDATOR_VERSION = "v3-citations-2026-05-10";
@@ -492,7 +498,7 @@ async function generateOne(
   apiKey: string,
   maxTokens?: number,
   sources: CitySource[] = [],
-): Promise<GeneratedPage | null> {
+): Promise<GeneratedPage | GenerationFailure> {
   const { system, user } = buildPrompt(plan, sources);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 115_000);
@@ -531,8 +537,13 @@ async function generateOne(
       .trim();
     return { plan_slug: plan.slug, body_markdown: body };
   } catch (e) {
-    console.error(`[generate-content-batch:${plan.slug}] ${errorMessage(e)}`);
-    return null;
+    const msg = errorMessage(e);
+    console.error(`[generate-content-batch:${plan.slug}] ${msg}`);
+    return {
+      plan_slug: plan.slug,
+      error: msg,
+      retryable: /AI credits exhausted|Rate limited/i.test(msg),
+    };
   } finally {
     clearTimeout(timeout);
   }
@@ -563,26 +574,39 @@ async function processGeneration(
     }),
   );
 
-  const generated = (
-    await Promise.all(
-      planRows.map((row) => {
-        // Token-budget gate: estimate output length and auto-promote model if needed.
-        const pick = pickModelForBudget(row, model);
-        const sources = sourcesBySlug.get(row.slug) ?? [];
-        if (pick.switched) {
-          console.log(`[generate-content-batch:${row.slug}] model auto-switch — ${pick.reason}`);
-        } else {
-          console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok, ${sources.length} sources)`);
-        }
-        return generateOne(row, pick.model, apiKey, pick.maxTokens, sources);
-      }),
-    )
-  ).filter((page): page is GeneratedPage => Boolean(page));
+  const generationResults = await Promise.all(
+    planRows.map((row) => {
+      // Token-budget gate: estimate output length and auto-promote model if needed.
+      const pick = pickModelForBudget(row, model);
+      const sources = sourcesBySlug.get(row.slug) ?? [];
+      if (pick.switched) {
+        console.log(`[generate-content-batch:${row.slug}] model auto-switch — ${pick.reason}`);
+      } else {
+        console.log(`[generate-content-batch:${row.slug}] using ${pick.model} (~${pick.estTokens} tok, ${sources.length} sources)`);
+      }
+      return generateOne(row, pick.model, apiKey, pick.maxTokens, sources);
+    }),
+  );
+
+  const retryableFailures = new Map(
+    generationResults
+      .filter((result): result is GenerationFailure => "error" in result && result.retryable)
+      .map((result) => [result.plan_slug, result.error]),
+  );
+  const generated = generationResults.filter(
+    (page): page is GeneratedPage => !("error" in page),
+  );
 
   const bySlug = new Map(generated.map((g) => [g.plan_slug, g]));
   const okPages: Array<{ plan: PlanRow; body: string }> = [];
 
   for (const plan of planRows) {
+    const retryableError = retryableFailures.get(plan.slug);
+    if (retryableError) {
+      errors.push(`${plan.slug}: ${retryableError}`);
+      continue;
+    }
+
     const gen = bySlug.get(plan.slug);
     if (!gen) {
       errors.push(`${plan.slug}: AI did not return a body`);
@@ -684,14 +708,15 @@ async function processGeneration(
     }
   }
   const recordFailure = async (slug: string, msg: string, currentAttempts: number) => {
+    const retryable = /AI credits exhausted|Rate limited/i.test(msg);
     const newAttempts = (currentAttempts ?? 0) + 1;
-    const shouldPause = newAttempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
+    const shouldPause = !retryable && newAttempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
     await supabase
       .from("content_plan")
       .update({
-        status: shouldPause ? "paused" : "pending",
+        status: "pending",
         last_error: msg.slice(0, 500),
-        attempt_count: newAttempts,
+        attempt_count: retryable ? currentAttempts ?? 0 : newAttempts,
         last_attempt_at: nowIso,
         validator_version: VALIDATOR_VERSION,
         paused_at: shouldPause ? nowIso : null,
