@@ -601,6 +601,12 @@ async function processGeneration(
   const okPages: Array<{ plan: PlanRow; body: string }> = [];
 
   for (const plan of planRows) {
+    const retryableError = retryableFailures.get(plan.slug);
+    if (retryableError) {
+      errors.push(`${plan.slug}: ${retryableError}`);
+      continue;
+    }
+
     const gen = bySlug.get(plan.slug);
     if (!gen) {
       errors.push(`${plan.slug}: AI did not return a body`);
@@ -702,14 +708,15 @@ async function processGeneration(
     }
   }
   const recordFailure = async (slug: string, msg: string, currentAttempts: number) => {
+    const retryable = /AI credits exhausted|Rate limited/i.test(msg);
     const newAttempts = (currentAttempts ?? 0) + 1;
-    const shouldPause = newAttempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
+    const shouldPause = !retryable && newAttempts >= MAX_ATTEMPTS_BEFORE_PAUSE;
     await supabase
       .from("content_plan")
       .update({
-        status: shouldPause ? "paused" : "pending",
+        status: "pending",
         last_error: msg.slice(0, 500),
-        attempt_count: newAttempts,
+        attempt_count: retryable ? currentAttempts ?? 0 : newAttempts,
         last_attempt_at: nowIso,
         validator_version: VALIDATOR_VERSION,
         paused_at: shouldPause ? nowIso : null,
