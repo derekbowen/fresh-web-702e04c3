@@ -78,7 +78,8 @@ export const getFollowupDashboard = createServerFn({ method: "GET" })
   .inputValidator((data) =>
     z.object({ rangeDays: z.number().int().min(1).max(365).default(90) }).parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<DashboardData> => {
+  .handler(async ({ data, context }): Promise<DashboardData> => {
+    await assertAdmin((context as any).userId);
     const since = new Date(Date.now() - data.rangeDays * 86400_000).toISOString();
 
     // Pull follow-ups in window
