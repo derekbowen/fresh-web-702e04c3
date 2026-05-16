@@ -894,7 +894,11 @@ Deno.serve(async (req) => {
       try {
         const probe = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
-          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          headers: {
+            "Lovable-API-Key": apiKey,
+            "X-Lovable-AIG-SDK": "vercel-ai-sdk",
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             model: "google/gemini-2.5-flash-lite",
             messages: [{ role: "user", content: "ping" }],
