@@ -258,6 +258,7 @@ export interface CannibalReport {
 }
 
 export const getCannibalizationReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
     z
       .object({
@@ -267,7 +268,8 @@ export const getCannibalizationReport = createServerFn({ method: "GET" })
       })
       .parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<CannibalReport> => {
+  .handler(async ({ data, context }): Promise<CannibalReport> => {
+    await assertAdmin((context as any).userId);
     const minImp = data.minImpressions ?? 50;
     const minPages = data.minPagesPerQuery ?? 2;
     const limit = data.limit ?? 100;
