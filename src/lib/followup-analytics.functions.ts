@@ -10,6 +10,12 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+async function assertAdmin(userId: string) {
+  const { data } = await supabaseAdmin
+    .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+  if (!data) throw new Error("Forbidden");
+}
+
 export interface DashboardSummary {
   total: number;
   contacted: number;
@@ -72,7 +78,8 @@ export const getFollowupDashboard = createServerFn({ method: "GET" })
   .inputValidator((data) =>
     z.object({ rangeDays: z.number().int().min(1).max(365).default(90) }).parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<DashboardData> => {
+  .handler(async ({ data, context }): Promise<DashboardData> => {
+    await assertAdmin((context as any).userId);
     const since = new Date(Date.now() - data.rangeDays * 86400_000).toISOString();
 
     // Pull follow-ups in window
@@ -280,7 +287,8 @@ export const getFollowupDrilldown = createServerFn({ method: "GET" })
       pageSize: z.number().int().min(10).max(100).default(25),
     }).parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<DrilldownResult> => {
+  .handler(async ({ data, context }): Promise<DrilldownResult> => {
+    await assertAdmin((context as any).userId);
     const since = new Date(Date.now() - data.rangeDays * 86400_000).toISOString();
     let q = supabaseAdmin
       .from("lead_followups")

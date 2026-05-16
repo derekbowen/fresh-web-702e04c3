@@ -8,7 +8,14 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+async function assertAdmin(userId: string) {
+  const { data } = await supabaseAdmin
+    .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+  if (!data) throw new Error("Forbidden");
+}
 
 export interface PageHealthRow {
   url_path: string;
@@ -60,6 +67,7 @@ function daysBetween(a: Date, b: Date): number {
 }
 
 export const getPageHealthReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
     z
       .object({
@@ -67,7 +75,8 @@ export const getPageHealthReport = createServerFn({ method: "GET" })
       })
       .parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<PageHealthReport> => {
+  .handler(async ({ data, context }): Promise<PageHealthReport> => {
+    await assertAdmin((context as any).userId);
     const limit = data.limit ?? 2000;
     const now = new Date();
     const start28 = new Date(now.getTime() - 28 * 86400000);
@@ -249,6 +258,7 @@ export interface CannibalReport {
 }
 
 export const getCannibalizationReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
     z
       .object({
@@ -258,7 +268,8 @@ export const getCannibalizationReport = createServerFn({ method: "GET" })
       })
       .parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<CannibalReport> => {
+  .handler(async ({ data, context }): Promise<CannibalReport> => {
+    await assertAdmin((context as any).userId);
     const minImp = data.minImpressions ?? 50;
     const minPages = data.minPagesPerQuery ?? 2;
     const limit = data.limit ?? 100;
