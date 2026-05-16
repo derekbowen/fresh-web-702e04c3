@@ -287,7 +287,8 @@ export const getFollowupDrilldown = createServerFn({ method: "GET" })
       pageSize: z.number().int().min(10).max(100).default(25),
     }).parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<DrilldownResult> => {
+  .handler(async ({ data, context }): Promise<DrilldownResult> => {
+    await assertAdmin((context as any).userId);
     const since = new Date(Date.now() - data.rangeDays * 86400_000).toISOString();
     let q = supabaseAdmin
       .from("lead_followups")
