@@ -67,6 +67,7 @@ function daysBetween(a: Date, b: Date): number {
 }
 
 export const getPageHealthReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
     z
       .object({
@@ -74,7 +75,8 @@ export const getPageHealthReport = createServerFn({ method: "GET" })
       })
       .parse(data ?? {}),
   )
-  .handler(async ({ data }): Promise<PageHealthReport> => {
+  .handler(async ({ data, context }): Promise<PageHealthReport> => {
+    await assertAdmin((context as any).userId);
     const limit = data.limit ?? 2000;
     const now = new Date();
     const start28 = new Date(now.getTime() - 28 * 86400000);
