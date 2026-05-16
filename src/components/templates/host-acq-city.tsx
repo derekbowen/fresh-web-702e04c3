@@ -12,6 +12,7 @@ import { EarningsCalculator } from "@/components/earnings-calculator";
 import { HostLeadPopup } from "@/components/host-lead-popup";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
+import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 import type { CityRow } from "@/server/cities.functions";
@@ -49,8 +50,10 @@ export function HostAcqCityTemplate({
   const body = page.body_markdown || page.content || null;
   const faqs = faqsForContentPage(page);
   const guide = city ? buildHostCityGuide(city) : null;
-  const cityName = city?.name || "your city";
-  const stateCode = (city?.state_code || "").toUpperCase();
+  const fallbackCitySlug = cityForContentPage(page.template_type, page.slug);
+  const fallbackCity = fallbackCitySlug ? parseCitySlug(fallbackCitySlug) : null;
+  const cityName = city?.name || fallbackCity?.city || "your city";
+  const stateCode = (city?.state_code || fallbackCity?.stateCode || "").toUpperCase();
   const tier = guide?.cityTier ?? "standard";
   const hourlyRate = guide?.defaultHourlyRate ?? 75;
 
