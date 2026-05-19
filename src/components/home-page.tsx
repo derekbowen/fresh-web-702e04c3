@@ -163,7 +163,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               You'll love hosting with us.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-primary-foreground/90 sm:text-xl">
-              Book a private pool by the hour, or list your own and start earning. Hourly rates from $40 to $150, $2M liability included.
+              List your backyard pool and earn $3K to $10K a month. 10% flat host fee, $2M liability included, bookings in your inbox this weekend.
             </p>
 
             {/* Search widget */}
