@@ -163,7 +163,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               You'll love hosting with us.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-primary-foreground/90 sm:text-xl">
-              Our new AI technology can build the features you ask for — same day. Just give us a call, we love to hear from you.
+              Book a private pool by the hour, or list your own and start earning. Hourly rates from $40 to $150, $2M liability included.
             </p>
 
             {/* Search widget */}
