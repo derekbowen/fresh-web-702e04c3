@@ -86,14 +86,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
       ? (safe.academyHealth as Record<string, "missing" | "short" | "published">)
       : {};
   const isHealthy = (slug: string) => academyHealth[slug] === "published";
-  // Tiles only feature fully-published pages; "short" pages still link via
-  // direct navigation elsewhere but aren't promoted on the homepage.
-  const visibleOccasions = FEATURED_OCCASIONS.filter((o) => isHealthy(o.slug));
+  // Real courses always render — they live in the `courses` table, not content_pages.
+  const visibleOccasions = FEATURED_OCCASIONS;
   const learningAcademyAvailable = isHealthy("learning-academy");
-  const hostTrainingAvailable = isHealthy("host-training-academy");
-  const showAcademySection =
-    visibleOccasions.length >= 2 &&
-    (learningAcademyAvailable || hostTrainingAvailable);
+  const showAcademySection = learningAcademyAvailable;
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   void safe.categories; // categories now rendered by static PoolTypeGrid below
