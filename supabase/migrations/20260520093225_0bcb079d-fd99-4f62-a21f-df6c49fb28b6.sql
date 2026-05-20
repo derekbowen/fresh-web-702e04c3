@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.compute_related_city_slugs(text, text) TO PUBLIC;
