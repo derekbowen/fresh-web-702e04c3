@@ -217,13 +217,6 @@ function CoursePage() {
             <p className="mt-8 text-lg text-muted-foreground">{course.excerpt}</p>
           )}
 
-          <div className="mt-8">
-            <CourseLearningControls
-              courseSlug={course.slug}
-              courseTitle={course.title}
-              expectedMinutes={course.duration_minutes ?? undefined}
-            />
-          </div>
 
           {(course.description || longFormText) && (
             <div className="prose prose-lg mt-10 max-w-none text-foreground dark:prose-invert">
