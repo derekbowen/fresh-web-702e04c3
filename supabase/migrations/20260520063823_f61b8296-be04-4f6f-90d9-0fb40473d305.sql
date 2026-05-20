@@ -1,0 +1,1 @@
+UPDATE public.content_pages SET content_refreshed_at = now() WHERE template_type='host_acq_city' AND status='published' AND content_refreshed_at IS NULL AND slug !~ '^become-a-(swimming-)?pool-host-.+-[a-z]{2}$';
