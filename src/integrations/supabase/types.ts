@@ -3791,6 +3791,10 @@ export type Database = {
       }
     }
     Functions: {
+      compute_related_city_slugs: {
+        Args: { p_slug: string; p_template: string }
+        Returns: string[]
+      }
       count_providers_by_category: {
         Args: never
         Returns: {
@@ -3841,6 +3845,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      refresh_related_slugs_for_template: {
+        Args: { p_template: string }
+        Returns: number
       }
       verify_certificate: {
         Args: { _uid: string }
