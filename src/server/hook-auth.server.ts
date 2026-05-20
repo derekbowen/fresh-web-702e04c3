@@ -13,8 +13,8 @@ let lastFetch = 0;
 let inflight: Promise<void> | null = null;
 const TTL_MS = 5 * 60_000;
 
-function refreshVaultToken(): Promise<void> {
-  if (inflight) return inflight;
+function refreshVaultToken(): void {
+  if (inflight) return;
   inflight = (async () => {
     try {
       const { data } = await (supabaseAdmin as any).rpc("get_hooks_admin_token");
@@ -28,10 +28,9 @@ function refreshVaultToken(): Promise<void> {
       inflight = null;
     }
   })();
-  return inflight;
 }
 
-export async function authorizeHookRequest(request: Request): Promise<Response | null> {
+export function authorizeHookRequest(request: Request): Response | null {
   const envExpected =
     process.env.HOOKS_ADMIN_TOKEN ||
     process.env.BACKFILL_ADMIN_TOKEN ||
