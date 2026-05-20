@@ -29,13 +29,40 @@ const STATE_NAMES: Record<string, string> = {
   wv: "West Virginia", wi: "Wisconsin", wy: "Wyoming", dc: "District of Columbia",
 };
 
-function parseCityState(slug: string): { city: string; state: string; stCode: string } | null {
-  const m = slug.match(/^become-a-(?:swimming-)?pool-host-(.+)-([a-z]{2})$/);
-  if (!m) return null;
-  const st = m[2];
-  if (!STATE_NAMES[st]) return null;
-  const city = m[1].split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-  return { city, state: STATE_NAMES[st], stCode: st.toUpperCase() };
+const STATE_NAME_TO_CODE: Record<string, string> = Object.fromEntries(
+  Object.entries(STATE_NAMES).map(([code, name]) => [name.toLowerCase().replace(/\s+/g, "-"), code])
+);
+
+async function parseCityState(slug: string): Promise<{ city: string; state: string; stCode: string } | null> {
+  const titleize = (s: string) => s.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  // Pattern A: ...-{city}-{xx}
+  let m = slug.match(/^become-a-(?:swimming-)?pool-host-(.+)-([a-z]{2})$/);
+  if (m && STATE_NAMES[m[2]]) {
+    return { city: titleize(m[1]), state: STATE_NAMES[m[2]], stCode: m[2].toUpperCase() };
+  }
+  // Pattern B: ...-{city}-{full-state-name} (e.g. -tucson-arizona, -lake-tahoe-nevada-california → take last 1-2 tokens)
+  m = slug.match(/^become-a-(?:swimming-)?pool-host-(.+)$/);
+  if (m) {
+    const tokens = m[1].split("-");
+    // try last-1 then last-2 tokens as state name
+    for (const take of [1, 2]) {
+      if (tokens.length <= take) continue;
+      const stateKey = tokens.slice(-take).join("-");
+      const code = STATE_NAME_TO_CODE[stateKey];
+      if (code) {
+        return { city: titleize(tokens.slice(0, -take).join("-")), state: STATE_NAMES[code], stCode: code.toUpperCase() };
+      }
+    }
+    // Pattern C: stateless — lookup in cities table by name
+    const cityName = titleize(tokens.join("-"));
+    const { data } = await (supabaseAdmin as any)
+      .from("cities").select("name, state, state_code")
+      .ilike("name", cityName).eq("is_published", true).limit(1).maybeSingle();
+    if (data?.state_code) {
+      return { city: data.name, state: data.state, stCode: data.state_code };
+    }
+  }
+  return null;
 }
 
 const BOILER_RE = /\n#+\s*Related Pool Owner Guides[\s\S]*$/i;
