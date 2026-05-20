@@ -20,13 +20,14 @@ const HIDE_LISTING_RE = /swim\s*spa|aquatic|rehab/i;
 
 const NEARBY_RADIUS_MILES = 500;
 
+// Real courses from the `courses` table — link straight to /p/course/{slug}.
 const FEATURED_OCCASIONS = [
-  { slug: "elearning-academy-tax-deduction-tracking-guide-pool-hosts", title: "Taxes & Pool Rental Income", img: "academy/taxes.jpg" },
-  { slug: "elearning-academy-dealing-with-difficult-scenarios-pool-hosts", title: "Difficult Guest Scenarios", img: "academy/difficult-guests.jpg" },
-  { slug: "elearning-academy-hoa-navigation-guide-pool-hosts", title: "HOA Navigation", img: "academy/hoa.jpg" },
-  { slug: "elearning-academy-dealing-with-neighbor-complaints-in-real-time", title: "Neighbor Complaints", img: "academy/neighbor-complaints.jpg" },
-  { slug: "elearning-academy-content-marketing-for-pool-rentals", title: "Content Marketing", img: "academy/bachelorette.jpg" },
-  { slug: "elearning-academy-listing-optimization-photography-conversion", title: "Photography & Listings", img: "academy/photoshoot.jpg" },
+  { slug: "bachelorette-pool-party-hosting-playbook", title: "Bachelorette Pool Party Hosting", img: "academy/bachelorette.jpg" },
+  { slug: "photoshoot-content-creator-ugc-pool-hosting", title: "Photoshoot & Content Creator Pool Hosting", img: "academy/photoshoot.jpg" },
+  { slug: "bachelor-party-pool-hosting", title: "Bachelor Party Pool Hosting", img: "academy/difficult-guests.jpg" },
+  { slug: "quinceanera-pool-venue-hosting", title: "Quinceañera Pool Venue Hosting", img: "academy/hoa.jpg" },
+  { slug: "tax-implications-for-pool-rental-income", title: "Taxes on Pool Rental Income", img: "academy/taxes.jpg" },
+  { slug: "essential-pool-rental-signage", title: "Essential Pool Rental Signage", img: "academy/neighbor-complaints.jpg" },
 ];
 
 export const HOMEPAGE_FAQS = [
@@ -85,14 +86,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
       ? (safe.academyHealth as Record<string, "missing" | "short" | "published">)
       : {};
   const isHealthy = (slug: string) => academyHealth[slug] === "published";
-  // Tiles only feature fully-published pages; "short" pages still link via
-  // direct navigation elsewhere but aren't promoted on the homepage.
-  const visibleOccasions = FEATURED_OCCASIONS.filter((o) => isHealthy(o.slug));
+  // Real courses always render — they live in the `courses` table, not content_pages.
+  const visibleOccasions = FEATURED_OCCASIONS;
   const learningAcademyAvailable = isHealthy("learning-academy");
-  const hostTrainingAvailable = isHealthy("host-training-academy");
-  const showAcademySection =
-    visibleOccasions.length >= 2 &&
-    (learningAcademyAvailable || hostTrainingAvailable);
+  const showAcademySection = learningAcademyAvailable;
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   void safe.categories; // categories now rendered by static PoolTypeGrid below
@@ -366,17 +363,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       Browse 135 free classes →
                     </a>
                   )}
-                  {hostTrainingAvailable && (
-                    <a
-                      href="/p/host-training-academy"
-                      className="inline-flex items-center justify-center rounded-full border border-border bg-card px-7 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary"
-                    >
-                      Earn certifications
-                    </a>
-                  )}
                 </div>
                 <p className="mt-4 text-xs text-muted-foreground">
-                  100% free · English & Español · Earn shareable host certificates
+                  100% free · English & Español · No sign-up required
                 </p>
               </div>
               <div className="lg:col-span-5">
@@ -384,7 +373,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   {visibleOccasions.slice(0, 4).map((o, idx) => (
                     <a
                       key={o.slug}
-                      href={`/p/${o.slug}`}
+                      href={`/p/course/${o.slug}`}
                       className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
                     >
                       <div className="aspect-square overflow-hidden">

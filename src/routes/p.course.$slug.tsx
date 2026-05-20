@@ -3,7 +3,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { CourseCard, type CourseCardCourse } from "@/components/course-card";
-import { CourseLearningControls } from "@/components/course-learning-controls";
+
 import { getCourse, getRelatedCourses } from "@/server/courses.functions";
 import { getCategoryMeta, I18N, getTierMeta, type Lang } from "@/lib/academy";
 import { resolveAcademyHero } from "@/lib/academy-images";
@@ -217,13 +217,6 @@ function CoursePage() {
             <p className="mt-8 text-lg text-muted-foreground">{course.excerpt}</p>
           )}
 
-          <div className="mt-8">
-            <CourseLearningControls
-              courseSlug={course.slug}
-              courseTitle={course.title}
-              expectedMinutes={course.duration_minutes ?? undefined}
-            />
-          </div>
 
           {(course.description || longFormText) && (
             <div className="prose prose-lg mt-10 max-w-none text-foreground dark:prose-invert">
