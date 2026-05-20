@@ -90,8 +90,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
   const isHealthy = (slug: string) => academyHealth[slug] === "published";
   // Real courses always render — they live in the `courses` table, not content_pages.
   const visibleOccasions = FEATURED_OCCASIONS;
-  const learningAcademyAvailable = isHealthy("learning-academy");
-  const showAcademySection = learningAcademyAvailable;
+  const learningAcademyAvailable = true;
+  const showAcademySection = true;
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   void safe.categories; // categories now rendered by static PoolTypeGrid below
