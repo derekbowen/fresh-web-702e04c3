@@ -433,6 +433,10 @@ export function HostAcqCityTemplate({
               heading={`More for ${cityName} pool hosts`}
               items={(() => {
                 const items: RelatedPagesItem[] = [];
+                // Geo-relevant city-to-city links first (internal linking backfill).
+                items.push(
+                  ...relatedSlugsToItems(page.related_slugs, { max: 10 }),
+                );
                 const advocacy = stateCode
                   ? ADVOCACY_STATES.find((s) => s.code === stateCode)
                   : null;
@@ -446,13 +450,12 @@ export function HostAcqCityTemplate({
                 items.push(
                   { to: "/p/earnings-calculator", label: "Pool host earnings calculator", description: `Estimate your monthly income in ${cityName}` },
                   { to: "/p/hosting", label: "Become a pool host", description: "Everything new hosts should know before listing" },
-                  { to: "/p/pool-maintenance", label: "Pool maintenance guide", description: "Keep your water guest-ready, week after week" },
-                  { to: "/p/free-host-tools", label: "Free host tools", description: "Calculators, checklists, and templates" },
                   { to: "/p/all-locations", label: "All pool rental locations", description: "Browse host pools across the US" },
                 );
                 return items;
               })()}
             />
+
           </div>
         </section>
 
