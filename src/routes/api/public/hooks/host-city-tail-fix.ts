@@ -130,36 +130,28 @@ export const Route = createFileRoute("/api/public/hooks/host-city-tail-fix")({
         try { body = await request.json(); } catch {}
         const limit = Math.min(Math.max(Number(body.limit) || 20, 1), 40);
 
-        // Pick work: empty body OR has boilerplate tail, not refreshed in this campaign
-        const { data: rows, error: pickErr } = await (supabaseAdmin as any).rpc(
-          "exec_sql_select", {}
-        ).catch(() => ({ data: null, error: null }));
-        // Fallback to query builder (no rpc above), use direct query:
+        // Pick work: empty bodies first (full generations), then boilerplate tails
         let work: Row[] = [];
-        if (!rows) {
-          // Empty bodies first
-          const { data: emptyRows } = await (supabaseAdmin as any)
+        const { data: emptyRows } = await (supabaseAdmin as any)
+          .from("content_pages")
+          .select("id, slug, body_markdown")
+          .eq("template_type", "host_acq_city")
+          .eq("status", "published")
+          .or("body_markdown.is.null,body_markdown.eq.")
+          .is("content_refreshed_at", null)
+          .limit(limit);
+        work = (emptyRows ?? []) as Row[];
+        if (work.length < limit) {
+          const need = limit - work.length;
+          const { data: tailRows } = await (supabaseAdmin as any)
             .from("content_pages")
             .select("id, slug, body_markdown")
             .eq("template_type", "host_acq_city")
             .eq("status", "published")
-            .or("body_markdown.is.null,body_markdown.eq.")
+            .ilike("body_markdown", "%Related Pool Owner Guides%")
             .is("content_refreshed_at", null)
-            .limit(limit);
-          work = (emptyRows ?? []) as Row[];
-          // Then boilerplate tails to fill the rest
-          if (work.length < limit) {
-            const need = limit - work.length;
-            const { data: tailRows } = await (supabaseAdmin as any)
-              .from("content_pages")
-              .select("id, slug, body_markdown")
-              .eq("template_type", "host_acq_city")
-              .eq("status", "published")
-              .ilike("body_markdown", "%Related Pool Owner Guides%")
-              .is("content_refreshed_at", null)
-              .limit(need);
-            work = work.concat((tailRows ?? []) as Row[]);
-          }
+            .limit(need);
+          work = work.concat((tailRows ?? []) as Row[]);
         }
 
         const errors: string[] = [];

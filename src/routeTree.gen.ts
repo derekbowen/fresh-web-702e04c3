@@ -158,6 +158,7 @@ import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
+import { Route as ApiPublicHooksHostCityTailFixRouteImport } from './routes/api/public/hooks/host-city-tail-fix'
 import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/hooks/gsc-sync'
 import { Route as ApiPublicHooksGenHostPagesRouteImport } from './routes/api/public/hooks/gen-host-pages'
 import { Route as ApiPublicHooksFollowupRemindersRouteImport } from './routes/api/public/hooks/followup-reminders'
@@ -945,6 +946,12 @@ const ApiPublicHooksIgLeadHunterRoute =
     path: '/api/public/hooks/ig-lead-hunter',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksHostCityTailFixRoute =
+  ApiPublicHooksHostCityTailFixRouteImport.update({
+    id: '/api/public/hooks/host-city-tail-fix',
+    path: '/api/public/hooks/host-city-tail-fix',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksGscSyncRoute = ApiPublicHooksGscSyncRouteImport.update({
   id: '/api/public/hooks/gsc-sync',
   path: '/api/public/hooks/gsc-sync',
@@ -1161,6 +1168,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
+  '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1324,6 +1332,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
+  '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1488,6 +1497,7 @@ export interface FileRoutesById {
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
+  '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
@@ -1653,6 +1663,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
+    | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
@@ -1816,6 +1827,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
+    | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
@@ -1979,6 +1991,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
+    | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/provider-ai-worker'
@@ -2082,6 +2095,7 @@ export interface RootRouteChildren {
   ApiPublicHooksFollowupRemindersRoute: typeof ApiPublicHooksFollowupRemindersRoute
   ApiPublicHooksGenHostPagesRoute: typeof ApiPublicHooksGenHostPagesRoute
   ApiPublicHooksGscSyncRoute: typeof ApiPublicHooksGscSyncRoute
+  ApiPublicHooksHostCityTailFixRoute: typeof ApiPublicHooksHostCityTailFixRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
@@ -3142,6 +3156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksIgLeadHunterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/host-city-tail-fix': {
+      id: '/api/public/hooks/host-city-tail-fix'
+      path: '/api/public/hooks/host-city-tail-fix'
+      fullPath: '/api/public/hooks/host-city-tail-fix'
+      preLoaderRoute: typeof ApiPublicHooksHostCityTailFixRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/gsc-sync': {
       id: '/api/public/hooks/gsc-sync'
       path: '/api/public/hooks/gsc-sync'
@@ -3512,6 +3533,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksFollowupRemindersRoute: ApiPublicHooksFollowupRemindersRoute,
   ApiPublicHooksGenHostPagesRoute: ApiPublicHooksGenHostPagesRoute,
   ApiPublicHooksGscSyncRoute: ApiPublicHooksGscSyncRoute,
+  ApiPublicHooksHostCityTailFixRoute: ApiPublicHooksHostCityTailFixRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
@@ -3529,13 +3551,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
