@@ -192,7 +192,11 @@ export const Route = createFileRoute("/api/public/hooks/host-city-tail-fix")({
           await Promise.all(batch.map(async (row) => {
             const parsed = await parseCityState(row.slug);
             if (!parsed) {
-              failed++; errors.push(`unparseable:${row.slug}`); return;
+              failed++; errors.push(`unparseable:${row.slug}`);
+              await (supabaseAdmin as any).from("content_pages")
+                .update({ content_refreshed_at: new Date().toISOString() })
+                .eq("id", row.id);
+              return;
             }
             const { city, state, stCode } = parsed;
             const isFull = !row.body_markdown || row.body_markdown.trim().length === 0;
