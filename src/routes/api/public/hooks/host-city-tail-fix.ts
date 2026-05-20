@@ -190,7 +190,7 @@ export const Route = createFileRoute("/api/public/hooks/host-city-tail-fix")({
         for (let i = 0; i < work.length; i += CONC) {
           const batch = work.slice(i, i + CONC);
           await Promise.all(batch.map(async (row) => {
-            const parsed = parseCityState(row.slug);
+            const parsed = await parseCityState(row.slug);
             if (!parsed) {
               failed++; errors.push(`unparseable:${row.slug}`); return;
             }
