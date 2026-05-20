@@ -3,28 +3,34 @@
  *
  * Token sources accepted (any one match):
  *  - env: HOOKS_ADMIN_TOKEN, BACKFILL_ADMIN_TOKEN, SUPABASE_SERVICE_ROLE_KEY
- *  - vault: public.get_hooks_admin_token() (so pg_cron can call without env coordination)
+ *  - vault: public.get_hooks_admin_token() (refreshed in background; lets pg_cron
+ *    authenticate without env-var coordination)
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-let cachedVaultToken: string | null = null;
-let cachedAt = 0;
-const VAULT_TTL_MS = 5 * 60_000;
+let vaultToken: string | null = null;
+let lastFetch = 0;
+let inflight: Promise<void> | null = null;
+const TTL_MS = 5 * 60_000;
 
-async function getVaultToken(): Promise<string | null> {
-  if (cachedVaultToken && Date.now() - cachedAt < VAULT_TTL_MS) return cachedVaultToken;
-  try {
-    const { data, error } = await (supabaseAdmin as any).rpc("get_hooks_admin_token");
-    if (error || !data) return null;
-    cachedVaultToken = String(data);
-    cachedAt = Date.now();
-    return cachedVaultToken;
-  } catch {
-    return null;
-  }
+function refreshVaultToken(): void {
+  if (inflight) return;
+  inflight = (async () => {
+    try {
+      const { data } = await (supabaseAdmin as any).rpc("get_hooks_admin_token");
+      if (data) {
+        vaultToken = String(data);
+        lastFetch = Date.now();
+      }
+    } catch {
+      // ignore
+    } finally {
+      inflight = null;
+    }
+  })();
 }
 
-export async function authorizeHookRequest(request: Request): Promise<Response | null> {
+export function authorizeHookRequest(request: Request): Response | null {
   const envExpected =
     process.env.HOOKS_ADMIN_TOKEN ||
     process.env.BACKFILL_ADMIN_TOKEN ||
@@ -35,6 +41,9 @@ export async function authorizeHookRequest(request: Request): Promise<Response |
     request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
     new URL(request.url).searchParams.get("token");
 
+  // Kick off background refresh if cache is stale
+  if (Date.now() - lastFetch > TTL_MS) refreshVaultToken();
+
   if (!provided) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401, headers: { "Content-Type": "application/json" },
@@ -42,8 +51,6 @@ export async function authorizeHookRequest(request: Request): Promise<Response |
   }
 
   if (envExpected && provided === envExpected) return null;
-
-  const vaultToken = await getVaultToken();
   if (vaultToken && provided === vaultToken) return null;
 
   if (!envExpected && !vaultToken) {
@@ -56,3 +63,6 @@ export async function authorizeHookRequest(request: Request): Promise<Response |
     status: 401, headers: { "Content-Type": "application/json" },
   });
 }
+
+// Warm the cache at module load
+refreshVaultToken();
