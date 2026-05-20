@@ -21,13 +21,15 @@ const HIDE_LISTING_RE = /swim\s*spa|aquatic|rehab/i;
 const NEARBY_RADIUS_MILES = 500;
 
 // Real courses from the `courses` table — link straight to /p/course/{slug}.
+// Hand-picked to only include "rich" courses (cover image + video + long-form content)
+// so every tile leads to a fully-populated lesson page, not a stub.
 const FEATURED_OCCASIONS = [
   { slug: "bachelorette-pool-party-hosting-playbook", title: "Bachelorette Pool Party Hosting", img: "academy/bachelorette.jpg" },
   { slug: "photoshoot-content-creator-ugc-pool-hosting", title: "Photoshoot & Content Creator Pool Hosting", img: "academy/photoshoot.jpg" },
-  { slug: "bachelor-party-pool-hosting", title: "Bachelor Party Pool Hosting", img: "academy/difficult-guests.jpg" },
-  { slug: "quinceanera-pool-venue-hosting", title: "Quinceañera Pool Venue Hosting", img: "academy/hoa.jpg" },
-  { slug: "tax-implications-for-pool-rental-income", title: "Taxes on Pool Rental Income", img: "academy/taxes.jpg" },
-  { slug: "essential-pool-rental-signage", title: "Essential Pool Rental Signage", img: "academy/neighbor-complaints.jpg" },
+  { slug: "bachelor-party-pool-hosting", title: "Bachelor Party Pool Hosting", img: "academy/bachelor.jpg" },
+  { slug: "quinceanera-pool-venue-hosting", title: "Quinceañera Pool Venue Hosting", img: "academy/quinceanera.jpg" },
+  { slug: "pool-host-income-modeling-city-by-city-earnings-forecast", title: "Pool Host Income Modeling", img: "academy/income.jpg" },
+  { slug: "multi-platform-hosting-cross-listing-prnm-swimply-peerspace", title: "Cross-Listing PRNM + Swimply + Peerspace", img: "academy/multi-platform.jpg" },
 ];
 
 export const HOMEPAGE_FAQS = [
