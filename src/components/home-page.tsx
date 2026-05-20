@@ -20,13 +20,14 @@ const HIDE_LISTING_RE = /swim\s*spa|aquatic|rehab/i;
 
 const NEARBY_RADIUS_MILES = 500;
 
+// Real courses from the `courses` table — link straight to /p/course/{slug}.
 const FEATURED_OCCASIONS = [
-  { slug: "elearning-academy-tax-deduction-tracking-guide-pool-hosts", title: "Taxes & Pool Rental Income", img: "academy/taxes.jpg" },
-  { slug: "elearning-academy-dealing-with-difficult-scenarios-pool-hosts", title: "Difficult Guest Scenarios", img: "academy/difficult-guests.jpg" },
-  { slug: "elearning-academy-hoa-navigation-guide-pool-hosts", title: "HOA Navigation", img: "academy/hoa.jpg" },
-  { slug: "elearning-academy-dealing-with-neighbor-complaints-in-real-time", title: "Neighbor Complaints", img: "academy/neighbor-complaints.jpg" },
-  { slug: "elearning-academy-content-marketing-for-pool-rentals", title: "Content Marketing", img: "academy/bachelorette.jpg" },
-  { slug: "elearning-academy-listing-optimization-photography-conversion", title: "Photography & Listings", img: "academy/photoshoot.jpg" },
+  { slug: "bachelorette-pool-party-hosting-playbook", title: "Bachelorette Pool Party Hosting", img: "academy/bachelorette.jpg" },
+  { slug: "photoshoot-content-creator-ugc-pool-hosting", title: "Photoshoot & Content Creator Pool Hosting", img: "academy/photoshoot.jpg" },
+  { slug: "bachelor-party-pool-hosting", title: "Bachelor Party Pool Hosting", img: "academy/difficult-guests.jpg" },
+  { slug: "quinceanera-pool-venue-hosting", title: "Quinceañera Pool Venue Hosting", img: "academy/hoa.jpg" },
+  { slug: "tax-implications-for-pool-rental-income", title: "Taxes on Pool Rental Income", img: "academy/taxes.jpg" },
+  { slug: "essential-pool-rental-signage", title: "Essential Pool Rental Signage", img: "academy/neighbor-complaints.jpg" },
 ];
 
 export const HOMEPAGE_FAQS = [
