@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
 import { RelatedPages, type RelatedPagesItem } from "@/components/related-pages";
+import { relatedSlugsToItems } from "@/lib/related-city-anchors";
 import { ADVOCACY_STATES } from "@/lib/advocacy-states";
 import { EarningsCalculator } from "@/components/earnings-calculator";
 import { HostLeadPopup } from "@/components/host-lead-popup";
