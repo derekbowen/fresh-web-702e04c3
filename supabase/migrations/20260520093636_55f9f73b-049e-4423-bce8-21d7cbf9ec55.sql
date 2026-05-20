@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.compute_related_city_slugs(text, text) FROM PUBLIC, anon, authenticated;
