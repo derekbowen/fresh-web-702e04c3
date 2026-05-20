@@ -373,7 +373,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   {visibleOccasions.slice(0, 4).map((o, idx) => (
                     <a
                       key={o.slug}
-                      href={`/p/${o.slug}`}
+                      href={`/p/course/${o.slug}`}
                       className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
                     >
                       <div className="aspect-square overflow-hidden">
