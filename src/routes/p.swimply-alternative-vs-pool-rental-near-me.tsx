@@ -60,7 +60,15 @@ export const Route = createFileRoute(
   component: SwimplyComparisonPage,
   head: () => ({
     ...buildComparisonMeta({ slug: SLUG, title: TITLE, description: DESCRIPTION }),
-    scripts: [faqJsonLd(faqs.map((f) => ({ q: f.q, a: f.a })))],
+    scripts: [
+      faqJsonLd(faqs.map((f) => ({ q: f.q, a: f.a }))),
+      articleJsonLd({ slug: SLUG, title: TITLE, description: DESCRIPTION, dateModified: "2026-05-22" }),
+      breadcrumbJsonLd([
+        { name: "Home", url: "https://www.poolrentalnearme.com/" },
+        { name: "Compare", url: "https://www.poolrentalnearme.com/p/all-locations" },
+        { name: "Swimply vs Pool Rental Near Me", url: `https://www.poolrentalnearme.com/p/${SLUG}` },
+      ]),
+    ],
   }),
 });
 
