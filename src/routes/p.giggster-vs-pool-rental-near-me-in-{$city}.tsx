@@ -1,5 +1,6 @@
-import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect, Link } from "@tanstack/react-router";
 import { getCityBySlug, type CityRow } from "@/server/cities.functions";
+import { lookupContentPage } from "@/server/content-pages.functions";
 import {
   ComparisonPage,
   ComparisonTable,
