@@ -123,7 +123,7 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me")({
     ...buildComparisonMeta({ slug: SLUG, title: TITLE, description: DESCRIPTION }),
     scripts: [
       faqJsonLd(faqs.map((f) => ({ q: f.q, a: f.a }))),
-      articleJsonLd({ slug: SLUG, title: TITLE, description: DESCRIPTION }),
+      articleJsonLd({ slug: SLUG, title: TITLE, description: DESCRIPTION, dateModified: "2026-05-22" }),
       breadcrumbJsonLd([
         { name: "Home", url: absUrl("/") },
         { name: "Compare", url: absUrl("/p/all-locations") },
