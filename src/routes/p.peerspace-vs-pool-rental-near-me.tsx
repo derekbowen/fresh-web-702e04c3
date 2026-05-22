@@ -137,6 +137,7 @@ function PeerspaceComparisonPage() {
   return (
     <ComparisonPage competitor="Peerspace" title="Peerspace vs Pool Rental Near Me" effectiveMonthYear="May 2026">
       <h1>Peerspace vs Pool Rental Near Me (2026): Which Pool Rental Platform Pays You More?</h1>
+      <LastUpdated date="2026-05-22" />
 
       <p>
         If you're a pool owner deciding between <strong>Peerspace</strong> and{" "}
