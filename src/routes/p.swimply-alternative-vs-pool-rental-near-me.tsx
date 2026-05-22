@@ -70,6 +70,7 @@ export const Route = createFileRoute(
         { name: "Compare", url: "https://www.poolrentalnearme.com/p/all-locations" },
         { name: "Swimply vs Pool Rental Near Me", url: `https://www.poolrentalnearme.com/p/${SLUG}` },
       ]),
+      organizationJsonLd(),
     ],
   }),
 });
