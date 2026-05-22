@@ -8,10 +8,12 @@ import {
   FAQList,
   LastUpdated,
   HartfordKnockout,
+  RelatedCompares,
   buildComparisonMeta,
   faqJsonLd,
   articleJsonLd,
   breadcrumbJsonLd,
+  organizationJsonLd,
 } from "@/components/comparison-page";
 
 const SLUG = "swimply-alternative-vs-pool-rental-near-me";
