@@ -191,7 +191,7 @@ function SwimplyComparisonPage() {
         secondary to your personal homeowners policy.<sup>[³]</sup>
       </p>
 
-      <HartfordKnockout>
+      <HartfordKnockout />
 
       <p>
         For pool hosts, the per-occurrence number is the one that matters most
