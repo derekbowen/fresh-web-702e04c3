@@ -70,8 +70,87 @@ export function HostAcqCityTemplate({
         ? `${cityName} is wide open — early hosts have first-mover advantage`
         : `${cityName} has steady, growing pool rental demand`;
 
+  // SEO: schema + bio
+  const stateName = city?.state || fallbackCity?.stateCode || stateCode;
+  
+  const dateModified = new Date().toISOString().slice(0, 10);
+  const dateFormatted = new Date(dateModified).toLocaleDateString("en-US", {
+    month: "long", day: "numeric", year: "numeric",
+  });
+  const pageUrl = `https://www.poolrentalnearme.com${page.url_path}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: `Become a Pool Host in ${cityName}, ${stateCode} — Earn ${earningsBand}/Month`,
+        author: {
+          "@type": "Person",
+          name: "Derek Bowen",
+          jobTitle: "Founder & CEO, PRNM Corp",
+          sameAs: [
+            "https://www.linkedin.com/in/derekcbowen/",
+            "https://www.amazon.com/stores/Derek-Bowen/author",
+          ],
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Pool Rental Near Me",
+          logo: { "@type": "ImageObject", url: "https://www.poolrentalnearme.com/logo.png" },
+        },
+        datePublished: "2026-01-01",
+        dateModified,
+        mainEntityOfPage: pageUrl,
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.question,
+          acceptedAnswer: { "@type": "Answer", text: f.answer },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: "https://www.poolrentalnearme.com/" },
+          { "@type": "ListItem", position: 2, name: "Become a Host", item: "https://www.poolrentalnearme.com/p/hosting" },
+          { "@type": "ListItem", position: 3, name: `${cityName}, ${stateCode}` },
+        ],
+      },
+      {
+        "@type": "LocalBusiness",
+        name: `Pool Rental Near Me — ${cityName}`,
+        description: `Peer-to-peer pool rental marketplace in ${cityName}, ${stateName}`,
+        areaServed: {
+          "@type": "City",
+          name: cityName,
+          containedInPlace: { "@type": "State", name: stateName },
+        },
+        url: pageUrl,
+        telephone: "+1-888-940-4247",
+        priceRange: `$${hourlyRate}/hr`,
+      },
+      {
+        "@type": "Organization",
+        name: "Pool Rental Near Me",
+        url: "https://www.poolrentalnearme.com",
+        telephone: "+1-888-940-4247",
+        sameAs: [
+          "https://www.facebook.com/poolrentalnearme",
+          "https://www.instagram.com/poolrentalnearme",
+          "https://x.com/poolrentalnearme",
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <SiteHeader />
       <main className="flex-1 pb-24 lg:pb-0">
         {/* HERO */}
@@ -112,6 +191,10 @@ export function HostAcqCityTemplate({
                   Earn {earningsBand}/mo.
                 </span>
               </h1>
+              <p className="mt-3 text-xs text-muted-foreground">
+                <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
+                {" · "}Reviewed by Derek Bowen, Founder &amp; CEO, PRNM Corp
+              </p>
               {description ? (
                 <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
                   {description}
@@ -274,6 +357,29 @@ export function HostAcqCityTemplate({
           </div>
         </section>
 
+        {/* HARTFORD INSURANCE CALLOUT */}
+        <section className="border-b border-border py-12 sm:py-16">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border-l-4 border-primary bg-primary/5 p-6 sm:p-8">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl" aria-hidden="true">🛡️</div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+                    Real insurance, not a self-funded guarantee
+                  </h2>
+                  <p className="mt-3 text-base leading-relaxed text-foreground/90">
+                    Pool Rental Near Me's <strong>$2M per-occurrence / $4M aggregate general liability</strong>{" "}
+                    is carrier-backed third-party insurance underwritten by{" "}
+                    <strong>Hartford Underwriters Insurance Company</strong> — not a self-funded host
+                    guarantee. Includes <strong>$150K STRETCH® PLUS property coverage</strong> and{" "}
+                    <strong>$10K medical expenses per person</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* CALCULATOR */}
         <section
           id="calculator"
@@ -394,6 +500,55 @@ export function HostAcqCityTemplate({
           </div>
         </section>
 
+        {/* AUTHOR BIO */}
+        <section className="border-b border-border bg-muted/20 py-12">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-primary">
+                About the author
+              </h2>
+              <div className="mt-3 text-xl font-bold text-foreground">Derek Bowen</div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Founder &amp; CEO, PRNM Corp
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-foreground/90">
+                Derek Bowen is the founder and CEO of PRNM Corp, the parent
+                company behind Pool Rental Near Me. A lifelong entrepreneur
+                with 20+ years of marketplace and e-commerce experience, Derek
+                launched Pool Rental Near Me to give pool owners a host-first
+                alternative to high-fee competitors. He is the author of
+                multiple Amazon-published books on pool hosting, including{" "}
+                <em>Pool Host Riches</em>, <em>The Backyard Entrepreneur</em>,
+                and the Pool Host Academy companion guides.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
+                <a
+                  href="https://www.linkedin.com/in/derekcbowen/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-border bg-background px-4 py-2 text-foreground transition hover:bg-muted"
+                >
+                  LinkedIn
+                </a>
+                <a
+                  href="https://www.amazon.com/stores/Derek-Bowen/author"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-border bg-background px-4 py-2 text-foreground transition hover:bg-muted"
+                >
+                  Amazon author page
+                </a>
+                <a
+                  href="/p/learningacademy"
+                  className="rounded-full border border-border bg-background px-4 py-2 text-foreground transition hover:bg-muted"
+                >
+                  Pool Host Academy
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
@@ -448,7 +603,13 @@ export function HostAcqCityTemplate({
                   });
                 }
                 items.push(
+                  { to: "/p/learningacademy", label: "Pool Host Academy", description: "70+ free courses for new and growing hosts" },
                   { to: "/p/earnings-calculator", label: "Pool host earnings calculator", description: `Estimate your monthly income in ${cityName}` },
+                  { to: "/p/swimply-alternative-vs-pool-rental-near-me", label: "Swimply alternative — PRNM compared", description: "Side-by-side fees, payouts, and coverage" },
+                  { to: "/p/peerspace-vs-pool-rental-near-me", label: "Peerspace vs Pool Rental Near Me", description: "Why pool-first beats general venue rental" },
+                  { to: "/p/giggster-vs-pool-rental-near-me", label: "Giggster vs Pool Rental Near Me", description: "Pool hosts vs film/event rentals" },
+                  { to: "/p/hoa-pool-rental-defense-kit", label: "HOA pool rental defense kit", description: "What to send your HOA before they push back" },
+                  { to: `/p/pool-pros?city=${encodeURIComponent(cityName)}`, label: `Pool pros in ${cityName}`, description: "Vetted local cleaners, techs, and repair" },
                   { to: "/p/hosting", label: "Become a pool host", description: "Everything new hosts should know before listing" },
                   { to: "/p/all-locations", label: "All pool rental locations", description: "Browse host pools across the US" },
                 );
