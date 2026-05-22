@@ -339,6 +339,9 @@ function GiggsterComparisonPage() {
         coverage.<sup>[⁴]</sup>
       </p>
 
+      <HartfordKnockout />
+
+
       <h2 id="buyers">Buyer base: who's actually booking your pool</h2>
       <p>
         This is the deciding factor for most pool owners and the one most
