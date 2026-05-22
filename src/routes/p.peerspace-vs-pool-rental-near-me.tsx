@@ -225,6 +225,9 @@ function PeerspaceComparisonPage() {
         is <strong>six times larger</strong>.
       </p>
 
+      <HartfordKnockout />
+
+
       <h2>Host Support & Training</h2>
 
       <p>
