@@ -77,6 +77,26 @@ export function CTAMid() {
   );
 }
 
+export function LastUpdated({ date }: { date: string }) {
+  return (
+    <p className="not-prose -mt-2 mb-6 text-xs text-muted-foreground">
+      <time dateTime={date}>Last updated: {new Date(date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</time>
+      {" · "}Reviewed by Derek Bowen, Founder & CEO, PRNM Corp
+    </p>
+  );
+}
+
+export function HartfordKnockout() {
+  return (
+    <div className="not-prose my-6 rounded-xl border-l-4 border-primary bg-primary/5 p-4">
+      <p className="m-0 text-sm leading-relaxed text-foreground">
+        <strong>Hartford-backed vs self-funded:</strong> PRNM's $2M per-occurrence liability is underwritten by{" "}
+        <strong>Hartford Underwriters Insurance Company</strong> — an A+ rated US carrier — through a Business Owner's Policy attached to every approved booking. Competitor "protection guarantees" are typically platform-funded reimbursement programs, not third-party insurance policies. Ask any platform for the underwriter's name. If they can't name one, it's self-funded.
+      </p>
+    </div>
+  );
+}
+
 export function AuthorBlock() {
   return (
     <>

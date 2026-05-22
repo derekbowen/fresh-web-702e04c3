@@ -7,6 +7,8 @@ import {
   AuthorBlock,
   FooterBlock,
   FAQList,
+  LastUpdated,
+  HartfordKnockout,
   buildComparisonMeta,
   faqJsonLd,
   articleJsonLd,
@@ -121,7 +123,7 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me")({
     ...buildComparisonMeta({ slug: SLUG, title: TITLE, description: DESCRIPTION }),
     scripts: [
       faqJsonLd(faqs.map((f) => ({ q: f.q, a: f.a }))),
-      articleJsonLd({ slug: SLUG, title: TITLE, description: DESCRIPTION }),
+      articleJsonLd({ slug: SLUG, title: TITLE, description: DESCRIPTION, dateModified: "2026-05-22" }),
       breadcrumbJsonLd([
         { name: "Home", url: absUrl("/") },
         { name: "Compare", url: absUrl("/p/all-locations") },
@@ -135,6 +137,7 @@ function PeerspaceComparisonPage() {
   return (
     <ComparisonPage competitor="Peerspace" title="Peerspace vs Pool Rental Near Me" effectiveMonthYear="May 2026">
       <h1>Peerspace vs Pool Rental Near Me (2026): Which Pool Rental Platform Pays You More?</h1>
+      <LastUpdated date="2026-05-22" />
 
       <p>
         If you're a pool owner deciding between <strong>Peerspace</strong> and{" "}
@@ -221,6 +224,9 @@ function PeerspaceComparisonPage() {
         limit is <strong>double Peerspace's</strong>, and the property blanket
         is <strong>six times larger</strong>.
       </p>
+
+      <HartfordKnockout />
+
 
       <h2>Host Support & Training</h2>
 

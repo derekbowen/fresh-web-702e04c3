@@ -6,8 +6,12 @@ import {
   AuthorBlock,
   FooterBlock,
   FAQList,
+  LastUpdated,
+  HartfordKnockout,
   buildComparisonMeta,
   faqJsonLd,
+  articleJsonLd,
+  breadcrumbJsonLd,
 } from "@/components/comparison-page";
 
 const SLUG = "swimply-alternative-vs-pool-rental-near-me";
@@ -56,7 +60,15 @@ export const Route = createFileRoute(
   component: SwimplyComparisonPage,
   head: () => ({
     ...buildComparisonMeta({ slug: SLUG, title: TITLE, description: DESCRIPTION }),
-    scripts: [faqJsonLd(faqs.map((f) => ({ q: f.q, a: f.a })))],
+    scripts: [
+      faqJsonLd(faqs.map((f) => ({ q: f.q, a: f.a }))),
+      articleJsonLd({ slug: SLUG, title: TITLE, description: DESCRIPTION, dateModified: "2026-05-22" }),
+      breadcrumbJsonLd([
+        { name: "Home", url: "https://www.poolrentalnearme.com/" },
+        { name: "Compare", url: "https://www.poolrentalnearme.com/p/all-locations" },
+        { name: "Swimply vs Pool Rental Near Me", url: `https://www.poolrentalnearme.com/p/${SLUG}` },
+      ]),
+    ],
   }),
 });
 
@@ -68,6 +80,7 @@ function SwimplyComparisonPage() {
       effectiveMonthYear="May 2026"
     >
       <h1>Swimply vs Pool Rental Near Me: 2026 Host & Guest Comparison</h1>
+      <LastUpdated date="2026-05-22" />
 
       <p>
         If you're a pool owner deciding between <strong>Swimply</strong> and{" "}
@@ -177,6 +190,8 @@ function SwimplyComparisonPage() {
         attached to every approved booking at no cost to the host, and also
         secondary to your personal homeowners policy.<sup>[³]</sup>
       </p>
+
+      <HartfordKnockout />
 
       <p>
         For pool hosts, the per-occurrence number is the one that matters most
