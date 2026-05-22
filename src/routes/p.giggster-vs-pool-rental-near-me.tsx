@@ -290,10 +290,20 @@ function GiggsterComparisonPage() {
 
       <h2 id="insurance">Insurance &amp; liability coverage (the most important section)</h2>
 
+      <HartfordKnockout
+        competitor="Giggster"
+        secondSentence={
+          <>
+            Giggster's host protection is a $1M general liability plus property damage coverage administered through their booking system — coverage limits and carrier disclosure are not as transparently published as PRNM's Hartford-backed policy, and on production bookings the renter (not the platform) is required to supply a $2M COI.
+          </>
+        }
+      />
+
       <p>
         For a residential pool host, insurance is the single biggest risk
         consideration. The two platforms approach it very differently.
       </p>
+
 
       <h3>Giggster's insurance model</h3>
       <p>
