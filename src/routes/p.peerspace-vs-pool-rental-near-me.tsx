@@ -7,6 +7,8 @@ import {
   AuthorBlock,
   FooterBlock,
   FAQList,
+  LastUpdated,
+  HartfordKnockout,
   buildComparisonMeta,
   faqJsonLd,
   articleJsonLd,
