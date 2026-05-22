@@ -200,6 +200,15 @@ function PeerspaceComparisonPage() {
 
       <h2>Insurance & Liability Coverage</h2>
 
+      <HartfordKnockout
+        competitor="Peerspace"
+        secondSentence={
+          <>
+            Peerspace provides a $1M Host Liability supplemental policy plus a $25K Property Damage Guarantee — useful, but supplemental coverage layered on top of the host's own homeowner's policy, not a primary third-party liability policy at PRNM's $2M / $4M level.
+          </>
+        }
+      />
+
       <p>
         Peerspace publishes <strong>$1,000,000</strong> in host General
         Liability insurance via its "Peace of Mind" page, plus a{" "}
@@ -225,7 +234,6 @@ function PeerspaceComparisonPage() {
         is <strong>six times larger</strong>.
       </p>
 
-      <HartfordKnockout />
 
 
       <h2>Host Support & Training</h2>
