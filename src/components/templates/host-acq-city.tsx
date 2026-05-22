@@ -72,7 +72,7 @@ export function HostAcqCityTemplate({
 
   // SEO: schema + bio
   const stateName = city?.state || fallbackCity?.stateCode || stateCode;
-  const citySlug = (page.slug || "").replace(/^become-a-(swimming-)?pool-host-/, "");
+  
   const dateModified = new Date().toISOString().slice(0, 10);
   const dateFormatted = new Date(dateModified).toLocaleDateString("en-US", {
     month: "long", day: "numeric", year: "numeric",
