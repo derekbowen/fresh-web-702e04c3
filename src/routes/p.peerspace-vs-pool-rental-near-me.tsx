@@ -131,6 +131,7 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me")({
         { name: "Compare", url: absUrl("/p/all-locations") },
         { name: "Peerspace vs Pool Rental Near Me", url: absUrl(`/p/${SLUG}`) },
       ]),
+      organizationJsonLd(),
     ],
   }),
 });
