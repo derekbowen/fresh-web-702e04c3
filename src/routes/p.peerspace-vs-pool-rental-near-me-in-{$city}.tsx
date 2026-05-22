@@ -1,5 +1,6 @@
-import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect, Link } from "@tanstack/react-router";
 import { getCityBySlug, type CityRow } from "@/server/cities.functions";
+import { lookupContentPage } from "@/server/content-pages.functions";
 import {
   ComparisonPage,
   ComparisonTable,
@@ -25,6 +26,11 @@ import { absUrl } from "@/lib/site-origin";
 
 export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$city}")({
   loader: async ({ params }) => {
+    const fullSlug = `peerspace-vs-pool-rental-near-me-in-${params.city}`;
+    const lookup = await lookupContentPage({ data: { slug: fullSlug } });
+    if (lookup.kind === "redirect" && lookup.redirectPath) {
+      throw redirect({ href: lookup.redirectPath, statusCode: 301 });
+    }
     const city = await getCityBySlug({ data: { slug: params.city } });
     if (!city) throw notFound();
     return { city };
