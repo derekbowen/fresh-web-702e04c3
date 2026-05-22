@@ -9,10 +9,12 @@ import {
   FAQList,
   LastUpdated,
   HartfordKnockout,
+  RelatedCompares,
   buildComparisonMeta,
   faqJsonLd,
   articleJsonLd,
   breadcrumbJsonLd,
+  organizationJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
 
@@ -129,6 +131,7 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me")({
         { name: "Compare", url: absUrl("/p/all-locations") },
         { name: "Peerspace vs Pool Rental Near Me", url: absUrl(`/p/${SLUG}`) },
       ]),
+      organizationJsonLd(),
     ],
   }),
 });
@@ -200,6 +203,15 @@ function PeerspaceComparisonPage() {
 
       <h2>Insurance & Liability Coverage</h2>
 
+      <HartfordKnockout
+        competitor="Peerspace"
+        secondSentence={
+          <>
+            Peerspace provides a $1M Host Liability supplemental policy plus a $25K Property Damage Guarantee — useful, but supplemental coverage layered on top of the host's own homeowner's policy, not a primary third-party liability policy at PRNM's $2M / $4M level.
+          </>
+        }
+      />
+
       <p>
         Peerspace publishes <strong>$1,000,000</strong> in host General
         Liability insurance via its "Peace of Mind" page, plus a{" "}
@@ -225,7 +237,6 @@ function PeerspaceComparisonPage() {
         is <strong>six times larger</strong>.
       </p>
 
-      <HartfordKnockout />
 
 
       <h2>Host Support & Training</h2>
@@ -379,6 +390,13 @@ function PeerspaceComparisonPage() {
           at <a href="/p/learningacademy">poolrentalnearme.com/p/learningacademy</a>.
         </li>
       </ol>
+
+      <RelatedCompares
+        items={[
+          { href: "/p/swimply-alternative-vs-pool-rental-near-me", label: "Swimply vs Pool Rental Near Me" },
+          { href: "/p/giggster-vs-pool-rental-near-me", label: "Giggster vs Pool Rental Near Me" },
+        ]}
+      />
 
       <FooterBlock />
     </ComparisonPage>

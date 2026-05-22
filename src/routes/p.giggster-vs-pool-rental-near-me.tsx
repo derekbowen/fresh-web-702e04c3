@@ -9,10 +9,12 @@ import {
   FAQList,
   LastUpdated,
   HartfordKnockout,
+  RelatedCompares,
   buildComparisonMeta,
   faqJsonLd,
   articleJsonLd,
   breadcrumbJsonLd,
+  organizationJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
 
@@ -86,6 +88,7 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me")({
           url: absUrl(`/p/${SLUG}`),
         },
       ]),
+      organizationJsonLd(),
     ],
   }),
 });
@@ -290,10 +293,20 @@ function GiggsterComparisonPage() {
 
       <h2 id="insurance">Insurance &amp; liability coverage (the most important section)</h2>
 
+      <HartfordKnockout
+        competitor="Giggster"
+        secondSentence={
+          <>
+            Giggster's host protection is a $1M general liability plus property damage coverage administered through their booking system — coverage limits and carrier disclosure are not as transparently published as PRNM's Hartford-backed policy, and on production bookings the renter (not the platform) is required to supply a $2M COI.
+          </>
+        }
+      />
+
       <p>
         For a residential pool host, insurance is the single biggest risk
         consideration. The two platforms approach it very differently.
       </p>
+
 
       <h3>Giggster's insurance model</h3>
       <p>
@@ -338,9 +351,6 @@ function GiggsterComparisonPage() {
         carrier-backed liability layer on top of your own homeowner's
         coverage.<sup>[⁴]</sup>
       </p>
-
-      <HartfordKnockout />
-
 
       <h2 id="buyers">Buyer base: who's actually booking your pool</h2>
       <p>
@@ -714,6 +724,13 @@ function GiggsterComparisonPage() {
           the current published terms on each platform.
         </em>
       </p>
+
+      <RelatedCompares
+        items={[
+          { href: "/p/swimply-alternative-vs-pool-rental-near-me", label: "Swimply vs Pool Rental Near Me" },
+          { href: "/p/peerspace-vs-pool-rental-near-me", label: "Peerspace vs Pool Rental Near Me" },
+        ]}
+      />
 
       <FooterBlock />
     </ComparisonPage>

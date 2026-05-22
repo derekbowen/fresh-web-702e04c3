@@ -8,10 +8,12 @@ import {
   FAQList,
   LastUpdated,
   HartfordKnockout,
+  RelatedCompares,
   buildComparisonMeta,
   faqJsonLd,
   articleJsonLd,
   breadcrumbJsonLd,
+  organizationJsonLd,
 } from "@/components/comparison-page";
 
 const SLUG = "swimply-alternative-vs-pool-rental-near-me";
@@ -68,6 +70,7 @@ export const Route = createFileRoute(
         { name: "Compare", url: "https://www.poolrentalnearme.com/p/all-locations" },
         { name: "Swimply vs Pool Rental Near Me", url: `https://www.poolrentalnearme.com/p/${SLUG}` },
       ]),
+      organizationJsonLd(),
     ],
   }),
 });
@@ -166,6 +169,15 @@ function SwimplyComparisonPage() {
 
       <h2>Insurance & Liability Coverage</h2>
 
+      <HartfordKnockout
+        competitor="Swimply"
+        secondSentence={
+          <>
+            Swimply's coverage is a self-funded host guarantee — Swimply no longer carries a third-party liability insurance policy for hosts as of 2023, per public reporting.<sup>[⁶]</sup>
+          </>
+        }
+      />
+
       <p>
         Both platforms publish a "secondary" insurance model — meaning the
         platform's coverage applies after your homeowners policy responds. The
@@ -191,7 +203,6 @@ function SwimplyComparisonPage() {
         secondary to your personal homeowners policy.<sup>[³]</sup>
       </p>
 
-      <HartfordKnockout />
 
       <p>
         For pool hosts, the per-occurrence number is the one that matters most
@@ -427,7 +438,20 @@ function SwimplyComparisonPage() {
           </a>
           .
         </li>
+        <li>
+          <strong>Swimply self-funded protection model</strong> —{" "}
+          <a href="https://en.wikipedia.org/wiki/Swimply" rel="noopener nofollow">
+            Wikipedia: Swimply
+          </a>
+        </li>
       </ol>
+
+      <RelatedCompares
+        items={[
+          { href: "/p/peerspace-vs-pool-rental-near-me", label: "Peerspace vs Pool Rental Near Me" },
+          { href: "/p/giggster-vs-pool-rental-near-me", label: "Giggster vs Pool Rental Near Me" },
+        ]}
+      />
 
       <FooterBlock />
     </ComparisonPage>
