@@ -86,15 +86,56 @@ export function LastUpdated({ date }: { date: string }) {
   );
 }
 
-export function HartfordKnockout() {
+export function HartfordKnockout({
+  competitor,
+  secondSentence,
+}: {
+  competitor: string;
+  secondSentence: React.ReactNode;
+}) {
   return (
     <div className="not-prose my-6 rounded-xl border-l-4 border-primary bg-primary/5 p-4">
       <p className="m-0 text-sm leading-relaxed text-foreground">
-        <strong>Hartford-backed vs self-funded:</strong> PRNM's $2M per-occurrence liability is underwritten by{" "}
-        <strong>Hartford Underwriters Insurance Company</strong> — an A+ rated US carrier — through a Business Owner's Policy attached to every approved booking. Competitor "protection guarantees" are typically platform-funded reimbursement programs, not third-party insurance policies. Ask any platform for the underwriter's name. If they can't name one, it's self-funded.
+        <strong>Pool Rental Near Me's $2M per-occurrence / $4M aggregate general liability is carrier-backed third-party insurance</strong>{" "}
+        underwritten by <strong>Hartford Underwriters Insurance Company</strong>. {secondSentence}{" "}
+        <span className="text-muted-foreground">(Coverage comparison verified May 2026; check {competitor}'s current published terms before listing.)</span>
       </p>
     </div>
   );
+}
+
+export function RelatedCompares({ items }: { items: { href: string; label: string }[] }) {
+  return (
+    <>
+      <h2>See also</h2>
+      <ul>
+        {items.map((it) => (
+          <li key={it.href}>
+            <a href={it.href}>See also: {it.label}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export function organizationJsonLd() {
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Pool Rental Near Me",
+      url: "https://www.poolrentalnearme.com",
+      telephone: "+1-888-940-4247",
+      sameAs: [
+        "https://www.facebook.com/poolrentalnearme",
+        "https://www.instagram.com/poolrentalnearme",
+        "https://x.com/poolrentalnearme",
+        "https://www.linkedin.com/company/pool-rental-near-me",
+      ],
+    }),
+  };
 }
 
 export function AuthorBlock() {
