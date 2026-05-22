@@ -290,7 +290,9 @@ export function faqsForContentPage(page: ContentPage): FaqItem[] {
   return [];
 }
 
-/** Build FAQPage JSON-LD object for a list of FAQs. */
+/** Build FAQPage JSON-LD object for a list of FAQs. Includes SpeakableSpecification
+ *  pointing at `.faq-answer` so voice assistants and AI overviews can quote the
+ *  answers verbatim. The FaqBlock component renders each <dd> with that class. */
 export function faqPageJsonLd(faqs: FaqItem[]) {
   return {
     "@context": "https://schema.org",
@@ -298,7 +300,14 @@ export function faqPageJsonLd(faqs: FaqItem[]) {
     mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer,
+        speakable: {
+          "@type": "SpeakableSpecification",
+          cssSelector: [".faq-answer"],
+        },
+      },
     })),
   };
 }

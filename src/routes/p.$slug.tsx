@@ -252,13 +252,19 @@ export const Route = createFileRoute("/p/$slug")({
 
     // Article JSON-LD — for content-style template types
     if (isArticleType(p.template_type)) {
+      const authorName = p.author || "Derek Bowen";
       const article = {
         "@context": "https://schema.org",
         "@type": "Article",
         headline: p.title,
         description,
         image: p.cover_image_url ? [p.cover_image_url] : undefined,
-        author: { "@type": "Person", name: p.author || SITE_NAME },
+        author: {
+          "@type": "Person",
+          name: authorName,
+          jobTitle: authorName === "Derek Bowen" ? "CEO, PRNM Corp" : undefined,
+          url: authorName === "Derek Bowen" ? `${SITE_URL}/p/about-our-company` : undefined,
+        },
         datePublished: p.published_at || undefined,
         dateModified: p.updated_at,
         mainEntityOfPage: `${SITE_URL}${path}`,
@@ -266,6 +272,10 @@ export const Route = createFileRoute("/p/$slug")({
           "@type": "Organization",
           name: SITE_NAME,
           url: SITE_URL,
+          logo: {
+            "@type": "ImageObject",
+            url: `${SITE_URL}/og-default.jpg`,
+          },
         },
         inLanguage: p.language,
       };
@@ -282,6 +292,35 @@ export const Route = createFileRoute("/p/$slug")({
     const localBiz = localBusinessForContentPage(p);
     if (localBiz) {
       scripts.push(ldJsonScript(localBiz));
+    }
+
+    // State-scoped Service JSON-LD — advocacy state pages
+    if (p.template_type === "host_advocacy_state" && p.slug) {
+      const stateMatch = p.slug.match(/^host-advocacy-(.+)$/);
+      const stateName = stateMatch
+        ? stateMatch[1].replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+        : null;
+      if (stateName) {
+        scripts.push(
+          ldJsonScript({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            serviceType: "Pool rental marketplace",
+            provider: {
+              "@type": "Organization",
+              name: SITE_NAME,
+              url: SITE_URL,
+            },
+            areaServed: {
+              "@type": "State",
+              name: stateName,
+              addressCountry: "US",
+            },
+            url: `${SITE_URL}${path}`,
+            inLanguage: p.language || "en",
+          }),
+        );
+      }
     }
 
     // CollectionPage + ItemList for the learning academy hubs

@@ -24,6 +24,7 @@ const STATIC_URLS: Array<{ path: string; lastmod?: Date }> = [
   { path: "/p/pool-rentals" },
   { path: "/p/pool-rental-insurance-explained" },
   { path: "/p/pool-rental-host-fees-compared" },
+  { path: "/p/pool-rental-permits-by-state" },
   // 50 state hub pages — internal linking layer for the 3,400+ city pages.
   ...Object.values(STATE_NAMES).map((name) => ({
     path: `/p/pool-rentals-${name.toLowerCase().replace(/\s+/g, "-")}`,

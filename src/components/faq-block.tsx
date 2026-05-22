@@ -22,7 +22,7 @@ export function FaqBlock({
             <dt className="text-base font-semibold text-foreground">
               {f.question}
             </dt>
-            <dd className="mt-2 text-base leading-relaxed text-muted-foreground">
+            <dd className="faq-answer mt-2 text-base leading-relaxed text-muted-foreground">
               {f.answer}
             </dd>
           </div>

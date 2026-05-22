@@ -50,6 +50,7 @@ import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './rou
 import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
 import { Route as PPoolRentalsStateRouteImport } from './routes/p.pool-rentals-$state'
 import { Route as PPoolRentalsRouteImport } from './routes/p.pool-rentals'
+import { Route as PPoolRentalPermitsByStateRouteImport } from './routes/p.pool-rental-permits-by-state'
 import { Route as PPoolRentalInsuranceExplainedRouteImport } from './routes/p.pool-rental-insurance-explained'
 import { Route as PPoolRentalHostFeesComparedRouteImport } from './routes/p.pool-rental-host-fees-compared'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
@@ -391,6 +392,12 @@ const PPoolRentalsRoute = PPoolRentalsRouteImport.update({
   path: '/p/pool-rentals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PPoolRentalPermitsByStateRoute =
+  PPoolRentalPermitsByStateRouteImport.update({
+    id: '/p/pool-rental-permits-by-state',
+    path: '/p/pool-rental-permits-by-state',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PPoolRentalInsuranceExplainedRoute =
   PPoolRentalInsuranceExplainedRouteImport.update({
     id: '/p/pool-rental-insurance-explained',
@@ -1157,6 +1164,7 @@ export interface FileRoutesByFullPath {
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
+  '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
@@ -1323,6 +1331,7 @@ export interface FileRoutesByTo {
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
+  '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
@@ -1490,6 +1499,7 @@ export interface FileRoutesById {
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
+  '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
@@ -1658,6 +1668,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
+    | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
     | '/p/privacy-request'
@@ -1824,6 +1835,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
+    | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
     | '/p/privacy-request'
@@ -1990,6 +2002,7 @@ export interface FileRouteTypes {
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
+    | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
     | '/p/privacy-request'
@@ -2098,6 +2111,7 @@ export interface RootRouteChildren {
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
   PPoolRentalHostFeesComparedRoute: typeof PPoolRentalHostFeesComparedRoute
   PPoolRentalInsuranceExplainedRoute: typeof PPoolRentalInsuranceExplainedRoute
+  PPoolRentalPermitsByStateRoute: typeof PPoolRentalPermitsByStateRoute
   PPoolRentalsRoute: typeof PPoolRentalsRoute
   PPoolRentalsStateRoute: typeof PPoolRentalsStateRoute
   PPrivacyRequestRoute: typeof PPrivacyRequestRoute
@@ -2426,6 +2440,13 @@ declare module '@tanstack/react-router' {
       path: '/p/pool-rentals'
       fullPath: '/p/pool-rentals'
       preLoaderRoute: typeof PPoolRentalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/pool-rental-permits-by-state': {
+      id: '/p/pool-rental-permits-by-state'
+      path: '/p/pool-rental-permits-by-state'
+      fullPath: '/p/pool-rental-permits-by-state'
+      preLoaderRoute: typeof PPoolRentalPermitsByStateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/pool-rental-insurance-explained': {
@@ -3550,6 +3571,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPoolProsRoute: PPoolProsRouteWithChildren,
   PPoolRentalHostFeesComparedRoute: PPoolRentalHostFeesComparedRoute,
   PPoolRentalInsuranceExplainedRoute: PPoolRentalInsuranceExplainedRoute,
+  PPoolRentalPermitsByStateRoute: PPoolRentalPermitsByStateRoute,
   PPoolRentalsRoute: PPoolRentalsRoute,
   PPoolRentalsStateRoute: PPoolRentalsStateRoute,
   PPrivacyRequestRoute: PPrivacyRequestRoute,
