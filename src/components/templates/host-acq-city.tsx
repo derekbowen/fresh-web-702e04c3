@@ -70,6 +70,84 @@ export function HostAcqCityTemplate({
         ? `${cityName} is wide open — early hosts have first-mover advantage`
         : `${cityName} has steady, growing pool rental demand`;
 
+  // SEO: schema + bio
+  const stateName = city?.state || fallbackCity?.stateCode || stateCode;
+  const citySlug = page.slug.replace(/^become-a-(swimming-)?pool-host-/, "");
+  const dateModified = new Date().toISOString().slice(0, 10);
+  const dateFormatted = new Date(dateModified).toLocaleDateString("en-US", {
+    month: "long", day: "numeric", year: "numeric",
+  });
+  const pageUrl = `https://www.poolrentalnearme.com${page.url_path}`;
+  const advocacyForState = stateCode
+    ? ADVOCACY_STATES.find((s) => s.code === stateCode)
+    : null;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: `Become a Pool Host in ${cityName}, ${stateCode} — Earn ${earningsBand}/Month`,
+        author: {
+          "@type": "Person",
+          name: "Derek Bowen",
+          jobTitle: "Founder & CEO, PRNM Corp",
+          sameAs: [
+            "https://www.linkedin.com/in/derekcbowen/",
+            "https://www.amazon.com/stores/Derek-Bowen/author",
+          ],
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Pool Rental Near Me",
+          logo: { "@type": "ImageObject", url: "https://www.poolrentalnearme.com/logo.png" },
+        },
+        datePublished: "2026-01-01",
+        dateModified,
+        mainEntityOfPage: pageUrl,
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.question,
+          acceptedAnswer: { "@type": "Answer", text: f.answer },
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: "https://www.poolrentalnearme.com/" },
+          { "@type": "ListItem", position: 2, name: "Become a Host", item: "https://www.poolrentalnearme.com/p/hosting" },
+          { "@type": "ListItem", position: 3, name: `${cityName}, ${stateCode}` },
+        ],
+      },
+      {
+        "@type": "LocalBusiness",
+        name: `Pool Rental Near Me — ${cityName}`,
+        description: `Peer-to-peer pool rental marketplace in ${cityName}, ${stateName}`,
+        areaServed: {
+          "@type": "City",
+          name: cityName,
+          containedInPlace: { "@type": "State", name: stateName },
+        },
+        url: pageUrl,
+        telephone: "+1-888-940-4247",
+        priceRange: `$${hourlyRate}/hr`,
+      },
+      {
+        "@type": "Organization",
+        name: "Pool Rental Near Me",
+        url: "https://www.poolrentalnearme.com",
+        telephone: "+1-888-940-4247",
+        sameAs: [
+          "https://www.facebook.com/poolrentalnearme",
+          "https://www.instagram.com/poolrentalnearme",
+          "https://x.com/poolrentalnearme",
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
