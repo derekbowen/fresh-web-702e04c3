@@ -9,10 +9,12 @@ import {
   FAQList,
   LastUpdated,
   HartfordKnockout,
+  RelatedCompares,
   buildComparisonMeta,
   faqJsonLd,
   articleJsonLd,
   breadcrumbJsonLd,
+  organizationJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
 
