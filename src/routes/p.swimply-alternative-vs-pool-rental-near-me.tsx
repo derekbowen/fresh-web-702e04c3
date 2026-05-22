@@ -80,6 +80,7 @@ function SwimplyComparisonPage() {
       effectiveMonthYear="May 2026"
     >
       <h1>Swimply vs Pool Rental Near Me: 2026 Host & Guest Comparison</h1>
+      <LastUpdated date="2026-05-22" />
 
       <p>
         If you're a pool owner deciding between <strong>Swimply</strong> and{" "}
