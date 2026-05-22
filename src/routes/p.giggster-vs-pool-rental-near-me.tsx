@@ -88,6 +88,7 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me")({
           url: absUrl(`/p/${SLUG}`),
         },
       ]),
+      organizationJsonLd(),
     ],
   }),
 });
