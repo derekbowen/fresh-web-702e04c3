@@ -86,11 +86,27 @@ Deno.serve(async (req: Request) => {
   const aiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!aiKey) return Response.json({ error: "LOVABLE_API_KEY missing" }, { status: 500 });
 
+  const sb = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
+  // Skip-if-already-long guard
+  const { data: existing } = await sb
+    .from("content_pages")
+    .select("body_markdown")
+    .eq("slug", slug)
+    .maybeSingle();
+  const existingLen = (existing?.body_markdown || "").length;
+  if (existingLen >= 8000) {
+    return Response.json({ slug, ok: true, skipped: true, reason: "already-long", len: existingLen });
+  }
+
   const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${aiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "google/gemini-2.5-pro",
+      model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: SYSTEM },
         { role: "user", content: userPrompt(city, sc, sn) },
