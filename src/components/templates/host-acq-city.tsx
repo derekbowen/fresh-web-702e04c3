@@ -603,7 +603,13 @@ export function HostAcqCityTemplate({
                   });
                 }
                 items.push(
+                  { to: "/p/learningacademy", label: "Pool Host Academy", description: "70+ free courses for new and growing hosts" },
                   { to: "/p/earnings-calculator", label: "Pool host earnings calculator", description: `Estimate your monthly income in ${cityName}` },
+                  { to: "/p/swimply-alternative-vs-pool-rental-near-me", label: "Swimply alternative — PRNM compared", description: "Side-by-side fees, payouts, and coverage" },
+                  { to: "/p/peerspace-vs-pool-rental-near-me", label: "Peerspace vs Pool Rental Near Me", description: "Why pool-first beats general venue rental" },
+                  { to: "/p/giggster-vs-pool-rental-near-me", label: "Giggster vs Pool Rental Near Me", description: "Pool hosts vs film/event rentals" },
+                  { to: "/p/hoa-pool-rental-defense-kit", label: "HOA pool rental defense kit", description: "What to send your HOA before they push back" },
+                  { to: `/p/pool-pros?city=${encodeURIComponent(cityName)}`, label: `Pool pros in ${cityName}`, description: "Vetted local cleaners, techs, and repair" },
                   { to: "/p/hosting", label: "Become a pool host", description: "Everything new hosts should know before listing" },
                   { to: "/p/all-locations", label: "All pool rental locations", description: "Browse host pools across the US" },
                 );
