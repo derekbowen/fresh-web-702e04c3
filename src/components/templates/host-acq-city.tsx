@@ -500,6 +500,55 @@ export function HostAcqCityTemplate({
           </div>
         </section>
 
+        {/* AUTHOR BIO */}
+        <section className="border-b border-border bg-muted/20 py-12">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-primary">
+                About the author
+              </h2>
+              <div className="mt-3 text-xl font-bold text-foreground">Derek Bowen</div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Founder &amp; CEO, PRNM Corp
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-foreground/90">
+                Derek Bowen is the founder and CEO of PRNM Corp, the parent
+                company behind Pool Rental Near Me. A lifelong entrepreneur
+                with 20+ years of marketplace and e-commerce experience, Derek
+                launched Pool Rental Near Me to give pool owners a host-first
+                alternative to high-fee competitors. He is the author of
+                multiple Amazon-published books on pool hosting, including{" "}
+                <em>Pool Host Riches</em>, <em>The Backyard Entrepreneur</em>,
+                and the Pool Host Academy companion guides.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
+                <a
+                  href="https://www.linkedin.com/in/derekcbowen/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-border bg-background px-4 py-2 text-foreground transition hover:bg-muted"
+                >
+                  LinkedIn
+                </a>
+                <a
+                  href="https://www.amazon.com/stores/Derek-Bowen/author"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-border bg-background px-4 py-2 text-foreground transition hover:bg-muted"
+                >
+                  Amazon author page
+                </a>
+                <a
+                  href="/p/learningacademy"
+                  className="rounded-full border border-border bg-background px-4 py-2 text-foreground transition hover:bg-muted"
+                >
+                  Pool Host Academy
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
