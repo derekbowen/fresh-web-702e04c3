@@ -51,6 +51,7 @@ import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
 import { Route as PPoolRentalsStateRouteImport } from './routes/p.pool-rentals-$state'
 import { Route as PPoolRentalsRouteImport } from './routes/p.pool-rentals'
 import { Route as PPoolRentalInsuranceExplainedRouteImport } from './routes/p.pool-rental-insurance-explained'
+import { Route as PPoolRentalHostFeesComparedRouteImport } from './routes/p.pool-rental-host-fees-compared'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
 import { Route as PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport } from './routes/p.peerspace-vs-pool-rental-near-me-in-{$city}'
 import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me'
@@ -394,6 +395,12 @@ const PPoolRentalInsuranceExplainedRoute =
   PPoolRentalInsuranceExplainedRouteImport.update({
     id: '/p/pool-rental-insurance-explained',
     path: '/p/pool-rental-insurance-explained',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PPoolRentalHostFeesComparedRoute =
+  PPoolRentalHostFeesComparedRouteImport.update({
+    id: '/p/pool-rental-host-fees-compared',
+    path: '/p/pool-rental-host-fees-compared',
     getParentRoute: () => rootRouteImport,
   } as any)
 const PPoolProsRoute = PPoolProsRouteImport.update({
@@ -1148,6 +1155,7 @@ export interface FileRoutesByFullPath {
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
+  '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
@@ -1313,6 +1321,7 @@ export interface FileRoutesByTo {
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
+  '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
@@ -1479,6 +1488,7 @@ export interface FileRoutesById {
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
+  '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
@@ -1646,6 +1656,7 @@ export interface FileRouteTypes {
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
+    | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
@@ -1811,6 +1822,7 @@ export interface FileRouteTypes {
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
+    | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
@@ -1976,6 +1988,7 @@ export interface FileRouteTypes {
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-pros'
+    | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
@@ -2083,6 +2096,7 @@ export interface RootRouteChildren {
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route: typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
+  PPoolRentalHostFeesComparedRoute: typeof PPoolRentalHostFeesComparedRoute
   PPoolRentalInsuranceExplainedRoute: typeof PPoolRentalInsuranceExplainedRoute
   PPoolRentalsRoute: typeof PPoolRentalsRoute
   PPoolRentalsStateRoute: typeof PPoolRentalsStateRoute
@@ -2419,6 +2433,13 @@ declare module '@tanstack/react-router' {
       path: '/p/pool-rental-insurance-explained'
       fullPath: '/p/pool-rental-insurance-explained'
       preLoaderRoute: typeof PPoolRentalInsuranceExplainedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/pool-rental-host-fees-compared': {
+      id: '/p/pool-rental-host-fees-compared'
+      path: '/p/pool-rental-host-fees-compared'
+      fullPath: '/p/pool-rental-host-fees-compared'
+      preLoaderRoute: typeof PPoolRentalHostFeesComparedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/pool-pros': {
@@ -3527,6 +3548,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route:
     PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route,
   PPoolProsRoute: PPoolProsRouteWithChildren,
+  PPoolRentalHostFeesComparedRoute: PPoolRentalHostFeesComparedRoute,
   PPoolRentalInsuranceExplainedRoute: PPoolRentalInsuranceExplainedRoute,
   PPoolRentalsRoute: PPoolRentalsRoute,
   PPoolRentalsStateRoute: PPoolRentalsStateRoute,
@@ -3573,13 +3595,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
