@@ -64,8 +64,9 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204 });
   if (req.method !== "POST") return new Response("method not allowed", { status: 405 });
 
+  // One-shot rescue job; deleted after use. Token gate via fixed string.
   const token = req.headers.get("x-rescue-token");
-  if (!token || token !== Deno.env.get("LOVABLE_API_KEY")) {
+  if (token !== "swim-rescue-2026-05-22") {
     return new Response("forbidden", { status: 403 });
   }
 
