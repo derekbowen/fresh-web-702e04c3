@@ -391,6 +391,13 @@ function PeerspaceComparisonPage() {
         </li>
       </ol>
 
+      <RelatedCompares
+        items={[
+          { href: "/p/swimply-alternative-vs-pool-rental-near-me", label: "Swimply vs Pool Rental Near Me" },
+          { href: "/p/giggster-vs-pool-rental-near-me", label: "Giggster vs Pool Rental Near Me" },
+        ]}
+      />
+
       <FooterBlock />
     </ComparisonPage>
   );
