@@ -435,7 +435,20 @@ function SwimplyComparisonPage() {
           </a>
           .
         </li>
+        <li>
+          <strong>Swimply self-funded protection model</strong> —{" "}
+          <a href="https://en.wikipedia.org/wiki/Swimply" rel="noopener nofollow">
+            Wikipedia: Swimply
+          </a>
+        </li>
       </ol>
+
+      <RelatedCompares
+        items={[
+          { href: "/p/peerspace-vs-pool-rental-near-me", label: "Peerspace vs Pool Rental Near Me" },
+          { href: "/p/giggster-vs-pool-rental-near-me", label: "Giggster vs Pool Rental Near Me" },
+        ]}
+      />
 
       <FooterBlock />
     </ComparisonPage>
