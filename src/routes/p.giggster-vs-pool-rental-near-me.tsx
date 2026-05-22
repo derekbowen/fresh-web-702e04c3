@@ -98,12 +98,13 @@ function GiggsterComparisonPage() {
       effectiveMonthYear="May 2026"
     >
       <h1>Giggster vs Pool Rental Near Me (2026): Fees, Insurance &amp; Best Use Cases</h1>
+      <LastUpdated date="2026-05-22" />
 
       <p className="text-sm text-muted-foreground">
         <em>
-          Last updated May 5, 2026. All Giggster figures cited below are taken directly
-          from Giggster's published Help Center articles and Terms of Service as of
-          this date. Always verify current terms with each platform before listing.
+          All Giggster figures cited below are taken directly from Giggster's published
+          Help Center articles and Terms of Service. Always verify current terms with
+          each platform before listing.
         </em>
       </p>
 
