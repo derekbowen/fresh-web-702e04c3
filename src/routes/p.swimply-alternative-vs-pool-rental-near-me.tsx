@@ -191,6 +191,8 @@ function SwimplyComparisonPage() {
         secondary to your personal homeowners policy.<sup>[³]</sup>
       </p>
 
+      <HartfordKnockout>
+
       <p>
         For pool hosts, the per-occurrence number is the one that matters most
         because pool injuries can be catastrophic. The published gap between $1M
