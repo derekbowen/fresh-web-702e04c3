@@ -76,7 +76,7 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me")({
         title: TITLE,
         description: DESCRIPTION,
         datePublished: "2026-01-15",
-        dateModified: "2026-05-05",
+        dateModified: "2026-05-22",
       }),
       breadcrumbJsonLd([
         { name: "Home", url: absUrl("/") },
