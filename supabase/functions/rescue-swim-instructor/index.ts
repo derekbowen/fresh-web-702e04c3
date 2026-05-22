@@ -124,10 +124,6 @@ Deno.serve(async (req: Request) => {
     return Response.json({ slug, error: "short output", len: md.length, preview: md.slice(0,300) }, { status: 500 });
   }
 
-  const sb = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
   const { error: upErr } = await sb
     .from("content_pages")
     .update({ body_markdown: md, updated_at: new Date().toISOString() })
