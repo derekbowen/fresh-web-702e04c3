@@ -166,6 +166,15 @@ function SwimplyComparisonPage() {
 
       <h2>Insurance & Liability Coverage</h2>
 
+      <HartfordKnockout
+        competitor="Swimply"
+        secondSentence={
+          <>
+            Swimply's coverage is a self-funded host guarantee — Swimply no longer carries a third-party liability insurance policy for hosts as of 2023, per public reporting.<sup>[⁶]</sup>
+          </>
+        }
+      />
+
       <p>
         Both platforms publish a "secondary" insurance model — meaning the
         platform's coverage applies after your homeowners policy responds. The
@@ -191,7 +200,6 @@ function SwimplyComparisonPage() {
         secondary to your personal homeowners policy.<sup>[³]</sup>
       </p>
 
-      <HartfordKnockout />
 
       <p>
         For pool hosts, the per-occurrence number is the one that matters most
