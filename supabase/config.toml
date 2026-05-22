@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.generate-advocacy]
 verify_jwt = false
+
+[functions.rescue-swim-instructor]
+verify_jwt = false
