@@ -78,9 +78,6 @@ export function HostAcqCityTemplate({
     month: "long", day: "numeric", year: "numeric",
   });
   const pageUrl = `https://www.poolrentalnearme.com${page.url_path}`;
-  const advocacyForState = stateCode
-    ? ADVOCACY_STATES.find((s) => s.code === stateCode)
-    : null;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
