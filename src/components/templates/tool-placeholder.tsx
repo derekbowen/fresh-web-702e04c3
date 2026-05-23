@@ -11,6 +11,11 @@ export interface ToolPlaceholderProps {
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   breadcrumbItems: Array<{ name: string; path: string }>;
+  /** Long-form sections (~200 words each) — depth so Google doesn't flag thin. */
+  whyExists: { heading: string; paragraphs: string[] };
+  whoUses: { heading: string; paragraphs: string[] };
+  howItWorks: { heading: string; steps: Array<{ title: string; body: string }> };
+  scenarios: { heading: string; items: Array<{ title: string; body: string }> };
 }
 
 /**
