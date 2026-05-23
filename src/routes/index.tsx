@@ -38,6 +38,7 @@ export const Route = createFileRoute("/")({
       "@type": "Organization",
       name: SITE_NAME,
       url: SITE_URL,
+      logo: SITE_LOGO,
       sameAs: ["https://www.poolrentalnearme.com"],
     };
     const faqLd = {
@@ -49,7 +50,18 @@ export const Route = createFileRoute("/")({
         acceptedAnswer: { "@type": "Answer", text: f.a },
       })),
     };
-    return { ...meta, scripts: [ldJsonScript(org), ldJsonScript(faqLd)] };
+    return {
+      ...meta,
+      links: [
+        ...(meta.links ?? []),
+        // Speed up navigation to the Sharetribe marketplace search page.
+        { rel: "prefetch", href: "/s" },
+        // Warm up the connection to the imgix CDN that serves listing photos
+        // (hero image + every featured-listing thumbnail).
+        { rel: "preconnect", href: "https://sharetribe.imgix.net", crossOrigin: "" },
+      ],
+      scripts: [ldJsonScript(org), ldJsonScript(faqLd)],
+    };
   },
   component: HomePage,
 });
