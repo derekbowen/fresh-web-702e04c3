@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { buildMeta, ldJsonScript, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { buildMeta, ldJsonScript, SITE_LOGO, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { getHomeData, type HomeData } from "@/server/home-data.functions";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
 
