@@ -63,7 +63,10 @@ export const Route = createRootRoute({
       description:
         "Rent a private pool by the hour or become a pool host. 10% flat fee, $2M liability coverage, 5,100+ pages across the US.",
       path: "/",
-      image: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c756e8fe-7c1e-4f71-8c20-05980f90b6f7",
+      // Do NOT set og:image here. Root head() concatenates into every match,
+      // so a root-level og:image would override every leaf route's share
+      // preview. Each shareable route sets its own og:image via buildMeta().
+      image: null,
     });
     return {
       meta: [
