@@ -210,9 +210,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 className="group relative flex min-h-[260px] flex-col items-start overflow-hidden rounded-xl border border-border p-6 text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
                 style={{
                   backgroundImage:
-                    "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://sharetribe.imgix.net/672444e2-9969-433a-b885-743775a6824c/69cd6fd4-af60-4ec0-9dc2-fcc0cc72fcc9?auto=format&crop=edges&fit=crop&h=400&w=600&s=9f244cd174e0b1be61662855c862f66b')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
+                    "linear-gradient(135deg, #0c4a6e 0%, #0EA5E9 100%)",
                 }}
               >
                 <span className="text-4xl" aria-hidden>🌴</span>
