@@ -220,6 +220,20 @@ export const Route = createFileRoute("/p/$slug")({
       hreflang,
     });
 
+    // Article OpenGraph metadata — for resource/event_guide/guide templates.
+    // Boosts AEO and helps Google/social cards show publish date + author.
+    const ARTICLE_OG_TYPES = new Set(["resource", "resource_article", "event_guide", "guide"]);
+    if (ARTICLE_OG_TYPES.has((p.template_type ?? "") as string)) {
+      const publishedIso = toIsoOrUndefined(p.published_at) ?? toIsoOrUndefined(p.created_at);
+      const modifiedIso = toIsoOrUndefined(p.updated_at);
+      const articleMeta: Array<{ property: string; content: string }> = [
+        { property: "article:author", content: p.author || "Pool Rental Near Me" },
+      ];
+      if (publishedIso) articleMeta.push({ property: "article:published_time", content: publishedIso });
+      if (modifiedIso) articleMeta.push({ property: "article:modified_time", content: modifiedIso });
+      meta.meta = [...(meta.meta ?? []), ...articleMeta];
+    }
+
     const scripts = [];
 
     // BreadcrumbList JSON-LD — Home > Blog > {Topic} > {Title} for blog posts.
