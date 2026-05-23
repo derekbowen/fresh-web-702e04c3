@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
   },
   head: () => {
     const meta = buildMeta({
-      title: "Pool Rental Near Me — Rent a Private Pool by the Hour",
+      title: "Pool Rental Near Me: Rent a Private Pool by the Hour",
       description:
         "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
       path: "/",
