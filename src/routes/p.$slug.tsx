@@ -403,6 +403,13 @@ export const Route = createFileRoute("/p/$slug")({
   ),
 });
 
+function toIsoOrUndefined(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return undefined;
+  return d.toISOString();
+}
+
 function isArticleType(t: ContentPage["template_type"]): boolean {
   const v = t as string | null;
   return (
