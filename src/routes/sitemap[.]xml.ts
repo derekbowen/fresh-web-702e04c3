@@ -66,6 +66,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             .select("*", { count: "exact", head: true })
             .in("template_type", group.templateTypes)
             .eq("in_sitemap", true)
+            .eq("status", "published")
             .not("slug", "is", null);
 
           if (error) {
@@ -79,6 +80,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             .select("updated_at")
             .in("template_type", group.templateTypes)
             .eq("in_sitemap", true)
+            .eq("status", "published")
             .not("slug", "is", null)
             .order("updated_at", { ascending: false })
             .limit(1)
