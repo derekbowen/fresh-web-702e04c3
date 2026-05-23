@@ -136,22 +136,16 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {/* ── HERO ─────────────────────────────────────────────── */}
         <section
           aria-label="Rent a backyard pool by the hour"
-          className="relative overflow-hidden"
+          className="relative overflow-hidden bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://sharetribe.imgix.net/672444e2-9969-433a-b885-743775a6824c/691b4a1e-fe6e-4725-8d5b-7f0a4d75a291?auto=format&crop=edges&fit=crop&h=900&w=1600&s=5ef145a1731698ef5cdb8a4bd19b1427')",
+            minHeight: "60vh",
+          }}
         >
-          <div className="absolute inset-0 -z-0">
-            <img
-              src="https://sharetribe.imgix.net/672444e2-9969-433a-b885-743775a6824c/691b4a1e-fe6e-4725-8d5b-7f0a4d75a291?auto=format&crop=edges&fit=crop&h=900&w=1600&s=5ef145a1731698ef5cdb8a4bd19b1427"
-              alt="A family relaxing in a private backyard pool listed on Pool Rental Near Me"
-              className="h-full w-full object-cover"
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-            />
-            <div className="absolute inset-0 bg-black/35" />
-          </div>
-          <div className="relative mx-auto flex min-h-[40vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 md:min-h-[60vh] lg:py-24">
+          <div className="relative mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 lg:py-24">
             <h1 className="text-4xl font-bold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
-              Summer is better shared. 💦
+              Summer is better shared.
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-base text-white/95 drop-shadow sm:text-lg">
               Rent a backyard pool by the hour, anywhere in America.
@@ -163,14 +157,14 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 className="inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] sm:text-lg"
                 style={{ backgroundColor: "#0EA5E9" }}
               >
-                Find a pool near me&nbsp;&nbsp;→
+                Find a pool near me&nbsp;&nbsp;&rarr;
               </a>
               <a
                 href="/p/hosting"
                 aria-label="Learn how to list your pool"
                 className="text-sm font-medium text-white/95 underline-offset-4 hover:underline sm:text-base"
               >
-                Have a pool? List it in 10 minutes →
+                Have a pool? List it in 10 minutes &rarr;
               </a>
             </div>
           </div>
@@ -189,23 +183,23 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <h2 className="text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Two ways to make summer happen.
             </h2>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2">
+            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
               {/* Card A — Renter */}
               <a
                 href="/s"
                 aria-label="I'm going swimming — find a pool to rent"
-                className="group relative flex flex-col items-start overflow-hidden rounded-xl border border-border bg-secondary/30 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+                className="group relative flex min-h-[260px] flex-col items-start overflow-hidden rounded-xl border border-border bg-secondary/30 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
               >
-                <span className="text-4xl" aria-hidden>🏖️</span>
+                <span className="text-4xl" aria-hidden>🏖</span>
                 <h3 className="mt-3 text-xl font-semibold text-foreground">I'm going swimming</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Simple, affordable, and the best Saturday your kids will remember this summer.
                 </p>
                 <span
-                  className="mt-5 inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white"
+                  className="mt-auto inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white"
                   style={{ backgroundColor: "#0EA5E9" }}
                 >
-                  Find a pool →
+                  Find a pool &rarr;
                 </span>
               </a>
 
@@ -213,25 +207,23 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               <a
                 href="/p/hosting"
                 aria-label="I'm sharing my pool — list my pool on Pool Rental Near Me"
-                className="group relative flex flex-col items-start overflow-hidden rounded-xl border border-border p-6 text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+                className="group relative flex min-h-[260px] flex-col items-start overflow-hidden rounded-xl border border-border p-6 text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://sharetribe.imgix.net/672444e2-9969-433a-b885-743775a6824c/69cd6fd4-af60-4ec0-9dc2-fcc0cc72fcc9?auto=format&crop=edges&fit=crop&h=400&w=600&s=9f244cd174e0b1be61662855c862f66b')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
               >
-                <img
-                  src="https://sharetribe.imgix.net/672444e2-9969-433a-b885-743775a6824c/69cd6fd4-af60-4ec0-9dc2-fcc0cc72fcc9?auto=format&crop=edges&fit=crop&h=400&w=600&s=9f244cd174e0b1be61662855c862f66b"
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute inset-0 -z-10 h-full w-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 -z-10 bg-black/55" />
                 <span className="text-4xl" aria-hidden>🌴</span>
                 <h3 className="mt-3 text-xl font-semibold">I'm sharing my pool</h3>
                 <p className="mt-2 text-sm text-white/90">
-                  Earn $3K–$10K a month renting your pool by the hour. $2M Hartford-backed insurance and 10% flat fees.
+                  Earn $3K-$10K a month renting your pool by the hour. $2M Hartford-backed insurance and 10% flat fees.
                 </p>
                 <span
-                  className="mt-5 inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-foreground"
+                  className="mt-auto inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-foreground"
                 >
-                  List my pool →
+                  List my pool &rarr;
                 </span>
               </a>
             </div>
@@ -241,31 +233,32 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {/* ── EVENT TILES ──────────────────────────────────────── */}
         <section aria-label="Browse pools by occasion" className="bg-secondary/20">
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
-            <p className="text-center text-base italic text-muted-foreground sm:text-lg">
+            <h2 className="text-center text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               Any excuse is a good one to dive in.
-            </p>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+            </h2>
+            <div className="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4 md:max-w-4xl md:grid-cols-3">
               {[
                 { emoji: "👰", label: "Bachelorette", href: "/s?event=bachelorette", aria: "bachelorette parties" },
                 { emoji: "🎂", label: "Birthday", href: "/s?event=birthday", aria: "birthday parties" },
                 { emoji: "👨‍👩‍👧", label: "Family Day", href: "/s?event=family-day", aria: "family days" },
                 { emoji: "🏊", label: "Swim Lesson", href: "/s?event=swim-lesson", aria: "swim lessons" },
                 { emoji: "🎉", label: "Pool Party", href: "/s?event=pool-party", aria: "pool parties" },
-                { emoji: "🌤️", label: "Just Tuesday", href: "/s", aria: "any day of the week" },
+                { emoji: "🌤", label: "Just Tuesday", href: "/s", aria: "any day of the week" },
               ].map((t) => (
                 <a
                   key={t.label}
                   href={t.href}
                   aria-label={`Browse pools for ${t.aria}`}
-                  className="flex aspect-square flex-col items-center justify-center gap-2 rounded-xl border border-border bg-background p-4 text-center transition-all duration-200 ease-in-out hover:-translate-y-1 hover:shadow-md"
+                  className="flex aspect-square max-h-[160px] flex-col items-center justify-center gap-2 rounded-xl border border-border bg-background p-4 text-center transition-all duration-200 ease-in-out hover:-translate-y-1 hover:shadow-md"
                 >
-                  <span className="text-3xl sm:text-4xl" aria-hidden>{t.emoji}</span>
-                  <span className="text-sm font-semibold text-foreground sm:text-base">{t.label}</span>
+                  <span className="text-[36px] leading-none" aria-hidden>{t.emoji}</span>
+                  <span className="text-sm font-bold text-foreground">{t.label}</span>
                 </a>
               ))}
             </div>
           </div>
         </section>
+
 
 
         {/* Comparative trust strip */}
