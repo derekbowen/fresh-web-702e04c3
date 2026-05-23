@@ -139,8 +139,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           aria-label="Rent a backyard pool by the hour"
           className="relative overflow-hidden bg-cover bg-center"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://sharetribe.imgix.net/672444e2-9969-433a-b885-743775a6824c/691b4a1e-fe6e-4725-8d5b-7f0a4d75a291?auto=format&crop=edges&fit=crop&h=900&w=1600&s=5ef145a1731698ef5cdb8a4bd19b1427')",
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('${heroFamilyPool}')`,
             minHeight: "60vh",
           }}
         >
