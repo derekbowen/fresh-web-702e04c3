@@ -265,8 +265,8 @@ export const Route = createFileRoute("/p/$slug")({
           jobTitle: authorName === "Derek Bowen" ? "CEO, PRNM Corp" : undefined,
           url: authorName === "Derek Bowen" ? `${SITE_URL}/p/about-our-company` : undefined,
         },
-        datePublished: p.published_at || undefined,
-        dateModified: p.updated_at,
+        datePublished: toIsoOrUndefined(p.published_at),
+        dateModified: toIsoOrUndefined(p.updated_at) ?? toIsoOrUndefined(p.published_at),
         mainEntityOfPage: `${SITE_URL}${path}`,
         publisher: {
           "@type": "Organization",
@@ -402,6 +402,13 @@ export const Route = createFileRoute("/p/$slug")({
     </div>
   ),
 });
+
+function toIsoOrUndefined(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return undefined;
+  return d.toISOString();
+}
 
 function isArticleType(t: ContentPage["template_type"]): boolean {
   const v = t as string | null;
