@@ -14,6 +14,7 @@ const PoolWaitlistForm = lazy(() =>
   import("@/components/pool-waitlist-form").then((m) => ({ default: m.PoolWaitlistForm })),
 );
 import heroPool from "@/assets/pool-hero-default.webp";
+import heroFamilyPool from "@/assets/hero-family-pool.jpg";
 import laSaltwaterFeatured from "@/assets/la-saltwater/hero-night.jpg";
 
 const HIDE_LISTING_RE = /swim\s*spa|aquatic|rehab/i;
