@@ -62,17 +62,16 @@ type NavLink = {
 };
 
 const PRIMARY_NAV: NavLink[] = [
-  { label: "Home Page", href: "/" },
-  { label: "Find a Pool", href: "/s" },
+  { label: "Find a pool", href: "/s" },
   { label: "Locations", href: "/p/all-locations" },
-  { label: "Pool Pros", href: "/p/pool-pros" },
-  { label: "How It Works", href: "/p/how-it-works" },
+  { label: "Pool pros", href: "/p/pool-pros" },
+  { label: "How it works", href: "/p/how-it-works" },
   { label: "Neighbors", href: "/p/neighbors" },
 ];
 
 const APP_NAV: NavLink[] = [
   {
-    label: "iOS App",
+    label: "iOS app",
     href: "https://apps.apple.com/us/app/pool-rental-near-me/id6737762373",
     external: true,
   },
