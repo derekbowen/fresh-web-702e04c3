@@ -157,7 +157,7 @@ export const queueSpanishCityBatch = createServerFn({ method: "POST" })
         state: row.state,
         state_code: st,
         population_2024: row.population_2024,
-        slug: `conviertete-en-anfitrion-de-piscina-${citySlug}-${stateLower}`,
+        slug: `conviertete-en-anfitrion-de-alberca-${citySlug}-${stateLower}`,
         h1: `Conviértete en Anfitrión de Alberca en ${city}, ${st}`,
         meta_title: `Renta Tu Alberca en ${city}, ${st} – Gana $4K-$8K+/Mes`,
         meta_description: `Convierte tu alberca en ${city} en ingresos premium. Seguro de $2M. 90% de ganancias. Soporte en español.`,
