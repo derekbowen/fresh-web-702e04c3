@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     q: "How do I switch from Swimply to Pool Rental Near Me?",
-    a: "Create your free PRNM listing at earn.poolrentalnearme.com using the same photos, capacity and rules you already have. You don't have to remove your Swimply listing — most hosts run both for a few months and make the call based on bookings and earnings.",
+    a: "Create your free PRNM listing at poolrentalnearme.com/p/start-hosting using the same photos, capacity and rules you already have. You don't have to remove your Swimply listing — most hosts run both for a few months and make the call based on bookings and earnings.",
   },
   {
     q: "Is Swimply or PRNM better for new pool hosts?",
