@@ -11,6 +11,11 @@ export interface ToolPlaceholderProps {
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   breadcrumbItems: Array<{ name: string; path: string }>;
+  /** Long-form sections (~200 words each) — depth so Google doesn't flag thin. */
+  whyExists: { heading: string; paragraphs: string[] };
+  whoUses: { heading: string; paragraphs: string[] };
+  howItWorks: { heading: string; steps: Array<{ title: string; body: string }> };
+  scenarios: { heading: string; items: Array<{ title: string; body: string }> };
 }
 
 /**
@@ -30,6 +35,10 @@ export function ToolPlaceholderPage({
   primaryCta,
   secondaryCta,
   breadcrumbItems,
+  whyExists,
+  whoUses,
+  howItWorks,
+  scenarios,
 }: ToolPlaceholderProps) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -122,6 +131,73 @@ export function ToolPlaceholderPage({
               </li>
             ))}
           </ul>
+        </section>
+
+        {/* Why this tool exists */}
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-3xl px-4 py-16">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {whyExists.heading}
+            </h2>
+            <div className="mt-5 space-y-4 text-base leading-relaxed text-muted-foreground">
+              {whyExists.paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Who uses it */}
+        <section className="border-t border-border bg-muted/20">
+          <div className="mx-auto max-w-3xl px-4 py-16">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {whoUses.heading}
+            </h2>
+            <div className="mt-5 space-y-4 text-base leading-relaxed text-muted-foreground">
+              {whoUses.paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-4xl px-4 py-16">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {howItWorks.heading}
+            </h2>
+            <ol className="mt-6 space-y-5">
+              {howItWorks.steps.map((s, i) => (
+                <li key={s.title} className="flex gap-4 rounded-xl border border-border bg-card p-5">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">{s.title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* Scenarios */}
+        <section className="border-t border-border bg-muted/20">
+          <div className="mx-auto max-w-4xl px-4 py-16">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {scenarios.heading}
+            </h2>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {scenarios.items.map((s) => (
+                <div key={s.title} className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="text-base font-semibold text-foreground">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* FAQ */}

@@ -43,6 +43,45 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
 ];
 
+const WHY_EXISTS = {
+  heading: "Why the pool heating cost calculator exists",
+  paragraphs: [
+    "Heating is the line item that quietly eats pool rental profit. A host charges $75 an hour, books 20 hours a month, and feels great about a $1,500 month — until the utility bill arrives and a $600 gas charge wipes out 40% of the take. By then it's too late to reprice.",
+    "The problem is that nobody runs the numbers up front. Heater manufacturers publish BTU ratings, not dollar costs. Utility companies publish per-therm rates, not pool-rental scenarios. And every \"how much does it cost to heat a pool\" article online is written for backyard owners who swim three times a summer, not for hosts heating to 88°F on demand every Saturday.",
+    "This calculator translates the physics into the only number that matters: what will it cost you, this month, to host. Plug in gallons, target temperature, zip code, heater type, and cover usage. Get a real monthly run-cost and a recommended pass-through fee so your $75 rate stays a $75 rate after utilities.",
+  ],
+};
+
+const WHO_USES = {
+  heading: "Who the calculator is for",
+  paragraphs: [
+    "Prospective hosts pricing their listing use it before they go live. The output tells them whether their climate and pool size can support hourly rates that pencil — and whether a cover upgrade should happen before the first booking, not after the first power bill.",
+    "Existing hosts use it to decide between gas and a heat pump upgrade. The calculator's payback view shows how many months a $4,500 heat pump takes to pay for itself given their actual booking volume. For busy hosts in mild climates, that number is often under a single season.",
+    "Solar-curious hosts use it to size a panel array against their target temperature and shoulder-season hosting window. The output integrates with the host fee structure so the recommended pass-through to renters stays competitive in your local market.",
+  ],
+};
+
+const HOW_IT_WORKS = {
+  heading: "How the calculator works",
+  steps: [
+    { title: "Enter the pool basics", body: "Gallons (or length × width × average depth — we'll convert), pool type, and zip code so we can pull local climate and utility rates." },
+    { title: "Pick a heater scenario", body: "Natural gas, propane, electric heat pump, or solar. Add the heater's BTU or kW rating if you know it; we use sane defaults if you don't." },
+    { title: "Set your hosting profile", body: "Target water temperature, hours hosted per week, and whether you use a thermal cover between bookings. Cover usage typically halves the answer." },
+    { title: "Compare side by side", body: "The output shows monthly run-cost, cost per booking hour, and payback time for any upgrades against your current setup." },
+    { title: "Export a host-ready summary", body: "Generate a one-page PDF you can paste into your listing's FAQ section. Renters who see real numbers convert better than renters who get a surprise heating fee at checkout." },
+  ],
+};
+
+const SCENARIOS = {
+  heading: "Common scenarios",
+  items: [
+    { title: "The Phoenix host who doesn't need a heater", body: "Mid-summer in Arizona — solar gain keeps the pool at 86°F unassisted. The calculator confirms the host can skip heating costs entirely from May through September and bake a small \"heated\" surcharge into October–April only." },
+    { title: "The Bay Area host running a heat pump", body: "Mild climate, year-round hosting potential. Calculator shows a heat pump runs about $180/month with a cover or $410/month without. Cover pays for itself in seven weeks." },
+    { title: "The Atlanta host using gas", body: "Humid summers, cool evenings. Gas heats fast but the calculator shows the monthly run cost crosses $700 once they hit 30 booked hours. Heat pump upgrade pencils inside a single season." },
+    { title: "The Vermont host with a short season", body: "Calculator shows a heat pump can extend the bookable window from 12 weeks to 22 weeks and effectively double annual revenue versus relying on solar gain alone." },
+  ],
+};
+
 const PROPS: Omit<ToolPlaceholderProps, "breadcrumbItems"> = {
   eyebrow: "Free tool · Coming soon",
   h1: "Pool heating cost calculator: gas, heat pump, and solar",
@@ -59,6 +98,10 @@ const PROPS: Omit<ToolPlaceholderProps, "breadcrumbItems"> = {
     "Export a host-ready cost summary for your listing FAQs",
     "Save profiles for each pool you manage",
   ],
+  whyExists: WHY_EXISTS,
+  whoUses: WHO_USES,
+  howItWorks: HOW_IT_WORKS,
+  scenarios: SCENARIOS,
   faqs: FAQS,
   primaryCta: {
     label: "Notify me when it launches",
