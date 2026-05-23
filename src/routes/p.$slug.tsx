@@ -274,7 +274,7 @@ export const Route = createFileRoute("/p/$slug")({
           url: SITE_URL,
           logo: {
             "@type": "ImageObject",
-            url: `${SITE_URL}/og-default.jpg`,
+            url: `${SITE_URL}/icon-512.png`,
           },
         },
         inLanguage: p.language,

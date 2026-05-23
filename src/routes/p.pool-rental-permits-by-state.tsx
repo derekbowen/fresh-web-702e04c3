@@ -138,7 +138,7 @@ export const Route = createFileRoute("/p/pool-rental-permits-by-state")({
             "@type": "Organization",
             name: SITE_NAME,
             url: SITE_URL,
-            logo: { "@type": "ImageObject", url: `${SITE_URL}/og-default.jpg` },
+            logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png` },
           },
           mainEntityOfPage: `${SITE_URL}${PATH}`,
         }),
