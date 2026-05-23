@@ -1,63 +1,102 @@
-## Goal
+## Five issues hurting our Google rankings — ranked by traffic impact
 
-Make the availability calendar render safely for every payload shape the Sharetribe `/timeslots/query` endpoint (or its cache row) can return — including missing fields, non-array `data`, malformed ISO strings, null `attributes`, HTTP failures, empty results, and bad cached rows. The page must never crash or render `Invalid Date`.
+All findings pulled from our `content_pages` table + live HTML on production. Numbers are real, not guessed.
 
-## Files to change
+---
 
-1. `src/server/sharetribe.server.ts` — `fetchAvailableTimeSlots`
-2. `src/lib/availability.functions.ts` — `getListingAvailability` + `expandToHourlySlots`
-3. `src/components/availability-calendar.tsx`
+### #1 — Nine high-value host pages have NO title and NO description
 
-## Changes
+Live HTML on `/p/become-a-swimming-pool-host-honolulu-hi` shows:
 
-### 1. `fetchAvailableTimeSlots` (sharetribe.server.ts)
+- `<title>become-a-swimming-pool-host-honolulu-hi | Pool Rental Near Me</title>`
+- `<meta name="description" content="become-a-swimming-pool-host-honolulu-hi">`
 
-Tolerate every malformed branch from the upstream API:
-- Treat non-object `json`, missing `json.data`, or non-array `json.data` as `[]`.
-- Use optional chaining on each item: `d?.attributes?.start`, `d?.attributes?.end`.
-- Validate each pair with `isValidIsoPair(start, end)` helper (parse to `Date`, check `!isNaN`, ensure `end > start`); drop slots that fail.
-- Coerce `seats` to a finite positive number, default `1`.
-- Wrap the entire `.map().filter().sort()` chain in try/catch returning `[]`.
-- Keep existing outer try/catch returning `[]`.
+The slug is literally being used as the title. 10,000+ words of real content sit underneath, but Google's search result reads like garbage. **9 pages affected, all premium markets:** Honolulu, Long Island, The Hamptons, Cape Cod, Greenwich CT, Lexington KY, Boise, Brandon FL, Arlington VA.
 
-### 2. `availability.functions.ts`
+**Fix:** backfill `seo_title` + `seo_description` from a template, e.g. `"Rent out your pool in {City}, {ST} — earn $5K–$15K/month | Pool Rental Near Me"`. One SQL migration, deployed in minutes. Expected outcome: these 9 markets start appearing in SERPs within a crawl cycle (~2 weeks).
 
-`getListingAvailability`:
-- When reading `availability_cache`, after the `Array.isArray(row.slots)` check, normalize each cached slot through the same `isValidIsoPair` filter. If the normalized array is empty AND the raw cache had entries, treat the cache as stale (skip and refetch).
-- Wrap `new Date(row.fetched_at).getTime()` in a finite check; if invalid, ignore the cache row.
-- In the catch block for the Sharetribe call, also catch synchronous errors from `expandToHourlySlots` (move the call inside the try, which it already is — confirm).
-- Return shape stays `{ listingId, fetchedAt, slots: [], error }` on any failure (already correct).
+---
 
-`expandToHourlySlots`:
-- Guard `blocks` with `Array.isArray(blocks) ? blocks : []` at the top.
-- Inside the loop, also guard `b?.start` / `b?.end` (currently assumes block has them).
-- Cap output length at a sane limit (e.g. 24 * days) to prevent runaway loops if `bEnd - bStart` is huge from bad data.
+### #2 — 524 pages sit on page 2 of Google (positions 11–25)
 
-### 3. `availability-calendar.tsx`
+These are pages Google likes enough to rank but not enough to show on page 1. One nudge each = massive traffic. The biggest opportunities:
 
-- Treat `data` as `Partial<AvailabilityResult> | null` defensively. Coerce `data?.slots` to `Array.isArray(data?.slots) ? data.slots : []` everywhere it's read (currently uses `data?.slots ?? []`, which fails if `slots` is a non-array value).
-- In `slotsByDay` builder, validate each slot:
-  - `s?.start` and `s?.end` are non-empty strings,
-  - `new Date(s.start)` is a valid date (`!isNaN(d.getTime())`),
-  - `new Date(s.end) > new Date(s.start)`.
-  Drop invalid slots silently.
-- In `formatHour`, return `"--"` (or empty) for invalid ISO inputs instead of `NaNAM`.
-- In `buildBookingUrl`, guard `bookingBaseUrl` with `String(bookingBaseUrl ?? "https://poolrentalnearme.com")` before `.replace`.
-- In `selectedSlots.map`, skip slots whose `formatHour` returns the fallback (defense in depth).
-- Wrap the entire returned `<section>` body in a try/catch via a small inner `<CalendarBody />` component plus a top-level error boundary fallback that renders the same "Calendar temporarily unavailable" panel with the direct-book CTA. (TanStack/React doesn't catch render errors without a boundary — use a tiny class component `AvailabilityErrorBoundary` colocated in the same file.)
+| URL | Impressions | Position | Potential if → top 5 |
+|---|---|---|---|
+| /p/all-locations | 10,938 | 19.5 | ~5× clicks |
+| /p/privatepoolrentalssandiego | 6,416 | 13.1 | ~3× |
+| /p/riverside | 3,575 | 11.1 | ~3× |
+| /p/the-3-best-swimming-pool-chlorines | 1,677 | 12.8 | ~3× |
+| /p/sacramentobestprivatepools | 1,255 | 12.9 | ~3× |
 
-### 4. Shared helper
+**Fix:** for the top 20 by impressions × (position − 8), run an internal-link sprint (link to them from high-authority pages like the homepage + /p/all-locations) and refresh the H1 + first 200 words. No new pages needed.
 
-Add `isValidIsoPair(start: unknown, end: unknown): { start: string; end: string } | null` to `availability.functions.ts` (or a small `src/lib/availability.utils.ts` if both files need it). Export from there and re-use in `fetchAvailableTimeSlots` to keep validation consistent across server and client paths.
+---
 
-## Out of scope
+### #3 — 26 pages get hundreds of impressions and ZERO clicks
 
-- No UI/visual redesign, no new copy beyond the existing error panel.
-- No changes to caching TTL or DB schema.
-- No changes to Sharetribe auth or request shape.
+CTR = 0% means the title/snippet repels searchers. Three of these already rank in the top 10 — they're invisible despite winning the SERP. Worst offenders:
 
-## Verification
+| URL | Impressions | Position | Clicks |
+|---|---|---|---|
+| /p/free-host-tools | 552 | 9.3 | **0** |
+| /p/why-renting-a-private-pool-is-better | 489 | 5.4 | **0** |
+| /p/romantic-pool-date-night-guide | 459 | 5.2 | **0** |
+| /p/host-advocacy-nevada | 429 | 8.0 | **0** |
+| /p/host-advocacy-ohio | 389 | 6.7 | **0** |
 
-- `bunx vitest` if any availability tests exist (none currently — skip).
-- Manually invoke server function with: valid listingId, listingId returning empty `data`, simulated bad payload by temporarily forcing `fetchAvailableTimeSlots` to return `[{}]` / `[{ attributes: null }]` / `null` — confirm component renders the empty-state message and never throws.
-- Use `stack_modern--server-function-logs` after deploy to confirm no new exceptions.
+**Fix:** rewrite titles with numbers, year, and benefit hook. e.g. `"Free Pool Host Tools (2026): Calculator, Templates & Checklists"`. Add a compelling 155-char description with the offer + the differentiator (10% fee, $2M insurance). Pure CTR play — no ranking change needed to get clicks.
+
+---
+
+### #4 — Massive thin-indexing problem: 5,706 indexed, only 627 (11%) draw any impressions
+
+Google has crawled and indexed thousands of our pages it considers low quality. This dilutes the whole domain's trust signal. By template:
+
+- **350 swim_instructor_city pages → 0 ranking, 0 impressions**
+- **70 elearning Academy pages → only 7 ranking**
+- **14 pool_maintenance pages → 0 ranking**
+- **445 Spanish host_acq_city → only 42 ranking (9%)**
+
+**Fix:** drop the dead templates from sitemap (`in_sitemap = false`) until they earn impressions. Add `<meta robots="noindex">` to the 350 swim_instructor pages until a real content refresh ships. Keeps the strong stuff strong; stops Google from grading us on the weak stuff.
+
+---
+
+### #5 — Duplicate titles = self-cannibalization
+
+7 pairs of pages share identical `<title>` tags. Google splits ranking signal between them and neither wins:
+
+- `"Pool Rental in Houston, TX | Hourly Backyard Pools"` × 2 URLs
+- `"Pool Rental in The Woodlands, TX | Hourly Backyard Pools"` × 2
+- `"Pool Rental in Indianapolis, IN | Hourly Backyard Pools"` × 2
+- `"Pool Rental Near Me Community Guidelines"` × 2
+- `"Eco-Friendly Pool Rental Practices | Host with PRNM"` × 2
+- `"Poolside Movie Night Guide..."` × 2
+
+**Fix:** for each pair, identify the winner (more impressions / longer content), 301 the loser to the winner, drop the loser from sitemap. Consolidates link equity onto one URL.
+
+---
+
+## What I'd ship (in order)
+
+1. **SQL migration**: backfill the 9 empty titles/descriptions for `host_acq_city` (#1) — ~10 min
+2. **SQL migration**: noindex + remove from sitemap for the 350 swim_instructor_city and 14 pool_maintenance pages (#4) — ~5 min
+3. **SQL migration**: 301-redirect the 7 duplicate-title loser pages (#5) — ~10 min
+4. **Title/meta rewrite pass**: top 20 page-2 pages from #2 + top 10 zero-CTR pages from #3 — ~30 min
+5. **Internal-link sprint**: link the top 5 page-2 winners (#2) from the homepage + `/p/all-locations` header — ~15 min
+
+Total: about 70 minutes of work, all surgical. No new pages, no template rewrites.
+
+### One bonus catch (unrelated to the 5)
+
+Live HTML still shows the OLD nav ("Home Page", "Find a Pool", "Pool Pros", "How It Works" in Title Case). Our menu fixes from earlier this session are in code but **not yet published**. Hit **Publish → Update** to push them live.
+
+---
+
+## Technical notes
+
+- All queries against `content_pages` use `supabaseAdmin` server-side per project memory — no client exposure.
+- GSC connector API key isn't configured in this sandbox (only `LOVABLE_API_KEY` is present), so I used the impressions/clicks/position data we sync into `content_pages.gsc_*` columns. Last sync date can be confirmed with `select max(gsc_updated_at) from content_pages`.
+- Recommend running #1, #2 (titles only), #4, #5 as migrations now; #3 and #2 internal-link sprint as a second pass after we see crawl results.
+
+Want me to ship all 5, or pick which ones first?
