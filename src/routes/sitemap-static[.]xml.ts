@@ -25,6 +25,13 @@ const STATIC_URLS: Array<{ path: string; lastmod?: Date }> = [
   { path: "/p/pool-rental-insurance-explained" },
   { path: "/p/pool-rental-host-fees-compared" },
   { path: "/p/pool-rental-permits-by-state" },
+  // Phase 1 subdomain consolidation — six new keyword-targeted tool routes.
+  { path: "/p/start-hosting" },
+  { path: "/p/pool-heating-cost-calculator" },
+  { path: "/p/ai-listing-generator" },
+  { path: "/p/waiver-generator" },
+  { path: "/p/host-marketing-playbook" },
+  { path: "/p/pool-rules-generator" },
   // 50 state hub pages — internal linking layer for the 3,400+ city pages.
   ...Object.values(STATE_NAMES).map((name) => ({
     path: `/p/pool-rentals-${name.toLowerCase().replace(/\s+/g, "-")}`,
