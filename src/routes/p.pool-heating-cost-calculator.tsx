@@ -98,6 +98,10 @@ const PROPS: Omit<ToolPlaceholderProps, "breadcrumbItems"> = {
     "Export a host-ready cost summary for your listing FAQs",
     "Save profiles for each pool you manage",
   ],
+  whyExists: WHY_EXISTS,
+  whoUses: WHO_USES,
+  howItWorks: HOW_IT_WORKS,
+  scenarios: SCENARIOS,
   faqs: FAQS,
   primaryCta: {
     label: "Notify me when it launches",

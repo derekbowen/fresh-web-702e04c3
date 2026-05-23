@@ -104,6 +104,10 @@ const PROPS: Omit<ToolPlaceholderProps, "breadcrumbItems"> = {
     "Pool Host Academy: 135 free classes to ramp up fast",
     "Free Host Pro app: pricing, calendar, waivers, taxes",
   ],
+  whyExists: WHY_EXISTS,
+  whoUses: WHO_USES,
+  howItWorks: HOW_IT_WORKS,
+  scenarios: SCENARIOS,
   faqs: FAQS,
   primaryCta: {
     label: "List my pool — it's free",
