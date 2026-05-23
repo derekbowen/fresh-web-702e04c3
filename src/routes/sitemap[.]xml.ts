@@ -119,8 +119,9 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("[sitemap] blog_posts count error", err);
         }
 
-        // 3. Sharetribe-served listing sub-sitemap — passthrough
-        entries.push({ loc: `${SITE_URL}/sitemap-recent-listings.xml` });
+        // (Sharetribe listing sub-sitemap removed — endpoint 404s and Google
+        // flags missing sub-sitemaps as errors. Re-add only when the
+        // passthrough is actually serving XML.)
 
         return sitemapResponse(buildSitemapIndexXml(entries));
       },
