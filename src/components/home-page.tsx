@@ -149,43 +149,31 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             />
             <div className="absolute inset-0 bg-black/35" />
           </div>
-          <div
-            className="relative mx-auto flex max-w-3xl flex-col items-center justify-center px-4 text-center text-white"
-            style={{ minHeight: "40vh" }}
-          >
-            <div className="w-full pt-[14vh] pb-10 sm:pt-20 sm:pb-16 lg:pt-28 lg:pb-24" style={{ minHeight: "inherit" }}>
-              <h1 className="text-4xl font-bold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
-                Summer is better shared. 💦
-              </h1>
-              <p className="mx-auto mt-4 max-w-xl text-base text-white/95 drop-shadow sm:text-lg">
-                Rent a backyard pool by the hour, anywhere in America.
-              </p>
-              <div className="mt-7 flex flex-col items-center gap-3">
-                <a
-                  href="/s"
-                  aria-label="Find a pool to rent near you"
-                  className="inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] sm:text-lg"
-                  style={{ backgroundColor: "#0EA5E9" }}
-                >
-                  Find a pool near me&nbsp;&nbsp;→
-                </a>
-                <a
-                  href="/p/hosting"
-                  aria-label="Learn how to list your pool"
-                  className="text-sm font-medium text-white/95 underline-offset-4 hover:underline sm:text-base"
-                >
-                  Have a pool? List it in 10 minutes →
-                </a>
-              </div>
+          <div className="relative mx-auto flex min-h-[40vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 md:min-h-[60vh] lg:py-24">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
+              Summer is better shared. 💦
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-base text-white/95 drop-shadow sm:text-lg">
+              Rent a backyard pool by the hour, anywhere in America.
+            </p>
+            <div className="mt-7 flex flex-col items-center gap-3">
+              <a
+                href="/s"
+                aria-label="Find a pool to rent near you"
+                className="inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] sm:text-lg"
+                style={{ backgroundColor: "#0EA5E9" }}
+              >
+                Find a pool near me&nbsp;&nbsp;→
+              </a>
+              <a
+                href="/p/hosting"
+                aria-label="Learn how to list your pool"
+                className="text-sm font-medium text-white/95 underline-offset-4 hover:underline sm:text-base"
+              >
+                Have a pool? List it in 10 minutes →
+              </a>
             </div>
           </div>
-          <style>{`
-            @media (min-width: 768px) {
-              section[aria-label="Rent a backyard pool by the hour"] > div.relative {
-                min-height: 60vh;
-              }
-            }
-          `}</style>
         </section>
 
         {/* Trust line under hero */}
