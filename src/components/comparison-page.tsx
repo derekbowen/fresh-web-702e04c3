@@ -46,7 +46,7 @@ export function CTAPrimary() {
   return (
     <div className="not-prose my-8 rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center">
       <a
-        href="https://earn.poolrentalnearme.com/"
+        href="/p/start-hosting"
         className="inline-block rounded-full bg-primary px-8 py-3 text-base font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
       >
         🏊 List Your Pool Free →

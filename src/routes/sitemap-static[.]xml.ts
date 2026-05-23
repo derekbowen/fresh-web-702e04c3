@@ -32,6 +32,7 @@ const STATIC_URLS: Array<{ path: string; lastmod?: Date }> = [
   { path: "/p/waiver-generator" },
   { path: "/p/host-marketing-playbook" },
   { path: "/p/pool-rules-generator" },
+  { path: "/p/pool-wifi-guide" },
   // 50 state hub pages — internal linking layer for the 3,400+ city pages.
   ...Object.values(STATE_NAMES).map((name) => ({
     path: `/p/pool-rentals-${name.toLowerCase().replace(/\s+/g, "-")}`,

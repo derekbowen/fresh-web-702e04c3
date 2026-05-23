@@ -346,7 +346,7 @@ function PeerspaceComparisonPage() {
       <h2>How to Add Pool Rental Near Me Alongside a Peerspace Listing</h2>
 
       <ol>
-        <li>Create your free Pool Rental Near Me listing at <a href="https://earn.poolrentalnearme.com/">earn.poolrentalnearme.com</a> using your existing photos, capacity, and rules.</li>
+        <li>Create your free Pool Rental Near Me listing at <a href="/p/start-hosting">poolrentalnearme.com/p/start-hosting</a> using your existing photos, capacity, and rules.</li>
         <li>Set recreational hourly pricing for Pool Rental Near Me ($45–$150/hr) and keep your premium rates on Peerspace for production / event use.</li>
         <li>Sync your calendar to prevent double-bookings.</li>
         <li>Run the <a href="/p/learningacademy">Pool Host Academy</a> intake modules to optimize your Pool Rental Near Me listing.</li>

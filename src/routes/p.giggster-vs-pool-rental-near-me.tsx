@@ -599,8 +599,8 @@ function GiggsterComparisonPage() {
         </li>
         <li>
           Create your free PRNM listing at{" "}
-          <a href="https://earn.poolrentalnearme.com/" rel="noopener">
-            earn.poolrentalnearme.com
+          <a href="/p/start-hosting" rel="noopener">
+            poolrentalnearme.com/p/start-hosting
           </a>{" "}
           with recreational pricing and weekend party capacity.
         </li>

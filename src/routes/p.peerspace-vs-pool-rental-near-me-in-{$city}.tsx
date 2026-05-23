@@ -201,7 +201,7 @@ function PeerspaceCityPage() {
       <ol>
         <li>
           Create your free Pool Rental Near Me listing at{" "}
-          <a href="https://earn.poolrentalnearme.com/">earn.poolrentalnearme.com</a>.
+          <a href="/p/start-hosting">poolrentalnearme.com/p/start-hosting</a>.
         </li>
         <li>Set your {city.name} hourly rate ($45–$150 is the typical band).</li>
         <li>

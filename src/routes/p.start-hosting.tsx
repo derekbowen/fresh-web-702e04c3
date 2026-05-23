@@ -12,10 +12,12 @@ import {
 import heroImage from "@/assets/hosting-hero.jpg";
 
 /**
- * /p/start-hosting — short, keyword-focused entry funnel that replaces
- * earn.poolrentalnearme.com. The deeper hub lives at /p/hosting; this
- * page captures the "start hosting" search intent and funnels there.
+ * /p/start-hosting — short, keyword-focused entry funnel. The deeper hub
+ * lives at /p/hosting; this page captures the "start hosting" search
+ * intent and funnels there.
  */
+
+
 
 const PATH = "/p/start-hosting";
 const PUBLISHED = "2026-05-23T00:00:00Z";
