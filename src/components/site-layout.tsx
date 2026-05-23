@@ -514,7 +514,7 @@ function SiteFooterInner() {
                 </li>
               ))}
               <li>
-                <a href={rel("/p/all-locations")} className="hover:text-primary">All Locations</a>
+                <a href={rel("/p/all-locations")} className="hover:text-primary">Pools Near Me</a>
               </li>
             </ul>
           </div>
