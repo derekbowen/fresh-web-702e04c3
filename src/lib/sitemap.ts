@@ -10,7 +10,12 @@
  * - No <priority>, no <changefreq> (Google ignores both)
  */
 
-export const SITEMAP_PAGE_SIZE = 45_000;
+// Capped at 1000 to match the Supabase/PostgREST default max-rows response
+// limit. Going higher silently truncates sub-sitemaps to 1000 URLs and
+// the parent index never emits ?page=N because it thinks one page covers
+// everything. Google allows up to 50k per sitemap, so 1000 is conservative
+// but safe and avoids the truncation footgun.
+export const SITEMAP_PAGE_SIZE = 1000;
 
 const XML_ESCAPE_MAP: Record<string, string> = {
   "&": "&amp;",
