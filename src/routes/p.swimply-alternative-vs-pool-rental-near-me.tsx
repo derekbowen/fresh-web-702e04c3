@@ -363,7 +363,7 @@ function SwimplyComparisonPage() {
       <ol>
         <li>
           Create your free PRNM listing at{" "}
-          <a href="https://earn.poolrentalnearme.com/">earn.poolrentalnearme.com</a>{" "}
+          <a href="/p/start-hosting">poolrentalnearme.com/p/start-hosting</a>{" "}
           using the same photos, capacity, rules and pricing you already use on
           Swimply.
         </li>
