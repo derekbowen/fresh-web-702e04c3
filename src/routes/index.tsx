@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { buildMeta, ldJsonScript, SITE_LOGO, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { buildMeta, ldJsonScript } from "@/lib/seo";
 import { getHomeData, type HomeData } from "@/server/home-data.functions";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
 
@@ -33,14 +33,9 @@ export const Route = createFileRoute("/")({
       // Do NOT add a noindex meta tag here — it would deindex the production homepage.
       image: HOMEPAGE_HERO_IMAGE,
     });
-    const org = {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      name: SITE_NAME,
-      url: SITE_URL,
-      logo: SITE_LOGO,
-      sameAs: ["https://www.poolrentalnearme.com"],
-    };
+    // Organization + WebSite JSON-LD are emitted once in __root.tsx and
+    // inherited by every route — do NOT re-emit Organization here or
+    // Google Rich Results flags the page for duplicate structured data.
     const faqLd = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
@@ -60,7 +55,7 @@ export const Route = createFileRoute("/")({
         // (hero image + every featured-listing thumbnail).
         { rel: "preconnect", href: "https://sharetribe.imgix.net", crossOrigin: "" },
       ],
-      scripts: [ldJsonScript(org), ldJsonScript(faqLd)],
+      scripts: [ldJsonScript(faqLd)],
     };
   },
   component: HomePage,

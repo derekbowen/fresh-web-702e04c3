@@ -64,7 +64,12 @@ export function buildMeta({
   // (potentially legacy) request path. This keeps social shares deduplicated
   // when a page is reachable via multiple URLs that 301 to one canonical.
   const url = canonicalUrl;
-  const resolvedImage = image === null ? null : image ?? DEFAULT_OG_IMAGE;
+  // Social crawlers reject relative paths. Imported Vite assets resolve to
+  // a hashed "/fw-assets/..." URL — prefix with SITE_URL so og:image and
+  // twitter:image are always absolute.
+  const rawImage = image === null ? null : image ?? DEFAULT_OG_IMAGE;
+  const resolvedImage =
+    rawImage && rawImage.startsWith("/") ? `${SITE_URL}${rawImage}` : rawImage;
   const ogTitleResolved = ogTitle || title;
   const ogDescriptionResolved = ogDescription || description;
   const meta: Array<Record<string, string>> = [
