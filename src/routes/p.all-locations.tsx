@@ -15,9 +15,9 @@ export const Route = createFileRoute("/p/all-locations")({
   },
   head: ({ loaderData }) => {
     const meta = buildMeta({
-      title: `All Locations & Pages — ${loaderData?.totalUrls.toLocaleString() ?? ""} URLs | PRNM`,
+      title: `All locations and pages — ${loaderData?.totalUrls.toLocaleString() ?? ""} URLs | Pool Rental Near Me`,
       description:
-        "Complete directory of every pool rental city, host guide, event guide, course, and resource on PoolRentalNearMe. Browse the full sitemap.",
+        "Browse every pool rental city, host guide, event guide, course, and resource on Pool Rental Near Me. The full human-readable site directory.",
       path: "/p/all-locations",
     });
     return { meta: meta.meta, links: meta.links };
@@ -25,31 +25,66 @@ export const Route = createFileRoute("/p/all-locations")({
   component: AllLocationsPage,
 });
 
+// Sentence-case overrides for server-supplied group titles so the page
+// matches the workspace voice without mutating the data source.
+const TITLE_OVERRIDES: Record<string, string> = {
+  "host-acquisition": "Become a host by city",
+  "swim-instructors": "Swim instructors by city",
+  "event-guides": "Event and party pool guides",
+  "money-guides": "Money and income guides",
+  advocacy: "Pool rental laws and advocacy",
+  resources: "Articles and resources",
+  academy: "Host Academy and courses",
+  "pool-maintenance": "Pool maintenance hub",
+  spanish: "Guías en español",
+  main: "Main pages",
+  listings: "Active pool listings",
+};
+
+function displayTitle(g: DirectoryGroup): string {
+  return TITLE_OVERRIDES[g.id] ?? g.title;
+}
+
 function AllLocationsPage() {
   const data = Route.useLoaderData();
+  const cityCount =
+    data.groups.find((g: DirectoryGroup) => g.id === "host-acquisition")?.links.length ?? 0;
+  const academyCount =
+    data.groups.find((g: DirectoryGroup) => g.id === "academy")?.links.length ?? 0;
+  const sectionCount = data.groups.length;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
       <main className="flex-1">
         {/* Hero */}
-        <section className="border-b border-border bg-gradient-to-b from-muted/40 to-background">
-          <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Site Directory
+        <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl"
+          />
+          <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              Site directory
             </p>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
-              All Locations & Pages
+            <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              Every page on Pool Rental Near Me
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-              A complete, crawlable index of every page on PoolRentalNearMe —{" "}
-              <strong className="text-foreground">
-                {data.totalUrls.toLocaleString()}
-              </strong>{" "}
-              URLs across cities, host guides, event resources, courses, and
-              live listings.
+            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
+              A human-readable index of cities, host guides, courses, and
+              resources. Built so you can find any page in two clicks and so
+              search engines can crawl the whole site.
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">
+
+            {/* Stat strip */}
+            <dl className="mt-8 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
+              <Stat label="Total URLs" value={data.totalUrls.toLocaleString()} />
+              <Stat label="Cities" value={cityCount.toLocaleString()} />
+              <Stat label="Courses" value={academyCount.toLocaleString()} />
+              <Stat label="Sections" value={sectionCount.toLocaleString()} />
+            </dl>
+
+            <p className="mt-6 text-xs text-muted-foreground">
               Last updated{" "}
               {new Date(data.generatedAt).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -57,79 +92,119 @@ function AllLocationsPage() {
                 day: "numeric",
               })}
             </p>
+          </div>
+        </section>
 
-            {/* Top jump nav */}
+        {/* Sticky chip nav */}
+        <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+          <div className="mx-auto max-w-6xl overflow-x-auto px-4 py-3">
             <nav
               aria-label="Jump to section"
-              className="mt-8 flex flex-wrap gap-2"
+              className="flex min-w-max items-center gap-2"
             >
               {data.groups.map((g: DirectoryGroup) => (
                 <a
                   key={`top-${g.id}`}
                   href={`#${g.id}`}
-                  className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-foreground transition hover:border-primary hover:text-primary"
                 >
-                  {g.title}{" "}
-                  <span className="text-muted-foreground">
-                    ({g.links.length.toLocaleString()})
+                  {displayTitle(g)}
+                  <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                    {g.links.length.toLocaleString()}
                   </span>
                 </a>
               ))}
             </nav>
           </div>
-        </section>
+        </div>
 
         {/* Groups */}
         <div className="mx-auto max-w-6xl px-4 py-12">
-          {data.groups.map((group: DirectoryGroup) => (
-            <section
-              key={group.id}
-              id={group.id}
-              className="scroll-mt-24 border-b border-border py-10 last:border-b-0"
-            >
-              <div className="mb-6 flex items-baseline justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                    {group.title}
-                  </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {group.description}
-                  </p>
-                </div>
-                <span className="shrink-0 rounded-md bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
-                  {group.links.length.toLocaleString()} pages
-                </span>
-              </div>
-
-              <ul className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {group.links.map((link: DirectoryLink) => (
-                  <li key={link.href} className="leading-snug">
-                    <a
-                      href={link.href}
-                      className="block truncate text-sm text-foreground hover:text-primary hover:underline"
-                      title={link.label}
-                    >
-                      {link.label}
-                    </a>
-                    {link.sub && (
-                      <span className="block truncate text-xs text-muted-foreground">
-                        {link.sub}
-                      </span>
+          {data.groups.map((group: DirectoryGroup) => {
+            const isAcademy = group.id === "academy";
+            return (
+              <section
+                key={group.id}
+                id={group.id}
+                className="scroll-mt-24 border-b border-border py-10 last:border-b-0"
+              >
+                <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+                  <div className="max-w-2xl">
+                    {isAcademy && (
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                        Free for hosts
+                      </p>
                     )}
-                  </li>
-                ))}
-              </ul>
+                    <h2 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+                      {displayTitle(group)}
+                    </h2>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {group.description}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                    {group.links.length.toLocaleString()} pages
+                  </span>
+                </div>
 
-              <div className="mt-6">
-                <a
-                  href="#top"
-                  className="text-xs font-medium text-muted-foreground hover:text-primary"
+                <ul
+                  className={
+                    isAcademy
+                      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+                      : "grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  }
                 >
-                  ↑ Back to top
-                </a>
-              </div>
-            </section>
-          ))}
+                  {group.links.map((link: DirectoryLink) =>
+                    isAcademy ? (
+                      <li key={link.href}>
+                        <a
+                          href={link.href}
+                          className="group block h-full rounded-xl border border-border bg-card p-4 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"
+                          title={link.label}
+                        >
+                          <span className="block text-sm font-semibold leading-snug text-foreground group-hover:text-primary">
+                            {link.label}
+                          </span>
+                          {link.sub && (
+                            <span className="mt-1 block text-xs text-muted-foreground">
+                              {link.sub}
+                            </span>
+                          )}
+                          <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition group-hover:opacity-100">
+                            Start course →
+                          </span>
+                        </a>
+                      </li>
+                    ) : (
+                      <li key={link.href} className="leading-snug">
+                        <a
+                          href={link.href}
+                          className="block truncate text-sm text-foreground hover:text-primary hover:underline"
+                          title={link.label}
+                        >
+                          {link.label}
+                        </a>
+                        {link.sub && (
+                          <span className="block truncate text-xs text-muted-foreground">
+                            {link.sub}
+                          </span>
+                        )}
+                      </li>
+                    ),
+                  )}
+                </ul>
+
+                <div className="mt-6">
+                  <a
+                    href="#top"
+                    className="text-xs font-medium text-muted-foreground hover:text-primary"
+                  >
+                    ↑ Back to top
+                  </a>
+                </div>
+              </section>
+            );
+          })}
 
           {/* Top cities reciprocal links */}
           <TopCitiesBlock cities={data.topCities} />
@@ -148,7 +223,7 @@ function AllLocationsPage() {
                   href={`#${g.id}`}
                   className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
                 >
-                  {g.title}{" "}
+                  {displayTitle(g)}{" "}
                   <span className="text-muted-foreground">
                     ({g.links.length.toLocaleString()})
                   </span>
@@ -168,6 +243,19 @@ function AllLocationsPage() {
         </div>
       </main>
       <SiteFooter />
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-card/60 px-4 py-3 backdrop-blur">
+      <dt className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+        {value}
+      </dd>
     </div>
   );
 }
