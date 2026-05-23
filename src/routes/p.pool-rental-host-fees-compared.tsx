@@ -106,7 +106,7 @@ export const Route = createFileRoute("/p/pool-rental-host-fees-compared")({
           publisher: {
             "@type": "Organization",
             name: "Pool Rental Near Me",
-            logo: { "@type": "ImageObject", url: `${SITE_URL}/og-default.jpg` },
+            logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png` },
           },
           mainEntityOfPage: `${SITE_URL}${PATH}`,
         }),
