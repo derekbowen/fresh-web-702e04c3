@@ -15,9 +15,9 @@ export const Route = createFileRoute("/p/all-locations")({
   },
   head: ({ loaderData }) => {
     const meta = buildMeta({
-      title: `All locations and pages — ${loaderData?.totalUrls.toLocaleString() ?? ""} URLs | Pool Rental Near Me`,
+      title: `Pool Near Me: Browse Every City & Guide | Pool Rental Near Me`,
       description:
-        "Browse every pool rental city, host guide, event guide, course, and resource on Pool Rental Near Me. The full human-readable site directory.",
+        "Pool near me directory — browse every private pool rental city, host guide, course, and resource on Pool Rental Near Me. The full site index.",
       path: "/p/all-locations",
     });
     return { meta: meta.meta, links: meta.links };
@@ -65,15 +65,13 @@ function AllLocationsPage() {
           />
           <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              Site directory
+              Pool near me
             </p>
             <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Every page on Pool Rental Near Me
+              Pool near me: every city and guide on Pool Rental Near Me
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              A human-readable index of cities, host guides, courses, and
-              resources. Built so you can find any page in two clicks and so
-              search engines can crawl the whole site.
+              Looking for a pool near you? Browse every private pool rental city, host guide, course, and resource we publish. Built so you can find any page in two clicks and so search engines can crawl the whole site.
             </p>
 
             {/* Stat strip */}

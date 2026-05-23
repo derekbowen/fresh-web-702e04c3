@@ -63,7 +63,7 @@ type NavLink = {
 
 const PRIMARY_NAV: NavLink[] = [
   { label: "Find a pool", href: "/s" },
-  { label: "Locations", href: "/p/all-locations" },
+  { label: "Pools near me", href: "/p/all-locations" },
   { label: "Academy", href: "/p/all-locations#academy" },
   { label: "Pool pros", href: "/p/pool-pros" },
   { label: "How it works", href: "/p/how-it-works" },
@@ -514,7 +514,7 @@ function SiteFooterInner() {
                 </li>
               ))}
               <li>
-                <a href={rel("/p/all-locations")} className="hover:text-primary">All Locations</a>
+                <a href={rel("/p/all-locations")} className="hover:text-primary">Pools Near Me</a>
               </li>
             </ul>
           </div>
