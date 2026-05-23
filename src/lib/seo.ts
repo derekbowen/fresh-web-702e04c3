@@ -5,7 +5,10 @@
 export const SITE_URL = "https://www.poolrentalnearme.com";
 export const SITE_NAME = "Pool Rental Near Me";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.jpg`;
-export const SITE_LOGO = `${SITE_URL}/og-default.jpg`;
+// TODO: replace logo URL with 600x600 transparent PNG once asset exists.
+// Using the 512×512 PWA icon as a square fallback so Organization.logo
+// is not a hero photo (which fails Google Rich Results Test).
+export const SITE_LOGO = `${SITE_URL}/icon-512.png`;
 
 export const SOCIAL_PROFILES = [
   "https://www.facebook.com/poolrentalnearme",
