@@ -454,8 +454,8 @@ function GiggsterCityPage() {
         <ol>
           <li>
             Create your free Pool Rental Near Me listing at{" "}
-            <a href="https://earn.poolrentalnearme.com/" rel="noopener">
-              earn.poolrentalnearme.com
+            <a href="/p/start-hosting" rel="noopener">
+              poolrentalnearme.com/p/start-hosting
             </a>
             .
           </li>
