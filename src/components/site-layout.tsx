@@ -62,17 +62,16 @@ type NavLink = {
 };
 
 const PRIMARY_NAV: NavLink[] = [
-  { label: "Home Page", href: "/" },
-  { label: "Find a Pool", href: "/s" },
+  { label: "Find a pool", href: "/s" },
   { label: "Locations", href: "/p/all-locations" },
-  { label: "Pool Pros", href: "/p/pool-pros" },
-  { label: "How It Works", href: "/p/how-it-works" },
+  { label: "Pool pros", href: "/p/pool-pros" },
+  { label: "How it works", href: "/p/how-it-works" },
   { label: "Neighbors", href: "/p/neighbors" },
 ];
 
 const APP_NAV: NavLink[] = [
   {
-    label: "iOS App",
+    label: "iOS app",
     href: "https://apps.apple.com/us/app/pool-rental-near-me/id6737762373",
     external: true,
   },
@@ -140,6 +139,18 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
       document.body.style.overflow = "hidden";
       return () => { document.body.style.overflow = prev; };
     }
+  }, [open]);
+
+  // Hide Intercom launcher while mobile menu is open so it doesn't overlap the sticky CTA.
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const ic = (window as unknown as { Intercom?: (cmd: string, opts?: Record<string, unknown>) => void }).Intercom;
+    if (typeof ic !== "function") return;
+    ic("update", { hide_default_launcher: open });
+    return () => {
+      const ic2 = (window as unknown as { Intercom?: (cmd: string, opts?: Record<string, unknown>) => void }).Intercom;
+      if (typeof ic2 === "function") ic2("update", { hide_default_launcher: false });
+    };
   }, [open]);
 
   // Close on Escape
