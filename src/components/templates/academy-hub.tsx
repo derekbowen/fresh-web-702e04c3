@@ -93,8 +93,41 @@ export function AcademyHubTemplate({
         {hub.total === 0 && (
           <p className="mt-12 text-muted-foreground">{t.noCourses}</p>
         )}
+
+        {lang === "en" && (
+          <section className="mt-20 border-t border-border pt-12">
+            <h2 className="text-2xl font-semibold text-foreground">
+              Free host tools
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Pair the academy with the tools top earners use every week.
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { href: "/p/start-hosting", title: "Start hosting", body: "Earn $1,500–$8,000/month renting your pool." },
+                { href: "/p/ai-listing-generator", title: "AI listing generator", body: "Turn one photo into a booking-ready listing." },
+                { href: "/p/pool-heating-cost-calculator", title: "Pool heating cost calculator", body: "Gas vs heat pump vs solar — monthly cost." },
+                { href: "/p/pool-rules-generator", title: "Pool rules generator", body: "Printable house rules in under a minute." },
+                { href: "/p/waiver-generator", title: "Waiver generator", body: "Digital liability waivers, signed on phone." },
+                { href: "/p/host-marketing-playbook", title: "Host marketing playbook", body: "Flyers, captions, seasonal campaigns." },
+              ].map((t) => (
+                <a
+                  key={t.href}
+                  href={t.href}
+                  className="rounded-xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-sm"
+                >
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {t.title} →
+                  </h3>
+                  <p className="mt-1 text-xs text-muted-foreground">{t.body}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
       <SiteFooter />
     </div>
   );
 }
+

@@ -46,20 +46,25 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as TechnicalSupportSplatRouteImport } from './routes/technical-support.$'
 import { Route as PoolManagementSplatRouteImport } from './routes/pool-management.$'
+import { Route as PWaiverGeneratorRouteImport } from './routes/p.waiver-generator'
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
+import { Route as PStartHostingRouteImport } from './routes/p.start-hosting'
 import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
+import { Route as PPoolRulesGeneratorRouteImport } from './routes/p.pool-rules-generator'
 import { Route as PPoolRentalsStateRouteImport } from './routes/p.pool-rentals-$state'
 import { Route as PPoolRentalsRouteImport } from './routes/p.pool-rentals'
 import { Route as PPoolRentalPermitsByStateRouteImport } from './routes/p.pool-rental-permits-by-state'
 import { Route as PPoolRentalInsuranceExplainedRouteImport } from './routes/p.pool-rental-insurance-explained'
 import { Route as PPoolRentalHostFeesComparedRouteImport } from './routes/p.pool-rental-host-fees-compared'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
+import { Route as PPoolHeatingCostCalculatorRouteImport } from './routes/p.pool-heating-cost-calculator'
 import { Route as PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport } from './routes/p.peerspace-vs-pool-rental-near-me-in-{$city}'
 import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me'
 import { Route as PNeighborsRouteImport } from './routes/p.neighbors'
 import { Route as PLaSaltwaterFeaturedRouteImport } from './routes/p.la-saltwater-featured'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
+import { Route as PHostMarketingPlaybookRouteImport } from './routes/p.host-marketing-playbook'
 import { Route as PGiggsterVsPoolRentalNearMeInChar123cityChar125RouteImport } from './routes/p.giggster-vs-pool-rental-near-me-in-{$city}'
 import { Route as PGiggsterVsPoolRentalNearMeRouteImport } from './routes/p.giggster-vs-pool-rental-near-me'
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
@@ -67,6 +72,7 @@ import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-cal
 import { Route as PDogRouteImport } from './routes/p.dog'
 import { Route as PBlogRouteImport } from './routes/p.blog'
 import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
+import { Route as PAiListingGeneratorRouteImport } from './routes/p.ai-listing-generator'
 import { Route as PAboutOurCompanyRouteImport } from './routes/p.about-our-company'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
@@ -371,15 +377,30 @@ const PoolManagementSplatRoute = PoolManagementSplatRouteImport.update({
   path: '/pool-management/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PWaiverGeneratorRoute = PWaiverGeneratorRouteImport.update({
+  id: '/p/waiver-generator',
+  path: '/p/waiver-generator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PSwimplyAlternativeVsPoolRentalNearMeRoute =
   PSwimplyAlternativeVsPoolRentalNearMeRouteImport.update({
     id: '/p/swimply-alternative-vs-pool-rental-near-me',
     path: '/p/swimply-alternative-vs-pool-rental-near-me',
     getParentRoute: () => rootRouteImport,
   } as any)
+const PStartHostingRoute = PStartHostingRouteImport.update({
+  id: '/p/start-hosting',
+  path: '/p/start-hosting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PPrivacyRequestRoute = PPrivacyRequestRouteImport.update({
   id: '/p/privacy-request',
   path: '/p/privacy-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PPoolRulesGeneratorRoute = PPoolRulesGeneratorRouteImport.update({
+  id: '/p/pool-rules-generator',
+  path: '/p/pool-rules-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PPoolRentalsStateRoute = PPoolRentalsStateRouteImport.update({
@@ -415,6 +436,12 @@ const PPoolProsRoute = PPoolProsRouteImport.update({
   path: '/p/pool-pros',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PPoolHeatingCostCalculatorRoute =
+  PPoolHeatingCostCalculatorRouteImport.update({
+    id: '/p/pool-heating-cost-calculator',
+    path: '/p/pool-heating-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route =
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport.update({
     id: '/p/peerspace-vs-pool-rental-near-me-in-{$city}',
@@ -445,6 +472,11 @@ const PHowItWorksRoute = PHowItWorksRouteImport.update({
 const PHostingRoute = PHostingRouteImport.update({
   id: '/p/hosting',
   path: '/p/hosting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PHostMarketingPlaybookRoute = PHostMarketingPlaybookRouteImport.update({
+  id: '/p/host-marketing-playbook',
+  path: '/p/host-marketing-playbook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PGiggsterVsPoolRentalNearMeInChar123cityChar125Route =
@@ -482,6 +514,11 @@ const PBlogRoute = PBlogRouteImport.update({
 const PAllLocationsRoute = PAllLocationsRouteImport.update({
   id: '/p/all-locations',
   path: '/p/all-locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PAiListingGeneratorRoute = PAiListingGeneratorRouteImport.update({
+  id: '/p/ai-listing-generator',
+  path: '/p/ai-listing-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PAboutOurCompanyRoute = PAboutOurCompanyRouteImport.update({
@@ -1148,6 +1185,7 @@ export interface FileRoutesByFullPath {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/about-our-company': typeof PAboutOurCompanyRoute
+  '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
   '/p/dog': typeof PDogRoute
@@ -1155,20 +1193,25 @@ export interface FileRoutesByFullPath {
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
   '/p/giggster-vs-pool-rental-near-me-in-{$city}': typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
+  '/p/host-marketing-playbook': typeof PHostMarketingPlaybookRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
   '/p/neighbors': typeof PNeighborsRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
+  '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
+  '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
+  '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
@@ -1315,6 +1358,7 @@ export interface FileRoutesByTo {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/about-our-company': typeof PAboutOurCompanyRoute
+  '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
   '/p/dog': typeof PDogRoute
@@ -1322,20 +1366,25 @@ export interface FileRoutesByTo {
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
   '/p/giggster-vs-pool-rental-near-me-in-{$city}': typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
+  '/p/host-marketing-playbook': typeof PHostMarketingPlaybookRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
   '/p/neighbors': typeof PNeighborsRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
+  '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
+  '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
+  '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
@@ -1483,6 +1532,7 @@ export interface FileRoutesById {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/about-our-company': typeof PAboutOurCompanyRoute
+  '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
   '/p/dog': typeof PDogRoute
@@ -1490,20 +1540,25 @@ export interface FileRoutesById {
   '/p/free-host-tools': typeof PFreeHostToolsRoute
   '/p/giggster-vs-pool-rental-near-me': typeof PGiggsterVsPoolRentalNearMeRoute
   '/p/giggster-vs-pool-rental-near-me-in-{$city}': typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
+  '/p/host-marketing-playbook': typeof PHostMarketingPlaybookRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
   '/p/neighbors': typeof PNeighborsRoute
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
+  '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
+  '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
+  '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
@@ -1652,6 +1707,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/about-our-company'
+    | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
     | '/p/dog'
@@ -1659,20 +1715,25 @@ export interface FileRouteTypes {
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
     | '/p/giggster-vs-pool-rental-near-me-in-{$city}'
+    | '/p/host-marketing-playbook'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/la-saltwater-featured'
     | '/p/neighbors'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
+    | '/p/pool-heating-cost-calculator'
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
+    | '/p/pool-rules-generator'
     | '/p/privacy-request'
+    | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
+    | '/p/waiver-generator'
     | '/pool-management/$'
     | '/technical-support/$'
     | '/verify/$uid'
@@ -1819,6 +1880,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/about-our-company'
+    | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
     | '/p/dog'
@@ -1826,20 +1888,25 @@ export interface FileRouteTypes {
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
     | '/p/giggster-vs-pool-rental-near-me-in-{$city}'
+    | '/p/host-marketing-playbook'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/la-saltwater-featured'
     | '/p/neighbors'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
+    | '/p/pool-heating-cost-calculator'
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
+    | '/p/pool-rules-generator'
     | '/p/privacy-request'
+    | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
+    | '/p/waiver-generator'
     | '/pool-management/$'
     | '/technical-support/$'
     | '/verify/$uid'
@@ -1986,6 +2053,7 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/about-our-company'
+    | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
     | '/p/dog'
@@ -1993,20 +2061,25 @@ export interface FileRouteTypes {
     | '/p/free-host-tools'
     | '/p/giggster-vs-pool-rental-near-me'
     | '/p/giggster-vs-pool-rental-near-me-in-{$city}'
+    | '/p/host-marketing-playbook'
     | '/p/hosting'
     | '/p/how-it-works'
     | '/p/la-saltwater-featured'
     | '/p/neighbors'
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
+    | '/p/pool-heating-cost-calculator'
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-$state'
+    | '/p/pool-rules-generator'
     | '/p/privacy-request'
+    | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
+    | '/p/waiver-generator'
     | '/pool-management/$'
     | '/technical-support/$'
     | '/verify/$uid'
@@ -2095,6 +2168,7 @@ export interface RootRouteChildren {
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
   PAboutOurCompanyRoute: typeof PAboutOurCompanyRoute
+  PAiListingGeneratorRoute: typeof PAiListingGeneratorRoute
   PAllLocationsRoute: typeof PAllLocationsRoute
   PBlogRoute: typeof PBlogRoute
   PDogRoute: typeof PDogRoute
@@ -2102,20 +2176,25 @@ export interface RootRouteChildren {
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
   PGiggsterVsPoolRentalNearMeRoute: typeof PGiggsterVsPoolRentalNearMeRoute
   PGiggsterVsPoolRentalNearMeInChar123cityChar125Route: typeof PGiggsterVsPoolRentalNearMeInChar123cityChar125Route
+  PHostMarketingPlaybookRoute: typeof PHostMarketingPlaybookRoute
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
   PLaSaltwaterFeaturedRoute: typeof PLaSaltwaterFeaturedRoute
   PNeighborsRoute: typeof PNeighborsRoute
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route: typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
+  PPoolHeatingCostCalculatorRoute: typeof PPoolHeatingCostCalculatorRoute
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
   PPoolRentalHostFeesComparedRoute: typeof PPoolRentalHostFeesComparedRoute
   PPoolRentalInsuranceExplainedRoute: typeof PPoolRentalInsuranceExplainedRoute
   PPoolRentalPermitsByStateRoute: typeof PPoolRentalPermitsByStateRoute
   PPoolRentalsRoute: typeof PPoolRentalsRoute
   PPoolRentalsStateRoute: typeof PPoolRentalsStateRoute
+  PPoolRulesGeneratorRoute: typeof PPoolRulesGeneratorRoute
   PPrivacyRequestRoute: typeof PPrivacyRequestRoute
+  PStartHostingRoute: typeof PStartHostingRoute
   PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  PWaiverGeneratorRoute: typeof PWaiverGeneratorRoute
   PoolManagementSplatRoute: typeof PoolManagementSplatRoute
   TechnicalSupportSplatRoute: typeof TechnicalSupportSplatRoute
   VerifyUidRoute: typeof VerifyUidRoute
@@ -2414,6 +2493,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoolManagementSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/waiver-generator': {
+      id: '/p/waiver-generator'
+      path: '/p/waiver-generator'
+      fullPath: '/p/waiver-generator'
+      preLoaderRoute: typeof PWaiverGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/swimply-alternative-vs-pool-rental-near-me': {
       id: '/p/swimply-alternative-vs-pool-rental-near-me'
       path: '/p/swimply-alternative-vs-pool-rental-near-me'
@@ -2421,11 +2507,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/start-hosting': {
+      id: '/p/start-hosting'
+      path: '/p/start-hosting'
+      fullPath: '/p/start-hosting'
+      preLoaderRoute: typeof PStartHostingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/privacy-request': {
       id: '/p/privacy-request'
       path: '/p/privacy-request'
       fullPath: '/p/privacy-request'
       preLoaderRoute: typeof PPrivacyRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/pool-rules-generator': {
+      id: '/p/pool-rules-generator'
+      path: '/p/pool-rules-generator'
+      fullPath: '/p/pool-rules-generator'
+      preLoaderRoute: typeof PPoolRulesGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/pool-rentals-$state': {
@@ -2470,6 +2570,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PPoolProsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/pool-heating-cost-calculator': {
+      id: '/p/pool-heating-cost-calculator'
+      path: '/p/pool-heating-cost-calculator'
+      fullPath: '/p/pool-heating-cost-calculator'
+      preLoaderRoute: typeof PPoolHeatingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/peerspace-vs-pool-rental-near-me-in-{$city}': {
       id: '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
       path: '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
@@ -2510,6 +2617,13 @@ declare module '@tanstack/react-router' {
       path: '/p/hosting'
       fullPath: '/p/hosting'
       preLoaderRoute: typeof PHostingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/host-marketing-playbook': {
+      id: '/p/host-marketing-playbook'
+      path: '/p/host-marketing-playbook'
+      fullPath: '/p/host-marketing-playbook'
+      preLoaderRoute: typeof PHostMarketingPlaybookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/giggster-vs-pool-rental-near-me-in-{$city}': {
@@ -2559,6 +2673,13 @@ declare module '@tanstack/react-router' {
       path: '/p/all-locations'
       fullPath: '/p/all-locations'
       preLoaderRoute: typeof PAllLocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/ai-listing-generator': {
+      id: '/p/ai-listing-generator'
+      path: '/p/ai-listing-generator'
+      fullPath: '/p/ai-listing-generator'
+      preLoaderRoute: typeof PAiListingGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/about-our-company': {
@@ -3553,6 +3674,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
   PAboutOurCompanyRoute: PAboutOurCompanyRoute,
+  PAiListingGeneratorRoute: PAiListingGeneratorRoute,
   PAllLocationsRoute: PAllLocationsRoute,
   PBlogRoute: PBlogRoute,
   PDogRoute: PDogRoute,
@@ -3561,6 +3683,7 @@ const rootRouteChildren: RootRouteChildren = {
   PGiggsterVsPoolRentalNearMeRoute: PGiggsterVsPoolRentalNearMeRoute,
   PGiggsterVsPoolRentalNearMeInChar123cityChar125Route:
     PGiggsterVsPoolRentalNearMeInChar123cityChar125Route,
+  PHostMarketingPlaybookRoute: PHostMarketingPlaybookRoute,
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
   PLaSaltwaterFeaturedRoute: PLaSaltwaterFeaturedRoute,
@@ -3568,15 +3691,19 @@ const rootRouteChildren: RootRouteChildren = {
   PPeerspaceVsPoolRentalNearMeRoute: PPeerspaceVsPoolRentalNearMeRoute,
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route:
     PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route,
+  PPoolHeatingCostCalculatorRoute: PPoolHeatingCostCalculatorRoute,
   PPoolProsRoute: PPoolProsRouteWithChildren,
   PPoolRentalHostFeesComparedRoute: PPoolRentalHostFeesComparedRoute,
   PPoolRentalInsuranceExplainedRoute: PPoolRentalInsuranceExplainedRoute,
   PPoolRentalPermitsByStateRoute: PPoolRentalPermitsByStateRoute,
   PPoolRentalsRoute: PPoolRentalsRoute,
   PPoolRentalsStateRoute: PPoolRentalsStateRoute,
+  PPoolRulesGeneratorRoute: PPoolRulesGeneratorRoute,
   PPrivacyRequestRoute: PPrivacyRequestRoute,
+  PStartHostingRoute: PStartHostingRoute,
   PSwimplyAlternativeVsPoolRentalNearMeRoute:
     PSwimplyAlternativeVsPoolRentalNearMeRoute,
+  PWaiverGeneratorRoute: PWaiverGeneratorRoute,
   PoolManagementSplatRoute: PoolManagementSplatRoute,
   TechnicalSupportSplatRoute: TechnicalSupportSplatRoute,
   VerifyUidRoute: VerifyUidRoute,

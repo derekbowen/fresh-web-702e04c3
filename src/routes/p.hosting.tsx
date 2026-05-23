@@ -573,7 +573,46 @@ function HostingPage() {
           </div>
         </section>
 
+        {/* Free host tools — links to the migrated /p/ tool pages */}
+        <section className="border-t border-border bg-background py-16">
+          <div className="mx-auto max-w-5xl px-4">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Free host tools
+            </h2>
+            <p className="mt-3 max-w-2xl text-muted-foreground">
+              Everything you need to price, list, protect, and market your
+              pool — free for Pool Rental Near Me hosts.
+            </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { href: "/p/start-hosting", title: "Start hosting", body: "Earn $1,500–$8,000/month — flat 10% fee, $2M coverage." },
+                { href: "/p/ai-listing-generator", title: "AI listing generator", body: "Upload one photo, get a booking-ready listing draft." },
+                { href: "/p/pool-heating-cost-calculator", title: "Pool heating cost calculator", body: "Gas vs heat pump vs solar — monthly run-cost and payback." },
+                { href: "/p/pool-rules-generator", title: "Pool rules generator", body: "Printable house rules tuned to your pool — in 60 seconds." },
+                { href: "/p/waiver-generator", title: "Waiver generator", body: "Digital liability waiver every guest signs on their phone." },
+                { href: "/p/host-marketing-playbook", title: "Host marketing playbook", body: "Flyers, social templates, seasonal campaigns." },
+                { href: "/p/earnings-calculator", title: "Earnings calculator", body: "See what your pool can earn by city and season." },
+                { href: "/p/free-host-tools", title: "All free host tools", body: "Pricing, calendar, screening, payouts, tax reports." },
+              ].map((t) => (
+                <a
+                  key={t.href}
+                  href={t.href}
+                  className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary/40 hover:shadow-md"
+                >
+                  <h3 className="text-base font-semibold text-foreground">
+                    {t.title} →
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {t.body}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* SECTION 9 — FINAL CTA */}
+
         <section className="bg-primary py-20">
           <div className="mx-auto max-w-3xl px-4 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl">
