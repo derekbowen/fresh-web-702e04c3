@@ -52,7 +52,11 @@ export const HOMEPAGE_FAQS = [
   },
 ];
 
-export const HOMEPAGE_HERO_IMAGE = heroPool;
+// Family pool hero — used for the in-page hero AND the og:image / twitter:image
+// share preview so social CTR matches what visitors actually see on the page.
+export const HOMEPAGE_HERO_IMAGE = heroFamilyPool;
+// Kept exported so existing call sites that wanted the stock fallback still resolve.
+export const HOMEPAGE_HERO_FALLBACK = heroPool;
 
 export function HomePageContent({ data }: { data: HomeData | undefined | null }) {
   return (
