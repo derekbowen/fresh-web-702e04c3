@@ -141,6 +141,18 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
     }
   }, [open]);
 
+  // Hide Intercom launcher while mobile menu is open so it doesn't overlap the sticky CTA.
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const ic = (window as unknown as { Intercom?: (cmd: string, opts?: Record<string, unknown>) => void }).Intercom;
+    if (typeof ic !== "function") return;
+    ic("update", { hide_default_launcher: open });
+    return () => {
+      const ic2 = (window as unknown as { Intercom?: (cmd: string, opts?: Record<string, unknown>) => void }).Intercom;
+      if (typeof ic2 === "function") ic2("update", { hide_default_launcher: false });
+    };
+  }, [open]);
+
   // Close on Escape
   React.useEffect(() => {
     if (!open && !accountOpen) return;
