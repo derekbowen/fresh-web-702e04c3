@@ -156,14 +156,15 @@ export async function buildContentPagesSitemap(
   const minBodyChars = options?.minBodyChars ?? 0;
 
   const cols = minBodyChars > 0
-    ? "slug, updated_at, hero_image_url, body_markdown"
-    : "slug, updated_at, hero_image_url";
+    ? "slug, url_path, status, updated_at, hero_image_url, body_markdown"
+    : "slug, url_path, status, updated_at, hero_image_url";
 
   const { data, error } = await supabase
     .from("content_pages")
     .select(cols)
     .in("template_type", templateTypes)
     .eq("in_sitemap", true)
+    .eq("status", "published")
     .not("slug", "is", null)
     .order("slug")
     .range(offset, offset + SITEMAP_PAGE_SIZE - 1);
@@ -173,15 +174,22 @@ export async function buildContentPagesSitemap(
     return sitemapResponse(buildUrlsetXml([]));
   }
 
+  const expectedPrefix = `${pathPrefix}/`;
   const filtered = (data ?? []).filter((row: any) => {
+    // Drop rows whose stored url_path lives outside this sitemap's prefix
+    // (e.g. legacy /academy, /app rows that would 404 at /p/academy).
+    if (row.url_path && !row.url_path.startsWith(expectedPrefix)) return false;
     if (minBodyChars <= 0) return true;
     const len = (row.body_markdown ?? "").trim().length;
     return len >= minBodyChars;
   });
 
   const urls: SitemapUrl[] = filtered.map((row: any) => {
+    const loc = row.url_path
+      ? `${siteUrl}${row.url_path}`
+      : `${siteUrl}${pathPrefix}/${row.slug}`;
     const sitemapUrl: SitemapUrl = {
-      loc: `${siteUrl}${pathPrefix}/${row.slug}`,
+      loc,
       lastmod: row.updated_at,
     };
     if (row.hero_image_url) {
