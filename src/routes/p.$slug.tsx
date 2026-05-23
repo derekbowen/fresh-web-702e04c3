@@ -224,7 +224,7 @@ export const Route = createFileRoute("/p/$slug")({
     // Boosts AEO and helps Google/social cards show publish date + author.
     const ARTICLE_OG_TYPES = new Set(["resource", "resource_article", "event_guide", "guide"]);
     if (ARTICLE_OG_TYPES.has((p.template_type ?? "") as string)) {
-      const publishedIso = toIsoOrUndefined(p.published_at) ?? toIsoOrUndefined(p.created_at);
+      const publishedIso = toIsoOrUndefined(p.published_at) ?? toIsoOrUndefined(p.scraped_at);
       const modifiedIso = toIsoOrUndefined(p.updated_at);
       const articleMeta: Array<{ property: string; content: string }> = [
         { property: "article:author", content: p.author || "Pool Rental Near Me" },
