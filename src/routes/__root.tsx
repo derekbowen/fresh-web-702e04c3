@@ -78,10 +78,11 @@ export const Route = createRootRoute({
       ],
       links: [
         { rel: "stylesheet", href: appCss },
-        { rel: "icon", href: "/favicon.ico", sizes: "any" },
-        { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
-        { rel: "icon", type: "image/png", sizes: "512x512", href: "/icon-512.png" },
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon-192.png" },
+        { rel: "icon", type: "image/png", sizes: "512x512", href: "/favicon-512.png" },
         { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+        { rel: "mask-icon", href: "/icon.svg", color: "#0ea5e9" },
         // Do NOT spread meta.links here — it would emit a root-level
         // <link rel="canonical" href="/"> on every page, duplicating the
         // per-route canonical. Each shareable route emits its own canonical
