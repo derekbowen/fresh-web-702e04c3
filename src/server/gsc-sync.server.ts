@@ -264,6 +264,6 @@ export async function getGscSyncOverview() {
     dailyRows: dailyCount || 0,
     queryRows: queryCount || 0,
     siteUrl: process.env.GSC_SITE_URL || DEFAULT_SITE_URL,
-    configured: Boolean(process.env.GSC_SERVICE_ACCOUNT_JSON),
+    configured: Boolean(process.env.LOVABLE_API_KEY && process.env.GOOGLE_SEARCH_CONSOLE_API_KEY),
   };
 }
