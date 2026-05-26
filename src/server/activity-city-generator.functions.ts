@@ -269,14 +269,14 @@ export const publishActivityCityPages = createServerFn({ method: "POST" })
     const { userId } = context as { userId: string };
     await requireAdmin(userId);
 
-    const { error, count } = await supabaseAdmin
+    const { data: updated, error } = await supabaseAdmin
       .from("content_pages")
       .update({ status: "published", in_sitemap: true })
       .eq("template_type", "activity_city")
       .in("slug", data.slugs)
-      .select("id", { count: "exact", head: true });
+      .select("id");
     if (error) throw new Error(error.message);
-    return { published: count ?? 0 };
+    return { published: updated?.length ?? 0 };
   });
 
 export const listActivityCityPages = createServerFn({ method: "POST" })
