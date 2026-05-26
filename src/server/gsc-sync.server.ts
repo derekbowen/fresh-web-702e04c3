@@ -41,8 +41,7 @@ export type GscSyncResult = {
 };
 
 const DEFAULT_SITE_URL = "sc-domain:poolrentalnearme.com";
-const SEARCH_CONSOLE_SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
-let tokenCache: { token: string; expiresAt: number } | null = null;
+const GATEWAY_BASE = "https://connector-gateway.lovable.dev/google_search_console";
 
 function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -56,83 +55,11 @@ function resolveDateRange(options: GscSyncOptions): { startDate: string; endDate
   return { startDate: isoDate(start), endDate: isoDate(end) };
 }
 
-function parseServiceAccount(): { account?: ServiceAccount; missingSecrets?: string[]; error?: string } {
-  const raw = process.env.GSC_SERVICE_ACCOUNT_JSON;
-  const missingSecrets: string[] = [];
-  if (!raw) missingSecrets.push("GSC_SERVICE_ACCOUNT_JSON");
-  if (missingSecrets.length) return { missingSecrets };
-
-  try {
-    const parsed = JSON.parse(raw || "{}") as ServiceAccount;
-    if (!parsed.client_email || !parsed.private_key) {
-      return { error: "GSC_SERVICE_ACCOUNT_JSON is missing client_email or private_key" };
-    }
-    return { account: parsed };
-  } catch {
-    return { error: "GSC_SERVICE_ACCOUNT_JSON must be the full JSON key file contents" };
-  }
-}
-
-function base64Url(input: string | Uint8Array): string {
-  const buffer = typeof input === "string" ? Buffer.from(input) : Buffer.from(input);
-  return buffer.toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-}
-
-async function importPrivateKey(privateKeyPem: string): Promise<CryptoKey> {
-  const pemBody = privateKeyPem
-    .replace(/\\n/g, "\n")
-    .replace(/\r/g, "")
-    .replace(/-----BEGIN PRIVATE KEY-----/g, "")
-    .replace(/-----END PRIVATE KEY-----/g, "")
-    .replace(/\s+/g, "");
-  const der = Buffer.from(pemBody, "base64");
-  return crypto.subtle.importKey(
-    "pkcs8",
-    der,
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-}
-
-async function signJwt(account: ServiceAccount): Promise<string> {
-  const now = Math.floor(Date.now() / 1000);
-  const header = { alg: "RS256", typ: "JWT" };
-  const payload = {
-    iss: account.client_email,
-    scope: SEARCH_CONSOLE_SCOPE,
-    aud: account.token_uri || "https://oauth2.googleapis.com/token",
-    exp: now + 3600,
-    iat: now,
-  };
-  const unsigned = `${base64Url(JSON.stringify(header))}.${base64Url(JSON.stringify(payload))}`;
-  const key = await importPrivateKey(account.private_key);
-  const signature = new Uint8Array(
-    await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(unsigned)),
-  );
-  return `${unsigned}.${base64Url(signature)}`;
-}
-
-async function getAccessToken(account: ServiceAccount): Promise<string> {
-  if (tokenCache && tokenCache.expiresAt > Date.now() + 60_000) return tokenCache.token;
-  const assertion = await signJwt(account);
-  const res = await fetch(account.token_uri || "https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion,
-    }),
-  });
-  const json = await res.json().catch(() => ({} as any));
-  if (!res.ok) {
-    const msg = json?.error_description || json?.error || `Google token request failed (${res.status})`;
-    throw new Error(msg);
-  }
-  const token = String(json.access_token || "");
-  if (!token) throw new Error("Google token response did not include an access token");
-  tokenCache = { token, expiresAt: Date.now() + Math.max(60, Number(json.expires_in || 3600) - 60) * 1000 };
-  return token;
+function checkGatewayCreds(): { ok: boolean; missingSecrets?: string[] } {
+  const missing: string[] = [];
+  if (!process.env.LOVABLE_API_KEY) missing.push("LOVABLE_API_KEY");
+  if (!process.env.GOOGLE_SEARCH_CONSOLE_API_KEY) missing.push("GOOGLE_SEARCH_CONSOLE_API_KEY");
+  return missing.length ? { ok: false, missingSecrets: missing } : { ok: true };
 }
 
 function normalizeUrlPath(raw: string | undefined): string | null {
@@ -147,25 +74,26 @@ function normalizeUrlPath(raw: string | undefined): string | null {
 }
 
 async function fetchSearchAnalytics(
-  token: string,
   siteUrl: string,
   body: Record<string, unknown>,
   maxRows: number,
 ): Promise<GscRow[]> {
   const rows: GscRow[] = [];
   const pageSize = Math.min(Math.max(Number(body.rowLimit || 25000), 1), 25000);
+  const url = `${GATEWAY_BASE}/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
   for (let startRow = 0; startRow < maxRows; startRow += pageSize) {
-    const res = await fetch(
-      `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ ...body, rowLimit: pageSize, startRow }),
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.LOVABLE_API_KEY}`,
+        "X-Connection-Api-Key": process.env.GOOGLE_SEARCH_CONSOLE_API_KEY as string,
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({ ...body, rowLimit: pageSize, startRow }),
+    });
     const json = (await res.json().catch(() => ({}))) as GscSearchResponse & { error?: { message?: string } };
     if (!res.ok) {
-      throw new Error(json?.error?.message || `Search Console request failed (${res.status})`);
+      throw new Error(json?.error?.message || `Search Console gateway request failed (${res.status})`);
     }
     const batch = Array.isArray(json.rows) ? json.rows : [];
     rows.push(...batch);
@@ -173,6 +101,7 @@ async function fetchSearchAnalytics(
   }
   return rows;
 }
+
 
 async function upsertInChunks(table: string, rows: any[], onConflict: string): Promise<number> {
   let synced = 0;
