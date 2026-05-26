@@ -13,11 +13,6 @@ type GscSearchResponse = {
   responseAggregationType?: string;
 };
 
-type ServiceAccount = {
-  client_email: string;
-  private_key: string;
-  token_uri?: string;
-};
 
 export type GscSyncOptions = {
   startDate?: string;
