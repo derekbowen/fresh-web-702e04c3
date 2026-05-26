@@ -5,7 +5,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
-import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
+import { type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { parseCitySlug } from "@/lib/city-slug";
@@ -25,7 +25,6 @@ import type { NearbyCity } from "@/server/nearby-cities.functions";
 export function ActivityCityTemplate({
   page,
   nearbyCities = [],
-  linkTargets = [],
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
@@ -90,13 +89,9 @@ export function ActivityCityTemplate({
 
         <section className="border-b border-border py-12">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <AutoLinkedContent
-              text=""
-              targets={linkTargets}
-              className="prose prose-neutral max-w-none text-base leading-relaxed text-foreground/90 dark:prose-invert"
-            >
+            <div className="prose prose-neutral max-w-none text-base leading-relaxed text-foreground/90 dark:prose-invert">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
-            </AutoLinkedContent>
+            </div>
           </div>
         </section>
 
