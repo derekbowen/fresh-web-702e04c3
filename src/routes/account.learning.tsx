@@ -23,7 +23,7 @@ export const Route = createFileRoute("/account/learning")({
     }
   },
   component: MyLearningPage,
-  head: () => ({ meta: [{ title: "My learning — Pool Rental Near Me Academy" }] }),
+  head: () => ({ meta: [{ title: "My learning — Learn with Fred" }] }),
 });
 
 function MyLearningPage() {
@@ -118,7 +118,7 @@ function MyLearningPage() {
             <p className="mt-2 text-sm text-muted-foreground">
               You aren't enrolled in any active courses.{" "}
               <a href={ACADEMY_HUB_PATH} className="text-primary hover:underline">
-                Browse the Academy
+                Browse Learn with Fred
               </a>
               .
             </p>

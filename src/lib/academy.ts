@@ -96,8 +96,8 @@ export const I18N: Record<Lang, {
   back: string;
 }> = {
   en: {
-    academyTitle: "Pool Host Learning Academy",
-    academyTagline: "100+ free courses to help you launch, grow, and protect your pool rental business.",
+    academyTitle: "Learn with Fred",
+    academyTagline: "100+ free classes with Fred, our pool-hosting mascot, to help you launch, grow, and protect your pool rental business.",
     startCourse: "Start Course",
     allCategories: "All courses",
     page: "Page",
@@ -111,8 +111,9 @@ export const I18N: Record<Lang, {
     inThisCourse: "About this course",
     level: "Level",
     language: "Language",
-    back: "Back to Academy",
+    back: "Back to Learn with Fred",
   },
+
   es: {
     academyTitle: "Aprende a Rentar tu Piscina",
     academyTagline: "Cursos gratuitos en español para anfitriones de piscinas.",
