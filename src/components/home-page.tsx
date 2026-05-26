@@ -27,7 +27,7 @@ const NEARBY_RADIUS_MILES = 500;
 const FEATURED_OCCASIONS = [
   { slug: "pool-host-income-modeling-city-by-city-earnings-forecast", title: "Pool host income: city-by-city earnings forecast", img: "academy/income.jpg" },
   { slug: "multi-platform-hosting-cross-listing-prnm-swimply-peerspace", title: "Cross-listing on PRNM, Swimply & Peerspace", img: "academy/multi-platform.jpg" },
-  { slug: "migrating-from-swimply-to-prnm-complete-switch-guide", title: "Switching from Swimply to PRNM", img: "academy/switch.jpg" },
+  { slug: "migrating-from-swimply-to-prnm-complete-switch-guide", title: "Switching from Swimply to PRNM", img: "academy/migrate.jpg" },
   { slug: "holiday-premium-playbook-memorial-day-july-4th-labor-day-halloween", title: "Holiday premium playbook: charging more on peak days", img: "academy/holiday.jpg" },
   { slug: "photoshoot-content-creator-ugc-pool-hosting", title: "Renting to photoshoots & content creators", img: "academy/photoshoot.jpg" },
   { slug: "aqua-fitness-senior-wellness-therapeutic-class-hosting", title: "Aqua fitness & wellness class hosting", img: "academy/wellness.jpg" },
