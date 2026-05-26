@@ -2,6 +2,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { CourseCard, type CourseCardCourse } from "@/components/course-card";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { FredMascot, FloatingFredTip } from "@/components/fred-mascot";
 import { getCategoryMeta, I18N, type Lang } from "@/lib/academy";
 import { academyHubPath } from "@/lib/course-urls";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -38,17 +39,28 @@ export function AcademyHubTemplate({
           ]}
         />
 
-        <header className="mt-6 max-w-3xl">
-          <div className="mb-4">
-            <LanguageSwitcher current={lang} alternateHref={twinPath ?? null} />
+        <header className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="max-w-3xl">
+            <div className="mb-4">
+              <LanguageSwitcher current={lang} alternateHref={twinPath ?? null} />
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+              {title}
+            </h1>
+            <p className="mt-4 text-lg text-muted-foreground">{description}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {hub.total} {lang === "es" ? "cursos gratuitos" : "free courses"}
+            </p>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            {title}
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">{description}</p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {hub.total} {lang === "es" ? "cursos gratuitos" : "free courses"}
-          </p>
+          <div className="hidden items-end gap-3 lg:flex">
+            <div className="relative max-w-[220px] rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-md">
+              {lang === "es"
+                ? "Soy Fred. Empieza con un curso destacado abajo. \u2193"
+                : "I'm Fred. Start with a featured course below. \u2193"}
+              <div className="absolute -right-1.5 bottom-5 h-3 w-3 rotate-45 border-r border-t border-border bg-card" />
+            </div>
+            <FredMascot variant="full" className="h-40 w-40 flex-shrink-0 drop-shadow-xl" />
+          </div>
         </header>
 
         {hub.featured.length > 0 && (
@@ -127,6 +139,7 @@ export function AcademyHubTemplate({
         )}
       </main>
       <SiteFooter />
+      <FloatingFredTip />
     </div>
   );
 }

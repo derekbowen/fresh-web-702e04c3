@@ -3,6 +3,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { CourseCard, type CourseCardCourse } from "@/components/course-card";
+import { FredMascot, FloatingFredTip } from "@/components/fred-mascot";
 
 import { getCourse, getRelatedCourses } from "@/server/courses.functions";
 import { getCategoryMeta, I18N, getTierMeta, type Lang } from "@/lib/academy";
@@ -189,6 +190,18 @@ function CoursePage() {
             <p className="mt-3 text-xl text-muted-foreground">{course.subtitle}</p>
           )}
 
+          {/* Fred speech-bubble intro */}
+          <div className="mt-6 flex items-start gap-4 rounded-2xl border border-border bg-card/60 p-4">
+            <FredMascot variant="full" className="h-20 w-20 flex-shrink-0 sm:h-24 sm:w-24" />
+            <div className="relative flex-1 rounded-2xl bg-muted/60 px-4 py-3 text-sm leading-relaxed text-foreground sm:text-base">
+              <div className="absolute -left-1.5 top-5 h-3 w-3 rotate-45 bg-muted/60" />
+              <span className="font-semibold">Hey, I'm Fred.</span>{" "}
+              {lang === "es"
+                ? `Soy tu coach de hosting. Esta clase de ${cat.label.toLowerCase()} te toma${course.duration_minutes ? ` ${course.duration_minutes} minutos` : " pocos minutos"} y vas a salir sabiendo exactamente qué hacer. Vamos.`
+                : `I'm your hosting coach. This ${cat.label.toLowerCase()} class takes ${course.duration_minutes ? `${course.duration_minutes} minutes` : "a few minutes"} and you'll walk away knowing exactly what to do. Let's go.`}
+            </div>
+          </div>
+
           {heroUrl && (
             <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
               <img
@@ -249,6 +262,7 @@ function CoursePage() {
         </div>
       </main>
       <SiteFooter />
+      <FloatingFredTip />
     </div>
   );
 }
