@@ -208,7 +208,7 @@ export async function runGscSync(options: GscSyncOptions = {}): Promise<GscSyncR
     const pagesSynced = await upsertInChunks("gsc_daily_pages", dailyRows, "url_path,date");
     const contentPagesUpdated = await updateContentPagesFromDaily(dailyRows);
 
-    const queryApiRows = await fetchSearchAnalytics(token, siteUrl, {
+    const queryApiRows = await fetchSearchAnalytics(siteUrl, {
       startDate,
       endDate,
       dimensions: ["page", "query"],
