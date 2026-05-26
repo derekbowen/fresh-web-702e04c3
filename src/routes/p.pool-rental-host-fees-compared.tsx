@@ -6,6 +6,7 @@ import {
   breadcrumbJsonLd,
   ldJsonScript,
   SITE_URL,
+  AUTHOR_PERSON_JSONLD_REF,
 } from "@/lib/seo";
 
 const PATH = "/p/pool-rental-host-fees-compared";
