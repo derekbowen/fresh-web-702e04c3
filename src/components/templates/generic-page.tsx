@@ -32,6 +32,7 @@ export function GenericPageTemplate({
         <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           {title}
         </h1>
+        <AuthorByline date={page.published_at ?? page.updated_at} />
         {page.description && (
           <p className="mt-4 text-lg text-muted-foreground">{page.description}</p>
         )}
