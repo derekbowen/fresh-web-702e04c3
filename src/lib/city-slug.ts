@@ -10,6 +10,17 @@ const HOST_ACQ_PREFIXES = [
 
 const SPANISH_HOST_ACQ_PREFIX = "conviertete-en-anfitrion-de-piscina-";
 
+// Activity-modifier city pages. Kept here (not imported from
+// `./activity-city`) so this module stays dependency-free for use in head()
+// metadata helpers.
+const ACTIVITY_CITY_PREFIXES = [
+  "pool-party-venues-",
+  "baby-shower-venues-",
+  "birthday-party-venues-",
+  "hot-tub-rental-",
+  "dog-friendly-pools-",
+].sort((a, b) => b.length - a.length);
+
 /** Extract a `cities.slug` from a content page's slug. */
 export function cityForContentPage(
   templateType: string | null,
@@ -31,6 +42,15 @@ export function cityForContentPage(
     case "spanish_host_acq": {
       if (slug.startsWith(SPANISH_HOST_ACQ_PREFIX)) {
         return slug.slice(SPANISH_HOST_ACQ_PREFIX.length);
+      }
+      return null;
+    }
+    case "activity_city": {
+      for (const p of ACTIVITY_CITY_PREFIXES) {
+        if (slug.startsWith(p)) {
+          const rest = slug.slice(p.length);
+          return rest.length > 0 ? rest : null;
+        }
       }
       return null;
     }

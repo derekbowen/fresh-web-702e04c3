@@ -57,6 +57,7 @@ export type ContentPageTemplateType =
   | "host_acq_hub"
   | "swim_instructor_city"
   | "swim_instructor_hub"
+  | "activity_city"
   | "account_legal"
   | "other";
 
