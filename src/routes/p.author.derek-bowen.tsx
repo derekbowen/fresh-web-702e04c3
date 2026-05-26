@@ -91,6 +91,8 @@ const BOOKS: Book[] = [
 ];
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/derekcbowen/";
+const AMAZON_AUTHOR_URL =
+  "https://www.amazon.com/stores/Derek-Bowen/author/B0FJM55Y12";
 const PRESS_URL =
   "https://www.einpresswire.com/article/908834379/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours";
 
