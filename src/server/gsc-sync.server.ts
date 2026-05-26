@@ -178,10 +178,9 @@ export async function runGscSync(options: GscSyncOptions = {}): Promise<GscSyncR
   const runId = run.id as string;
 
   try {
-    const token = await getAccessToken(parsed.account);
     const capturedAt = new Date().toISOString();
 
-    const pageApiRows = await fetchSearchAnalytics(token, siteUrl, {
+    const pageApiRows = await fetchSearchAnalytics(siteUrl, {
       startDate,
       endDate,
       dimensions: ["page", "date"],
