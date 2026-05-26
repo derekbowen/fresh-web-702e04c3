@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
