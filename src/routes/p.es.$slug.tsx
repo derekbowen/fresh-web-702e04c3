@@ -19,6 +19,7 @@ import {
   ldJsonScript,
   SITE_URL,
   SITE_NAME,
+  AUTHOR_PERSON_JSONLD_REF,
 } from "@/lib/seo";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 
