@@ -128,12 +128,7 @@ export const Route = createFileRoute("/p/pool-rental-permits-by-state")({
           description: DESCRIPTION,
           datePublished: LAST_UPDATED,
           dateModified: LAST_UPDATED,
-          author: {
-            "@type": "Person",
-            name: "Derek Bowen",
-            jobTitle: "CEO, PRNM Corp",
-            url: `${SITE_URL}/p/about-our-company`,
-          },
+          author: AUTHOR_PERSON_JSONLD_REF,
           publisher: {
             "@type": "Organization",
             name: SITE_NAME,
