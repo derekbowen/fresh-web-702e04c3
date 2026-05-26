@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AUTHOR_PERSON_JSONLD_REF } from "@/lib/seo";
 
 export interface ComparisonPageProps {
   competitor: string;
@@ -289,11 +290,7 @@ export function articleJsonLd(opts: {
       "@type": "Article",
       headline: opts.title,
       description: opts.description,
-      author: {
-        "@type": "Person",
-        name: "Derek Bowen",
-        url: "https://www.linkedin.com/in/derekcbowen/",
-      },
+      author: AUTHOR_PERSON_JSONLD_REF,
       publisher: {
         "@type": "Organization",
         name: "Pool Rental Near Me",

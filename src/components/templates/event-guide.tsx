@@ -1,4 +1,5 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { HeroImage } from "@/components/hero-image";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
@@ -41,6 +42,7 @@ export function EventGuideTemplate({
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             {title}
           </h1>
+          <AuthorByline date={page.published_at ?? page.updated_at} />
           {description && (
             <p className="mt-4 text-lg text-muted-foreground">{description}</p>
           )}

@@ -1,4 +1,6 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AUTHOR_PERSON_JSONLD_REF } from "@/lib/seo";
+import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { HeroImage } from "@/components/hero-image";
 import { type LinkTarget } from "@/components/auto-linked-content";
@@ -84,15 +86,7 @@ export function HostAcqCityTemplate({
       {
         "@type": "Article",
         headline: `Become a Pool Host in ${cityName}, ${stateCode} — Earn ${earningsBand}/Month`,
-        author: {
-          "@type": "Person",
-          name: "Derek Bowen",
-          jobTitle: "Founder & CEO, PRNM Corp",
-          sameAs: [
-            "https://www.linkedin.com/in/derekcbowen/",
-            "https://www.amazon.com/stores/Derek-Bowen/author",
-          ],
-        },
+        author: AUTHOR_PERSON_JSONLD_REF,
         publisher: {
           "@type": "Organization",
           name: "Pool Rental Near Me",
@@ -191,9 +185,9 @@ export function HostAcqCityTemplate({
                   Earn {earningsBand}/mo.
                 </span>
               </h1>
-              <p className="mt-3 text-xs text-muted-foreground">
+              <AuthorByline date={dateModified} />
+              <p className="mt-1 text-xs text-muted-foreground">
                 <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
-                {" · "}Reviewed by Derek Bowen, Founder &amp; CEO, PRNM Corp
               </p>
               {description ? (
                 <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">

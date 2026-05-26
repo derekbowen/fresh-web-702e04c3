@@ -1,6 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AuthorByline } from "@/components/author-byline";
 import { type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
@@ -31,6 +32,7 @@ export function GenericPageTemplate({
         <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           {title}
         </h1>
+        <AuthorByline date={page.published_at ?? page.updated_at} />
         {page.description && (
           <p className="mt-4 text-lg text-muted-foreground">{page.description}</p>
         )}

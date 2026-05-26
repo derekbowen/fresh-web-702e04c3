@@ -27,6 +27,8 @@ import {
   ldJsonScript,
   SITE_URL,
   SITE_NAME,
+  AUTHOR_PERSON_JSONLD_REF,
+  AUTHOR_PERSON_URL,
 } from "@/lib/seo";
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
@@ -267,18 +269,16 @@ export const Route = createFileRoute("/p/$slug")({
     // Article JSON-LD — for content-style template types
     if (isArticleType(p.template_type)) {
       const authorName = p.author || "Derek Bowen";
+      const isDerek = authorName === "Derek Bowen";
       const article = {
         "@context": "https://schema.org",
         "@type": "Article",
         headline: p.title,
         description,
         image: p.cover_image_url ? [p.cover_image_url] : undefined,
-        author: {
-          "@type": "Person",
-          name: authorName,
-          jobTitle: authorName === "Derek Bowen" ? "CEO, PRNM Corp" : undefined,
-          url: authorName === "Derek Bowen" ? `${SITE_URL}/p/about-our-company` : undefined,
-        },
+        author: isDerek
+          ? AUTHOR_PERSON_JSONLD_REF
+          : { "@type": "Person", name: authorName },
         datePublished: toIsoOrUndefined(p.published_at),
         dateModified: toIsoOrUndefined(p.updated_at) ?? toIsoOrUndefined(p.published_at),
         mainEntityOfPage: `${SITE_URL}${path}`,

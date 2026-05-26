@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useMemo } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
 import { LiteYouTube } from "@/components/lite-youtube";
@@ -138,6 +139,7 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
               <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                 {page.title || page.seo_title || page.slug}
               </h1>
+              <AuthorByline date={page.published_at ?? page.updated_at} />
               {page.description ? (
                 <p className="mt-4 max-w-3xl text-lg text-muted-foreground">
                   {page.description}

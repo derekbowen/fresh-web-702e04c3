@@ -6,6 +6,7 @@ import {
   breadcrumbJsonLd,
   ldJsonScript,
   SITE_URL,
+  AUTHOR_PERSON_JSONLD_REF,
 } from "@/lib/seo";
 
 const PATH = "/p/pool-rental-insurance-explained";
@@ -105,12 +106,7 @@ export const Route = createFileRoute("/p/pool-rental-insurance-explained")({
           description: DESCRIPTION,
           datePublished: LAST_UPDATED,
           dateModified: LAST_UPDATED,
-          author: {
-            "@type": "Person",
-            name: "Derek Bowen",
-            jobTitle: "CEO, PRNM Corp",
-            url: `${SITE_URL}/p/about-our-company`,
-          },
+          author: AUTHOR_PERSON_JSONLD_REF,
           publisher: {
             "@type": "Organization",
             name: "Pool Rental Near Me",

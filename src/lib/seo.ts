@@ -20,6 +20,25 @@ export const SOCIAL_PROFILES = [
   "https://www.pinterest.com/poolrentalnearme",
 ];
 
+/**
+ * Canonical Author entity for Derek Bowen — referenced from every Article
+ * JSON-LD on the site so Google ties all content to one Person.
+ */
+export const AUTHOR_PERSON_URL = `${SITE_URL}/p/author/derek-bowen`;
+export const AUTHOR_PERSON_ID = `${AUTHOR_PERSON_URL}#person`;
+
+export const AUTHOR_PERSON_JSONLD_REF = {
+  "@type": "Person",
+  "@id": AUTHOR_PERSON_ID,
+  name: "Derek Bowen",
+  url: AUTHOR_PERSON_URL,
+  jobTitle: "Founder & CEO, PRNM Corp",
+  sameAs: [
+    "https://www.amazon.com/stores/Derek-Bowen/author/B0FJM55Y12",
+    "https://www.linkedin.com/in/derekcbowen/",
+  ],
+} as const;
+
 export interface SeoMetaInput {
   title: string;
   description: string;

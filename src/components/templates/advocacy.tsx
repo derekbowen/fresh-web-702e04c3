@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useMemo } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
 import { RelatedPages, type RelatedPagesItem } from "@/components/related-pages";
@@ -251,9 +252,7 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
               <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 {title}
               </h1>
-              <p className="mt-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Last updated {new Date(page.updated_at || Date.now()).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · Reviewed by Derek Bowen, CEO, PRNM Corp
-              </p>
+              <AuthorByline date={page.updated_at} />
               <p className="mt-5 text-lg leading-relaxed text-muted-foreground sm:text-xl">
                 {lede}
               </p>

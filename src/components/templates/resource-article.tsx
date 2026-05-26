@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { HeroImage } from "@/components/hero-image";
 import { RelatedPages } from "@/components/related-pages";
@@ -98,18 +99,8 @@ export function ResourceArticleTemplate({
           <h1 className="mt-2 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             {page.title || page.seo_title || page.slug}
           </h1>
-          <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
-            {page.author && <span>By {page.author}</span>}
-            {publishedAt && (
-              <time dateTime={publishedAt}>
-                {new Date(publishedAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-            )}
-          </div>
+          <AuthorByline date={publishedAt} />
+
           {(page.cover_image_url || page.hero_image_url) && (
             <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
               <HeroImage

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
@@ -44,6 +45,7 @@ export function SwimInstructorCityTemplate({
             <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
               Rent a Pool to Teach Swim Lessons in {where}
             </h1>
+            <AuthorByline date={page.published_at ?? page.updated_at} />
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{page.seo_description || page.description}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a href="/auth" className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:opacity-90">
