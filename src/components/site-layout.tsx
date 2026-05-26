@@ -425,6 +425,26 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
           </div>
         </aside>
       </div>
+
+      {/* Sticky bottom CTA — mobile only. Auto-hides while the slide-out menu is open. */}
+      {!open && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.25)] backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden">
+          <div className="flex items-center gap-2">
+            <a
+              href={marketplace("/s")}
+              className="inline-flex h-11 flex-1 items-center justify-center rounded-full border border-border bg-background text-sm font-semibold text-foreground hover:bg-muted"
+            >
+              Find a pool
+            </a>
+            <a
+              href={marketplace(LIST_SPACE_HREF)}
+              className="inline-flex h-11 flex-1 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary-glow"
+            >
+              List your space
+            </a>
+          </div>
+        </div>
+      )}
     </>
   );
 }
