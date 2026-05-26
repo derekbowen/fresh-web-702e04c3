@@ -374,11 +374,31 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
                   🎓 Free · Only on PRNM
                 </span>
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-                  Learn with Fred — the only Pool Host Academy on the internet.
-                </h2>
-                <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-                  135 free classes with Fred, our pool-hosting mascot, on safety, pricing, marketing, AI tools, guest experience, and the highest-paying booking niches. No other platform teaches you how to host — we wrote the playbook.
+
+                {/* Fred + headline — Fred is the focal point */}
+                <div className="mt-4 flex items-start gap-4 sm:gap-6">
+                  <div className="relative flex-shrink-0">
+                    <FredMascot
+                      variant="full"
+                      className="h-32 w-32 drop-shadow-xl sm:h-44 sm:w-44 lg:h-56 lg:w-56"
+                    />
+                    <span className="absolute -right-2 -top-1 inline-flex items-center rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-yellow-950 shadow-md sm:text-xs">
+                      Your coach
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+                      Learn with Fred — the only Pool Host Academy on the internet.
+                    </h2>
+                    <div className="relative mt-3 inline-block rounded-2xl bg-card px-4 py-2 text-sm font-medium text-foreground shadow-md ring-1 ring-border sm:text-base">
+                      <span className="font-semibold">Hey, I'm Fred.</span> I've coached 5,000+ hosts. I'll show you what actually works.
+                      <div className="absolute -left-1.5 top-4 h-3 w-3 rotate-45 bg-card ring-1 ring-border" />
+                    </div>
+                  </div>
+                </div>
+
+                <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
+                  135 free classes on safety, pricing, marketing, AI tools, guest experience, and the highest-paying booking niches. No other platform teaches you how to host — Fred wrote the playbook.
                 </p>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -411,37 +431,28 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 </p>
               </div>
               <div className="lg:col-span-5">
-                <div className="relative">
-                  {/* Fred — the host coach. Pops out of the card stack. */}
-                  <div className="pointer-events-none absolute -top-8 -left-6 z-10 hidden w-40 sm:block lg:-left-16 lg:w-52">
-                    <FredMascot variant="full" className="h-auto w-full drop-shadow-2xl" />
-                    <div className="pointer-events-auto mx-auto mt-1 w-[120px] rounded-2xl border border-border bg-card px-3 py-2 text-center text-xs font-semibold text-foreground shadow-md lg:w-[150px] lg:text-sm">
-                      Hey, I'm Fred. Pick a class.
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    {visibleOccasions.slice(0, 4).map((o, idx) => (
-                      <a
-                        key={o.slug}
-                        href={`/p/course/${o.slug}`}
-                        className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
-                      >
-                        <div className="aspect-square overflow-hidden">
-                          <img
-                            src={ACADEMY_HERO_MAP[o.img]}
-                            alt={`${o.title} hosting course`}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                        </div>
-                        <div className="absolute inset-x-0 bottom-0 p-3">
-                          <div className="text-xs font-semibold uppercase tracking-wider text-white/80">Course</div>
-                          <div className="text-sm font-bold text-white">{o.title}</div>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {visibleOccasions.slice(0, 4).map((o, idx) => (
+                    <a
+                      key={o.slug}
+                      href={`/p/course/${o.slug}`}
+                      className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
+                    >
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          src={ACADEMY_HERO_MAP[o.img]}
+                          alt={`${o.title} hosting course`}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 p-3">
+                        <div className="text-xs font-semibold uppercase tracking-wider text-white/80">Course</div>
+                        <div className="text-sm font-bold text-white">{o.title}</div>
+                      </div>
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
