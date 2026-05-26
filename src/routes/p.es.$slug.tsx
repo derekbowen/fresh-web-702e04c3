@@ -119,7 +119,7 @@ export const Route = createFileRoute("/p/es/$slug")({
         headline: p.title,
         description,
         image: p.cover_image_url ? [p.cover_image_url] : undefined,
-        author: { "@type": "Person", name: SITE_NAME },
+        author: AUTHOR_PERSON_JSONLD_REF,
         dateModified: p.updated_at,
         mainEntityOfPage: `${SITE_URL}${path}`,
         publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
