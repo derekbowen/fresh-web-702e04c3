@@ -185,9 +185,9 @@ export function HostAcqCityTemplate({
                   Earn {earningsBand}/mo.
                 </span>
               </h1>
-              <p className="mt-3 text-xs text-muted-foreground">
+              <AuthorByline date={dateModified} />
+              <p className="mt-1 text-xs text-muted-foreground">
                 <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
-                {" · "}Reviewed by Derek Bowen, Founder &amp; CEO, PRNM Corp
               </p>
               {description ? (
                 <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
