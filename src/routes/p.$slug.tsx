@@ -27,6 +27,8 @@ import {
   ldJsonScript,
   SITE_URL,
   SITE_NAME,
+  AUTHOR_PERSON_JSONLD_REF,
+  AUTHOR_PERSON_URL,
 } from "@/lib/seo";
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
