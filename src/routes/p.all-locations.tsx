@@ -15,9 +15,9 @@ export const Route = createFileRoute("/p/all-locations")({
   },
   head: ({ loaderData }) => {
     const meta = buildMeta({
-      title: `Pool Near Me: Browse Every City & Guide | Pool Rental Near Me`,
+      title: `Pool rental directory: every city, guide, and resource`,
       description:
-        "Pool near me directory — browse every private pool rental city, host guide, course, and resource on Pool Rental Near Me. The full site index.",
+        "Browse 5,100+ city pages, host guides, courses, and pool rental laws. The full Pool Rental Near Me index, find any page in two clicks.",
       path: "/p/all-locations",
     });
     return { meta: meta.meta, links: meta.links };
