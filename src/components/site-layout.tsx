@@ -10,6 +10,7 @@ import {
   type FooterLink,
   type FooterMarket,
 } from "@/lib/site-footer-defaults";
+import fredAvatar from "@/assets/fred-avatar.png";
 
 const FOOTER_YEAR = 2026;
 
@@ -114,13 +115,24 @@ function NavAnchor({
   onClick?: () => void;
 }) {
   const external = link.external;
+  const isFred = link.label === "Learn with Fred";
   return (
     <a
       href={external ? link.href : rel(link.href)}
       onClick={onClick}
-      className={className}
+      className={`${className ?? ""} ${isFred ? "inline-flex items-center gap-1.5" : ""}`}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >
+      {isFred && (
+        <img
+          src={fredAvatar}
+          alt=""
+          aria-hidden="true"
+          width={20}
+          height={20}
+          className="h-5 w-5 rounded-full object-cover ring-1 ring-border"
+        />
+      )}
       {link.label}
     </a>
   );
