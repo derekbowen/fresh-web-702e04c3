@@ -109,7 +109,7 @@ const PERSON_LD = {
     name: "PRNM Corp",
     url: SITE_URL,
   },
-  sameAs: [LINKEDIN_URL, PRESS_URL, ...BOOKS.map((b) => amazonUrl(b.asin))],
+  sameAs: [AMAZON_AUTHOR_URL, LINKEDIN_URL, PRESS_URL, ...BOOKS.map((b) => amazonUrl(b.asin))],
   knowsAbout: [
     "Pool rental hosting",
     "Peer-to-peer marketplace operations",
