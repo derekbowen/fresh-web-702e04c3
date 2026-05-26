@@ -230,7 +230,7 @@ function AuthorPage() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-foreground hover:text-primary"
                 >
-                  <BookOpen className="h-4 w-4" /> Books on Amazon
+                  <BookOpen className="h-4 w-4" /> Amazon author page
                 </a>
                 <a
                   href={PRESS_URL}
