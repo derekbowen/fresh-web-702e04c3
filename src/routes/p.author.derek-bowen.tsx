@@ -91,6 +91,8 @@ const BOOKS: Book[] = [
 ];
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/derekcbowen/";
+const AMAZON_AUTHOR_URL =
+  "https://www.amazon.com/stores/Derek-Bowen/author/B0FJM55Y12";
 const PRESS_URL =
   "https://www.einpresswire.com/article/908834379/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours";
 
@@ -107,7 +109,7 @@ const PERSON_LD = {
     name: "PRNM Corp",
     url: SITE_URL,
   },
-  sameAs: [LINKEDIN_URL, PRESS_URL, ...BOOKS.map((b) => amazonUrl(b.asin))],
+  sameAs: [AMAZON_AUTHOR_URL, LINKEDIN_URL, PRESS_URL, ...BOOKS.map((b) => amazonUrl(b.asin))],
   knowsAbout: [
     "Pool rental hosting",
     "Peer-to-peer marketplace operations",
@@ -223,12 +225,12 @@ function AuthorPage() {
                   <Linkedin className="h-4 w-4" /> LinkedIn
                 </a>
                 <a
-                  href="https://www.amazon.com/s?k=derek+bowen&i=digital-text"
+                  href={AMAZON_AUTHOR_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-foreground hover:text-primary"
                 >
-                  <BookOpen className="h-4 w-4" /> Books on Amazon
+                  <BookOpen className="h-4 w-4" /> Amazon author page
                 </a>
                 <a
                   href={PRESS_URL}
