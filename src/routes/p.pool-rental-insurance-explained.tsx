@@ -11,9 +11,9 @@ import {
 
 const PATH = "/p/pool-rental-insurance-explained";
 const TITLE =
-  "Pool Rental Insurance Explained: Swimply, Peerspace, Giggster & PRNM Compared (2026)";
+  "Pool rental insurance: Swimply vs PRNM vs Peerspace (2026)";
 const DESCRIPTION =
-  "What insurance actually covers a pool rental — and what doesn't. Side-by-side breakdown of Swimply's self-funded $1M Protection Guarantee, Peerspace's $1M Host Liability, Giggster's coverage, and Pool Rental Near Me's $2M/$4M Hartford-backed Business Owner's Policy. Sourced from each platform's published terms.";
+  "Side-by-side: Swimply's self-funded $1M guarantee vs PRNM's $2M Hartford-backed BOP vs Peerspace and Giggster. With carriers, limits, and proof.";
 const LAST_UPDATED = "2026-05-22";
 
 const faqs = [
