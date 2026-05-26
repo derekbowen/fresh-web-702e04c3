@@ -153,8 +153,8 @@ export async function runGscSync(options: GscSyncOptions = {}): Promise<GscSyncR
   const siteUrl = process.env.GSC_SITE_URL || DEFAULT_SITE_URL;
   const sb = supabaseAdmin as any;
 
-  const parsed = parseServiceAccount();
-  if (parsed.missingSecrets?.length || parsed.error || !parsed.account) {
+  const creds = checkGatewayCreds();
+  if (!creds.ok) {
     return {
       ok: false,
       runId: null,
@@ -164,8 +164,8 @@ export async function runGscSync(options: GscSyncOptions = {}): Promise<GscSyncR
       pagesSynced: 0,
       queriesSynced: 0,
       contentPagesUpdated: 0,
-      missingSecrets: parsed.missingSecrets,
-      error: parsed.error || `Missing required secret: ${(parsed.missingSecrets || []).join(", ")}`,
+      missingSecrets: creds.missingSecrets,
+      error: `Missing required secret: ${(creds.missingSecrets || []).join(", ")}`,
     };
   }
 
