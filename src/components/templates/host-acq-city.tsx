@@ -1,4 +1,5 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AUTHOR_PERSON_JSONLD_REF } from "@/lib/seo";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { HeroImage } from "@/components/hero-image";
 import { type LinkTarget } from "@/components/auto-linked-content";
