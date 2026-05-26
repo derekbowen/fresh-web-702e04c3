@@ -225,7 +225,7 @@ function AuthorPage() {
                   <Linkedin className="h-4 w-4" /> LinkedIn
                 </a>
                 <a
-                  href="https://www.amazon.com/s?k=derek+bowen&i=digital-text"
+                  href={AMAZON_AUTHOR_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-foreground hover:text-primary"
