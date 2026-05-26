@@ -147,6 +147,7 @@ import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
 import { Route as PEsSlugRouteImport } from './routes/p.es.$slug'
 import { Route as PCourseSlugRouteImport } from './routes/p.course.$slug'
+import { Route as PAuthorDerekBowenRouteImport } from './routes/p.author.derek-bowen'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
@@ -894,6 +895,11 @@ const PCourseSlugRoute = PCourseSlugRouteImport.update({
   path: '/p/course/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PAuthorDerekBowenRoute = PAuthorDerekBowenRouteImport.update({
+  id: '/p/author/derek-bowen',
+  path: '/p/author/derek-bowen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -1229,6 +1235,7 @@ export interface FileRoutesByFullPath {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/author/derek-bowen': typeof PAuthorDerekBowenRoute
   '/p/course/$slug': typeof PCourseSlugRoute
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
@@ -1403,6 +1410,7 @@ export interface FileRoutesByTo {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/author/derek-bowen': typeof PAuthorDerekBowenRoute
   '/p/course/$slug': typeof PCourseSlugRoute
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
@@ -1578,6 +1586,7 @@ export interface FileRoutesById {
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/p/author/derek-bowen': typeof PAuthorDerekBowenRoute
   '/p/course/$slug': typeof PCourseSlugRoute
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
@@ -1754,6 +1763,7 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/author/derek-bowen'
     | '/p/course/$slug'
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
@@ -1928,6 +1938,7 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/author/derek-bowen'
     | '/p/course/$slug'
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
@@ -2102,6 +2113,7 @@ export interface FileRouteTypes {
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/suppression'
+    | '/p/author/derek-bowen'
     | '/p/course/$slug'
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
@@ -2217,6 +2229,7 @@ export interface RootRouteChildren {
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   LSlugIdRoute: typeof LSlugIdRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  PAuthorDerekBowenRoute: typeof PAuthorDerekBowenRoute
   PCourseSlugRoute: typeof PCourseSlugRoute
   PEsSlugRoute: typeof PEsSlugRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
@@ -3213,6 +3226,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PCourseSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/author/derek-bowen': {
+      id: '/p/author/derek-bowen'
+      path: '/p/author/derek-bowen'
+      fullPath: '/p/author/derek-bowen'
+      preLoaderRoute: typeof PAuthorDerekBowenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -3734,6 +3754,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   LSlugIdRoute: LSlugIdRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  PAuthorDerekBowenRoute: PAuthorDerekBowenRoute,
   PCourseSlugRoute: PCourseSlugRoute,
   PEsSlugRoute: PEsSlugRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
@@ -3765,13 +3786,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
