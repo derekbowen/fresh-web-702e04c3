@@ -39,6 +39,7 @@ import { EventGuideTemplate } from "@/components/templates/event-guide";
 import { SwimInstructorCityTemplate } from "@/components/templates/swim-instructor-city";
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { PoolMaintenanceTemplate } from "@/components/templates/pool-maintenance";
+import { ActivityCityTemplate } from "@/components/templates/activity-city";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { heroPreloadLinks } from "@/lib/hero-image";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
@@ -100,7 +101,8 @@ export const Route = createFileRoute("/p/$slug")({
     if (
       page.template_type === "host_acq_city" ||
       page.template_type === "spanish_host_acq" ||
-      page.template_type === "swim_instructor_city"
+      page.template_type === "swim_instructor_city" ||
+      page.template_type === "activity_city"
     ) {
       try {
         const requirePathPrefix =
@@ -497,6 +499,8 @@ function ContentPageDispatcher() {
     case "host_advocacy_hub":
     case "host_advocacy_state":
       return <AdvocacyTemplate page={page} />;
+    case "activity_city":
+      return <ActivityCityTemplate page={page} nearbyCities={nearbyCities} linkTargets={linkTargets} />;
     default:
       return <GenericPageTemplate page={page} linkTargets={linkTargets} />;
   }

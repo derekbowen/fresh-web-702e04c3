@@ -1,43 +1,80 @@
-## The 10 opportunities (from your GSC export, last period)
+# Activity-modifier city pages: take Swimply's long-tail
 
-Ranked by upside (impressions × distance from #1, weighted by CTR gap).
+## Goal
 
-| # | URL | Pos | Impr | Clicks | Problem | Play |
-|---|---|---|---|---|---|---|
-| 1 | `/p/all-locations` | 16.8 | 20,720 | 209 | Page 2, weak title/H1, thin intro | Rewrite title+meta with primary kw; add 400-word intro w/ state-grouped TOC; bump to internal-link target from city pages |
-| 2 | `/` (home) | 10.5 | 17,346 | 434 | Stuck just below top 10 for "pool rentals near me" (3,636 impr) | Tighten H1+meta around "pool rentals near me", add FAQ schema, add city-grid above fold, internal links from top 50 city pages |
-| 3 | `/p/newyork` | 10.4 | 10,407 | 159 | Slug is `/newyork` not `/new-york`; light content vs SERP competitors | Expand to 2.5k words on Jurupa Valley template, add neighborhood cluster (Fort Greene, Brooklyn, etc. — we have these), add LocalBusiness JSON-LD, add 301 from a clean slug if missing |
-| 4 | `/p/privatepoolrentalssandiego` | 13.2 | 6,981 | 49 | Awful slug, low CTR, page 2 | Migrate to `/p/private-pool-rentals-san-diego` w/ 301, full host-acq-city template rewrite, add 6+ neighborhood sections |
-| 5 | `/p/why-hosts-are-leaving-swimply` | 5.9 | 5,762 | **4** | Pos 6 with 0.07% CTR = title/meta total failure | Rewrite title for click bait + clarity ("Why Swimply hosts are switching to Pool Rental Near Me in 2026"), rewrite meta, add comparison table above fold, add year in title |
-| 6 | `/p/riverside` | 11.2 | 4,763 | 70 | Page 2, slug missing state | Add `/p/riverside-ca` canonical, expand content to Jurupa Valley template, add nearby cities block, internal links from `/p/all-locations` |
-| 7 | `/p/best-poolside-beers` | 6.5 | 2,680 | 22 | Pos 6 / 0.8% CTR — title isn't competitive | Rewrite title with number+year ("17 best poolside beers for 2026, ranked"), add product schema, add image alt tags, refresh updated_at |
-| 8 | `/p/swimply-alternative-vs-pool-rental-near-me` | 7.2 | 2,633 | 14 | Pos 7 / 0.5% CTR — title is robotic | Rewrite to "Swimply alternatives: 5 better options for renting backyard pools (2026)", lead with comparison table, FAQ schema |
-| 9 | `/p/insurance-guide-for-pool-owners` | 7.2 | 2,158 | 13 | Pos 7 / 0.6% CTR; matches "pool insurance for renters" (1,393 impr, 0 clicks) | Rewrite title to lead with "Pool insurance for owners & renters: 2026 guide", add a dedicated H2 for renters intent, FAQ schema |
-| 10 | `/p/american-cities-with-pools` | 8.4 | 2,533 | 35 | Pos 8 / 1.4% CTR; list-post intent | Rewrite title with number+year, convert to ranked list with jump-links, add data table sortable by pool count |
+Build pages targeting `{activity} in {city}` queries that Swimply currently ranks #1-3 for with thin pages. Our advantage: real depth, EEAT, $2M insurance angle, 10% fee.
 
-Bonus mentions tracked but not in top 10: `/p/pool-rental-tax-write-offs-your-missing-out-on` (typo in slug — fix in Phase 2), `/p/hosting`, `/p/host-poolside-movie-night`, `/p/ai-cameras-pool-safety-drowning-prevention`.
+## Slug pattern
 
-## Execution plan
+`/p/{activity}-venues-{city-state}` — e.g. `/p/pool-party-venues-los-angeles-ca`, `/p/baby-shower-venues-houston-tx`, `/p/hot-tub-rental-miami-fl`.
 
-**Phase 1 — CTR fixes (ship first, 1 DB migration)**
-For pages 5, 7, 8, 9, 10 (low-CTR / good-position): UPDATE `content_pages` rows to rewrite `seo_title`, `seo_description`, `og_title`, `og_description` only. No body changes. These are the fastest wins — pos 6–8 with sub-1% CTR is purely a SERP-snippet problem. Expected: 3–10× clicks within 2–3 weeks, no rerank needed.
+Reasons: matches actual SERP queries ("baby shower venues", "pool party venues near me"), keeps everything under the existing `/p/*` prefix that nginx forwards, no new route file needed (the `p.$slug.tsx` resolver handles it via `template_type`).
 
-**Phase 2 — Content depth (5 pages, larger UPDATE)**
-For pages 1, 2, 3, 4, 6: rewrite `content` / `body_markdown` to follow the Jurupa Valley host-city template (2.5k–3.5k words, EEAT, neighborhood clusters, calculator/advocacy/side-hustle comparison block, city-specific FAQ). Update meta at same time. For #4 and #6 also queue 301 redirects via `legacy_slugs` to clean slugs (same pattern we used for the Spanish migration).
+## Activities (phase 1)
 
-**Phase 3 — Internal linking pass**
-- Add `/p/all-locations` link to footer of all 5,100+ city pages (boosts #1).
-- Add city-grid block to homepage (boosts #2).
-- Add "nearby cities" block to NY/Riverside pages pointing to existing neighborhood pages.
+| Activity | Slug fragment | Target query | Swimply best rank |
+|---|---|---|---|
+| Pool party | `pool-party-venues-` | "pool party venues {city}" | #2 (LA) |
+| Baby shower | `baby-shower-venues-` | "baby shower venues {city}" | #2 (Covina) |
+| Birthday party | `birthday-party-venues-` | "birthday party at a pool {city}" | #2 (LA) |
+| Hot tub rental | `hot-tub-rental-` | "hot tub near me {city}" | #7 (Austin) |
+| Dog-friendly pools | `dog-friendly-pools-` | "dog pool {city}" | #3 (SD) |
 
-**Phase 4 — Verify**
-Re-pull GSC in 3 weeks. Track delta on each URL.
+## Metros (phase 1, top 50)
 
-## Open questions before I start
+Pull from `cities` table ranked by population (or by existing `gsc_impressions` on the city's `content_pages` row). Top 50 US metros = ~250 pages.
 
-1. **Ship order**: Phase 1 (5 CTR-only rewrites, low risk, ~30 min) first, then come back for Phase 2/3 next session? Or batch all of Phase 1+2 now (~2 hours, 10 rows updated, ~25k tokens of new content)?
-2. **AI for content rewrites**: For Phase 2 I'll generate the 5 long-form rewrites via Lovable AI (google/gemini-2.5-pro) using the Jurupa Valley template as the system prompt — same approach you've sanctioned before. Confirm?
-3. **Slug redirects** (#4 SD, #6 Riverside, #3 NY): you want me to add 301s via `legacy_slugs` like the Spanish migration, right? Same pattern — old slug stays in `legacy_slugs[]`, new slug becomes primary, sitemap regenerates automatically.
-4. **Year in titles**: OK to use "2026" in titles for #5, #7, #8, #10? Helps CTR but requires a refresh annually.
+## Implementation
 
-Reply with answers and I'll execute Phase 1 immediately.
+1. **New template type** `activity_city` in `content_pages.template_type`.
+2. **New template component** `src/components/templates/activity-city.tsx` rendering:
+   - H1: `{Activity} venues in {City}, {ST}`
+   - Author byline (Derek Bowen)
+   - 4-paragraph intro: why this activity in this city (climate, scene, demand signals)
+   - "What you get when you book through PRNM": $2M insurance, instant book, hourly pricing, 10% host fee context
+   - Activity-specific guide block (e.g. baby shower: capacity, decor rules, food, photographer access)
+   - Price benchmarks for that activity in that city (pulled from city-level rates, never invented)
+   - Top 3-5 pool features renters want for this activity (heated, shallow end, shade, etc.)
+   - "How PRNM compares to Swimply for {activity}" — fee table, insurance, payout speed
+   - FAQ (6-8 Qs, JSON-LD FAQPage schema)
+   - Nearby city links (reuse `compute_related_city_slugs`)
+   - CTA to `/s?address={City}%2C+{ST}` (relative path, Sharetribe)
+   - Internal link to the canonical city page `/p/{city-slug}`
+3. **Generator server function** `src/server/activity-city-generator.functions.ts`:
+   - Admin-only (`requireSupabaseAuth` + admin role check)
+   - Takes `{ activity, citySlugs[] }`, calls Lovable AI Gateway (`google/gemini-2.5-pro`) to produce 1.5k-2k words per page following a strict prompt template
+   - Inserts into `content_pages` with `template_type='activity_city'`, status='draft' for review
+   - Word count target: 1500-2000 (less than host-acq 2.5-3.5k because intent is more transactional)
+4. **Admin UI panel** at existing admin route (small addition): list activities × metros grid, batch-generate button, draft preview, bulk publish.
+5. **Sitemap inclusion**: auto-pulled since sitemap reads from `content_pages` where status='published'.
+6. **Schema markdown** stored in `content` column; rendered via existing markdown pipeline.
+
+## EEAT requirements (workspace voice rules)
+
+- Sentence case headings, second person, no banned words
+- Derek Bowen byline + JSON-LD author Person entity (already wired sitewide)
+- Real numbers only — pull hourly rates from existing city rate data, never invent
+- City-specific facts in intro (no copy-paste between cities) — the AI prompt must require 2 city-specific signals (neighborhood, climate, event scene, local landmark)
+
+## Phase 1 deliverable (this turn)
+
+- DB: add `activity_city` template type to any enum/check constraint
+- Template component
+- Generator server fn + admin trigger UI
+- Generate 10 pages as a pilot (2 activities × 5 metros: LA, NYC, Houston, Miami, Phoenix) as drafts for review
+
+Once you approve the pilot output quality, run the full 250 in one batch.
+
+## Out of scope
+
+- No new top-level routes — everything under `/p/{slug}`
+- Spanish variants (phase 2)
+- Activity-modifier directory pages (phase 2)
+
+## Technical notes
+
+- AI provider: Lovable AI Gateway, model `google/gemini-2.5-pro`, no extra API key
+- Word count enforcement in generator (reject and regenerate if < 1500)
+- Each generated page gets a unique `seo_title` (≤60) and `seo_description` (≤160) from the AI, validated server-side
+- Slug uniqueness check before insert
+- 301 redirect setup: not needed (new pages, no legacy)

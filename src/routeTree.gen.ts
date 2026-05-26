@@ -143,6 +143,7 @@ import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-her
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminAutoRefreshRouteImport } from './routes/admin.auto-refresh'
 import { Route as AdminAutoOutreachRouteImport } from './routes/admin.auto-outreach'
+import { Route as AdminActivityCitiesRouteImport } from './routes/admin.activity-cities'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
 import { Route as PEsSlugRouteImport } from './routes/p.es.$slug'
@@ -875,6 +876,11 @@ const AdminAutoOutreachRoute = AdminAutoOutreachRouteImport.update({
   path: '/auto-outreach',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminActivityCitiesRoute = AdminActivityCitiesRouteImport.update({
+  id: '/activity-cities',
+  path: '/activity-cities',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AccountLearningRoute = AccountLearningRouteImport.update({
   id: '/account/learning',
   path: '/account/learning',
@@ -1128,6 +1134,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/activity-cities': typeof AdminActivityCitiesRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1303,6 +1310,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/activity-cities': typeof AdminActivityCitiesRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1479,6 +1487,7 @@ export interface FileRoutesById {
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/account/learning': typeof AccountLearningRoute
+  '/admin/activity-cities': typeof AdminActivityCitiesRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1656,6 +1665,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/activity-cities'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -1831,6 +1841,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/activity-cities'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -2006,6 +2017,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
     | '/account/learning'
+    | '/admin/activity-cities'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -3198,6 +3210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAutoOutreachRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/activity-cities': {
+      id: '/admin/activity-cities'
+      path: '/activity-cities'
+      fullPath: '/admin/activity-cities'
+      preLoaderRoute: typeof AdminActivityCitiesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/account/learning': {
       id: '/account/learning'
       path: '/account/learning'
@@ -3487,6 +3506,7 @@ const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminActivityCitiesRoute: typeof AdminActivityCitiesRoute
   AdminAutoOutreachRoute: typeof AdminAutoOutreachRoute
   AdminAutoRefreshRoute: typeof AdminAutoRefreshRoute
   AdminBlogRoute: typeof AdminBlogRoute
@@ -3547,6 +3567,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminActivityCitiesRoute: AdminActivityCitiesRoute,
   AdminAutoOutreachRoute: AdminAutoOutreachRoute,
   AdminAutoRefreshRoute: AdminAutoRefreshRoute,
   AdminBlogRoute: AdminBlogRoute,
