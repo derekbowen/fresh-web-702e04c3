@@ -201,7 +201,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <a href="/" className="flex items-center gap-2" onClick={close}>
-          <img src="/logo.png" alt="Pool Rental Near Me" className="h-9 w-auto" width="36" height="36" />
+          <img src={logoUrl} alt="Pool Rental Near Me" className="h-9 w-auto" width="36" height="36" />
         </a>
 
         <nav className="hidden items-center gap-5 lg:flex">
