@@ -164,8 +164,8 @@ function AuthorPage() {
         <div className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 lg:px-8">
           <Breadcrumbs
             items={[
-              { label: "Home", href: "/" },
-              { label: "Derek Bowen" },
+              { name: "Home", path: "/" },
+              { name: "Derek Bowen", path: PATH },
             ]}
           />
         </div>
