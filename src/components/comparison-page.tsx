@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
+import { AUTHOR_PERSON_JSONLD_REF } from "@/lib/seo";
 
 export interface ComparisonPageProps {
   competitor: string;
