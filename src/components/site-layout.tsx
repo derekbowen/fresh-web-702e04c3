@@ -11,6 +11,7 @@ import {
   type FooterMarket,
 } from "@/lib/site-footer-defaults";
 import fredAvatar from "@/assets/fred-avatar.png";
+import logoUrl from "@/assets/logo.png";
 
 const FOOTER_YEAR = 2026;
 
