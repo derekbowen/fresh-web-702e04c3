@@ -100,7 +100,7 @@ export function AcademyHubTemplate({
               Free host tools
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Pair the academy with the tools top earners use every week.
+              Pair Learn with Fred with the tools top earners use every week.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[
