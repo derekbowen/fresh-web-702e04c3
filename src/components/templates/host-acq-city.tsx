@@ -85,15 +85,7 @@ export function HostAcqCityTemplate({
       {
         "@type": "Article",
         headline: `Become a Pool Host in ${cityName}, ${stateCode} — Earn ${earningsBand}/Month`,
-        author: {
-          "@type": "Person",
-          name: "Derek Bowen",
-          jobTitle: "Founder & CEO, PRNM Corp",
-          sameAs: [
-            "https://www.linkedin.com/in/derekcbowen/",
-            "https://www.amazon.com/stores/Derek-Bowen/author",
-          ],
-        },
+        author: AUTHOR_PERSON_JSONLD_REF,
         publisher: {
           "@type": "Organization",
           name: "Pool Rental Near Me",
