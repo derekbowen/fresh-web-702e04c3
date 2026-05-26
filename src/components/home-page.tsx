@@ -7,6 +7,7 @@ import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCity, HomeData } from "@/server/home-data.functions";
 import { ACADEMY_HERO_MAP } from "@/lib/academy-images";
 import { LiteYouTube } from "@/components/lite-youtube";
+import { FredMascot } from "@/components/fred-mascot";
 
 // Below-the-fold form components — pull react-hook-form + zod resolvers.
 // Lazy-load so they don't bloat the homepage entry chunk.
@@ -410,28 +411,37 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 </p>
               </div>
               <div className="lg:col-span-5">
-                <div className="grid grid-cols-2 gap-3">
-                  {visibleOccasions.slice(0, 4).map((o, idx) => (
-                    <a
-                      key={o.slug}
-                      href={`/p/course/${o.slug}`}
-                      className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
-                    >
-                      <div className="aspect-square overflow-hidden">
-                        <img
-                          src={ACADEMY_HERO_MAP[o.img]}
-                          alt={`${o.title} hosting course`}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                      </div>
-                      <div className="absolute inset-x-0 bottom-0 p-3">
-                        <div className="text-xs font-semibold uppercase tracking-wider text-white/80">Course</div>
-                        <div className="text-sm font-bold text-white">{o.title}</div>
-                      </div>
-                    </a>
-                  ))}
+                <div className="relative">
+                  {/* Fred — the host coach. Pops out of the card stack. */}
+                  <div className="pointer-events-none absolute -top-8 -left-6 z-10 hidden w-40 sm:block lg:-left-16 lg:w-52">
+                    <FredMascot variant="full" className="h-auto w-full drop-shadow-2xl" />
+                    <div className="pointer-events-auto mx-auto mt-1 w-[120px] rounded-2xl border border-border bg-card px-3 py-2 text-center text-xs font-semibold text-foreground shadow-md lg:w-[150px] lg:text-sm">
+                      Hey, I'm Fred. Pick a class.
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {visibleOccasions.slice(0, 4).map((o, idx) => (
+                      <a
+                        key={o.slug}
+                        href={`/p/course/${o.slug}`}
+                        className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
+                      >
+                        <div className="aspect-square overflow-hidden">
+                          <img
+                            src={ACADEMY_HERO_MAP[o.img]}
+                            alt={`${o.title} hosting course`}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                        </div>
+                        <div className="absolute inset-x-0 bottom-0 p-3">
+                          <div className="text-xs font-semibold uppercase tracking-wider text-white/80">Course</div>
+                          <div className="text-sm font-bold text-white">{o.title}</div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

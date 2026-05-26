@@ -1,6 +1,7 @@
 import { getCategoryMeta, getTierMeta, I18N, type Lang } from "@/lib/academy";
 import { resolveAcademyHero } from "@/lib/academy-images";
 import { coursePath } from "@/lib/course-urls";
+import { FredMascot } from "@/components/fred-mascot";
 
 export interface CourseCardCourse {
   slug: string;
@@ -35,7 +36,7 @@ export function CourseCard({
       }`}
     >
       <a href={coursePath(course.slug)} className="block">
-        <div className="aspect-[16/10] overflow-hidden bg-muted">
+        <div className="relative aspect-[16/10] overflow-hidden bg-muted">
           {heroUrl ? (
             <img
               src={heroUrl}
@@ -48,6 +49,13 @@ export function CourseCard({
               {cat.emoji}
             </div>
           )}
+          {/* Fred "taught by" badge */}
+          <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-white/95 py-1 pl-1 pr-2.5 shadow-md backdrop-blur-sm">
+            <FredMascot variant="avatar" className="h-6 w-6 rounded-full object-cover" alt="Fred" />
+            <span className="text-[11px] font-semibold text-foreground">
+              {lang === "es" ? "Con Fred" : "With Fred"}
+            </span>
+          </div>
         </div>
       </a>
       <div className="flex flex-1 flex-col p-5">
