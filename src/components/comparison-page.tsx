@@ -290,11 +290,7 @@ export function articleJsonLd(opts: {
       "@type": "Article",
       headline: opts.title,
       description: opts.description,
-      author: {
-        "@type": "Person",
-        name: "Derek Bowen",
-        url: "https://www.linkedin.com/in/derekcbowen/",
-      },
+      author: AUTHOR_PERSON_JSONLD_REF,
       publisher: {
         "@type": "Organization",
         name: "Pool Rental Near Me",
