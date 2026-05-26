@@ -72,7 +72,7 @@ export function FloatingFredTip() {
   };
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-40 flex items-end gap-2 sm:bottom-6 sm:right-6">
+    <div className="pointer-events-none fixed bottom-6 right-6 z-40 hidden items-end gap-2 sm:flex">
       {open && (
         <div className="pointer-events-auto relative mb-2 max-w-[260px] rounded-2xl border border-border bg-card p-3 pr-7 text-sm shadow-xl sm:max-w-xs">
           <button
