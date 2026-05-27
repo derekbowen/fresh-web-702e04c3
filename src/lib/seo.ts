@@ -123,7 +123,7 @@ export function buildMeta({
   if (nextPath) links.push({ rel: "next", href: `${SITE_URL}${nextPath}` });
   if (hreflang?.length) {
     for (const h of hreflang) {
-      links.push({ rel: "alternate", hrefLang: h.lang, href: h.href });
+      links.push({ rel: "alternate", hreflang: h.lang, href: h.href });
     }
   }
   return { meta, links };
