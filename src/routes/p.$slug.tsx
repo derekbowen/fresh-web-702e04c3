@@ -160,8 +160,9 @@ export const Route = createFileRoute("/p/$slug")({
       }
     }
     let hreflangSibling: { slug: string; language: string } | null = null;
-    const pageForSibling = page as { hreflang_alt?: string | null; hreflang_group?: string | null };
-    if (pageForSibling.hreflang_alt || pageForSibling.hreflang_group) {
+    const pageForSibling = page as { hreflang_group?: string | null };
+    if (pageForSibling.hreflang_group) {
+
       try {
         const res = await getHreflangSibling({ data: { pageId: page.id } });
         hreflangSibling = res.sibling;
