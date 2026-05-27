@@ -59,6 +59,7 @@ import { Route as PPoolRentalPermitsByStateRouteImport } from './routes/p.pool-r
 import { Route as PPoolRentalInsuranceExplainedRouteImport } from './routes/p.pool-rental-insurance-explained'
 import { Route as PPoolRentalHostFeesComparedRouteImport } from './routes/p.pool-rental-host-fees-compared'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
+import { Route as PPoolPartyRentalsRouteImport } from './routes/p.pool-party-rentals'
 import { Route as PPoolHeatingCostCalculatorRouteImport } from './routes/p.pool-heating-cost-calculator'
 import { Route as PPeerspaceVsPoolRentalNearMeInChar123cityChar125RouteImport } from './routes/p.peerspace-vs-pool-rental-near-me-in-{$city}'
 import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.peerspace-vs-pool-rental-near-me'
@@ -448,6 +449,11 @@ const PPoolRentalHostFeesComparedRoute =
 const PPoolProsRoute = PPoolProsRouteImport.update({
   id: '/p/pool-pros',
   path: '/p/pool-pros',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PPoolPartyRentalsRoute = PPoolPartyRentalsRouteImport.update({
+  id: '/p/pool-party-rentals',
+  path: '/p/pool-party-rentals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PPoolHeatingCostCalculatorRoute =
@@ -1226,6 +1232,7 @@ export interface FileRoutesByFullPath {
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
+  '/p/pool-party-rentals': typeof PPoolPartyRentalsRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
@@ -1403,6 +1410,7 @@ export interface FileRoutesByTo {
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
+  '/p/pool-party-rentals': typeof PPoolPartyRentalsRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
@@ -1581,6 +1589,7 @@ export interface FileRoutesById {
   '/p/peerspace-vs-pool-rental-near-me': typeof PPeerspaceVsPoolRentalNearMeRoute
   '/p/peerspace-vs-pool-rental-near-me-in-{$city}': typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
+  '/p/pool-party-rentals': typeof PPoolPartyRentalsRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
@@ -1760,6 +1769,7 @@ export interface FileRouteTypes {
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-heating-cost-calculator'
+    | '/p/pool-party-rentals'
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
@@ -1937,6 +1947,7 @@ export interface FileRouteTypes {
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-heating-cost-calculator'
+    | '/p/pool-party-rentals'
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
@@ -2114,6 +2125,7 @@ export interface FileRouteTypes {
     | '/p/peerspace-vs-pool-rental-near-me'
     | '/p/peerspace-vs-pool-rental-near-me-in-{$city}'
     | '/p/pool-heating-cost-calculator'
+    | '/p/pool-party-rentals'
     | '/p/pool-pros'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
@@ -2232,6 +2244,7 @@ export interface RootRouteChildren {
   PPeerspaceVsPoolRentalNearMeRoute: typeof PPeerspaceVsPoolRentalNearMeRoute
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route: typeof PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route
   PPoolHeatingCostCalculatorRoute: typeof PPoolHeatingCostCalculatorRoute
+  PPoolPartyRentalsRoute: typeof PPoolPartyRentalsRoute
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
   PPoolRentalHostFeesComparedRoute: typeof PPoolRentalHostFeesComparedRoute
   PPoolRentalInsuranceExplainedRoute: typeof PPoolRentalInsuranceExplainedRoute
@@ -2633,6 +2646,13 @@ declare module '@tanstack/react-router' {
       path: '/p/pool-pros'
       fullPath: '/p/pool-pros'
       preLoaderRoute: typeof PPoolProsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/pool-party-rentals': {
+      id: '/p/pool-party-rentals'
+      path: '/p/pool-party-rentals'
+      fullPath: '/p/pool-party-rentals'
+      preLoaderRoute: typeof PPoolPartyRentalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/pool-heating-cost-calculator': {
@@ -3773,6 +3793,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route:
     PPeerspaceVsPoolRentalNearMeInChar123cityChar125Route,
   PPoolHeatingCostCalculatorRoute: PPoolHeatingCostCalculatorRoute,
+  PPoolPartyRentalsRoute: PPoolPartyRentalsRoute,
   PPoolProsRoute: PPoolProsRouteWithChildren,
   PPoolRentalHostFeesComparedRoute: PPoolRentalHostFeesComparedRoute,
   PPoolRentalInsuranceExplainedRoute: PPoolRentalInsuranceExplainedRoute,
