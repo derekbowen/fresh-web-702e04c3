@@ -1,0 +1,5 @@
+UPDATE public.content_pages
+SET content = REPLACE(REPLACE(REPLACE(content, '(213) 444-3745', '888-940-4247'), '(213)444-3745', '888-940-4247'), '213-444-3745', '888-940-4247'),
+    body_markdown = REPLACE(REPLACE(REPLACE(body_markdown, '(213) 444-3745', '888-940-4247'), '(213)444-3745', '888-940-4247'), '213-444-3745', '888-940-4247'),
+    raw_html = REPLACE(REPLACE(REPLACE(raw_html, '(213) 444-3745', '888-940-4247'), '(213)444-3745', '888-940-4247'), '213-444-3745', '888-940-4247')
+WHERE content ILIKE '%213%444%3745%' OR body_markdown ILIKE '%213%444%3745%' OR raw_html ILIKE '%213%444%3745%';
