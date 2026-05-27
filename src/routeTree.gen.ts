@@ -49,6 +49,7 @@ import { Route as PoolManagementSplatRouteImport } from './routes/pool-managemen
 import { Route as PWaiverGeneratorRouteImport } from './routes/p.waiver-generator'
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
 import { Route as PStartHostingRouteImport } from './routes/p.start-hosting'
+import { Route as PPrivatePoolRentalRouteImport } from './routes/p.private-pool-rental'
 import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
 import { Route as PPoolWifiGuideRouteImport } from './routes/p.pool-wifi-guide'
 import { Route as PPoolRulesGeneratorRouteImport } from './routes/p.pool-rules-generator'
@@ -394,6 +395,11 @@ const PSwimplyAlternativeVsPoolRentalNearMeRoute =
 const PStartHostingRoute = PStartHostingRouteImport.update({
   id: '/p/start-hosting',
   path: '/p/start-hosting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PPrivatePoolRentalRoute = PPrivatePoolRentalRouteImport.update({
+  id: '/p/private-pool-rental',
+  path: '/p/private-pool-rental',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PPrivacyRequestRoute = PPrivacyRequestRouteImport.update({
@@ -1229,6 +1235,7 @@ export interface FileRoutesByFullPath {
   '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/pool-wifi-guide': typeof PPoolWifiGuideRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
+  '/p/private-pool-rental': typeof PPrivatePoolRentalRoute
   '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
@@ -1405,6 +1412,7 @@ export interface FileRoutesByTo {
   '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/pool-wifi-guide': typeof PPoolWifiGuideRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
+  '/p/private-pool-rental': typeof PPrivatePoolRentalRoute
   '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
@@ -1582,6 +1590,7 @@ export interface FileRoutesById {
   '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/pool-wifi-guide': typeof PPoolWifiGuideRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
+  '/p/private-pool-rental': typeof PPrivatePoolRentalRoute
   '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
@@ -1760,6 +1769,7 @@ export interface FileRouteTypes {
     | '/p/pool-rules-generator'
     | '/p/pool-wifi-guide'
     | '/p/privacy-request'
+    | '/p/private-pool-rental'
     | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
@@ -1936,6 +1946,7 @@ export interface FileRouteTypes {
     | '/p/pool-rules-generator'
     | '/p/pool-wifi-guide'
     | '/p/privacy-request'
+    | '/p/private-pool-rental'
     | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
@@ -2112,6 +2123,7 @@ export interface FileRouteTypes {
     | '/p/pool-rules-generator'
     | '/p/pool-wifi-guide'
     | '/p/privacy-request'
+    | '/p/private-pool-rental'
     | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
@@ -2229,6 +2241,7 @@ export interface RootRouteChildren {
   PPoolRulesGeneratorRoute: typeof PPoolRulesGeneratorRoute
   PPoolWifiGuideRoute: typeof PPoolWifiGuideRoute
   PPrivacyRequestRoute: typeof PPrivacyRequestRoute
+  PPrivatePoolRentalRoute: typeof PPrivatePoolRentalRoute
   PStartHostingRoute: typeof PStartHostingRoute
   PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   PWaiverGeneratorRoute: typeof PWaiverGeneratorRoute
@@ -2550,6 +2563,13 @@ declare module '@tanstack/react-router' {
       path: '/p/start-hosting'
       fullPath: '/p/start-hosting'
       preLoaderRoute: typeof PStartHostingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/private-pool-rental': {
+      id: '/p/private-pool-rental'
+      path: '/p/private-pool-rental'
+      fullPath: '/p/private-pool-rental'
+      preLoaderRoute: typeof PPrivatePoolRentalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/privacy-request': {
@@ -3762,6 +3782,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPoolRulesGeneratorRoute: PPoolRulesGeneratorRoute,
   PPoolWifiGuideRoute: PPoolWifiGuideRoute,
   PPrivacyRequestRoute: PPrivacyRequestRoute,
+  PPrivatePoolRentalRoute: PPrivatePoolRentalRoute,
   PStartHostingRoute: PStartHostingRoute,
   PSwimplyAlternativeVsPoolRentalNearMeRoute:
     PSwimplyAlternativeVsPoolRentalNearMeRoute,
