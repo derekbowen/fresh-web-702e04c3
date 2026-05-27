@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
     const meta = buildMeta({
       title: "Pool Rental Near Me: Rent a Private Pool by the Hour",
       description:
-        "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
+        "Find and book a private pool for rent by the hour. Heated pools, hot tubs, and luxury backyards. Swimming pool rental with $2M liability insurance included.",
       path: "/",
       // Indexability is controlled by the X-Robots-Tag HTTP header in src/start.ts
       // (preview hosts get noindex; production www.poolrentalnearme.com is indexable).
