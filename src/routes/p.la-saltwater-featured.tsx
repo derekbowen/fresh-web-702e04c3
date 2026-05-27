@@ -132,7 +132,7 @@ export const Route = createFileRoute("/p/la-saltwater-featured")({
       title: TITLE,
       description: DESCRIPTION,
       path: PATH,
-      image: `${SITE_URL}/og-default.jpg`,
+      image: heroNight,
       type: "article",
     });
     const lodging = {
