@@ -72,6 +72,18 @@ function academyLangForSlug(slug: string | null | undefined): "en" | "es" | null
 
 export const Route = createFileRoute("/p/$slug")({
   beforeLoad: async ({ params }) => {
+    // Lowercase normalization: all canonical slugs in content_pages are lowercase
+    // (built via slugify()). Issue a 301 to the lowercase variant before any DB
+    // hit so Mixed-Case URLs collapse cleanly in GSC. Phase 2 Ship B.
+    const lower = params.slug.toLowerCase();
+    if (lower !== params.slug) {
+      throw redirect({
+        to: "/p/$slug",
+        params: { slug: lower },
+        statusCode: 301,
+        replace: true,
+      });
+    }
     const result = await lookupContentPage({ data: { slug: params.slug } });
     if (result.kind === "redirect") {
       if (result.redirectPath?.startsWith("/")) {
