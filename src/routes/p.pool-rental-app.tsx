@@ -151,10 +151,10 @@ function PoolRentalAppPage() {
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-white/90 sm:text-xl">
               Find a private pool for rent by the hour, anywhere in America. The
-              Pool Rental Near Me pool rental app puts heated pools, hot tubs,
-              and party-friendly backyards in your pocket. Book in minutes,
-              message your host, and show up ready to swim. Every booking
-              carries $2M in liability coverage at no extra cost.
+              Pool Rental Near Me app puts heated pools, hot tubs, and
+              party-friendly backyards in your pocket. Book in minutes, message
+              your host, and show up ready to swim. Every booking carries $2M
+              in liability coverage at no extra cost.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
