@@ -191,11 +191,11 @@ function PoolRentalAppPage() {
           >
             <h2>What the pool rental app does</h2>
             <p>
-              The Pool Rental Near Me pool rental app turns your phone into a
-              live map of every private pool you can book by the hour. Open the
-              app, allow location access, and you see heated pools, hot tubs,
-              saltwater backyards, and party-friendly spots near you with
-              hourly rates, photos, and host reviews.
+              The Pool Rental Near Me app turns your phone into a live map of
+              every private pool you can book by the hour. Open the app, allow
+              location access, and you see heated pools, hot tubs, saltwater
+              backyards, and party-friendly spots near you with hourly rates,
+              photos, and host reviews.
             </p>
             <p>
               Booking takes under a minute. Pick a slot on the host's calendar,
