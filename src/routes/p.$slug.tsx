@@ -160,7 +160,8 @@ export const Route = createFileRoute("/p/$slug")({
       }
     }
     let hreflangSibling: { slug: string; language: string } | null = null;
-    if ((page as { hreflang_alt?: string | null }).hreflang_alt) {
+    const pageForSibling = page as { hreflang_alt?: string | null; hreflang_group?: string | null };
+    if (pageForSibling.hreflang_alt || pageForSibling.hreflang_group) {
       try {
         const res = await getHreflangSibling({ data: { pageId: page.id } });
         hreflangSibling = res.sibling;
@@ -168,6 +169,7 @@ export const Route = createFileRoute("/p/$slug")({
         hreflangSibling = null;
       }
     }
+
     let relatedPosts: RelatedPostMeta[] = [];
     const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs;
     if (Array.isArray(relatedSlugs) && relatedSlugs.length > 0) {
