@@ -206,7 +206,7 @@ function PoolRentalAppPage() {
             </p>
             <p>
               Once your booking is confirmed, the address, parking notes, and
-              house rules unlock inside the app. Pull up directions, message
+              house rules appear inside the app. Pull up directions, message
               your host on arrival, and rate the space when you leave. Saved
               listings, past bookings, and refunds all live in one place.
             </p>
@@ -308,7 +308,7 @@ function PoolRentalAppPage() {
               </li>
               <li>
                 <strong>Host confirms.</strong> Most bookings confirm in under
-                an hour. The address and house rules unlock once confirmed.
+                an hour. The address and house rules appear once confirmed.
               </li>
               <li>
                 <strong>Show up, swim, head home.</strong> Stay within your
