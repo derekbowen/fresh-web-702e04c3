@@ -147,7 +147,7 @@ export const Route = createFileRoute("/p/la-saltwater-featured")({
         addressRegion: "CA",
         addressCountry: "US",
       },
-      image: [`${SITE_URL}/og-default.jpg`],
+      image: [`${SITE_URL}${heroNight}`],
       url: `${SITE_URL}${PATH}`,
       maximumAttendeeCapacity: 45,
       amenityFeature: INCLUDED.map((a) => ({
