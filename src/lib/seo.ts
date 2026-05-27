@@ -1,10 +1,14 @@
 /**
  * SEO helpers for building meta tags and JSON-LD structured data.
  */
+import ogDefaultImage from "@/assets/og-default.jpg";
 
 export const SITE_URL = "https://www.poolrentalnearme.com";
 export const SITE_NAME = "Pool Rental Near Me";
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.jpg`;
+// Bundled asset served from /fw-assets/ (the marketplace upstream
+// hijacks /og-default.jpg at the nginx layer, so the public/ file is
+// unreachable in production). buildMeta() prefixes relative paths with SITE_URL.
+export const DEFAULT_OG_IMAGE = ogDefaultImage;
 // TODO: replace logo URL with 600x600 transparent PNG once asset exists.
 // Using the 512×512 PWA icon as a square fallback so Organization.logo
 // is not a hero photo (which fails Google Rich Results Test).
