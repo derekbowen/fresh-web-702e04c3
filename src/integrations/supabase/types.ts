@@ -1145,6 +1145,36 @@ export type Database = {
         }
         Relationships: []
       }
+      dialect_audit_log: {
+        Row: {
+          after_value: string | null
+          batch_label: string
+          before_value: string | null
+          created_at: string
+          field_name: string
+          id: string
+          page_id: string
+        }
+        Insert: {
+          after_value?: string | null
+          batch_label?: string
+          before_value?: string | null
+          created_at?: string
+          field_name: string
+          id?: string
+          page_id: string
+        }
+        Update: {
+          after_value?: string | null
+          batch_label?: string
+          before_value?: string | null
+          created_at?: string
+          field_name?: string
+          id?: string
+          page_id?: string
+        }
+        Relationships: []
+      }
       email_branding: {
         Row: {
           created_at: string
