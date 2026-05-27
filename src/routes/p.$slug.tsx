@@ -446,8 +446,9 @@ function buildHreflangLinks(
   p: ContentPage,
   sibling: { slug: string; language: string } | null,
 ): Array<{ lang: string; href: string }> | undefined {
-  const pAny = p as { hreflang_alt?: string | null; hreflang_group?: string | null };
-  if (!sibling || (!pAny.hreflang_alt && !pAny.hreflang_group)) return undefined;
+  const pAny = p as { hreflang_group?: string | null };
+  if (!sibling || !pAny.hreflang_group) return undefined;
+
 
   const pagePath = p.url_path || `/p/${p.slug ?? ""}`;
   const siblingPath = `/p/${sibling.slug}`;
