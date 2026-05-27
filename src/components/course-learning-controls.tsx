@@ -161,15 +161,7 @@ export function CourseLearningControls({ courseSlug, courseTitle, expectedMinute
           <Button disabled variant="outline">Loading…</Button>
         ) : !signedIn ? (
           <Button asChild>
-            <Link
-              to="/auth"
-              search={{
-                mode: "signup",
-                redirect: typeof window !== "undefined" ? window.location.pathname : ACADEMY_HUB_PATH,
-              }}
-            >
-              Sign up to track progress
-            </Link>
+            <a href="/signup">Sign up to track progress</a>
           </Button>
         ) : status?.is_completed && status.certificate_uid ? (
           <div className="flex flex-wrap gap-2">

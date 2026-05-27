@@ -48,7 +48,7 @@ export function SwimInstructorCityTemplate({
             <AuthorByline date={page.published_at ?? page.updated_at} />
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{page.seo_description || page.description}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="/auth" className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:opacity-90">
+              <a href="/s" className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:opacity-90">
                 Find a {cityName} pool
               </a>
               <a href="/p/swim-instructor-pool-rental" className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-muted">
@@ -97,7 +97,7 @@ export function SwimInstructorCityTemplate({
                 📘 Swim Instructor Pool Rental Guide →
               </Link>
               <a
-                href="/auth"
+                href="/s"
                 className="block rounded-lg border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary"
               >
                 🏊 Browse {cityName} pools →
@@ -153,7 +153,7 @@ export function SwimInstructorCityTemplate({
             <h2 className="text-3xl font-bold tracking-tight text-foreground">Start teaching in {cityName} this week.</h2>
             <p className="mt-4 text-lg text-muted-foreground">Browse instructor-friendly pools, book by the hour, and run your class on your terms.</p>
             <div className="mt-6">
-              <a href="/auth" className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90">
+              <a href="/s" className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90">
                 Browse {cityName} pools
               </a>
             </div>
