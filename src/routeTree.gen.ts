@@ -58,6 +58,7 @@ import { Route as PPoolRentalsRouteImport } from './routes/p.pool-rentals'
 import { Route as PPoolRentalPermitsByStateRouteImport } from './routes/p.pool-rental-permits-by-state'
 import { Route as PPoolRentalInsuranceExplainedRouteImport } from './routes/p.pool-rental-insurance-explained'
 import { Route as PPoolRentalHostFeesComparedRouteImport } from './routes/p.pool-rental-host-fees-compared'
+import { Route as PPoolRentalAppRouteImport } from './routes/p.pool-rental-app'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
 import { Route as PPoolPartyRentalsRouteImport } from './routes/p.pool-party-rentals'
 import { Route as PPoolHeatingCostCalculatorRouteImport } from './routes/p.pool-heating-cost-calculator'
@@ -446,6 +447,11 @@ const PPoolRentalHostFeesComparedRoute =
     path: '/p/pool-rental-host-fees-compared',
     getParentRoute: () => rootRouteImport,
   } as any)
+const PPoolRentalAppRoute = PPoolRentalAppRouteImport.update({
+  id: '/p/pool-rental-app',
+  path: '/p/pool-rental-app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PPoolProsRoute = PPoolProsRouteImport.update({
   id: '/p/pool-pros',
   path: '/p/pool-pros',
@@ -1234,6 +1240,7 @@ export interface FileRoutesByFullPath {
   '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
   '/p/pool-party-rentals': typeof PPoolPartyRentalsRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
+  '/p/pool-rental-app': typeof PPoolRentalAppRoute
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
@@ -1412,6 +1419,7 @@ export interface FileRoutesByTo {
   '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
   '/p/pool-party-rentals': typeof PPoolPartyRentalsRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
+  '/p/pool-rental-app': typeof PPoolRentalAppRoute
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
@@ -1591,6 +1599,7 @@ export interface FileRoutesById {
   '/p/pool-heating-cost-calculator': typeof PPoolHeatingCostCalculatorRoute
   '/p/pool-party-rentals': typeof PPoolPartyRentalsRoute
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
+  '/p/pool-rental-app': typeof PPoolRentalAppRoute
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
@@ -1771,6 +1780,7 @@ export interface FileRouteTypes {
     | '/p/pool-heating-cost-calculator'
     | '/p/pool-party-rentals'
     | '/p/pool-pros'
+    | '/p/pool-rental-app'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
@@ -1949,6 +1959,7 @@ export interface FileRouteTypes {
     | '/p/pool-heating-cost-calculator'
     | '/p/pool-party-rentals'
     | '/p/pool-pros'
+    | '/p/pool-rental-app'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
@@ -2127,6 +2138,7 @@ export interface FileRouteTypes {
     | '/p/pool-heating-cost-calculator'
     | '/p/pool-party-rentals'
     | '/p/pool-pros'
+    | '/p/pool-rental-app'
     | '/p/pool-rental-host-fees-compared'
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
@@ -2246,6 +2258,7 @@ export interface RootRouteChildren {
   PPoolHeatingCostCalculatorRoute: typeof PPoolHeatingCostCalculatorRoute
   PPoolPartyRentalsRoute: typeof PPoolPartyRentalsRoute
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
+  PPoolRentalAppRoute: typeof PPoolRentalAppRoute
   PPoolRentalHostFeesComparedRoute: typeof PPoolRentalHostFeesComparedRoute
   PPoolRentalInsuranceExplainedRoute: typeof PPoolRentalInsuranceExplainedRoute
   PPoolRentalPermitsByStateRoute: typeof PPoolRentalPermitsByStateRoute
@@ -2639,6 +2652,13 @@ declare module '@tanstack/react-router' {
       path: '/p/pool-rental-host-fees-compared'
       fullPath: '/p/pool-rental-host-fees-compared'
       preLoaderRoute: typeof PPoolRentalHostFeesComparedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/pool-rental-app': {
+      id: '/p/pool-rental-app'
+      path: '/p/pool-rental-app'
+      fullPath: '/p/pool-rental-app'
+      preLoaderRoute: typeof PPoolRentalAppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/pool-pros': {
@@ -3795,6 +3815,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPoolHeatingCostCalculatorRoute: PPoolHeatingCostCalculatorRoute,
   PPoolPartyRentalsRoute: PPoolPartyRentalsRoute,
   PPoolProsRoute: PPoolProsRouteWithChildren,
+  PPoolRentalAppRoute: PPoolRentalAppRoute,
   PPoolRentalHostFeesComparedRoute: PPoolRentalHostFeesComparedRoute,
   PPoolRentalInsuranceExplainedRoute: PPoolRentalInsuranceExplainedRoute,
   PPoolRentalPermitsByStateRoute: PPoolRentalPermitsByStateRoute,
