@@ -160,8 +160,9 @@ export const Route = createFileRoute("/p/$slug")({
       }
     }
     let hreflangSibling: { slug: string; language: string } | null = null;
-    const pageForSibling = page as { hreflang_alt?: string | null; hreflang_group?: string | null };
-    if (pageForSibling.hreflang_alt || pageForSibling.hreflang_group) {
+    const pageForSibling = page as { hreflang_group?: string | null };
+    if (pageForSibling.hreflang_group) {
+
       try {
         const res = await getHreflangSibling({ data: { pageId: page.id } });
         hreflangSibling = res.sibling;
@@ -446,8 +447,9 @@ function buildHreflangLinks(
   p: ContentPage,
   sibling: { slug: string; language: string } | null,
 ): Array<{ lang: string; href: string }> | undefined {
-  const pAny = p as { hreflang_alt?: string | null; hreflang_group?: string | null };
-  if (!sibling || (!pAny.hreflang_alt && !pAny.hreflang_group)) return undefined;
+  const pAny = p as { hreflang_group?: string | null };
+  if (!sibling || !pAny.hreflang_group) return undefined;
+
 
   const pagePath = p.url_path || `/p/${p.slug ?? ""}`;
   const siblingPath = `/p/${sibling.slug}`;
