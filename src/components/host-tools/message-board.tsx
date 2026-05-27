@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+
 import { Loader2, MessageSquare, Heart, Send, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { listThreads, getThread, createThread, createReply } from "@/server/host-tools.functions";
