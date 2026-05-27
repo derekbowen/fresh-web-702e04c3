@@ -153,7 +153,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               Summer is better shared.
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-base text-white/95 drop-shadow sm:text-lg">
-              Rent a backyard pool by the hour, anywhere in America.
+              Find a private pool for rent by the hour, anywhere in America. From quiet family days to full pool party rentals.
             </p>
             <div className="mt-7 flex flex-col items-center gap-3">
               <a
@@ -188,6 +188,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <h2 className="text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Two ways to make summer happen.
             </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
+              Book a swimming pool rental as a guest, or list your private pool and earn $3K–$10K/month as a host.
+            </p>
             <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
               {/* Card A — Renter */}
               <a

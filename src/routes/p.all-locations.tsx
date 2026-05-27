@@ -17,7 +17,7 @@ export const Route = createFileRoute("/p/all-locations")({
     const meta = buildMeta({
       title: `Pool rental directory: every city, guide, and resource`,
       description:
-        "Browse 5,100+ city pages, host guides, courses, and pool rental laws. The full Pool Rental Near Me index, find any page in two clicks.",
+        "Every US city with a private pool rental available. Browse 5,100+ pages of pool for rent listings, hourly bookings, $2M liability included.",
       path: "/p/all-locations",
     });
     return { meta: meta.meta, links: meta.links };
@@ -71,7 +71,7 @@ function AllLocationsPage() {
               Pool near me: every city and guide on Pool Rental Near Me
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              Looking for a pool near you? Browse every private pool rental city, host guide, course, and resource we publish. Built so you can find any page in two clicks and so search engines can crawl the whole site.
+              Browse every city where you can find a pool for rent in the US. Every private pool rental city, host guide, course, and resource we publish. Built so you can find any page in two clicks and so search engines can crawl the whole site.
             </p>
 
             {/* Stat strip */}
