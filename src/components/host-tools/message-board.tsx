@@ -77,9 +77,9 @@ export function MessageBoard() {
             <Plus className="h-4 w-4" /> New thread
           </button>
         ) : (
-          <Link to="/auth" search={{ redirect: "/p/free-host-tools", mode: "signin" }} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
+          <a href="/login" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95">
             Sign in to post
-          </Link>
+          </a>
         )}
       </div>
 
@@ -199,9 +199,9 @@ function ThreadView({ thread, replies, user, onBack, onReply }: {
           </button>
         </div>
       ) : (
-        <Link to="/auth" search={{ redirect: "/p/free-host-tools", mode: "signin" }} className="block rounded-2xl border border-dashed border-border p-6 text-center text-sm text-primary hover:underline">
+        <a href="/login" className="block rounded-2xl border border-dashed border-border p-6 text-center text-sm text-primary hover:underline">
           Sign in to reply →
-        </Link>
+        </a>
       )}
     </div>
   );

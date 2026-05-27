@@ -127,7 +127,7 @@ function ReferralPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a
-                href="/auth"
+                href="/login"
                 className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
                 Sign in to get your link
@@ -263,7 +263,7 @@ function ReferralPage() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <a
-              href="/auth"
+              href="/login"
               className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
             >
               Get my referral link
