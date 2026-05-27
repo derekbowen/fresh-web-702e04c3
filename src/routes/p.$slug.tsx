@@ -160,7 +160,8 @@ export const Route = createFileRoute("/p/$slug")({
       }
     }
     let hreflangSibling: { slug: string; language: string } | null = null;
-    if ((page as { hreflang_alt?: string | null }).hreflang_alt) {
+    const pageForSibling = page as { hreflang_alt?: string | null; hreflang_group?: string | null };
+    if (pageForSibling.hreflang_alt || pageForSibling.hreflang_group) {
       try {
         const res = await getHreflangSibling({ data: { pageId: page.id } });
         hreflangSibling = res.sibling;
@@ -168,6 +169,7 @@ export const Route = createFileRoute("/p/$slug")({
         hreflangSibling = null;
       }
     }
+
     let relatedPosts: RelatedPostMeta[] = [];
     const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs;
     if (Array.isArray(relatedSlugs) && relatedSlugs.length > 0) {
@@ -444,11 +446,17 @@ function buildHreflangLinks(
   p: ContentPage,
   sibling: { slug: string; language: string } | null,
 ): Array<{ lang: string; href: string }> | undefined {
-  if (!p.hreflang_alt || !sibling) return undefined;
+  const pAny = p as { hreflang_alt?: string | null; hreflang_group?: string | null };
+  if (!sibling || (!pAny.hreflang_alt && !pAny.hreflang_group)) return undefined;
 
   const pagePath = p.url_path || `/p/${p.slug ?? ""}`;
   const siblingPath = `/p/${sibling.slug}`;
   const pageLang = p.locale || p.language || "en";
+
+  // US-targeted EN↔ES pairs use regional codes so Google clusters them per
+  // market. x-default points at the English variant.
+  const regional = (lang: string) =>
+    lang === "en" ? "en-US" : lang === "es" ? "es-US" : lang;
 
   const englishHref =
     pageLang === "en"
@@ -458,11 +466,12 @@ function buildHreflangLinks(
         : `${SITE_URL}${pagePath}`;
 
   return [
-    { lang: pageLang, href: `${SITE_URL}${pagePath}` },
-    { lang: sibling.language, href: `${SITE_URL}${siblingPath}` },
+    { lang: regional(pageLang), href: `${SITE_URL}${pagePath}` },
+    { lang: regional(sibling.language), href: `${SITE_URL}${siblingPath}` },
     { lang: "x-default", href: englishHref },
   ];
 }
+
 
 function ContentPageDispatcher() {
   const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts } = Route.useLoaderData();
