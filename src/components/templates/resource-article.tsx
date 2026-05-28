@@ -7,6 +7,7 @@ import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { HeroImage } from "@/components/hero-image";
 import { RelatedPages } from "@/components/related-pages";
 import { FaqBlock } from "@/components/faq-block";
+import { FounderBookingInline } from "@/components/founder-booking";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import type { LinkTarget } from "@/components/auto-linked-content";
 import type { ContentPage } from "@/server/content-pages.functions";
