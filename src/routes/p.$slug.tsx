@@ -326,6 +326,12 @@ export const Route = createFileRoute("/p/$slug")({
       scripts.push(ldJsonScript(localBiz));
     }
 
+    // Host-acquisition structural signals (WebPage+audience, ProfessionalService,
+    // Offer, HowTo) — host-acq templates only. Renter-facing pages skip these.
+    for (const block of hostAcqSchemasForPage(p, loaderData.city ?? null)) {
+      scripts.push(ldJsonScript(block));
+    }
+
     // State-scoped Service JSON-LD — advocacy state pages
     if (p.template_type === "host_advocacy_state" && p.slug) {
       const stateMatch = p.slug.match(/^host-advocacy-(.+)$/);
