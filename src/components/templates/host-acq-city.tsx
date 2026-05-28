@@ -17,6 +17,7 @@ import { FounderBookingInline } from "@/components/founder-booking";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
 import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
+import { normalizeTitleVariant, getVariantCopy } from "@/lib/host-acq-variants";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 import type { CityRow } from "@/server/cities.functions";
@@ -60,6 +61,12 @@ export function HostAcqCityTemplate({
   const stateCode = (city?.state_code || fallbackCity?.stateCode || "").toUpperCase();
   const tier = guide?.cityTier ?? "standard";
   const hourlyRate = guide?.defaultHourlyRate ?? 75;
+
+  // A/B/C/D title-test variant override. NULL = control = render as before.
+  const variant = normalizeTitleVariant(
+    (page as { title_variant?: string | null }).title_variant,
+  );
+  const variantCopy = variant ? getVariantCopy(variant, cityName, stateCode) : null;
 
   // Tier-tuned monthly earnings band (gross, before 10% fee)
   const lo = Math.round(hourlyRate * 8 * 4); // ~8 hrs/wk
@@ -180,26 +187,43 @@ export function HostAcqCityTemplate({
                 <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                 {stateCode ? `${cityName}, ${stateCode}` : cityName} · For pool owners
               </div>
-              <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Rent your {cityName} pool by the hour.{" "}
-                <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-                  Earn {earningsBand}/mo.
-                </span>
-              </h1>
-              <AuthorByline date={dateModified} />
-              <p className="mt-1 text-xs text-muted-foreground">
-                <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
-              </p>
-              {description ? (
-                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  {description}
-                </p>
+              {variantCopy ? (
+                <>
+                  <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                    {variantCopy.h1}
+                  </h1>
+                  <AuthorByline date={dateModified} />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
+                  </p>
+                  <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                    {variantCopy.intro}
+                  </p>
+                </>
               ) : (
-                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  Join the homeowners turning their backyard into income on
-                  Pool Rental Near Me — the fastest-growing hourly pool
-                  marketplace, with the lowest host fee in the industry.
-                </p>
+                <>
+                  <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                    Rent your {cityName} pool by the hour.{" "}
+                    <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                      Earn {earningsBand}/mo.
+                    </span>
+                  </h1>
+                  <AuthorByline date={dateModified} />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
+                  </p>
+                  {description ? (
+                    <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                      {description}
+                    </p>
+                  ) : (
+                    <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                      Join the homeowners turning their backyard into income on
+                      Pool Rental Near Me — the fastest-growing hourly pool
+                      marketplace, with the lowest host fee in the industry.
+                    </p>
+                  )}
+                </>
               )}
 
               <div className="mt-8 flex flex-wrap gap-3">
