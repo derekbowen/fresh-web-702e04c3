@@ -555,6 +555,12 @@ export function HostAcqCityTemplate({
           </div>
         </section>
 
+        {/* STAGED ROLLOUT: founder booking on Tracy test page only */}
+        {page.slug === "become-a-swimming-pool-host-tracy-ca" && (
+          <FounderBookingInline lang="en" />
+        )}
+
+
         <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <FaqBlock faqs={faqs} />
