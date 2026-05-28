@@ -17,6 +17,7 @@ import { FounderBookingInline } from "@/components/founder-booking";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
 import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
+import { normalizeTitleVariant, getVariantCopy } from "@/lib/host-acq-variants";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 import type { CityRow } from "@/server/cities.functions";
