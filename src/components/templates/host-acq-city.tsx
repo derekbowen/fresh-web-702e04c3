@@ -13,6 +13,7 @@ import { relatedSlugsToItems } from "@/lib/related-city-anchors";
 import { ADVOCACY_STATES } from "@/lib/advocacy-states";
 import { EarningsCalculator } from "@/components/earnings-calculator";
 import { HostLeadPopup } from "@/components/host-lead-popup";
+import { FounderBookingInline, FounderBookingSlideIn } from "@/components/founder-booking";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
 import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
