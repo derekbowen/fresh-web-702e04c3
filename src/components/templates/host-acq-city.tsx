@@ -62,6 +62,12 @@ export function HostAcqCityTemplate({
   const tier = guide?.cityTier ?? "standard";
   const hourlyRate = guide?.defaultHourlyRate ?? 75;
 
+  // A/B/C/D title-test variant override. NULL = control = render as before.
+  const variant = normalizeTitleVariant(
+    (page as { title_variant?: string | null }).title_variant,
+  );
+  const variantCopy = variant ? getVariantCopy(variant, cityName, stateCode) : null;
+
   // Tier-tuned monthly earnings band (gross, before 10% fee)
   const lo = Math.round(hourlyRate * 8 * 4); // ~8 hrs/wk
   const hi = Math.round(hourlyRate * 18 * 4); // ~18 hrs/wk
