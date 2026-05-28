@@ -75,7 +75,7 @@ const PRIMARY_NAV: NavLink[] = [
 const APP_NAV: NavLink[] = [
   {
     label: "iOS app",
-    href: "https://apps.apple.com/us/app/pool-rental-near-me/id6737762373",
+    href: "https://apps.apple.com/us/app/pool-rental-near-me-swim-fun/id6737762373",
     external: true,
   },
   {
