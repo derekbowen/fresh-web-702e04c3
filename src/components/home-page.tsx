@@ -604,7 +604,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               >
                 <div>
                   <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                    ⚖️ Host advocacy hub
+                    Host advocacy hub
                   </span>
                   <h3 className="mt-4 text-2xl font-bold text-foreground">
                     State-by-state hosting laws and rights
