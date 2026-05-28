@@ -67,7 +67,7 @@ export const TIERS: TierMeta[] = [
     label: "Tier 3 — Mastery",
     shortLabel: "Mastery",
     description: "Advanced strategy: niches, automation, and scale.",
-    emoji: "🟣",
+    emoji: "",
     badgeClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
   },
 ];
