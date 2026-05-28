@@ -136,8 +136,8 @@ function PoolRentalAppPage() {
               alt="Pool Rental Near Me app on a phone next to a private backyard pool"
               className="h-full w-full object-cover"
               loading="eager"
-              data-todo="hero-image-swap"
             />
+
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
           </div>
           <div className="relative mx-auto max-w-3xl px-4 py-20 text-center text-white sm:py-28">
