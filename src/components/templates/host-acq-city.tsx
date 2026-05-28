@@ -13,7 +13,7 @@ import { relatedSlugsToItems } from "@/lib/related-city-anchors";
 import { ADVOCACY_STATES } from "@/lib/advocacy-states";
 import { EarningsCalculator } from "@/components/earnings-calculator";
 import { HostLeadPopup } from "@/components/host-lead-popup";
-import { FounderBookingInline, FounderBookingSlideIn } from "@/components/founder-booking";
+import { FounderBookingInline } from "@/components/founder-booking";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import { buildHostCityGuide } from "@/lib/host-city-guide";
 import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
@@ -555,10 +555,8 @@ export function HostAcqCityTemplate({
           </div>
         </section>
 
-        {/* STAGED ROLLOUT: founder booking on Tracy test page only */}
-        {page.slug === "become-a-swimming-pool-host-tracy-ca" && (
-          <FounderBookingInline lang="en" />
-        )}
+        {/* Founder booking — all become-a-host pages */}
+        <FounderBookingInline lang="en" />
 
 
         <section className="py-16">
