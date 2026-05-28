@@ -680,7 +680,9 @@ export function HostAcqCityTemplate({
         </div>
       </div>
 
-      <HostLeadPopup cityName={cityName} stateCode={stateCode} />
+      {page.slug !== "become-a-swimming-pool-host-tracy-ca" && (
+        <HostLeadPopup cityName={cityName} stateCode={stateCode} />
+      )}
       {page.slug === "become-a-swimming-pool-host-tracy-ca" && (
         <FounderBookingSlideIn lang="en" />
       )}
