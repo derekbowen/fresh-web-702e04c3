@@ -140,6 +140,9 @@ export function ResourceArticleTemplate({
           )}
           <FaqBlock faqs={faqs} />
         </article>
+        {page.slug?.startsWith("become-a-swimming-pool-host-") && (
+          <FounderBookingInline lang="en" />
+        )}
         {relatedPosts.length > 0 ? (
           <RelatedPostsCard posts={relatedPosts} />
         ) : (
