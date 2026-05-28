@@ -187,26 +187,43 @@ export function HostAcqCityTemplate({
                 <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                 {stateCode ? `${cityName}, ${stateCode}` : cityName} · For pool owners
               </div>
-              <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Rent your {cityName} pool by the hour.{" "}
-                <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-                  Earn {earningsBand}/mo.
-                </span>
-              </h1>
-              <AuthorByline date={dateModified} />
-              <p className="mt-1 text-xs text-muted-foreground">
-                <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
-              </p>
-              {description ? (
-                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  {description}
-                </p>
+              {variantCopy ? (
+                <>
+                  <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                    {variantCopy.h1}
+                  </h1>
+                  <AuthorByline date={dateModified} />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
+                  </p>
+                  <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                    {variantCopy.intro}
+                  </p>
+                </>
               ) : (
-                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  Join the homeowners turning their backyard into income on
-                  Pool Rental Near Me — the fastest-growing hourly pool
-                  marketplace, with the lowest host fee in the industry.
-                </p>
+                <>
+                  <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                    Rent your {cityName} pool by the hour.{" "}
+                    <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                      Earn {earningsBand}/mo.
+                    </span>
+                  </h1>
+                  <AuthorByline date={dateModified} />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
+                  </p>
+                  {description ? (
+                    <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                      {description}
+                    </p>
+                  ) : (
+                    <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+                      Join the homeowners turning their backyard into income on
+                      Pool Rental Near Me — the fastest-growing hourly pool
+                      marketplace, with the lowest host fee in the industry.
+                    </p>
+                  )}
+                </>
               )}
 
               <div className="mt-8 flex flex-wrap gap-3">
