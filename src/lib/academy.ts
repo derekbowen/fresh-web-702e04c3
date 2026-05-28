@@ -7,16 +7,16 @@ export interface CategoryMeta {
 }
 
 const EN: Record<string, CategoryMeta> = {
-  safety: { label: "Safety & Rescue", description: "CPR, drowning response, supervision, and emergency planning.", emoji: "🛟" },
-  legal: { label: "Legal & Compliance", description: "Waivers, insurance, taxes, HOAs, and regulatory essentials.", emoji: "⚖️" },
-  marketing: { label: "Marketing & Pricing", description: "Photography, ads, listing optimization, and dynamic pricing.", emoji: "📈" },
-  "ai-tech": { label: "AI & Technology", description: "ChatGPT, automation, and smart tools for pool hosts.", emoji: "🤖" },
-  "guest-experience": { label: "Guest Experience", description: "Communication, check-in, repeat-guest mastery, and conflict resolution.", emoji: "🤝" },
-  operations: { label: "Operations", description: "Equipment, water care, scheduling, and day-to-day hosting.", emoji: "🛠️" },
-  occasions: { label: "Occasion Playbooks", description: "Bachelorette, Sweet 16, Quinceañera, family reunions and the highest-paying booking categories.", emoji: "🎉" },
-  niche: { label: "Niche Hosting", description: "Dog days, photoshoots, swim training, productions, aqua fitness — high-margin micro-niches.", emoji: "🐾" },
-  "host-acquisition": { label: "Host Growth & Migration", description: "Switch from Swimply, cross-list, model income, and price holiday premiums.", emoji: "🚀" },
-  general: { label: "General", description: "Foundational courses for new pool hosts.", emoji: "📚" },
+  safety: { label: "Safety & Rescue", description: "CPR, drowning response, supervision, and emergency planning.", emoji: "" },
+  legal: { label: "Legal & Compliance", description: "Waivers, insurance, taxes, HOAs, and regulatory essentials.", emoji: "" },
+  marketing: { label: "Marketing & Pricing", description: "Photography, ads, listing optimization, and dynamic pricing.", emoji: "" },
+  "ai-tech": { label: "AI & Technology", description: "ChatGPT, automation, and smart tools for pool hosts.", emoji: "" },
+  "guest-experience": { label: "Guest Experience", description: "Communication, check-in, repeat-guest mastery, and conflict resolution.", emoji: "" },
+  operations: { label: "Operations", description: "Equipment, water care, scheduling, and day-to-day hosting.", emoji: "" },
+  occasions: { label: "Occasion Playbooks", description: "Bachelorette, Sweet 16, Quinceañera, family reunions and the highest-paying booking categories.", emoji: "" },
+  niche: { label: "Niche Hosting", description: "Dog days, photoshoots, swim training, productions, aqua fitness — high-margin micro-niches.", emoji: "" },
+  "host-acquisition": { label: "Host Growth & Migration", description: "Switch from Swimply, cross-list, model income, and price holiday premiums.", emoji: "" },
+  general: { label: "General", description: "Foundational courses for new pool hosts.", emoji: "" },
 };
 
 const ES: Record<string, CategoryMeta> = {
