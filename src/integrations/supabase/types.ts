@@ -747,6 +747,7 @@ export type Database = {
           status: string
           template_type: string | null
           title: string | null
+          title_variant: string | null
           updated_at: string
           url_path: string | null
           youtube_video_id: string | null
@@ -793,6 +794,7 @@ export type Database = {
           status?: string
           template_type?: string | null
           title?: string | null
+          title_variant?: string | null
           updated_at?: string
           url_path?: string | null
           youtube_video_id?: string | null
@@ -839,6 +841,7 @@ export type Database = {
           status?: string
           template_type?: string | null
           title?: string | null
+          title_variant?: string | null
           updated_at?: string
           url_path?: string | null
           youtube_video_id?: string | null
