@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
-const TIDYCAL_URL = "https://tidycal.com/meetderek";
+const TIDYCAL_URL = "https://tidycal.com/meetderek/15-minute-meeting";
 
 type Lang = "en" | "es";
 
 const COPY = {
   en: {
-    heading: "Questions before you list? Talk to Derek, the founder.",
-    sub: "Grab 15 minutes. No pressure, no sales pitch — just a real person who'll help you get your pool listed and answer whatever's on your mind.",
+    heading: "Thinking about listing your pool? Talk to Derek, the founder.",
+    sub: "Book 15 minutes with me. I'll walk you through how it works, what you could earn, how insurance covers you, and how to get your first booking. No pressure, no sales pitch.",
     slide: "Still thinking it over?",
     slideCta: "Talk to the founder, 15 min",
     dismiss: "Dismiss",
@@ -15,8 +15,8 @@ const COPY = {
     close: "Close",
   },
   es: {
-    heading: "¿Tienes preguntas antes de publicar tu piscina? Habla con Derek, el fundador.",
-    sub: "Solo 15 minutos. Sin compromiso y sin ventas — una persona real que te ayudará a publicar tu piscina y responder tus preguntas.",
+    heading: "¿Estás pensando en publicar tu piscina? Habla con Derek, el fundador.",
+    sub: "Reserva 15 minutos conmigo. Te explico cómo funciona, cuánto podrías ganar, cómo te cubre el seguro y cómo conseguir tu primera reserva. Sin compromiso y sin ventas.",
     slide: "¿Todavía lo estás pensando?",
     slideCta: "Habla con el fundador, 15 min",
     dismiss: "Cerrar",
