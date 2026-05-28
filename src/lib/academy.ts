@@ -7,16 +7,16 @@ export interface CategoryMeta {
 }
 
 const EN: Record<string, CategoryMeta> = {
-  safety: { label: "Safety & Rescue", description: "CPR, drowning response, supervision, and emergency planning.", emoji: "🛟" },
-  legal: { label: "Legal & Compliance", description: "Waivers, insurance, taxes, HOAs, and regulatory essentials.", emoji: "⚖️" },
-  marketing: { label: "Marketing & Pricing", description: "Photography, ads, listing optimization, and dynamic pricing.", emoji: "📈" },
-  "ai-tech": { label: "AI & Technology", description: "ChatGPT, automation, and smart tools for pool hosts.", emoji: "🤖" },
-  "guest-experience": { label: "Guest Experience", description: "Communication, check-in, repeat-guest mastery, and conflict resolution.", emoji: "🤝" },
-  operations: { label: "Operations", description: "Equipment, water care, scheduling, and day-to-day hosting.", emoji: "🛠️" },
-  occasions: { label: "Occasion Playbooks", description: "Bachelorette, Sweet 16, Quinceañera, family reunions and the highest-paying booking categories.", emoji: "🎉" },
-  niche: { label: "Niche Hosting", description: "Dog days, photoshoots, swim training, productions, aqua fitness — high-margin micro-niches.", emoji: "🐾" },
-  "host-acquisition": { label: "Host Growth & Migration", description: "Switch from Swimply, cross-list, model income, and price holiday premiums.", emoji: "🚀" },
-  general: { label: "General", description: "Foundational courses for new pool hosts.", emoji: "📚" },
+  safety: { label: "Safety & Rescue", description: "CPR, drowning response, supervision, and emergency planning.", emoji: "" },
+  legal: { label: "Legal & Compliance", description: "Waivers, insurance, taxes, HOAs, and regulatory essentials.", emoji: "" },
+  marketing: { label: "Marketing & Pricing", description: "Photography, ads, listing optimization, and dynamic pricing.", emoji: "" },
+  "ai-tech": { label: "AI & Technology", description: "ChatGPT, automation, and smart tools for pool hosts.", emoji: "" },
+  "guest-experience": { label: "Guest Experience", description: "Communication, check-in, repeat-guest mastery, and conflict resolution.", emoji: "" },
+  operations: { label: "Operations", description: "Equipment, water care, scheduling, and day-to-day hosting.", emoji: "" },
+  occasions: { label: "Occasion Playbooks", description: "Bachelorette, Sweet 16, Quinceañera, family reunions and the highest-paying booking categories.", emoji: "" },
+  niche: { label: "Niche Hosting", description: "Dog days, photoshoots, swim training, productions, aqua fitness — high-margin micro-niches.", emoji: "" },
+  "host-acquisition": { label: "Host Growth & Migration", description: "Switch from Swimply, cross-list, model income, and price holiday premiums.", emoji: "" },
+  general: { label: "General", description: "Foundational courses for new pool hosts.", emoji: "" },
 };
 
 const ES: Record<string, CategoryMeta> = {
@@ -29,7 +29,7 @@ export function getCategoryMeta(slug: string, lang: Lang = "en"): CategoryMeta {
     map[slug] ?? {
       label: slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
       description: "",
-      emoji: "🎓",
+      emoji: "",
     }
   );
 }
@@ -51,7 +51,7 @@ export const TIERS: TierMeta[] = [
     label: "Tier 1 — Foundations",
     shortLabel: "Foundations",
     description: "Start here. Core skills every pool host needs on day one.",
-    emoji: "🟢",
+    emoji: "",
     badgeClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
   },
   {
@@ -59,7 +59,7 @@ export const TIERS: TierMeta[] = [
     label: "Tier 2 — Growth",
     shortLabel: "Growth",
     description: "Level up bookings, pricing, and guest experience.",
-    emoji: "🔵",
+    emoji: "",
     badgeClass: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
   },
   {
@@ -67,7 +67,7 @@ export const TIERS: TierMeta[] = [
     label: "Tier 3 — Mastery",
     shortLabel: "Mastery",
     description: "Advanced strategy: niches, automation, and scale.",
-    emoji: "🟣",
+    emoji: "",
     badgeClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
   },
 ];

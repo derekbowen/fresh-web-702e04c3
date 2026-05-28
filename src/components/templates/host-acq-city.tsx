@@ -356,20 +356,17 @@ export function HostAcqCityTemplate({
         <section className="border-b border-border py-12 sm:py-16">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div className="rounded-2xl border-l-4 border-primary bg-primary/5 p-6 sm:p-8">
-              <div className="flex items-start gap-4">
-                <div className="text-3xl" aria-hidden="true">🛡️</div>
-                <div>
-                  <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                    Real insurance, not a self-funded guarantee
-                  </h2>
-                  <p className="mt-3 text-base leading-relaxed text-foreground/90">
-                    Pool Rental Near Me's <strong>$2M per-occurrence / $4M aggregate general liability</strong>{" "}
-                    is carrier-backed third-party insurance underwritten by{" "}
-                    <strong>Hartford Underwriters Insurance Company</strong> — not a self-funded host
-                    guarantee. Includes <strong>$150K STRETCH® PLUS property coverage</strong> and{" "}
-                    <strong>$10K medical expenses per person</strong>.
-                  </p>
-                </div>
+              <div>
+                <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+                  Real insurance, not a self-funded guarantee
+                </h2>
+                <p className="mt-3 text-base leading-relaxed text-foreground/90">
+                  Pool Rental Near Me's <strong>$2M per-occurrence / $4M aggregate general liability</strong>{" "}
+                  is carrier-backed third-party insurance underwritten by{" "}
+                  <strong>Hartford Underwriters Insurance Company</strong> — not a self-funded host
+                  guarantee. Includes <strong>$150K STRETCH® PLUS property coverage</strong> and{" "}
+                  <strong>$10K medical expenses per person</strong>.
+                </p>
               </div>
             </div>
           </div>

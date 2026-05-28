@@ -375,7 +375,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <div className="grid items-center gap-10 lg:grid-cols-12">
               <div className="lg:col-span-7">
                 <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                  🎓 Free · Only on PRNM
+                  Free · Only on PRNM
                 </span>
 
                 {/* Fred + headline — Fred is the focal point */}
@@ -406,16 +406,16 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {[
-                    { e: "🛟", t: "Safety & Rescue" },
-                    { e: "📈", t: "Marketing & Pricing" },
-                    { e: "🤖", t: "AI & Automation" },
-                    { e: "🎉", t: "Occasion Playbooks" },
-                    { e: "⚖️", t: "Legal & Insurance" },
-                    { e: "🚀", t: "Switch from Swimply" },
-                  ].map((i) => (
-                    <div key={i.t} className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-2.5">
-                      <span className="text-xl" aria-hidden>{i.e}</span>
-                      <span className="text-sm font-medium text-foreground">{i.t}</span>
+                    "Safety & Rescue",
+                    "Marketing & Pricing",
+                    "AI & Automation",
+                    "Occasion Playbooks",
+                    "Legal & Insurance",
+                    "Switch from Swimply",
+                  ].map((t) => (
+                    <div key={t} className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-2.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
+                      <span className="text-sm font-medium text-foreground">{t}</span>
                     </div>
                   ))}
                 </div>
@@ -604,7 +604,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               >
                 <div>
                   <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                    ⚖️ Host advocacy hub
+                    Host advocacy hub
                   </span>
                   <h3 className="mt-4 text-2xl font-bold text-foreground">
                     State-by-state hosting laws and rights
