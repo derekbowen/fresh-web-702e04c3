@@ -51,7 +51,7 @@ export const TIERS: TierMeta[] = [
     label: "Tier 1 — Foundations",
     shortLabel: "Foundations",
     description: "Start here. Core skills every pool host needs on day one.",
-    emoji: "🟢",
+    emoji: "",
     badgeClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
   },
   {
