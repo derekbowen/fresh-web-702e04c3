@@ -70,7 +70,7 @@ export function GenericPageTemplate({
         <RelatedPages />
       </main>
       {(page.template_type === "spanish_host_acq" ||
-        page.template_type === "host_acq_city_es") && (
+        (page.template_type as string | null) === "host_acq_city_es") && (
         <FounderBookingInline lang="es" />
       )}
       <SiteFooter />
