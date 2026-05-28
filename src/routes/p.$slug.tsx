@@ -207,8 +207,22 @@ export const Route = createFileRoute("/p/$slug")({
     // a single canonical URL — even before the 301 redirect fires.
     const canonicalPath = p.url_path || `/p/${p.slug ?? params.slug}`;
     const titleBase = p.title || p.seo_title || params.slug;
-    const title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
-    const description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
+    let title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
+    let description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
+
+    // A/B/C/D title-test override (host_acq_city only; NULL = control = no change)
+    const variant = p.template_type === "host_acq_city"
+      ? normalizeTitleVariant((p as { title_variant?: string | null }).title_variant)
+      : null;
+    if (variant) {
+      const citySlug = cityForContentPage(p.template_type, p.slug);
+      const parsed = citySlug ? parseCitySlug(citySlug) : null;
+      const cityName = loaderData.city?.name || parsed?.city || "your city";
+      const stateCode = (loaderData.city?.state_code || parsed?.stateCode || "").toUpperCase();
+      const copy = getVariantCopy(variant, cityName, stateCode);
+      title = copy.title;
+      description = copy.metaDescription;
+    }
 
     // Hreflang — emit the EN↔ES pair for the academy hubs and any other
     // page that has a known twin. (Skipped on simple en pages with no twin.)
