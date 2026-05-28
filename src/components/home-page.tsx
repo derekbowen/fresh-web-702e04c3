@@ -375,7 +375,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <div className="grid items-center gap-10 lg:grid-cols-12">
               <div className="lg:col-span-7">
                 <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                  🎓 Free · Only on PRNM
+                  Free · Only on PRNM
                 </span>
 
                 {/* Fred + headline — Fred is the focal point */}
