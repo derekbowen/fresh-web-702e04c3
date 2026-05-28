@@ -7,7 +7,7 @@ import { getIntercomAppId, getIntercomUserJwt } from "@/server/intercom.function
 
 /** Pull useful IDs out of the current path for support context. */
 function deriveContext(pathname: string) {
-  const ctx: Record<string, string | boolean> = { current_url: pathname };
+  const ctx: Record<string, string | boolean | number> = { current_url: pathname };
 
   // /l/<slug>/<id> — listing detail
   const listing = pathname.match(/^\/l\/[^/]+\/([^/?#]+)/);
@@ -27,6 +27,8 @@ function deriveContext(pathname: string) {
   const contentPage = pathname.match(/^\/p\/([^/?#]+)/);
   if (contentPage) ctx.content_page_slug = contentPage[1];
 
+  const isTracy = pathname === "/p/become-a-swimming-pool-host-tracy-ca";
+  ctx.vertical_padding = isTracy ? 80 : 20;
   return ctx;
 }
 
