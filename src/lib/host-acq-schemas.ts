@@ -14,7 +14,6 @@
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { CityRow } from "@/server/cities.functions";
 import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
-import { buildHostCityGuide } from "@/lib/host-city-guide";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const HOST_ACQ_TEMPLATES = new Set(["host_acq_city", "spanish_host_acq"]);
@@ -34,9 +33,6 @@ export function hostAcqSchemasForPage(
   const stateName = city?.state || stateCode || null;
 
   if (!cityName) return [];
-
-  const guide = city ? buildHostCityGuide(city) : null;
-  const hourlyRate = guide?.defaultHourlyRate ?? 75;
 
   const language =
     page.language || (page.template_type === "spanish_host_acq" ? "es" : "en");
@@ -114,7 +110,7 @@ export function hostAcqSchemasForPage(
         "@type": "HowToStep",
         position: 2,
         name: "Set your hourly rate",
-        text: `Most ${cityName} hosts price between $${Math.round(hourlyRate * 0.7)}-$${Math.round(hourlyRate * 1.4)}/hour based on pool size and amenities.`,
+        text: "Set a rate that reflects your pool size, location, and amenities. You stay in control.",
         url: `${pageUrl}#step-rate`,
       },
       {
