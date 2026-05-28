@@ -37,9 +37,6 @@ export function hostAcqSchemasForPage(
 
   const guide = city ? buildHostCityGuide(city) : null;
   const hourlyRate = guide?.defaultHourlyRate ?? 75;
-  const lo = Math.round(hourlyRate * 8 * 4);
-  const hi = Math.round(hourlyRate * 18 * 4);
-  const earningsBand = `$${lo.toLocaleString()}-$${hi.toLocaleString()}+`;
 
   const language =
     page.language || (page.template_type === "spanish_host_acq" ? "es" : "en");
@@ -91,7 +88,7 @@ export function hostAcqSchemasForPage(
   const offer: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Offer",
-    name: `List Your Pool — Earn ${earningsBand}/month`,
+    name: `List Your Pool in ${cityName}, ${stateCode}`,
     category: "Income Opportunity",
     eligibleCustomerType: "PropertyOwner",
     areaServed: geoArea,
