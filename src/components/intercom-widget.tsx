@@ -27,6 +27,8 @@ function deriveContext(pathname: string) {
   const contentPage = pathname.match(/^\/p\/([^/?#]+)/);
   if (contentPage) ctx.content_page_slug = contentPage[1];
 
+  const isTracy = pathname === "/p/become-a-swimming-pool-host-tracy-ca";
+  ctx.vertical_padding = isTracy ? 80 : 20;
   return ctx;
 }
 
