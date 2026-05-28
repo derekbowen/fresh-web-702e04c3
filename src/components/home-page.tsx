@@ -406,16 +406,16 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {[
-                    { e: "🛟", t: "Safety & Rescue" },
-                    { e: "📈", t: "Marketing & Pricing" },
-                    { e: "🤖", t: "AI & Automation" },
-                    { e: "🎉", t: "Occasion Playbooks" },
-                    { e: "⚖️", t: "Legal & Insurance" },
-                    { e: "🚀", t: "Switch from Swimply" },
-                  ].map((i) => (
-                    <div key={i.t} className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-2.5">
-                      <span className="text-xl" aria-hidden>{i.e}</span>
-                      <span className="text-sm font-medium text-foreground">{i.t}</span>
+                    "Safety & Rescue",
+                    "Marketing & Pricing",
+                    "AI & Automation",
+                    "Occasion Playbooks",
+                    "Legal & Insurance",
+                    "Switch from Swimply",
+                  ].map((t) => (
+                    <div key={t} className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-2.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
+                      <span className="text-sm font-medium text-foreground">{t}</span>
                     </div>
                   ))}
                 </div>
