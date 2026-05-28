@@ -136,8 +136,8 @@ function PoolRentalAppPage() {
               alt="Pool Rental Near Me app on a phone next to a private backyard pool"
               className="h-full w-full object-cover"
               loading="eager"
-              data-todo="hero-image-swap"
             />
+
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
           </div>
           <div className="relative mx-auto max-w-3xl px-4 py-20 text-center text-white sm:py-28">
@@ -211,32 +211,30 @@ function PoolRentalAppPage() {
               listings, past bookings, and refunds all live in one place.
             </p>
 
-            {/* Screenshot placeholders */}
-            <div className="not-prose my-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div
-                className="aspect-[9/19] overflow-hidden rounded-2xl border border-border bg-muted"
-                data-todo="app-screenshot-search"
-              >
-                <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                  Search screen
-                </div>
-              </div>
-              <div
-                className="aspect-[9/19] overflow-hidden rounded-2xl border border-border bg-muted"
-                data-todo="app-screenshot-listing"
-              >
-                <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                  Listing detail
-                </div>
-              </div>
-              <div
-                className="aspect-[9/19] overflow-hidden rounded-2xl border border-border bg-muted"
-                data-todo="app-screenshot-booking"
-              >
-                <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                  Booking confirmation
-                </div>
-              </div>
+            {/* App screenshots: search filters + sort */}
+            <div className="not-prose my-10 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
+              <figure className="mx-auto w-full max-w-[320px]">
+                <img
+                  src="/images/app/filter-search.png"
+                  alt="Pool Rental Near Me app filter screen with water type, guest capacity, and event type options"
+                  loading="lazy"
+                  className="w-full rounded-2xl border border-border bg-card shadow-sm"
+                />
+                <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                  Filter by water type, guest count, and event type.
+                </figcaption>
+              </figure>
+              <figure className="mx-auto w-full max-w-[320px]">
+                <img
+                  src="/images/app/sort-by.png"
+                  alt="Sort search results by newest, oldest, closest distance, or price in the Pool Rental Near Me app"
+                  loading="lazy"
+                  className="w-full rounded-2xl border border-border bg-card shadow-sm"
+                />
+                <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                  Sort by closest distance or price in one tap.
+                </figcaption>
+              </figure>
             </div>
 
             <h2>Why a pool rental app beats a browser tab</h2>
@@ -271,21 +269,85 @@ function PoolRentalAppPage() {
               </li>
             </ul>
 
+            <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
+              <img
+                src="/images/app/wishlist.png"
+                alt="Saved pools wishlist with hourly rates in the Pool Rental Near Me app"
+                loading="lazy"
+                className="w-full rounded-2xl border border-border bg-card shadow-sm"
+              />
+              <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                Save pools to your wishlist and come back when you are ready.
+              </figcaption>
+            </figure>
+
             <h2>Hosts: list your pool from the app</h2>
             <p>
               The same pool rental app lets you list your backyard pool in
               about 15 minutes. Add photos, set your hourly rate and house
               rules, pick your weekly availability, and you are live to every
-              guest searching your city. Hosts on Pool Rental Near Me earn
-              $1,500 to $8,000 a month renting their backyard pool by the hour.
+              guest searching your city.
             </p>
+
+            <h3>Get listed in 5 fields</h3>
             <p>
-              The pricing is simple. Flat 10% host fee, and we eat the credit
-              card processing fees, so 90% means 90%. $2M in liability coverage
-              comes with every booking at no cost to you. Most other pool
-              rental platforms charge 15% or more and pass processing fees on
-              top.
+              The minimum-viable listing is intentionally short. Five fields
+              are required to publish: pool name, description, location,
+              photos, and price. Skip the rest and refine later from your
+              dashboard.
             </p>
+
+            <div className="not-prose my-8 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
+              <figure className="mx-auto w-full max-w-[320px]">
+                <img
+                  src="/images/app/listing-creation-select-type.png"
+                  alt="Select listing type screen when creating a new pool listing in the Pool Rental Near Me app"
+                  loading="lazy"
+                  className="w-full rounded-2xl border border-border bg-card shadow-sm"
+                />
+                <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                  Start by picking your listing type.
+                </figcaption>
+              </figure>
+              <figure className="mx-auto w-full max-w-[320px]">
+                <img
+                  src="/images/app/listing-creation-basic-info.png"
+                  alt="Basic Info tab of the host listing flow with Hourly renting, Pool category, and Private Pool subcategory selected"
+                  loading="lazy"
+                  className="w-full rounded-2xl border border-border bg-card shadow-sm"
+                />
+                <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                  Hourly renting is the primary model. Pick a category and name your pool.
+                </figcaption>
+              </figure>
+            </div>
+
+            <p>
+              The full Basic Info, Where, Rates &amp; Upgrades, and Calendar
+              tabs are all available, but you can publish a working listing in
+              minutes and add depth later. The description field allows up to
+              5,000 characters, so you have room to tell your story. Hourly
+              renting is the primary booking model. Hosts keep 90% of every
+              booking with the flat 10% host fee, and $2M liability coverage
+              is included.
+            </p>
+
+            <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
+              <img
+                src="/images/app/listing-creation-form.png"
+                alt="Listing creation form showing category, pool name, description, square footage, and max guest fields"
+                loading="lazy"
+                className="w-full rounded-2xl border border-border bg-card shadow-sm"
+              />
+              <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                Set your category, square footage, and max guest capacity at your own pace.
+              </figcaption>
+            </figure>
+
+            <p>
+              <strong>Your rules. Your hours. Your earnings. We handle the rest.</strong>
+            </p>
+
             <p>
               You can also start your listing on the web at{" "}
               <a href={LIST_HREF}>List your pool free</a> and finish on the app
@@ -319,6 +381,46 @@ function PoolRentalAppPage() {
                 liability coverage at no extra cost to you.
               </li>
             </ol>
+
+            <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
+              <img
+                src="/images/app/inbox.png"
+                alt="Direct in-app messaging between renters and pool hosts in the Pool Rental Near Me app"
+                loading="lazy"
+                className="w-full rounded-2xl border border-border bg-card shadow-sm"
+              />
+              <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                Message hosts and manage bookings from a single inbox.
+              </figcaption>
+            </figure>
+
+            <h2>Secure sign-in, your way</h2>
+            <p>
+              Log in to the pool rental app with the option that fits you:
+              email and password, Apple, Google, or Facebook. Whichever you
+              pick, your account is protected with industry-standard
+              encryption, secure password storage, and account recovery built
+              in. Payments and messaging stay inside the app so your contact
+              info and card details are never exposed to other users.
+            </p>
+            <ul>
+              <li><strong>Email and password</strong> with password reset built in.</li>
+              <li><strong>Sign in with Apple</strong> for one-tap login on iOS.</li>
+              <li><strong>Sign in with Google</strong> on any device.</li>
+              <li><strong>Sign in with Facebook</strong> if that is what you already use.</li>
+            </ul>
+
+            <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
+              <img
+                src="/images/app/login.png"
+                alt="Pool Rental Near Me app login screen with email, password, Apple, Google, and Facebook sign-in options"
+                loading="lazy"
+                className="w-full rounded-2xl border border-border bg-card shadow-sm"
+              />
+              <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+                Sign in with email, Apple, Google, or Facebook.
+              </figcaption>
+            </figure>
 
             <h2>What is not in the app</h2>
             <p>
