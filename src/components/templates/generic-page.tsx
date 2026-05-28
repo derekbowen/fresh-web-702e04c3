@@ -5,6 +5,7 @@ import { AuthorByline } from "@/components/author-byline";
 import { type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { FounderBookingInline } from "@/components/founder-booking";
 import type { ContentPage } from "@/server/content-pages.functions";
 
 /**
