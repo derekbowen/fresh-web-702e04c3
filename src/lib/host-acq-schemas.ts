@@ -96,13 +96,6 @@ export function hostAcqSchemasForPage(
     eligibleCustomerType: "PropertyOwner",
     areaServed: geoArea,
     url: pageUrl,
-    priceSpecification: {
-      "@type": "PriceSpecification",
-      priceCurrency: "USD",
-      minPrice: lo,
-      maxPrice: hi,
-      unitText: "MONTH",
-    },
     seller: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
