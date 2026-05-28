@@ -59,7 +59,7 @@ export const TIERS: TierMeta[] = [
     label: "Tier 2 — Growth",
     shortLabel: "Growth",
     description: "Level up bookings, pricing, and guest experience.",
-    emoji: "🔵",
+    emoji: "",
     badgeClass: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
   },
   {
