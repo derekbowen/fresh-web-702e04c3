@@ -29,7 +29,7 @@ export function getCategoryMeta(slug: string, lang: Lang = "en"): CategoryMeta {
     map[slug] ?? {
       label: slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
       description: "",
-      emoji: "🎓",
+      emoji: "",
     }
   );
 }
