@@ -270,6 +270,14 @@ export const Route = createFileRoute("/p/$slug")({
       meta.meta = [...(meta.meta ?? []), ...articleMeta];
     }
 
+    // Hidden verification tag for the host_acq_city title-test variant pages.
+    if (variant) {
+      meta.meta = [
+        ...(meta.meta ?? []),
+        { name: "title_test_variant", content: variant },
+      ];
+    }
+
     const scripts = [];
 
     // BreadcrumbList JSON-LD — Home > Blog > {Topic} > {Title} for blog posts.
