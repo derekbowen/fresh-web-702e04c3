@@ -44,6 +44,8 @@ import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { heroPreloadLinks } from "@/lib/hero-image";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 import { hostAcqSchemasForPage } from "@/lib/host-acq-schemas";
+import { normalizeTitleVariant, getVariantCopy } from "@/lib/host-acq-variants";
+import { parseCitySlug } from "@/lib/city-slug";
 import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
 import { AcademyHubTemplate } from "@/components/templates/academy-hub";
 import { ACADEMY_HUB_SLUGS, academyHubPath } from "@/lib/course-urls";
