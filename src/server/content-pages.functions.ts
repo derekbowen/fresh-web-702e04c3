@@ -94,6 +94,8 @@ export interface ContentPage {
   topic?: string | null;
   /** AI-generated FAQ Q&A list, stored per page. Renders FAQPage JSON-LD when present. */
   faq_items?: Array<{ question: string; answer: string }> | null;
+  /** A/B/C/D title-test variant (host_acq_city only). NULL = control / no test. */
+  title_variant?: "A" | "B" | "C" | "D" | null;
 }
 
 export type ContentPageLookupResult =
