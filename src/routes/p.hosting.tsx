@@ -138,6 +138,15 @@ const FAQS = [
   {
     q: "Do I need to be home during bookings?",
     a: "Not at all. You can provide check-in info to confirmed guests through our app and let them self-serve. About 60% of our hosts choose to be home anyway — it's a personal preference, not a requirement.",
+    node: (
+      <>
+        Not at all. You can provide check-in info to confirmed guests through{" "}
+        <a href="/p/pool-rental-app" className="font-semibold text-primary hover:underline">
+          the Pool Rental Near Me app
+        </a>{" "}
+        and let them self-serve. About 60% of our hosts choose to be home anyway — it's a personal preference, not a requirement.
+      </>
+    ),
   },
   {
     q: "Can I be home during bookings?",
