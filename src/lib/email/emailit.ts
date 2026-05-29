@@ -29,6 +29,11 @@ export interface SendViaEmailitInput {
   html: string;
   text?: string | null;
   replyTo?: string | null;
+  /**
+   * Extra RFC-compliant headers forwarded to Emailit (e.g. List-Unsubscribe,
+   * List-Unsubscribe-Post). Keys are case-insensitive on the wire.
+   */
+  headers?: Record<string, string> | null;
 }
 
 export interface SendViaEmailitResult {
@@ -50,6 +55,9 @@ export async function sendViaEmailit(input: SendViaEmailitInput): Promise<SendVi
   };
   if (input.text) body.text = input.text;
   if (input.replyTo) body.reply_to = input.replyTo;
+  if (input.headers && Object.keys(input.headers).length > 0) {
+    body.headers = input.headers;
+  }
 
   const res = await fetch(EMAILIT_ENDPOINT, {
     method: "POST",
