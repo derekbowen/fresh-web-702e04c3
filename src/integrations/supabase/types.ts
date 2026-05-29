@@ -848,6 +848,33 @@ export type Database = {
         }
         Relationships: []
       }
+      content_pages_backup_2026_05_29_markdown_fix: {
+        Row: {
+          body_markdown: string | null
+          content: string | null
+          id: string | null
+          slug: string | null
+          template_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          body_markdown?: string | null
+          content?: string | null
+          id?: string | null
+          slug?: string | null
+          template_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          body_markdown?: string | null
+          content?: string | null
+          id?: string | null
+          slug?: string | null
+          template_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       content_plan: {
         Row: {
           attempt_count: number
