@@ -117,7 +117,7 @@ function Page() {
       <h1 className="text-3xl font-bold">Founder update blast (2026-05-28)</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Template: <code>founder-update-2026-05-28</code> · From:{" "}
-        <code>derek@poolrentalnearme.com</code> · Subject: "Pool Rental Near Me update"
+        <code>derek@poolrentalnearme.com</code> · Subject: "pool rental near me update"
       </p>
 
       {error && (
