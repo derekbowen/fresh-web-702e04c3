@@ -215,7 +215,7 @@ function PoolRentalAppPage() {
             <div className="not-prose my-10 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
               <figure className="mx-auto w-full max-w-[320px]">
                 <img
-                  src="/images/app/filter-search.png"
+                  src="/fw-assets/app/filter-search.png"
                   alt="Pool Rental Near Me app filter screen with water type, guest capacity, and event type options"
                   loading="lazy"
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
@@ -226,7 +226,7 @@ function PoolRentalAppPage() {
               </figure>
               <figure className="mx-auto w-full max-w-[320px]">
                 <img
-                  src="/images/app/sort-by.png"
+                  src="/fw-assets/app/sort-by.png"
                   alt="Sort search results by newest, oldest, closest distance, or price in the Pool Rental Near Me app"
                   loading="lazy"
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
@@ -271,7 +271,7 @@ function PoolRentalAppPage() {
 
             <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
               <img
-                src="/images/app/wishlist.png"
+                src="/fw-assets/app/wishlist.png"
                 alt="Saved pools wishlist with hourly rates in the Pool Rental Near Me app"
                 loading="lazy"
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
@@ -300,7 +300,7 @@ function PoolRentalAppPage() {
             <div className="not-prose my-8 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
               <figure className="mx-auto w-full max-w-[320px]">
                 <img
-                  src="/images/app/listing-creation-select-type.png"
+                  src="/fw-assets/app/listing-creation-select-type.png"
                   alt="Select listing type screen when creating a new pool listing in the Pool Rental Near Me app"
                   loading="lazy"
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
@@ -311,7 +311,7 @@ function PoolRentalAppPage() {
               </figure>
               <figure className="mx-auto w-full max-w-[320px]">
                 <img
-                  src="/images/app/listing-creation-basic-info.png"
+                  src="/fw-assets/app/listing-creation-basic-info.png"
                   alt="Basic Info tab of the host listing flow with Hourly renting, Pool category, and Private Pool subcategory selected"
                   loading="lazy"
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
@@ -334,7 +334,7 @@ function PoolRentalAppPage() {
 
             <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
               <img
-                src="/images/app/listing-creation-form.png"
+                src="/fw-assets/app/listing-creation-form.png"
                 alt="Listing creation form showing category, pool name, description, square footage, and max guest fields"
                 loading="lazy"
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
@@ -384,7 +384,7 @@ function PoolRentalAppPage() {
 
             <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
               <img
-                src="/images/app/inbox.png"
+                src="/fw-assets/app/inbox.png"
                 alt="Direct in-app messaging between renters and pool hosts in the Pool Rental Near Me app"
                 loading="lazy"
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
@@ -412,7 +412,7 @@ function PoolRentalAppPage() {
 
             <figure className="not-prose my-8 mx-auto w-full max-w-[320px]">
               <img
-                src="/images/app/login.png"
+                src="/fw-assets/app/login.png"
                 alt="Pool Rental Near Me app login screen with email, password, Apple, Google, and Facebook sign-in options"
                 loading="lazy"
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
