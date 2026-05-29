@@ -8,9 +8,9 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server'
 import { TEMPLATES } from '@/lib/email-templates/registry'
 
 const SITE_NAME = 'Pool Rental Near Me'
-const SENDER_DOMAIN = 'poolrentalnearme.com'
-const FROM_DOMAIN = 'poolrentalnearme.com'
-const FROM_LOCAL = 'derek'
+const SENDER_DOMAIN = 'notify.poolfriends.poolrentalnearme.com'
+const FROM_DOMAIN = 'notify.poolfriends.poolrentalnearme.com'
+const FROM_LOCAL = 'noreply'
 
 function generateToken(): string {
   const bytes = new Uint8Array(32)
