@@ -5,7 +5,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { TEMPLATES } from '@/lib/email-templates/registry'
 
 // Configuration baked in at scaffold time
-const SITE_NAME = "fresh-web"
+const SITE_NAME = "Pool Rental Near Me"
 // SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
 // It MUST match the subdomain delegated to Lovable's nameservers. NEVER use the root domain.
 const SENDER_DOMAIN = "notify.poolfriends.poolrentalnearme.com"
@@ -251,8 +251,9 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           return Response.json({ success: false, reason: 'email_suppressed' })
         }
 
-        // 4. Render React Email template to HTML and plain text
-        const element = React.createElement(template.component, templateData)
+        // 4. Render React Email template to HTML and plain text.
+        const renderProps = { ...templateData, unsubscribeToken }
+        const element = React.createElement(template.component, renderProps)
         const html = await renderAsync(element)
         const plainText = await renderAsync(element, { plainText: true })
 
