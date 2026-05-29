@@ -25,6 +25,7 @@ interface DailySeoDigestProps {
   totalNewCompetitor?: number
   totalCriticalAudits?: number
   totalHostLeads?: number
+  unsubscribeToken?: string | null
 }
 
 const DailySeoDigestEmail = ({
@@ -36,6 +37,7 @@ const DailySeoDigestEmail = ({
   totalNewCompetitor = 0,
   totalCriticalAudits = 0,
   totalHostLeads = 0,
+  unsubscribeToken,
 }: DailySeoDigestProps) => {
   const nothing =
     newCompetitorPages.length === 0 &&
