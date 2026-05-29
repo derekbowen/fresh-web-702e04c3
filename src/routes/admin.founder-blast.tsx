@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin-layout";
 import { buildMeta } from "@/lib/seo";
@@ -31,6 +32,9 @@ function readableError(error: unknown, fallback: string) {
 }
 
 function Page() {
+  const dryRun = useServerFn(founderBlastDryRunFn);
+  const liveBatch = useServerFn(founderBlastLiveBatchFn);
+  const loadSummary = useServerFn(founderBlastSummaryFn);
   const [dryResult, setDryResult] = useState<any>(null);
   const [batches, setBatches] = useState<any[]>([]);
   const [summary, setSummary] = useState<any>(null);
@@ -42,7 +46,7 @@ function Page() {
     setBusy("dryrun");
     setError("");
     try {
-      const r = await founderBlastDryRunFn();
+      const r = await dryRun();
       setDryResult(r);
     } catch (e) {
       setError(readableError(e, "Dry-run failed"));
@@ -52,7 +56,7 @@ function Page() {
   }
 
   async function doOneBatch(): Promise<number> {
-    const r = await founderBlastLiveBatchFn({ data: { batchSize: 6, delayMs: 3000 } });
+    const r = await liveBatch({ data: { batchSize: 6, delayMs: 3000 } });
     setBatches((b) => [...b, r]);
     return r.remaining as number;
   }
@@ -71,7 +75,7 @@ function Page() {
         // small pause between batches to give the UI a chance to render
         await new Promise((res) => setTimeout(res, 500));
       }
-      const s = await founderBlastSummaryFn();
+      const s = await loadSummary();
       setSummary(s);
     } catch (e) {
       setError(readableError(e, "Live send failed"));
@@ -85,7 +89,7 @@ function Page() {
     setBusy("summary");
     setError("");
     try {
-      const s = await founderBlastSummaryFn();
+      const s = await loadSummary();
       setSummary(s);
     } catch (e) {
       setError(readableError(e, "Summary failed"));
