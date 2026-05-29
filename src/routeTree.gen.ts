@@ -123,6 +123,7 @@ import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
+import { Route as AdminFounderBlastRouteImport } from './routes/admin.founder-blast'
 import { Route as AdminFollowupRemindersRouteImport } from './routes/admin.followup-reminders'
 import { Route as AdminFollowupPerformanceRouteImport } from './routes/admin.followup-performance'
 import { Route as AdminFollowupDrilldownRouteImport } from './routes/admin.followup-drilldown'
@@ -779,6 +780,11 @@ const AdminGenerateContentRoute = AdminGenerateContentRouteImport.update({
   path: '/generate-content',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFounderBlastRoute = AdminFounderBlastRouteImport.update({
+  id: '/founder-blast',
+  path: '/founder-blast',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFollowupRemindersRoute = AdminFollowupRemindersRouteImport.update({
   id: '/followup-reminders',
   path: '/followup-reminders',
@@ -1183,6 +1189,7 @@ export interface FileRoutesByFullPath {
   '/admin/followup-drilldown': typeof AdminFollowupDrilldownRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
   '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
+  '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1363,6 +1370,7 @@ export interface FileRoutesByTo {
   '/admin/followup-drilldown': typeof AdminFollowupDrilldownRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
   '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
+  '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1544,6 +1552,7 @@ export interface FileRoutesById {
   '/admin/followup-drilldown': typeof AdminFollowupDrilldownRoute
   '/admin/followup-performance': typeof AdminFollowupPerformanceRoute
   '/admin/followup-reminders': typeof AdminFollowupRemindersRoute
+  '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
@@ -1726,6 +1735,7 @@ export interface FileRouteTypes {
     | '/admin/followup-drilldown'
     | '/admin/followup-performance'
     | '/admin/followup-reminders'
+    | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -1906,6 +1916,7 @@ export interface FileRouteTypes {
     | '/admin/followup-drilldown'
     | '/admin/followup-performance'
     | '/admin/followup-reminders'
+    | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -2086,6 +2097,7 @@ export interface FileRouteTypes {
     | '/admin/followup-drilldown'
     | '/admin/followup-performance'
     | '/admin/followup-reminders'
+    | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
     | '/admin/ig-lead-hunter'
@@ -3123,6 +3135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGenerateContentRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/founder-blast': {
+      id: '/admin/founder-blast'
+      path: '/founder-blast'
+      fullPath: '/admin/founder-blast'
+      preLoaderRoute: typeof AdminFounderBlastRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/followup-reminders': {
       id: '/admin/followup-reminders'
       path: '/followup-reminders'
@@ -3611,6 +3630,7 @@ interface AdminRouteChildren {
   AdminFollowupDrilldownRoute: typeof AdminFollowupDrilldownRoute
   AdminFollowupPerformanceRoute: typeof AdminFollowupPerformanceRoute
   AdminFollowupRemindersRoute: typeof AdminFollowupRemindersRoute
+  AdminFounderBlastRoute: typeof AdminFounderBlastRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
   AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
@@ -3672,6 +3692,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFollowupDrilldownRoute: AdminFollowupDrilldownRoute,
   AdminFollowupPerformanceRoute: AdminFollowupPerformanceRoute,
   AdminFollowupRemindersRoute: AdminFollowupRemindersRoute,
+  AdminFounderBlastRoute: AdminFounderBlastRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
   AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,

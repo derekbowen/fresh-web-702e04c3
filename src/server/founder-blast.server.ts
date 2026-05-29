@@ -12,7 +12,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { integrationGet } from "./sharetribe.server";
 import { sendViaEmailit, EmailitError } from "@/lib/email/emailit";
-// @ts-expect-error - vite ?raw import
 import RAW_HTML from "@/lib/email-static/founder-update-2026-05-28.html?raw";
 
 export const FOUNDER_TEMPLATE_NAME = "founder-update-2026-05-28";
