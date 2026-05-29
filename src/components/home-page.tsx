@@ -171,6 +171,13 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               >
                 Have a pool? List it in 10 minutes &rarr;
               </a>
+              <a
+                href="/p/pool-rental-app"
+                aria-label="Download the Pool Rental Near Me app"
+                className="text-sm font-medium text-white/90 underline-offset-4 hover:underline"
+              >
+                Get the pool rental app &rarr;
+              </a>
             </div>
           </div>
         </section>

@@ -31,6 +31,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Start a Business", href: "/p/hosting" },
     { label: "Liability Waivers", href: "https://rentalwaivers.com" },
     { label: "Browse All States", href: "/p/pool-rentals" },
+    { label: "Pool Rental App", href: "/p/pool-rental-app" },
   ],
   compare_links: [
     { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
