@@ -94,6 +94,11 @@ function Page() {
     }
   }
 
+  const sampleRecipients = Array.isArray(dryResult?.sample) ? dryResult.sample : [];
+  const preview = dryResult?.preview;
+  const suppressed = Array.isArray(summary?.suppressed) ? summary.suppressed : [];
+  const failed = Array.isArray(summary?.failed) ? summary.failed : [];
+
   return (
     <AdminLayout>
       <h1 className="text-3xl font-bold">Founder update blast (2026-05-28)</h1>
@@ -128,7 +133,7 @@ function Page() {
             </div>
             <div>
               <strong>Preview to derek@:</strong>{" "}
-              {dryResult.preview.ok ? "✓ sent" : `✗ ${dryResult.preview.error}`}
+              {preview?.ok ? "✓ sent" : `✗ ${preview?.error ?? "Preview result unavailable"}`}
             </div>
             <details className="rounded border bg-muted/40 p-3">
               <summary className="cursor-pointer font-semibold">First 10 recipients</summary>
@@ -141,7 +146,7 @@ function Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {dryResult.sample.map((s: any) => (
+                  {sampleRecipients.map((s: any) => (
                     <tr key={s.email}>
                       <td className="pr-3">{s.email}</td>
                       <td className="pr-3">{s.firstName ?? "—"}</td>
@@ -189,7 +194,7 @@ function Page() {
                     {b.startedAt} → {b.finishedAt}
                   </div>
                   <ul className="ml-4 list-disc">
-                    {b.results.map((r: any) => (
+                    {(Array.isArray(b.results) ? b.results : []).map((r: any) => (
                       <li key={r.email}>
                         {r.email} ({r.firstName ?? "there"}) — {r.status}
                         {r.error ? ` · ${r.error}` : ""}
@@ -223,25 +228,25 @@ function Page() {
               <strong>First send:</strong> {summary.firstSendAt ?? "—"} ·{" "}
               <strong>Last send:</strong> {summary.lastSendAt ?? "—"}
             </div>
-            {summary.suppressed.length > 0 && (
+            {suppressed.length > 0 && (
               <details className="rounded border bg-muted/40 p-3">
                 <summary className="cursor-pointer font-semibold">
-                  Suppressed ({summary.suppressed.length})
+                  Suppressed ({suppressed.length})
                 </summary>
                 <ul className="ml-4 list-disc text-xs">
-                  {summary.suppressed.map((e: string) => (
+                  {suppressed.map((e: string) => (
                     <li key={e}>{e}</li>
                   ))}
                 </ul>
               </details>
             )}
-            {summary.failed.length > 0 && (
+            {failed.length > 0 && (
               <details className="rounded border bg-rose-50 p-3">
                 <summary className="cursor-pointer font-semibold text-rose-900">
-                  Failed ({summary.failed.length})
+                  Failed ({failed.length})
                 </summary>
                 <ul className="ml-4 list-disc text-xs text-rose-900">
-                  {summary.failed.map((f: any) => (
+                  {failed.map((f: any) => (
                     <li key={f.email}>
                       {f.email} — {f.error ?? "unknown"}
                     </li>
