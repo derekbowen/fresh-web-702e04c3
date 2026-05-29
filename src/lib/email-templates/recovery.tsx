@@ -17,16 +17,19 @@ import {
   BrandFooter,
   buttonStyle,
 } from './_branding'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface RecoveryEmailProps {
   siteName?: string
   confirmationUrl: string
   branding?: Branding
+  unsubscribeToken?: string | null
 }
 
 export const RecoveryEmail = ({
   confirmationUrl,
   branding = DEFAULT_BRANDING,
+  unsubscribeToken,
   siteName,
 }: RecoveryEmailProps) => {
   const name = siteName || branding.siteName
@@ -48,6 +51,7 @@ export const RecoveryEmail = ({
             If you didn't request a password reset, you can safely ignore this email. Your password will not be changed.
           </Text>
           <BrandFooter branding={branding} />
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>

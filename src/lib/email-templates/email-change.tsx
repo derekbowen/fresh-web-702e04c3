@@ -18,6 +18,7 @@ import {
   BrandFooter,
   buttonStyle,
 } from './_branding'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface EmailChangeEmailProps {
   siteName?: string
@@ -26,6 +27,7 @@ interface EmailChangeEmailProps {
   newEmail: string
   confirmationUrl: string
   branding?: Branding
+  unsubscribeToken?: string | null
 }
 
 export const EmailChangeEmail = ({
@@ -33,6 +35,7 @@ export const EmailChangeEmail = ({
   newEmail,
   confirmationUrl,
   branding = DEFAULT_BRANDING,
+  unsubscribeToken,
   siteName,
 }: EmailChangeEmailProps) => {
   const name = siteName || branding.siteName
@@ -58,6 +61,7 @@ export const EmailChangeEmail = ({
             If you didn't request this change, please secure your account immediately.
           </Text>
           <BrandFooter branding={branding} />
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>

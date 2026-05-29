@@ -17,16 +17,19 @@ import {
   BrandFooter,
   buttonStyle,
 } from './_branding'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface MagicLinkEmailProps {
   siteName?: string
   confirmationUrl: string
   branding?: Branding
+  unsubscribeToken?: string | null
 }
 
 export const MagicLinkEmail = ({
   confirmationUrl,
   branding = DEFAULT_BRANDING,
+  unsubscribeToken,
   siteName,
 }: MagicLinkEmailProps) => {
   const name = siteName || branding.siteName
@@ -48,6 +51,7 @@ export const MagicLinkEmail = ({
             If you didn't request this link, you can safely ignore this email.
           </Text>
           <BrandFooter branding={branding} />
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>
