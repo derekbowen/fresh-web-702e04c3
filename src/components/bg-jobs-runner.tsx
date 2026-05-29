@@ -3,6 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Loader2, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { processSeoFixQueue, getSeoJobStatus, cancelQueuedSeoJobs, listSeoBatches } from "@/server/admin-tools.functions";
 import { loadJobs, upsertJob, removeJob, useBgJobs, type BgJob } from "@/lib/bg-jobs";
+import { supabase } from "@/integrations/supabase/client";
 
 // Single tab leader election: only one tab pumps the queue at a time.
 // Uses BroadcastChannel + localStorage heartbeat. Other tabs still display
@@ -75,6 +76,10 @@ export function BgJobsRunner() {
 
     async function reconcileFromServer() {
       try {
+        // Skip server polling when not signed in — avoids 401 spam and the
+        // global error boundary catching the rejected Response.
+        const { data: sess } = await supabase.auth.getSession();
+        if (!sess.session?.access_token) return;
         const { batches } = await listSeoBatches({ data: { sinceHours: 72 } });
         const local = new Map(loadJobs().map((j) => [j.id, j] as const));
         for (const b of batches) {
