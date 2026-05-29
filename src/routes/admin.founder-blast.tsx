@@ -19,6 +19,17 @@ export const Route = createFileRoute("/admin/founder-blast")({
   component: Page,
 });
 
+function readableError(error: unknown, fallback: string) {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  if (raw.includes("Unauthorized") || raw.includes("No authorization header")) {
+    return "You need to sign in on this preview first. Open /auth?redirect=/admin/founder-blast, sign in as admin, then run the dry-run again.";
+  }
+  if (raw.includes("Admin role required")) {
+    return "You are signed in, but this account is not marked as an admin.";
+  }
+  return raw && raw !== "[object Response]" ? raw : fallback;
+}
+
 function Page() {
   const [dryResult, setDryResult] = useState<any>(null);
   const [batches, setBatches] = useState<any[]>([]);
@@ -34,7 +45,7 @@ function Page() {
       const r = await founderBlastDryRunFn();
       setDryResult(r);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Dry-run failed");
+      setError(readableError(e, "Dry-run failed"));
     } finally {
       setBusy(null);
     }
@@ -63,7 +74,7 @@ function Page() {
       const s = await founderBlastSummaryFn();
       setSummary(s);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Live send failed");
+      setError(readableError(e, "Live send failed"));
     } finally {
       setBusy(null);
       setAutoLoop(false);
@@ -77,7 +88,7 @@ function Page() {
       const s = await founderBlastSummaryFn();
       setSummary(s);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Summary failed");
+      setError(readableError(e, "Summary failed"));
     } finally {
       setBusy(null);
     }
