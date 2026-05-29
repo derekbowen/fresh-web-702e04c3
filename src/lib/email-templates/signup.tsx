@@ -18,6 +18,7 @@ import {
   BrandFooter,
   buttonStyle,
 } from './_branding'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface SignupEmailProps {
   siteName?: string
@@ -25,6 +26,7 @@ interface SignupEmailProps {
   recipient: string
   confirmationUrl: string
   branding?: Branding
+  unsubscribeToken?: string | null
 }
 
 export const SignupEmail = ({
@@ -32,6 +34,7 @@ export const SignupEmail = ({
   recipient,
   confirmationUrl,
   branding = DEFAULT_BRANDING,
+  unsubscribeToken,
   siteName,
 }: SignupEmailProps) => {
   const name = siteName || branding.siteName
@@ -64,6 +67,7 @@ export const SignupEmail = ({
             If you didn't create an account, you can safely ignore this email.
           </Text>
           <BrandFooter branding={branding} />
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>

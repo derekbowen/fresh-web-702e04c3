@@ -221,6 +221,46 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
               }
             }
 
+            // GAP 8 — final suppression check at send time. The recipient
+            // may have unsubscribed or bounced between enqueue and dispatch.
+            const recipientLc = typeof payload.to === 'string' ? payload.to.toLowerCase() : ''
+            if (recipientLc) {
+              const { data: lateSuppressed } = await supabase
+                .from('suppressed_emails')
+                .select('id')
+                .eq('email', recipientLc)
+                .maybeSingle()
+              if (lateSuppressed) {
+                await supabase.from('email_send_log').insert({
+                  message_id: payload.message_id,
+                  template_name: payload.label || queue,
+                  recipient_email: payload.to,
+                  status: 'suppressed_late',
+                  error_message: 'Recipient suppressed between enqueue and send',
+                })
+                const { error: lateDelError } = await supabase.rpc('delete_email', {
+                  queue_name: queue,
+                  message_id: msg.msg_id,
+                })
+                if (lateDelError) {
+                  console.error('Failed to delete late-suppressed message from queue', { queue, msg_id: msg.msg_id, error: lateDelError })
+                }
+                continue
+              }
+            }
+
+            // Build List-Unsubscribe headers when an unsubscribe token is
+            // present on the queued payload (transactional emails have one;
+            // auth emails do not).
+            let extraHeaders: Record<string, string> | undefined
+            const unsubToken = typeof payload.unsubscribe_token === 'string' ? payload.unsubscribe_token : null
+            if (unsubToken) {
+              extraHeaders = {
+                'List-Unsubscribe': `<https://www.poolrentalnearme.com/email/unsubscribe?token=${unsubToken}>, <mailto:unsubscribe@poolrentalnearme.com>`,
+                'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+              }
+            }
+
             try {
               await sendViaEmailit({
                 from: payload.from,
@@ -228,6 +268,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                 subject: payload.subject,
                 html: payload.html,
                 text: payload.text,
+                headers: extraHeaders,
               })
 
               // Log success

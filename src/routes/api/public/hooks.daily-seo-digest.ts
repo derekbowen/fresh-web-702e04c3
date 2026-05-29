@@ -146,7 +146,7 @@ async function sendDigest(force: boolean) {
     token = stored?.token || token;
   }
 
-  const element = React.createElement(template.component, data);
+  const element = React.createElement(template.component, { ...data, unsubscribeToken: token });
   const html = await renderAsync(element);
   const text = await renderAsync(element, { plainText: true });
   const subject = typeof template.subject === "function" ? template.subject(data) : template.subject;

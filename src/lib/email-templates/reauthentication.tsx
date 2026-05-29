@@ -15,15 +15,18 @@ import {
   BrandHeader,
   BrandFooter,
 } from './_branding'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface ReauthenticationEmailProps {
   token: string
   branding?: Branding
+  unsubscribeToken?: string | null
 }
 
 export const ReauthenticationEmail = ({
   token,
   branding = DEFAULT_BRANDING,
+  unsubscribeToken,
 }: ReauthenticationEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />

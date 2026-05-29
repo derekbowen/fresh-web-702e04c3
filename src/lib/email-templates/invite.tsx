@@ -18,18 +18,21 @@ import {
   BrandFooter,
   buttonStyle,
 } from './_branding'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface InviteEmailProps {
   siteName?: string
   siteUrl: string
   confirmationUrl: string
   branding?: Branding
+  unsubscribeToken?: string | null
 }
 
 export const InviteEmail = ({
   siteUrl,
   confirmationUrl,
   branding = DEFAULT_BRANDING,
+  unsubscribeToken,
   siteName,
 }: InviteEmailProps) => {
   const name = siteName || branding.siteName
@@ -55,6 +58,7 @@ export const InviteEmail = ({
             If you weren't expecting this invitation, you can safely ignore this email.
           </Text>
           <BrandFooter branding={branding} />
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>
