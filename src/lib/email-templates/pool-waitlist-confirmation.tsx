@@ -10,6 +10,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 const SITE_NAME = 'Pool Rental Near Me'
 const SITE_URL = 'https://poolrentalnearme.com'
@@ -18,12 +19,14 @@ interface PoolWaitlistConfirmationProps {
   city?: string | null
   region?: string | null
   nearestMiles?: number | null
+  unsubscribeToken?: string | null
 }
 
 const PoolWaitlistConfirmationEmail = ({
   city,
   region,
   nearestMiles,
+  unsubscribeToken,
 }: PoolWaitlistConfirmationProps) => {
   const where = city ? `${city}${region ? `, ${region}` : ''}` : 'your area'
   const milesLabel =
@@ -79,6 +82,7 @@ const PoolWaitlistConfirmationEmail = ({
           </Text>
 
           <Text style={footer}>— The {SITE_NAME} team</Text>
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>

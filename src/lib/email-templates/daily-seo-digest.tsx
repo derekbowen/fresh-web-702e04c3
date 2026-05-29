@@ -3,6 +3,7 @@ import {
   Body, Container, Head, Heading, Hr, Html, Preview, Section, Text, Link,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface CompetitorPage { url: string; domain: string; title?: string | null }
 interface AuditIssue { url_path: string; score: number; summary?: string | null }
@@ -149,6 +150,7 @@ const DailySeoDigestEmail = ({
             Sent automatically by Pool Rental Near Me admin.
             View details in <Link href="/admin/dashboard" style={linkStyle}>admin dashboard</Link>.
           </Text>
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>

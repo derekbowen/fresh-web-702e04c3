@@ -10,6 +10,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { UnsubscribeFooter } from './_unsubscribe-footer'
 
 interface InternalLeadNotificationProps {
   formType?: string
@@ -20,6 +21,7 @@ interface InternalLeadNotificationProps {
   message?: string | null
   nearestMiles?: number | null
   referrerPath?: string | null
+  unsubscribeToken?: string | null
 }
 
 const InternalLeadNotificationEmail = ({
@@ -31,6 +33,7 @@ const InternalLeadNotificationEmail = ({
   message,
   nearestMiles,
   referrerPath,
+  unsubscribeToken,
 }: InternalLeadNotificationProps) => {
   const where = [city, region].filter(Boolean).join(', ') || '—'
   return (
@@ -73,6 +76,7 @@ const InternalLeadNotificationEmail = ({
           <Text style={footer}>
             Sent automatically by Pool Rental Near Me.
           </Text>
+          <UnsubscribeFooter unsubscribeToken={unsubscribeToken} />
         </Container>
       </Body>
     </Html>
