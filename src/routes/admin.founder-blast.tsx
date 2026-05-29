@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin-layout";
 import { buildMeta } from "@/lib/seo";
@@ -19,7 +20,25 @@ export const Route = createFileRoute("/admin/founder-blast")({
   component: Page,
 });
 
+function readableError(error: unknown, fallback: string) {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  if (raw.includes("Unauthorized") || raw.includes("No authorization header")) {
+    return "You need to sign in on this preview first. Open /auth?redirect=/admin/founder-blast, sign in as admin, then run the dry-run again.";
+  }
+  if (raw.includes("Admin role required")) {
+    return "You are signed in, but this account is not marked as an admin.";
+  }
+  return raw && raw !== "[object Response]" ? raw : fallback;
+}
+
+function isDryRunResult(value: any) {
+  return value && typeof value.audienceCount === "number" && value.preview;
+}
+
 function Page() {
+  const dryRun = useServerFn(founderBlastDryRunFn);
+  const liveBatch = useServerFn(founderBlastLiveBatchFn);
+  const loadSummary = useServerFn(founderBlastSummaryFn);
   const [dryResult, setDryResult] = useState<any>(null);
   const [batches, setBatches] = useState<any[]>([]);
   const [summary, setSummary] = useState<any>(null);
@@ -31,17 +50,22 @@ function Page() {
     setBusy("dryrun");
     setError("");
     try {
-      const r = await founderBlastDryRunFn();
+      const r = await dryRun();
+      if (!isDryRunResult(r)) {
+        setDryResult(null);
+        setError("The dry-run did not return a valid result. Sign in at /auth?redirect=/admin/founder-blast, then try again.");
+        return;
+      }
       setDryResult(r);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Dry-run failed");
+      setError(readableError(e, "Dry-run failed"));
     } finally {
       setBusy(null);
     }
   }
 
   async function doOneBatch(): Promise<number> {
-    const r = await founderBlastLiveBatchFn({ data: { batchSize: 6, delayMs: 3000 } });
+    const r = await liveBatch({ data: { batchSize: 6, delayMs: 3000 } });
     setBatches((b) => [...b, r]);
     return r.remaining as number;
   }
@@ -60,10 +84,10 @@ function Page() {
         // small pause between batches to give the UI a chance to render
         await new Promise((res) => setTimeout(res, 500));
       }
-      const s = await founderBlastSummaryFn();
+      const s = await loadSummary();
       setSummary(s);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Live send failed");
+      setError(readableError(e, "Live send failed"));
     } finally {
       setBusy(null);
       setAutoLoop(false);
@@ -74,14 +98,19 @@ function Page() {
     setBusy("summary");
     setError("");
     try {
-      const s = await founderBlastSummaryFn();
+      const s = await loadSummary();
       setSummary(s);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Summary failed");
+      setError(readableError(e, "Summary failed"));
     } finally {
       setBusy(null);
     }
   }
+
+  const sampleRecipients = Array.isArray(dryResult?.sample) ? dryResult.sample : [];
+  const preview = dryResult?.preview;
+  const suppressed = Array.isArray(summary?.suppressed) ? summary.suppressed : [];
+  const failed = Array.isArray(summary?.failed) ? summary.failed : [];
 
   return (
     <AdminLayout>
@@ -117,7 +146,7 @@ function Page() {
             </div>
             <div>
               <strong>Preview to derek@:</strong>{" "}
-              {dryResult.preview.ok ? "✓ sent" : `✗ ${dryResult.preview.error}`}
+              {preview?.ok ? "✓ sent" : `✗ ${preview?.error ?? "Preview result unavailable"}`}
             </div>
             <details className="rounded border bg-muted/40 p-3">
               <summary className="cursor-pointer font-semibold">First 10 recipients</summary>
@@ -130,7 +159,7 @@ function Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {dryResult.sample.map((s: any) => (
+                  {sampleRecipients.map((s: any) => (
                     <tr key={s.email}>
                       <td className="pr-3">{s.email}</td>
                       <td className="pr-3">{s.firstName ?? "—"}</td>
@@ -178,7 +207,7 @@ function Page() {
                     {b.startedAt} → {b.finishedAt}
                   </div>
                   <ul className="ml-4 list-disc">
-                    {b.results.map((r: any) => (
+                    {(Array.isArray(b.results) ? b.results : []).map((r: any) => (
                       <li key={r.email}>
                         {r.email} ({r.firstName ?? "there"}) — {r.status}
                         {r.error ? ` · ${r.error}` : ""}
@@ -212,25 +241,25 @@ function Page() {
               <strong>First send:</strong> {summary.firstSendAt ?? "—"} ·{" "}
               <strong>Last send:</strong> {summary.lastSendAt ?? "—"}
             </div>
-            {summary.suppressed.length > 0 && (
+            {suppressed.length > 0 && (
               <details className="rounded border bg-muted/40 p-3">
                 <summary className="cursor-pointer font-semibold">
-                  Suppressed ({summary.suppressed.length})
+                  Suppressed ({suppressed.length})
                 </summary>
                 <ul className="ml-4 list-disc text-xs">
-                  {summary.suppressed.map((e: string) => (
+                  {suppressed.map((e: string) => (
                     <li key={e}>{e}</li>
                   ))}
                 </ul>
               </details>
             )}
-            {summary.failed.length > 0 && (
+            {failed.length > 0 && (
               <details className="rounded border bg-rose-50 p-3">
                 <summary className="cursor-pointer font-semibold text-rose-900">
-                  Failed ({summary.failed.length})
+                  Failed ({failed.length})
                 </summary>
                 <ul className="ml-4 list-disc text-xs text-rose-900">
-                  {summary.failed.map((f: any) => (
+                  {failed.map((f: any) => (
                     <li key={f.email}>
                       {f.email} — {f.error ?? "unknown"}
                     </li>

@@ -1,5 +1,6 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 // Baseline security headers applied to every response (HTML, server fns, server routes).
 // CSP is intentionally permissive enough to allow Supabase, Lovable assets, embedded
@@ -79,6 +80,7 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
 
 export const startInstance = createStart(() => ({
   requestMiddleware: [securityHeadersMiddleware],
+  functionMiddleware: [attachSupabaseAuth],
   serverFns: {
     fetch: async (url, requestInit) => {
       const init = requestInit ?? {};
