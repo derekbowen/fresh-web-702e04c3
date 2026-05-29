@@ -1,17 +1,17 @@
 import * as React from 'react'
-import { render as renderAsync } from '@react-email/components'
+import { renderAsync } from '@react-email/components'
 import { createClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 import { TEMPLATES } from '@/lib/email-templates/registry'
 
-// Configuration
-const SITE_NAME = "Pool Rental Near Me"
-// Verified sending domain in Emailit. From: header uses derek@<FROM_DOMAIN>.
-// SENDER_DOMAIN is the subdomain authorized in Emailit; FROM_DOMAIN is the
-// display domain on the From: header (root .com has valid SPF/DKIM).
-const SENDER_DOMAIN = "poolrentalnearme.com"
-const FROM_DOMAIN = "poolrentalnearme.com"
-const FROM_LOCAL = "derek"
+// Configuration baked in at scaffold time
+const SITE_NAME = "fresh-web"
+// SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
+// It MUST match the subdomain delegated to Lovable's nameservers. NEVER use the root domain.
+const SENDER_DOMAIN = "notify.poolfriends.poolrentalnearme.com"
+// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
+// Can be the root domain when display_from_root is enabled — this is cosmetic only.
+const FROM_DOMAIN = "notify.poolfriends.poolrentalnearme.com"
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return '***'
@@ -251,11 +251,8 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           return Response.json({ success: false, reason: 'email_suppressed' })
         }
 
-        // 4. Render React Email template to HTML and plain text.
-        // Inject unsubscribeToken into templateData so the shared
-        // UnsubscribeFooter renders a working link in the body.
-        const renderProps = { ...templateData, unsubscribeToken }
-        const element = React.createElement(template.component, renderProps)
+        // 4. Render React Email template to HTML and plain text
+        const element = React.createElement(template.component, templateData)
         const html = await renderAsync(element)
         const plainText = await renderAsync(element, { plainText: true })
 
@@ -281,7 +278,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           payload: {
             message_id: messageId,
             to: effectiveRecipient,
-            from: `${SITE_NAME} <${FROM_LOCAL}@${FROM_DOMAIN}>`,
+            from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
             sender_domain: SENDER_DOMAIN,
             subject: resolvedSubject,
             html,

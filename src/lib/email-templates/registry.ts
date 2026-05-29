@@ -9,12 +9,15 @@ export interface TemplateEntry {
   to?: string
 }
 
-import { template as poolWaitlistConfirmation } from './pool-waitlist-confirmation'
-import { template as internalLeadNotification } from './internal-lead-notification'
-import { template as dailySeoDigest } from './daily-seo-digest'
-
+/**
+ * Template registry — maps template names to their React Email components.
+ * Import and register new templates here after creating them in this directory.
+ *
+ * Example:
+ *   import { template as welcomeTemplate } from './welcome'
+ *   // then add to TEMPLATES: 'welcome': welcomeTemplate
+ */
 export const TEMPLATES: Record<string, TemplateEntry> = {
-  'pool-waitlist-confirmation': poolWaitlistConfirmation,
-  'internal-lead-notification': internalLeadNotification,
-  'daily-seo-digest': dailySeoDigest,
+  // Add templates here as they are created, e.g.:
+  // 'welcome': welcomeTemplate,
 }
