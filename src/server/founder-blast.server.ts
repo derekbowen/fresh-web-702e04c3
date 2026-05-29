@@ -15,7 +15,7 @@ import { sendViaEmailit, EmailitError } from "@/lib/email/emailit";
 import RAW_HTML from "@/lib/email-static/founder-update-2026-05-28.html?raw";
 
 export const FOUNDER_TEMPLATE_NAME = "founder-update-2026-05-28";
-export const FOUNDER_SUBJECT = "Pool Rental Near Me update";
+export const FOUNDER_SUBJECT = "pool rental near me update";
 export const FOUNDER_FROM = "Derek @ Pool Rental Near Me <derek@poolrentalnearme.com>";
 export const FOUNDER_REPLY_TO = "derek@poolrentalnearme.com";
 
