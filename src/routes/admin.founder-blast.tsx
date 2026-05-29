@@ -31,6 +31,10 @@ function readableError(error: unknown, fallback: string) {
   return raw && raw !== "[object Response]" ? raw : fallback;
 }
 
+function isDryRunResult(value: any) {
+  return value && typeof value.audienceCount === "number" && value.preview;
+}
+
 function Page() {
   const dryRun = useServerFn(founderBlastDryRunFn);
   const liveBatch = useServerFn(founderBlastLiveBatchFn);
@@ -47,6 +51,11 @@ function Page() {
     setError("");
     try {
       const r = await dryRun();
+      if (!isDryRunResult(r)) {
+        setDryResult(null);
+        setError("The dry-run did not return a valid result. Sign in at /auth?redirect=/admin/founder-blast, then try again.");
+        return;
+      }
       setDryResult(r);
     } catch (e) {
       setError(readableError(e, "Dry-run failed"));
