@@ -8,8 +8,9 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server'
 import { TEMPLATES } from '@/lib/email-templates/registry'
 
 const SITE_NAME = 'Pool Rental Near Me'
-const SENDER_DOMAIN = 'poolrentalnearme.online'
-const FROM_DOMAIN = 'poolrentalnearme.online'
+const SENDER_DOMAIN = 'poolrentalnearme.com'
+const FROM_DOMAIN = 'poolrentalnearme.com'
+const FROM_LOCAL = 'derek'
 
 function generateToken(): string {
   const bytes = new Uint8Array(32)
@@ -91,8 +92,9 @@ export async function sendTransactionalEmailServer({
     return { success: false, reason: 'email_suppressed' }
   }
 
-  // Render
-  const element = React.createElement(template.component, templateData)
+  // Render — inject unsubscribeToken so shared footer renders a real link.
+  const renderProps = { ...templateData, unsubscribeToken: unsubscribeToken! }
+  const element = React.createElement(template.component, renderProps)
   const html = await renderAsync(element)
   const plainText = await renderAsync(element, { plainText: true })
   const resolvedSubject =
@@ -112,7 +114,7 @@ export async function sendTransactionalEmailServer({
     payload: {
       message_id: messageId,
       to: effectiveRecipient,
-      from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+      from: `${SITE_NAME} <${FROM_LOCAL}@${FROM_DOMAIN}>`,
       sender_domain: SENDER_DOMAIN,
       subject: resolvedSubject,
       html,

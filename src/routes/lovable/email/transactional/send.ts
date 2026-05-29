@@ -6,9 +6,12 @@ import { TEMPLATES } from '@/lib/email-templates/registry'
 
 // Configuration
 const SITE_NAME = "Pool Rental Near Me"
-// Verified sending domain in Emailit. From header uses noreply@<FROM_DOMAIN>.
-const SENDER_DOMAIN = "poolrentalnearme.online"
-const FROM_DOMAIN = "poolrentalnearme.online"
+// Verified sending domain in Emailit. From: header uses derek@<FROM_DOMAIN>.
+// SENDER_DOMAIN is the subdomain authorized in Emailit; FROM_DOMAIN is the
+// display domain on the From: header (root .com has valid SPF/DKIM).
+const SENDER_DOMAIN = "poolrentalnearme.com"
+const FROM_DOMAIN = "poolrentalnearme.com"
+const FROM_LOCAL = "derek"
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return '***'
@@ -248,8 +251,11 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           return Response.json({ success: false, reason: 'email_suppressed' })
         }
 
-        // 4. Render React Email template to HTML and plain text
-        const element = React.createElement(template.component, templateData)
+        // 4. Render React Email template to HTML and plain text.
+        // Inject unsubscribeToken into templateData so the shared
+        // UnsubscribeFooter renders a working link in the body.
+        const renderProps = { ...templateData, unsubscribeToken }
+        const element = React.createElement(template.component, renderProps)
         const html = await renderAsync(element)
         const plainText = await renderAsync(element, { plainText: true })
 
@@ -275,7 +281,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           payload: {
             message_id: messageId,
             to: effectiveRecipient,
-            from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+            from: `${SITE_NAME} <${FROM_LOCAL}@${FROM_DOMAIN}>`,
             sender_domain: SENDER_DOMAIN,
             subject: resolvedSubject,
             html,
