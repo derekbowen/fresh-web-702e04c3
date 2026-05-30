@@ -1,18 +1,20 @@
 /**
- * Brand-level rating snapshot for Organization JSON-LD.
+ * Brand-level AggregateRating sourced from PRNM Corp's verified
+ * Google Business Profile. This is intentionally separate from
+ * listing-level reviews per our September 2025 announcement:
+ * brand-level credibility signals (PRNM as a company) are
+ * distinct from listing-level reviews (individual hosts), which
+ * we de-emphasize in favor of education-based credentials.
  *
- * Source: Google Business Profile aggregate. Refresh manually each
- * quarter (or whenever the count crosses a round number worth bragging
- * about). One source of truth — referenced by src/lib/seo.ts to enrich
- * organizationJsonLd() with an AggregateRating block.
+ * Refresh manually each quarter (or whenever the count crosses a
+ * round number worth bragging about). One source of truth.
  *
- * Why hardcoded vs. API sync: GBP API requires OAuth + business owner
- * verification + a fully-built sync job for two numbers that change
- * slowly. Manual refresh is the right cost/benefit.
+ * Why hardcoded vs. API sync: GBP API requires OAuth + business
+ * owner verification + a fully-built sync job for two numbers
+ * that change slowly. Manual refresh is the right cost/benefit.
  *
  * When count === 0 the helper omits AggregateRating entirely — no
- * empty/fake schema is shipped. Fill in real numbers from GBP to
- * activate.
+ * empty/fake schema is shipped.
  *
  * Schema.org rules:
  *  - ratingValue: 1–5, one decimal place
@@ -27,14 +29,15 @@ export interface BrandRating {
   reviewCount: number;
   /** ISO date the snapshot was taken (for our audit trail; not shipped) */
   asOf: string;
+  /** Human-readable source label for our own audit trail; not shipped */
+  source: string;
 }
 
-// TODO: replace with actual GBP numbers (see docstring above).
-// Until ratingValue > 0 AND reviewCount > 0, no AggregateRating is emitted.
 export const BRAND_RATING: BrandRating = {
-  ratingValue: 0,
-  reviewCount: 0,
+  ratingValue: 5.0,
+  reviewCount: 10,
   asOf: "2026-05-30",
+  source: "Google Business Profile — PRNM Corp",
 };
 
 export function brandRatingActive(r: BrandRating = BRAND_RATING): boolean {
