@@ -67,7 +67,6 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
   const headings = useMemo(() => extractHeadings(body), [body]);
   const minutes = useMemo(() => readingMinutes(body), [body]);
   const faqs = faqsForContentPage(page);
-  const youtubeId = (page as { youtube_video_id?: string | null }).youtube_video_id ?? null;
   const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs ?? [];
 
   const breadcrumbs: Array<{ name: string; path: string }> = [
