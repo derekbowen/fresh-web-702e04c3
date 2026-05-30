@@ -33,7 +33,15 @@ export function AuthorByline({
       >
         Derek Bowen
       </Link>
-      , founder of Pool Rental Near Me and author of 7 books on pool hosting
+      , founder of Pool Rental Near Me and{" "}
+      <a
+        href="https://www.amazon.com/stores/author/B0FJM55Y12/about"
+        target="_blank"
+        rel="noopener"
+        className="font-medium text-foreground underline-offset-2 hover:underline"
+      >
+        author of 7 books on pool hosting
+      </a>
       {updated ? <span className="text-muted-foreground"> · Updated {updated}</span> : null}
     </p>
   );
