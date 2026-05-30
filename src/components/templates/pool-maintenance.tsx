@@ -408,7 +408,7 @@ function PrnmCta() {
   );
 }
 
-function ProseBlock({ children }: { children: React.ReactNode }) {
+function ProseBlock({ children }: { children: ReactNode }) {
   return (
     <div
       className="prose prose-lg mt-10 max-w-none text-foreground
