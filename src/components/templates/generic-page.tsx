@@ -16,9 +16,23 @@ export function GenericPageTemplate({
   page,
   linkTargets = [],
 }: {
-  page: ContentPage;
+  page: ContentPage | null | undefined;
   linkTargets?: LinkTarget[];
 }) {
+  if (!page) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader />
+        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+          <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground">Page not found</h1>
+          <p className="mt-4 text-muted-foreground">
+            The page you're looking for isn't available. Try the homepage or search for a pool near you.
+          </p>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
   const title = page.title || page.seo_title || page.slug || "";
   return (
     <div className="flex min-h-screen flex-col">

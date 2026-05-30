@@ -519,7 +519,15 @@ function buildHreflangLinks(
 
 
 function ContentPageDispatcher() {
-  const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
+  const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts } =
+    (loaderData ?? {}) as ReturnType<typeof Route.useLoaderData>;
+
+  // Defensive guard: if the page object is missing or has no template_type,
+  // render the generic fallback instead of crashing the entire route.
+  if (!page || !page.template_type) {
+    return <GenericPageTemplate page={page} linkTargets={linkTargets} />;
+  }
 
   // Academy hubs (en + es) override their stored template_type so they always
   // render the rich hub UI even though the row's template_type may be
