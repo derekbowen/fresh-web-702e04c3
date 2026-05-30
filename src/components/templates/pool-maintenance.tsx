@@ -232,46 +232,9 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
               </section>
             ) : null}
 
-            {/* Body markdown */}
+            {/* Body markdown — split after first major H2 section to inject mid-content CTA */}
             {body ? (
-              <div
-                className="prose prose-lg mt-10 max-w-none text-foreground
-                  prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground prose-headings:scroll-mt-24
-                  prose-h2:mt-12 prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-2
-                  prose-h3:mt-8 prose-h3:text-xl
-                  prose-p:leading-relaxed
-                  prose-a:text-primary hover:prose-a:underline
-                  prose-strong:text-foreground
-                  prose-table:border prose-table:border-border
-                  prose-th:bg-muted/40 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold
-                  prose-td:border prose-td:border-border prose-td:px-3 prose-td:py-2
-                  prose-li:my-1
-                  dark:prose-invert"
-              >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h2: ({ children, ...props }) => {
-                      const text = Array.isArray(children)
-                        ? children.join("")
-                        : String(children ?? "");
-                      return (
-                        <h2 id={slugify(text)} {...props}>
-                          {children}
-                        </h2>
-                      );
-                    },
-                    blockquote: ({ children }) => (
-                      <aside className="not-prose my-6 flex gap-3 rounded-xl border-l-4 border-amber-400 bg-amber-50 p-4 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
-                        <span aria-hidden className="text-xl">💡</span>
-                        <div className="text-base leading-relaxed [&_p]:m-0">{children}</div>
-                      </aside>
-                    ),
-                  }}
-                >
-                  {body}
-                </ReactMarkdown>
-              </div>
+              <BodyWithMidCta body={body} injectCta={!isHub} />
             ) : null}
 
             {/* FAQ */}
