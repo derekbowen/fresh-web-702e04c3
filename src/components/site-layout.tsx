@@ -525,7 +525,11 @@ function SiteFooterInner() {
 
           <FooterColumn
             title="Explore"
-            items={[...data.explore_links, { label: "Blog", href: "/p/blog" }]}
+            items={[
+              ...data.explore_links,
+              { label: "Pool Maintenance Guide", href: "/p/pool-maintenance" },
+              { label: "Blog", href: "/p/blog" },
+            ]}
           />
           <FooterColumn title="Become a Host" items={data.host_links} />
           <FooterColumn title="Compare" items={data.compare_links} />

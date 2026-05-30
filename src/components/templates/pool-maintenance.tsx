@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
@@ -232,46 +232,9 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
               </section>
             ) : null}
 
-            {/* Body markdown */}
+            {/* Body markdown — split after first major H2 section to inject mid-content CTA */}
             {body ? (
-              <div
-                className="prose prose-lg mt-10 max-w-none text-foreground
-                  prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground prose-headings:scroll-mt-24
-                  prose-h2:mt-12 prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-2
-                  prose-h3:mt-8 prose-h3:text-xl
-                  prose-p:leading-relaxed
-                  prose-a:text-primary hover:prose-a:underline
-                  prose-strong:text-foreground
-                  prose-table:border prose-table:border-border
-                  prose-th:bg-muted/40 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold
-                  prose-td:border prose-td:border-border prose-td:px-3 prose-td:py-2
-                  prose-li:my-1
-                  dark:prose-invert"
-              >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h2: ({ children, ...props }) => {
-                      const text = Array.isArray(children)
-                        ? children.join("")
-                        : String(children ?? "");
-                      return (
-                        <h2 id={slugify(text)} {...props}>
-                          {children}
-                        </h2>
-                      );
-                    },
-                    blockquote: ({ children }) => (
-                      <aside className="not-prose my-6 flex gap-3 rounded-xl border-l-4 border-amber-400 bg-amber-50 p-4 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
-                        <span aria-hidden className="text-xl">💡</span>
-                        <div className="text-base leading-relaxed [&_p]:m-0">{children}</div>
-                      </aside>
-                    ),
-                  }}
-                >
-                  {body}
-                </ReactMarkdown>
-              </div>
+              <BodyWithMidCta body={body} injectCta={!isHub} />
             ) : null}
 
             {/* FAQ */}
@@ -388,34 +351,137 @@ function PillarSection({
   );
 }
 
+function MidContentCta() {
+  return (
+    <aside className="not-prose my-10 overflow-hidden rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 sm:p-6">
+      <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+        Got a pool?
+      </p>
+      <p className="mt-2 text-base font-semibold leading-snug text-foreground sm:text-lg">
+        It can pay for its own upkeep.
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        Owners on Pool Rental Near Me earn money renting their pool by the hour —
+        no membership, flat 10% host fee, $2M liability insurance included.
+      </p>
+      <div className="mt-4">
+        <a
+          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+        >
+          List your pool →
+        </a>
+      </div>
+    </aside>
+  );
+}
+
 function PrnmCta() {
   return (
-    <aside className="mt-14 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 p-6 sm:p-8">
+    <aside className="mt-14 overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 sm:p-8">
       <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-        Pool Rental Near Me
+        Turn your pool into income
       </p>
-      <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-        Don't want to deal with pool maintenance?
+      <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        Stop paying for pool upkeep. Get paid for it instead.
       </h2>
       <p className="mt-3 max-w-2xl text-base text-muted-foreground">
-        Rent a fully maintained, professionally cleaned pool by the hour — no chemicals,
-        no equipment, no upkeep. Browse hosts in your area on PRNM.
+        Hosts on Pool Rental Near Me earn $3K–$10K/month renting their pool by the
+        hour. Flat 10% host fee (vs Swimply's 15%+), $2M liability insurance
+        included, you set the rules. Listing takes 10 minutes.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <a
-          href="/s"
-          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground hover:opacity-90"
         >
-          Browse pools in your area
+          List your pool →
         </a>
-        <Link
-          to="/p/$slug"
-          params={{ slug: "hosting" }}
+        <a
+          href="/s"
           className="inline-flex items-center justify-center rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground hover:border-primary hover:text-primary"
         >
-          Or list your pool
-        </Link>
+          Looking to rent a pool instead? Find pools near you →
+        </a>
       </div>
     </aside>
+  );
+}
+
+function ProseBlock({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="prose prose-lg mt-10 max-w-none text-foreground
+        prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground prose-headings:scroll-mt-24
+        prose-h2:mt-12 prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-2
+        prose-h3:mt-8 prose-h3:text-xl
+        prose-p:leading-relaxed
+        prose-a:text-primary hover:prose-a:underline
+        prose-strong:text-foreground
+        prose-table:border prose-table:border-border
+        prose-th:bg-muted/40 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold
+        prose-td:border prose-td:border-border prose-td:px-3 prose-td:py-2
+        prose-li:my-1
+        dark:prose-invert"
+    >
+      {children}
+    </div>
+  );
+}
+
+function renderMarkdown(md: string) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        h2: ({ children, ...props }) => {
+          const text = Array.isArray(children) ? children.join("") : String(children ?? "");
+          return (
+            <h2 id={slugify(text)} {...props}>
+              {children}
+            </h2>
+          );
+        },
+        blockquote: ({ children }) => (
+          <aside className="not-prose my-6 flex gap-3 rounded-xl border-l-4 border-amber-400 bg-amber-50 p-4 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
+            <span aria-hidden className="text-xl">💡</span>
+            <div className="text-base leading-relaxed [&_p]:m-0">{children}</div>
+          </aside>
+        ),
+      }}
+    >
+      {md}
+    </ReactMarkdown>
+  );
+}
+
+/**
+ * Splits body markdown at the start of the SECOND `## ` heading so we can
+ * inject the host-acquisition CTA after the first major section. Falls back
+ * to a single block when the body has fewer than two H2s.
+ */
+function BodyWithMidCta({ body, injectCta }: { body: string; injectCta: boolean }) {
+  const split = useMemo(() => {
+    if (!injectCta) return { before: body, after: "" };
+    const re = /\n## /g;
+    const first = re.exec(body);
+    if (!first) return { before: body, after: "" };
+    const second = re.exec(body);
+    if (!second) return { before: body, after: "" };
+    return {
+      before: body.slice(0, second.index),
+      after: body.slice(second.index + 1), // drop the leading newline
+    };
+  }, [body, injectCta]);
+
+  if (!split.after) {
+    return <ProseBlock>{renderMarkdown(split.before)}</ProseBlock>;
+  }
+  return (
+    <>
+      <ProseBlock>{renderMarkdown(split.before)}</ProseBlock>
+      <MidContentCta />
+      <ProseBlock>{renderMarkdown(split.after)}</ProseBlock>
+    </>
   );
 }
