@@ -323,6 +323,24 @@ function HostingPage() {
                   </li>
                 ))}
               </ul>
+
+              {/* Community card — secondary trust signal */}
+              <div className="mt-8 rounded-2xl border border-border bg-card p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Connect with other pool hosts
+                </h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  Join our private Facebook group of 130+ hosts for pricing tips, hosting advice, and support.
+                </p>
+                <a
+                  href="https://www.facebook.com/groups/poolrentalnearme/"
+                  target="_blank"
+                  rel="noopener"
+                  className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:underline"
+                >
+                  Join the Group →
+                </a>
+              </div>
             </div>
             <div className="relative">
               <img
