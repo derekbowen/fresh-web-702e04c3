@@ -313,6 +313,30 @@ export type Database = {
         }
         Relationships: []
       }
+      cities_backup_2026_05_30_republish: {
+        Row: {
+          is_published: boolean | null
+          name: string | null
+          slug: string | null
+          state_code: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          is_published?: boolean | null
+          name?: string | null
+          slug?: string | null
+          state_code?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          is_published?: boolean | null
+          name?: string | null
+          slug?: string | null
+          state_code?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       cities_hero_backfill_log: {
         Row: {
           city_slug: string
