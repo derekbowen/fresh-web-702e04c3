@@ -196,8 +196,31 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
               </aside>
             ) : null}
 
+            {/* Optional YouTube embed — renders only when youtube_video_id is a
+                valid 11-char ID. Dead/blank IDs render nothing. */}
+            {(() => {
+              const vid = (page as { youtube_video_id?: string | null }).youtube_video_id;
+              if (!vid || !/^[A-Za-z0-9_-]{11}$/.test(vid)) return null;
+              return (
+                <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card">
+                  <div className="aspect-video">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${vid}`}
+                      title={page.title || "Pool maintenance video"}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="h-full w-full"
+                    />
+                  </div>
+                  <p className="px-4 py-3 text-xs text-muted-foreground">
+                    Video embedded from YouTube. We do not own this video; it is provided as supplementary reference.
+                  </p>
+                </div>
+              );
+            })()}
 
-            {/* Hub: master TOC linking to all 14 children */}
+
             {isHub ? (
               <section className="mt-10 space-y-8">
                 <PillarSection
