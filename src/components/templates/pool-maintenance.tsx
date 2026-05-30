@@ -6,7 +6,6 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
-import { LiteYouTube } from "@/components/lite-youtube";
 import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -68,7 +67,6 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
   const headings = useMemo(() => extractHeadings(body), [body]);
   const minutes = useMemo(() => readingMinutes(body), [body]);
   const faqs = faqsForContentPage(page);
-  const youtubeId = (page as { youtube_video_id?: string | null }).youtube_video_id ?? null;
   const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs ?? [];
 
   const breadcrumbs: Array<{ name: string; path: string }> = [
@@ -198,18 +196,6 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
               </aside>
             ) : null}
 
-            {/* YouTube */}
-            {youtubeId ? (
-              <figure className="mt-8">
-                <LiteYouTube
-                  videoId={youtubeId}
-                  title={page.title || page.slug || "Pool maintenance video"}
-                />
-                <figcaption className="mt-2 text-xs text-muted-foreground">
-                  Video embedded from YouTube. We do not own this video; all credit to the original creator.
-                </figcaption>
-              </figure>
-            ) : null}
 
             {/* Hub: master TOC linking to all 14 children */}
             {isHub ? (
