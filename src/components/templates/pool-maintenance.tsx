@@ -388,33 +388,58 @@ function PillarSection({
   );
 }
 
+function MidContentCta() {
+  return (
+    <aside className="not-prose my-10 overflow-hidden rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 sm:p-6">
+      <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+        Got a pool?
+      </p>
+      <p className="mt-2 text-base font-semibold leading-snug text-foreground sm:text-lg">
+        It can pay for its own upkeep.
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        Owners on Pool Rental Near Me earn money renting their pool by the hour —
+        no membership, flat 10% host fee, $2M liability insurance included.
+      </p>
+      <div className="mt-4">
+        <a
+          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+        >
+          List your pool →
+        </a>
+      </div>
+    </aside>
+  );
+}
+
 function PrnmCta() {
   return (
-    <aside className="mt-14 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 p-6 sm:p-8">
+    <aside className="mt-14 overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 p-6 sm:p-8">
       <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-        Pool Rental Near Me
+        Turn your pool into income
       </p>
-      <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-        Don't want to deal with pool maintenance?
+      <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        Stop paying for pool upkeep. Get paid for it instead.
       </h2>
       <p className="mt-3 max-w-2xl text-base text-muted-foreground">
-        Rent a fully maintained, professionally cleaned pool by the hour — no chemicals,
-        no equipment, no upkeep. Browse hosts in your area on PRNM.
+        Hosts on Pool Rental Near Me earn $3K–$10K/month renting their pool by the
+        hour. Flat 10% host fee (vs Swimply's 15%+), $2M liability insurance
+        included, you set the rules. Listing takes 10 minutes.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <a
-          href="/s"
-          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground hover:opacity-90"
         >
-          Browse pools in your area
+          List your pool →
         </a>
-        <Link
-          to="/p/$slug"
-          params={{ slug: "hosting" }}
+        <a
+          href="/s"
           className="inline-flex items-center justify-center rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground hover:border-primary hover:text-primary"
         >
-          Or list your pool
-        </Link>
+          Looking to rent a pool instead? Find pools near you →
+        </a>
       </div>
     </aside>
   );
