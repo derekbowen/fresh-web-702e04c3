@@ -250,6 +250,17 @@ export interface STResponse<T> {
 
 // ---------- Public helpers ----------
 
+export interface ListingReview {
+  /** 1–5 star rating left by the guest */
+  rating: number;
+  /** Review body text */
+  body: string;
+  /** Author display name (Sharetribe profile.displayName or abbreviated) */
+  authorName: string;
+  /** ISO timestamp the review was created */
+  createdAt: string;
+}
+
 export interface ListingSummary {
   id: string;
   slug: string;
@@ -263,6 +274,10 @@ export interface ListingSummary {
   geolocation: { lat: number; lng: number } | null;
   /** Approx miles from visitor (server-computed via Cloudflare geo). */
   distanceMiles?: number | null;
+  /** Public guest-of-host reviews, newest first. Empty array if none. */
+  reviews?: ListingReview[];
+  /** Aggregate of `reviews` for convenient JSON-LD wiring. */
+  aggregateRating?: { value: number; count: number } | null;
 }
 
 function slugify(s: string): string {
