@@ -6,7 +6,6 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { FaqBlock } from "@/components/faq-block";
-import { LiteYouTube } from "@/components/lite-youtube";
 import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
