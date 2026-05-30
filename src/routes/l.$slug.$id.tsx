@@ -26,7 +26,7 @@ export const Route = createFileRoute("/l/$slug/$id")({
       image: l.imageUrl,
       type: "product",
     });
-    const product = {
+    const product: Record<string, unknown> = {
       "@context": "https://schema.org",
       "@type": "Product",
       name: l.title,
@@ -48,6 +48,32 @@ export const Route = createFileRoute("/l/$slug/$id")({
         },
       }),
     };
+    // Attach real Sharetribe reviews when present. We never ship empty
+    // aggregateRating or fabricated reviews — n=0 schema gets pages
+    // demoted, not promoted.
+    if (l.aggregateRating && l.reviews && l.reviews.length > 0) {
+      product.aggregateRating = {
+        "@type": "AggregateRating",
+        ratingValue: l.aggregateRating.value.toFixed(1),
+        reviewCount: l.aggregateRating.count,
+        bestRating: "5",
+        worstRating: "1",
+      };
+      // Cap surfaced reviews at the most recent 5 — schema doesn't need
+      // every review and the body field can be long.
+      product.review = l.reviews.slice(0, 5).map((r) => ({
+        "@type": "Review",
+        author: { "@type": "Person", name: r.authorName },
+        datePublished: r.createdAt,
+        reviewBody: r.body,
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: String(r.rating),
+          bestRating: "5",
+          worstRating: "1",
+        },
+      }));
+    }
     const crumbs = breadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "Pool Rentals", path: "/" },

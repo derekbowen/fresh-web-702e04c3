@@ -2,6 +2,7 @@
  * SEO helpers for building meta tags and JSON-LD structured data.
  */
 import ogDefaultImage from "@/assets/og-default.jpg";
+import { BRAND_RATING, brandRatingActive } from "@/lib/brand-rating";
 
 export const SITE_URL = "https://www.poolrentalnearme.com";
 export const SITE_NAME = "Pool Rental Near Me";
@@ -169,7 +170,7 @@ export function itemListJsonLd(items: ItemListEntry[], listName?: string) {
 }
 
 export function organizationJsonLd() {
-  return {
+  const base: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
@@ -187,6 +188,18 @@ export function organizationJsonLd() {
       },
     ],
   };
+  // Only emit AggregateRating when real numbers are configured in
+  // src/lib/brand-rating.ts. Zero-count schema is worse than no schema.
+  if (brandRatingActive()) {
+    base.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: BRAND_RATING.ratingValue.toFixed(1),
+      reviewCount: BRAND_RATING.reviewCount,
+      bestRating: "5",
+      worstRating: "1",
+    };
+  }
+  return base;
 }
 
 export function websiteJsonLd() {

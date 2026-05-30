@@ -250,6 +250,17 @@ export interface STResponse<T> {
 
 // ---------- Public helpers ----------
 
+export interface ListingReview {
+  /** 1–5 star rating left by the guest */
+  rating: number;
+  /** Review body text */
+  body: string;
+  /** Author display name (Sharetribe profile.displayName or abbreviated) */
+  authorName: string;
+  /** ISO timestamp the review was created */
+  createdAt: string;
+}
+
 export interface ListingSummary {
   id: string;
   slug: string;
@@ -263,6 +274,10 @@ export interface ListingSummary {
   geolocation: { lat: number; lng: number } | null;
   /** Approx miles from visitor (server-computed via Cloudflare geo). */
   distanceMiles?: number | null;
+  /** Public guest-of-host reviews, newest first. Empty array if none. */
+  reviews?: ListingReview[];
+  /** Aggregate of `reviews` for convenient JSON-LD wiring. */
+  aggregateRating?: { value: number; count: number } | null;
 }
 
 function slugify(s: string): string {
@@ -348,20 +363,92 @@ const IMAGE_VARIANT_PARAMS = {
   include: "images",
 };
 
+/**
+ * Fetch public guest-of-host reviews for a listing via the Integration API.
+ *
+ * Sharetribe's `/reviews/query` returns 404 on this marketplace (likely
+ * because of small collection size or configuration), so we fetch reviews
+ * through `/transactions/query?listingId=...&include=reviews,reviews.author`.
+ * Only `type=ofProvider` (guest reviewing the pool) and `state=public`
+ * reviews are returned. Sorted newest-first. Returns `[]` on any error.
+ */
+export async function fetchListingReviews(listingId: string): Promise<ListingReview[]> {
+  try {
+    const res = await integrationGet<any>("/transactions/query", {
+      listingId,
+      perPage: 100,
+      include: "reviews,reviews.author",
+      "fields.review": "type,state,rating,content,createdAt",
+      "fields.user": "profile",
+    });
+    const inc: any[] = Array.isArray(res?.included) ? res.included : [];
+    const users = new Map<string, any>();
+    const rawReviews: any[] = [];
+    for (const item of inc) {
+      if (item?.type === "user" && item.id) users.set(String(item.id), item);
+      else if (item?.type === "review") rawReviews.push(item);
+    }
+    const seen = new Set<string>();
+    const out: ListingReview[] = [];
+    for (const r of rawReviews) {
+      const id = String(r?.id ?? "");
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      const a = r?.attributes ?? {};
+      if (a.type !== "ofProvider") continue;
+      if (a.state && a.state !== "public") continue;
+      const rating = Number(a.rating);
+      const body = typeof a.content === "string" ? a.content.trim() : "";
+      if (!rating || rating < 1 || rating > 5 || !body) continue;
+      const authorRel = r?.relationships?.author?.data;
+      const authorId = authorRel?.id ? String(authorRel.id) : null;
+      const author = authorId ? users.get(authorId) : null;
+      const profile = author?.attributes?.profile ?? {};
+      const displayName =
+        (typeof profile.displayName === "string" && profile.displayName.trim()) ||
+        [profile.firstName, profile.abbreviatedLastName].filter(Boolean).join(" ").trim() ||
+        "Guest";
+      out.push({
+        rating,
+        body,
+        authorName: displayName,
+        createdAt: String(a.createdAt ?? ""),
+      });
+    }
+    out.sort((x, y) => (y.createdAt || "").localeCompare(x.createdAt || ""));
+    return out;
+  } catch (err) {
+    console.error("fetchListingReviews error:", err);
+    return [];
+  }
+}
+
+function aggregateFor(reviews: ListingReview[]): { value: number; count: number } | null {
+  if (!reviews.length) return null;
+  const sum = reviews.reduce((a, r) => a + r.rating, 0);
+  return { value: Math.round((sum / reviews.length) * 10) / 10, count: reviews.length };
+}
+
 export async function fetchListing(id: string): Promise<{
   listing: ListingSummary;
   raw: STListing;
 } | null> {
   try {
-    const res = await integGet<STResponse<STListing | STListing[]>>(
-      `/listings/show`,
-      { id, ...IMAGE_VARIANT_PARAMS },
-    );
-    const data = Array.isArray(res.data) ? res.data[0] : res.data;
+    const [listingRes, reviews] = await Promise.all([
+      integGet<STResponse<STListing | STListing[]>>(`/listings/show`, {
+        id,
+        ...IMAGE_VARIANT_PARAMS,
+      }),
+      fetchListingReviews(id),
+    ]);
+    const data = Array.isArray(listingRes.data) ? listingRes.data[0] : listingRes.data;
     if (!data) return null;
     // Don't expose draft / closed listings publicly.
     if (data.attributes.state !== "published") return null;
-    return { listing: summarize(data, res.included), raw: data };
+    const listing = summarize(data, listingRes.included);
+    listing.reviews = reviews;
+    listing.aggregateRating = aggregateFor(reviews);
+    return { listing, raw: data };
   } catch (err) {
     console.error("fetchListing error:", err);
     return null;
