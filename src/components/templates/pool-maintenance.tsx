@@ -290,9 +290,9 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
             <section className="mt-10 rounded-2xl border border-border bg-muted/30 p-6">
               <p className="text-sm font-semibold text-foreground">Written by the PRNM team</p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Pool Rental Near Me operates the largest peer-to-peer pool rental marketplace
-                in the US, with 2,200+ host pools across 40+ states. Our editorial team works
-                with hosts and licensed pool pros to keep these guides current.
+                Pool Rental Near Me is the peer-to-peer pool rental marketplace America loves —
+                connecting pool owners with guests for hourly rentals across the US. Our editorial
+                team works with hosts and licensed pool pros to keep these guides current.
               </p>
             </section>
           </article>
