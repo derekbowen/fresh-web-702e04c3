@@ -261,8 +261,36 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
           </div>
         </section>
 
+        {/* All 50 states — surfaced up top on the hub so visitors hit links immediately */}
+        {isHub && (
+          <section
+            aria-label="All 50 state host guides"
+            className="border-b border-border bg-secondary/30"
+          >
+            <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    Pick your state
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                    Every state has different rules for renting your pool. Tap yours for local laws, permits, HOA tips, and neighbor-friendly scripts.
+                  </p>
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {ADVOCACY_STATES.length} guides
+                </span>
+              </div>
+              <div className="mt-6 rounded-3xl border border-border bg-card p-5 sm:p-7">
+                <StateGrid states={ADVOCACY_STATES} currentSlug={page.slug} />
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Body + sidebar */}
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+
           <div className="grid gap-10 lg:grid-cols-12">
             <article className="lg:col-span-8">
               {!isHub && (
