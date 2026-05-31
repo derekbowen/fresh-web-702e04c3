@@ -57,7 +57,7 @@ function readingMinutes(md: string): number {
 
 function normalizeMarkdownTables(md: string): string {
   return md.replace(
-    /(^\|[^\n]*\|\s*$)(?:\n[ \t]*)+(?=^\|)/gm,
+    /(^\|[^\n]*\|[ \t]*$)(?:\n[ \t]*)+(?=^\|)/gm,
     "$1\n",
   );
 }
