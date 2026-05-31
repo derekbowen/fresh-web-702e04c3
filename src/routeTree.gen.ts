@@ -25,12 +25,14 @@ import { Route as SitemapPagesSpanishDotxmlRouteImport } from './routes/sitemap-
 import { Route as SitemapPagesMoneyDotxmlRouteImport } from './routes/sitemap-pages-money[.]xml'
 import { Route as SitemapPagesHostAcquisitionDotxmlRouteImport } from './routes/sitemap-pages-host-acquisition[.]xml'
 import { Route as SitemapPagesEventGuidesDotxmlRouteImport } from './routes/sitemap-pages-event-guides[.]xml'
+import { Route as SitemapPagesCoursesDotxmlRouteImport } from './routes/sitemap-pages-courses[.]xml'
 import { Route as SitemapPagesComparisonsDotxmlRouteImport } from './routes/sitemap-pages-comparisons[.]xml'
 import { Route as SitemapPagesCitiesDotxmlRouteImport } from './routes/sitemap-pages-cities[.]xml'
 import { Route as SitemapPagesBlogDotxmlRouteImport } from './routes/sitemap-pages-blog[.]xml'
 import { Route as SitemapPagesArticlesDotxmlRouteImport } from './routes/sitemap-pages-articles[.]xml'
 import { Route as SitemapPagesAdvocacyDotxmlRouteImport } from './routes/sitemap-pages-advocacy[.]xml'
 import { Route as SitemapPagesAcademyDotxmlRouteImport } from './routes/sitemap-pages-academy[.]xml'
+import { Route as SitemapListingsDotxmlRouteImport } from './routes/sitemap-listings[.]xml'
 import { Route as SitemapIndexDotxmlRouteImport } from './routes/sitemap-index[.]xml'
 import { Route as SitemapHubDotxmlRouteImport } from './routes/sitemap-hub[.]xml'
 import { Route as SitemapDirectoryDotxmlRouteImport } from './routes/sitemap-directory[.]xml'
@@ -274,6 +276,12 @@ const SitemapPagesEventGuidesDotxmlRoute =
     path: '/sitemap-pages-event-guides.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SitemapPagesCoursesDotxmlRoute =
+  SitemapPagesCoursesDotxmlRouteImport.update({
+    id: '/sitemap-pages-courses.xml',
+    path: '/sitemap-pages-courses.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapPagesComparisonsDotxmlRoute =
   SitemapPagesComparisonsDotxmlRouteImport.update({
     id: '/sitemap-pages-comparisons.xml',
@@ -309,6 +317,11 @@ const SitemapPagesAcademyDotxmlRoute =
     path: '/sitemap-pages-academy.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SitemapListingsDotxmlRoute = SitemapListingsDotxmlRouteImport.update({
+  id: '/sitemap-listings.xml',
+  path: '/sitemap-listings.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapIndexDotxmlRoute = SitemapIndexDotxmlRouteImport.update({
   id: '/sitemap-index.xml',
   path: '/sitemap-index.xml',
@@ -1142,12 +1155,14 @@ export interface FileRoutesByFullPath {
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
   '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
+  '/sitemap-listings.xml': typeof SitemapListingsDotxmlRoute
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
   '/sitemap-pages-blog.xml': typeof SitemapPagesBlogDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
   '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
+  '/sitemap-pages-courses.xml': typeof SitemapPagesCoursesDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
@@ -1323,12 +1338,14 @@ export interface FileRoutesByTo {
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
   '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
+  '/sitemap-listings.xml': typeof SitemapListingsDotxmlRoute
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
   '/sitemap-pages-blog.xml': typeof SitemapPagesBlogDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
   '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
+  '/sitemap-pages-courses.xml': typeof SitemapPagesCoursesDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
@@ -1505,12 +1522,14 @@ export interface FileRoutesById {
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
   '/sitemap-index.xml': typeof SitemapIndexDotxmlRoute
+  '/sitemap-listings.xml': typeof SitemapListingsDotxmlRoute
   '/sitemap-pages-academy.xml': typeof SitemapPagesAcademyDotxmlRoute
   '/sitemap-pages-advocacy.xml': typeof SitemapPagesAdvocacyDotxmlRoute
   '/sitemap-pages-articles.xml': typeof SitemapPagesArticlesDotxmlRoute
   '/sitemap-pages-blog.xml': typeof SitemapPagesBlogDotxmlRoute
   '/sitemap-pages-cities.xml': typeof SitemapPagesCitiesDotxmlRoute
   '/sitemap-pages-comparisons.xml': typeof SitemapPagesComparisonsDotxmlRoute
+  '/sitemap-pages-courses.xml': typeof SitemapPagesCoursesDotxmlRoute
   '/sitemap-pages-event-guides.xml': typeof SitemapPagesEventGuidesDotxmlRoute
   '/sitemap-pages-host-acquisition.xml': typeof SitemapPagesHostAcquisitionDotxmlRoute
   '/sitemap-pages-money.xml': typeof SitemapPagesMoneyDotxmlRoute
@@ -1688,12 +1707,14 @@ export interface FileRouteTypes {
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
     | '/sitemap-index.xml'
+    | '/sitemap-listings.xml'
     | '/sitemap-pages-academy.xml'
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
     | '/sitemap-pages-blog.xml'
     | '/sitemap-pages-cities.xml'
     | '/sitemap-pages-comparisons.xml'
+    | '/sitemap-pages-courses.xml'
     | '/sitemap-pages-event-guides.xml'
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
@@ -1869,12 +1890,14 @@ export interface FileRouteTypes {
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
     | '/sitemap-index.xml'
+    | '/sitemap-listings.xml'
     | '/sitemap-pages-academy.xml'
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
     | '/sitemap-pages-blog.xml'
     | '/sitemap-pages-cities.xml'
     | '/sitemap-pages-comparisons.xml'
+    | '/sitemap-pages-courses.xml'
     | '/sitemap-pages-event-guides.xml'
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
@@ -2050,12 +2073,14 @@ export interface FileRouteTypes {
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
     | '/sitemap-index.xml'
+    | '/sitemap-listings.xml'
     | '/sitemap-pages-academy.xml'
     | '/sitemap-pages-advocacy.xml'
     | '/sitemap-pages-articles.xml'
     | '/sitemap-pages-blog.xml'
     | '/sitemap-pages-cities.xml'
     | '/sitemap-pages-comparisons.xml'
+    | '/sitemap-pages-courses.xml'
     | '/sitemap-pages-event-guides.xml'
     | '/sitemap-pages-host-acquisition.xml'
     | '/sitemap-pages-money.xml'
@@ -2232,12 +2257,14 @@ export interface RootRouteChildren {
   SitemapDirectoryDotxmlRoute: typeof SitemapDirectoryDotxmlRoute
   SitemapHubDotxmlRoute: typeof SitemapHubDotxmlRoute
   SitemapIndexDotxmlRoute: typeof SitemapIndexDotxmlRoute
+  SitemapListingsDotxmlRoute: typeof SitemapListingsDotxmlRoute
   SitemapPagesAcademyDotxmlRoute: typeof SitemapPagesAcademyDotxmlRoute
   SitemapPagesAdvocacyDotxmlRoute: typeof SitemapPagesAdvocacyDotxmlRoute
   SitemapPagesArticlesDotxmlRoute: typeof SitemapPagesArticlesDotxmlRoute
   SitemapPagesBlogDotxmlRoute: typeof SitemapPagesBlogDotxmlRoute
   SitemapPagesCitiesDotxmlRoute: typeof SitemapPagesCitiesDotxmlRoute
   SitemapPagesComparisonsDotxmlRoute: typeof SitemapPagesComparisonsDotxmlRoute
+  SitemapPagesCoursesDotxmlRoute: typeof SitemapPagesCoursesDotxmlRoute
   SitemapPagesEventGuidesDotxmlRoute: typeof SitemapPagesEventGuidesDotxmlRoute
   SitemapPagesHostAcquisitionDotxmlRoute: typeof SitemapPagesHostAcquisitionDotxmlRoute
   SitemapPagesMoneyDotxmlRoute: typeof SitemapPagesMoneyDotxmlRoute
@@ -2449,6 +2476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapPagesEventGuidesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-pages-courses.xml': {
+      id: '/sitemap-pages-courses.xml'
+      path: '/sitemap-pages-courses.xml'
+      fullPath: '/sitemap-pages-courses.xml'
+      preLoaderRoute: typeof SitemapPagesCoursesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-pages-comparisons.xml': {
       id: '/sitemap-pages-comparisons.xml'
       path: '/sitemap-pages-comparisons.xml'
@@ -2489,6 +2523,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-pages-academy.xml'
       fullPath: '/sitemap-pages-academy.xml'
       preLoaderRoute: typeof SitemapPagesAcademyDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-listings.xml': {
+      id: '/sitemap-listings.xml'
+      path: '/sitemap-listings.xml'
+      fullPath: '/sitemap-listings.xml'
+      preLoaderRoute: typeof SitemapListingsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-index.xml': {
@@ -3803,12 +3844,14 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDirectoryDotxmlRoute: SitemapDirectoryDotxmlRoute,
   SitemapHubDotxmlRoute: SitemapHubDotxmlRoute,
   SitemapIndexDotxmlRoute: SitemapIndexDotxmlRoute,
+  SitemapListingsDotxmlRoute: SitemapListingsDotxmlRoute,
   SitemapPagesAcademyDotxmlRoute: SitemapPagesAcademyDotxmlRoute,
   SitemapPagesAdvocacyDotxmlRoute: SitemapPagesAdvocacyDotxmlRoute,
   SitemapPagesArticlesDotxmlRoute: SitemapPagesArticlesDotxmlRoute,
   SitemapPagesBlogDotxmlRoute: SitemapPagesBlogDotxmlRoute,
   SitemapPagesCitiesDotxmlRoute: SitemapPagesCitiesDotxmlRoute,
   SitemapPagesComparisonsDotxmlRoute: SitemapPagesComparisonsDotxmlRoute,
+  SitemapPagesCoursesDotxmlRoute: SitemapPagesCoursesDotxmlRoute,
   SitemapPagesEventGuidesDotxmlRoute: SitemapPagesEventGuidesDotxmlRoute,
   SitemapPagesHostAcquisitionDotxmlRoute:
     SitemapPagesHostAcquisitionDotxmlRoute,
