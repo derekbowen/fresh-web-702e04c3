@@ -77,10 +77,12 @@ export const Route = createFileRoute("/p/es/$slug")({
     } catch {
       linkTargets = [];
     }
-    return { page, linkTargets };
+    const origin = await getRouteOrigin();
+    return { page, linkTargets, origin };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
+
     const p = loaderData.page;
     const path = `/p/es/${params.slug}`;
     const canonicalPath = p.url_path || path;
