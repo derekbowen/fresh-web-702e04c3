@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { ListingCard } from "@/components/listing-card";
 import { buildMeta } from "@/lib/seo";
 import { getStateHub } from "@/server/state-hub.functions";
+import { queryListings, type ListingSummary } from "@/server/sharetribe.functions";
 
 export const Route = createFileRoute("/p/pool-rentals-$state")({
   loader: async ({ params }) => {
@@ -16,7 +18,18 @@ export const Route = createFileRoute("/p/pool-rentals-$state")({
       data = null;
     }
     if (!data || !data.cities || data.cities.length === 0) throw notFound();
-    return data;
+
+    // Fetch live listings for this state (best-effort, never throws).
+    let listings: ListingSummary[] = [];
+    try {
+      const res = await queryListings({
+        data: { stateCode: data.stateCode, perPage: 12, page: 1 },
+      });
+      listings = res.listings ?? [];
+    } catch (err) {
+      console.error("[pool-rentals-$state] listings fetch failed:", err);
+    }
+    return { ...data, listings };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [], links: [] };
@@ -60,7 +73,7 @@ export const Route = createFileRoute("/p/pool-rentals-$state")({
 });
 
 function StateHubPage() {
-  const { stateName, stateCode, cities } = Route.useLoaderData();
+  const { stateName, stateCode, cities, listings } = Route.useLoaderData();
 
   // Group cities alphabetically into A, B, C... buckets for scannability.
   type City = (typeof cities)[number];
@@ -114,6 +127,30 @@ function StateHubPage() {
             </a>
           </div>
         </header>
+
+        {/* Live listings strip */}
+        {listings.length > 0 && (
+          <section className="mt-12">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <h2 className="text-2xl font-bold tracking-tight">
+                Available pools in {stateName}
+              </h2>
+              <a
+                href={`/s?address=${encodeURIComponent(stateName)}`}
+                className="text-sm font-semibold text-primary hover:underline"
+              >
+                See all →
+              </a>
+            </div>
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {listings.map((l: ListingSummary) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </div>
+          </section>
+        )}
+
+
 
         {/* Letter jump nav */}
         {letters.length > 1 && (
