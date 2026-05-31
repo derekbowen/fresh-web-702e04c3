@@ -55,6 +55,13 @@ function readingMinutes(md: string): number {
   return Math.max(1, Math.round(words / 220));
 }
 
+function normalizeMarkdownTables(md: string): string {
+  return md.replace(
+    /(^\|[^\n]*\|[ \t]*$)(?:\n[ \t]*)+(?=^\|)/gm,
+    "$1\n",
+  );
+}
+
 /**
  * Pool Maintenance template. Handles both the pillar hub (slug =
  * "pool-maintenance") and child guides. Mobile-first, sticky desktop TOC,
@@ -62,7 +69,7 @@ function readingMinutes(md: string): number {
  */
 export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
   const isHub = page.slug === "pool-maintenance";
-  const body = (page.content || page.body_markdown || "").toString();
+  const body = normalizeMarkdownTables((page.content || page.body_markdown || "").toString());
   const headings = useMemo(() => extractHeadings(body), [body]);
   const minutes = useMemo(() => readingMinutes(body), [body]);
   const faqs = faqsForContentPage(page);
@@ -455,6 +462,23 @@ function renderMarkdown(md: string) {
             <span aria-hidden className="text-xl">💡</span>
             <div className="text-base leading-relaxed [&_p]:m-0">{children}</div>
           </aside>
+        ),
+        table: ({ children }) => (
+          <div className="not-prose my-8 overflow-x-auto rounded-xl border border-border">
+            <table className="w-full min-w-[720px] border-collapse text-left text-sm text-foreground">
+              {children}
+            </table>
+          </div>
+        ),
+        th: ({ children }) => (
+          <th className="border-b border-border bg-muted/60 px-3 py-2 align-top font-semibold text-foreground">
+            {children}
+          </th>
+        ),
+        td: ({ children }) => (
+          <td className="border-t border-border px-3 py-2 align-top leading-relaxed">
+            {children}
+          </td>
         ),
       }}
     >

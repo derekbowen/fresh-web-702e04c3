@@ -14,6 +14,7 @@
  *   - Anything else: PROD_ORIGIN as a typed safety net.
  */
 import { PROD_ORIGIN } from "./site-origin";
+import { getRouteOriginFromRequest } from "./route-origin.functions";
 
 const LOVABLE_HOST_MARKER = "lovable.app";
 
@@ -29,11 +30,5 @@ export async function getRouteOrigin(): Promise<string> {
       return PROD_ORIGIN;
     }
   }
-  try {
-    const { getRequest } = await import("@tanstack/react-start/server");
-    const { getCanonicalOrigin } = await import("@/server/canonical.server");
-    return getCanonicalOrigin(getRequest());
-  } catch {
-    return PROD_ORIGIN;
-  }
+  return getRouteOriginFromRequest();
 }
