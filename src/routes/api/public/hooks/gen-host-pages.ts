@@ -10,6 +10,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 const STATE_NAMES: Record<string, string> = {
   al: "Alabama", ak: "Alaska", az: "Arizona", ar: "Arkansas", ca: "California",
