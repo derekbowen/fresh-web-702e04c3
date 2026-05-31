@@ -75,6 +75,16 @@ function academyLangForSlug(slug: string | null | undefined): "en" | "es" | null
 
 export const Route = createFileRoute("/p/$slug")({
   beforeLoad: async ({ params }) => {
+    // 301 known junk slugs to home (external LLM hallucinations / stale caches).
+    // /p/null, /p/details, /p/mailto:* leak into GSC 404 reports; redirect
+    // to silence them rather than continuing to serve 404s.
+    if (
+      params.slug === "null" ||
+      params.slug === "details" ||
+      params.slug.startsWith("mailto:")
+    ) {
+      throw redirect({ href: "/", statusCode: 301, replace: true });
+    }
     // Lowercase normalization: all canonical slugs in content_pages are lowercase
     // (built via slugify()). Issue a 301 to the lowercase variant before any DB
     // hit so Mixed-Case URLs collapse cleanly in GSC. Phase 2 Ship B.
