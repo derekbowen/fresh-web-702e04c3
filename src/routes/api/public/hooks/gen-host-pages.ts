@@ -170,6 +170,8 @@ export const Route = createFileRoute("/api/public/hooks/gen-host-pages")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await authorizeHookRequest(request);
+        if (unauth) return unauth;
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) {
           return new Response(JSON.stringify({ ok: false, error: "LOVABLE_API_KEY missing" }),
