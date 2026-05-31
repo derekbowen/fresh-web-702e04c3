@@ -21,6 +21,8 @@ import {
   SITE_NAME,
   AUTHOR_PERSON_JSONLD_REF,
 } from "@/lib/seo";
+import { getRouteOrigin } from "@/lib/route-origin";
+
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 
 /**
