@@ -241,15 +241,16 @@ export const Route = createFileRoute("/p/$slug")({
     // Hreflang — emit the EN↔ES pair for the academy hubs and any other
     // page that has a known twin. (Skipped on simple en pages with no twin.)
     const academyLang = academyLangForSlug(p.slug);
+    const origin = loaderData.origin ?? SITE_URL;
     let hreflang: Array<{ lang: string; href: string }> | undefined;
     if (academyLang) {
       hreflang = [
-        { lang: "en", href: `${SITE_URL}${academyHubPath("en")}` },
-        { lang: "es", href: `${SITE_URL}${academyHubPath("es")}` },
-        { lang: "x-default", href: `${SITE_URL}${academyHubPath("en")}` },
+        { lang: "en", href: `${origin}${academyHubPath("en")}` },
+        { lang: "es", href: `${origin}${academyHubPath("es")}` },
+        { lang: "x-default", href: `${origin}${academyHubPath("en")}` },
       ];
     } else {
-      hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null);
+      hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null, origin);
     }
 
     const pAny = p as unknown as {
@@ -267,8 +268,10 @@ export const Route = createFileRoute("/p/$slug")({
       ogDescription: pAny.og_description?.trim() || undefined,
       image: p.cover_image_url || p.hero_image_url || undefined,
       type: isArticleType(p.template_type) || academyLang ? "article" : "website",
+      origin,
       hreflang,
     });
+
 
     // Article OpenGraph metadata — for resource/event_guide/guide templates.
     // Boosts AEO and helps Google/social cards show publish date + author.
