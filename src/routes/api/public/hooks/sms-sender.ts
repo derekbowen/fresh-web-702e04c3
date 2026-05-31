@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/public/hooks/sms-sender")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         const nowIso = new Date().toISOString();
         const { data: due, error } = await supabaseAdmin

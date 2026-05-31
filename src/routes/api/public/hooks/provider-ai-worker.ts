@@ -88,13 +88,13 @@ export const Route = createFileRoute("/api/public/hooks/provider-ai-worker")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         const remaining = await countRemaining();
         return Response.json({ remaining });
       },
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
 
         const apiKey = process.env.LOVABLE_API_KEY;

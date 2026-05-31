@@ -144,7 +144,7 @@ export const Route = createFileRoute("/api/public/hooks/host-city-tail-fix")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
 
         const apiKey = process.env.LOVABLE_API_KEY;

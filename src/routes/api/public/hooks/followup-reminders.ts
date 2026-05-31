@@ -6,7 +6,7 @@ export const Route = createFileRoute("/api/public/hooks/followup-reminders")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         try {
           const result = await processFollowupReminders();

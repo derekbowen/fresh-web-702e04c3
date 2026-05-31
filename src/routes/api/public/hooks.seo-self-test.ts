@@ -148,12 +148,12 @@ export const Route = createFileRoute("/api/public/hooks/seo-self-test")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         return Response.json(await runAll());
       },
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         return Response.json(await runAll());
       },
