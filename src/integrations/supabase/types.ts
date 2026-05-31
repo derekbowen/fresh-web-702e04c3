@@ -980,6 +980,150 @@ export type Database = {
         }
         Relationships: []
       }
+      content_pages_backup_2026_05_31_tx_refresh: {
+        Row: {
+          body_markdown: string | null
+          canonical_override: string | null
+          category: string | null
+          content: string | null
+          content_refreshed_at: string | null
+          created_at: string | null
+          description: string | null
+          faq_items: Json | null
+          focus_keyword: string | null
+          gsc_clicks: number | null
+          gsc_impressions: number | null
+          gsc_position: number | null
+          gsc_updated_at: string | null
+          hero_backfill_attempts: number | null
+          hero_backfill_last_error: string | null
+          hero_image_alt: string | null
+          hero_image_url: string | null
+          hreflang_group: string | null
+          id: string | null
+          in_sitemap: boolean | null
+          legacy_slugs: string[] | null
+          locale: string | null
+          migrated_at: string | null
+          og_description: string | null
+          og_title: string | null
+          priority: number | null
+          raw_html: string | null
+          redirect_to: string | null
+          refresh_attempts: number | null
+          refresh_last_error: string | null
+          related_slugs: string[] | null
+          schema_type: string | null
+          scraped_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          sitemap_source: string | null
+          slug: string | null
+          source_url: string | null
+          status: string | null
+          template_type: string | null
+          title: string | null
+          title_variant: string | null
+          updated_at: string | null
+          url_path: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          body_markdown?: string | null
+          canonical_override?: string | null
+          category?: string | null
+          content?: string | null
+          content_refreshed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          faq_items?: Json | null
+          focus_keyword?: string | null
+          gsc_clicks?: number | null
+          gsc_impressions?: number | null
+          gsc_position?: number | null
+          gsc_updated_at?: string | null
+          hero_backfill_attempts?: number | null
+          hero_backfill_last_error?: string | null
+          hero_image_alt?: string | null
+          hero_image_url?: string | null
+          hreflang_group?: string | null
+          id?: string | null
+          in_sitemap?: boolean | null
+          legacy_slugs?: string[] | null
+          locale?: string | null
+          migrated_at?: string | null
+          og_description?: string | null
+          og_title?: string | null
+          priority?: number | null
+          raw_html?: string | null
+          redirect_to?: string | null
+          refresh_attempts?: number | null
+          refresh_last_error?: string | null
+          related_slugs?: string[] | null
+          schema_type?: string | null
+          scraped_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          sitemap_source?: string | null
+          slug?: string | null
+          source_url?: string | null
+          status?: string | null
+          template_type?: string | null
+          title?: string | null
+          title_variant?: string | null
+          updated_at?: string | null
+          url_path?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          body_markdown?: string | null
+          canonical_override?: string | null
+          category?: string | null
+          content?: string | null
+          content_refreshed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          faq_items?: Json | null
+          focus_keyword?: string | null
+          gsc_clicks?: number | null
+          gsc_impressions?: number | null
+          gsc_position?: number | null
+          gsc_updated_at?: string | null
+          hero_backfill_attempts?: number | null
+          hero_backfill_last_error?: string | null
+          hero_image_alt?: string | null
+          hero_image_url?: string | null
+          hreflang_group?: string | null
+          id?: string | null
+          in_sitemap?: boolean | null
+          legacy_slugs?: string[] | null
+          locale?: string | null
+          migrated_at?: string | null
+          og_description?: string | null
+          og_title?: string | null
+          priority?: number | null
+          raw_html?: string | null
+          redirect_to?: string | null
+          refresh_attempts?: number | null
+          refresh_last_error?: string | null
+          related_slugs?: string[] | null
+          schema_type?: string | null
+          scraped_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          sitemap_source?: string | null
+          slug?: string | null
+          source_url?: string | null
+          status?: string | null
+          template_type?: string | null
+          title?: string | null
+          title_variant?: string | null
+          updated_at?: string | null
+          url_path?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
       content_plan: {
         Row: {
           attempt_count: number
