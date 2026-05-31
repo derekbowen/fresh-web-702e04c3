@@ -578,6 +578,7 @@ function SiteFooterInner() {
           <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <span>{data.bottom_text || `© ${FOOTER_YEAR} PRNM CORP`}</span>
             <div className="flex items-center gap-4">
+              <a href="/public-pools" className="hover:text-primary">Public Pools</a>
               <a href="/p/blog" className="hover:text-primary">Blog</a>
               <a href="/sitemap.xml" className="hover:text-primary">Sitemap</a>
             </div>
