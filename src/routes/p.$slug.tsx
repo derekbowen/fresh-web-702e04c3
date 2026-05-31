@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+
 import {
   createFileRoute,
   useRouter,
@@ -533,50 +533,8 @@ function ContentPageDispatcher() {
   const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts } =
     (loaderData ?? {}) as ReturnType<typeof Route.useLoaderData>;
 
-  // Global anchor click interceptor. The production nginx proxy does not
-  // forward /_serverFn/* to fresh-web, so any client-side navigation that
-  // runs a route loader returns Sharetribe's 404 HTML and crashes the
-  // dispatcher. Force every same-origin link click to be a hard document
-  // load until the proxy is updated. Marketplace paths owned by Sharetribe
-  // (/s, /l, /login, /signup, /inbox, /auth, /account, /profile, /messages,
-  // /listings, /saved-listings) are already plain <a> tags doing full nav,
-  // so this is a no-op for them.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const onClick = (event: MouseEvent) => {
-      if (event.defaultPrevented) return;
-      if (event.button !== 0) return;
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const target = event.target as Element | null;
-      const anchor = target?.closest?.("a") as HTMLAnchorElement | null;
-      if (!anchor) return;
-      if (anchor.target && anchor.target !== "" && anchor.target !== "_self") return;
-      if (anchor.hasAttribute("download")) return;
-      const href = anchor.getAttribute("href");
-      if (!href) return;
-      // Skip hash-only, mailto/tel, and any non-same-origin
-      if (href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
-      let url: URL;
-      try {
-        url = new URL(href, window.location.href);
-      } catch {
-        return;
-      }
-      if (url.origin !== window.location.origin) return;
-      // Same-page hash navigation: let the browser handle it
-      if (
-        url.pathname === window.location.pathname &&
-        url.search === window.location.search &&
-        url.hash
-      ) {
-        return;
-      }
-      event.preventDefault();
-      window.location.assign(url.pathname + url.search + url.hash);
-    };
-    document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
-  }, []);
+
+
 
 
   // Defensive guard: if the page object is missing entirely, show a friendly
