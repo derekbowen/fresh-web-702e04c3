@@ -44,7 +44,7 @@ export function LanguageSwitcher({
         <span
           aria-disabled="true"
           title={isEn ? "Not available in Spanish" : "No disponible en inglés"}
-          className="rounded-full px-3 py-1 text-muted-foreground/60"
+          className="rounded-full px-3 py-1 text-muted-foreground"
         >
           {altLabel}
         </span>
