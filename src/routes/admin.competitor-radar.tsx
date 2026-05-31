@@ -15,7 +15,6 @@ import { Loader2, Plus, RefreshCw, Trash2, ExternalLink, Check, Eye, Radar, Targ
 
 export const Route = createFileRoute("/admin/competitor-radar")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/competitor-radar", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

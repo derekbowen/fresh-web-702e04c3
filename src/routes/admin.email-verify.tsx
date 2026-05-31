@@ -13,7 +13,6 @@ import { Loader2, Mail, CheckCircle2, XCircle, RefreshCw, Play } from "lucide-re
 
 export const Route = createFileRoute("/admin/email-verify")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/email-verify", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

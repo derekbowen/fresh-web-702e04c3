@@ -8,7 +8,6 @@ import { Loader2, Sparkles, CheckCircle2, AlertTriangle, Lightbulb } from "lucid
 
 export const Route = createFileRoute("/admin/page-auditor")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/page-auditor", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

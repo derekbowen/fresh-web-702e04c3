@@ -7,7 +7,6 @@ import { listLeads, updateLeadStatus, type LeadRow } from "@/server/admin-tools.
 
 export const Route = createFileRoute("/admin/leads")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/leads", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

@@ -11,7 +11,6 @@ import { Loader2, Sparkles, Mail, Trash2, CheckCircle2, AlertTriangle, Lightbulb
 
 export const Route = createFileRoute("/admin/listing-auditor")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/listing-auditor", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();
