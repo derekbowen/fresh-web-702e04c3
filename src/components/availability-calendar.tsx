@@ -307,7 +307,7 @@ function AvailabilityCalendarInner({
                         ? "bg-primary text-primary-foreground"
                         : hasSlots
                           ? "bg-card text-foreground hover:bg-primary/10"
-                          : "bg-secondary/20 text-muted-foreground/50",
+                          : "bg-secondary/20 text-muted-foreground",
                       disabled ? "cursor-not-allowed" : "cursor-pointer",
                     ].join(" ")}
                     aria-label={
