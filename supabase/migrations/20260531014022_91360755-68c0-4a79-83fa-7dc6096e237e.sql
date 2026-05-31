@@ -1,0 +1,4 @@
+ALTER TABLE public.content_pages_backup_2026_05_31_sitemap_fix ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.content_pages_backup_2026_05_31_sitemap_fix FORCE ROW LEVEL SECURITY;
+REVOKE ALL ON public.content_pages_backup_2026_05_31_sitemap_fix FROM anon, authenticated;
+GRANT ALL ON public.content_pages_backup_2026_05_31_sitemap_fix TO service_role;
