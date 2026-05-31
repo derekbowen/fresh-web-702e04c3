@@ -121,9 +121,68 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("[sitemap] blog_posts count error", err);
         }
 
-        // (Sharetribe listing sub-sitemap removed — endpoint 404s and Google
-        // flags missing sub-sitemaps as errors. Re-add only when the
-        // passthrough is actually serving XML.)
+        // 2c. Courses (sourced from `courses`, served at /p/course/{slug})
+        try {
+          const { count: courseCount } = await (supabaseAdmin as any)
+            .from("courses")
+            .select("*", { count: "exact", head: true })
+            .eq("is_published", true)
+            .not("slug", "is", null);
+          if (courseCount && courseCount > 0) {
+            const { data: latestCourse } = await (supabaseAdmin as any)
+              .from("courses")
+              .select("updated_at")
+              .eq("is_published", true)
+              .not("slug", "is", null)
+              .order("updated_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            const coursePageCount = Math.ceil(courseCount / SITEMAP_PAGE_SIZE);
+            for (let p = 1; p <= coursePageCount; p++) {
+              const loc =
+                p === 1
+                  ? `${SITE_URL}/sitemap-pages-courses.xml`
+                  : `${SITE_URL}/sitemap-pages-courses.xml?page=${p}`;
+              entries.push({ loc, lastmod: latestCourse?.updated_at });
+            }
+          }
+        } catch (err) {
+          console.error("[sitemap] courses count error", err);
+        }
+
+        // 2d. Sharetribe listings (mirror in `synced_listings`, served at /l/{slug}/{id})
+        try {
+          const { count: listingCount } = await (supabaseAdmin as any)
+            .from("synced_listings")
+            .select("*", { count: "exact", head: true })
+            .eq("state", "published")
+            .eq("is_deleted", false)
+            .not("slug", "is", null)
+            .not("sharetribe_id", "is", null);
+          if (listingCount && listingCount > 0) {
+            const { data: latestListing } = await (supabaseAdmin as any)
+              .from("synced_listings")
+              .select("updated_at")
+              .eq("state", "published")
+              .eq("is_deleted", false)
+              .not("slug", "is", null)
+              .not("sharetribe_id", "is", null)
+              .order("updated_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            const listingPageCount = Math.ceil(listingCount / SITEMAP_PAGE_SIZE);
+            for (let p = 1; p <= listingPageCount; p++) {
+              const loc =
+                p === 1
+                  ? `${SITE_URL}/sitemap-listings.xml`
+                  : `${SITE_URL}/sitemap-listings.xml?page=${p}`;
+              entries.push({ loc, lastmod: latestListing?.updated_at });
+            }
+          }
+        } catch (err) {
+          console.error("[sitemap] synced_listings count error", err);
+        }
+
 
         return sitemapResponse(buildSitemapIndexXml(entries));
       },
