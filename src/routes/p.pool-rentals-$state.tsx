@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { ListingCard } from "@/components/listing-card";
 import { buildMeta } from "@/lib/seo";
 import { getStateHub } from "@/server/state-hub.functions";
+import { queryListings, type ListingSummary } from "@/server/sharetribe.functions";
 
 export const Route = createFileRoute("/p/pool-rentals-$state")({
   loader: async ({ params }) => {
@@ -16,7 +18,18 @@ export const Route = createFileRoute("/p/pool-rentals-$state")({
       data = null;
     }
     if (!data || !data.cities || data.cities.length === 0) throw notFound();
-    return data;
+
+    // Fetch live listings for this state (best-effort, never throws).
+    let listings: ListingSummary[] = [];
+    try {
+      const res = await queryListings({
+        data: { stateCode: data.stateCode, perPage: 12, page: 1 },
+      });
+      listings = res.listings ?? [];
+    } catch (err) {
+      console.error("[pool-rentals-$state] listings fetch failed:", err);
+    }
+    return { ...data, listings };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [], links: [] };
