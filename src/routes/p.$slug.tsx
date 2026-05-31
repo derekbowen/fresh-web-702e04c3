@@ -208,7 +208,9 @@ export const Route = createFileRoute("/p/$slug")({
         relatedPosts = [];
       }
     }
-    return { page, nearbyCities, city, citySources, linkTargets, academyHub, hreflangSibling, relatedPosts };
+    const origin = await getRouteOrigin();
+    return { page, nearbyCities, city, citySources, linkTargets, academyHub, hreflangSibling, relatedPosts, origin };
+
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
