@@ -220,6 +220,30 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts_backup_2026_05_31_ph_slug_fix: {
+        Row: {
+          id: string | null
+          is_published: boolean | null
+          slug: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string | null
+          is_published?: boolean | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string | null
+          is_published?: boolean | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
