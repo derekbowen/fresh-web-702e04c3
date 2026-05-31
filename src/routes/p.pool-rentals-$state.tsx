@@ -128,6 +128,30 @@ function StateHubPage() {
           </div>
         </header>
 
+        {/* Live listings strip */}
+        {listings.length > 0 && (
+          <section className="mt-12">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <h2 className="text-2xl font-bold tracking-tight">
+                Available pools in {stateName}
+              </h2>
+              <a
+                href={`/s?address=${encodeURIComponent(stateName)}`}
+                className="text-sm font-semibold text-primary hover:underline"
+              >
+                See all →
+              </a>
+            </div>
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {listings.map((l) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </div>
+          </section>
+        )}
+
+
+
         {/* Letter jump nav */}
         {letters.length > 1 && (
           <nav aria-label="Jump to letter" className="mt-10 flex flex-wrap gap-2">
