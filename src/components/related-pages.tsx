@@ -1,5 +1,3 @@
-import { Link } from "@tanstack/react-router";
-
 export interface RelatedPagesItem {
   to: string;
   label: string;
@@ -36,15 +34,15 @@ export function RelatedPages({
       <ul className="mt-5 grid gap-3 sm:grid-cols-2">
         {list.map((it) => (
           <li key={it.to}>
-            <Link
-              to={it.to}
+            <a
+              href={it.to}
               className="block rounded-xl border border-border bg-card px-4 py-3 transition hover:border-primary"
             >
               <div className="text-sm font-semibold text-foreground">{it.label}</div>
               {it.description && (
                 <div className="mt-1 text-xs text-muted-foreground">{it.description}</div>
               )}
-            </Link>
+            </a>
           </li>
         ))}
       </ul>
