@@ -457,32 +457,32 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
           </div>
         </section>
 
-        {/* Full state index */}
-        <section className="border-t border-border bg-secondary/30">
-          <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                  {isHub ? "Browse every state guide" : "All 50 state host guides"}
-                </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Pick your state to see local laws, permits, HOA tips, and what to do when neighbors have questions.
-                </p>
-              </div>
-              {!isHub && (
+        {/* Full state index — only on state pages; the hub already shows it up top */}
+        {!isHub && (
+          <section className="border-t border-border bg-secondary/30">
+            <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    All 50 state host guides
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Pick your state to see local laws, permits, HOA tips, and what to do when neighbors have questions.
+                  </p>
+                </div>
                 <a
                   href={ADVOCACY_HUB_PATH}
                   className="text-sm font-semibold text-primary hover:underline"
                 >
                   Back to hub →
                 </a>
-              )}
+              </div>
+              <div className="mt-8 rounded-3xl border border-border bg-card p-6 sm:p-8">
+                <StateGrid states={ADVOCACY_STATES} currentSlug={page.slug} />
+              </div>
             </div>
-            <div className="mt-8 rounded-3xl border border-border bg-card p-6 sm:p-8">
-              <StateGrid states={ADVOCACY_STATES} currentSlug={page.slug} />
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
       <SiteFooter />
     </div>
