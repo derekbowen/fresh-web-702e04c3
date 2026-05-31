@@ -166,6 +166,7 @@ export type Database = {
           content: string | null
           cover_image_url: string | null
           created_at: string
+          editorial_cluster: string | null
           enrichment_generated_at: string | null
           excerpt: string | null
           id: string
@@ -185,6 +186,7 @@ export type Database = {
           content?: string | null
           cover_image_url?: string | null
           created_at?: string
+          editorial_cluster?: string | null
           enrichment_generated_at?: string | null
           excerpt?: string | null
           id?: string
@@ -204,6 +206,7 @@ export type Database = {
           content?: string | null
           cover_image_url?: string | null
           created_at?: string
+          editorial_cluster?: string | null
           enrichment_generated_at?: string | null
           excerpt?: string | null
           id?: string
