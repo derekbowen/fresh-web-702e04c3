@@ -73,7 +73,7 @@ export const Route = createFileRoute("/p/pool-rentals-$state")({
 });
 
 function StateHubPage() {
-  const { stateName, stateCode, cities } = Route.useLoaderData();
+  const { stateName, stateCode, cities, listings } = Route.useLoaderData();
 
   // Group cities alphabetically into A, B, C... buckets for scannability.
   type City = (typeof cities)[number];
