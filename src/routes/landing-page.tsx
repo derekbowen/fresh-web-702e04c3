@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildMeta, ldJsonScript, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { getHomeData, type HomeData } from "@/server/home-data.functions";
+import { getRouteOrigin } from "@/lib/route-origin";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
 
 const EMPTY_HOME_DATA: HomeData = {
@@ -14,12 +15,14 @@ const EMPTY_HOME_DATA: HomeData = {
 };
 
 export const Route = createFileRoute("/landing-page")({
-  loader: async (): Promise<HomeData> => {
+  loader: async (): Promise<{ data: HomeData; origin: string }> => {
+    const origin = await getRouteOrigin();
     try {
-      return (await getHomeData()) ?? EMPTY_HOME_DATA;
+      const data = (await getHomeData()) ?? EMPTY_HOME_DATA;
+      return { data, origin };
     } catch (err) {
       console.error("landing-page loader failed:", err);
-      return EMPTY_HOME_DATA;
+      return { data: EMPTY_HOME_DATA, origin };
     }
   },
   // This route is reverse-proxied at https://www.poolrentalnearme.com/.
@@ -27,7 +30,8 @@ export const Route = createFileRoute("/landing-page")({
   // which makes any data-driven first render risk a hydration mismatch.
   // We render a deterministic empty shell on both server and first client
   // render, then fetch live data in an effect post-hydration.
-  head: () => {
+  head: ({ loaderData }) => {
+    const origin = loaderData?.origin;
     const meta = buildMeta({
       title: "Pool Rental Near Me — Rent a Private Pool by the Hour",
       description:
@@ -38,6 +42,7 @@ export const Route = createFileRoute("/landing-page")({
       // separate page competing with /.
       canonicalPath: "/",
       image: HOMEPAGE_HERO_IMAGE,
+      origin,
     });
     const org = {
       "@context": "https://schema.org",
@@ -61,6 +66,6 @@ export const Route = createFileRoute("/landing-page")({
 });
 
 function LandingPage() {
-  const data = Route.useLoaderData();
+  const { data } = Route.useLoaderData();
   return <HomePageContent data={data} />;
 }
