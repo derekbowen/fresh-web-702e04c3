@@ -59,11 +59,7 @@ export const getRouter = () => {
     routeTree,
     context: {},
     scrollRestoration: true,
-    // Production nginx proxy does NOT forward /_serverFn/* to fresh-web, so
-    // any client-side navigation that runs a loader returns the Sharetribe
-    // 404 HTML and crashes the dispatcher. Disable preload + force hard
-    // navigation everywhere until the proxy is updated.
-    defaultPreload: false,
+    defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
   });
