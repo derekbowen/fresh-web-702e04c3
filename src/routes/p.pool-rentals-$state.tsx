@@ -6,8 +6,16 @@ import { getStateHub } from "@/server/state-hub.functions";
 
 export const Route = createFileRoute("/p/pool-rentals-$state")({
   loader: async ({ params }) => {
-    const data = await getStateHub({ data: { state: params.state } });
-    if (!data) throw notFound();
+    // Any failure (bad slug, Zod throw, supabase outage) collapses to a
+    // clean notFound() — never the scary "Something went wrong" screen.
+    let data: Awaited<ReturnType<typeof getStateHub>> | null = null;
+    try {
+      data = await getStateHub({ data: { state: params.state } });
+    } catch (err) {
+      console.error("[pool-rentals-$state] loader failed:", err);
+      data = null;
+    }
+    if (!data || !data.cities || data.cities.length === 0) throw notFound();
     return data;
   },
   head: ({ loaderData }) => {
