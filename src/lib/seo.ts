@@ -61,6 +61,13 @@ export interface SeoMetaInput {
   prevPath?: string | null;
   nextPath?: string | null;
   /**
+   * Request-scoped origin from getRouteOrigin() (which reads X-Forwarded-Host
+   * on the server). When provided, canonical, og:url, and og:image are built
+   * from this origin instead of the hardcoded SITE_URL fallback. Workspace
+   * rule #6.
+   */
+  origin?: string;
+  /**
    * Bidirectional hreflang links. When set, emits <link rel="alternate"
    * hreflang="..."> tags for each entry. Always include x-default. Each `href`
    * must be an absolute URL.
@@ -81,19 +88,24 @@ export function buildMeta({
   noindex,
   prevPath,
   nextPath,
+  origin,
   hreflang,
 }: SeoMetaInput) {
-  const canonicalUrl = canonicalUrlOverride ?? `${SITE_URL}${canonicalPath ?? path}`;
+  // Prefer the request-scoped origin (X-Forwarded-Host via getRouteOrigin())
+  // so canonicals and social URLs honor the production proxy. Fall back to
+  // SITE_URL only when the caller didn't thread origin through.
+  const siteOrigin = (origin ?? SITE_URL).replace(/\/+$/, "");
+  const canonicalUrl = canonicalUrlOverride ?? `${siteOrigin}${canonicalPath ?? path}`;
   // og:url and twitter URLs should reflect the canonical location, not the
   // (potentially legacy) request path. This keeps social shares deduplicated
   // when a page is reachable via multiple URLs that 301 to one canonical.
   const url = canonicalUrl;
   // Social crawlers reject relative paths. Imported Vite assets resolve to
-  // a hashed "/fw-assets/..." URL — prefix with SITE_URL so og:image and
-  // twitter:image are always absolute.
+  // a hashed "/fw-assets/..." URL — prefix with siteOrigin so og:image and
+  // twitter:image are always absolute and on the live host.
   const rawImage = image === null ? null : image ?? DEFAULT_OG_IMAGE;
   const resolvedImage =
-    rawImage && rawImage.startsWith("/") ? `${SITE_URL}${rawImage}` : rawImage;
+    rawImage && rawImage.startsWith("/") ? `${siteOrigin}${rawImage}` : rawImage;
   const ogTitleResolved = ogTitle || title;
   const ogDescriptionResolved = ogDescription || description;
   const meta: Array<Record<string, string>> = [
@@ -120,8 +132,8 @@ export function buildMeta({
   const links: Array<Record<string, string>> = [
     { rel: "canonical", href: canonicalUrl },
   ];
-  if (prevPath) links.push({ rel: "prev", href: `${SITE_URL}${prevPath}` });
-  if (nextPath) links.push({ rel: "next", href: `${SITE_URL}${nextPath}` });
+  if (prevPath) links.push({ rel: "prev", href: `${siteOrigin}${prevPath}` });
+  if (nextPath) links.push({ rel: "next", href: `${siteOrigin}${nextPath}` });
   if (hreflang?.length) {
     for (const h of hreflang) {
       links.push({ rel: "alternate", hreflang: h.lang, href: h.href });
@@ -129,6 +141,7 @@ export function buildMeta({
   }
   return { meta, links };
 }
+
 
 export interface BreadcrumbItem {
   name: string;

@@ -30,6 +30,8 @@ import {
   AUTHOR_PERSON_JSONLD_REF,
   AUTHOR_PERSON_URL,
 } from "@/lib/seo";
+import { getRouteOrigin } from "@/lib/route-origin";
+
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { AdvocacyTemplate } from "@/components/templates/advocacy";
@@ -206,7 +208,9 @@ export const Route = createFileRoute("/p/$slug")({
         relatedPosts = [];
       }
     }
-    return { page, nearbyCities, city, citySources, linkTargets, academyHub, hreflangSibling, relatedPosts };
+    const origin = await getRouteOrigin();
+    return { page, nearbyCities, city, citySources, linkTargets, academyHub, hreflangSibling, relatedPosts, origin };
+
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};
@@ -237,15 +241,16 @@ export const Route = createFileRoute("/p/$slug")({
     // Hreflang — emit the EN↔ES pair for the academy hubs and any other
     // page that has a known twin. (Skipped on simple en pages with no twin.)
     const academyLang = academyLangForSlug(p.slug);
+    const origin = loaderData.origin ?? SITE_URL;
     let hreflang: Array<{ lang: string; href: string }> | undefined;
     if (academyLang) {
       hreflang = [
-        { lang: "en", href: `${SITE_URL}${academyHubPath("en")}` },
-        { lang: "es", href: `${SITE_URL}${academyHubPath("es")}` },
-        { lang: "x-default", href: `${SITE_URL}${academyHubPath("en")}` },
+        { lang: "en", href: `${origin}${academyHubPath("en")}` },
+        { lang: "es", href: `${origin}${academyHubPath("es")}` },
+        { lang: "x-default", href: `${origin}${academyHubPath("en")}` },
       ];
     } else {
-      hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null);
+      hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null, origin);
     }
 
     const pAny = p as unknown as {
@@ -263,8 +268,10 @@ export const Route = createFileRoute("/p/$slug")({
       ogDescription: pAny.og_description?.trim() || undefined,
       image: p.cover_image_url || p.hero_image_url || undefined,
       type: isArticleType(p.template_type) || academyLang ? "article" : "website",
+      origin,
       hreflang,
     });
+
 
     // Article OpenGraph metadata — for resource/event_guide/guide templates.
     // Boosts AEO and helps Google/social cards show publish date + author.
@@ -499,6 +506,7 @@ function isArticleType(t: ContentPage["template_type"]): boolean {
 function buildHreflangLinks(
   p: ContentPage,
   sibling: { slug: string; language: string } | null,
+  origin: string = SITE_URL,
 ): Array<{ lang: string; href: string }> | undefined {
   const pAny = p as { hreflang_group?: string | null };
   if (!sibling || !pAny.hreflang_group) return undefined;
@@ -515,17 +523,18 @@ function buildHreflangLinks(
 
   const englishHref =
     pageLang === "en"
-      ? `${SITE_URL}${pagePath}`
+      ? `${origin}${pagePath}`
       : sibling.language === "en"
-        ? `${SITE_URL}${siblingPath}`
-        : `${SITE_URL}${pagePath}`;
+        ? `${origin}${siblingPath}`
+        : `${origin}${pagePath}`;
 
   return [
-    { lang: regional(pageLang), href: `${SITE_URL}${pagePath}` },
-    { lang: regional(sibling.language), href: `${SITE_URL}${siblingPath}` },
+    { lang: regional(pageLang), href: `${origin}${pagePath}` },
+    { lang: regional(sibling.language), href: `${origin}${siblingPath}` },
     { lang: "x-default", href: englishHref },
   ];
 }
+
 
 
 function ContentPageDispatcher() {
