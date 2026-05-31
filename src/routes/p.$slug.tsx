@@ -30,6 +30,8 @@ import {
   AUTHOR_PERSON_JSONLD_REF,
   AUTHOR_PERSON_URL,
 } from "@/lib/seo";
+import { getRouteOrigin } from "@/lib/route-origin";
+
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 import { AdvocacyTemplate } from "@/components/templates/advocacy";
