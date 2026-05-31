@@ -6,11 +6,14 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { runLinkAutoFix } from "@/server/link-auto-fix.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 export const Route = createFileRoute("/api/public/hooks/link-auto-fix")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const unauth = await authorizeHookRequest(request);
+        if (unauth) return unauth;
         try {
           const result = await runLinkAutoFix({ batchSize: 200, maxPages: 2000 });
           return new Response(JSON.stringify({ ok: true, ...result }), {
