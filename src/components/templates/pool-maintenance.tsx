@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useMemo, type ReactNode } from "react";
+import { useMemo, type MouseEvent, type ReactNode } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
@@ -10,6 +10,14 @@ import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 
 const HUB_PATH = "/p/pool-maintenance";
+
+function forceDocumentNavigation(path: string) {
+  return (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    window.location.assign(path);
+  };
+}
 
 const HUB_LINKS: Array<{ slug: string; label: string; tier: "tier2" | "tier3" | "tier4" }> = [
   { slug: "water-chemistry-basics", label: "Water chemistry basics", tier: "tier2" },
@@ -264,6 +272,7 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
                     >
                       <a
                         href={`/p/${s.slug}`}
+                        onClick={forceDocumentNavigation(`/p/${s.slug}`)}
                         className="block"
                       >
                         <p className="text-xs font-semibold uppercase tracking-wider text-primary">
@@ -282,7 +291,7 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
                   ))}
                 </ul>
                 <div className="mt-6 text-sm">
-                  <a href="/p/pool-maintenance" className="text-primary hover:underline">
+                  <a href="/p/pool-maintenance" onClick={forceDocumentNavigation("/p/pool-maintenance")} className="text-primary hover:underline">
                     ← Back to the full Pool Maintenance Guide
                   </a>
                 </div>
@@ -343,6 +352,7 @@ function PillarSection({
           <li key={l.slug}>
             <a
               href={`/p/${l.slug}`}
+              onClick={forceDocumentNavigation(`/p/${l.slug}`)}
               className="group flex items-start gap-2 rounded-lg border border-transparent p-3 transition hover:border-primary hover:bg-primary/5"
             >
               <span className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
