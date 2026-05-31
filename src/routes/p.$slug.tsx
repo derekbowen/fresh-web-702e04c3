@@ -533,9 +533,33 @@ function ContentPageDispatcher() {
   const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts } =
     (loaderData ?? {}) as ReturnType<typeof Route.useLoaderData>;
 
-  // Defensive guard: if the page object is missing or has no template_type,
-  // render the generic fallback instead of crashing the entire route.
-  if (!page || !page.template_type) {
+  // Defensive guard: if the page object is missing entirely, show a friendly
+  // not-found view instead of crashing downstream templates that all assume
+  // `page` is defined and read `page.template_type` / `page.title`. This was
+  // the source of the "undefined is not an object (evaluating
+  // 't.template_type')" crash some users hit when navigating between
+  // /p/* pages — the generic fallback itself reads page.template_type.
+  if (!page) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader />
+        <main className="mx-auto max-w-3xl px-4 py-20 text-center">
+          <h1 className="text-3xl font-bold">Page not found</h1>
+          <p className="mt-2 text-muted-foreground">
+            The page you're looking for is unavailable. Try refreshing, or head back home.
+          </p>
+          <Link
+            to="/"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+          >
+            Go home
+          </Link>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+  if (!page.template_type) {
     return <GenericPageTemplate page={page} linkTargets={linkTargets} />;
   }
 
