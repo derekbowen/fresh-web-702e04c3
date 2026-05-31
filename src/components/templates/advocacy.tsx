@@ -92,25 +92,60 @@ function SidebarCTA({ stateName }: { stateName?: string | null }) {
     ? `/s?address=${encodeURIComponent(stateName)}`
     : "/s";
   return (
-    <div className="rounded-3xl bg-gradient-to-br from-primary to-primary-glow p-6 text-primary-foreground shadow-xl">
-      <h3 className="text-lg font-bold">
-        Ready to host{stateName ? ` in ${stateName}` : ""}?
-      </h3>
-      <p className="mt-2 text-sm text-primary-foreground/85">
-        Free to list. $2M liability on every confirmed booking.
-      </p>
-      <a
-        href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
-        className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-primary shadow transition-transform hover:scale-[1.02]"
-      >
-        List your pool →
-      </a>
-      <a
-        href={findHref}
-        className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
-      >
-        Find pools{stateName ? ` in ${stateName}` : ""} →
-      </a>
+    <div className="space-y-4">
+      <div className="rounded-3xl bg-gradient-to-br from-primary to-primary-glow p-6 text-primary-foreground shadow-xl">
+        <h3 className="text-lg font-bold">
+          Ready to host{stateName ? ` in ${stateName}` : ""}?
+        </h3>
+        <p className="mt-2 text-sm text-primary-foreground/85">
+          Free to list. $2M liability on every confirmed booking. 10% flat host fee.
+        </p>
+        <a
+          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-primary shadow transition-transform hover:scale-[1.02]"
+        >
+          List your pool →
+        </a>
+        <a
+          href={findHref}
+          className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+        >
+          Find pools{stateName ? ` in ${stateName}` : ""} →
+        </a>
+      </div>
+
+      <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Host resources
+        </h3>
+        <ul className="mt-3 space-y-2 text-sm">
+          <li>
+            <a href="/p/earnings-calculator" className="font-medium text-primary hover:underline">
+              Pool host earnings calculator →
+            </a>
+          </li>
+          <li>
+            <a href="/p/learningacademy" className="font-medium text-primary hover:underline">
+              Pool Host Academy (free) →
+            </a>
+          </li>
+          <li>
+            <a href="/p/hoa-pool-rental-defense-kit" className="font-medium text-primary hover:underline">
+              HOA defense kit →
+            </a>
+          </li>
+          <li>
+            <a href="/p/pool-rental-insurance-explained" className="font-medium text-primary hover:underline">
+              $2M insurance, explained →
+            </a>
+          </li>
+          <li>
+            <a href="/p/swimply-alternative-vs-pool-rental-near-me" className="font-medium text-primary hover:underline">
+              PRNM vs Swimply (fees) →
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }
