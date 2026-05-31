@@ -926,6 +926,33 @@ export type Database = {
         }
         Relationships: []
       }
+      content_pages_backup_2026_05_31_ca_refresh: {
+        Row: {
+          backup_at: string | null
+          body_markdown: string | null
+          content_refreshed_at: string | null
+          id: string | null
+          slug: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          backup_at?: string | null
+          body_markdown?: string | null
+          content_refreshed_at?: string | null
+          id?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          backup_at?: string | null
+          body_markdown?: string | null
+          content_refreshed_at?: string | null
+          id?: string | null
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       content_pages_backup_2026_05_31_sitemap_fix: {
         Row: {
           backup_at: string | null
