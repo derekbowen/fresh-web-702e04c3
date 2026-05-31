@@ -49,6 +49,15 @@ export const Route = createFileRoute("/")({
       ...meta,
       links: [
         ...(meta.links ?? []),
+        // Preload the LCP hero (CSS background-image) so the browser fetches
+        // it in parallel with stylesheet parsing instead of discovering it
+        // only after CSS is applied.
+        {
+          rel: "preload",
+          as: "image",
+          href: HOMEPAGE_HERO_IMAGE,
+          fetchpriority: "high",
+        },
         // Speed up navigation to the Sharetribe marketplace search page.
         { rel: "prefetch", href: "/s" },
         // Warm up the connection to the imgix CDN that serves listing photos
