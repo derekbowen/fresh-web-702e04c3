@@ -11,9 +11,9 @@ import {
   SITE_NAME,
   organizationJsonLd,
   websiteJsonLd,
-  AUTHOR_PERSON_JSONLD_REF,
   AUTHOR_PERSON_ID,
 } from "@/lib/seo";
+
 
 export const Route = createFileRoute("/p/blog")({
   loader: async () => {
