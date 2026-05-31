@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import {
   createFileRoute,
-  Link,
   useRouter,
   notFound,
   redirect,
