@@ -25,7 +25,6 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
   bottom_text: "© 2026 PRNM CORP Riverside, Ca 92509",
   explore_links: [
     { label: "Search Listings", href: "/s" },
-    { label: "Pool Pros Directory", href: "/p/pool-pros" },
     { label: "How It Works", href: "/p/how-it-works" },
     { label: "Neighbors", href: "/p/neighbors" },
     { label: "Start a Business", href: "/p/hosting" },

@@ -66,7 +66,6 @@ type NavLink = {
 const PRIMARY_NAV: NavLink[] = [
   { label: "Find a pool", href: "/s" },
   { label: "Learn with Fred", href: "/p/learningacademy" },
-  { label: "Pool pros", href: "/p/pool-pros" },
   { label: "How it works", href: "/p/how-it-works" },
   { label: "Neighbors", href: "/p/neighbors" },
 ];
