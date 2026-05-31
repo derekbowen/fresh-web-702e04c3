@@ -5,6 +5,7 @@ export type BlogHubPost = {
   slug: string;
   title: string;
   topic: string | null;
+  editorial_cluster: string | null;
   excerpt: string | null;
   cover_image_url: string | null;
   published_at: string | null;
@@ -20,7 +21,9 @@ export const listPublishedBlogPosts = createServerFn({ method: "GET" }).handler(
     try {
       const { data, error } = await supabaseAdmin
         .from("blog_posts")
-        .select("slug, title, topic, excerpt, cover_image_url, published_at, updated_at")
+        .select(
+          "slug, title, topic, editorial_cluster, excerpt, cover_image_url, published_at, updated_at",
+        )
         .eq("is_published", true)
         .order("published_at", { ascending: false, nullsFirst: false })
         .order("updated_at", { ascending: false })
