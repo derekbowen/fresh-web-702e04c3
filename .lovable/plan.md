@@ -1,88 +1,56 @@
-# Ship: Honest Review schema (small surface)
+## What's actually happening
 
-Phase 1 found **6 total reviews** in the marketplace. The original "5,800+ pages" scope is not viable without manufacturing schema. This plan ships only what's honestly supported by data.
+I reproduced the crash on production at 414x896 (iPhone-sized viewport) and inspected the network traffic. The picture is different from what we thought.
 
-## Surface A — Organization AggregateRating (GBP-backed)
+When you tap "Water chemistry basics" on `/p/pool-maintenance`:
 
-Where it renders:
-- `/` (homepage)
-- `/p/about-our-company`
+1. TanStack Router intercepts the click and does a client-side navigation to `/p/water-chemistry-basics` (the `forceDocumentNavigation` workaround we shipped earlier is being bypassed — the router's own link/preload handlers fire first on touch).
+2. The client calls `https://www.poolrentalnearme.com/_serverFn/<hash>` to run the page loader.
+3. **That request returns HTTP 200 with an HTML body that says "Page not found"** — it's the Sharetribe marketplace's 404 HTML, not the fresh-web server function response. Confirmed in the response headers (`Content-Type: text/html`, body `<title>Page not found</title>`).
+4. The loader returns `undefined`, the dispatcher reads `page.template_type` on undefined, and the error boundary shows `Cannot read properties of undefined (reading 'template_type')`.
 
-Schema shape (JSON-LD `Organization` with embedded `aggregateRating`):
-```text
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Pool Rental Near Me",
-  "url": "https://www.poolrentalnearme.com",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "<from GBP>",
-    "reviewCount": "<from GBP>",
-    "bestRating": "5",
-    "worstRating": "1"
-  }
-}
-```
+A direct `curl` of `/p/water-chemistry-basics` returns the full SSR'd page correctly (200, real content). The problem is exclusively on client-side transitions, because the nginx proxy is not forwarding `/_serverFn/*` to fresh-web — that path falls through to Sharetribe.
 
-Implementation:
-- New file `src/lib/brand-rating.ts` exports a typed const `{ ratingValue, reviewCount, asOf }`. **You provide the numbers** — single source of truth, refresh manually each quarter. (Building a GBP API sync for two numbers is overkill; revisit if/when we add per-page review surfacing.)
-- New helper `organizationJsonLd()` in `src/lib/seo.ts` (or extend existing schema helpers).
-- Inject via `head()` on the two routes only. Do NOT add to `__root.tsx` (root concatenates into every match — would put GBP rating schema on every page, which IS the misleading-schema risk we just avoided).
+## Root cause
 
-## Surface B — Per-listing Review JSON-LD on /l/$slug/$id
+The nginx route table for `poolrentalnearme.com` does not include `/_serverFn/*`, so every TanStack server-function RPC from the browser ends up at Sharetribe. There are two correct fixes — one infra, one app.
 
-Where it renders:
-- Only the 6 `/l/*` pages that have Sharetribe reviews. Other listing pages stay unchanged.
+## Recommended fix (app-side, ships from Lovable today)
 
-Schema shape (extend the existing `Product` JSON-LD on `src/routes/l.$slug.$id.tsx`):
-```text
-{
-  "@type": "Product",
-  ...existing fields...,
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": <avg of listing's reviews>,
-    "reviewCount": <count>
-  },
-  "review": [
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "<reviewer display name>" },
-      "datePublished": "<ISO>",
-      "reviewBody": "<content>",
-      "reviewRating": { "@type": "Rating", "ratingValue": <1-5>, "bestRating": "5" }
-    }
-  ]
-}
-```
+Stop calling `/_serverFn` from the browser at all. Two changes together cover every entry point so a stray Link or prefetch can't trigger it:
 
-Implementation:
-1. Add `fetchListingReviews(listingId: string): Promise<ListingReview[]>` in `src/server/sharetribe.server.ts`. Approach: query `/transactions/query?perPage=100&include=reviews,reviews.author` filtered to the listing, dedupe reviews, return `ofProvider` only. Wrap in try/catch, return `[]` on error (defensive-rendering rule).
-2. Extend `fetchListing(id)` to also call `fetchListingReviews(id)` in parallel and attach to the returned shape, OR add a separate `getListingReviews` server function. **Recommend parallel inside fetchListing** — same render, no extra round trip to client.
-3. Extend `ListingSummary` type with `reviews?: ListingReview[]` and `aggregateRating?: { value: number; count: number }`.
-4. In `src/routes/l.$slug.$id.tsx`, when `listing.reviews?.length`, append `aggregateRating` + `review[]` to the existing Product schema. No visual changes — schema only. (The FTW frontend handles the visible review UI; we don't touch it.)
+### 1. Disable client-side navigation/preloading on `/p/*` content pages
 
-## Out of scope (explicit)
+In `src/router.tsx`, set:
 
-- No changes to any /p/* page schema.
-- No new DB tables. No cache. No sync job. No cron.
-- No visual review UI anywhere (FTW frontend owns visible reviews on /l/*).
-- No GBP API integration — manual quarterly refresh of two numbers in a config file.
-- No backups needed (no DB writes).
-- Per-city Review/AggregateRating revisits when marketplace has ≥100 reviews and ≥20 cities with reviews.
+- `defaultPreload: false` (currently undefined — defaults to off, but make it explicit)
+- `defaultPreloadStaleTime` stays `0`
 
-## Validation
+Then in `src/routes/p.$slug.tsx`, replace the remaining two `<Link>` usages in the `errorComponent` and `notFoundComponent` with plain `<a href="/">` so even the error UI never re-enters the router.
 
-After implementation:
-1. Run Google Rich Results Test on `/`, `/p/about-our-company`, and 2 of the 6 reviewed `/l/*` URLs. All must show valid `Organization`/`Product` with `AggregateRating`.
-2. Spot-check schema on the 5 unreviewed listings — confirm they render Product schema WITHOUT aggregateRating (no n=0 schema).
-3. Confirm canonical URLs in the schema use `getCanonicalUrl(request, path)` (workspace rule #6), not hardcoded `lovable.app`.
+### 2. Add a global anchor-click interceptor on every `/p/*` page
 
-## What I need from you before build mode
+In `src/routes/p.$slug.tsx`'s component (`ContentPageDispatcher`), add a single `useEffect` that:
 
-1. **GBP rating + count.** Two numbers. e.g., `ratingValue: 4.8, reviewCount: 47`.
-2. **Date label** for the GBP snapshot (used in `asOf` for our own audit trail; not shipped to schema).
-3. Confirmation that `/p/about-our-company` is the right second surface (vs. `/p/about` or homepage only).
+- Attaches a `click` listener at the document root
+- For any left-click on an `<a>` whose `href` starts with `/p/`, `/`, or any same-origin path that isn't `/s`, `/l/`, `/login`, `/signup`, `/inbox`, `/auth/`, `/account/`, `/profile/`, `/messages/`, `/listings/` (those need to remain regular browser nav too — but they already are)
+- Calls `event.preventDefault()` + `window.location.assign(href)`
 
-Halt-on-failure discipline applies. No log-and-continue. Honest report at the end of what shipped (homepage + about + N of 6 listings actually rendering Review schema after Sharetribe round-trip).
+This makes the existing per-component `forceDocumentNavigation` helpers redundant, but they stay as belt-and-braces. The interceptor catches all the cases we missed (related cards, body markdown links rendered by `ReactMarkdown`, breadcrumbs, etc.) without having to hunt down each one.
+
+### 3. Defensive loader fallback
+
+In `lookupContentPage` calls, we already guard `if (!page)` in the dispatcher. Keep that. No change needed beyond what's already there.
+
+## Why not the infra fix
+
+The proper fix is one line in your EC2 nginx config: add `location /_serverFn/ { proxy_pass http://fresh-web; }` (with whatever upstream name you're using). That makes client-side navigation work everywhere on the site and improves performance. Per the workspace rules I won't touch nginx from Lovable, but if you want, I can write you the exact nginx snippet to paste in — it's much cleaner than the app-side workaround.
+
+## Files changed
+
+- `src/router.tsx` — explicit `defaultPreload: false`
+- `src/routes/p.$slug.tsx` — global click interceptor in dispatcher + two `<Link>` → `<a>` swaps in error/notFound components
+
+## After the change
+
+I'll publish and re-test on the mobile-sized browser by clicking through 3 hub links in a row to confirm hard navigation fires every time and no `_serverFn` requests are made.
