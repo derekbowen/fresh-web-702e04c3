@@ -10,6 +10,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 const STATE_NAMES: Record<string, string> = {
   al: "Alabama", ak: "Alaska", az: "Arizona", ar: "Arkansas", ca: "California",
@@ -169,6 +170,8 @@ export const Route = createFileRoute("/api/public/hooks/gen-host-pages")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await authorizeHookRequest(request);
+        if (unauth) return unauth;
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) {
           return new Response(JSON.stringify({ ok: false, error: "LOVABLE_API_KEY missing" }),

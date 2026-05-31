@@ -104,7 +104,33 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
         // Resolve effective recipient: template-level `to` takes precedence over
         // the caller-provided recipientEmail. This allows notification templates
         // to always send to a fixed address (e.g., site owner from env var).
-        const effectiveRecipient = template.to || recipientEmail
+        // Caller-supplied recipientEmail is only honored when it matches the
+        // authenticated user's own email. Templates with a fixed `to` (admin
+        // notifications, digests) bypass this and always send to that address.
+        // This prevents authenticated users from using this endpoint to spam
+        // arbitrary third-party addresses via templates like pool-waitlist-confirmation.
+        let resolvedRecipient: string | undefined = template.to
+        if (!resolvedRecipient) {
+          const callerEmail = user.email?.toLowerCase() ?? null
+          const requested = recipientEmail?.toLowerCase() ?? null
+          const { data: isAdmin } = await supabase.rpc('has_role', {
+            _user_id: user.id,
+            _role: 'admin',
+          })
+          if (isAdmin === true) {
+            resolvedRecipient = recipientEmail
+          } else if (requested && callerEmail && requested === callerEmail) {
+            resolvedRecipient = recipientEmail
+          } else if (!requested && callerEmail) {
+            resolvedRecipient = user.email ?? undefined
+          } else {
+            return Response.json(
+              { error: 'recipientEmail must match the authenticated user\'s email' },
+              { status: 403 }
+            )
+          }
+        }
+        const effectiveRecipient = resolvedRecipient
 
         if (!effectiveRecipient) {
           return Response.json(
