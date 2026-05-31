@@ -463,12 +463,12 @@ export const Route = createFileRoute("/p/$slug")({
         <p className="mt-2 text-muted-foreground">
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <Link
-          to="/"
+        <a
+          href="/"
           className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
         >
           Go home
-        </Link>
+        </a>
       </main>
       <SiteFooter />
     </div>
@@ -548,12 +548,12 @@ function ContentPageDispatcher() {
           <p className="mt-2 text-muted-foreground">
             The page you're looking for is unavailable. Try refreshing, or head back home.
           </p>
-          <Link
-            to="/"
+          <a
+            href="/"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
           >
             Go home
-          </Link>
+          </a>
         </main>
         <SiteFooter />
       </div>
