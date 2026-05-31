@@ -197,18 +197,18 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
   return (
     <>
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <a href="/" className="flex items-center gap-2" onClick={close}>
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 sm:px-6 lg:px-8">
+        <a href="/" className="flex items-center gap-2 justify-self-start" onClick={close}>
           <img src={logoUrl} alt="Pool Rental Near Me" className="h-9 w-auto" width="36" height="36" />
         </a>
 
-        <nav className="hidden items-center gap-5 lg:flex">
+        <nav className="hidden items-center justify-center gap-7 justify-self-center lg:flex">
           {PRIMARY_NAV.map((l) => (
             <NavAnchor key={l.label} link={l} className={navLinkClass} />
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-self-end">
           {isAuthed ? (
             <div className="hidden items-center gap-4 md:flex" ref={accountRef}>
               <a href={marketplace("/inbox/sales")} className={navLinkClass}>
