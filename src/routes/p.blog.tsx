@@ -191,12 +191,10 @@ function BlogHubPage() {
     about: CLUSTERS.map((c) => ({ "@type": "Thing", name: c.heading })),
   };
 
-  // Embed Author Person entity by reference so Google ties this Article to
-  // the canonical Derek Bowen node at /p/author/derek-bowen.
-  const authorPersonLd = {
-    "@context": "https://schema.org",
-    ...AUTHOR_PERSON_JSONLD_REF,
-  };
+  // Author Person entity is referenced by @id from the Article above; the
+  // canonical Person node lives at /p/author/derek-bowen.
+
+
 
   const faqLd = {
     "@context": "https://schema.org",
