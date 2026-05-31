@@ -30,7 +30,7 @@ function refreshVaultToken(): void {
   })();
 }
 
-export function authorizeHookRequest(request: Request): Response | null {
+export async function authorizeHookRequest(request: Request): Promise<Response | null> {
   const envExpected =
     process.env.HOOKS_ADMIN_TOKEN ||
     process.env.BACKFILL_ADMIN_TOKEN ||
@@ -51,6 +51,17 @@ export function authorizeHookRequest(request: Request): Response | null {
   }
 
   if (envExpected && provided === envExpected) return null;
+
+  // Cold-start race: on a fresh Worker instance, the module-load
+  // refreshVaultToken() is fire-and-forget. If the first request arrives
+  // before it resolves, vaultToken is still null and a valid vault-issued
+  // token gets a spurious 401. Await any inflight fetch before deciding.
+  // pg_cron callers (which only have the vault token) used to fail every
+  // hour because of this. Env-token callers above don't pay the cost.
+  if (!vaultToken && inflight) {
+    try { await inflight; } catch { /* ignore */ }
+  }
+
   if (vaultToken && provided === vaultToken) return null;
 
   if (!envExpected && !vaultToken) {
