@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useMemo, type MouseEvent, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
@@ -10,14 +10,6 @@ import { faqsForContentPage } from "@/lib/page-faqs";
 import type { ContentPage } from "@/server/content-pages.functions";
 
 const HUB_PATH = "/p/pool-maintenance";
-
-function forceDocumentNavigation(path: string) {
-  return (event: MouseEvent<HTMLAnchorElement>) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    window.location.assign(path);
-  };
-}
 
 const HUB_LINKS: Array<{ slug: string; label: string; tier: "tier2" | "tier3" | "tier4" }> = [
   { slug: "water-chemistry-basics", label: "Water chemistry basics", tier: "tier2" },
