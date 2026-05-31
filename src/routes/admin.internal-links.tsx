@@ -15,7 +15,6 @@ import { Loader2, Sparkles, Check, X, ArrowRight, LinkIcon } from "lucide-react"
 
 export const Route = createFileRoute("/admin/internal-links")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/internal-links", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

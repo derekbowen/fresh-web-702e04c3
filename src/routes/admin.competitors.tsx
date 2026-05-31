@@ -14,7 +14,6 @@ import { Loader2, Plus, Trash2, GitCompare, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/admin/competitors")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/competitors", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

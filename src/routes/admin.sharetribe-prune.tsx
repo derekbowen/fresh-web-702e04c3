@@ -10,7 +10,6 @@ import {
 
 export const Route = createFileRoute("/admin/sharetribe-prune")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
       throw redirect({

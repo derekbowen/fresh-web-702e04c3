@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin/no-access")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data } = await supabase.auth.getUser();
     if (!data.user) {
       throw redirect({ to: "/auth", search: { redirect: "/admin/dashboard", mode: "signin" } });

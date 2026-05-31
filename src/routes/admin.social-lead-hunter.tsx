@@ -24,7 +24,6 @@ const SOURCE_LABELS: Record<SourceTab, string> = {
 
 export const Route = createFileRoute("/admin/social-lead-hunter")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/social-lead-hunter", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

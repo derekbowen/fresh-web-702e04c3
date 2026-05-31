@@ -8,7 +8,6 @@ import { getRecentLinkHealthRuns, type LinkHealthRun } from "@/server/link-healt
 
 export const Route = createFileRoute("/admin/link-checker")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/link-checker", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

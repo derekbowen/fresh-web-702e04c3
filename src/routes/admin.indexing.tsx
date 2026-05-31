@@ -7,7 +7,6 @@ import { getIndexingStats, type IndexingStats } from "@/server/admin-tools.funct
 
 export const Route = createFileRoute("/admin/indexing")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/indexing", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

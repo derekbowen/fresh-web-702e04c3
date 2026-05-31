@@ -8,7 +8,6 @@ import { AdminLayout, ADMIN_NAV_GROUPS } from "@/components/admin-layout";
 
 export const Route = createFileRoute("/admin/dashboard")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
       throw redirect({ to: "/auth", search: { redirect: "/admin/dashboard", mode: "signin" } });

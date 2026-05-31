@@ -11,7 +11,6 @@ import { Loader2, Plus, Trash2, RefreshCw, TrendingUp, TrendingDown, Minus } fro
 
 export const Route = createFileRoute("/admin/rank-tracker")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/rank-tracker", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();

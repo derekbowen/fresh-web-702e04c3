@@ -12,7 +12,6 @@ import { Loader2, RefreshCw, ExternalLink, Trash2, Instagram, Search, CheckSquar
 
 export const Route = createFileRoute("/admin/ig-lead-hunter")({
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: "/admin/ig-lead-hunter", mode: "signin" } });
     const { isAdmin } = await checkAdminRole();
