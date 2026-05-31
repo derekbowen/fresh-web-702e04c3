@@ -506,6 +506,7 @@ function isArticleType(t: ContentPage["template_type"]): boolean {
 function buildHreflangLinks(
   p: ContentPage,
   sibling: { slug: string; language: string } | null,
+  origin: string = SITE_URL,
 ): Array<{ lang: string; href: string }> | undefined {
   const pAny = p as { hreflang_group?: string | null };
   if (!sibling || !pAny.hreflang_group) return undefined;
@@ -522,17 +523,18 @@ function buildHreflangLinks(
 
   const englishHref =
     pageLang === "en"
-      ? `${SITE_URL}${pagePath}`
+      ? `${origin}${pagePath}`
       : sibling.language === "en"
-        ? `${SITE_URL}${siblingPath}`
-        : `${SITE_URL}${pagePath}`;
+        ? `${origin}${siblingPath}`
+        : `${origin}${pagePath}`;
 
   return [
-    { lang: regional(pageLang), href: `${SITE_URL}${pagePath}` },
-    { lang: regional(sibling.language), href: `${SITE_URL}${siblingPath}` },
+    { lang: regional(pageLang), href: `${origin}${pagePath}` },
+    { lang: regional(sibling.language), href: `${origin}${siblingPath}` },
     { lang: "x-default", href: englishHref },
   ];
 }
+
 
 
 function ContentPageDispatcher() {
