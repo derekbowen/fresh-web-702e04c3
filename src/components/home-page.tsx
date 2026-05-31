@@ -144,7 +144,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           aria-label="Rent a backyard pool by the hour"
           className="relative overflow-hidden bg-cover bg-center"
           style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('${heroFamilyPool}')`,
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('${heroFamilyPool}')`,
             minHeight: "60vh",
           }}
         >
