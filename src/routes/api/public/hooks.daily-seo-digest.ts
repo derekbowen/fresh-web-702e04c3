@@ -201,7 +201,7 @@ export const Route = createFileRoute("/api/public/hooks/daily-seo-digest")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         const url = new URL(request.url);
         const force = url.searchParams.get("force") === "1";
@@ -214,7 +214,7 @@ export const Route = createFileRoute("/api/public/hooks/daily-seo-digest")({
         }
       },
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         const url = new URL(request.url);
         const force = url.searchParams.get("force") === "1";

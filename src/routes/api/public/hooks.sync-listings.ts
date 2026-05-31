@@ -3,7 +3,7 @@ import { runListingSync } from "@/server/listing-sync.server";
 import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 async function handle(request: Request) {
-  const unauth = authorizeHookRequest(request);
+  const unauth = await authorizeHookRequest(request);
   if (unauth) return unauth;
   const result = await runListingSync();
   return new Response(JSON.stringify(result), {

@@ -61,7 +61,7 @@ export const Route = createFileRoute("/api/public/hooks/academy-health")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         const res = await runCheck();
         return new Response(JSON.stringify(res), {
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/api/public/hooks/academy-health")({
         });
       },
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         const res = await runCheck();
         return new Response(JSON.stringify(res), {

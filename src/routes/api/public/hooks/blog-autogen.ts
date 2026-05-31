@@ -6,7 +6,7 @@ export const Route = createFileRoute("/api/public/hooks/blog-autogen")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         let body: any = {};
         try {

@@ -91,12 +91,12 @@ export const Route = createFileRoute("/api/public/hooks/competitor-radar-scan")(
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         return Response.json(await runScan());
       },
       POST: async ({ request }) => {
-        const unauth = authorizeHookRequest(request);
+        const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
         return Response.json(await runScan());
       },
