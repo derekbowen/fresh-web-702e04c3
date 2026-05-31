@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import type { MouseEvent } from "react";
 
 export interface RelatedPagesItem {
   to: string;
@@ -14,6 +14,14 @@ const DEFAULT_ITEMS: RelatedPagesItem[] = [
   { to: "/p/all-locations", label: "All pool rental locations", description: "Browse pools across the US" },
   { to: "/p/pool-pros", label: "Pool pros directory", description: "Local pool builders, cleaners, and inspectors" },
 ];
+
+function forceDocumentNavigation(path: string) {
+  return (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    window.location.assign(path);
+  };
+}
 
 /**
  * Site-wide related-pages module. Renders evergreen hub links plus any
@@ -36,15 +44,16 @@ export function RelatedPages({
       <ul className="mt-5 grid gap-3 sm:grid-cols-2">
         {list.map((it) => (
           <li key={it.to}>
-            <Link
-              to={it.to}
+            <a
+              href={it.to}
+              onClick={forceDocumentNavigation(it.to)}
               className="block rounded-xl border border-border bg-card px-4 py-3 transition hover:border-primary"
             >
               <div className="text-sm font-semibold text-foreground">{it.label}</div>
               {it.description && (
                 <div className="mt-1 text-xs text-muted-foreground">{it.description}</div>
               )}
-            </Link>
+            </a>
           </li>
         ))}
       </ul>
