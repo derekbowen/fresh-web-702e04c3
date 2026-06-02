@@ -2,7 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, ldJsonScript } from "@/lib/seo";
-import { getShareListing } from "@/server/sharetribe.functions";
+import { getShareListing, type ShareListing } from "@/server/sharetribe.functions";
 import { getRouteOrigin } from "@/lib/route-origin";
 import {
   MapPin,
