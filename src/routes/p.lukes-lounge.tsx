@@ -117,6 +117,8 @@ function LukesLoungePage() {
   const locStr = [listing.city, listing.state].filter(Boolean).join(", ");
   const heroImg = listing.heroImage ?? "";
   const galleryRest = listing.images.slice(1, 5);
+  const extraPhotos = listing.images.slice(5);
+  const totalPhotos = listing.images.length;
 
   return (
     <>
@@ -124,11 +126,25 @@ function LukesLoungePage() {
       <main className="bg-background pb-20">
         {/* HERO GALLERY */}
         <section className="mx-auto max-w-7xl px-4 pt-6">
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-4 md:grid-rows-2 md:gap-3">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Camera className="h-4 w-4 text-primary" />
+              {totalPhotos} photos
+            </div>
+            {totalPhotos > 5 && (
+              <button
+                onClick={() => setLightbox(0)}
+                className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm hover:bg-accent"
+              >
+                View all {totalPhotos}
+              </button>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:grid-rows-2 md:gap-3">
             {heroImg && (
               <button
                 onClick={() => setLightbox(0)}
-                className="group relative col-span-1 row-span-2 overflow-hidden rounded-2xl md:col-span-2"
+                className="group relative col-span-2 row-span-2 overflow-hidden rounded-2xl md:col-span-2"
               >
                 <img
                   src={heroImg}
@@ -141,23 +157,24 @@ function LukesLoungePage() {
               <button
                 key={src}
                 onClick={() => setLightbox(i + 1)}
-                className="group relative hidden overflow-hidden rounded-2xl md:block"
+                className="group relative overflow-hidden rounded-2xl"
               >
                 <img
                   src={src}
                   alt={`${listing.title} photo ${i + 2}`}
                   loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 md:aspect-auto"
                 />
-                {i === 3 && listing.images.length > 5 && (
-                  <span className="absolute bottom-3 right-3 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-foreground shadow-md">
-                    +{listing.images.length - 5} photos
+                {i === 3 && totalPhotos > 5 && (
+                  <span className="absolute bottom-2 right-2 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-semibold text-foreground shadow-md md:bottom-3 md:right-3 md:px-3 md:py-1.5 md:text-xs">
+                    +{totalPhotos - 5} more
                   </span>
                 )}
               </button>
             ))}
           </div>
         </section>
+
 
         {/* HERO VIDEO REEL */}
         <section className="mx-auto mt-8 max-w-7xl px-4">
