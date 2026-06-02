@@ -388,31 +388,39 @@ function LukesLoungePage() {
           </section>
         )}
 
-        {/* PHOTO GRID (REMAINING) */}
-        {listing.images.length > 5 && (
+        {/* FULL PHOTO GALLERY */}
+        {extraPhotos.length > 0 && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">
-              <Camera className="mr-2 inline h-5 w-5" />
-              More photos
-            </h2>
-            <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-              {listing.images.slice(5).map((src, i) => (
+            <div className="flex items-end justify-between">
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+                  <Camera className="h-6 w-6 text-primary" />
+                  The full tour
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  All {totalPhotos} photos of Luke's Lounge — tap any photo to enlarge.
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-3 lg:grid-cols-4">
+              {extraPhotos.map((src, i) => (
                 <button
                   key={src}
                   onClick={() => setLightbox(i + 5)}
-                  className="overflow-hidden rounded-xl"
+                  className="group overflow-hidden rounded-xl"
                 >
                   <img
                     src={src}
                     alt={`${listing.title} photo ${i + 6}`}
                     loading="lazy"
-                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 hover:scale-105"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </button>
               ))}
             </div>
           </section>
         )}
+
 
         {/* FINAL CTA */}
         <section className="mx-auto mt-20 max-w-4xl px-4 text-center">
