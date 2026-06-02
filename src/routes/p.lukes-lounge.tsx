@@ -111,7 +111,7 @@ export const Route = createFileRoute("/p/lukes-lounge")({
 });
 
 function LukesLoungePage() {
-  const { listing } = Route.useLoaderData();
+  const { listing } = Route.useLoaderData() as { listing: ShareListing; origin: string };
   const [lightbox, setLightbox] = useState<number | null>(null);
   const locStr = [listing.city, listing.state].filter(Boolean).join(", ");
   const heroImg = listing.heroImage ?? "";
