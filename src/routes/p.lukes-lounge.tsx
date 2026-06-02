@@ -485,6 +485,22 @@ function LukesLoungePage() {
           >
             ✕
           </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightbox((lightbox - 1 + totalPhotos) % totalPhotos); }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 md:left-6"
+            aria-label="Previous photo"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightbox((lightbox + 1) % totalPhotos); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 md:right-6"
+            aria-label="Next photo"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white">
+            {lightbox + 1} / {totalPhotos}
         </div>
       )}
 
