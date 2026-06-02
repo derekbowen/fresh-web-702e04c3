@@ -20,6 +20,11 @@ import {
   Sun,
   Trees,
   Lock,
+  ChevronLeft,
+  ChevronRight,
+  Gift,
+  ListChecks,
+
 } from "lucide-react";
 
 const LISTING_ID = "68865990-2dec-4c64-a6a3-475f95ffe556";
