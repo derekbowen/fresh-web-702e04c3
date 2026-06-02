@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
+import lukesReel from "@/assets/lukes-lounge-reel.mp4.asset.json";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, ldJsonScript } from "@/lib/seo";
 import { getShareListing, type ShareListing } from "@/server/sharetribe.functions";
@@ -157,6 +158,28 @@ function LukesLoungePage() {
             ))}
           </div>
         </section>
+
+        {/* HERO VIDEO REEL */}
+        <section className="mx-auto mt-8 max-w-7xl px-4">
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground md:text-3xl">Watch the tour</h2>
+              <p className="text-sm text-muted-foreground">60 seconds inside Luke's Lounge</p>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-2xl bg-black shadow-xl ring-1 ring-border">
+            <video
+              src={lukesReel.url}
+              poster={heroImg || undefined}
+              controls
+              playsInline
+              preload="metadata"
+              className="aspect-video w-full"
+            />
+          </div>
+        </section>
+
+
 
         {/* TITLE + CTA */}
         <section className="mx-auto mt-8 max-w-7xl px-4">
