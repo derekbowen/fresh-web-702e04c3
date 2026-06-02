@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
+import lukesReel from "@/assets/lukes-lounge-reel.mp4.asset.json";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, ldJsonScript } from "@/lib/seo";
 import { getShareListing, type ShareListing } from "@/server/sharetribe.functions";
