@@ -383,7 +383,10 @@ function LukesLoungePage() {
         {/* HOUSE RULES */}
         {listing.houseRules.length > 0 && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">House rules</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <ListChecks className="h-6 w-6 text-primary" />
+              House rules
+            </h2>
             <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {listing.houseRules.map((code) => {
                 const label = RULE_LABELS[code];
