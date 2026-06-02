@@ -184,6 +184,14 @@ function LukesLoungePage() {
                     {listing.poolSize} pool
                   </span>
                 )}
+                <a
+                  href={listing.bookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                >
+                  View on Pool Rental Near Me ↗
+                </a>
               </div>
             </div>
 
@@ -196,13 +204,15 @@ function LukesLoungePage() {
               </div>
               <a
                 href={listing.bookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02]"
               >
                 <Calendar className="h-4 w-4" />
                 Check availability & book
               </a>
               <p className="text-xs text-muted-foreground">
-                Free cancellation up to 2 hours before
+                Free cancellation up to 2 hours before · Opens in new tab
               </p>
             </div>
           </div>
@@ -238,6 +248,8 @@ function LukesLoungePage() {
               </div>
               <a
                 href={listing.bookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02]"
               >
                 Book now
@@ -376,6 +388,8 @@ function LukesLoungePage() {
             </p>
             <a
               href={listing.bookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02]"
             >
               <Calendar className="h-5 w-5" />
