@@ -184,6 +184,14 @@ function LukesLoungePage() {
                     {listing.poolSize} pool
                   </span>
                 )}
+                <a
+                  href={listing.bookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                >
+                  View on Pool Rental Near Me ↗
+                </a>
               </div>
             </div>
 
