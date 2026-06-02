@@ -2,9 +2,22 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import {
   fetchListing,
+  fetchShareListing,
   searchListings,
   type ListingSummary,
+  type ShareListing,
 } from "./sharetribe.server";
+
+export const getShareListing = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) =>
+    z.object({ id: z.string().uuid() }).parse(data),
+  )
+  .handler(async ({ data }): Promise<{ listing: ShareListing | null }> => {
+    const listing = await fetchShareListing(data.id);
+    return { listing };
+  });
+
+export type { ShareListing };
 
 export const getListing = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) =>
