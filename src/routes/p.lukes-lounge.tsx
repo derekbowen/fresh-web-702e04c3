@@ -20,6 +20,11 @@ import {
   Sun,
   Trees,
   Lock,
+  ChevronLeft,
+  ChevronRight,
+  Gift,
+  ListChecks,
+
 } from "lucide-react";
 
 const LISTING_ID = "68865990-2dec-4c64-a6a3-475f95ffe556";
@@ -117,6 +122,8 @@ function LukesLoungePage() {
   const locStr = [listing.city, listing.state].filter(Boolean).join(", ");
   const heroImg = listing.heroImage ?? "";
   const galleryRest = listing.images.slice(1, 5);
+  const extraPhotos = listing.images.slice(5);
+  const totalPhotos = listing.images.length;
 
   return (
     <>
@@ -124,11 +131,25 @@ function LukesLoungePage() {
       <main className="bg-background pb-20">
         {/* HERO GALLERY */}
         <section className="mx-auto max-w-7xl px-4 pt-6">
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-4 md:grid-rows-2 md:gap-3">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Camera className="h-4 w-4 text-primary" />
+              {totalPhotos} photos
+            </div>
+            {totalPhotos > 5 && (
+              <button
+                onClick={() => setLightbox(0)}
+                className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm hover:bg-accent"
+              >
+                View all {totalPhotos}
+              </button>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:grid-rows-2 md:gap-3">
             {heroImg && (
               <button
                 onClick={() => setLightbox(0)}
-                className="group relative col-span-1 row-span-2 overflow-hidden rounded-2xl md:col-span-2"
+                className="group relative col-span-2 row-span-2 overflow-hidden rounded-2xl md:col-span-2"
               >
                 <img
                   src={heroImg}
@@ -141,23 +162,24 @@ function LukesLoungePage() {
               <button
                 key={src}
                 onClick={() => setLightbox(i + 1)}
-                className="group relative hidden overflow-hidden rounded-2xl md:block"
+                className="group relative overflow-hidden rounded-2xl"
               >
                 <img
                   src={src}
                   alt={`${listing.title} photo ${i + 2}`}
                   loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 md:aspect-auto"
                 />
-                {i === 3 && listing.images.length > 5 && (
-                  <span className="absolute bottom-3 right-3 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-foreground shadow-md">
-                    +{listing.images.length - 5} photos
+                {i === 3 && totalPhotos > 5 && (
+                  <span className="absolute bottom-2 right-2 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-semibold text-foreground shadow-md md:bottom-3 md:right-3 md:px-3 md:py-1.5 md:text-xs">
+                    +{totalPhotos - 5} more
                   </span>
                 )}
               </button>
             ))}
           </div>
         </section>
+
 
         {/* HERO VIDEO REEL */}
         <section className="mx-auto mt-8 max-w-7xl px-4">
@@ -254,7 +276,10 @@ function LukesLoungePage() {
         {/* DESCRIPTION */}
         <section className="mx-auto mt-12 grid max-w-7xl gap-12 px-4 md:grid-cols-3">
           <div className="md:col-span-2">
-            <h2 className="text-xl font-semibold text-foreground">About this pool</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <Droplets className="h-6 w-6 text-primary" />
+              About this pool
+            </h2>
             <div className="mt-4 space-y-4 whitespace-pre-line text-[15px] leading-relaxed text-foreground/85">
               {listing.description}
             </div>
@@ -298,7 +323,10 @@ function LukesLoungePage() {
         {/* WHAT'S INCLUDED */}
         {(listing.advantages.length > 0 || listing.poolAmenities.length > 0) && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">What's included</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <Sparkles className="h-6 w-6 text-primary" />
+              What's included
+            </h2>
             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {listing.advantages.map((code) => {
                 const cfg = ADVANTAGE_LABELS[code];
@@ -328,7 +356,10 @@ function LukesLoungePage() {
         {/* ADD-ON AMENITIES */}
         {listing.amenities.length > 0 && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">Free extras & add-ons</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <Gift className="h-6 w-6 text-primary" />
+              Free extras & add-ons
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">All free with your booking unless noted.</p>
             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {listing.amenities.map((a) => (
@@ -355,7 +386,10 @@ function LukesLoungePage() {
         {/* HOUSE RULES */}
         {listing.houseRules.length > 0 && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">House rules</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <ListChecks className="h-6 w-6 text-primary" />
+              House rules
+            </h2>
             <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {listing.houseRules.map((code) => {
                 const label = RULE_LABELS[code];
@@ -371,31 +405,39 @@ function LukesLoungePage() {
           </section>
         )}
 
-        {/* PHOTO GRID (REMAINING) */}
-        {listing.images.length > 5 && (
+        {/* FULL PHOTO GALLERY */}
+        {extraPhotos.length > 0 && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">
-              <Camera className="mr-2 inline h-5 w-5" />
-              More photos
-            </h2>
-            <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-              {listing.images.slice(5).map((src, i) => (
+            <div className="flex items-end justify-between">
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+                  <Camera className="h-6 w-6 text-primary" />
+                  The full tour
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  All {totalPhotos} photos of Luke's Lounge — tap any photo to enlarge.
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-3 lg:grid-cols-4">
+              {extraPhotos.map((src, i) => (
                 <button
                   key={src}
                   onClick={() => setLightbox(i + 5)}
-                  className="overflow-hidden rounded-xl"
+                  className="group overflow-hidden rounded-xl"
                 >
                   <img
                     src={src}
                     alt={`${listing.title} photo ${i + 6}`}
                     loading="lazy"
-                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 hover:scale-105"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </button>
               ))}
             </div>
           </section>
         )}
+
 
         {/* FINAL CTA */}
         <section className="mx-auto mt-20 max-w-4xl px-4 text-center">
@@ -443,6 +485,23 @@ function LukesLoungePage() {
           >
             ✕
           </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightbox((lightbox - 1 + totalPhotos) % totalPhotos); }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 md:left-6"
+            aria-label="Previous photo"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightbox((lightbox + 1) % totalPhotos); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 md:right-6"
+            aria-label="Next photo"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white">
+            {lightbox + 1} / {totalPhotos}
+          </span>
         </div>
       )}
 
