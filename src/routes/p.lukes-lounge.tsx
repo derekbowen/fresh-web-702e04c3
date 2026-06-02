@@ -320,7 +320,10 @@ function LukesLoungePage() {
         {/* WHAT'S INCLUDED */}
         {(listing.advantages.length > 0 || listing.poolAmenities.length > 0) && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">What's included</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <Sparkles className="h-6 w-6 text-primary" />
+              What's included
+            </h2>
             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {listing.advantages.map((code) => {
                 const cfg = ADVANTAGE_LABELS[code];
