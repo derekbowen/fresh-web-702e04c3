@@ -388,6 +388,8 @@ function LukesLoungePage() {
             </p>
             <a
               href={listing.bookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02]"
             >
               <Calendar className="h-5 w-5" />
