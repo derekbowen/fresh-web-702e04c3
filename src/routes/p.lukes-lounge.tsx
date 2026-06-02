@@ -276,7 +276,10 @@ function LukesLoungePage() {
         {/* DESCRIPTION */}
         <section className="mx-auto mt-12 grid max-w-7xl gap-12 px-4 md:grid-cols-3">
           <div className="md:col-span-2">
-            <h2 className="text-xl font-semibold text-foreground">About this pool</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <Droplets className="h-6 w-6 text-primary" />
+              About this pool
+            </h2>
             <div className="mt-4 space-y-4 whitespace-pre-line text-[15px] leading-relaxed text-foreground/85">
               {listing.description}
             </div>
