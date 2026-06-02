@@ -248,6 +248,8 @@ function LukesLoungePage() {
               </div>
               <a
                 href={listing.bookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02]"
               >
                 Book now
