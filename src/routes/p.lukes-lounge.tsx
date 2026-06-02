@@ -501,6 +501,7 @@ function LukesLoungePage() {
           </button>
           <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white">
             {lightbox + 1} / {totalPhotos}
+          </span>
         </div>
       )}
 
