@@ -369,6 +369,133 @@ export async function fetchListing(id: string): Promise<{
   }
 }
 
+// ---------- Rich listing fetch (for shareable landing pages) ----------
+
+export interface ShareListingAmenity {
+  id: string;
+  name: string;
+  description: string;
+  priceCents: number;
+}
+
+export interface ShareListing {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  pricePerHour: number; // dollars
+  city: string | null;
+  state: string | null;
+  guests: number | null;
+  poolType: string | null;
+  waterType: string | null;
+  poolSize: string | null;
+  poolDepth: string | null;
+  images: string[]; // ordered large URLs
+  heroImage: string | null;
+  amenities: ShareListingAmenity[];
+  advantages: string[];
+  houseRules: string[];
+  poolAmenities: string[];
+  bookUrl: string; // relative path to marketplace listing
+  geolocation: { lat: number; lng: number } | null;
+}
+
+const STATE_ABBR: Record<string, string> = {
+  alabama: "AL", alaska: "AK", arizona: "AZ", arkansas: "AR", california: "CA",
+  colorado: "CO", connecticut: "CT", delaware: "DE", florida: "FL", georgia: "GA",
+  hawaii: "HI", idaho: "ID", illinois: "IL", indiana: "IN", iowa: "IA",
+  kansas: "KS", kentucky: "KY", louisiana: "LA", maine: "ME", maryland: "MD",
+  massachusetts: "MA", michigan: "MI", minnesota: "MN", mississippi: "MS",
+  missouri: "MO", montana: "MT", nebraska: "NE", nevada: "NV", "new hampshire": "NH",
+  "new jersey": "NJ", "new mexico": "NM", "new york": "NY", "north carolina": "NC",
+  "north dakota": "ND", ohio: "OH", oklahoma: "OK", oregon: "OR", pennsylvania: "PA",
+  "rhode island": "RI", "south carolina": "SC", "south dakota": "SD", tennessee: "TN",
+  texas: "TX", utah: "UT", vermont: "VT", virginia: "VA", washington: "WA",
+  "west virginia": "WV", wisconsin: "WI", wyoming: "WY",
+};
+
+export async function fetchShareListing(id: string): Promise<ShareListing | null> {
+  try {
+    const res = await integGet<STResponse<STListing>>(`/listings/show`, {
+      id,
+      include: "images",
+      "fields.image":
+        "variants.scaled-large,variants.scaled-medium,variants.landscape-crop2x",
+    });
+    const data = Array.isArray(res.data) ? res.data[0] : res.data;
+    if (!data || data.attributes.state !== "published") return null;
+    const a = data.attributes;
+    const pd = (a.publicData ?? {}) as Record<string, unknown>;
+    const loc = (pd.location as Record<string, unknown> | undefined) ?? {};
+
+    // Build ordered image list following the listing's image relationship order.
+    const imageOrder = data.relationships?.images?.data ?? [];
+    const imageMap = new Map<string, STImage>();
+    for (const inc of res.included ?? []) {
+      if (inc.type === "image") imageMap.set(inc.id, inc as STImage);
+    }
+    const images: string[] = [];
+    for (const ref of imageOrder) {
+      const img = imageMap.get(ref.id);
+      if (!img) continue;
+      const v = img.attributes.variants;
+      const url =
+        v["scaled-large"]?.url ||
+        v["landscape-crop2x"]?.url ||
+        v["scaled-medium"]?.url ||
+        Object.values(v)[0]?.url;
+      if (url) images.push(url);
+    }
+
+    const rawState = (loc.state as string) || (pd.state as string) || null;
+    let stateCode: string | null = null;
+    if (rawState) {
+      stateCode = rawState.length === 2 ? rawState.toUpperCase() : (STATE_ABBR[rawState.toLowerCase()] ?? null);
+    }
+    // Try to extract state from full address as fallback (e.g., "..., PA 18966, USA")
+    if (!stateCode && typeof loc.address === "string") {
+      const m = (loc.address as string).match(/,\s*([A-Z]{2})\s+\d{5}/);
+      if (m) stateCode = m[1];
+    }
+
+    const amenitiesRaw = Array.isArray(pd.amenities) ? (pd.amenities as Array<Record<string, unknown>>) : [];
+    const amenities: ShareListingAmenity[] = amenitiesRaw.map((x) => ({
+      id: String(x.id ?? ""),
+      name: String(x.name ?? "").trim(),
+      description: String(x.description ?? "").trim(),
+      priceCents: Number((x.price as { amount?: number } | undefined)?.amount ?? 0),
+    })).filter((x) => x.name);
+
+    const slug = slugify(a.title || "pool");
+    return {
+      id: data.id,
+      slug,
+      title: a.title,
+      description: a.description ?? "",
+      pricePerHour: Math.round((a.price?.amount ?? 0) / 100),
+      city: (loc.city as string) || (pd.city as string) || null,
+      state: stateCode,
+      guests: typeof pd.guestallowed === "number" ? (pd.guestallowed as number) : null,
+      poolType: (pd.pool_type as string) || null,
+      waterType: (pd.water_type as string) || null,
+      poolSize: (pd.poolsize as string) || null,
+      poolDepth: (pd.pool_depth as string) || null,
+      images,
+      heroImage: images[0] ?? null,
+      amenities,
+      advantages: Array.isArray(pd.advantagesSelection) ? (pd.advantagesSelection as string[]) : [],
+      houseRules: Array.isArray(pd.houseRules) ? (pd.houseRules as string[]) : [],
+      poolAmenities: Array.isArray(pd.poolAmenities) ? (pd.poolAmenities as string[]) : [],
+      bookUrl: `/l/${slug}/${data.id}`,
+      geolocation: a.geolocation ?? null,
+    };
+  } catch (err) {
+    console.error("fetchShareListing error:", err);
+    return null;
+  }
+}
+
 export interface SearchOptions {
   page?: number;
   perPage?: number;
