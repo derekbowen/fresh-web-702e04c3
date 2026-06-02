@@ -353,7 +353,10 @@ function LukesLoungePage() {
         {/* ADD-ON AMENITIES */}
         {listing.amenities.length > 0 && (
           <section className="mx-auto mt-16 max-w-7xl px-4">
-            <h2 className="text-xl font-semibold text-foreground">Free extras & add-ons</h2>
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
+              <Gift className="h-6 w-6 text-primary" />
+              Free extras & add-ons
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">All free with your booking unless noted.</p>
             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {listing.amenities.map((a) => (
