@@ -134,7 +134,8 @@ export function hostAcqSchemasForPage(
   // Uses CONTRACTOR + directApply so it's honest about being independent
   // gig income, not W2 employment. Rolling 60-day validThrough that we
   // derive from the page slug so the date is stable per URL (no SSR drift).
-  const slugHash = page.slug
+  const slugSeed = page.slug ?? page.url_path ?? cityName;
+  const slugHash = slugSeed
     .split("")
     .reduce((acc, ch) => (acc * 31 + ch.charCodeAt(0)) | 0, 0);
   const dayOffset = Math.abs(slugHash) % 30; // 0–29 day jitter
