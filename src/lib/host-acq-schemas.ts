@@ -145,11 +145,20 @@ export function hostAcqSchemasForPage(
   const validThrough = new Date(postedAt);
   validThrough.setUTCDate(validThrough.getUTCDate() + 60);
 
+  // Lead the description with city-specific copy from the page itself when
+  // we have it (better signal to Google + Indeed than the generic template),
+  // then append the standard "what you do / include / requirements" block so
+  // structured fields stay consistent across all 1,200+ cities.
+  const cityHook =
+    (page.seo_description && page.seo_description.trim().length > 60
+      ? page.seo_description.trim()
+      : `Turn your backyard pool in ${cityName}, ${stateCode} into income. ${SITE_NAME} connects pool owners with local guests who book by the hour. Hosts typically earn $40–$150/hour depending on pool size, location, and amenities.`);
+
   const jobPosting: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
     title: `Rent your backyard pool in ${cityName}, ${stateCode} — earn $40–$150/hour`,
-    description: `<p>Turn your backyard pool into income. ${SITE_NAME} connects pool owners in ${cityName}, ${stateCode} with local guests who book by the hour. Hosts typically earn $40–$150/hour depending on pool size, location, and amenities.</p><h3>What you do</h3><ul><li>List your pool with photos and an hourly rate</li><li>Approve booking requests on your schedule</li><li>Welcome guests, then get paid</li></ul><h3>What we include</h3><ul><li>$2,000,000 liability insurance on every booking</li><li>10% flat host fee (lower than Swimply's 15%+)</li><li>Guest verification and secure payouts</li></ul><h3>Requirements</h3><ul><li>You own (or have permission to rent) a residential pool in or near ${cityName}</li><li>Pool is clean, safe, and accessible to guests</li><li>You can respond to booking requests within 24 hours</li></ul><p><strong>This is an independent income opportunity, not W2 employment.</strong> You set your own schedule, rates, and house rules.</p>`,
+    description: `<p>${cityHook}</p><h3>What you do</h3><ul><li>List your pool with photos and an hourly rate</li><li>Approve booking requests on your schedule</li><li>Welcome guests, then get paid</li></ul><h3>What we include</h3><ul><li>$2,000,000 liability insurance on every booking</li><li>10% flat host fee (lower than Swimply's 15%+)</li><li>Guest verification and secure payouts</li></ul><h3>Requirements</h3><ul><li>You own (or have permission to rent) a residential pool in or near ${cityName}</li><li>Pool is clean, safe, and accessible to guests</li><li>You can respond to booking requests within 24 hours</li></ul><p><strong>This is an independent income opportunity, not W2 employment.</strong> You set your own schedule, rates, and house rules.</p>`,
     identifier: {
       "@type": "PropertyValue",
       name: SITE_NAME,
