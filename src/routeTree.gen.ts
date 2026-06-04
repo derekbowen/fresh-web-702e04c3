@@ -41,6 +41,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
+import { Route as JobsDotxmlRouteImport } from './routes/jobs[.]xml'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -362,6 +363,11 @@ const PoolsDirectorySitemapDotxmlRoute =
 const LandingPageRoute = LandingPageRouteImport.update({
   id: '/landing-page',
   path: '/landing-page',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobsDotxmlRoute = JobsDotxmlRouteImport.update({
+  id: '/jobs.xml',
+  path: '/jobs.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -1153,6 +1159,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/referral': typeof ReferralRoute
@@ -1337,6 +1344,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/referral': typeof ReferralRoute
@@ -1522,6 +1530,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/referral': typeof ReferralRoute
@@ -1708,6 +1717,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/blog'
+    | '/jobs.xml'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/referral'
@@ -1892,6 +1902,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/blog'
+    | '/jobs.xml'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/referral'
@@ -2076,6 +2087,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/blog'
+    | '/jobs.xml'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/referral'
@@ -2261,6 +2273,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
+  JobsDotxmlRoute: typeof JobsDotxmlRoute
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   ReferralRoute: typeof ReferralRoute
@@ -2599,6 +2612,13 @@ declare module '@tanstack/react-router' {
       path: '/landing-page'
       fullPath: '/landing-page'
       preLoaderRoute: typeof LandingPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jobs.xml': {
+      id: '/jobs.xml'
+      path: '/jobs.xml'
+      fullPath: '/jobs.xml'
+      preLoaderRoute: typeof JobsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -3856,6 +3876,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
+  JobsDotxmlRoute: JobsDotxmlRoute,
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   ReferralRoute: ReferralRoute,
@@ -3977,13 +3998,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
