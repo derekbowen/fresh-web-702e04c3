@@ -153,7 +153,7 @@ export function hostAcqSchemasForPage(
     identifier: {
       "@type": "PropertyValue",
       name: SITE_NAME,
-      value: `host-${page.slug}`,
+      value: `host-${slugSeed}`,
     },
     datePosted: postedAt.toISOString().slice(0, 10),
     validThrough: validThrough.toISOString().slice(0, 10),
