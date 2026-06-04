@@ -130,5 +130,65 @@ export function hostAcqSchemasForPage(
     ],
   };
 
-  return [webPage, professionalService, offer, howTo];
+  // JobPosting — gets the page into the Google for Jobs widget.
+  // Uses CONTRACTOR + directApply so it's honest about being independent
+  // gig income, not W2 employment. Rolling 60-day validThrough that we
+  // derive from the page slug so the date is stable per URL (no SSR drift).
+  const slugHash = page.slug
+    .split("")
+    .reduce((acc, ch) => (acc * 31 + ch.charCodeAt(0)) | 0, 0);
+  const dayOffset = Math.abs(slugHash) % 30; // 0–29 day jitter
+  const postedAt = new Date();
+  postedAt.setUTCHours(0, 0, 0, 0);
+  postedAt.setUTCDate(postedAt.getUTCDate() - dayOffset);
+  const validThrough = new Date(postedAt);
+  validThrough.setUTCDate(validThrough.getUTCDate() + 60);
+
+  const jobPosting: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: `Rent your backyard pool in ${cityName}, ${stateCode} — earn $40–$150/hour`,
+    description: `<p>Turn your backyard pool into income. ${SITE_NAME} connects pool owners in ${cityName}, ${stateCode} with local guests who book by the hour. Hosts typically earn $40–$150/hour depending on pool size, location, and amenities.</p><h3>What you do</h3><ul><li>List your pool with photos and an hourly rate</li><li>Approve booking requests on your schedule</li><li>Welcome guests, then get paid</li></ul><h3>What we include</h3><ul><li>$2,000,000 liability insurance on every booking</li><li>10% flat host fee (lower than Swimply's 15%+)</li><li>Guest verification and secure payouts</li></ul><h3>Requirements</h3><ul><li>You own (or have permission to rent) a residential pool in or near ${cityName}</li><li>Pool is clean, safe, and accessible to guests</li><li>You can respond to booking requests within 24 hours</li></ul><p><strong>This is an independent income opportunity, not W2 employment.</strong> You set your own schedule, rates, and house rules.</p>`,
+    identifier: {
+      "@type": "PropertyValue",
+      name: SITE_NAME,
+      value: `host-${page.slug}`,
+    },
+    datePosted: postedAt.toISOString().slice(0, 10),
+    validThrough: validThrough.toISOString().slice(0, 10),
+    employmentType: "CONTRACTOR",
+    hiringOrganization: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      sameAs: SITE_URL,
+      logo: `${SITE_URL}/fw-assets/logo.png`,
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: cityName,
+        addressRegion: stateCode,
+        addressCountry: "US",
+      },
+    },
+    baseSalary: {
+      "@type": "MonetaryAmount",
+      currency: "USD",
+      value: {
+        "@type": "QuantitativeValue",
+        minValue: 40,
+        maxValue: 150,
+        unitText: "HOUR",
+      },
+    },
+    directApply: true,
+    url: pageUrl,
+    applicantLocationRequirements: {
+      "@type": "City",
+      name: cityName,
+    },
+  };
+
+  return [webPage, professionalService, offer, howTo, jobPosting];
 }
