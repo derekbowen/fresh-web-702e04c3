@@ -96,6 +96,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-passw
 import { Route as AdminTechDocsRouteImport } from './routes/admin.tech-docs'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSocialLeadHunterRouteImport } from './routes/admin.social-lead-hunter'
+import { Route as AdminSmsBlastRouteImport } from './routes/admin.sms-blast'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSharetribePruneRouteImport } from './routes/admin.sharetribe-prune'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
@@ -647,6 +648,11 @@ const AdminTeamRoute = AdminTeamRouteImport.update({
 const AdminSocialLeadHunterRoute = AdminSocialLeadHunterRouteImport.update({
   id: '/social-lead-hunter',
   path: '/social-lead-hunter',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSmsBlastRoute = AdminSmsBlastRouteImport.update({
+  id: '/sms-blast',
+  path: '/sms-blast',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
@@ -1249,6 +1255,7 @@ export interface FileRoutesByFullPath {
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/sms-blast': typeof AdminSmsBlastRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/tech-docs': typeof AdminTechDocsRoute
@@ -1434,6 +1441,7 @@ export interface FileRoutesByTo {
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/sms-blast': typeof AdminSmsBlastRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/tech-docs': typeof AdminTechDocsRoute
@@ -1620,6 +1628,7 @@ export interface FileRoutesById {
   '/admin/seo-health': typeof AdminSeoHealthRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
+  '/admin/sms-blast': typeof AdminSmsBlastRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/tech-docs': typeof AdminTechDocsRoute
@@ -1807,6 +1816,7 @@ export interface FileRouteTypes {
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
+    | '/admin/sms-blast'
     | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/admin/tech-docs'
@@ -1992,6 +2002,7 @@ export interface FileRouteTypes {
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
+    | '/admin/sms-blast'
     | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/admin/tech-docs'
@@ -2177,6 +2188,7 @@ export interface FileRouteTypes {
     | '/admin/seo-health'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
+    | '/admin/sms-blast'
     | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/admin/tech-docs'
@@ -2999,6 +3011,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSocialLeadHunterRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sms-blast': {
+      id: '/admin/sms-blast'
+      path: '/sms-blast'
+      fullPath: '/admin/sms-blast'
+      preLoaderRoute: typeof AdminSmsBlastRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/site-footer': {
       id: '/admin/site-footer'
       path: '/site-footer'
@@ -3743,6 +3762,7 @@ interface AdminRouteChildren {
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
   AdminSharetribePruneRoute: typeof AdminSharetribePruneRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
+  AdminSmsBlastRoute: typeof AdminSmsBlastRoute
   AdminSocialLeadHunterRoute: typeof AdminSocialLeadHunterRoute
   AdminTeamRoute: typeof AdminTeamRoute
   AdminTechDocsRoute: typeof AdminTechDocsRoute
@@ -3805,6 +3825,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSeoHealthRoute: AdminSeoHealthRoute,
   AdminSharetribePruneRoute: AdminSharetribePruneRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
+  AdminSmsBlastRoute: AdminSmsBlastRoute,
   AdminSocialLeadHunterRoute: AdminSocialLeadHunterRoute,
   AdminTeamRoute: AdminTeamRoute,
   AdminTechDocsRoute: AdminTechDocsRoute,
