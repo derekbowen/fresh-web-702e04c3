@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRenterRouteImport } from './routes/unsubscribe-renter'
+import { Route as UnsubscribeHostRouteImport } from './routes/unsubscribe-host'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as Sm74buq58vDotxmlRouteImport } from './routes/sm-74buq58v[.]xml'
 import { Route as Sm74buq58vLsDotxmlRouteImport } from './routes/sm-74buq58v-ls[.]xml'
@@ -203,6 +204,11 @@ import { Route as PPoolProsCCategoryStateCityRouteImport } from './routes/p.pool
 const UnsubscribeRenterRoute = UnsubscribeRenterRouteImport.update({
   id: '/unsubscribe-renter',
   path: '/unsubscribe-renter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeHostRoute = UnsubscribeHostRouteImport.update({
+  id: '/unsubscribe-host',
+  path: '/unsubscribe-host',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
@@ -1238,6 +1244,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
@@ -1430,6 +1437,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
@@ -1623,6 +1631,7 @@ export interface FileRoutesById {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
@@ -1817,6 +1826,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
@@ -2009,6 +2019,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
@@ -2201,6 +2212,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
@@ -2394,6 +2406,7 @@ export interface RootRouteChildren {
   Sm74buq58vLsDotxmlRoute: typeof Sm74buq58vLsDotxmlRoute
   Sm74buq58vDotxmlRoute: typeof Sm74buq58vDotxmlRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  UnsubscribeHostRoute: typeof UnsubscribeHostRoute
   UnsubscribeRenterRoute: typeof UnsubscribeRenterRoute
   AccountLearningRoute: typeof AccountLearningRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
@@ -2488,6 +2501,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe-renter'
       fullPath: '/unsubscribe-renter'
       preLoaderRoute: typeof UnsubscribeRenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe-host': {
+      id: '/unsubscribe-host'
+      path: '/unsubscribe-host'
+      fullPath: '/unsubscribe-host'
+      preLoaderRoute: typeof UnsubscribeHostRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/unsubscribe': {
@@ -4056,6 +4076,7 @@ const rootRouteChildren: RootRouteChildren = {
   Sm74buq58vLsDotxmlRoute: Sm74buq58vLsDotxmlRoute,
   Sm74buq58vDotxmlRoute: Sm74buq58vDotxmlRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  UnsubscribeHostRoute: UnsubscribeHostRoute,
   UnsubscribeRenterRoute: UnsubscribeRenterRoute,
   AccountLearningRoute: AccountLearningRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
