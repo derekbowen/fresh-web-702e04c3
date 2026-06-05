@@ -180,6 +180,7 @@ import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
 import { Route as ApiPublicHooksSendRenterEmailsRouteImport } from './routes/api/public/hooks/send-renter-emails'
+import { Route as ApiPublicHooksSendHostDripEmailsRouteImport } from './routes/api/public/hooks/send-host-drip-emails'
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksPollSharetribeRentersRouteImport } from './routes/api/public/hooks/poll-sharetribe-renters'
 import { Route as ApiPublicHooksPollSharetribeHostsRouteImport } from './routes/api/public/hooks/poll-sharetribe-hosts'
@@ -1087,6 +1088,12 @@ const ApiPublicHooksSendRenterEmailsRoute =
     path: '/api/public/hooks/send-renter-emails',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSendHostDripEmailsRoute =
+  ApiPublicHooksSendHostDripEmailsRouteImport.update({
+    id: '/api/public/hooks/send-host-drip-emails',
+    path: '/api/public/hooks/send-host-drip-emails',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksProviderAiWorkerRoute =
   ApiPublicHooksProviderAiWorkerRouteImport.update({
     id: '/api/public/hooks/provider-ai-worker',
@@ -1369,6 +1376,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
+  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1560,6 +1568,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
+  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1752,6 +1761,7 @@ export interface FileRoutesById {
   '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
+  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1945,6 +1955,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
+    | '/api/public/hooks/send-host-drip-emails'
     | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -2136,6 +2147,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
+    | '/api/public/hooks/send-host-drip-emails'
     | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -2327,6 +2339,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
+    | '/api/public/hooks/send-host-drip-emails'
     | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -2454,6 +2467,7 @@ export interface RootRouteChildren {
   ApiPublicHooksPollSharetribeHostsRoute: typeof ApiPublicHooksPollSharetribeHostsRoute
   ApiPublicHooksPollSharetribeRentersRoute: typeof ApiPublicHooksPollSharetribeRentersRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
+  ApiPublicHooksSendHostDripEmailsRoute: typeof ApiPublicHooksSendHostDripEmailsRoute
   ApiPublicHooksSendRenterEmailsRoute: typeof ApiPublicHooksSendRenterEmailsRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
@@ -3666,6 +3680,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSendRenterEmailsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/send-host-drip-emails': {
+      id: '/api/public/hooks/send-host-drip-emails'
+      path: '/api/public/hooks/send-host-drip-emails'
+      fullPath: '/api/public/hooks/send-host-drip-emails'
+      preLoaderRoute: typeof ApiPublicHooksSendHostDripEmailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/provider-ai-worker': {
       id: '/api/public/hooks/provider-ai-worker'
       path: '/api/public/hooks/provider-ai-worker'
@@ -4114,6 +4135,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksPollSharetribeRentersRoute:
     ApiPublicHooksPollSharetribeRentersRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
+  ApiPublicHooksSendHostDripEmailsRoute: ApiPublicHooksSendHostDripEmailsRoute,
   ApiPublicHooksSendRenterEmailsRoute: ApiPublicHooksSendRenterEmailsRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
