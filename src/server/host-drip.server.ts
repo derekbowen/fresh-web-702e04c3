@@ -37,7 +37,8 @@ function renderTemplate(kind: string, firstName: string, unsubUrl: string): stri
 // ---------- Sequence scheduling ----------
 
 export async function scheduleSequence(subscriberId: string, baseAt = new Date()) {
-  const rows = HOST_SEQUENCE.map((s) => ({
+  // step >= 99 are one-off broadcasts, not part of the weekly cadence.
+  const rows = HOST_SEQUENCE.filter((s) => s.step < 99).map((s) => ({
     subscriber_id: subscriberId,
     step: s.step,
     kind: s.kind,
@@ -45,6 +46,7 @@ export async function scheduleSequence(subscriberId: string, baseAt = new Date()
     status: "pending" as const,
   }));
   await supabaseAdmin.from("host_drip_emails").insert(rows);
+
   await supabaseAdmin
     .from("host_subscribers")
     .update({ sequence_scheduled: true })
