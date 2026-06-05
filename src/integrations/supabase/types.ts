@@ -3425,6 +3425,140 @@ export type Database = {
         }
         Relationships: []
       }
+      renter_drip_state: {
+        Row: {
+          id: number
+          last_polled_at: string | null
+          last_st_created_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          last_polled_at?: string | null
+          last_st_created_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          last_polled_at?: string | null
+          last_st_created_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      renter_emails: {
+        Row: {
+          attempts: number
+          created_at: string
+          emailit_id: string | null
+          error: string | null
+          id: string
+          kind: string
+          listing_id: string | null
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          step: number
+          subject: string | null
+          subscriber_id: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          emailit_id?: string | null
+          error?: string | null
+          id?: string
+          kind: string
+          listing_id?: string | null
+          scheduled_at: string
+          sent_at?: string | null
+          status?: string
+          step: number
+          subject?: string | null
+          subscriber_id: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          emailit_id?: string | null
+          error?: string | null
+          id?: string
+          kind?: string
+          listing_id?: string | null
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          step?: number
+          subject?: string | null
+          subscriber_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "renter_emails_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "renter_subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      renter_subscribers: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          last_error: string | null
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          sequence_scheduled: boolean
+          st_created_at: string | null
+          st_user_id: string | null
+          state_code: string | null
+          status: string
+          unsubscribe_token: string
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          last_error?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string | null
+          sequence_scheduled?: boolean
+          st_created_at?: string | null
+          st_user_id?: string | null
+          state_code?: string | null
+          status?: string
+          unsubscribe_token?: string
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          last_error?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string | null
+          sequence_scheduled?: boolean
+          st_created_at?: string | null
+          st_user_id?: string | null
+          state_code?: string | null
+          status?: string
+          unsubscribe_token?: string
+          updated_at?: string
+          zip?: string | null
+        }
+        Relationships: []
+      }
       seo_fix_jobs: {
         Row: {
           attempts: number
