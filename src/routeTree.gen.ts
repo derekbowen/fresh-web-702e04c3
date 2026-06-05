@@ -182,6 +182,7 @@ import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksSendRenterEmailsRouteImport } from './routes/api/public/hooks/send-renter-emails'
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksPollSharetribeRentersRouteImport } from './routes/api/public/hooks/poll-sharetribe-renters'
+import { Route as ApiPublicHooksPollSharetribeHostsRouteImport } from './routes/api/public/hooks/poll-sharetribe-hosts'
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
 import { Route as ApiPublicHooksHostCityTailFixRouteImport } from './routes/api/public/hooks/host-city-tail-fix'
@@ -1098,6 +1099,12 @@ const ApiPublicHooksPollSharetribeRentersRoute =
     path: '/api/public/hooks/poll-sharetribe-renters',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksPollSharetribeHostsRoute =
+  ApiPublicHooksPollSharetribeHostsRouteImport.update({
+    id: '/api/public/hooks/poll-sharetribe-hosts',
+    path: '/api/public/hooks/poll-sharetribe-hosts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksLinkAutoFixRoute =
   ApiPublicHooksLinkAutoFixRouteImport.update({
     id: '/api/public/hooks/link-auto-fix',
@@ -1359,6 +1366,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
+  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
@@ -1549,6 +1557,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
+  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
@@ -1740,6 +1749,7 @@ export interface FileRoutesById {
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
+  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
@@ -1932,6 +1942,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
+    | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/send-renter-emails'
@@ -2122,6 +2133,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
+    | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/send-renter-emails'
@@ -2312,6 +2324,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
+    | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
     | '/api/public/hooks/send-renter-emails'
@@ -2438,6 +2451,7 @@ export interface RootRouteChildren {
   ApiPublicHooksHostCityTailFixRoute: typeof ApiPublicHooksHostCityTailFixRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
+  ApiPublicHooksPollSharetribeHostsRoute: typeof ApiPublicHooksPollSharetribeHostsRoute
   ApiPublicHooksPollSharetribeRentersRoute: typeof ApiPublicHooksPollSharetribeRentersRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
   ApiPublicHooksSendRenterEmailsRoute: typeof ApiPublicHooksSendRenterEmailsRoute
@@ -3666,6 +3680,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksPollSharetribeRentersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/poll-sharetribe-hosts': {
+      id: '/api/public/hooks/poll-sharetribe-hosts'
+      path: '/api/public/hooks/poll-sharetribe-hosts'
+      fullPath: '/api/public/hooks/poll-sharetribe-hosts'
+      preLoaderRoute: typeof ApiPublicHooksPollSharetribeHostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/link-auto-fix': {
       id: '/api/public/hooks/link-auto-fix'
       path: '/api/public/hooks/link-auto-fix'
@@ -4088,6 +4109,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksHostCityTailFixRoute: ApiPublicHooksHostCityTailFixRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
+  ApiPublicHooksPollSharetribeHostsRoute:
+    ApiPublicHooksPollSharetribeHostsRoute,
   ApiPublicHooksPollSharetribeRentersRoute:
     ApiPublicHooksPollSharetribeRentersRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
