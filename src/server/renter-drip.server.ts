@@ -347,3 +347,99 @@ export async function backfillSequenceForAll(): Promise<{
   }
   return { scheduled, skipped };
 }
+
+/**
+ * Pulls ALL existing Sharetribe users (paginated, no date cursor), upserts
+ * them as renter_subscribers, and queues the 3-day sequence for any active
+ * subscriber that doesn't already have one. Day-0 sends are staggered ~1s
+ * apart starting ~2 min from now to respect Emailit's 2/sec limit.
+ */
+export async function backfillAllSharetribeRenters(): Promise<{
+  fetched: number;
+  inserted: number;
+  scheduled: number;
+  skipped: number;
+  pages: number;
+}> {
+  const { integrationGet } = await import("@/server/sharetribe.server");
+
+  let fetched = 0;
+  let inserted = 0;
+  let scheduled = 0;
+  let skipped = 0;
+  let pages = 0;
+
+  const baseStart = new Date(Date.now() + 2 * 60_000);
+  let offsetSec = 0;
+
+  let page = 1;
+  const perPage = 100;
+  while (page <= 200) {
+    let res: any;
+    try {
+      res = await integrationGet("/users/query", { perPage, page, sort: "createdAt" });
+    } catch (err: any) {
+      console.error("backfillAllSharetribeRenters page", page, err?.message || err);
+      break;
+    }
+    const users: any[] = Array.isArray(res?.data) ? res.data : [];
+    pages++;
+    if (users.length === 0) break;
+    fetched += users.length;
+
+    for (const u of users) {
+      const stUserId =
+        typeof u.id === "string" ? u.id : u.id?.uuid || u.id?._ref || null;
+      const attrs = u.attributes || {};
+      const email = (attrs.email || "").toLowerCase().trim();
+      const createdAt = attrs.createdAt || null;
+      if (!stUserId || !email) { skipped++; continue; }
+
+      const profile = attrs.profile || {};
+      const name = `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || null;
+
+      const { data: existing } = await supabaseAdmin
+        .from("renter_subscribers")
+        .select("id, sequence_scheduled, status")
+        .or(`st_user_id.eq.${stUserId},email.eq.${email}`)
+        .maybeSingle();
+
+      if (existing) {
+        await supabaseAdmin
+          .from("renter_subscribers")
+          .update({ st_user_id: stUserId, email, name, st_created_at: createdAt })
+          .eq("id", existing.id);
+        if (!existing.sequence_scheduled && existing.status === "active") {
+          const baseAt = new Date(baseStart.getTime() + offsetSec * 1000);
+          await scheduleSequence(existing.id, baseAt);
+          scheduled++;
+          offsetSec += 1;
+        } else {
+          skipped++;
+        }
+      } else {
+        const { data: ins } = await supabaseAdmin
+          .from("renter_subscribers")
+          .insert({ st_user_id: stUserId, email, name, st_created_at: createdAt })
+          .select("id")
+          .single();
+        if (!ins) { skipped++; continue; }
+        inserted++;
+        const baseAt = new Date(baseStart.getTime() + offsetSec * 1000);
+        await scheduleSequence(ins.id, baseAt);
+        scheduled++;
+        offsetSec += 1;
+      }
+    }
+
+    if (users.length < perPage) break;
+    page++;
+  }
+
+  await supabaseAdmin
+    .from("renter_drip_state")
+    .update({ last_polled_at: new Date().toISOString() })
+    .eq("id", 1);
+
+  return { fetched, inserted, scheduled, skipped, pages };
+}
