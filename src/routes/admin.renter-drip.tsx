@@ -53,6 +53,18 @@ const runSendNow = createServerFn({ method: "POST" })
     return await sendDueEmails(50);
   });
 
+const runBackfillAll = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { userId } = context as { userId: string };
+    const { data: role } = await supabaseAdmin
+      .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (!role) throw new Error("Forbidden");
+    const { backfillAllSharetribeRenters } = await import("@/server/renter-drip.server");
+    return await backfillAllSharetribeRenters();
+  });
+
 export const Route = createFileRoute("/admin/renter-drip")({
   component: Page,
 });
@@ -61,6 +73,8 @@ function Page() {
   const fetcher = useServerFn(getRenterDripStats);
   const poll = useServerFn(runPollNow);
   const send = useServerFn(runSendNow);
+  const backfill = useServerFn(runBackfillAll);
+
   const { data, refetch, isLoading } = useQuery({
     queryKey: ["renter-drip-stats"],
     queryFn: () => fetcher(),
