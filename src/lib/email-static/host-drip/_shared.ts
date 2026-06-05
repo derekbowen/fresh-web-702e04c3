@@ -54,4 +54,46 @@ export const HOST_SEQUENCE: HostStep[] = [
     subject: "Public pool network: free traffic into your listing",
     day: 42,
   },
+  {
+    step: 7,
+    kind: "08-weekend-pricing",
+    subject: "Weekend pricing playbook: stop charging a flat rate",
+    day: 49,
+  },
+  {
+    step: 8,
+    kind: "09-photo-refresh",
+    subject: "20-minute photo refresh: 5 shots, more bookings",
+    day: 56,
+  },
+  {
+    step: 9,
+    kind: "10-reviews",
+    subject: "3 reviews, roughly 2x bookings: here's the ask template",
+    day: 63,
+  },
+  {
+    step: 10,
+    kind: "11-off-season",
+    subject: "Off-season bookings: how top hosts earn year-round",
+    day: 70,
+  },
+  {
+    step: 11,
+    kind: "12-add-ons",
+    subject: "Add-ons that boost every booking by 15-30%",
+    day: 77,
+  },
+  {
+    step: 12,
+    kind: "13-neighbors",
+    subject: "The neighbor and HOA playbook (prevents 90% of complaints)",
+    day: 84,
+  },
+  {
+    step: 13,
+    kind: "14-whats-next",
+    subject: "What we're building next, and what I need from you",
+    day: 91,
+  },
 ];
