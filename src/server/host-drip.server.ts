@@ -282,3 +282,61 @@ export async function sendDueHostEmails(batch = 20): Promise<{
 
   return { considered: due.length, sent, failed, skipped };
 }
+
+// ---------- One-off broadcast ----------
+
+/**
+ * Queue a one-off broadcast email (kind from HOST_SEQUENCE) to every active
+ * host subscriber. Schedules rows ~1 second apart starting in 1 minute so the
+ * existing /api/public/hooks/send-host-drip-emails cron drains them under the
+ * Emailit 2/sec limit. Skips subscribers who already have a row for this kind.
+ */
+export async function queueBroadcast(kind: string): Promise<{
+  queued: number;
+  skipped: number;
+  total: number;
+}> {
+  const step = HOST_SEQUENCE.find((s) => s.kind === kind);
+  if (!step) throw new Error(`Unknown broadcast kind: ${kind}`);
+
+  const { data: subs } = await supabaseAdmin
+    .from("host_subscribers")
+    .select("id")
+    .eq("status", "active");
+  const list = subs ?? [];
+
+  // Find subscribers who already have a row for this kind (avoid dupes).
+  const { data: existing } = await supabaseAdmin
+    .from("host_drip_emails")
+    .select("subscriber_id")
+    .eq("kind", kind);
+  const sent = new Set((existing ?? []).map((r: any) => r.subscriber_id));
+
+  const baseStart = new Date(Date.now() + 60_000);
+  const rows: any[] = [];
+  let offset = 0;
+  let skipped = 0;
+  for (const s of list) {
+    if (sent.has(s.id)) {
+      skipped++;
+      continue;
+    }
+    rows.push({
+      subscriber_id: s.id,
+      step: step.step,
+      kind: step.kind,
+      scheduled_at: new Date(baseStart.getTime() + offset * 1000).toISOString(),
+      status: "pending" as const,
+    });
+    offset += 1;
+  }
+
+  if (rows.length > 0) {
+    // Insert in batches of 200 to avoid payload limits.
+    for (let i = 0; i < rows.length; i += 200) {
+      await supabaseAdmin.from("host_drip_emails").insert(rows.slice(i, i + 200));
+    }
+  }
+
+  return { queued: rows.length, skipped, total: list.length };
+}
