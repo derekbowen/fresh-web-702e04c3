@@ -1,56 +1,83 @@
-## What's actually happening
+# Renter pool-match email drip
 
-I reproduced the crash on production at 414x896 (iPhone-sized viewport) and inspected the network traffic. The picture is different from what we thought.
+## What it does
 
-When you tap "Water chemistry basics" on `/p/pool-maintenance`:
+1. **Every 15 min**: poll Sharetribe Integration API for new renters. Pull `email`, `displayName`, and the ZIP code from signup extended data (profile.protectedData.zip or publicData.zip — I'll detect which). Upsert into `renter_subscribers`.
+2. **On new subscriber**: queue a welcome email + a 14-day daily sequence of "pool of the day" emails (one pool near their ZIP, with photo, price, link to listing).
+3. **Cron every 5 min**: drains the queue and sends due emails via Emailit (same client we already use).
+4. **Day 7 and Day 14**: replace the daily pool with a "know someone with a pool? refer them" email.
+5. **One-click unsubscribe** in every email (reuses existing `email_unsubscribe_tokens` table).
 
-1. TanStack Router intercepts the click and does a client-side navigation to `/p/water-chemistry-basics` (the `forceDocumentNavigation` workaround we shipped earlier is being bypassed — the router's own link/preload handlers fire first on touch).
-2. The client calls `https://www.poolrentalnearme.com/_serverFn/<hash>` to run the page loader.
-3. **That request returns HTTP 200 with an HTML body that says "Page not found"** — it's the Sharetribe marketplace's 404 HTML, not the fresh-web server function response. Confirmed in the response headers (`Content-Type: text/html`, body `<title>Page not found</title>`).
-4. The loader returns `undefined`, the dispatcher reads `page.template_type` on undefined, and the error boundary shows `Cannot read properties of undefined (reading 'template_type')`.
+## Pool matching
 
-A direct `curl` of `/p/water-chemistry-basics` returns the full SSR'd page correctly (200, real content). The problem is exclusively on client-side transitions, because the nginx proxy is not forwarding `/_serverFn/*` to fresh-web — that path falls through to Sharetribe.
+ZIP → lat/lng via a free ZIP lookup table I'll seed from a CSV (US ZIPs only, ~42k rows, ~3MB). Then query Sharetribe `listings/query` with `origin=lat,lng` and a 50-mile radius, filter to ones with photos, rotate so the same renter doesn't get the same pool twice (track in `renter_email_sends`).
 
-## Root cause
+## Files
 
-The nginx route table for `poolrentalnearme.com` does not include `/_serverFn/*`, so every TanStack server-function RPC from the browser ends up at Sharetribe. There are two correct fixes — one infra, one app.
+```text
+supabase/migrations/<ts>_renter_drip.sql
+  - renter_subscribers (id, st_user_id unique, email, name, zip, lat, lng, status, created_at)
+  - renter_emails (id, subscriber_id, step, kind, scheduled_at, status, listing_id, sent_at, emailit_id)
+  - us_zips (zip pk, lat, lng, city, state)  -- seeded from public CSV
+  - cron: poll-sharetribe-renters-15m, send-renter-emails-5m
 
-## Recommended fix (app-side, ships from Lovable today)
+src/server/sharetribe-renter-poll.server.ts
+  - listNewRenters(sinceISO): hits ST Integration API users/query, returns {st_user_id, email, name, zip}
 
-Stop calling `/_serverFn` from the browser at all. Two changes together cover every entry point so a stray Link or prefetch can't trigger it:
+src/server/renter-pool-matcher.server.ts
+  - pickPoolForSubscriber(subscriberId): returns a listing not yet sent
 
-### 1. Disable client-side navigation/preloading on `/p/*` content pages
+src/lib/email-templates/renter-welcome.tsx
+src/lib/email-templates/renter-pool-of-the-day.tsx
+src/lib/email-templates/renter-referral.tsx
 
-In `src/router.tsx`, set:
+src/routes/api/public/hooks/poll-sharetribe-renters.ts
+  - GET (apikey auth) → run poller, upsert subscribers, schedule 14-day sequence
+src/routes/api/public/hooks/send-renter-emails.ts
+  - GET (apikey auth) → pick due rows, render template, send via emailit, mark sent
 
-- `defaultPreload: false` (currently undefined — defaults to off, but make it explicit)
-- `defaultPreloadStaleTime` stays `0`
+src/routes/api/public/unsubscribe-renter.ts
+  - GET ?token=... → mark subscriber unsubscribed, cancel pending emails
 
-Then in `src/routes/p.$slug.tsx`, replace the remaining two `<Link>` usages in the `errorComponent` and `notFoundComponent` with plain `<a href="/">` so even the error UI never re-enters the router.
+src/routes/admin.renter-drip.tsx
+  - Subscriber list, send log, manual "send next now" button
+```
 
-### 2. Add a global anchor-click interceptor on every `/p/*` page
+## Sequence (14 days)
 
-In `src/routes/p.$slug.tsx`'s component (`ContentPageDispatcher`), add a single `useEffect` that:
+```text
+Day 0  Welcome + 3 nearby pools
+Day 1  Pool of the day
+Day 2  Pool of the day
+Day 3  Pool of the day
+Day 5  Pool of the day
+Day 7  "Know anyone with a pool? Refer them" (referral CTA)
+Day 9  Pool of the day
+Day 11 Pool of the day
+Day 14 Final referral push, then sequence ends
+```
 
-- Attaches a `click` listener at the document root
-- For any left-click on an `<a>` whose `href` starts with `/p/`, `/`, or any same-origin path that isn't `/s`, `/l/`, `/login`, `/signup`, `/inbox`, `/auth/`, `/account/`, `/profile/`, `/messages/`, `/listings/` (those need to remain regular browser nav too — but they already are)
-- Calls `event.preventDefault()` + `window.location.assign(href)`
+User can change cadence later — it's all rows in `renter_emails`.
 
-This makes the existing per-component `forceDocumentNavigation` helpers redundant, but they stay as belt-and-braces. The interceptor catches all the cases we missed (related cards, body markdown links rendered by `ReactMarkdown`, breadcrumbs, etc.) without having to hunt down each one.
+## Deliverability note
 
-### 3. Defensive loader fallback
+Daily sends to people who signed up to *use* the marketplace (not opted into newsletter) is aggressive. I'll honor unsubscribe instantly, suppress on bounce, and cap at 1 email/day. If complaint rates climb, we throttle to 2-3x/week — easy config change.
 
-In `lookupContentPage` calls, we already guard `if (!page)` in the dispatcher. Keep that. No change needed beyond what's already there.
+## Secrets needed
 
-## Why not the infra fix
+- `SHARETRIBE_INTEG_CLIENT_ID` ✅ already set
+- `SHARETRIBE_INTEG_CLIENT_SECRET` ✅ already set
+- `EMAILIT_API_KEY` ✅ already set
+- `HOOKS_ADMIN_TOKEN` (or anon key) for cron auth — already wired
 
-The proper fix is one line in your EC2 nginx config: add `location /_serverFn/ { proxy_pass http://fresh-web; }` (with whatever upstream name you're using). That makes client-side navigation work everywhere on the site and improves performance. Per the workspace rules I won't touch nginx from Lovable, but if you want, I can write you the exact nginx snippet to paste in — it's much cleaner than the app-side workaround.
+No new secrets required.
 
-## Files changed
+## Out of scope (ask if you want them)
 
-- `src/router.tsx` — explicit `defaultPreload: false`
-- `src/routes/p.$slug.tsx` — global click interceptor in dispatcher + two `<Link>` → `<a>` swaps in error/notFound components
+- SMS to renters (you said you're done with SMS)
+- Host-side recommendations (this is renter-side only)
+- Re-engaging dormant renters (>30 days inactive) — separate job
 
-## After the change
+## Open question
 
-I'll publish and re-test on the mobile-sized browser by clicking through 3 hub links in a row to confirm hard navigation fires every time and no `_serverFn` requests are made.
+Where exactly does ZIP live on the Sharetribe user object? I'll inspect the first few users when the poller runs and adjust if it's `publicData.zip` vs `protectedData.zip` vs `address.postal`. If ZIP is missing on a user, I'll fall back to city/state and skip them if neither is present.
