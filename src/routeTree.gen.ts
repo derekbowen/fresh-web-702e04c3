@@ -129,6 +129,7 @@ import { Route as AdminJobHistoryRouteImport } from './routes/admin.job-history'
 import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
+import { Route as AdminHostDripRouteImport } from './routes/admin.host-drip'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminFounderBlastRouteImport } from './routes/admin.founder-blast'
@@ -823,6 +824,11 @@ const AdminIgLeadHunterRoute = AdminIgLeadHunterRouteImport.update({
   path: '/ig-lead-hunter',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHostDripRoute = AdminHostDripRouteImport.update({
+  id: '/host-drip',
+  path: '/host-drip',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGscImportRoute = AdminGscImportRouteImport.update({
   id: '/gsc-import',
   path: '/gsc-import',
@@ -1274,6 +1280,7 @@ export interface FileRoutesByFullPath {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/host-drip': typeof AdminHostDripRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1467,6 +1474,7 @@ export interface FileRoutesByTo {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/host-drip': typeof AdminHostDripRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1661,6 +1669,7 @@ export interface FileRoutesById {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/host-drip': typeof AdminHostDripRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1856,6 +1865,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/host-drip'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -2049,6 +2059,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/host-drip'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -2242,6 +2253,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/host-drip'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -3336,6 +3348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIgLeadHunterRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/host-drip': {
+      id: '/admin/host-drip'
+      path: '/host-drip'
+      fullPath: '/admin/host-drip'
+      preLoaderRoute: typeof AdminHostDripRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/gsc-import': {
       id: '/admin/gsc-import'
       path: '/gsc-import'
@@ -3876,6 +3895,7 @@ interface AdminRouteChildren {
   AdminFounderBlastRoute: typeof AdminFounderBlastRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
+  AdminHostDripRoute: typeof AdminHostDripRoute
   AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminInternalLinksRoute: typeof AdminInternalLinksRoute
@@ -3940,6 +3960,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFounderBlastRoute: AdminFounderBlastRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
+  AdminHostDripRoute: AdminHostDripRoute,
   AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
   AdminIndexingRoute: AdminIndexingRoute,
   AdminInternalLinksRoute: AdminInternalLinksRoute,
