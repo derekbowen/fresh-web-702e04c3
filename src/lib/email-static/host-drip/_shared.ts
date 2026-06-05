@@ -96,4 +96,13 @@ export const HOST_SEQUENCE: HostStep[] = [
     subject: "What we're building next, and what I need from you",
     day: 91,
   },
+  {
+    // One-off broadcast (not part of the weekly cadence). Day is unused
+    // because rows are scheduled manually from the admin broadcast button.
+    step: 99,
+    kind: "15-share-link-profits",
+    subject: "Keep more of your profits 🌊 Share your link with returning guests",
+    day: 0,
+  },
 ];
+

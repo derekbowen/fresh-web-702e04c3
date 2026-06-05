@@ -69,6 +69,19 @@ const runSendNow = createServerFn({ method: "POST" })
     return await sendDueHostEmails(20);
   });
 
+const runBroadcastShareLink = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { userId } = context as { userId: string };
+    const { data: role } = await supabaseAdmin
+      .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (!role) throw new Error("Forbidden");
+    const { queueBroadcast } = await import("@/server/host-drip.server");
+    return await queueBroadcast("15-share-link-profits");
+  });
+
+
 export const Route = createFileRoute("/admin/host-drip")({
   component: Page,
 });
@@ -77,6 +90,7 @@ function Page() {
   const fetcher = useServerFn(getHostDripStats);
   const poll = useServerFn(runPollNow);
   const send = useServerFn(runSendNow);
+  const broadcast = useServerFn(runBroadcastShareLink);
   const { data, refetch, isLoading } = useQuery({
     queryKey: ["host-drip-stats"],
     queryFn: () => fetcher(),
@@ -99,8 +113,18 @@ function Page() {
           className="px-4 py-2 rounded bg-slate-700 text-white"
           onClick={async () => { await send(); refetch(); }}
         >Drain send queue now</button>
+        <button
+          className="px-4 py-2 rounded bg-blue-700 text-white"
+          onClick={async () => {
+            if (!confirm("Queue the 'keep more of your profits' broadcast to ALL active hosts?")) return;
+            const r: any = await broadcast();
+            alert(`Queued ${r.queued} (skipped ${r.skipped} already sent, of ${r.total} active).`);
+            refetch();
+          }}
+        >Broadcast: share-link profits</button>
         <button className="px-4 py-2 rounded border" onClick={() => refetch()}>Refresh</button>
       </div>
+
 
       {isLoading || !data ? <p>Loading…</p> : (
         <>
