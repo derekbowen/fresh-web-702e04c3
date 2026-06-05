@@ -2068,6 +2068,83 @@ export type Database = {
         }
         Relationships: []
       }
+      host_drip_emails: {
+        Row: {
+          attempts: number
+          created_at: string
+          emailit_id: string | null
+          error: string | null
+          id: string
+          kind: string
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          step: number
+          subject: string | null
+          subscriber_id: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          emailit_id?: string | null
+          error?: string | null
+          id?: string
+          kind: string
+          scheduled_at: string
+          sent_at?: string | null
+          status?: string
+          step: number
+          subject?: string | null
+          subscriber_id: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          emailit_id?: string | null
+          error?: string | null
+          id?: string
+          kind?: string
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          step?: number
+          subject?: string | null
+          subscriber_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "host_drip_emails_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "host_subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      host_drip_state: {
+        Row: {
+          id: number
+          last_polled_at: string | null
+          last_st_created_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          id: number
+          last_polled_at?: string | null
+          last_st_created_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          last_polled_at?: string | null
+          last_st_created_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       host_leads: {
         Row: {
           city: string | null
@@ -2176,6 +2253,51 @@ export type Database = {
           match_id?: string | null
           reason?: string | null
           reported_by?: string | null
+        }
+        Relationships: []
+      }
+      host_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          last_synced_at: string
+          name: string | null
+          sequence_scheduled: boolean
+          st_created_at: string | null
+          st_user_id: string | null
+          status: string
+          unsubscribe_token: string
+          unsubscribed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          last_synced_at?: string
+          name?: string | null
+          sequence_scheduled?: boolean
+          st_created_at?: string | null
+          st_user_id?: string | null
+          status?: string
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          last_synced_at?: string
+          name?: string | null
+          sequence_scheduled?: boolean
+          st_created_at?: string | null
+          st_user_id?: string | null
+          status?: string
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

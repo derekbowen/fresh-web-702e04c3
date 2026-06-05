@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRenterRouteImport } from './routes/unsubscribe-renter'
+import { Route as UnsubscribeHostRouteImport } from './routes/unsubscribe-host'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as Sm74buq58vDotxmlRouteImport } from './routes/sm-74buq58v[.]xml'
 import { Route as Sm74buq58vLsDotxmlRouteImport } from './routes/sm-74buq58v-ls[.]xml'
@@ -128,6 +129,7 @@ import { Route as AdminJobHistoryRouteImport } from './routes/admin.job-history'
 import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
+import { Route as AdminHostDripRouteImport } from './routes/admin.host-drip'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminFounderBlastRouteImport } from './routes/admin.founder-blast'
@@ -180,8 +182,10 @@ import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
 import { Route as ApiPublicHooksSendRenterEmailsRouteImport } from './routes/api/public/hooks/send-renter-emails'
+import { Route as ApiPublicHooksSendHostDripEmailsRouteImport } from './routes/api/public/hooks/send-host-drip-emails'
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
 import { Route as ApiPublicHooksPollSharetribeRentersRouteImport } from './routes/api/public/hooks/poll-sharetribe-renters'
+import { Route as ApiPublicHooksPollSharetribeHostsRouteImport } from './routes/api/public/hooks/poll-sharetribe-hosts'
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
 import { Route as ApiPublicHooksHostCityTailFixRouteImport } from './routes/api/public/hooks/host-city-tail-fix'
@@ -201,6 +205,11 @@ import { Route as PPoolProsCCategoryStateCityRouteImport } from './routes/p.pool
 const UnsubscribeRenterRoute = UnsubscribeRenterRouteImport.update({
   id: '/unsubscribe-renter',
   path: '/unsubscribe-renter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeHostRoute = UnsubscribeHostRouteImport.update({
+  id: '/unsubscribe-host',
+  path: '/unsubscribe-host',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
@@ -815,6 +824,11 @@ const AdminIgLeadHunterRoute = AdminIgLeadHunterRouteImport.update({
   path: '/ig-lead-hunter',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHostDripRoute = AdminHostDripRouteImport.update({
+  id: '/host-drip',
+  path: '/host-drip',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGscImportRoute = AdminGscImportRouteImport.update({
   id: '/gsc-import',
   path: '/gsc-import',
@@ -1086,6 +1100,12 @@ const ApiPublicHooksSendRenterEmailsRoute =
     path: '/api/public/hooks/send-renter-emails',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSendHostDripEmailsRoute =
+  ApiPublicHooksSendHostDripEmailsRouteImport.update({
+    id: '/api/public/hooks/send-host-drip-emails',
+    path: '/api/public/hooks/send-host-drip-emails',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksProviderAiWorkerRoute =
   ApiPublicHooksProviderAiWorkerRouteImport.update({
     id: '/api/public/hooks/provider-ai-worker',
@@ -1096,6 +1116,12 @@ const ApiPublicHooksPollSharetribeRentersRoute =
   ApiPublicHooksPollSharetribeRentersRouteImport.update({
     id: '/api/public/hooks/poll-sharetribe-renters',
     path: '/api/public/hooks/poll-sharetribe-renters',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksPollSharetribeHostsRoute =
+  ApiPublicHooksPollSharetribeHostsRouteImport.update({
+    id: '/api/public/hooks/poll-sharetribe-hosts',
+    path: '/api/public/hooks/poll-sharetribe-hosts',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksLinkAutoFixRoute =
@@ -1224,6 +1250,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
@@ -1253,6 +1280,7 @@ export interface FileRoutesByFullPath {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/host-drip': typeof AdminHostDripRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1359,8 +1387,10 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
+  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
+  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1414,6 +1444,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
@@ -1443,6 +1474,7 @@ export interface FileRoutesByTo {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/host-drip': typeof AdminHostDripRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1549,8 +1581,10 @@ export interface FileRoutesByTo {
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
+  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
+  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1605,6 +1639,7 @@ export interface FileRoutesById {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
@@ -1634,6 +1669,7 @@ export interface FileRoutesById {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
+  '/admin/host-drip': typeof AdminHostDripRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1740,8 +1776,10 @@ export interface FileRoutesById {
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
+  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
+  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
   '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
@@ -1797,6 +1835,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
@@ -1826,6 +1865,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/host-drip'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -1932,8 +1972,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
+    | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
+    | '/api/public/hooks/send-host-drip-emails'
     | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -1987,6 +2029,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
@@ -2016,6 +2059,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/host-drip'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -2122,8 +2166,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
+    | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
+    | '/api/public/hooks/send-host-drip-emails'
     | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -2177,6 +2223,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
@@ -2206,6 +2253,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
+    | '/admin/host-drip'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -2312,8 +2360,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
     | '/api/public/hooks/link-auto-fix'
+    | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
+    | '/api/public/hooks/send-host-drip-emails'
     | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
@@ -2368,6 +2418,7 @@ export interface RootRouteChildren {
   Sm74buq58vLsDotxmlRoute: typeof Sm74buq58vLsDotxmlRoute
   Sm74buq58vDotxmlRoute: typeof Sm74buq58vDotxmlRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  UnsubscribeHostRoute: typeof UnsubscribeHostRoute
   UnsubscribeRenterRoute: typeof UnsubscribeRenterRoute
   AccountLearningRoute: typeof AccountLearningRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
@@ -2438,8 +2489,10 @@ export interface RootRouteChildren {
   ApiPublicHooksHostCityTailFixRoute: typeof ApiPublicHooksHostCityTailFixRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
+  ApiPublicHooksPollSharetribeHostsRoute: typeof ApiPublicHooksPollSharetribeHostsRoute
   ApiPublicHooksPollSharetribeRentersRoute: typeof ApiPublicHooksPollSharetribeRentersRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
+  ApiPublicHooksSendHostDripEmailsRoute: typeof ApiPublicHooksSendHostDripEmailsRoute
   ApiPublicHooksSendRenterEmailsRoute: typeof ApiPublicHooksSendRenterEmailsRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
@@ -2460,6 +2513,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe-renter'
       fullPath: '/unsubscribe-renter'
       preLoaderRoute: typeof UnsubscribeRenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe-host': {
+      id: '/unsubscribe-host'
+      path: '/unsubscribe-host'
+      fullPath: '/unsubscribe-host'
+      preLoaderRoute: typeof UnsubscribeHostRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/unsubscribe': {
@@ -3288,6 +3348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIgLeadHunterRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/host-drip': {
+      id: '/admin/host-drip'
+      path: '/host-drip'
+      fullPath: '/admin/host-drip'
+      preLoaderRoute: typeof AdminHostDripRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/gsc-import': {
       id: '/admin/gsc-import'
       path: '/gsc-import'
@@ -3652,6 +3719,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSendRenterEmailsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/send-host-drip-emails': {
+      id: '/api/public/hooks/send-host-drip-emails'
+      path: '/api/public/hooks/send-host-drip-emails'
+      fullPath: '/api/public/hooks/send-host-drip-emails'
+      preLoaderRoute: typeof ApiPublicHooksSendHostDripEmailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/provider-ai-worker': {
       id: '/api/public/hooks/provider-ai-worker'
       path: '/api/public/hooks/provider-ai-worker'
@@ -3664,6 +3738,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/poll-sharetribe-renters'
       fullPath: '/api/public/hooks/poll-sharetribe-renters'
       preLoaderRoute: typeof ApiPublicHooksPollSharetribeRentersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/poll-sharetribe-hosts': {
+      id: '/api/public/hooks/poll-sharetribe-hosts'
+      path: '/api/public/hooks/poll-sharetribe-hosts'
+      fullPath: '/api/public/hooks/poll-sharetribe-hosts'
+      preLoaderRoute: typeof ApiPublicHooksPollSharetribeHostsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/link-auto-fix': {
@@ -3814,6 +3895,7 @@ interface AdminRouteChildren {
   AdminFounderBlastRoute: typeof AdminFounderBlastRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
+  AdminHostDripRoute: typeof AdminHostDripRoute
   AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminInternalLinksRoute: typeof AdminInternalLinksRoute
@@ -3878,6 +3960,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFounderBlastRoute: AdminFounderBlastRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
+  AdminHostDripRoute: AdminHostDripRoute,
   AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
   AdminIndexingRoute: AdminIndexingRoute,
   AdminInternalLinksRoute: AdminInternalLinksRoute,
@@ -4014,6 +4097,7 @@ const rootRouteChildren: RootRouteChildren = {
   Sm74buq58vLsDotxmlRoute: Sm74buq58vLsDotxmlRoute,
   Sm74buq58vDotxmlRoute: Sm74buq58vDotxmlRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  UnsubscribeHostRoute: UnsubscribeHostRoute,
   UnsubscribeRenterRoute: UnsubscribeRenterRoute,
   AccountLearningRoute: AccountLearningRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
@@ -4088,9 +4172,12 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksHostCityTailFixRoute: ApiPublicHooksHostCityTailFixRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
+  ApiPublicHooksPollSharetribeHostsRoute:
+    ApiPublicHooksPollSharetribeHostsRoute,
   ApiPublicHooksPollSharetribeRentersRoute:
     ApiPublicHooksPollSharetribeRentersRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
+  ApiPublicHooksSendHostDripEmailsRoute: ApiPublicHooksSendHostDripEmailsRoute,
   ApiPublicHooksSendRenterEmailsRoute: ApiPublicHooksSendRenterEmailsRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
