@@ -84,7 +84,7 @@ function Page() {
     <main className="max-w-5xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold">Renter drip</h1>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap">
         <button
           className="px-4 py-2 rounded bg-sky-600 text-white"
           onClick={async () => { await poll(); refetch(); }}
@@ -93,6 +93,15 @@ function Page() {
           className="px-4 py-2 rounded bg-slate-700 text-white"
           onClick={async () => { await send(); refetch(); }}
         >Drain send queue now</button>
+        <button
+          className="px-4 py-2 rounded bg-blue-700 text-white"
+          onClick={async () => {
+            if (!confirm("Pull ALL existing Sharetribe customers and queue the 3-day sequence for any not already scheduled?")) return;
+            const r: any = await backfill();
+            alert(`Fetched ${r.fetched} across ${r.pages} pages. Inserted ${r.inserted}, scheduled ${r.scheduled}, skipped ${r.skipped}.`);
+            refetch();
+          }}
+        >Backfill ALL existing Sharetribe customers</button>
         <button className="px-4 py-2 rounded border" onClick={() => refetch()}>Refresh</button>
       </div>
 
