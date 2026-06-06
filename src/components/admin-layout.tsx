@@ -3,8 +3,8 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
-  CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
-  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell,
+  CreditCard, Search, Bot, Mail, Activity, ChevronLeft, ChevronDown, Menu, X, Home, LinkIcon,
+  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell, Share2,
 } from "lucide-react";
 import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 import { BgJobsRunner } from "@/components/bg-jobs-runner";
