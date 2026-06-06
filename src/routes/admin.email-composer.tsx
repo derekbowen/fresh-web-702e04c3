@@ -1034,7 +1034,14 @@ function Page() {
                   <td>{r.sent_count}</td>
                   <td>{r.failed_count}</td>
                   <td className="text-xs">{r.status}</td>
-                  <td>
+                  <td className="space-x-2 whitespace-nowrap">
+                    <button
+                      onClick={() => handleDuplicate(r)}
+                      className="text-xs text-sky-700 hover:underline"
+                      title="Load subject + body into composer to send again"
+                    >
+                      Duplicate
+                    </button>
                     {r.status === "scheduled" && (
                       <button
                         onClick={() => handleCancel(r.id)}
