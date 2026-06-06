@@ -243,16 +243,6 @@ function PageErrorFallback({ error }: { error: Error }) {
   );
 }
 
-function PageWithBoundary() {
-  // Local boundary keeps the failure inside the route — global "Something
-  // went wrong" page hid the real error message.
-  const Boundary = require("@/components/error-boundary").ErrorBoundary as typeof import("@/components/error-boundary").ErrorBoundary;
-  return (
-    <Boundary name="email-composer" fallback={<PageErrorFallback error={new Error("see console")} />}>
-      <Page />
-    </Boundary>
-  );
-}
 
 export const Route = createFileRoute("/admin/email-composer")({
   component: Page,
