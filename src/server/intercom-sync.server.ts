@@ -14,7 +14,7 @@ export async function syncHostSubscribersToIntercom(limit = 100): Promise<{
     .from("host_subscribers")
     .select("id, email, name, status, st_user_id, intercom_id, intercom_synced_at, updated_at, created_at")
     .eq("status", "active")
-    .or("intercom_synced_at.is.null,intercom_synced_at.lt.updated_at")
+    .is("intercom_id", null)
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -60,7 +60,7 @@ export async function syncRenterSubscribersToIntercom(limit = 100): Promise<{
     .from("renter_subscribers")
     .select("id, email, name, city, state_code, status, st_user_id, intercom_id, intercom_synced_at, updated_at, created_at")
     .eq("status", "active")
-    .or("intercom_synced_at.is.null,intercom_synced_at.lt.updated_at")
+    .is("intercom_id", null)
     .order("created_at", { ascending: false })
     .limit(limit);
 
