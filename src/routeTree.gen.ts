@@ -185,6 +185,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicHooksTwilioInboundRouteImport } from './routes/api/public/hooks/twilio-inbound'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
+import { Route as ApiPublicHooksSyncAffiliateCommissionsRouteImport } from './routes/api/public/hooks/sync-affiliate-commissions'
 import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public/hooks/sms-sender'
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
@@ -1124,6 +1125,12 @@ const ApiPublicHooksSyncListingsRoute =
     path: '/api/public/hooks/sync-listings',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSyncAffiliateCommissionsRoute =
+  ApiPublicHooksSyncAffiliateCommissionsRouteImport.update({
+    id: '/api/public/hooks/sync-affiliate-commissions',
+    path: '/api/public/hooks/sync-affiliate-commissions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSmsSenderRoute = ApiPublicHooksSmsSenderRouteImport.update({
   id: '/api/public/hooks/sms-sender',
   path: '/api/public/hooks/sms-sender',
@@ -1476,6 +1483,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
+  '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1681,6 +1689,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
+  '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1887,6 +1896,7 @@ export interface FileRoutesById {
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
+  '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -2094,6 +2104,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sms-sender'
+    | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
@@ -2299,6 +2310,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sms-sender'
+    | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
@@ -2504,6 +2516,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sms-sender'
+    | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
@@ -2639,6 +2652,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
   ApiPublicHooksSmsSenderRoute: typeof ApiPublicHooksSmsSenderRoute
+  ApiPublicHooksSyncAffiliateCommissionsRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
   ApiPublicHooksTwilioInboundRoute: typeof ApiPublicHooksTwilioInboundRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -3882,6 +3896,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/sync-affiliate-commissions': {
+      id: '/api/public/hooks/sync-affiliate-commissions'
+      path: '/api/public/hooks/sync-affiliate-commissions'
+      fullPath: '/api/public/hooks/sync-affiliate-commissions'
+      preLoaderRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sms-sender': {
       id: '/api/public/hooks/sms-sender'
       path: '/api/public/hooks/sms-sender'
@@ -4417,6 +4438,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
   ApiPublicHooksSmsSenderRoute: ApiPublicHooksSmsSenderRoute,
+  ApiPublicHooksSyncAffiliateCommissionsRoute:
+    ApiPublicHooksSyncAffiliateCommissionsRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
   ApiPublicHooksTwilioInboundRoute: ApiPublicHooksTwilioInboundRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

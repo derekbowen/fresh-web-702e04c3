@@ -10,7 +10,7 @@ export type AffiliateDashboard = {
     full_name: string | null;
     email: string;
     payout_method: string | null;
-    payout_details: Record<string, unknown>;
+    payout_details: Record<string, string>;
   } | null;
   totals: {
     clicks: number;
@@ -60,7 +60,7 @@ export const getAffiliateDashboard = createServerFn({ method: "POST" })
       affiliate: aff
         ? {
             ...aff,
-            payout_details: (aff.payout_details ?? {}) as Record<string, unknown>,
+            payout_details: (aff.payout_details ?? {}) as Record<string, string>,
           }
         : null,
       totals: { clicks: 0, referred_hosts: 0, pending_cents: 0, approved_cents: 0, paid_cents: 0 },
@@ -103,7 +103,7 @@ export const getAffiliateDashboard = createServerFn({ method: "POST" })
     };
 
     return {
-      affiliate: { ...aff, payout_details: (aff.payout_details ?? {}) as Record<string, unknown> },
+      affiliate: { ...aff, payout_details: (aff.payout_details ?? {}) as Record<string, string> },
       totals,
       referrals: refsRes.data || [],
       commissions,

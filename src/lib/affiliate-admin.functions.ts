@@ -100,11 +100,12 @@ export const setAffiliateStatus = createServerFn({ method: "POST" })
     const { userId } = context as { userId: string };
     await assertAdmin(userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = { status: data.status };
-    if (data.status === "approved") {
-      patch.approved_at = new Date().toISOString();
-      patch.approved_by = userId;
-    }
+    const patch = {
+      status: data.status,
+      ...(data.status === "approved"
+        ? { approved_at: new Date().toISOString(), approved_by: userId }
+        : {}),
+    };
     const { error } = await supabaseAdmin.from("affiliates").update(patch).eq("id", data.id);
     if (error) throw error;
     return { ok: true };
