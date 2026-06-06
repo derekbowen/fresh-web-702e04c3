@@ -105,6 +105,7 @@ import { Route as AdminSocialLeadHunterRouteImport } from './routes/admin.social
 import { Route as AdminSmsBlastRouteImport } from './routes/admin.sms-blast'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSharetribePruneRouteImport } from './routes/admin.sharetribe-prune'
+import { Route as AdminSharetribeRouteImport } from './routes/admin.sharetribe'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminSeoCriticRouteImport } from './routes/admin.seo-critic'
 import { Route as AdminSeoCoachRouteImport } from './routes/admin.seo-coach'
@@ -718,6 +719,11 @@ const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
 const AdminSharetribePruneRoute = AdminSharetribePruneRouteImport.update({
   id: '/sharetribe-prune',
   path: '/sharetribe-prune',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSharetribeRoute = AdminSharetribeRouteImport.update({
+  id: '/sharetribe',
+  path: '/sharetribe',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSeoHealthRoute = AdminSeoHealthRouteImport.update({
@@ -1425,6 +1431,7 @@ export interface FileRoutesByFullPath {
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/sms-blast': typeof AdminSmsBlastRoute
@@ -1636,6 +1643,7 @@ export interface FileRoutesByTo {
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/sms-blast': typeof AdminSmsBlastRoute
@@ -1848,6 +1856,7 @@ export interface FileRoutesById {
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/sms-blast': typeof AdminSmsBlastRoute
@@ -2061,6 +2070,7 @@ export interface FileRouteTypes {
     | '/admin/seo-coach'
     | '/admin/seo-critic'
     | '/admin/seo-health'
+    | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/sms-blast'
@@ -2272,6 +2282,7 @@ export interface FileRouteTypes {
     | '/admin/seo-coach'
     | '/admin/seo-critic'
     | '/admin/seo-health'
+    | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/sms-blast'
@@ -2483,6 +2494,7 @@ export interface FileRouteTypes {
     | '/admin/seo-coach'
     | '/admin/seo-critic'
     | '/admin/seo-health'
+    | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/sms-blast'
@@ -3399,6 +3411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSharetribePruneRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sharetribe': {
+      id: '/admin/sharetribe'
+      path: '/sharetribe'
+      fullPath: '/admin/sharetribe'
+      preLoaderRoute: typeof AdminSharetribeRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/seo-health': {
       id: '/admin/seo-health'
       path: '/seo-health'
@@ -4268,6 +4287,7 @@ interface AdminRouteChildren {
   AdminSeoCoachRoute: typeof AdminSeoCoachRoute
   AdminSeoCriticRoute: typeof AdminSeoCriticRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
+  AdminSharetribeRoute: typeof AdminSharetribeRoute
   AdminSharetribePruneRoute: typeof AdminSharetribePruneRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
   AdminSmsBlastRoute: typeof AdminSmsBlastRoute
@@ -4339,6 +4359,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSeoCoachRoute: AdminSeoCoachRoute,
   AdminSeoCriticRoute: AdminSeoCriticRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
+  AdminSharetribeRoute: AdminSharetribeRoute,
   AdminSharetribePruneRoute: AdminSharetribePruneRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
   AdminSmsBlastRoute: AdminSmsBlastRoute,
