@@ -282,6 +282,7 @@ function Page() {
   const [sequenceStartLocal, setSequenceStartLocal] = useState<string>(defaultScheduleValue());
   const [samplePercent, setSamplePercent] = useState(10);
   const [winnerHours, setWinnerHours] = useState(2);
+  const [delayMs, setDelayMs] = useState(700);
 
   // Preview-as-recipient
   const [previewEmail, setPreviewEmail] = useState("");
