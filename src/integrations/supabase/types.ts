@@ -723,10 +723,15 @@ export type Database = {
           completed_at: string | null
           created_at: string
           created_by: string | null
+          custom_emails: Json | null
           failed_count: number
           id: string
+          plain_body: string | null
+          preview_text: string | null
           recipient_count: number
+          scheduled_at: string | null
           sent_count: number
+          single_email: string | null
           status: string
           subject: string
           test_only: boolean
@@ -737,10 +742,15 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           created_by?: string | null
+          custom_emails?: Json | null
           failed_count?: number
           id?: string
+          plain_body?: string | null
+          preview_text?: string | null
           recipient_count?: number
+          scheduled_at?: string | null
           sent_count?: number
+          single_email?: string | null
           status?: string
           subject: string
           test_only?: boolean
@@ -751,10 +761,15 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           created_by?: string | null
+          custom_emails?: Json | null
           failed_count?: number
           id?: string
+          plain_body?: string | null
+          preview_text?: string | null
           recipient_count?: number
+          scheduled_at?: string | null
           sent_count?: number
+          single_email?: string | null
           status?: string
           subject?: string
           test_only?: boolean
