@@ -18,7 +18,13 @@ interface SyncResult {
   diffs?: Diff[];
 }
 
+// Set to `true` ONLY after the matching custom attributes have been created in
+// Intercom (Settings → Data → People data). Until then we sync standard fields
+// only (name, email, external_id) so Intercom doesn't 400 on every contact.
+const SEND_CUSTOM_ATTRS = false;
+
 function buildHostAttrs(r: any) {
+  if (!SEND_CUSTOM_ATTRS) return undefined;
   return {
     prnm_audience: "host" as const,
     prnm_status: r.status,
@@ -27,6 +33,7 @@ function buildHostAttrs(r: any) {
 }
 
 function buildRenterAttrs(r: any) {
+  if (!SEND_CUSTOM_ATTRS) return undefined;
   return {
     prnm_audience: "renter" as const,
     prnm_status: r.status,
@@ -54,7 +61,7 @@ function diffAttrs(
 async function syncTable(
   audience: Audience,
   rows: any[],
-  buildAttrs: (r: any) => Record<string, any>,
+  buildAttrs: (r: any) => Record<string, any> | undefined,
   table: "host_subscribers" | "renter_subscribers",
   dryRun: boolean,
 ): Promise<SyncResult> {
@@ -70,7 +77,7 @@ async function syncTable(
 
       if (dryRun) {
         const existing = await findContactByEmail(r.email);
-        const changes = diffAttrs(proposed, existing?.custom_attributes);
+        const changes = diffAttrs(proposed ?? {}, existing?.custom_attributes);
         // Name change?
         if (existing && r.name && existing.name !== r.name) {
           changes.name = { from: existing.name ?? null, to: r.name };
