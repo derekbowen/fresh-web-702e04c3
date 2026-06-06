@@ -716,8 +716,85 @@ export type Database = {
           },
         ]
       }
+      composer_ab_tests: {
+        Row: {
+          audience: string
+          body_html: string
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          custom_emails: Json | null
+          id: string
+          plain_body: string | null
+          preview_text: string | null
+          sample_a_count: number
+          sample_b_count: number
+          sample_percent: number
+          scheduled_winner_at: string
+          status: string
+          subject_a: string
+          subject_b: string
+          total_recipients: number
+          winner_after_minutes: number
+          winner_picked_at: string | null
+          winner_picked_by: string | null
+          winner_recipient_count: number | null
+          winner_variant: string | null
+        }
+        Insert: {
+          audience: string
+          body_html: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          custom_emails?: Json | null
+          id?: string
+          plain_body?: string | null
+          preview_text?: string | null
+          sample_a_count?: number
+          sample_b_count?: number
+          sample_percent?: number
+          scheduled_winner_at: string
+          status?: string
+          subject_a: string
+          subject_b: string
+          total_recipients?: number
+          winner_after_minutes?: number
+          winner_picked_at?: string | null
+          winner_picked_by?: string | null
+          winner_recipient_count?: number | null
+          winner_variant?: string | null
+        }
+        Update: {
+          audience?: string
+          body_html?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          custom_emails?: Json | null
+          id?: string
+          plain_body?: string | null
+          preview_text?: string | null
+          sample_a_count?: number
+          sample_b_count?: number
+          sample_percent?: number
+          scheduled_winner_at?: string
+          status?: string
+          subject_a?: string
+          subject_b?: string
+          total_recipients?: number
+          winner_after_minutes?: number
+          winner_picked_at?: string | null
+          winner_picked_by?: string | null
+          winner_recipient_count?: number | null
+          winner_variant?: string | null
+        }
+        Relationships: []
+      }
       composer_campaigns: {
         Row: {
+          ab_test_id: string | null
+          ab_variant: string | null
           audience: string
           body_html: string
           completed_at: string | null
@@ -731,12 +808,16 @@ export type Database = {
           recipient_count: number
           scheduled_at: string | null
           sent_count: number
+          sequence_id: string | null
+          sequence_position: number | null
           single_email: string | null
           status: string
           subject: string
           test_only: boolean
         }
         Insert: {
+          ab_test_id?: string | null
+          ab_variant?: string | null
           audience: string
           body_html: string
           completed_at?: string | null
@@ -750,12 +831,16 @@ export type Database = {
           recipient_count?: number
           scheduled_at?: string | null
           sent_count?: number
+          sequence_id?: string | null
+          sequence_position?: number | null
           single_email?: string | null
           status?: string
           subject: string
           test_only?: boolean
         }
         Update: {
+          ab_test_id?: string | null
+          ab_variant?: string | null
           audience?: string
           body_html?: string
           completed_at?: string | null
@@ -769,12 +854,22 @@ export type Database = {
           recipient_count?: number
           scheduled_at?: string | null
           sent_count?: number
+          sequence_id?: string | null
+          sequence_position?: number | null
           single_email?: string | null
           status?: string
           subject?: string
           test_only?: boolean
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "composer_campaigns_ab_test_id_fkey"
+            columns: ["ab_test_id"]
+            isOneToOne: false
+            referencedRelation: "composer_ab_tests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       composer_email_log: {
         Row: {
@@ -813,6 +908,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      composer_snippets: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       composer_unsubscribes: {
         Row: {
