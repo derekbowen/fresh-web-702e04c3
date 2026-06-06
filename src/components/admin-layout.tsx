@@ -211,7 +211,7 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
       )}
       <aside
         className={[
-          "z-50 shrink-0 border-r border-border bg-card transition-all",
+          "z-50 shrink-0 border-r border-border bg-card transition-all flex flex-col",
           "lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:block",
           collapsed ? "lg:w-14" : "lg:w-60",
           "fixed inset-y-0 left-0 w-64 lg:translate-x-0",
