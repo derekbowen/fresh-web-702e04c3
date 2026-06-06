@@ -19,6 +19,16 @@ import {
 
 export const Route = createFileRoute("/admin/auto-outreach")({
   component: AutoOutreachPage,
+  errorComponent: ({ error, reset }) => (
+    <AdminLayout>
+      <div className="max-w-3xl mx-auto p-6 space-y-3">
+        <h1 className="text-2xl font-bold">Auto-outreach</h1>
+        <p className="text-sm text-destructive">Something went wrong loading this page.</p>
+        <pre className="text-xs bg-muted p-3 rounded overflow-auto whitespace-pre-wrap">{String((error as any)?.message || error)}</pre>
+        <Button onClick={() => reset()}>Try again</Button>
+      </div>
+    </AdminLayout>
+  ),
   head: () => ({ meta: [{ title: "Auto-outreach — Admin" }, { name: "robots", content: "noindex" }] }),
 });
 
