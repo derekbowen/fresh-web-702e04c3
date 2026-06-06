@@ -85,6 +85,48 @@ export type Database = {
           },
         ]
       }
+      affiliate_coaching_log: {
+        Row: {
+          affiliate_id: string
+          created_at: string
+          id: string
+          note: string
+          referral_id: string | null
+          template_used: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          created_at?: string
+          id?: string
+          note: string
+          referral_id?: string | null
+          template_used?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          referral_id?: string | null
+          template_used?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_coaching_log_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_coaching_log_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_commissions: {
         Row: {
           affiliate_id: string
@@ -95,6 +137,7 @@ export type Database = {
           currency: string
           host_user_id: string
           id: string
+          kind: Database["public"]["Enums"]["commission_kind"]
           listing_id: string | null
           listing_title: string | null
           payout_id: string | null
@@ -112,6 +155,7 @@ export type Database = {
           currency?: string
           host_user_id: string
           id?: string
+          kind?: Database["public"]["Enums"]["commission_kind"]
           listing_id?: string | null
           listing_title?: string | null
           payout_id?: string | null
@@ -129,6 +173,7 @@ export type Database = {
           currency?: string
           host_user_id?: string
           id?: string
+          kind?: Database["public"]["Enums"]["commission_kind"]
           listing_id?: string | null
           listing_title?: string | null
           payout_id?: string | null
@@ -213,39 +258,54 @@ export type Database = {
       }
       affiliate_referrals: {
         Row: {
+          activation_paid_at: string | null
           affiliate_id: string
           attributed_at: string
           attribution_source: Database["public"]["Enums"]["attribution_source"]
+          completed_bookings_count: number
           created_at: string
           display_name: string | null
           email_seen: string | null
           first_booking_at: string | null
           id: string
+          last_booking_at: string | null
+          recurring_unlocked_at: string | null
           sharetribe_user_id: string
+          total_gross_cents: number
           updated_at: string
         }
         Insert: {
+          activation_paid_at?: string | null
           affiliate_id: string
           attributed_at?: string
           attribution_source?: Database["public"]["Enums"]["attribution_source"]
+          completed_bookings_count?: number
           created_at?: string
           display_name?: string | null
           email_seen?: string | null
           first_booking_at?: string | null
           id?: string
+          last_booking_at?: string | null
+          recurring_unlocked_at?: string | null
           sharetribe_user_id: string
+          total_gross_cents?: number
           updated_at?: string
         }
         Update: {
+          activation_paid_at?: string | null
           affiliate_id?: string
           attributed_at?: string
           attribution_source?: Database["public"]["Enums"]["attribution_source"]
+          completed_bookings_count?: number
           created_at?: string
           display_name?: string | null
           email_seen?: string | null
           first_booking_at?: string | null
           id?: string
+          last_booking_at?: string | null
+          recurring_unlocked_at?: string | null
           sharetribe_user_id?: string
+          total_gross_cents?: number
           updated_at?: string
         }
         Relationships: [
@@ -274,6 +334,9 @@ export type Database = {
           phone: string | null
           promo_plan: string | null
           status: Database["public"]["Enums"]["affiliate_status"]
+          tier: Database["public"]["Enums"]["affiliate_tier"]
+          tier_override: boolean
+          tier_set_at: string
           updated_at: string
           user_id: string | null
         }
@@ -292,6 +355,9 @@ export type Database = {
           phone?: string | null
           promo_plan?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"]
+          tier?: Database["public"]["Enums"]["affiliate_tier"]
+          tier_override?: boolean
+          tier_set_at?: string
           updated_at?: string
           user_id?: string | null
         }
@@ -310,6 +376,9 @@ export type Database = {
           phone?: string | null
           promo_plan?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"]
+          tier?: Database["public"]["Enums"]["affiliate_tier"]
+          tier_override?: boolean
+          tier_set_at?: string
           updated_at?: string
           user_id?: string | null
         }
@@ -5342,12 +5411,14 @@ export type Database = {
     }
     Enums: {
       affiliate_status: "pending" | "approved" | "rejected" | "paused"
+      affiliate_tier: "starter" | "lead" | "captain"
       app_role: "admin" | "editor" | "user"
       attribution_source:
         | "cookie"
         | "manual_admin"
         | "invite_link"
         | "form_field"
+      commission_kind: "activation_bonus" | "recurring"
       commission_status: "pending" | "approved" | "paid" | "reversed"
       followup_status:
         | "new"
@@ -5505,6 +5576,7 @@ export const Constants = {
   public: {
     Enums: {
       affiliate_status: ["pending", "approved", "rejected", "paused"],
+      affiliate_tier: ["starter", "lead", "captain"],
       app_role: ["admin", "editor", "user"],
       attribution_source: [
         "cookie",
@@ -5512,6 +5584,7 @@ export const Constants = {
         "invite_link",
         "form_field",
       ],
+      commission_kind: ["activation_bonus", "recurring"],
       commission_status: ["pending", "approved", "paid", "reversed"],
       followup_status: [
         "new",
