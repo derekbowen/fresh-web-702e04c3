@@ -213,5 +213,4 @@ function TextArea({
     </label>
   );
 }
-<TextArea label="placeholder" name="placeholder" />
 
