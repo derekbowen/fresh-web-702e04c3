@@ -18,28 +18,31 @@ interface SyncResult {
   diffs?: Diff[];
 }
 
-// Set to `true` ONLY after the matching custom attributes have been created in
-// Intercom (Settings → Data → People data). Until then we sync standard fields
-// only (name, email, external_id) so Intercom doesn't 400 on every contact.
-const SEND_CUSTOM_ATTRS = false;
+// Maps to the existing Intercom People attributes already configured in
+// Settings → Data → People (do NOT create new attributes). Confirmed names:
+//   user_type, marketplace, source, sharetribe_id,
+//   signup_city, signup_state, lifecycle_stage
+const SEND_CUSTOM_ATTRS = true;
 
 function buildHostAttrs(r: any) {
   if (!SEND_CUSTOM_ATTRS) return undefined;
   return {
-    prnm_audience: "host" as const,
-    prnm_status: r.status,
-    prnm_sharetribe_id: r.st_user_id ?? null,
+    user_type: "host",
+    marketplace: "poolrentalnearme",
+    source: "prnm_host_subscribers",
+    sharetribe_id: r.st_user_id ?? null,
   };
 }
 
 function buildRenterAttrs(r: any) {
   if (!SEND_CUSTOM_ATTRS) return undefined;
   return {
-    prnm_audience: "renter" as const,
-    prnm_status: r.status,
-    prnm_city: r.city ?? null,
-    prnm_state: r.state_code ?? null,
-    prnm_sharetribe_id: r.st_user_id ?? null,
+    user_type: "guest",
+    marketplace: "poolrentalnearme",
+    source: "prnm_renter_subscribers",
+    sharetribe_id: r.st_user_id ?? null,
+    signup_city: r.city ?? null,
+    signup_state: r.state_code ?? null,
   };
 }
 
