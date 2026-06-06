@@ -75,6 +75,7 @@ export const Route = createRootRoute({
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "author", content: SITE_NAME },
         { name: "theme-color", content: "#0ea5e9" },
+        { name: "google-site-verification", content: "nDLvX6F18GNzJw-bLU6J4HjK3kfbuRIJENjW-6O5ZpU" },
         ...meta.meta,
         { title: "Pool Rental Near Me Rent a Private Swimming Pool hour" },
         { property: "og:title", content: "Pool Rental Near Me Rent a Private Swimming Pool hour" },
