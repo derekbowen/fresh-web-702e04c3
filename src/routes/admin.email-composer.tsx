@@ -434,6 +434,7 @@ function Page() {
             audience, customEmails,
             singleEmail: audience === "single" ? singleEmail : undefined,
             subject, bodyText, preview,
+            delayMs,
           },
         });
         setResult(`✅ Campaign ${r.campaignId.slice(0, 8)}… complete. Sent ${r.sent}/${r.total}, failed ${r.failed}.`);
