@@ -3,8 +3,8 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
-  CreditCard, Search, Bot, Mail, Activity, ChevronLeft, Menu, X, Home, LinkIcon,
-  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell,
+  CreditCard, Search, Bot, Mail, Activity, ChevronLeft, ChevronDown, Menu, X, Home, LinkIcon,
+  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell, Share2,
 } from "lucide-react";
 import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 import { BgJobsRunner } from "@/components/bg-jobs-runner";
@@ -42,8 +42,8 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/admin/prnm-coach", label: "PRNM Coach 🤖", icon: Sparkles },
       { to: "/admin/opportunities", label: "Opportunities", icon: CheckCircle2 },
-      { to: "/admin/tech-docs", label: "Technical docs", icon: FileText },
       { to: "/admin/job-history", label: "Job history", icon: Activity },
+      { to: "/admin/tech-docs", label: "Technical docs", icon: FileText },
     ],
   },
   {
@@ -51,8 +51,8 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     items: [
       { to: "/admin/quick-page", label: "Quick page builder", icon: Wand2 },
       { to: "/admin/generate-content", label: "Generate content", icon: Bot },
-      { to: "/admin/content-migration", label: "Content migration", icon: Database },
       { to: "/admin/content-pages", label: "Bulk page editor", icon: FileText },
+      { to: "/admin/content-migration", label: "Content migration", icon: Database },
       { to: "/admin/blog", label: "Blog admin", icon: Newspaper },
       { to: "/admin/learning", label: "Learning admin", icon: GraduationCap },
       { to: "/admin/cities-heroes", label: "City heroes", icon: ImageIcon },
@@ -74,9 +74,6 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/internal-links", label: "Internal link recommender", icon: Network },
       { to: "/admin/seo-health", label: "SEO health", icon: Activity },
       { to: "/admin/auto-refresh", label: "Auto-refresh queue 🔄", icon: Sparkles },
-      { to: "/admin/link-checker", label: "Link checker", icon: LinkIcon },
-      { to: "/admin/link-audit", label: "Link audit dashboard", icon: LinkIcon },
-      { to: "/admin/link-auto-repair", label: "Link auto-repair 🪄", icon: Wand2 },
       { to: "/admin/missing-pages", label: "Missing pages (404s)", icon: AlertTriangle },
       { to: "/admin/indexing", label: "Sitemap & indexing", icon: Search },
       { to: "/admin/gsc-import", label: "GSC import", icon: Search },
@@ -85,31 +82,44 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     ],
   },
   {
+    label: "Links",
+    items: [
+      { to: "/admin/link-checker", label: "Link checker", icon: LinkIcon },
+      { to: "/admin/link-audit", label: "Link audit dashboard", icon: LinkIcon },
+      { to: "/admin/link-auto-repair", label: "Link auto-repair 🪄", icon: Wand2 },
+    ],
+  },
+  {
     label: "Email",
     items: [
-      { to: "/admin/email-composer", label: "✉️ Email Composer", icon: Mail },
-      { to: "/admin/add-contacts", label: "Add contacts ➕", icon: Mail },
-      { to: "/admin/email-queue", label: "Email queue 📬", icon: Mail },
-      { to: "/admin/email-deliverability", label: "Deliverability 📊", icon: Activity },
       { to: "/admin/founder-blast", label: "Founder blast", icon: Mail },
       { to: "/admin/host-drip", label: "Host drip", icon: Mail },
       { to: "/admin/renter-drip", label: "Renter drip", icon: Mail },
       { to: "/admin/drip-subscribers", label: "Subscribers ⏯", icon: Mail },
-      { to: "/admin/email-branding", label: "Email branding", icon: Mail },
-      { to: "/admin/email-verify", label: "Email verify", icon: CheckCircle2 },
+      { to: "/admin/add-contacts", label: "Add contacts ➕", icon: Mail },
     ],
   },
   {
-    label: "Users & Ops",
+    label: "Social",
+    items: [
+      { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
+      { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
+      { to: "/admin/sms-blast", label: "SMS blast", icon: Bell },
+    ],
+  },
+  {
+    label: "Leads & CRM",
     items: [
       { to: "/admin/leads", label: "Lead inbox", icon: Mail },
       { to: "/admin/follow-ups", label: "Follow-ups 📞", icon: Activity },
       { to: "/admin/followup-performance", label: "Follow-up performance 📊", icon: TrendingUp },
       { to: "/admin/followup-reminders", label: "Follow-up reminders 🔔", icon: Bell },
       { to: "/admin/auto-outreach", label: "Auto-outreach 🤖", icon: Bot },
-      { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
-      { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
-      { to: "/admin/sms-blast", label: "SMS blast", icon: Bell },
+    ],
+  },
+  {
+    label: "Site & Ops",
+    items: [
       { to: "/admin/site-footer", label: "Site footer", icon: LinkIcon },
       { to: "/admin/directory", label: "Directory moderation", icon: Building2 },
       { to: "/admin/claims", label: "Listing claims", icon: ShieldCheck },
@@ -117,7 +127,6 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/team", label: "Admin team", icon: ShieldCheck },
     ],
   },
-
 ];
 
 const ALL_ITEMS = GROUPS.flatMap((g) => g.items);
@@ -126,12 +135,38 @@ function useCurrentPath() {
   return useRouterState({ select: (s) => s.location.pathname });
 }
 
+const OPEN_GROUPS_KEY = "prnm_admin_open_groups";
+
 function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onToggleDemo }: {
   collapsed: boolean; onToggle: () => void; mobileOpen: boolean; onMobileClose: () => void;
   demoMode: boolean; onToggleDemo: () => void;
 }) {
   const path = useCurrentPath();
   const groups = demoMode ? filterGroupsForDemo(GROUPS) : GROUPS;
+
+  // Which group contains the active route — always force-open it.
+  const activeGroupLabel = React.useMemo(
+    () => groups.find((g) => g.items.some((it) => path === it.to || path.startsWith(it.to + "/")))?.label,
+    [groups, path],
+  );
+
+  const [openMap, setOpenMap] = React.useState<Record<string, boolean>>({});
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem(OPEN_GROUPS_KEY);
+      setOpenMap(raw ? JSON.parse(raw) : { Overview: true });
+    } catch { setOpenMap({ Overview: true }); }
+  }, []);
+  const toggleGroup = (label: string) => {
+    setOpenMap((prev) => {
+      const next = { ...prev, [label]: !prev[label] };
+      try { localStorage.setItem(OPEN_GROUPS_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+  const isOpen = (label: string) => collapsed || label === activeGroupLabel || openMap[label] === true;
+
   return (
     <>
       {mobileOpen && (
@@ -161,35 +196,53 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
         </div>
         <nav className="flex h-[calc(100%-3rem)] flex-col overflow-y-auto p-2">
           <div className="flex-1">
-            {groups.map((g) => (
-              <div key={g.label} className="mb-3">
-                {!collapsed && (
-                  <div className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{g.label}</div>
-                )}
-                <ul className="space-y-0.5">
-                  {g.items.map((it) => {
-                    const active = path === it.to || path.startsWith(it.to + "/");
-                    return (
-                      <li key={it.to}>
-                        <Link
-                          to={it.to}
-                          onClick={onMobileClose}
-                          title={collapsed ? it.label : undefined}
-                          className={[
-                            "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
-                            active ? "bg-primary text-primary-foreground font-medium" : "text-foreground hover:bg-muted",
-                          ].join(" ")}
-                        >
-                          <it.icon className="h-4 w-4 shrink-0" />
-                          {!collapsed && <span className="truncate">{it.label}</span>}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+            {groups.map((g) => {
+              const open = isOpen(g.label);
+              const groupActive = g.label === activeGroupLabel;
+              return (
+                <div key={g.label} className="mb-1">
+                  {!collapsed ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(g.label)}
+                      className={[
+                        "flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider",
+                        groupActive ? "text-foreground" : "text-muted-foreground hover:bg-muted",
+                      ].join(" ")}
+                      aria-expanded={open}
+                    >
+                      <span>{g.label}</span>
+                      <ChevronDown className={`h-3 w-3 transition-transform ${open ? "" : "-rotate-90"}`} />
+                    </button>
+                  ) : null}
+                  {open && (
+                    <ul className="space-y-0.5 pt-0.5">
+                      {g.items.map((it) => {
+                        const active = path === it.to || path.startsWith(it.to + "/");
+                        return (
+                          <li key={it.to}>
+                            <Link
+                              to={it.to}
+                              onClick={onMobileClose}
+                              title={collapsed ? it.label : undefined}
+                              className={[
+                                "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
+                                active ? "bg-primary text-primary-foreground font-medium" : "text-foreground hover:bg-muted",
+                              ].join(" ")}
+                            >
+                              <it.icon className="h-4 w-4 shrink-0" />
+                              {!collapsed && <span className="truncate">{it.label}</span>}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
           </div>
+
           <div className="mt-2 border-t border-border pt-2">
             <button
               onClick={onToggleDemo}
