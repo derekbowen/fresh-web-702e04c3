@@ -253,6 +253,8 @@ export async function sendComposerEmail(opts: {
   createdBy?: string;
   /** Existing campaign row to send (used by the scheduler). */
   campaignId?: string;
+  /** Delay between sends in ms (throttle). Default 700 (~85/min, under Emailit's 2/sec). Min 500, max 5000. */
+  delayMs?: number;
 }): Promise<{
   campaignId: string;
   total: number;
