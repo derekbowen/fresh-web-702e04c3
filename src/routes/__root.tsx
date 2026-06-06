@@ -123,6 +123,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: { queries: { staleTime: 60_000, refetchOnWindowFocus: false } },
+  }));
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const data = Route.useLoaderData();
   const isAdmin = pathname.startsWith("/admin");
@@ -148,8 +151,8 @@ function RootComponent() {
       )}
     </>
   );
-  if (footer) {
-    return <FooterDataProvider value={footer}>{content}</FooterDataProvider>;
-  }
-  return content;
+  const wrapped = footer ? (
+    <FooterDataProvider value={footer}>{content}</FooterDataProvider>
+  ) : content;
+  return <QueryClientProvider client={queryClient}>{wrapped}</QueryClientProvider>;
 }
