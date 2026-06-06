@@ -41,7 +41,6 @@ import { Route as SitemapHubDotxmlRouteImport } from './routes/sitemap-hub[.]xml
 import { Route as SitemapDirectoryDotxmlRouteImport } from './routes/sitemap-directory[.]xml'
 import { Route as SitemapDefaultDotxmlRouteImport } from './routes/sitemap-default[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
 import { Route as JobsDotxmlRouteImport } from './routes/jobs[.]xml'
@@ -52,8 +51,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as TechnicalSupportSplatRouteImport } from './routes/technical-support.$'
-import { Route as ReferralDashboardRouteImport } from './routes/referral.dashboard'
-import { Route as ReferralApplyRouteImport } from './routes/referral.apply'
 import { Route as PoolManagementSplatRouteImport } from './routes/pool-management.$'
 import { Route as PWaiverGeneratorRouteImport } from './routes/p.waiver-generator'
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
@@ -87,6 +84,9 @@ import { Route as PDogRouteImport } from './routes/p.dog'
 import { Route as PBlogRouteImport } from './routes/p.blog'
 import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
 import { Route as PAiListingGeneratorRouteImport } from './routes/p.ai-listing-generator'
+import { Route as PAffiliateProgramRouteImport } from './routes/p.affiliate-program'
+import { Route as PAffiliateDashboardRouteImport } from './routes/p.affiliate-dashboard'
+import { Route as PAffiliateRouteImport } from './routes/p.affiliate'
 import { Route as PAboutOurCompanyRouteImport } from './routes/p.about-our-company'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as PSplatRouteImport } from './routes/p.$'
@@ -391,11 +391,6 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReferralRoute = ReferralRouteImport.update({
-  id: '/referral',
-  path: '/referral',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PoolsDirectorySitemapDotxmlRoute =
   PoolsDirectorySitemapDotxmlRouteImport.update({
     id: '/pools-directory-sitemap.xml',
@@ -446,16 +441,6 @@ const TechnicalSupportSplatRoute = TechnicalSupportSplatRouteImport.update({
   id: '/technical-support/$',
   path: '/technical-support/$',
   getParentRoute: () => rootRouteImport,
-} as any)
-const ReferralDashboardRoute = ReferralDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => ReferralRoute,
-} as any)
-const ReferralApplyRoute = ReferralApplyRouteImport.update({
-  id: '/apply',
-  path: '/apply',
-  getParentRoute: () => ReferralRoute,
 } as any)
 const PoolManagementSplatRoute = PoolManagementSplatRouteImport.update({
   id: '/pool-management/$',
@@ -629,6 +614,21 @@ const PAllLocationsRoute = PAllLocationsRouteImport.update({
 const PAiListingGeneratorRoute = PAiListingGeneratorRouteImport.update({
   id: '/p/ai-listing-generator',
   path: '/p/ai-listing-generator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PAffiliateProgramRoute = PAffiliateProgramRouteImport.update({
+  id: '/p/affiliate-program',
+  path: '/p/affiliate-program',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PAffiliateDashboardRoute = PAffiliateDashboardRouteImport.update({
+  id: '/p/affiliate-dashboard',
+  path: '/p/affiliate-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PAffiliateRoute = PAffiliateRouteImport.update({
+  id: '/p/affiliate',
+  path: '/p/affiliate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PAboutOurCompanyRoute = PAboutOurCompanyRouteImport.update({
@@ -1335,7 +1335,6 @@ export interface FileRoutesByFullPath {
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
-  '/referral': typeof ReferralRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
@@ -1450,6 +1449,9 @@ export interface FileRoutesByFullPath {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/about-our-company': typeof PAboutOurCompanyRoute
+  '/p/affiliate': typeof PAffiliateRoute
+  '/p/affiliate-dashboard': typeof PAffiliateDashboardRoute
+  '/p/affiliate-program': typeof PAffiliateProgramRoute
   '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
@@ -1483,8 +1485,6 @@ export interface FileRoutesByFullPath {
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
-  '/referral/apply': typeof ReferralApplyRoute
-  '/referral/dashboard': typeof ReferralDashboardRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1547,7 +1547,6 @@ export interface FileRoutesByTo {
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
-  '/referral': typeof ReferralRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
@@ -1662,6 +1661,9 @@ export interface FileRoutesByTo {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/about-our-company': typeof PAboutOurCompanyRoute
+  '/p/affiliate': typeof PAffiliateRoute
+  '/p/affiliate-dashboard': typeof PAffiliateDashboardRoute
+  '/p/affiliate-program': typeof PAffiliateProgramRoute
   '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
@@ -1695,8 +1697,6 @@ export interface FileRoutesByTo {
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
-  '/referral/apply': typeof ReferralApplyRoute
-  '/referral/dashboard': typeof ReferralDashboardRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1760,7 +1760,6 @@ export interface FileRoutesById {
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
-  '/referral': typeof ReferralRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
@@ -1875,6 +1874,9 @@ export interface FileRoutesById {
   '/p/$': typeof PSplatRoute
   '/p/$slug': typeof PSlugRoute
   '/p/about-our-company': typeof PAboutOurCompanyRoute
+  '/p/affiliate': typeof PAffiliateRoute
+  '/p/affiliate-dashboard': typeof PAffiliateDashboardRoute
+  '/p/affiliate-program': typeof PAffiliateProgramRoute
   '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
@@ -1908,8 +1910,6 @@ export interface FileRoutesById {
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
-  '/referral/apply': typeof ReferralApplyRoute
-  '/referral/dashboard': typeof ReferralDashboardRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1974,7 +1974,6 @@ export interface FileRouteTypes {
     | '/jobs.xml'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
-    | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
@@ -2089,6 +2088,9 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/about-our-company'
+    | '/p/affiliate'
+    | '/p/affiliate-dashboard'
+    | '/p/affiliate-program'
     | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
@@ -2122,8 +2124,6 @@ export interface FileRouteTypes {
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
     | '/pool-management/$'
-    | '/referral/apply'
-    | '/referral/dashboard'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2186,7 +2186,6 @@ export interface FileRouteTypes {
     | '/jobs.xml'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
-    | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
@@ -2301,6 +2300,9 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/about-our-company'
+    | '/p/affiliate'
+    | '/p/affiliate-dashboard'
+    | '/p/affiliate-program'
     | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
@@ -2334,8 +2336,6 @@ export interface FileRouteTypes {
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
     | '/pool-management/$'
-    | '/referral/apply'
-    | '/referral/dashboard'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2398,7 +2398,6 @@ export interface FileRouteTypes {
     | '/jobs.xml'
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
-    | '/referral'
     | '/robots.txt'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
@@ -2513,6 +2512,9 @@ export interface FileRouteTypes {
     | '/p/$'
     | '/p/$slug'
     | '/p/about-our-company'
+    | '/p/affiliate'
+    | '/p/affiliate-dashboard'
+    | '/p/affiliate-program'
     | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
@@ -2546,8 +2548,6 @@ export interface FileRouteTypes {
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
     | '/pool-management/$'
-    | '/referral/apply'
-    | '/referral/dashboard'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2611,7 +2611,6 @@ export interface RootRouteChildren {
   JobsDotxmlRoute: typeof JobsDotxmlRoute
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
-  ReferralRoute: typeof ReferralRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDefaultDotxmlRoute: typeof SitemapDefaultDotxmlRoute
   SitemapDirectoryDotxmlRoute: typeof SitemapDirectoryDotxmlRoute
@@ -2655,6 +2654,9 @@ export interface RootRouteChildren {
   PSplatRoute: typeof PSplatRoute
   PSlugRoute: typeof PSlugRoute
   PAboutOurCompanyRoute: typeof PAboutOurCompanyRoute
+  PAffiliateRoute: typeof PAffiliateRoute
+  PAffiliateDashboardRoute: typeof PAffiliateDashboardRoute
+  PAffiliateProgramRoute: typeof PAffiliateProgramRoute
   PAiListingGeneratorRoute: typeof PAiListingGeneratorRoute
   PAllLocationsRoute: typeof PAllLocationsRoute
   PBlogRoute: typeof PBlogRoute
@@ -2963,13 +2965,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/referral': {
-      id: '/referral'
-      path: '/referral'
-      fullPath: '/referral'
-      preLoaderRoute: typeof ReferralRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/pools-directory-sitemap.xml': {
       id: '/pools-directory-sitemap.xml'
       path: '/pools-directory-sitemap.xml'
@@ -3039,20 +3034,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/technical-support/$'
       preLoaderRoute: typeof TechnicalSupportSplatRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/referral/dashboard': {
-      id: '/referral/dashboard'
-      path: '/dashboard'
-      fullPath: '/referral/dashboard'
-      preLoaderRoute: typeof ReferralDashboardRouteImport
-      parentRoute: typeof ReferralRoute
-    }
-    '/referral/apply': {
-      id: '/referral/apply'
-      path: '/apply'
-      fullPath: '/referral/apply'
-      preLoaderRoute: typeof ReferralApplyRouteImport
-      parentRoute: typeof ReferralRoute
     }
     '/pool-management/$': {
       id: '/pool-management/$'
@@ -3283,6 +3264,27 @@ declare module '@tanstack/react-router' {
       path: '/p/ai-listing-generator'
       fullPath: '/p/ai-listing-generator'
       preLoaderRoute: typeof PAiListingGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/affiliate-program': {
+      id: '/p/affiliate-program'
+      path: '/p/affiliate-program'
+      fullPath: '/p/affiliate-program'
+      preLoaderRoute: typeof PAffiliateProgramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/affiliate-dashboard': {
+      id: '/p/affiliate-dashboard'
+      path: '/p/affiliate-dashboard'
+      fullPath: '/p/affiliate-dashboard'
+      preLoaderRoute: typeof PAffiliateDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/affiliate': {
+      id: '/p/affiliate'
+      path: '/p/affiliate'
+      fullPath: '/p/affiliate'
+      preLoaderRoute: typeof PAffiliateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/about-our-company': {
@@ -4390,20 +4392,6 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
-interface ReferralRouteChildren {
-  ReferralApplyRoute: typeof ReferralApplyRoute
-  ReferralDashboardRoute: typeof ReferralDashboardRoute
-}
-
-const ReferralRouteChildren: ReferralRouteChildren = {
-  ReferralApplyRoute: ReferralApplyRoute,
-  ReferralDashboardRoute: ReferralDashboardRoute,
-}
-
-const ReferralRouteWithChildren = ReferralRoute._addFileChildren(
-  ReferralRouteChildren,
-)
-
 interface PPoolProsCCategoryStateRouteChildren {
   PPoolProsCCategoryStateCityRoute: typeof PPoolProsCCategoryStateCityRoute
 }
@@ -4452,7 +4440,6 @@ const rootRouteChildren: RootRouteChildren = {
   JobsDotxmlRoute: JobsDotxmlRoute,
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
-  ReferralRoute: ReferralRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDefaultDotxmlRoute: SitemapDefaultDotxmlRoute,
   SitemapDirectoryDotxmlRoute: SitemapDirectoryDotxmlRoute,
@@ -4497,6 +4484,9 @@ const rootRouteChildren: RootRouteChildren = {
   PSplatRoute: PSplatRoute,
   PSlugRoute: PSlugRoute,
   PAboutOurCompanyRoute: PAboutOurCompanyRoute,
+  PAffiliateRoute: PAffiliateRoute,
+  PAffiliateDashboardRoute: PAffiliateDashboardRoute,
+  PAffiliateProgramRoute: PAffiliateProgramRoute,
   PAiListingGeneratorRoute: PAiListingGeneratorRoute,
   PAllLocationsRoute: PAllLocationsRoute,
   PBlogRoute: PBlogRoute,

@@ -657,7 +657,7 @@ function HostingPage() {
                 List my pool — it's free
               </a>
               <a
-                href="/referral"
+                href="/p/affiliate"
                 className="inline-flex items-center justify-center rounded-full border border-primary-foreground/60 bg-transparent px-7 py-3.5 text-base font-semibold text-primary-foreground transition hover:bg-primary-foreground/10"
               >
                 Refer a host (earn $50)

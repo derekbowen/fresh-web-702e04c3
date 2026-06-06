@@ -7,7 +7,7 @@ import {
   SITE_URL,
 } from "@/lib/seo";
 
-const PATH = "/referral";
+const PATH = "/p/affiliate";
 const TITLE = "Host Referral Program — Refer 5 Hosts, Pay $0 Fees for a Year";
 const DESCRIPTION =
   "Refer 5 approved pool hosts and we waive your platform fees for 12 months. Recruit pools and earn 5% of their bookings for 2 years.";
@@ -68,7 +68,7 @@ const FAQS = [
   },
 ];
 
-export const Route = createFileRoute("/referral")({
+export const Route = createFileRoute("/p/affiliate")({
   head: () => {
     const meta = buildMeta({ title: TITLE, description: DESCRIPTION, path: PATH });
     return {
@@ -127,13 +127,13 @@ function ReferralPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/referral/apply"
+                to="/p/affiliate-program"
                 className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
                 Apply to refer hosts
               </Link>
               <a
-                href="/referral/dashboard"
+                href="/p/affiliate-dashboard"
                 className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-muted"
               >
                 Affiliate sign in

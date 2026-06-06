@@ -9,11 +9,11 @@ import {
   type AffiliateDashboard,
 } from "@/lib/affiliate-dashboard.functions";
 
-export const Route = createFileRoute("/referral/dashboard")({
+export const Route = createFileRoute("/p/affiliate-dashboard")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
-      throw redirect({ to: "/auth", search: { redirect: "/referral/dashboard", mode: "signin" } });
+      throw redirect({ to: "/auth", search: { redirect: "/p/affiliate-dashboard", mode: "signin" } });
     }
   },
   head: () => ({
@@ -61,7 +61,7 @@ function AffiliatePage() {
               Apply with the same email you used to sign in. We'll review and email you when your link is live.
             </p>
             <Link
-              to="/referral/apply"
+              to="/p/affiliate-program"
               className="mt-4 inline-flex rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
             >
               Apply now
