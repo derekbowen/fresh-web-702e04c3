@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireAdmin } from "@/server/admin-auth.functions";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 
 export type QueuedEmail = {
   source: "host_drip" | "renter_drip";
