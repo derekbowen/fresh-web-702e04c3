@@ -77,7 +77,7 @@ async function syncTable(
 
       if (dryRun) {
         const existing = await findContactByEmail(r.email);
-        const changes = diffAttrs(proposed, existing?.custom_attributes);
+        const changes = diffAttrs(proposed ?? {}, existing?.custom_attributes);
         // Name change?
         if (existing && r.name && existing.name !== r.name) {
           changes.name = { from: existing.name ?? null, to: r.name };
