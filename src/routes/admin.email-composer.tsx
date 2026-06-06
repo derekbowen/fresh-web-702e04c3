@@ -144,6 +144,7 @@ const runSendEmail = createServerFn({ method: "POST" })
     preview?: string;
     testOnly?: boolean;
     testRecipient?: string;
+    delayMs?: number;
   }) => d)
   .handler(async ({ context, data }) => {
     const { userId } = context as { userId: string };
