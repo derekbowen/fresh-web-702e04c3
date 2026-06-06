@@ -716,6 +716,110 @@ export type Database = {
           },
         ]
       }
+      composer_campaigns: {
+        Row: {
+          audience: string
+          body_html: string
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          failed_count: number
+          id: string
+          recipient_count: number
+          sent_count: number
+          status: string
+          subject: string
+          test_only: boolean
+        }
+        Insert: {
+          audience: string
+          body_html: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          failed_count?: number
+          id?: string
+          recipient_count?: number
+          sent_count?: number
+          status?: string
+          subject: string
+          test_only?: boolean
+        }
+        Update: {
+          audience?: string
+          body_html?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          failed_count?: number
+          id?: string
+          recipient_count?: number
+          sent_count?: number
+          status?: string
+          subject?: string
+          test_only?: boolean
+        }
+        Relationships: []
+      }
+      composer_email_log: {
+        Row: {
+          campaign_id: string | null
+          emailit_id: string | null
+          error: string | null
+          id: string
+          recipient_email: string
+          sent_at: string
+          status: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          emailit_id?: string | null
+          error?: string | null
+          id?: string
+          recipient_email: string
+          sent_at?: string
+          status: string
+        }
+        Update: {
+          campaign_id?: string | null
+          emailit_id?: string | null
+          error?: string | null
+          id?: string
+          recipient_email?: string
+          sent_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "composer_email_log_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "composer_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      composer_unsubscribes: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          token?: string
+        }
+        Relationships: []
+      }
       content_404_log: {
         Row: {
           first_seen_at: string
