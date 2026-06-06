@@ -10,7 +10,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { sendViaEmailit } from "@/lib/email/emailit";
 import { wrapInShell, renderForRecipient } from "@/lib/email-static/composer/_shell";
 
-const FROM = "Pool Rental Near Me <hello@notify.poolfriends.poolrentalnearme.com>";
+const FROM = "Pool Rental Near Me <support@poolrentalnearme.com>";
 const SITE_URL = "https://www.poolrentalnearme.com";
 
 export type Audience =
