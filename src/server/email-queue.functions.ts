@@ -71,5 +71,5 @@ export const listQueuedEmails = createServerFn({ method: "GET" })
     } catch (e: any) {
       return { ok: false, emails: [], error: e?.message ?? String(e) };
     }
-  },
-);
+  });
+
