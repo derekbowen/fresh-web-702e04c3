@@ -159,6 +159,7 @@ import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-her
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminAutoRefreshRouteImport } from './routes/admin.auto-refresh'
 import { Route as AdminAutoOutreachRouteImport } from './routes/admin.auto-outreach'
+import { Route as AdminAddContactsRouteImport } from './routes/admin.add-contacts'
 import { Route as AdminActivityCitiesRouteImport } from './routes/admin.activity-cities'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
@@ -978,6 +979,11 @@ const AdminAutoOutreachRoute = AdminAutoOutreachRouteImport.update({
   path: '/auto-outreach',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAddContactsRoute = AdminAddContactsRouteImport.update({
+  id: '/add-contacts',
+  path: '/add-contacts',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminActivityCitiesRoute = AdminActivityCitiesRouteImport.update({
   id: '/activity-cities',
   path: '/activity-cities',
@@ -1273,6 +1279,7 @@ export interface FileRoutesByFullPath {
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
+  '/admin/add-contacts': typeof AdminAddContactsRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1470,6 +1477,7 @@ export interface FileRoutesByTo {
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
+  '/admin/add-contacts': typeof AdminAddContactsRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1668,6 +1676,7 @@ export interface FileRoutesById {
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
+  '/admin/add-contacts': typeof AdminAddContactsRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1867,6 +1876,7 @@ export interface FileRouteTypes {
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
+    | '/admin/add-contacts'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -2064,6 +2074,7 @@ export interface FileRouteTypes {
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
+    | '/admin/add-contacts'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -2261,6 +2272,7 @@ export interface FileRouteTypes {
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
+    | '/admin/add-contacts'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -3595,6 +3607,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAutoOutreachRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/add-contacts': {
+      id: '/admin/add-contacts'
+      path: '/add-contacts'
+      fullPath: '/admin/add-contacts'
+      preLoaderRoute: typeof AdminAddContactsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/activity-cities': {
       id: '/admin/activity-cities'
       path: '/activity-cities'
@@ -3927,6 +3946,7 @@ const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
 
 interface AdminRouteChildren {
   AdminActivityCitiesRoute: typeof AdminActivityCitiesRoute
+  AdminAddContactsRoute: typeof AdminAddContactsRoute
   AdminAutoOutreachRoute: typeof AdminAutoOutreachRoute
   AdminAutoRefreshRoute: typeof AdminAutoRefreshRoute
   AdminBlogRoute: typeof AdminBlogRoute
@@ -3994,6 +4014,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminActivityCitiesRoute: AdminActivityCitiesRoute,
+  AdminAddContactsRoute: AdminAddContactsRoute,
   AdminAutoOutreachRoute: AdminAutoOutreachRoute,
   AdminAutoRefreshRoute: AdminAutoRefreshRoute,
   AdminBlogRoute: AdminBlogRoute,
