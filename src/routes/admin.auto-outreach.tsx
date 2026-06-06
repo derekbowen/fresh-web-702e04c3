@@ -39,7 +39,11 @@ function AutoOutreachPage() {
   const runFn = useServerFn(runAutoOutreachNow);
   const cancelFn = useServerFn(cancelAutoOutreachMessage);
 
-  const { data, isLoading } = useQuery({ queryKey: ["auto-outreach-state"], queryFn: () => fetchState({ data: {} } as any) });
+  const { data, isLoading, error: queryError } = useQuery({
+    queryKey: ["auto-outreach-state"],
+    queryFn: () => fetchState({ data: {} } as any),
+    retry: false,
+  });
   const settings = data?.settings;
 
   const [form, setForm] = useState({
