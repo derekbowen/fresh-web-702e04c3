@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
@@ -142,6 +142,7 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
   demoMode: boolean; onToggleDemo: () => void;
 }) {
   const path = useCurrentPath();
+  const navigate = useNavigate();
   const groups = demoMode ? filterGroupsForDemo(GROUPS) : GROUPS;
 
   // Which group contains the active route — always force-open it.
@@ -167,6 +168,42 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
   };
   const isOpen = (label: string) => collapsed || label === activeGroupLabel || openMap[label] === true;
 
+  // ── Search ──
+  const [query, setQuery] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [highlight, setHighlight] = React.useState(0);
+
+  const flatItems = React.useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [] as Array<{ group: string } & Item>;
+    return groups
+      .flatMap((g) => g.items.map((it) => ({ group: g.label, ...it })))
+      .filter((it) => it.label.toLowerCase().includes(q) || it.to.toLowerCase().includes(q));
+  }, [groups, query]);
+
+  React.useEffect(() => { setHighlight(0); }, [flatItems.length]);
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlight((i) => Math.min(i + 1, flatItems.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight((i) => Math.max(i - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const it = flatItems[highlight];
+      if (it) {
+        navigate({ to: it.to });
+        setQuery("");
+        onMobileClose();
+      }
+    } else if (e.key === "Escape") {
+      setQuery("");
+      inputRef.current?.blur();
+    }
+  };
+
   return (
     <>
       {mobileOpen && (
@@ -174,7 +211,7 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
       )}
       <aside
         className={[
-          "z-50 shrink-0 border-r border-border bg-card transition-all",
+          "z-50 shrink-0 border-r border-border bg-card transition-all flex flex-col",
           "lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:block",
           collapsed ? "lg:w-14" : "lg:w-60",
           "fixed inset-y-0 left-0 w-64 lg:translate-x-0",
@@ -194,7 +231,51 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
             <X className="h-4 w-4" />
           </button>
         </div>
-        <nav className="flex h-[calc(100%-3rem)] flex-col overflow-y-auto p-2">
+
+        {/* Search */}
+        {!collapsed && (
+          <div className="relative border-b border-border px-3 py-2">
+            <Search className="pointer-events-none absolute left-[1.15rem] top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={onKeyDown}
+              placeholder="Jump to…"
+              className="w-full rounded-md border border-border bg-background py-1.5 pl-7 pr-2 text-xs text-foreground outline-none ring-0 placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+            {query && flatItems.length > 0 && (
+              <div className="absolute left-0 right-0 top-full z-50 border-b border-x border-border bg-popover shadow-lg">
+                <ul className="max-h-64 overflow-y-auto py-1">
+                  {flatItems.map((it, idx) => (
+                    <li key={`${it.to}-${idx}`}>
+                      <Link
+                        to={it.to}
+                        onClick={() => { setQuery(""); onMobileClose(); }}
+                        className={[
+                          "flex items-center gap-2 px-3 py-1.5 text-sm",
+                          idx === highlight ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted",
+                        ].join(" ")}
+                        onMouseEnter={() => setHighlight(idx)}
+                      >
+                        <it.icon className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                        <span className="flex-1 truncate">{it.label}</span>
+                        <span className="shrink-0 text-[10px] opacity-60">{it.group}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {query && flatItems.length === 0 && (
+              <div className="absolute left-0 right-0 top-full z-50 border-b border-x border-border bg-popover px-3 py-2 text-xs text-muted-foreground shadow-lg">
+                No results
+              </div>
+            )}
+          </div>
+        )}
+
+        <nav className="flex flex-1 flex-col overflow-y-auto p-2">
           <div className="flex-1">
             {groups.map((g) => {
               const open = isOpen(g.label);
