@@ -19,9 +19,13 @@ export type AdminAffiliateRow = {
   full_name: string | null;
   email: string;
   status: string;
+  tier: "starter" | "lead" | "captain";
+  tier_override: boolean;
   user_id: string | null;
   created_at: string;
   referral_count: number;
+  active_host_count: number;
+  gmv_30d_cents: number;
   pending_cents: number;
   approved_cents: number;
   paid_cents: number;
@@ -30,7 +34,12 @@ export type AdminAffiliateRow = {
 export const listAffiliatesAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({ status: z.enum(["all", "pending", "approved", "rejected", "paused"]).optional() }).parse(d ?? {}),
+    z
+      .object({
+        status: z.enum(["all", "pending", "approved", "rejected", "paused"]).optional(),
+        sort: z.enum(["recent", "gmv_30d", "approved_cents"]).optional(),
+      })
+      .parse(d ?? {}),
   )
   .handler(async ({ data, context }): Promise<{ rows: AdminAffiliateRow[] }> => {
     const { userId } = context as { userId: string };
@@ -39,7 +48,7 @@ export const listAffiliatesAdmin = createServerFn({ method: "POST" })
 
     let q = supabaseAdmin
       .from("affiliates")
-      .select("id,code,full_name,email,status,user_id,created_at")
+      .select("id,code,full_name,email,status,tier,tier_override,user_id,created_at")
       .order("created_at", { ascending: false })
       .limit(500);
     if (data.status && data.status !== "all") q = q.eq("status", data.status);
@@ -47,44 +56,74 @@ export const listAffiliatesAdmin = createServerFn({ method: "POST" })
     if (error) throw error;
 
     const ids = (affs || []).map((a) => a.id);
+    const since30 = new Date(Date.now() - 30 * 86400_000).toISOString();
+    const activeCutoff = new Date(Date.now() - 60 * 86400_000).toISOString();
+
     const [refsAgg, commAgg] = await Promise.all([
       ids.length
-        ? supabaseAdmin.from("affiliate_referrals").select("affiliate_id").in("affiliate_id", ids)
-        : Promise.resolve({ data: [] as Array<{ affiliate_id: string }> } as any),
+        ? supabaseAdmin
+            .from("affiliate_referrals")
+            .select("affiliate_id,completed_bookings_count,last_booking_at")
+            .in("affiliate_id", ids)
+        : Promise.resolve({ data: [] } as any),
       ids.length
         ? supabaseAdmin
             .from("affiliate_commissions")
-            .select("affiliate_id,commission_cents,status")
+            .select("affiliate_id,commission_cents,booking_gross_cents,status,kind,booking_date")
             .in("affiliate_id", ids)
-        : Promise.resolve({ data: [] as Array<{ affiliate_id: string; commission_cents: number; status: string }> } as any),
+        : Promise.resolve({ data: [] } as any),
     ]);
 
     const refCounts = new Map<string, number>();
-    for (const r of (refsAgg.data || []) as Array<{ affiliate_id: string }>) {
+    const activeCounts = new Map<string, number>();
+    for (const r of (refsAgg.data || []) as Array<{
+      affiliate_id: string;
+      completed_bookings_count: number | null;
+      last_booking_at: string | null;
+    }>) {
       refCounts.set(r.affiliate_id, (refCounts.get(r.affiliate_id) || 0) + 1);
+      if ((r.completed_bookings_count ?? 0) >= 3 && r.last_booking_at && r.last_booking_at >= activeCutoff) {
+        activeCounts.set(r.affiliate_id, (activeCounts.get(r.affiliate_id) || 0) + 1);
+      }
     }
-    const totals = new Map<string, { p: number; a: number; pd: number }>();
-    for (const c of (commAgg.data || []) as Array<{ affiliate_id: string; commission_cents: number; status: string }>) {
-      const t = totals.get(c.affiliate_id) || { p: 0, a: 0, pd: 0 };
+    const totals = new Map<string, { p: number; a: number; pd: number; gmv30: number }>();
+    for (const c of (commAgg.data || []) as Array<{
+      affiliate_id: string;
+      commission_cents: number;
+      booking_gross_cents: number;
+      status: string;
+      kind: string;
+      booking_date: string;
+    }>) {
+      const t = totals.get(c.affiliate_id) || { p: 0, a: 0, pd: 0, gmv30: 0 };
       if (c.status === "pending") t.p += c.commission_cents;
       else if (c.status === "approved") t.a += c.commission_cents;
       else if (c.status === "paid") t.pd += c.commission_cents;
+      if (c.kind === "recurring" && c.booking_date >= since30) t.gmv30 += c.booking_gross_cents || 0;
       totals.set(c.affiliate_id, t);
     }
 
-    return {
-      rows: (affs || []).map((a) => {
-        const t = totals.get(a.id) || { p: 0, a: 0, pd: 0 };
-        return {
-          ...a,
-          referral_count: refCounts.get(a.id) || 0,
-          pending_cents: t.p,
-          approved_cents: t.a,
-          paid_cents: t.pd,
-        };
-      }),
-    };
+    const rows: AdminAffiliateRow[] = (affs || []).map((a) => {
+      const t = totals.get(a.id) || { p: 0, a: 0, pd: 0, gmv30: 0 };
+      return {
+        ...a,
+        tier: (a.tier as any) || "starter",
+        tier_override: !!a.tier_override,
+        referral_count: refCounts.get(a.id) || 0,
+        active_host_count: activeCounts.get(a.id) || 0,
+        gmv_30d_cents: t.gmv30,
+        pending_cents: t.p,
+        approved_cents: t.a,
+        paid_cents: t.pd,
+      };
+    });
+
+    if (data.sort === "gmv_30d") rows.sort((a, b) => b.gmv_30d_cents - a.gmv_30d_cents);
+    else if (data.sort === "approved_cents") rows.sort((a, b) => b.approved_cents - a.approved_cents);
+
+    return { rows };
   });
+
 
 export const setAffiliateStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
