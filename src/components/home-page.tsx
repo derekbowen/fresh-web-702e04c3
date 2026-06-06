@@ -161,7 +161,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           />
           <div className="relative mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 lg:py-24">
             <h1 className="text-4xl font-bold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
-              Summer is better shared.
+              Rent a private pool by the hour
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-base text-white/95 drop-shadow sm:text-lg">
               Find a private pool for rent by the hour, anywhere in America. From quiet family days to full pool party rentals.
