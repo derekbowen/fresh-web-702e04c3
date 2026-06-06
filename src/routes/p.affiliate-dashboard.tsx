@@ -9,7 +9,7 @@ import {
   type AffiliateDashboard,
 } from "@/lib/affiliate-dashboard.functions";
 
-export const Route = createFileRoute("/referral/dashboard")({
+export const Route = createFileRoute("/p/affiliate-dashboard")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {

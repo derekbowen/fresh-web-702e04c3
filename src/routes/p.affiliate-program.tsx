@@ -10,7 +10,7 @@ const TITLE = "Apply to the Pool Rental Near Me Affiliate Program";
 const DESCRIPTION =
   "Refer pool hosts to Pool Rental Near Me and earn 5% of every booking they take, for the lifetime of the host.";
 
-export const Route = createFileRoute("/referral/apply")({
+export const Route = createFileRoute("/p/affiliate-program")({
   head: () => {
     const meta = buildMeta({ title: TITLE, description: DESCRIPTION, path: PATH });
     return { meta: meta.meta, links: meta.links };
