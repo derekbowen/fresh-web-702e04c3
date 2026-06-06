@@ -1,106 +1,67 @@
 ## Goal
 
-Let anyone apply to become an affiliate, get a unique referral link, and earn **5% of every booking, for the lifetime of the host**, on any pool host they refer. Build the tracking pipeline, an affiliate-facing dashboard, and an admin payout ledger.
+Replace the flat 5% lifetime model with a milestone-trigger system that rewards affiliates who actually coach their hosts. Build the crew dashboard so affiliates can see each host they recruited and act on them.
 
-## Data model (new tables, all admin-only via supabaseAdmin)
+## Commission rules (new)
 
-```text
-affiliates
-  id (uuid, pk)
-  user_id (uuid → auth.users, nullable until they sign in)
-  email, full_name, payout_email, phone, notes
-  code (text unique, e.g. "BRAD-7K2X")  -- powers /?ref=CODE
-  status: pending | approved | rejected | paused
-  approved_at, approved_by
-  payout_method: paypal | venmo | check | ach
-  payout_details (jsonb)
-  created_at, updated_at
+| Trigger | Payout |
+|---|---|
+| Host signs up via `?ref=CODE` | $0 |
+| Host's **1st completed booking** | **$100 one-time activation bonus** |
+| Host's **3rd completed booking** | **Unlock 5% recurring** on that host's future bookings (forever, while host stays active) |
+| Host has no completed booking for **60 days** | Commissions on that host pause; resume on next booking |
+| Affiliate's crew hits **5 active hosts** (3+ bookings each) | Tier auto-promotes to **Lead Host** + badge on dashboard |
+| Lead Host's crew hits **$10K/month GMV** | Tier auto-promotes to **Regional Captain** + listed in admin "captains" view |
 
-affiliate_clicks         -- one row per /?ref= landing hit
-  id, affiliate_id, ref_code, landing_path, ip_hash, ua, referrer, created_at
+Tiers are titles only — they don't change commission rate. Commission rate is purely milestone-driven per host.
 
-affiliate_referrals      -- a host we attribute to an affiliate
-  id, affiliate_id
-  sharetribe_user_id (uuid, unique)   -- the host on Sharetribe
-  email_seen, display_name
-  attribution_source: cookie | manual_admin | invite_link
-  attributed_at
-  first_booking_at
+## Schema changes
 
-affiliate_commissions    -- one row per qualifying Sharetribe transaction
-  id, affiliate_id, referral_id
-  sharetribe_tx_id (text, unique)
-  booking_gross_cents, commission_cents (5%)
-  currency, booking_date, host_user_id, listing_id, listing_title
-  status: pending | approved | paid | reversed
-  payout_id (nullable → affiliate_payouts.id)
-  created_at
+- **`affiliates`**: add `tier` enum (`starter` | `lead` | `captain`), default `starter`.
+- **`affiliate_referrals`**: add `completed_bookings_count` int, `activation_paid_at` timestamptz, `recurring_unlocked_at` timestamptz, `last_booking_at` timestamptz.
+- **`affiliate_commissions`**: add `kind` enum (`activation_bonus` | `recurring`), default `recurring`. Existing rows (zero in prod) get `recurring`.
+- New **`affiliate_coaching_log`** table: `affiliate_id`, `referral_id`, `note`, `template_used`, `created_at`. Affiliate-writable for their own crew, admin-readable.
 
-affiliate_payouts        -- admin marks a batch paid
-  id, affiliate_id, period_start, period_end
-  total_cents, method, reference (e.g. PayPal tx id)
-  paid_at, paid_by, notes
-```
+All tables: FORCE RLS, supabaseAdmin for writes, scoped SELECT to `affiliates.user_id = auth.uid()` or admin.
 
-RLS: every table FORCE RLS, no anon/authenticated grants. All reads go through server fns. The affiliate dashboard uses `requireSupabaseAuth` and filters by `affiliates.user_id = auth.uid()`.
+## Server changes
 
-## Attribution flow
+- **`src/server/affiliate-sync.server.ts`** — rewrite commission calc:
+  1. On each completed Sharetribe transaction, increment `completed_bookings_count` on the referral.
+  2. If count == 1 → insert `activation_bonus` commission row for $100, set `activation_paid_at`.
+  3. If count >= 3 → if `recurring_unlocked_at` is null, set it; insert `recurring` commission at 5% of `payinTotal`.
+  4. If count == 2 → no commission (gap between activation and unlock).
+  5. Update `last_booking_at`. Skip recurring if last booking was >60 days ago at time of sync (pause logic).
+- **New `src/lib/affiliate-tier.functions.ts`** — `recomputeAffiliateTier(affiliateId)`: counts active hosts (3+ bookings, booked in last 60d) and last-30d GMV, sets tier. Called by sync after each commission insert.
+- **`affiliate-dashboard.functions.ts`** — extend `getAffiliateDashboard` to return: tier, crew array (each host with status traffic light: green if booked <14d, yellow 14-60d, red dormant), progress bars (X/5 active hosts → Lead, $Y/$10K → Captain), activation bonus count.
+- **New `src/lib/affiliate-coaching.functions.ts`** — `logCoachingActivity({ referralId, note, templateUsed })`, `listCoachingForCrew()`.
 
-1. **Click capture** — root route reads `?ref=CODE`, sets a 90-day cookie `prnm_ref=CODE`, inserts an `affiliate_clicks` row (fire-and-forget server fn).
-2. **Host signup attribution** — when a new Sharetribe host is detected by the nightly poll (or the existing host-sync flow), if their email matches a recent click cookie email OR if admin manually links them, write an `affiliate_referrals` row. (Cookie→host email match happens at the moment a lead submits the host signup form — we capture `prnm_ref` on host-lead submit and stash it on the lead, then promote to a referral when that email becomes a host.)
-3. **Commission computation** — nightly cron polls Sharetribe Integration API for completed transactions, joins `tx.providerId → affiliate_referrals.sharetribe_user_id`, inserts an `affiliate_commissions` row at 5% of gross. Idempotent on `sharetribe_tx_id`.
+## UI changes
 
-## Routes & UI
+- **`/affiliate` dashboard** (`src/routes/p.affiliate-dashboard.tsx`):
+  - Tier badge + next-tier progress bars at top
+  - "How you earn" mini-card explaining the 3 milestones
+  - Crew section: card per host showing name (display_name only), bookings count, last booking, status dot, "$earned" total, and a "Log coaching" button that opens a modal with 3 pre-written templates (Nextdoor post / Facebook group post / text-a-friend) + free-text
+  - Activation bonuses sub-section (separate from recurring)
+- **`/admin/affiliates`** (`src/routes/admin.affiliates.tsx`):
+  - Tier column + leaderboard tab (top 10 by 30d GMV)
+  - Per-affiliate drawer: crew list, coaching log feed, manual tier override
+- Coaching templates live in `src/lib/affiliate-coaching-templates.ts` (3 short scripts).
 
-**Public**
-- `/referral` — existing marketing page, add "Apply to become an affiliate" form (open signup, status=pending).
-- `/referral/apply` — form (name, email, audience description, how they'll promote). Returns "thanks, we'll review".
+## Out of scope (this batch)
 
-**Affiliate (under `_authenticated/`)**
-- `/affiliate` — dashboard: total earned, pending vs paid, click count, referred hosts list, recent commissions table, copy-link box with their `?ref=CODE` URL, payout method form.
+- Auto-promotion emails (tier change just updates DB + dashboard for now)
+- Sub-codes per host
+- Branded landing pages for Captains
+- Stripe Connect payouts (still manual)
 
-**Admin (under `_authenticated/`, admin role)**
-- `/admin/affiliates` — list, approve/reject/pause, manually link a Sharetribe host to an affiliate, view commissions, create a payout batch (selects pending commissions → marks paid).
+## Order of work
 
-## Server functions / routes
+1. Migration (schema + enum + RLS + grants)
+2. Sync rewrite with milestone logic
+3. Tier recompute fn
+4. Dashboard server fn + UI
+5. Coaching log fn + modal UI
+6. Admin crew drawer + leaderboard
 
-- `affiliate-apply.functions.ts` — public submit, creates `pending` row.
-- `affiliate-dashboard.functions.ts` — `requireSupabaseAuth`, returns own stats + commissions + payouts.
-- `affiliate-admin.functions.ts` — admin gated via `has_role('admin')`: approve, reject, pause, manual-link host, create payout batch, mark paid.
-- `affiliate-click.functions.ts` — record click, return cookie value to set client-side.
-- `src/routes/api/public/hooks/sync-affiliate-commissions.ts` — nightly cron endpoint:
-  1. Pull Sharetribe completed transactions since `max(booking_date)`.
-  2. For each, if provider has a referral row, upsert commission.
-  3. Auto-approve commissions older than 7 days (refund window) → `status='approved'`.
-- pg_cron: `0 5 * * *` daily, posts to the sync endpoint with `apikey` header.
-
-## Sharetribe integration (poll model)
-
-Use existing `src/server/sharetribe.server.ts` patterns. Add an Integration API call to list transactions with state `transition/complete` filtered by `lastTransitionedAt`. Map `relationships.provider.data.id` → `sharetribe_user_id`. Wrap in try/catch; on failure log and skip — never throws to cron.
-
-## Payouts
-
-Manual for v1. Admin selects an affiliate, picks all `status='approved'` commissions, clicks "Create payout" → inserts `affiliate_payouts`, updates the selected commissions to `status='paid'` with `payout_id`. Records method + external reference (e.g. PayPal tx id). No Stripe Connect in this pass.
-
-## Out of scope (call out, don't build)
-
-- Stripe Connect automated payouts.
-- Real-time Sharetribe webhooks (we're polling).
-- Renter-side referrals (host-only attribution).
-- 1099 tax form generation.
-- Multi-tier / sub-affiliate.
-
-## Build order (one batch per step)
-
-1. Migration: 5 tables + grants + RLS + a `generate_affiliate_code()` helper + trigger to backfill `affiliates.user_id` on first sign-in by email.
-2. Server fns: apply, click, dashboard, admin (approve/reject/link/payout), sync cron endpoint.
-3. Cookie capture in `__root.tsx` (read `?ref`, set cookie, fire click fn).
-4. UI: `/referral/apply` form, `/affiliate` dashboard, `/admin/affiliates` console. Add nav links.
-5. pg_cron schedule for nightly sync.
-6. Smoke test: apply → admin approves → manually link a real host → run sync endpoint by hand → confirm commission row → create payout → confirm dashboard totals.
-
-## Notes / risks
-
-- **Refund reversals**: Sharetribe transactions can transition to refunded. v1 stamps commissions `pending` for 7 days, then auto-approves. Refunds after that → admin manually marks `reversed` (rare; we can add automated reversal later).
-- **Email-to-host matching**: depends on us reliably capturing `?ref` on host-lead submit. Hosts who sign up directly on Sharetribe without going through our `/p/become-a-pool-host-*` funnel can be linked manually by admin in `/admin/affiliates`.
-- **Sharetribe API rate limits**: nightly poll with pagination; store `last_sync_at` in a `kv_state` row to avoid re-scanning history.
+Want me to go straight through 1-6, or pause for review after the migration?
