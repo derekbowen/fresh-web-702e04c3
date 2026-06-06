@@ -1,7 +1,8 @@
 import * as React from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta } from "@/lib/seo";
+import { supabase } from "@/integrations/supabase/client";
 import { applyAsAffiliate } from "@/lib/affiliate-apply.functions";
 
 const PATH = "/referral/apply";
@@ -18,8 +19,8 @@ export const Route = createFileRoute("/referral/apply")({
 });
 
 function ApplyPage() {
+  const navigate = useNavigate();
   const [busy, setBusy] = React.useState(false);
-  const [done, setDone] = React.useState<null | { already?: boolean; status?: string }>(null);
   const [err, setErr] = React.useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -27,21 +28,40 @@ function ApplyPage() {
     setErr(null);
     setBusy(true);
     const fd = new FormData(e.currentTarget);
+    const email = String(fd.get("email") || "").trim();
+    const password = String(fd.get("password") || "");
+
     try {
       const res = await applyAsAffiliate({
         data: {
           full_name: String(fd.get("full_name") || ""),
-          email: String(fd.get("email") || ""),
+          email,
+          password,
           phone: String(fd.get("phone") || ""),
           audience: String(fd.get("audience") || ""),
           promo_plan: String(fd.get("promo_plan") || ""),
         },
       });
-      if (!res.ok) setErr("Something went wrong. Try again or email referrals@poolrentalnearme.com.");
-      else setDone({ already: res.alreadyExists, status: res.status });
+
+      if (!res.ok) {
+        setErr(res.error || "Something went wrong. Try again or email referrals@poolrentalnearme.com.");
+        setBusy(false);
+        return;
+      }
+
+      // Auto sign-in so they land in the dashboard
+      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInErr) {
+        // Account exists with a different password — send them to sign in
+        navigate({
+          to: "/auth",
+          search: { redirect: "/referral/dashboard", mode: "signin" } as any,
+        });
+        return;
+      }
+      navigate({ to: "/referral/dashboard" });
     } catch (e: any) {
       setErr(e?.message || "Submission failed.");
-    } finally {
       setBusy(false);
     }
   }
@@ -54,65 +74,62 @@ function ApplyPage() {
           <Link to="/referral" className="text-sm text-primary underline-offset-4 hover:underline">
             &larr; Back to the referral program
           </Link>
-          <h1 className="mt-4 text-3xl font-bold text-foreground sm:text-4xl">Apply to refer hosts</h1>
+          <h1 className="mt-4 text-3xl font-bold text-foreground sm:text-4xl">
+            Create your affiliate account
+          </h1>
           <p className="mt-3 text-muted-foreground">
-            Earn 5% of every booking, for the lifetime of every host you bring to Pool Rental Near Me. We review
-            applications manually and you'll hear back within 2 business days.
+            Earn 5% of every booking, for the lifetime of every host you bring to Pool Rental Near Me. Your
+            dashboard goes live the moment we approve you, usually within 2 business days.
           </p>
 
-          {done ? (
-            <div className="mt-8 rounded-2xl border border-primary/30 bg-primary/5 p-6">
-              <h2 className="text-xl font-semibold text-foreground">
-                {done.already ? "You're already in the system" : "Application received"}
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {done.already
-                  ? `Current status: ${done.status}. Sign in with the email you applied with to see your dashboard.`
-                  : "We'll review and email you when your referral link is live. Once approved, sign in with this email to access your dashboard."}
-              </p>
-              <div className="mt-4 flex gap-3">
-                <Link
-                  to="/auth"
-                  search={{ redirect: "/affiliate", mode: "signin" }}
-                  className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
-                >
-                  Sign in
-                </Link>
-                <Link to="/referral" className="rounded-full border border-border px-5 py-2 text-sm font-semibold">
-                  Back to overview
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={onSubmit} className="mt-8 space-y-4 rounded-2xl border border-border bg-card p-6">
-              <Field label="Full name" name="full_name" required maxLength={120} />
-              <Field label="Email" name="email" type="email" required maxLength={255} />
-              <Field label="Phone (optional)" name="phone" maxLength={40} />
-              <TextArea
-                label="Who's your audience?"
-                name="audience"
-                placeholder="e.g. pool owners in San Diego county, friends in real estate, my YouTube channel"
-                maxLength={1000}
-              />
-              <TextArea
-                label="How will you promote it?"
-                name="promo_plan"
-                placeholder="e.g. door hangers in HOA, IG reels, partner with pool service companies"
-                maxLength={2000}
-              />
-              {err && <p className="text-sm text-destructive">{err}</p>}
-              <button
-                type="submit"
-                disabled={busy}
-                className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90 disabled:opacity-60"
+          <form onSubmit={onSubmit} className="mt-8 space-y-4 rounded-2xl border border-border bg-card p-6">
+            <Field label="Full name" name="full_name" required maxLength={120} autoComplete="name" />
+            <Field label="Email" name="email" type="email" required maxLength={255} autoComplete="email" />
+            <Field
+              label="Create a password"
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              maxLength={72}
+              autoComplete="new-password"
+              hint="Minimum 8 characters. You'll use this to sign in to your dashboard."
+            />
+            <Field label="Phone (optional)" name="phone" maxLength={40} autoComplete="tel" />
+            <TextArea
+              label="Who's your audience?"
+              name="audience"
+              placeholder="e.g. pool owners in San Diego county, friends in real estate, my YouTube channel"
+              maxLength={1000}
+            />
+            <TextArea
+              label="How will you promote it?"
+              name="promo_plan"
+              placeholder="e.g. door hangers in HOA, IG reels, partner with pool service companies"
+              maxLength={2000}
+            />
+            {err && <p className="text-sm text-destructive">{err}</p>}
+            <button
+              type="submit"
+              disabled={busy}
+              className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90 disabled:opacity-60"
+            >
+              {busy ? "Creating your account..." : "Create account & apply"}
+            </button>
+            <p className="text-xs text-muted-foreground">
+              By submitting you agree to receive program updates by email. Unsubscribe anytime.
+            </p>
+            <p className="text-center text-xs text-muted-foreground">
+              Already applied?{" "}
+              <Link
+                to="/auth"
+                search={{ redirect: "/referral/dashboard", mode: "signin" } as any}
+                className="text-primary underline-offset-4 hover:underline"
               >
-                {busy ? "Submitting..." : "Submit application"}
-              </button>
-              <p className="text-xs text-muted-foreground">
-                By submitting you agree to receive program updates by email. Unsubscribe anytime.
-              </p>
-            </form>
-          )}
+                Sign in to your dashboard
+              </Link>
+            </p>
+          </form>
         </section>
       </main>
       <SiteFooter />
@@ -126,12 +143,18 @@ function Field({
   type = "text",
   required,
   maxLength,
+  minLength,
+  autoComplete,
+  hint,
 }: {
   label: string;
   name: string;
   type?: string;
   required?: boolean;
   maxLength?: number;
+  minLength?: number;
+  autoComplete?: string;
+  hint?: string;
 }) {
   return (
     <label className="block">
@@ -141,8 +164,11 @@ function Field({
         type={type}
         required={required}
         maxLength={maxLength}
+        minLength={minLength}
+        autoComplete={autoComplete}
         className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
       />
+      {hint && <span className="mt-1 block text-xs text-muted-foreground">{hint}</span>}
     </label>
   );
 }
