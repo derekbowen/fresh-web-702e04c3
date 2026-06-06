@@ -431,10 +431,10 @@ export async function syncSharetribeMirror(): Promise<{
 
   // Scan newly-arrived messages
   const { scanMessagesForAlerts } = await import("./security-scanner.server");
-  const scan = await scanMessagesForAlerts().catch((e) => ({
+  const scan = await scanMessagesForAlerts().catch((e: unknown) => ({
     scanned: 0,
     alerts: 0,
-    error: (e as Error).message,
+    error: e instanceof Error ? e.message : String(e),
   }));
   if ((scan as any).error) errors.push(`scan: ${(scan as any).error}`);
 
