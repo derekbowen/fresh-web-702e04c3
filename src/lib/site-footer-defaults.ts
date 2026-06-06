@@ -49,7 +49,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Host Connect", href: "https://connect.poolrentalnearme.com" },
     { label: "HOA Navigation Guide", href: "/p/elearning-academy-hoa-navigation-guide-pool-hosts" },
     { label: "Host Make More $$$", href: "/p/hosting" },
-    { label: "Affiliate program", href: "/referral/apply" },
+    { label: "Affiliate program", href: "/p/affiliate-program" },
   ],
   company_links: [
     { label: "About", href: "/p/how-it-works" },
@@ -57,7 +57,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Terms", href: "/p/terms-of-service" },
     { label: "Privacy", href: "/p/privacy-policy" },
     { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
-    { label: "Refer Pool Owners", href: "/referral" },
+    { label: "Refer Pool Owners", href: "/p/affiliate" },
     { label: "Investors", href: "/p/investors" },
   ],
   // Slugs map to published `content_pages` (host_acq_city template) so each
