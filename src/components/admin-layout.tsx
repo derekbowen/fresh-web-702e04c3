@@ -135,12 +135,38 @@ function useCurrentPath() {
   return useRouterState({ select: (s) => s.location.pathname });
 }
 
+const OPEN_GROUPS_KEY = "prnm_admin_open_groups";
+
 function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onToggleDemo }: {
   collapsed: boolean; onToggle: () => void; mobileOpen: boolean; onMobileClose: () => void;
   demoMode: boolean; onToggleDemo: () => void;
 }) {
   const path = useCurrentPath();
   const groups = demoMode ? filterGroupsForDemo(GROUPS) : GROUPS;
+
+  // Which group contains the active route — always force-open it.
+  const activeGroupLabel = React.useMemo(
+    () => groups.find((g) => g.items.some((it) => path === it.to || path.startsWith(it.to + "/")))?.label,
+    [groups, path],
+  );
+
+  const [openMap, setOpenMap] = React.useState<Record<string, boolean>>({});
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem(OPEN_GROUPS_KEY);
+      setOpenMap(raw ? JSON.parse(raw) : { Overview: true });
+    } catch { setOpenMap({ Overview: true }); }
+  }, []);
+  const toggleGroup = (label: string) => {
+    setOpenMap((prev) => {
+      const next = { ...prev, [label]: !prev[label] };
+      try { localStorage.setItem(OPEN_GROUPS_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+  const isOpen = (label: string) => collapsed || label === activeGroupLabel || openMap[label] === true;
+
   return (
     <>
       {mobileOpen && (
@@ -170,35 +196,53 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
         </div>
         <nav className="flex h-[calc(100%-3rem)] flex-col overflow-y-auto p-2">
           <div className="flex-1">
-            {groups.map((g) => (
-              <div key={g.label} className="mb-3">
-                {!collapsed && (
-                  <div className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{g.label}</div>
-                )}
-                <ul className="space-y-0.5">
-                  {g.items.map((it) => {
-                    const active = path === it.to || path.startsWith(it.to + "/");
-                    return (
-                      <li key={it.to}>
-                        <Link
-                          to={it.to}
-                          onClick={onMobileClose}
-                          title={collapsed ? it.label : undefined}
-                          className={[
-                            "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
-                            active ? "bg-primary text-primary-foreground font-medium" : "text-foreground hover:bg-muted",
-                          ].join(" ")}
-                        >
-                          <it.icon className="h-4 w-4 shrink-0" />
-                          {!collapsed && <span className="truncate">{it.label}</span>}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+            {groups.map((g) => {
+              const open = isOpen(g.label);
+              const groupActive = g.label === activeGroupLabel;
+              return (
+                <div key={g.label} className="mb-1">
+                  {!collapsed ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(g.label)}
+                      className={[
+                        "flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider",
+                        groupActive ? "text-foreground" : "text-muted-foreground hover:bg-muted",
+                      ].join(" ")}
+                      aria-expanded={open}
+                    >
+                      <span>{g.label}</span>
+                      <ChevronDown className={`h-3 w-3 transition-transform ${open ? "" : "-rotate-90"}`} />
+                    </button>
+                  ) : null}
+                  {open && (
+                    <ul className="space-y-0.5 pt-0.5">
+                      {g.items.map((it) => {
+                        const active = path === it.to || path.startsWith(it.to + "/");
+                        return (
+                          <li key={it.to}>
+                            <Link
+                              to={it.to}
+                              onClick={onMobileClose}
+                              title={collapsed ? it.label : undefined}
+                              className={[
+                                "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
+                                active ? "bg-primary text-primary-foreground font-medium" : "text-foreground hover:bg-muted",
+                              ].join(" ")}
+                            >
+                              <it.icon className="h-4 w-4 shrink-0" />
+                              {!collapsed && <span className="truncate">{it.label}</span>}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
           </div>
+
           <div className="mt-2 border-t border-border pt-2">
             <button
               onClick={onToggleDemo}
