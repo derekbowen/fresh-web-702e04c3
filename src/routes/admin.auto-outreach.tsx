@@ -73,16 +73,19 @@ function AutoOutreachPage() {
   const save = useMutation({
     mutationFn: () => saveFn({ data: { ...form, reply_to: form.reply_to || null } } as any),
     onSuccess: (r: any) => { r?.ok ? toast.success("Saved") : toast.error(r?.error || "Failed"); qc.invalidateQueries({ queryKey: ["auto-outreach-state"] }); },
+    onError: (e: any) => toast.error(e?.message || "Save failed"),
   });
 
   const runNow = useMutation({
     mutationFn: () => runFn({ data: {} } as any),
     onSuccess: (r: any) => { toast.success(`Enqueued ${r?.enqueued ?? 0} • Sent ${r?.sent ?? 0} • Failed ${r?.failed ?? 0}`); qc.invalidateQueries({ queryKey: ["auto-outreach-state"] }); },
+    onError: (e: any) => toast.error(e?.message || "Run failed — check server logs"),
   });
 
   const cancel = useMutation({
     mutationFn: (id: string) => cancelFn({ data: { id } } as any),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["auto-outreach-state"] }); },
+    onError: (e: any) => toast.error(e?.message || "Cancel failed"),
   });
 
   return (
