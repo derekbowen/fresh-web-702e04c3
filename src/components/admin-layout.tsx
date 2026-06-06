@@ -123,6 +123,13 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     ],
   },
   {
+    label: "Marketplace",
+    items: [
+      { to: "/admin/sharetribe", label: "Sharetribe mirror 🛰", icon: Database },
+      { to: "/admin/affiliates", label: "Affiliates 💸", icon: Share2 },
+    ],
+  },
+  {
     label: "Site & Ops",
     items: [
       { to: "/admin/site-footer", label: "Site footer", icon: LinkIcon },
