@@ -5,7 +5,7 @@ import { buildMeta } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 import { applyAsAffiliate } from "@/lib/affiliate-apply.functions";
 
-const PATH = "/referral/apply";
+const PATH = "/p/affiliate-program";
 const TITLE = "Apply to the Pool Rental Near Me Affiliate Program";
 const DESCRIPTION =
   "Refer pool hosts to Pool Rental Near Me and earn 5% of every booking they take, for the lifetime of the host.";
@@ -55,11 +55,11 @@ function ApplyPage() {
         // Account exists with a different password — send them to sign in
         navigate({
           to: "/auth",
-          search: { redirect: "/referral/dashboard", mode: "signin" } as any,
+          search: { redirect: "/p/affiliate-dashboard", mode: "signin" } as any,
         });
         return;
       }
-      navigate({ to: "/referral/dashboard" });
+      navigate({ to: "/p/affiliate-dashboard" });
     } catch (e: any) {
       setErr(e?.message || "Submission failed.");
       setBusy(false);
@@ -71,7 +71,7 @@ function ApplyPage() {
       <SiteHeader />
       <main className="flex-1">
         <section className="mx-auto max-w-2xl px-4 py-16">
-          <Link to="/referral" className="text-sm text-primary underline-offset-4 hover:underline">
+          <Link to="/p/affiliate" className="text-sm text-primary underline-offset-4 hover:underline">
             &larr; Back to the referral program
           </Link>
           <h1 className="mt-4 text-3xl font-bold text-foreground sm:text-4xl">
@@ -123,7 +123,7 @@ function ApplyPage() {
               Already applied?{" "}
               <Link
                 to="/auth"
-                search={{ redirect: "/referral/dashboard", mode: "signin" } as any}
+                search={{ redirect: "/p/affiliate-dashboard", mode: "signin" } as any}
                 className="text-primary underline-offset-4 hover:underline"
               >
                 Sign in to your dashboard
