@@ -92,11 +92,16 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
   {
     label: "Email",
     items: [
+      { to: "/admin/email-composer", label: "Email composer ✨", icon: Sparkles },
       { to: "/admin/founder-blast", label: "Founder blast", icon: Mail },
       { to: "/admin/host-drip", label: "Host drip", icon: Mail },
       { to: "/admin/renter-drip", label: "Renter drip", icon: Mail },
       { to: "/admin/drip-subscribers", label: "Subscribers ⏯", icon: Mail },
       { to: "/admin/add-contacts", label: "Add contacts ➕", icon: Mail },
+      { to: "/admin/email-queue", label: "Email queue", icon: Mail },
+      { to: "/admin/email-deliverability", label: "Deliverability", icon: Activity },
+      { to: "/admin/email-branding", label: "Email branding", icon: ImageIcon },
+      { to: "/admin/email-verify", label: "Email verify", icon: CheckCircle2 },
     ],
   },
   {
