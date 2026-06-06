@@ -4,7 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { useState, useMemo } from "react";
 import { AdminLayout } from "@/components/admin-layout";
-import { wrapInShell, renderForRecipient, STARTER_TEMPLATES } from "@/lib/email-static/composer/_shell";
+import {
+  wrapInShell,
+  renderForRecipient,
+  composeFromPlainText,
+  STARTER_TEMPLATES,
+} from "@/lib/email-static/composer/_shell";
 
 // ---------- Server functions ----------
 
@@ -37,7 +42,7 @@ const fetchRecentCampaigns = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
       .from("composer_campaigns" as any)
-      .select("id, subject, audience, recipient_count, sent_count, failed_count, status, test_only, created_at")
+      .select("id, subject, audience, recipient_count, sent_count, failed_count, status, test_only, scheduled_at, created_at")
       .order("created_at", { ascending: false })
       .limit(20);
     return data || [];
@@ -60,7 +65,7 @@ const runSendEmail = createServerFn({ method: "POST" })
     customEmails?: string[];
     singleEmail?: string;
     subject: string;
-    bodyHtml: string;
+    bodyText: string;
     preview?: string;
     testOnly?: boolean;
     testRecipient?: string;
@@ -72,6 +77,39 @@ const runSendEmail = createServerFn({ method: "POST" })
     return await sendComposerEmail({ ...data, createdBy: userId });
   });
 
+const runScheduleEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    audience: "hosts" | "renters" | "waitlist" | "custom" | "single";
+    customEmails?: string[];
+    singleEmail?: string;
+    subject: string;
+    bodyText: string;
+    preview?: string;
+    scheduledAt: string;
+  }) => d)
+  .handler(async ({ context, data }) => {
+    const { userId } = context as { userId: string };
+    await requireAdmin(userId);
+    const { scheduleComposerEmail } = await import("@/server/email-composer.server");
+    return await scheduleComposerEmail({ ...data, createdBy: userId });
+  });
+
+const cancelScheduledCampaign = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { campaignId: string }) => d)
+  .handler(async ({ context, data }) => {
+    const { userId } = context as { userId: string };
+    await requireAdmin(userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("composer_campaigns" as any)
+      .update({ status: "cancelled" })
+      .eq("id", data.campaignId)
+      .eq("status", "scheduled");
+    return { ok: true };
+  });
+
 export const Route = createFileRoute("/admin/email-composer")({
   component: Page,
 });
@@ -79,13 +117,15 @@ export const Route = createFileRoute("/admin/email-composer")({
 // ---------- UI ----------
 
 type Audience = "hosts" | "renters" | "waitlist" | "custom" | "single";
-type Tab = "ai" | "templates" | "custom";
+type Tab = "ai" | "templates" | "write";
 
 function Page() {
   const getCounts = useServerFn(fetchAudienceCounts);
   const getRecent = useServerFn(fetchRecentCampaigns);
   const genAI = useServerFn(runGenerateAI);
   const send = useServerFn(runSendEmail);
+  const schedule = useServerFn(runScheduleEmail);
+  const cancel = useServerFn(cancelScheduledCampaign);
 
   const counts = useQuery({ queryKey: ["composer-counts"], queryFn: () => getCounts() });
   const recent = useQuery({ queryKey: ["composer-recent"], queryFn: () => getRecent() });
@@ -95,14 +135,16 @@ function Page() {
   const [singleEmail, setSingleEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [preview, setPreview] = useState("");
-  const [bodyHtml, setBodyHtml] = useState(STARTER_TEMPLATES.announcement.body);
-  const [tab, setTab] = useState<Tab>("ai");
+  const [bodyText, setBodyText] = useState(STARTER_TEMPLATES.announcement.text);
+  const [tab, setTab] = useState<Tab>("write");
   const [aiDescription, setAiDescription] = useState("");
   const [aiTone, setAiTone] = useState("Friendly, founder-mentor");
   const [generating, setGenerating] = useState(false);
   const [sending, setSending] = useState(false);
   const [testRecipient, setTestRecipient] = useState("");
   const [result, setResult] = useState<string>("");
+  const [sendMode, setSendMode] = useState<"now" | "later">("now");
+  const [scheduledLocal, setScheduledLocal] = useState<string>(defaultScheduleValue());
 
   const audienceCount = useMemo(() => {
     if (!counts.data) return 0;
@@ -117,12 +159,10 @@ function Page() {
   }, [audience, counts.data, customEmailsRaw, singleEmail]);
 
   const previewHtml = useMemo(() => {
-    const shell = wrapInShell({ subject: subject || "(no subject)", bodyHtml, preview });
-    return renderForRecipient(shell, {
-      firstName: "Alex",
-      unsubscribeUrl: "#preview-unsubscribe",
-    });
-  }, [subject, bodyHtml, preview]);
+    const { html } = composeFromPlainText(bodyText || "");
+    const shell = wrapInShell({ subject: subject || "(no subject)", bodyHtml: html, preview });
+    return renderForRecipient(shell, { firstName: "Alex", unsubscribeUrl: "#preview-unsubscribe" });
+  }, [subject, bodyText, preview]);
 
   async function handleGenerate() {
     if (!aiDescription.trim()) { alert("Describe the email first"); return; }
@@ -130,8 +170,8 @@ function Page() {
     try {
       const r: any = await genAI({ data: { description: aiDescription, tone: aiTone } });
       if (r.subject) setSubject(r.subject);
-      if (r.bodyHtml) setBodyHtml(r.bodyHtml);
-      setTab("custom");
+      if (r.bodyText) setBodyText(r.bodyText);
+      setTab("write");
     } catch (e: any) {
       alert(`AI failed: ${e?.message || e}`);
     } finally {
@@ -141,13 +181,13 @@ function Page() {
 
   async function handleTestSend() {
     if (!testRecipient.trim()) { alert("Enter your test email"); return; }
-    if (!subject.trim() || !bodyHtml.trim()) { alert("Subject and body required"); return; }
+    if (!subject.trim() || !bodyText.trim()) { alert("Subject and body required"); return; }
     setSending(true);
     setResult("");
     try {
       const r: any = await send({
         data: {
-          audience, subject, bodyHtml, preview,
+          audience, subject, bodyText, preview,
           testOnly: true,
           testRecipient,
         },
@@ -162,30 +202,58 @@ function Page() {
 
   async function handleSend() {
     if (audienceCount === 0) { alert("No recipients"); return; }
-    if (!subject.trim() || !bodyHtml.trim()) { alert("Subject and body required"); return; }
+    if (!subject.trim() || !bodyText.trim()) { alert("Subject and body required"); return; }
     const label = audience === "single" ? singleEmail : `${audienceCount} ${audience} recipients`;
-    if (!confirm(`Send "${subject}" to ${label}? This cannot be undone.`)) return;
+    if (sendMode === "now") {
+      if (!confirm(`Send "${subject}" to ${label} NOW? This cannot be undone.`)) return;
+    } else {
+      const when = new Date(scheduledLocal);
+      if (isNaN(when.getTime()) || when.getTime() < Date.now()) {
+        alert("Pick a future date/time");
+        return;
+      }
+      if (!confirm(`Schedule "${subject}" to ${label} for ${when.toLocaleString()}?`)) return;
+    }
     setSending(true);
     setResult("");
     try {
       const customEmails = audience === "custom"
         ? customEmailsRaw.split(/[\s,;]+/).map((e) => e.trim()).filter(Boolean)
         : undefined;
-      const r: any = await send({
-        data: {
-          audience,
-          customEmails,
-          singleEmail: audience === "single" ? singleEmail : undefined,
-          subject, bodyHtml, preview,
-        },
-      });
-      setResult(`✅ Campaign ${r.campaignId.slice(0, 8)}… complete. Sent ${r.sent}/${r.total}, failed ${r.failed}.`);
+      if (sendMode === "now") {
+        const r: any = await send({
+          data: {
+            audience,
+            customEmails,
+            singleEmail: audience === "single" ? singleEmail : undefined,
+            subject, bodyText, preview,
+          },
+        });
+        setResult(`✅ Campaign ${r.campaignId.slice(0, 8)}… complete. Sent ${r.sent}/${r.total}, failed ${r.failed}.`);
+      } else {
+        const r: any = await schedule({
+          data: {
+            audience,
+            customEmails,
+            singleEmail: audience === "single" ? singleEmail : undefined,
+            subject, bodyText, preview,
+            scheduledAt: new Date(scheduledLocal).toISOString(),
+          },
+        });
+        setResult(`🕒 Scheduled for ${new Date(r.scheduledAt).toLocaleString()} (campaign ${r.campaignId.slice(0, 8)}…)`);
+      }
       recent.refetch();
     } catch (e: any) {
       setResult(`❌ ${e?.message || e}`);
     } finally {
       setSending(false);
     }
+  }
+
+  async function handleCancel(id: string) {
+    if (!confirm("Cancel this scheduled send?")) return;
+    await cancel({ data: { campaignId: id } });
+    recent.refetch();
   }
 
   return (
@@ -240,19 +308,43 @@ function Page() {
               type="text"
               value={preview}
               onChange={(e) => setPreview(e.target.value)}
-              placeholder="Preview text (optional, shown in inbox preview)"
+              placeholder="Preview text (optional — shown in inbox preview)"
               className="w-full border rounded p-2 mt-2 text-sm"
             />
           </section>
 
           {/* Body */}
           <section className="border rounded-lg p-4 bg-card">
-            <h2 className="font-semibold mb-3">3. Body</h2>
+            <h2 className="font-semibold mb-3">3. Message</h2>
             <div className="flex gap-2 mb-3 border-b">
+              <TabBtn active={tab === "write"} onClick={() => setTab("write")}>✏️ Write</TabBtn>
               <TabBtn active={tab === "ai"} onClick={() => setTab("ai")}>✨ AI Generate</TabBtn>
-              <TabBtn active={tab === "templates"} onClick={() => setTab("templates")}>📝 Templates</TabBtn>
-              <TabBtn active={tab === "custom"} onClick={() => setTab("custom")}>✏️ Edit HTML</TabBtn>
+              <TabBtn active={tab === "templates"} onClick={() => setTab("templates")}>📝 Starters</TabBtn>
             </div>
+
+            {tab === "write" && (
+              <div className="space-y-2">
+                <textarea
+                  value={bodyText}
+                  onChange={(e) => setBodyText(e.target.value)}
+                  rows={16}
+                  className="w-full border rounded p-3 text-sm leading-relaxed"
+                  placeholder={"Just type your message. Examples:\n\n# Big news, {{first_name}}\n\nA paragraph here.\n\n- Bullet one\n- Bullet two\n\n[Button text](https://example.com)"}
+                />
+                <details className="text-xs text-slate-500">
+                  <summary className="cursor-pointer">Formatting cheatsheet</summary>
+                  <div className="mt-2 space-y-1 pl-2">
+                    <div><code># Heading</code> — big section title</div>
+                    <div><code>## Subheading</code></div>
+                    <div><code>- item</code> or <code>1. item</code> — lists</div>
+                    <div><code>[Button text](https://url)</code> on its own line → branded button</div>
+                    <div><code>**bold**</code>  <code>*italic*</code>  <code>[link](url)</code></div>
+                    <div><code>{"{{first_name}}"}</code> — auto-replaced per recipient</div>
+                    <div className="mt-2 italic">Header, footer, postal address, and unsubscribe link are added automatically — every email looks the same.</div>
+                  </div>
+                </details>
+              </div>
+            )}
 
             {tab === "ai" && (
               <div className="space-y-2">
@@ -285,7 +377,7 @@ function Page() {
                 {Object.entries(STARTER_TEMPLATES).map(([k, v]) => (
                   <button
                     key={k}
-                    onClick={() => { setBodyHtml(v.body); setTab("custom"); }}
+                    onClick={() => { setBodyText(v.text); setTab("write"); }}
                     className="border rounded p-3 text-left hover:bg-slate-50"
                   >
                     <div className="font-medium text-sm">{v.label}</div>
@@ -293,21 +385,12 @@ function Page() {
                 ))}
               </div>
             )}
-
-            {tab === "custom" && (
-              <textarea
-                value={bodyHtml}
-                onChange={(e) => setBodyHtml(e.target.value)}
-                rows={16}
-                className="w-full border rounded p-2 text-xs font-mono"
-                placeholder="Paste or write HTML body. Use {{first_name}} for the recipient's first name."
-              />
-            )}
           </section>
 
           {/* Send */}
           <section className="border rounded-lg p-4 bg-card">
             <h2 className="font-semibold mb-3">4. Send</h2>
+
             <div className="flex gap-2 mb-3">
               <input
                 type="email"
@@ -324,18 +407,44 @@ function Page() {
                 Send test
               </button>
             </div>
+
+            <div className="flex gap-4 mb-3 text-sm">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="radio" checked={sendMode === "now"} onChange={() => setSendMode("now")} />
+                Send now
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="radio" checked={sendMode === "later"} onChange={() => setSendMode("later")} />
+                Send later
+              </label>
+            </div>
+
+            {sendMode === "later" && (
+              <input
+                type="datetime-local"
+                value={scheduledLocal}
+                onChange={(e) => setScheduledLocal(e.target.value)}
+                min={defaultScheduleValue()}
+                className="w-full border rounded p-2 text-sm mb-3"
+              />
+            )}
+
             <button
               onClick={handleSend}
               disabled={sending || audienceCount === 0}
               className="w-full px-4 py-3 rounded bg-blue-700 text-white font-semibold disabled:opacity-50"
             >
-              {sending ? "Sending…" : `Send to ${audienceCount} recipient${audienceCount === 1 ? "" : "s"}`}
+              {sending
+                ? (sendMode === "now" ? "Sending…" : "Scheduling…")
+                : (sendMode === "now"
+                    ? `Send to ${audienceCount} recipient${audienceCount === 1 ? "" : "s"}`
+                    : `Schedule for ${audienceCount} recipient${audienceCount === 1 ? "" : "s"}`)}
             </button>
             {result && (
               <p className="mt-3 text-sm whitespace-pre-wrap">{result}</p>
             )}
             <p className="text-xs text-slate-500 mt-2">
-              Paced at ~1.5/sec to stay under Emailit's 2/sec limit. Every email includes a one-click unsubscribe link and the company footer. Suppressed addresses are skipped automatically.
+              Paced under Emailit's 2/sec limit. One-click unsubscribe, postal address, and plain-text version are added to every send. Suppressed addresses are skipped.
             </p>
           </section>
         </div>
@@ -358,22 +467,36 @@ function Page() {
 
       {/* Recent campaigns */}
       <section className="mt-8 border rounded-lg p-4 bg-card">
-        <h2 className="font-semibold mb-3">Recent campaigns</h2>
+        <h2 className="font-semibold mb-3">Recent & scheduled campaigns</h2>
         {recent.isLoading ? <p>Loading…</p> : (
           <table className="w-full text-sm border-collapse">
             <thead><tr className="text-left border-b">
-              <th className="p-2">When</th><th>Subject</th><th>Audience</th><th>Recipients</th><th>Sent</th><th>Failed</th><th>Status</th>
+              <th className="p-2">When</th><th>Subject</th><th>Audience</th><th>Recipients</th><th>Sent</th><th>Failed</th><th>Status</th><th></th>
             </tr></thead>
             <tbody>
               {(recent.data || []).map((r: any) => (
                 <tr key={r.id} className="border-b">
-                  <td className="p-2">{new Date(r.created_at).toLocaleString()}</td>
+                  <td className="p-2 whitespace-nowrap">
+                    {r.scheduled_at && r.status === "scheduled"
+                      ? <span title="Scheduled for">🕒 {new Date(r.scheduled_at).toLocaleString()}</span>
+                      : new Date(r.created_at).toLocaleString()}
+                  </td>
                   <td className="truncate max-w-[200px]">{r.subject}</td>
                   <td>{r.audience}{r.test_only ? " (test)" : ""}</td>
                   <td>{r.recipient_count}</td>
                   <td>{r.sent_count}</td>
                   <td>{r.failed_count}</td>
                   <td>{r.status}</td>
+                  <td>
+                    {r.status === "scheduled" && (
+                      <button
+                        onClick={() => handleCancel(r.id)}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -382,6 +505,13 @@ function Page() {
       </section>
     </AdminLayout>
   );
+}
+
+function defaultScheduleValue(): string {
+  // 30 min from now, formatted as datetime-local
+  const d = new Date(Date.now() + 30 * 60 * 1000);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function AudienceBtn({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
