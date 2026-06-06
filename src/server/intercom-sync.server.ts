@@ -61,7 +61,7 @@ function diffAttrs(
 async function syncTable(
   audience: Audience,
   rows: any[],
-  buildAttrs: (r: any) => Record<string, any>,
+  buildAttrs: (r: any) => Record<string, any> | undefined,
   table: "host_subscribers" | "renter_subscribers",
   dryRun: boolean,
 ): Promise<SyncResult> {
