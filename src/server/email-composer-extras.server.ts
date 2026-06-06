@@ -254,8 +254,6 @@ export async function scheduleSequence(opts: {
 type Audience = "hosts" | "renters" | "waitlist" | "custom" | "single";
 
 async function resolveAllRecipients(audience: Audience, customEmails?: string[], singleEmail?: string) {
-  const { default: c } = await import("@/server/email-composer.server").then((m) => ({ default: m }));
-  // re-use logic via a private import won't work cleanly; re-implement minimal
   if (audience === "single" && singleEmail) {
     return [{ email: singleEmail.trim().toLowerCase(), firstName: "", unsubscribeUrl: `${SITE_URL}/unsubscribe-composer?token=preview` }];
   }
