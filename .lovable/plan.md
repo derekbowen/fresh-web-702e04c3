@@ -1,83 +1,69 @@
-# Renter pool-match email drip
+## Email Composer — admin tool
 
-## What it does
+A single-page admin email tool to compose, AI-generate, preview, and send branded emails to chosen audiences (or individual addresses) with built-in unsubscribe compliance.
 
-1. **Every 15 min**: poll Sharetribe Integration API for new renters. Pull `email`, `displayName`, and the ZIP code from signup extended data (profile.protectedData.zip or publicData.zip — I'll detect which). Upsert into `renter_subscribers`.
-2. **On new subscriber**: queue a welcome email + a 14-day daily sequence of "pool of the day" emails (one pool near their ZIP, with photo, price, link to listing).
-3. **Cron every 5 min**: drains the queue and sends due emails via Emailit (same client we already use).
-4. **Day 7 and Day 14**: replace the daily pool with a "know someone with a pool? refer them" email.
-5. **One-click unsubscribe** in every email (reuses existing `email_unsubscribe_tokens` table).
+### Where it lives
+- Route: `/admin/email-composer` (admin-gated, same as other `/admin/*` pages)
+- Top-nav button: add an **"Email Composer"** button to `src/components/admin-layout.tsx` so it's one click from every admin page
 
-## Pool matching
+### Compose UI (single page)
+1. **Audience** — choose one:
+   - Sharetribe hosts (existing `host_subscribers`, active only)
+   - Sharetribe renters/customers (existing `renter_subscribers`, active only)
+   - Pool waitlist (`pool_waitlist` table — people who requested a pool)
+   - Custom: paste comma/newline-separated emails
+   - Single recipient (one email box)
+   - Live count shown ("Will send to 767 active renters")
+2. **From** — locked to `Pool Rental Near Me <hello@notify.poolfriends.poolrentalnearme.com>` (proven sender)
+3. **Subject** — text input
+4. **Body** — three tabs:
+   - **AI Generate**: short description → calls Lovable AI Gateway (`google/gemini-3-flash-preview`) → fills branded HTML template
+   - **Templates**: pick a starter (Announcement, Tips, Reminder, Promo, Plain text) → loads into the editor
+   - **Custom HTML / Paste**: textarea for raw paste; rich preview toggle
+5. **Preview** — right-side live HTML preview (renders the final template with brand header + unsubscribe footer)
+6. **Send** — buttons: "Send test to me", "Send to N recipients" (confirm dialog showing audience count)
 
-ZIP → lat/lng via a free ZIP lookup table I'll seed from a CSV (US ZIPs only, ~42k rows, ~3MB). Then query Sharetribe `listings/query` with `origin=lat,lng` and a 50-mile radius, filter to ones with photos, rotate so the same renter doesn't get the same pool twice (track in `renter_email_sends`).
+### Compliance (every send)
+- Brand header with logo top
+- Per-recipient `{{unsubscribe_url}}` substitution using the recipient's existing unsubscribe token (renter_subscribers / host_subscribers already store one; for waitlist + custom we mint a token in `email_unsubscribe_tokens`)
+- `List-Unsubscribe` + `List-Unsubscribe-Post: List-Unsubscribe=One-Click` headers
+- Suppression check against `suppressed_emails` before each send
+- Skips any recipient with `status = 'unsubscribed'` in their source table
+- Paced at ~1.5/sec to stay under Emailit's 2/sec limit
+- Every send logged to a new `composer_email_log` table (campaign id, recipient, status, error, sent_at)
 
-## Files
+### Backend pieces
+- New server functions in `src/server/email-composer.server.ts`:
+  - `getAudienceCount(audience)` — count active recipients
+  - `generateEmailWithAI({ description, tone })` — calls Lovable AI Gateway, returns HTML body wrapped in the shared branded shell
+  - `sendComposerEmail({ audience, customEmails, subject, htmlBody, testOnly })` — resolves recipients, renders per-recipient HTML with unsub URL, queues + sends via Emailit with pacing, writes to `composer_email_log`
+- All wrapped with `requireSupabaseAuth` + admin role check (same pattern as `admin.renter-drip.tsx`)
 
-```text
-supabase/migrations/<ts>_renter_drip.sql
-  - renter_subscribers (id, st_user_id unique, email, name, zip, lat, lng, status, created_at)
-  - renter_emails (id, subscriber_id, step, kind, scheduled_at, status, listing_id, sent_at, emailit_id)
-  - us_zips (zip pk, lat, lng, city, state)  -- seeded from public CSV
-  - cron: poll-sharetribe-renters-15m, send-renter-emails-5m
+### Database
+New migration:
+- `composer_campaigns` (subject, audience, body_html, sent_count, status, created_by, created_at)
+- `composer_email_log` (campaign_id, recipient_email, status, error, sent_at)
+- Grants + RLS: admin-only via `has_role()`; `service_role` full access for server fns
 
-src/server/sharetribe-renter-poll.server.ts
-  - listNewRenters(sinceISO): hits ST Integration API users/query, returns {st_user_id, email, name, zip}
+### Branded shell
+Shared HTML wrapper in `src/lib/email-static/composer/_shell.ts` (logo header + blue accent + footer with company address + unsubscribe link). The AI/template/custom body is injected into the shell's `{{body}}` slot so every email is on-brand and compliant.
 
-src/server/renter-pool-matcher.server.ts
-  - pickPoolForSubscriber(subscriberId): returns a listing not yet sent
+### AI prompt
+System prompt instructs the model to:
+- Write in our brand voice (founder-mentor, sentence case, no banned words from project knowledge)
+- Return only the inner body HTML (no `<html>`/`<head>`)
+- Use simple inline-styled `<p>`, `<h2>`, `<a>` matching blue accent `#0ea5e9`
+- Include a clear CTA when the description implies one
 
-src/lib/email-templates/renter-welcome.tsx
-src/lib/email-templates/renter-pool-of-the-day.tsx
-src/lib/email-templates/renter-referral.tsx
+### Files to add / edit
+- `src/routes/admin.email-composer.tsx` (new, the UI)
+- `src/server/email-composer.server.ts` (new, send + AI logic)
+- `src/lib/email-static/composer/_shell.ts` (new, branded shell)
+- `src/components/admin-layout.tsx` (edit — add nav button)
+- Migration: create `composer_campaigns` + `composer_email_log` with grants + RLS
 
-src/routes/api/public/hooks/poll-sharetribe-renters.ts
-  - GET (apikey auth) → run poller, upsert subscribers, schedule 14-day sequence
-src/routes/api/public/hooks/send-renter-emails.ts
-  - GET (apikey auth) → pick due rows, render template, send via emailit, mark sent
+### What I will NOT change
+- Existing renter-drip / host-drip systems stay as-is
+- Sender domain, Emailit integration, unsubscribe routes — reuse what already works
 
-src/routes/api/public/unsubscribe-renter.ts
-  - GET ?token=... → mark subscriber unsubscribed, cancel pending emails
-
-src/routes/admin.renter-drip.tsx
-  - Subscriber list, send log, manual "send next now" button
-```
-
-## Sequence (14 days)
-
-```text
-Day 0  Welcome + 3 nearby pools
-Day 1  Pool of the day
-Day 2  Pool of the day
-Day 3  Pool of the day
-Day 5  Pool of the day
-Day 7  "Know anyone with a pool? Refer them" (referral CTA)
-Day 9  Pool of the day
-Day 11 Pool of the day
-Day 14 Final referral push, then sequence ends
-```
-
-User can change cadence later — it's all rows in `renter_emails`.
-
-## Deliverability note
-
-Daily sends to people who signed up to *use* the marketplace (not opted into newsletter) is aggressive. I'll honor unsubscribe instantly, suppress on bounce, and cap at 1 email/day. If complaint rates climb, we throttle to 2-3x/week — easy config change.
-
-## Secrets needed
-
-- `SHARETRIBE_INTEG_CLIENT_ID` ✅ already set
-- `SHARETRIBE_INTEG_CLIENT_SECRET` ✅ already set
-- `EMAILIT_API_KEY` ✅ already set
-- `HOOKS_ADMIN_TOKEN` (or anon key) for cron auth — already wired
-
-No new secrets required.
-
-## Out of scope (ask if you want them)
-
-- SMS to renters (you said you're done with SMS)
-- Host-side recommendations (this is renter-side only)
-- Re-engaging dormant renters (>30 days inactive) — separate job
-
-## Open question
-
-Where exactly does ZIP live on the Sharetribe user object? I'll inspect the first few users when the poller runs and adjust if it's `publicData.zip` vs `protectedData.zip` vs `address.postal`. If ZIP is missing on a user, I'll fall back to city/state and skip them if neither is present.
+Approve and I'll build it.

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRenterRouteImport } from './routes/unsubscribe-renter'
 import { Route as UnsubscribeHostRouteImport } from './routes/unsubscribe-host'
+import { Route as UnsubscribeComposerRouteImport } from './routes/unsubscribe-composer'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as Sm74buq58vDotxmlRouteImport } from './routes/sm-74buq58v[.]xml'
 import { Route as Sm74buq58vLsDotxmlRouteImport } from './routes/sm-74buq58v-ls[.]xml'
@@ -139,6 +140,7 @@ import { Route as AdminFollowupDrilldownRouteImport } from './routes/admin.follo
 import { Route as AdminFollowUpsRouteImport } from './routes/admin.follow-ups'
 import { Route as AdminFaqGeneratorRouteImport } from './routes/admin.faq-generator'
 import { Route as AdminEmailVerifyRouteImport } from './routes/admin.email-verify'
+import { Route as AdminEmailComposerRouteImport } from './routes/admin.email-composer'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDataImportRouteImport } from './routes/admin.data-import'
@@ -210,6 +212,11 @@ const UnsubscribeRenterRoute = UnsubscribeRenterRouteImport.update({
 const UnsubscribeHostRoute = UnsubscribeHostRouteImport.update({
   id: '/unsubscribe-host',
   path: '/unsubscribe-host',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeComposerRoute = UnsubscribeComposerRouteImport.update({
+  id: '/unsubscribe-composer',
+  path: '/unsubscribe-composer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
@@ -875,6 +882,11 @@ const AdminEmailVerifyRoute = AdminEmailVerifyRouteImport.update({
   path: '/email-verify',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEmailComposerRoute = AdminEmailComposerRouteImport.update({
+  id: '/email-composer',
+  path: '/email-composer',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEmailBrandingRoute = AdminEmailBrandingRouteImport.update({
   id: '/email-branding',
   path: '/email-branding',
@@ -1250,6 +1262,7 @@ export interface FileRoutesByFullPath {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-composer': typeof UnsubscribeComposerRoute
   '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
@@ -1271,6 +1284,7 @@ export interface FileRoutesByFullPath {
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
+  '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
@@ -1444,6 +1458,7 @@ export interface FileRoutesByTo {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-composer': typeof UnsubscribeComposerRoute
   '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
@@ -1465,6 +1480,7 @@ export interface FileRoutesByTo {
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
+  '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
@@ -1639,6 +1655,7 @@ export interface FileRoutesById {
   '/sm-74buq58v-ls.xml': typeof Sm74buq58vLsDotxmlRoute
   '/sm-74buq58v.xml': typeof Sm74buq58vDotxmlRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/unsubscribe-composer': typeof UnsubscribeComposerRoute
   '/unsubscribe-host': typeof UnsubscribeHostRoute
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
@@ -1660,6 +1677,7 @@ export interface FileRoutesById {
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
+  '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
@@ -1835,6 +1853,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-composer'
     | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
@@ -1856,6 +1875,7 @@ export interface FileRouteTypes {
     | '/admin/data-import'
     | '/admin/directory'
     | '/admin/email-branding'
+    | '/admin/email-composer'
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
@@ -2029,6 +2049,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-composer'
     | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
@@ -2050,6 +2071,7 @@ export interface FileRouteTypes {
     | '/admin/data-import'
     | '/admin/directory'
     | '/admin/email-branding'
+    | '/admin/email-composer'
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
@@ -2223,6 +2245,7 @@ export interface FileRouteTypes {
     | '/sm-74buq58v-ls.xml'
     | '/sm-74buq58v.xml'
     | '/unsubscribe'
+    | '/unsubscribe-composer'
     | '/unsubscribe-host'
     | '/unsubscribe-renter'
     | '/account/learning'
@@ -2244,6 +2267,7 @@ export interface FileRouteTypes {
     | '/admin/data-import'
     | '/admin/directory'
     | '/admin/email-branding'
+    | '/admin/email-composer'
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
@@ -2418,6 +2442,7 @@ export interface RootRouteChildren {
   Sm74buq58vLsDotxmlRoute: typeof Sm74buq58vLsDotxmlRoute
   Sm74buq58vDotxmlRoute: typeof Sm74buq58vDotxmlRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  UnsubscribeComposerRoute: typeof UnsubscribeComposerRoute
   UnsubscribeHostRoute: typeof UnsubscribeHostRoute
   UnsubscribeRenterRoute: typeof UnsubscribeRenterRoute
   AccountLearningRoute: typeof AccountLearningRoute
@@ -2520,6 +2545,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe-host'
       fullPath: '/unsubscribe-host'
       preLoaderRoute: typeof UnsubscribeHostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe-composer': {
+      id: '/unsubscribe-composer'
+      path: '/unsubscribe-composer'
+      fullPath: '/unsubscribe-composer'
+      preLoaderRoute: typeof UnsubscribeComposerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/unsubscribe': {
@@ -3418,6 +3450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEmailVerifyRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/email-composer': {
+      id: '/admin/email-composer'
+      path: '/email-composer'
+      fullPath: '/admin/email-composer'
+      preLoaderRoute: typeof AdminEmailComposerRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/email-branding': {
       id: '/admin/email-branding'
       path: '/email-branding'
@@ -3886,6 +3925,7 @@ interface AdminRouteChildren {
   AdminDataImportRoute: typeof AdminDataImportRoute
   AdminDirectoryRoute: typeof AdminDirectoryRoute
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
+  AdminEmailComposerRoute: typeof AdminEmailComposerRoute
   AdminEmailVerifyRoute: typeof AdminEmailVerifyRoute
   AdminFaqGeneratorRoute: typeof AdminFaqGeneratorRoute
   AdminFollowUpsRoute: typeof AdminFollowUpsRoute
@@ -3951,6 +3991,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDataImportRoute: AdminDataImportRoute,
   AdminDirectoryRoute: AdminDirectoryRoute,
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
+  AdminEmailComposerRoute: AdminEmailComposerRoute,
   AdminEmailVerifyRoute: AdminEmailVerifyRoute,
   AdminFaqGeneratorRoute: AdminFaqGeneratorRoute,
   AdminFollowUpsRoute: AdminFollowUpsRoute,
@@ -4097,6 +4138,7 @@ const rootRouteChildren: RootRouteChildren = {
   Sm74buq58vLsDotxmlRoute: Sm74buq58vLsDotxmlRoute,
   Sm74buq58vDotxmlRoute: Sm74buq58vDotxmlRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  UnsubscribeComposerRoute: UnsubscribeComposerRoute,
   UnsubscribeHostRoute: UnsubscribeHostRoute,
   UnsubscribeRenterRoute: UnsubscribeRenterRoute,
   AccountLearningRoute: AccountLearningRoute,
