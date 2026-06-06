@@ -188,6 +188,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicHooksTwilioInboundRouteImport } from './routes/api/public/hooks/twilio-inbound'
+import { Route as ApiPublicHooksSyncSharetribeMirrorRouteImport } from './routes/api/public/hooks/sync-sharetribe-mirror'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiPublicHooksSyncAffiliateCommissionsRouteImport } from './routes/api/public/hooks/sync-affiliate-commissions'
 import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public/hooks/sms-sender'
@@ -1143,6 +1144,12 @@ const ApiPublicHooksTwilioInboundRoute =
     path: '/api/public/hooks/twilio-inbound',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSyncSharetribeMirrorRoute =
+  ApiPublicHooksSyncSharetribeMirrorRouteImport.update({
+    id: '/api/public/hooks/sync-sharetribe-mirror',
+    path: '/api/public/hooks/sync-sharetribe-mirror',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSyncListingsRoute =
   ApiPublicHooksSyncListingsRouteImport.update({
     id: '/api/public/hooks/sync-listings',
@@ -1513,6 +1520,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
+  '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1723,6 +1731,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
+  '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1934,6 +1943,7 @@ export interface FileRoutesById {
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
+  '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -2146,6 +2156,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
+    | '/api/public/hooks/sync-sharetribe-mirror'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -2356,6 +2367,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
+    | '/api/public/hooks/sync-sharetribe-mirror'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -2566,6 +2578,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
+    | '/api/public/hooks/sync-sharetribe-mirror'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -2703,6 +2716,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSmsSenderRoute: typeof ApiPublicHooksSmsSenderRoute
   ApiPublicHooksSyncAffiliateCommissionsRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
+  ApiPublicHooksSyncSharetribeMirrorRoute: typeof ApiPublicHooksSyncSharetribeMirrorRoute
   ApiPublicHooksTwilioInboundRoute: typeof ApiPublicHooksTwilioInboundRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -3966,6 +3980,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksTwilioInboundRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/sync-sharetribe-mirror': {
+      id: '/api/public/hooks/sync-sharetribe-mirror'
+      path: '/api/public/hooks/sync-sharetribe-mirror'
+      fullPath: '/api/public/hooks/sync-sharetribe-mirror'
+      preLoaderRoute: typeof ApiPublicHooksSyncSharetribeMirrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-listings': {
       id: '/api/public/hooks/sync-listings'
       path: '/api/public/hooks/sync-listings'
@@ -4535,6 +4556,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSyncAffiliateCommissionsRoute:
     ApiPublicHooksSyncAffiliateCommissionsRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
+  ApiPublicHooksSyncSharetribeMirrorRoute:
+    ApiPublicHooksSyncSharetribeMirrorRoute,
   ApiPublicHooksTwilioInboundRoute: ApiPublicHooksTwilioInboundRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
