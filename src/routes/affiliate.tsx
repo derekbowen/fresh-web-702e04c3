@@ -1,9 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-// Canonical, memorable URL for the affiliate dashboard.
-// The actual UI lives in /affiliate (kept for back-compat).
+// Back-compat: old dashboard URL → new canonical URL.
 export const Route = createFileRoute("/affiliate")({
   beforeLoad: () => {
-    throw redirect({ to: "/affiliate" });
+    throw redirect({ to: "/referral/dashboard" });
   },
 });
