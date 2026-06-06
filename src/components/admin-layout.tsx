@@ -88,6 +88,8 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     label: "Email",
     items: [
       { to: "/admin/email-composer", label: "✉️ Email Composer", icon: Mail },
+      { to: "/admin/email-queue", label: "Email queue 📬", icon: Mail },
+
       { to: "/admin/founder-blast", label: "Founder blast", icon: Mail },
       { to: "/admin/host-drip", label: "Host drip", icon: Mail },
       { to: "/admin/renter-drip", label: "Renter drip", icon: Mail },
