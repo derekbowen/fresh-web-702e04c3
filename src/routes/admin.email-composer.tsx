@@ -42,7 +42,7 @@ const fetchRecentCampaigns = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
       .from("composer_campaigns" as any)
-      .select("id, subject, audience, recipient_count, sent_count, failed_count, status, test_only, scheduled_at, created_at, ab_test_id, ab_variant, sequence_id, sequence_position")
+      .select("id, subject, audience, recipient_count, sent_count, failed_count, status, test_only, scheduled_at, created_at, ab_test_id, ab_variant, sequence_id, sequence_position, plain_body, preview_text")
       .order("created_at", { ascending: false })
       .limit(30);
     return data || [];
