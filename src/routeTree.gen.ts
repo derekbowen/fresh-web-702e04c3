@@ -204,6 +204,7 @@ import { Route as ApiPublicHooksBlogAutogenRouteImport } from './routes/api/publ
 import { Route as ApiPublicHooksAutoOutreachWorkerRouteImport } from './routes/api/public/hooks/auto-outreach-worker'
 import { Route as ApiPublicHooksAliasBackfillRouteImport } from './routes/api/public/hooks/alias-backfill'
 import { Route as ApiPublicHooksAcademyHealthRouteImport } from './routes/api/public/hooks.academy-health'
+import { Route as ApiPublicHooksAbAutoWinnerRouteImport } from './routes/api/public/hooks.ab-auto-winner'
 import { Route as ApiCertificatesUidPdfRouteImport } from './routes/api/certificates.$uid.pdf'
 import { Route as PPoolProsCCategoryStateRouteImport } from './routes/p.pool-pros.c.$category.$state'
 import { Route as PPoolProsCCategoryStateCityRouteImport } from './routes/p.pool-pros.c.$category.$state.$city'
@@ -1233,6 +1234,12 @@ const ApiPublicHooksAcademyHealthRoute =
     path: '/api/public/hooks/academy-health',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAbAutoWinnerRoute =
+  ApiPublicHooksAbAutoWinnerRouteImport.update({
+    id: '/api/public/hooks/ab-auto-winner',
+    path: '/api/public/hooks/ab-auto-winner',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCertificatesUidPdfRoute = ApiCertificatesUidPdfRouteImport.update({
   id: '/api/certificates/$uid/pdf',
   path: '/api/certificates/$uid/pdf',
@@ -1418,6 +1425,7 @@ export interface FileRoutesByFullPath {
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/ab-auto-winner': typeof ApiPublicHooksAbAutoWinnerRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
@@ -1618,6 +1626,7 @@ export interface FileRoutesByTo {
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/ab-auto-winner': typeof ApiPublicHooksAbAutoWinnerRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
@@ -1819,6 +1828,7 @@ export interface FileRoutesById {
   '/p/es/$slug': typeof PEsSlugRoute
   '/p/pool-pros/$slug': typeof PPoolProsSlugRoute
   '/api/certificates/$uid/pdf': typeof ApiCertificatesUidPdfRoute
+  '/api/public/hooks/ab-auto-winner': typeof ApiPublicHooksAbAutoWinnerRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
   '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
@@ -2021,6 +2031,7 @@ export interface FileRouteTypes {
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/ab-auto-winner'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/auto-outreach-worker'
@@ -2221,6 +2232,7 @@ export interface FileRouteTypes {
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/ab-auto-winner'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/auto-outreach-worker'
@@ -2421,6 +2433,7 @@ export interface FileRouteTypes {
     | '/p/es/$slug'
     | '/p/pool-pros/$slug'
     | '/api/certificates/$uid/pdf'
+    | '/api/public/hooks/ab-auto-winner'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
     | '/api/public/hooks/auto-outreach-worker'
@@ -2552,6 +2565,7 @@ export interface RootRouteChildren {
   PCourseSlugRoute: typeof PCourseSlugRoute
   PEsSlugRoute: typeof PEsSlugRoute
   ApiCertificatesUidPdfRoute: typeof ApiCertificatesUidPdfRoute
+  ApiPublicHooksAbAutoWinnerRoute: typeof ApiPublicHooksAbAutoWinnerRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
   ApiPublicHooksAliasBackfillRoute: typeof ApiPublicHooksAliasBackfillRoute
   ApiPublicHooksAutoOutreachWorkerRoute: typeof ApiPublicHooksAutoOutreachWorkerRoute
@@ -3949,6 +3963,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksAcademyHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/ab-auto-winner': {
+      id: '/api/public/hooks/ab-auto-winner'
+      path: '/api/public/hooks/ab-auto-winner'
+      fullPath: '/api/public/hooks/ab-auto-winner'
+      preLoaderRoute: typeof ApiPublicHooksAbAutoWinnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/certificates/$uid/pdf': {
       id: '/api/certificates/$uid/pdf'
       path: '/api/certificates/$uid/pdf'
@@ -4286,6 +4307,7 @@ const rootRouteChildren: RootRouteChildren = {
   PCourseSlugRoute: PCourseSlugRoute,
   PEsSlugRoute: PEsSlugRoute,
   ApiCertificatesUidPdfRoute: ApiCertificatesUidPdfRoute,
+  ApiPublicHooksAbAutoWinnerRoute: ApiPublicHooksAbAutoWinnerRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
   ApiPublicHooksAliasBackfillRoute: ApiPublicHooksAliasBackfillRoute,
   ApiPublicHooksAutoOutreachWorkerRoute: ApiPublicHooksAutoOutreachWorkerRoute,
@@ -4321,13 +4343,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
