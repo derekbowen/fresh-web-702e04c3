@@ -275,7 +275,7 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
           </div>
         )}
 
-        <nav className="flex h-[calc(100%-6.5rem)] flex-col overflow-y-auto p-2">
+        <nav className="flex flex-1 flex-col overflow-y-auto p-2">
           <div className="flex-1">
             {groups.map((g) => {
               const open = isOpen(g.label);
