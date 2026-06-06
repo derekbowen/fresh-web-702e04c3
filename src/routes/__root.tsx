@@ -77,7 +77,6 @@ export const Route = createRootRoute({
         { name: "theme-color", content: "#0ea5e9" },
         { name: "google-site-verification", content: "nDLvX6F18GNzJw-bLU6J4HjK3kfbuRIJENjW-6O5ZpU" },
         ...meta.meta,
-        { property: "og:type", content: "website" },
       ],
       links: [
         { rel: "stylesheet", href: appCss },
