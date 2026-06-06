@@ -42,7 +42,7 @@ const fetchRecentCampaigns = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
       .from("composer_campaigns" as any)
-      .select("id, subject, audience, recipient_count, sent_count, failed_count, status, test_only, scheduled_at, created_at, ab_test_id, ab_variant, sequence_id, sequence_position")
+      .select("id, subject, audience, recipient_count, sent_count, failed_count, status, test_only, scheduled_at, created_at, ab_test_id, ab_variant, sequence_id, sequence_position, plain_body, preview_text")
       .order("created_at", { ascending: false })
       .limit(30);
     return data || [];
@@ -144,6 +144,7 @@ const runSendEmail = createServerFn({ method: "POST" })
     preview?: string;
     testOnly?: boolean;
     testRecipient?: string;
+    delayMs?: number;
   }) => d)
   .handler(async ({ context, data }) => {
     const { userId } = context as { userId: string };
@@ -281,6 +282,7 @@ function Page() {
   const [sequenceStartLocal, setSequenceStartLocal] = useState<string>(defaultScheduleValue());
   const [samplePercent, setSamplePercent] = useState(10);
   const [winnerHours, setWinnerHours] = useState(2);
+  const [delayMs, setDelayMs] = useState(700);
 
   // Preview-as-recipient
   const [previewEmail, setPreviewEmail] = useState("");
@@ -432,6 +434,7 @@ function Page() {
             audience, customEmails,
             singleEmail: audience === "single" ? singleEmail : undefined,
             subject, bodyText, preview,
+            delayMs,
           },
         });
         setResult(`✅ Campaign ${r.campaignId.slice(0, 8)}… complete. Sent ${r.sent}/${r.total}, failed ${r.failed}.`);
@@ -537,6 +540,20 @@ function Page() {
     if (!confirm("Cancel this scheduled send?")) return;
     await cancel({ data: { campaignId: id } });
     recent.refetch();
+  }
+
+  function handleDuplicate(r: any) {
+    setSubject(r.subject || "");
+    setBodyText(r.plain_body || "");
+    setPreview(r.preview_text || "");
+    const aud = String(r.audience || "").split(":")[0];
+    if (["hosts", "renters", "waitlist", "custom", "single"].includes(aud)) {
+      setAudience(aud as Audience);
+    }
+    setSendMode("now");
+    setTab("write");
+    setResult(`📋 Duplicated "${r.subject}". Edit and send when ready.`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
@@ -870,6 +887,28 @@ function Page() {
               </div>
             )}
 
+            {(sendMode === "now" || sendMode === "later") && (
+              <div className="mb-3 text-xs border rounded p-2 bg-slate-50">
+                <label className="flex items-center gap-2 flex-wrap">
+                  <span className="font-medium">⏱ Throttle:</span>
+                  <input
+                    type="range" min={500} max={3000} step={100}
+                    value={delayMs}
+                    onChange={(e) => setDelayMs(Number(e.target.value))}
+                    className="flex-1 min-w-[120px]"
+                  />
+                  <span className="font-mono w-16 text-right">{delayMs}ms</span>
+                  <span className="text-slate-500">
+                    (~{Math.round(60000 / delayMs)}/min)
+                  </span>
+                </label>
+                <p className="text-slate-500 mt-1">
+                  Lower = faster, but Emailit caps at 2/sec. 700ms is safe.
+                </p>
+              </div>
+            )}
+
+
             <button
               onClick={handleSend}
               disabled={sending || (sendMode !== "sequence" && audienceCount === 0)}
@@ -995,7 +1034,14 @@ function Page() {
                   <td>{r.sent_count}</td>
                   <td>{r.failed_count}</td>
                   <td className="text-xs">{r.status}</td>
-                  <td>
+                  <td className="space-x-2 whitespace-nowrap">
+                    <button
+                      onClick={() => handleDuplicate(r)}
+                      className="text-xs text-sky-700 hover:underline"
+                      title="Load subject + body into composer to send again"
+                    >
+                      Duplicate
+                    </button>
                     {r.status === "scheduled" && (
                       <button
                         onClick={() => handleCancel(r.id)}

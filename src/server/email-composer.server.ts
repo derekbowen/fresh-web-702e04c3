@@ -253,6 +253,8 @@ export async function sendComposerEmail(opts: {
   createdBy?: string;
   /** Existing campaign row to send (used by the scheduler). */
   campaignId?: string;
+  /** Delay between sends in ms (throttle). Default 700 (~85/min, under Emailit's 2/sec). Min 500, max 5000. */
+  delayMs?: number;
 }): Promise<{
   campaignId: string;
   total: number;
@@ -381,7 +383,7 @@ export async function sendComposerEmail(opts: {
         await new Promise((res) => setTimeout(res, wait));
       }
     }
-    await new Promise((res) => setTimeout(res, 700));
+    await new Promise((res) => setTimeout(res, Math.min(5000, Math.max(500, opts.delayMs ?? 700))));
   }
 
   await supabaseAdmin.from("composer_campaigns" as any)
