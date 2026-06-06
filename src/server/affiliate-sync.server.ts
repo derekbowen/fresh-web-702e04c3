@@ -203,7 +203,14 @@ export async function syncAffiliateCommissions(): Promise<{
         }
 
         // Update referral milestone state
-        const update: Record<string, unknown> = {
+        const update: {
+          completed_bookings_count: number;
+          last_booking_at: string;
+          total_gross_cents: number;
+          first_booking_at?: string;
+          activation_paid_at?: string;
+          recurring_unlocked_at?: string;
+        } = {
           completed_bookings_count: nextCount,
           last_booking_at: bookingDate,
           total_gross_cents: (ref.total_gross_cents ?? 0) + gross,
@@ -216,6 +223,7 @@ export async function syncAffiliateCommissions(): Promise<{
 
         // Mutate in-memory ref so subsequent txs in same page count correctly
         Object.assign(ref, update);
+
       }
     }
 
