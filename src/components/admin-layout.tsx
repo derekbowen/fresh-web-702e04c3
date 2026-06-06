@@ -85,6 +85,17 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     ],
   },
   {
+    label: "Email",
+    items: [
+      { to: "/admin/email-composer", label: "✉️ Email Composer", icon: Mail },
+      { to: "/admin/founder-blast", label: "Founder blast", icon: Mail },
+      { to: "/admin/host-drip", label: "Host drip", icon: Mail },
+      { to: "/admin/renter-drip", label: "Renter drip", icon: Mail },
+      { to: "/admin/email-branding", label: "Email branding", icon: Mail },
+      { to: "/admin/email-verify", label: "Email verify", icon: CheckCircle2 },
+    ],
+  },
+  {
     label: "Users & Ops",
     items: [
       { to: "/admin/leads", label: "Lead inbox", icon: Mail },
@@ -94,9 +105,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/auto-outreach", label: "Auto-outreach 🤖", icon: Bot },
       { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
       { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
-      { to: "/admin/email-composer", label: "✉️ Email Composer", icon: Mail },
-      { to: "/admin/email-branding", label: "Email branding", icon: Mail },
-      { to: "/admin/email-verify", label: "Email verify", icon: CheckCircle2 },
+      { to: "/admin/sms-blast", label: "SMS blast", icon: Bell },
       { to: "/admin/site-footer", label: "Site footer", icon: LinkIcon },
       { to: "/admin/directory", label: "Directory moderation", icon: Building2 },
       { to: "/admin/claims", label: "Listing claims", icon: ShieldCheck },
@@ -104,6 +113,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/team", label: "Admin team", icon: ShieldCheck },
     ],
   },
+
 ];
 
 const ALL_ITEMS = GROUPS.flatMap((g) => g.items);

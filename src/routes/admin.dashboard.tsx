@@ -209,9 +209,18 @@ function AdminDashboard() {
                 {stats && <> · Updated {new Date(stats.generatedAt).toLocaleTimeString()}</>}
               </p>
             </div>
-            <button onClick={load} className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
-              {loading ? "Refreshing…" : "Refresh"}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                to="/admin/email-composer"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-blue-700 hover:to-indigo-700"
+              >
+                ✉️ Email Tools
+              </Link>
+              <button onClick={load} className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+                {loading ? "Refreshing…" : "Refresh"}
+              </button>
+            </div>
+
           </div>
 
           {/* Sticky band nav */}
