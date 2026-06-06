@@ -13,11 +13,16 @@ export type QueuedEmail = {
   scheduled_at: string;
 };
 
-export const listQueuedEmails = createServerFn({ method: "GET" }).handler(
-  async (): Promise<{ ok: boolean; emails: QueuedEmail[]; error?: string }> => {
+export const listQueuedEmails = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ ok: boolean; emails: QueuedEmail[]; error?: string }> => {
     try {
-      await requireAdmin();
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { userId } = context as { userId: string };
+      const { data: roleRow } = await supabaseAdmin
+        .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+      if (!roleRow) return { ok: false, emails: [], error: "Not authorized" };
+
 
       const [host, renter] = await Promise.all([
         supabaseAdmin
