@@ -47,10 +47,12 @@ import { Route as LandingPageRouteImport } from './routes/landing-page'
 import { Route as JobsDotxmlRouteImport } from './routes/jobs[.]xml'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AffiliateRouteImport } from './routes/affiliate'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as TechnicalSupportSplatRouteImport } from './routes/technical-support.$'
+import { Route as ReferralApplyRouteImport } from './routes/referral.apply'
 import { Route as PoolManagementSplatRouteImport } from './routes/pool-management.$'
 import { Route as PWaiverGeneratorRouteImport } from './routes/p.waiver-generator'
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
@@ -161,6 +163,7 @@ import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-her
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminAutoRefreshRouteImport } from './routes/admin.auto-refresh'
 import { Route as AdminAutoOutreachRouteImport } from './routes/admin.auto-outreach'
+import { Route as AdminAffiliatesRouteImport } from './routes/admin.affiliates'
 import { Route as AdminAddContactsRouteImport } from './routes/admin.add-contacts'
 import { Route as AdminActivityCitiesRouteImport } from './routes/admin.activity-cities'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
@@ -185,6 +188,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicHooksTwilioInboundRouteImport } from './routes/api/public/hooks/twilio-inbound'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
+import { Route as ApiPublicHooksSyncAffiliateCommissionsRouteImport } from './routes/api/public/hooks/sync-affiliate-commissions'
 import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public/hooks/sms-sender'
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
@@ -415,6 +419,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AffiliateRoute = AffiliateRouteImport.update({
+  id: '/affiliate',
+  path: '/affiliate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -434,6 +443,11 @@ const TechnicalSupportSplatRoute = TechnicalSupportSplatRouteImport.update({
   id: '/technical-support/$',
   path: '/technical-support/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ReferralApplyRoute = ReferralApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => ReferralRoute,
 } as any)
 const PoolManagementSplatRoute = PoolManagementSplatRouteImport.update({
   id: '/pool-management/$',
@@ -997,6 +1011,11 @@ const AdminAutoOutreachRoute = AdminAutoOutreachRouteImport.update({
   path: '/auto-outreach',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAffiliatesRoute = AdminAffiliatesRouteImport.update({
+  id: '/affiliates',
+  path: '/affiliates',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAddContactsRoute = AdminAddContactsRouteImport.update({
   id: '/add-contacts',
   path: '/add-contacts',
@@ -1122,6 +1141,12 @@ const ApiPublicHooksSyncListingsRoute =
   ApiPublicHooksSyncListingsRouteImport.update({
     id: '/api/public/hooks/sync-listings',
     path: '/api/public/hooks/sync-listings',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSyncAffiliateCommissionsRoute =
+  ApiPublicHooksSyncAffiliateCommissionsRouteImport.update({
+    id: '/api/public/hooks/sync-affiliate-commissions',
+    path: '/api/public/hooks/sync-affiliate-commissions',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksSmsSenderRoute = ApiPublicHooksSmsSenderRouteImport.update({
@@ -1285,12 +1310,13 @@ const PPoolProsCCategoryStateCityRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/affiliate': typeof AffiliateRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
-  '/referral': typeof ReferralRoute
+  '/referral': typeof ReferralRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
@@ -1326,6 +1352,7 @@ export interface FileRoutesByFullPath {
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
   '/admin/add-contacts': typeof AdminAddContactsRoute
+  '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1436,6 +1463,7 @@ export interface FileRoutesByFullPath {
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
+  '/referral/apply': typeof ReferralApplyRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1476,6 +1504,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
+  '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1490,12 +1519,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/affiliate': typeof AffiliateRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
-  '/referral': typeof ReferralRoute
+  '/referral': typeof ReferralRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
@@ -1531,6 +1561,7 @@ export interface FileRoutesByTo {
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
   '/admin/add-contacts': typeof AdminAddContactsRoute
+  '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1641,6 +1672,7 @@ export interface FileRoutesByTo {
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
+  '/referral/apply': typeof ReferralApplyRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1681,6 +1713,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
+  '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1696,12 +1729,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/affiliate': typeof AffiliateRoute
   '/auth': typeof AuthRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
-  '/referral': typeof ReferralRoute
+  '/referral': typeof ReferralRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
@@ -1737,6 +1771,7 @@ export interface FileRoutesById {
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
   '/admin/add-contacts': typeof AdminAddContactsRoute
+  '/admin/affiliates': typeof AdminAffiliatesRoute
   '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
@@ -1847,6 +1882,7 @@ export interface FileRoutesById {
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
+  '/referral/apply': typeof ReferralApplyRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1887,6 +1923,7 @@ export interface FileRoutesById {
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
+  '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -1903,6 +1940,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/affiliate'
     | '/auth'
     | '/blog'
     | '/jobs.xml'
@@ -1944,6 +1982,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/activity-cities'
     | '/admin/add-contacts'
+    | '/admin/affiliates'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -2054,6 +2093,7 @@ export interface FileRouteTypes {
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
     | '/pool-management/$'
+    | '/referral/apply'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2094,6 +2134,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sms-sender'
+    | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
@@ -2108,6 +2149,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/affiliate'
     | '/auth'
     | '/blog'
     | '/jobs.xml'
@@ -2149,6 +2191,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/activity-cities'
     | '/admin/add-contacts'
+    | '/admin/affiliates'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -2259,6 +2302,7 @@ export interface FileRouteTypes {
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
     | '/pool-management/$'
+    | '/referral/apply'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2299,6 +2343,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sms-sender'
+    | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
@@ -2313,6 +2358,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/affiliate'
     | '/auth'
     | '/blog'
     | '/jobs.xml'
@@ -2354,6 +2400,7 @@ export interface FileRouteTypes {
     | '/account/learning'
     | '/admin/activity-cities'
     | '/admin/add-contacts'
+    | '/admin/affiliates'
     | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
@@ -2464,6 +2511,7 @@ export interface FileRouteTypes {
     | '/p/swimply-alternative-vs-pool-rental-near-me'
     | '/p/waiver-generator'
     | '/pool-management/$'
+    | '/referral/apply'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2504,6 +2552,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
     | '/api/public/hooks/sms-sender'
+    | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
@@ -2519,12 +2568,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  AffiliateRoute: typeof AffiliateRoute
   AuthRoute: typeof AuthRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   JobsDotxmlRoute: typeof JobsDotxmlRoute
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
-  ReferralRoute: typeof ReferralRoute
+  ReferralRoute: typeof ReferralRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDefaultDotxmlRoute: typeof SitemapDefaultDotxmlRoute
   SitemapDirectoryDotxmlRoute: typeof SitemapDirectoryDotxmlRoute
@@ -2639,6 +2689,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
   ApiPublicHooksSmsSenderRoute: typeof ApiPublicHooksSmsSenderRoute
+  ApiPublicHooksSyncAffiliateCommissionsRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
   ApiPublicHooksTwilioInboundRoute: typeof ApiPublicHooksTwilioInboundRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -2916,6 +2967,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/affiliate': {
+      id: '/affiliate'
+      path: '/affiliate'
+      fullPath: '/affiliate'
+      preLoaderRoute: typeof AffiliateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -2943,6 +3001,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/technical-support/$'
       preLoaderRoute: typeof TechnicalSupportSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/referral/apply': {
+      id: '/referral/apply'
+      path: '/apply'
+      fullPath: '/referral/apply'
+      preLoaderRoute: typeof ReferralApplyRouteImport
+      parentRoute: typeof ReferralRoute
     }
     '/pool-management/$': {
       id: '/pool-management/$'
@@ -3714,6 +3779,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAutoOutreachRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/affiliates': {
+      id: '/admin/affiliates'
+      path: '/affiliates'
+      fullPath: '/admin/affiliates'
+      preLoaderRoute: typeof AdminAffiliatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/add-contacts': {
       id: '/admin/add-contacts'
       path: '/add-contacts'
@@ -3880,6 +3952,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/sync-listings'
       fullPath: '/api/public/hooks/sync-listings'
       preLoaderRoute: typeof ApiPublicHooksSyncListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/sync-affiliate-commissions': {
+      id: '/api/public/hooks/sync-affiliate-commissions'
+      path: '/api/public/hooks/sync-affiliate-commissions'
+      fullPath: '/api/public/hooks/sync-affiliate-commissions'
+      preLoaderRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/sms-sender': {
@@ -4089,6 +4168,7 @@ const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminActivityCitiesRoute: typeof AdminActivityCitiesRoute
   AdminAddContactsRoute: typeof AdminAddContactsRoute
+  AdminAffiliatesRoute: typeof AdminAffiliatesRoute
   AdminAutoOutreachRoute: typeof AdminAutoOutreachRoute
   AdminAutoRefreshRoute: typeof AdminAutoRefreshRoute
   AdminBlogRoute: typeof AdminBlogRoute
@@ -4159,6 +4239,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminActivityCitiesRoute: AdminActivityCitiesRoute,
   AdminAddContactsRoute: AdminAddContactsRoute,
+  AdminAffiliatesRoute: AdminAffiliatesRoute,
   AdminAutoOutreachRoute: AdminAutoOutreachRoute,
   AdminAutoRefreshRoute: AdminAutoRefreshRoute,
   AdminBlogRoute: AdminBlogRoute,
@@ -4248,6 +4329,18 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface ReferralRouteChildren {
+  ReferralApplyRoute: typeof ReferralApplyRoute
+}
+
+const ReferralRouteChildren: ReferralRouteChildren = {
+  ReferralApplyRoute: ReferralApplyRoute,
+}
+
+const ReferralRouteWithChildren = ReferralRoute._addFileChildren(
+  ReferralRouteChildren,
+)
+
 interface PPoolProsCCategoryStateRouteChildren {
   PPoolProsCCategoryStateCityRoute: typeof PPoolProsCCategoryStateCityRoute
 }
@@ -4290,12 +4383,13 @@ const PPoolProsRouteWithChildren = PPoolProsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  AffiliateRoute: AffiliateRoute,
   AuthRoute: AuthRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   JobsDotxmlRoute: JobsDotxmlRoute,
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
-  ReferralRoute: ReferralRoute,
+  ReferralRoute: ReferralRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDefaultDotxmlRoute: SitemapDefaultDotxmlRoute,
   SitemapDirectoryDotxmlRoute: SitemapDirectoryDotxmlRoute,
@@ -4417,6 +4511,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
   ApiPublicHooksSmsSenderRoute: ApiPublicHooksSmsSenderRoute,
+  ApiPublicHooksSyncAffiliateCommissionsRoute:
+    ApiPublicHooksSyncAffiliateCommissionsRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
   ApiPublicHooksTwilioInboundRoute: ApiPublicHooksTwilioInboundRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
@@ -4428,13 +4524,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

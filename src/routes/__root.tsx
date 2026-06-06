@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import appCss from "../styles.css?url";
 import { SiteHeader, SiteFooter, GlobalChromeProvider, FooterDataProvider } from "@/components/site-layout";
 import { HydrationDebug } from "@/components/hydration-debug";
+import { AffiliateRefCapture } from "@/components/affiliate-ref-capture";
 
 // Intercom ships ~350KB of JS. Lazy-load it so it never blocks first paint
 // and never lands in the entry chunk for routes that don't show the widget.
@@ -126,6 +127,7 @@ function RootComponent() {
   const content = (
     <>
       <HydrationDebug />
+      <AffiliateRefCapture />
       <div className="flex min-h-screen flex-col">
         {!isAdmin && <SiteHeader isAuthed={isAuthed} />}
         <div className="flex flex-1 flex-col">
