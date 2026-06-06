@@ -1,39 +1,46 @@
 ---
 name: Affiliate program
-description: 5% lifetime commission on referred Sharetribe hosts. Schema, routes, sync cron, attribution flow.
+description: Milestone-trigger commission model with tiered titles. Schema, sync, dashboards, coaching log.
 type: feature
 ---
 
-## Goal
-Anyone can apply at /referral/apply. Admin approves at /admin/affiliates. Affiliate gets a unique referral code (`?ref=CODE` link). When a Sharetribe host gets attributed to that affiliate (manual link by admin or future cookie→email match), 5% of every completed booking that host takes is recorded as a commission. Affiliate sees totals at /affiliate. Admin records payouts manually.
+## Model (post-2026-06-06 redesign)
 
-## Tables (all FORCE RLS, no anon grants)
-- `affiliates` — code (auto, unique), status enum, payout_method/details, user_id auto-linked on signup via trigger `link_affiliate_on_signup`.
-- `affiliate_clicks` — every ?ref= landing.
-- `affiliate_referrals` — sharetribe_user_id (unique) ↔ affiliate_id.
-- `affiliate_commissions` — sharetribe_tx_id (unique), 5% of payinTotal, status pending → approved (7d) → paid.
-- `affiliate_payouts` — admin batch record.
+Per-host milestones drive payouts. Tiers are titles only.
 
-Authenticated SELECT policies scope rows to `affiliates.user_id = auth.uid()` OR `has_role(auth.uid(),'admin')`. All writes via supabaseAdmin.
+| Trigger | Payout |
+|---|---|
+| Host signup via `?ref=CODE` | $0 |
+| Host's 1st completed booking | **$100 activation bonus** (commission_kind=`activation_bonus`) |
+| Host's 2nd booking | nothing (the gap) |
+| Host's 3rd+ booking | **5% recurring** of payinTotal (commission_kind=`recurring`) |
+| Host dormant 60+ days | recurring stays paused until next booking ends dormancy |
 
-## Routes
-- Public: `/referral` (marketing), `/referral/apply` (form).
-- Affiliate: `/affiliate` (dashboard, requires auth).
-- Admin: `/admin/affiliates` (list, approve/reject/pause, link Sharetribe host, record payout).
-- Hook: `/api/public/hooks/sync-affiliate-commissions` — authorized via `authorizeHookRequest` (vault `hooks_admin_token`).
+Tiers (auto-computed unless `affiliates.tier_override=true`):
+- **starter** — default
+- **lead** — 5+ active hosts (3+ bookings AND last booking ≤60d)
+- **captain** — lead + crew GMV ≥$10K in last 30d
+
+## Tables (all FORCE RLS, supabaseAdmin writes)
+- `affiliates` — adds `tier` enum, `tier_set_at`, `tier_override`.
+- `affiliate_referrals` — adds `completed_bookings_count`, `activation_paid_at`, `recurring_unlocked_at`, `last_booking_at`, `total_gross_cents`.
+- `affiliate_commissions` — adds `kind` enum (`activation_bonus` | `recurring`).
+- `affiliate_coaching_log` — affiliate-writable (own crew), admin-readable.
 
 ## Server fns
-- `src/lib/affiliate-apply.functions.ts` — `applyAsAffiliate`.
-- `src/lib/affiliate-click.functions.ts` — `recordAffiliateClick`.
-- `src/lib/affiliate-dashboard.functions.ts` — `getAffiliateDashboard`, `updateMyPayoutMethod`.
-- `src/lib/affiliate-admin.functions.ts` — `listAffiliatesAdmin`, `setAffiliateStatus`, `linkHostToAffiliate`, `createAffiliatePayout`, `reverseCommission`.
-- `src/server/affiliate-sync.server.ts` — `syncAffiliateCommissions()` polls Sharetribe `/transactions/query` with `lastTransition=transition/complete`, upserts by `sharetribe_tx_id`, auto-approves pending older than 7 days.
+- `src/server/affiliate-sync.server.ts` — `syncAffiliateCommissions()` walks Sharetribe completed tx chronologically per host, applies milestone logic, calls tier recompute for touched affiliates.
+- `src/lib/affiliate-tier.functions.ts` — `recomputeAffiliateTier(id)`, `setAffiliateTierOverride` (admin).
+- `src/lib/affiliate-coaching.functions.ts` — `logCoachingActivity`, `listMyCoachingLog`, `listCoachingForAffiliate` (admin).
+- `src/lib/affiliate-coaching-templates.ts` — 4 pre-written scripts (Nextdoor, FB group, text-a-friend, IG story).
+- `src/lib/affiliate-dashboard.functions.ts` — `getAffiliateDashboard` returns tier, crew (with traffic-light status), tier progress bars, kind-split totals.
+- `src/lib/affiliate-admin.functions.ts` — `listAffiliatesAdmin` now returns tier, active_host_count, gmv_30d_cents; supports sort=`gmv_30d`/`approved_cents`.
 
-## Cron
-`sync-affiliate-commissions` runs `0 5 * * *` UTC → POST hook with `x-admin-token: get_hooks_admin_token()`.
+## UI
+- `/p/affiliate-dashboard` — tier block + progress bars, "How you earn" card, crew cards (status dot + Log coaching button → templates modal), commissions split by kind.
+- `/admin/affiliates` — top-10 leaderboard by 30d GMV, columns for tier/active/GMV, drawer for coaching log, tier override dialog.
 
-## Cookie capture
-`src/components/affiliate-ref-capture.tsx` mounted in `__root.tsx`. Reads `?ref=`, sets `prnm_ref` cookie (90 days), fires `recordAffiliateClick`. The cookie is captured but not yet wired to host-lead submission — admin manually links hosts via Sharetribe UUID for v1.
-
-## Out of scope (v1)
-Stripe Connect payouts, real-time webhooks, renter referrals, 1099s, automated cookie→host email attribution at lead submit (planned, not built).
+## Out of scope (still)
+- Auto-promotion emails on tier change
+- Sub-codes per host
+- Branded captain landing pages
+- Stripe Connect payouts (still manual)
