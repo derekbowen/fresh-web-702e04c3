@@ -2505,6 +2505,9 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          intercom_id: string | null
+          intercom_paused_at: string | null
+          intercom_synced_at: string | null
           last_synced_at: string
           name: string | null
           sequence_scheduled: boolean
@@ -2519,6 +2522,9 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          intercom_id?: string | null
+          intercom_paused_at?: string | null
+          intercom_synced_at?: string | null
           last_synced_at?: string
           name?: string | null
           sequence_scheduled?: boolean
@@ -2533,6 +2539,9 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          intercom_id?: string | null
+          intercom_paused_at?: string | null
+          intercom_synced_at?: string | null
           last_synced_at?: string
           name?: string | null
           sequence_scheduled?: boolean
@@ -2632,6 +2641,39 @@ export type Database = {
           snippet?: string | null
           source_url?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      intercom_events_log: {
+        Row: {
+          email: string | null
+          id: string
+          intercom_contact_id: string | null
+          payload: Json
+          processed_at: string | null
+          received_at: string
+          result: string | null
+          topic: string
+        }
+        Insert: {
+          email?: string | null
+          id?: string
+          intercom_contact_id?: string | null
+          payload: Json
+          processed_at?: string | null
+          received_at?: string
+          result?: string | null
+          topic: string
+        }
+        Update: {
+          email?: string | null
+          id?: string
+          intercom_contact_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          received_at?: string
+          result?: string | null
+          topic?: string
         }
         Relationships: []
       }
@@ -3874,6 +3916,9 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          intercom_id: string | null
+          intercom_paused_at: string | null
+          intercom_synced_at: string | null
           last_error: string | null
           latitude: number | null
           longitude: number | null
@@ -3892,6 +3937,9 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          intercom_id?: string | null
+          intercom_paused_at?: string | null
+          intercom_synced_at?: string | null
           last_error?: string | null
           latitude?: number | null
           longitude?: number | null
@@ -3910,6 +3958,9 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          intercom_id?: string | null
+          intercom_paused_at?: string | null
+          intercom_synced_at?: string | null
           last_error?: string | null
           latitude?: number | null
           longitude?: number | null
