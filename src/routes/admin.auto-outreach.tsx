@@ -19,6 +19,16 @@ import {
 
 export const Route = createFileRoute("/admin/auto-outreach")({
   component: AutoOutreachPage,
+  errorComponent: ({ error, reset }) => (
+    <AdminLayout>
+      <div className="max-w-3xl mx-auto p-6 space-y-3">
+        <h1 className="text-2xl font-bold">Auto-outreach</h1>
+        <p className="text-sm text-destructive">Something went wrong loading this page.</p>
+        <pre className="text-xs bg-muted p-3 rounded overflow-auto whitespace-pre-wrap">{String((error as any)?.message || error)}</pre>
+        <Button onClick={() => reset()}>Try again</Button>
+      </div>
+    </AdminLayout>
+  ),
   head: () => ({ meta: [{ title: "Auto-outreach — Admin" }, { name: "robots", content: "noindex" }] }),
 });
 
@@ -29,7 +39,11 @@ function AutoOutreachPage() {
   const runFn = useServerFn(runAutoOutreachNow);
   const cancelFn = useServerFn(cancelAutoOutreachMessage);
 
-  const { data, isLoading } = useQuery({ queryKey: ["auto-outreach-state"], queryFn: () => fetchState({ data: {} } as any) });
+  const { data, isLoading, error: queryError } = useQuery({
+    queryKey: ["auto-outreach-state"],
+    queryFn: () => fetchState({ data: {} } as any),
+    retry: false,
+  });
   const settings = data?.settings;
 
   const [form, setForm] = useState({
@@ -59,16 +73,19 @@ function AutoOutreachPage() {
   const save = useMutation({
     mutationFn: () => saveFn({ data: { ...form, reply_to: form.reply_to || null } } as any),
     onSuccess: (r: any) => { r?.ok ? toast.success("Saved") : toast.error(r?.error || "Failed"); qc.invalidateQueries({ queryKey: ["auto-outreach-state"] }); },
+    onError: (e: any) => toast.error(e?.message || "Save failed"),
   });
 
   const runNow = useMutation({
     mutationFn: () => runFn({ data: {} } as any),
     onSuccess: (r: any) => { toast.success(`Enqueued ${r?.enqueued ?? 0} • Sent ${r?.sent ?? 0} • Failed ${r?.failed ?? 0}`); qc.invalidateQueries({ queryKey: ["auto-outreach-state"] }); },
+    onError: (e: any) => toast.error(e?.message || "Run failed — check server logs"),
   });
 
   const cancel = useMutation({
     mutationFn: (id: string) => cancelFn({ data: { id } } as any),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["auto-outreach-state"] }); },
+    onError: (e: any) => toast.error(e?.message || "Cancel failed"),
   });
 
   return (
@@ -81,6 +98,13 @@ function AutoOutreachPage() {
           </div>
           <Button onClick={() => runNow.mutate()} disabled={runNow.isPending}>{runNow.isPending ? "Running…" : "Run now"}</Button>
         </div>
+
+        {queryError && (
+          <div className="border border-destructive/40 bg-destructive/10 text-destructive rounded-md p-3 text-sm">
+            Couldn't load state: {(queryError as any)?.message || String(queryError)}
+          </div>
+        )}
+
 
         {data?.tally && (
           <div className="flex gap-2 flex-wrap">
