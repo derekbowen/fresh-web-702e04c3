@@ -24,7 +24,7 @@ export const BRAND = {
   url: "https://www.poolrentalnearme.com",
   supportEmail: "support@poolrentalnearme.com",
   // Required by CAN-SPAM. Replace with real postal address.
-  postalAddress: "Pool Rental Near Me · 1 Pool Plaza, Suite 100, Los Angeles, CA 90001",
+  postalAddress: "Pool Rental Near Me · 7785 Halbrook Terrace, Riverside, CA 92509",
   // Colors
   primary: "#0c4a6e",      // deep ocean
   accent: "#0ea5e9",       // bright pool blue
