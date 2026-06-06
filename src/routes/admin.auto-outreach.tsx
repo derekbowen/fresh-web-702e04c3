@@ -99,6 +99,13 @@ function AutoOutreachPage() {
           <Button onClick={() => runNow.mutate()} disabled={runNow.isPending}>{runNow.isPending ? "Running…" : "Run now"}</Button>
         </div>
 
+        {queryError && (
+          <div className="border border-destructive/40 bg-destructive/10 text-destructive rounded-md p-3 text-sm">
+            Couldn't load state: {(queryError as any)?.message || String(queryError)}
+          </div>
+        )}
+
+
         {data?.tally && (
           <div className="flex gap-2 flex-wrap">
             {Object.entries(data.tally).map(([k, v]) => (
