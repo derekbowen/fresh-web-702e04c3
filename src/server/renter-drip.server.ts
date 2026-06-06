@@ -125,6 +125,33 @@ export async function sendDueEmails(batch = 25): Promise<{
         continue;
       }
 
+      // Intercom suppression
+      if ((sub as any).intercom_paused_at) {
+        await supabaseAdmin
+          .from("renter_emails")
+          .update({ status: "skipped", error: "intercom paused" })
+          .eq("id", row.id);
+        skipped++;
+        continue;
+      }
+      try {
+        const { hasOpenConversation } = await import("@/lib/intercom.server");
+        if (await hasOpenConversation(sub.email)) {
+          await supabaseAdmin
+            .from("renter_subscribers")
+            .update({ intercom_paused_at: new Date().toISOString() })
+            .eq("id", sub.id);
+          await supabaseAdmin
+            .from("renter_emails")
+            .update({ status: "skipped", error: "intercom open conversation" })
+            .eq("id", row.id);
+          skipped++;
+          continue;
+        }
+      } catch (e) {
+        // never block the loop on Intercom failure
+      }
+
       const step = SEQUENCE.find((s) => s.kind === row.kind);
       console.log("[renter-drip] finding step for kind:", row.kind, "available:", SEQUENCE.map((s) => s.kind), "found:", !!step);
       if (!step) {
