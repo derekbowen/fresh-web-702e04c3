@@ -126,6 +126,7 @@ export async function sendDueEmails(batch = 25): Promise<{
       }
 
       const step = SEQUENCE.find((s) => s.kind === row.kind);
+      console.log("[renter-drip] finding step for kind:", row.kind, "available:", SEQUENCE.map((s) => s.kind), "found:", !!step);
       if (!step) {
         await supabaseAdmin
           .from("renter_emails")
