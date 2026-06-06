@@ -225,8 +225,38 @@ const runCancelAb = createServerFn({ method: "POST" })
     return await cancelAbTest(data.abTestId);
   });
 
+function PageErrorFallback({ error }: { error: Error }) {
+  return (
+    <div className="mx-auto max-w-3xl p-6">
+      <div className="border border-red-300 bg-red-50 rounded-lg p-4">
+        <h2 className="text-lg font-semibold text-red-800">Email Composer hit an error</h2>
+        <p className="mt-2 text-sm text-red-700">{error?.message || String(error)}</p>
+        <pre className="mt-3 max-h-64 overflow-auto rounded bg-white p-2 text-[11px] text-red-900 whitespace-pre-wrap">
+{error?.stack || ""}
+        </pre>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-3 px-3 py-1.5 rounded bg-red-600 text-white text-sm"
+        >Reload</button>
+      </div>
+    </div>
+  );
+}
+
+function PageWithBoundary() {
+  // Local boundary keeps the failure inside the route — global "Something
+  // went wrong" page hid the real error message.
+  const Boundary = require("@/components/error-boundary").ErrorBoundary as typeof import("@/components/error-boundary").ErrorBoundary;
+  return (
+    <Boundary name="email-composer" fallback={<PageErrorFallback error={new Error("see console")} />}>
+      <Page />
+    </Boundary>
+  );
+}
+
 export const Route = createFileRoute("/admin/email-composer")({
   component: Page,
+  errorComponent: PageErrorFallback,
 });
 
 // ---------- UI ----------
