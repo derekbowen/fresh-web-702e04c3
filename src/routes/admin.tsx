@@ -39,5 +39,20 @@ export const Route = createFileRoute("/admin")({
       });
     }
   },
+  head: () => ({
+    meta: [
+      // iOS: launch full-screen with no Safari chrome when saved to Home Screen
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "PRNM Admin" },
+      { name: "theme-color", content: "#0ea5e9" },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
+    links: [
+      { rel: "manifest", href: "/admin-manifest.webmanifest" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+    ],
+  }),
   component: () => <Outlet />,
 });
