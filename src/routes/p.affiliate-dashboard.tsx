@@ -13,7 +13,8 @@ export const Route = createFileRoute("/p/affiliate-dashboard")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
-      throw redirect({ to: "/auth", search: { redirect: "/p/affiliate-dashboard", mode: "signin" } });
+      // No password — send them back to the apply page to request a magic link.
+      throw redirect({ to: "/p/affiliate-program" });
     }
   },
   head: () => ({
