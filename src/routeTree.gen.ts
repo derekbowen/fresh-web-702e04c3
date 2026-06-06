@@ -52,6 +52,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as TechnicalSupportSplatRouteImport } from './routes/technical-support.$'
+import { Route as ReferralDashboardRouteImport } from './routes/referral.dashboard'
 import { Route as ReferralApplyRouteImport } from './routes/referral.apply'
 import { Route as PoolManagementSplatRouteImport } from './routes/pool-management.$'
 import { Route as PWaiverGeneratorRouteImport } from './routes/p.waiver-generator'
@@ -443,6 +444,11 @@ const TechnicalSupportSplatRoute = TechnicalSupportSplatRouteImport.update({
   id: '/technical-support/$',
   path: '/technical-support/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ReferralDashboardRoute = ReferralDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => ReferralRoute,
 } as any)
 const ReferralApplyRoute = ReferralApplyRouteImport.update({
   id: '/apply',
@@ -1464,6 +1470,7 @@ export interface FileRoutesByFullPath {
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/referral/apply': typeof ReferralApplyRoute
+  '/referral/dashboard': typeof ReferralDashboardRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1673,6 +1680,7 @@ export interface FileRoutesByTo {
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/referral/apply': typeof ReferralApplyRoute
+  '/referral/dashboard': typeof ReferralDashboardRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -1883,6 +1891,7 @@ export interface FileRoutesById {
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/referral/apply': typeof ReferralApplyRoute
+  '/referral/dashboard': typeof ReferralDashboardRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
   '/verify/$uid': typeof VerifyUidRoute
   '/admin/learning/$userId': typeof AdminLearningUserIdRoute
@@ -2094,6 +2103,7 @@ export interface FileRouteTypes {
     | '/p/waiver-generator'
     | '/pool-management/$'
     | '/referral/apply'
+    | '/referral/dashboard'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2303,6 +2313,7 @@ export interface FileRouteTypes {
     | '/p/waiver-generator'
     | '/pool-management/$'
     | '/referral/apply'
+    | '/referral/dashboard'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -2512,6 +2523,7 @@ export interface FileRouteTypes {
     | '/p/waiver-generator'
     | '/pool-management/$'
     | '/referral/apply'
+    | '/referral/dashboard'
     | '/technical-support/$'
     | '/verify/$uid'
     | '/admin/learning/$userId'
@@ -3001,6 +3013,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/technical-support/$'
       preLoaderRoute: typeof TechnicalSupportSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/referral/dashboard': {
+      id: '/referral/dashboard'
+      path: '/dashboard'
+      fullPath: '/referral/dashboard'
+      preLoaderRoute: typeof ReferralDashboardRouteImport
+      parentRoute: typeof ReferralRoute
     }
     '/referral/apply': {
       id: '/referral/apply'
@@ -4331,10 +4350,12 @@ const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface ReferralRouteChildren {
   ReferralApplyRoute: typeof ReferralApplyRoute
+  ReferralDashboardRoute: typeof ReferralDashboardRoute
 }
 
 const ReferralRouteChildren: ReferralRouteChildren = {
   ReferralApplyRoute: ReferralApplyRoute,
+  ReferralDashboardRoute: ReferralDashboardRoute,
 }
 
 const ReferralRouteWithChildren = ReferralRoute._addFileChildren(
