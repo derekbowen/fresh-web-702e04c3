@@ -197,6 +197,7 @@ import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/h
 import { Route as ApiPublicHooksGenHostPagesRouteImport } from './routes/api/public/hooks/gen-host-pages'
 import { Route as ApiPublicHooksFollowupRemindersRouteImport } from './routes/api/public/hooks/followup-reminders'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
+import { Route as ApiPublicHooksComposerScheduledRouteImport } from './routes/api/public/hooks.composer-scheduled'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiPublicHooksBlogAutogenRouteImport } from './routes/api/public/hooks/blog-autogen'
 import { Route as ApiPublicHooksAutoOutreachWorkerRouteImport } from './routes/api/public/hooks/auto-outreach-worker'
@@ -1189,6 +1190,12 @@ const ApiPublicHooksDailySeoDigestRoute =
     path: '/api/public/hooks/daily-seo-digest',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksComposerScheduledRoute =
+  ApiPublicHooksComposerScheduledRouteImport.update({
+    id: '/api/public/hooks/composer-scheduled',
+    path: '/api/public/hooks/composer-scheduled',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksCompetitorRadarScanRoute =
   ApiPublicHooksCompetitorRadarScanRouteImport.update({
     id: '/api/public/hooks/competitor-radar-scan',
@@ -1408,6 +1415,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
+  '/api/public/hooks/composer-scheduled': typeof ApiPublicHooksComposerScheduledRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
@@ -1606,6 +1614,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
+  '/api/public/hooks/composer-scheduled': typeof ApiPublicHooksComposerScheduledRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
@@ -1805,6 +1814,7 @@ export interface FileRoutesById {
   '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
+  '/api/public/hooks/composer-scheduled': typeof ApiPublicHooksComposerScheduledRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
@@ -2005,6 +2015,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
+    | '/api/public/hooks/composer-scheduled'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
@@ -2203,6 +2214,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
+    | '/api/public/hooks/composer-scheduled'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
@@ -2401,6 +2413,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
+    | '/api/public/hooks/composer-scheduled'
     | '/api/public/hooks/daily-seo-digest'
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
@@ -2531,6 +2544,7 @@ export interface RootRouteChildren {
   ApiPublicHooksAutoOutreachWorkerRoute: typeof ApiPublicHooksAutoOutreachWorkerRoute
   ApiPublicHooksBlogAutogenRoute: typeof ApiPublicHooksBlogAutogenRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
+  ApiPublicHooksComposerScheduledRoute: typeof ApiPublicHooksComposerScheduledRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
   ApiPublicHooksFollowupRemindersRoute: typeof ApiPublicHooksFollowupRemindersRoute
   ApiPublicHooksGenHostPagesRoute: typeof ApiPublicHooksGenHostPagesRoute
@@ -3873,6 +3887,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksDailySeoDigestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/composer-scheduled': {
+      id: '/api/public/hooks/composer-scheduled'
+      path: '/api/public/hooks/composer-scheduled'
+      fullPath: '/api/public/hooks/composer-scheduled'
+      preLoaderRoute: typeof ApiPublicHooksComposerScheduledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/competitor-radar-scan': {
       id: '/api/public/hooks/competitor-radar-scan'
       path: '/api/public/hooks/competitor-radar-scan'
@@ -4249,6 +4270,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksBlogAutogenRoute: ApiPublicHooksBlogAutogenRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
+  ApiPublicHooksComposerScheduledRoute: ApiPublicHooksComposerScheduledRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
   ApiPublicHooksFollowupRemindersRoute: ApiPublicHooksFollowupRemindersRoute,
   ApiPublicHooksGenHostPagesRoute: ApiPublicHooksGenHostPagesRoute,
