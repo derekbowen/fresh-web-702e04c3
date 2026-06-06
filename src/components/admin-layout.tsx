@@ -42,8 +42,8 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/admin/prnm-coach", label: "PRNM Coach 🤖", icon: Sparkles },
       { to: "/admin/opportunities", label: "Opportunities", icon: CheckCircle2 },
-      { to: "/admin/tech-docs", label: "Technical docs", icon: FileText },
       { to: "/admin/job-history", label: "Job history", icon: Activity },
+      { to: "/admin/tech-docs", label: "Technical docs", icon: FileText },
     ],
   },
   {
@@ -51,8 +51,8 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     items: [
       { to: "/admin/quick-page", label: "Quick page builder", icon: Wand2 },
       { to: "/admin/generate-content", label: "Generate content", icon: Bot },
-      { to: "/admin/content-migration", label: "Content migration", icon: Database },
       { to: "/admin/content-pages", label: "Bulk page editor", icon: FileText },
+      { to: "/admin/content-migration", label: "Content migration", icon: Database },
       { to: "/admin/blog", label: "Blog admin", icon: Newspaper },
       { to: "/admin/learning", label: "Learning admin", icon: GraduationCap },
       { to: "/admin/cities-heroes", label: "City heroes", icon: ImageIcon },
@@ -74,9 +74,6 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/internal-links", label: "Internal link recommender", icon: Network },
       { to: "/admin/seo-health", label: "SEO health", icon: Activity },
       { to: "/admin/auto-refresh", label: "Auto-refresh queue 🔄", icon: Sparkles },
-      { to: "/admin/link-checker", label: "Link checker", icon: LinkIcon },
-      { to: "/admin/link-audit", label: "Link audit dashboard", icon: LinkIcon },
-      { to: "/admin/link-auto-repair", label: "Link auto-repair 🪄", icon: Wand2 },
       { to: "/admin/missing-pages", label: "Missing pages (404s)", icon: AlertTriangle },
       { to: "/admin/indexing", label: "Sitemap & indexing", icon: Search },
       { to: "/admin/gsc-import", label: "GSC import", icon: Search },
@@ -85,31 +82,44 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     ],
   },
   {
+    label: "Links",
+    items: [
+      { to: "/admin/link-checker", label: "Link checker", icon: LinkIcon },
+      { to: "/admin/link-audit", label: "Link audit dashboard", icon: LinkIcon },
+      { to: "/admin/link-auto-repair", label: "Link auto-repair 🪄", icon: Wand2 },
+    ],
+  },
+  {
     label: "Email",
     items: [
-      { to: "/admin/email-composer", label: "✉️ Email Composer", icon: Mail },
-      { to: "/admin/add-contacts", label: "Add contacts ➕", icon: Mail },
-      { to: "/admin/email-queue", label: "Email queue 📬", icon: Mail },
-      { to: "/admin/email-deliverability", label: "Deliverability 📊", icon: Activity },
       { to: "/admin/founder-blast", label: "Founder blast", icon: Mail },
       { to: "/admin/host-drip", label: "Host drip", icon: Mail },
       { to: "/admin/renter-drip", label: "Renter drip", icon: Mail },
       { to: "/admin/drip-subscribers", label: "Subscribers ⏯", icon: Mail },
-      { to: "/admin/email-branding", label: "Email branding", icon: Mail },
-      { to: "/admin/email-verify", label: "Email verify", icon: CheckCircle2 },
+      { to: "/admin/add-contacts", label: "Add contacts ➕", icon: Mail },
     ],
   },
   {
-    label: "Users & Ops",
+    label: "Social",
+    items: [
+      { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
+      { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
+      { to: "/admin/sms-blast", label: "SMS blast", icon: Bell },
+    ],
+  },
+  {
+    label: "Leads & CRM",
     items: [
       { to: "/admin/leads", label: "Lead inbox", icon: Mail },
       { to: "/admin/follow-ups", label: "Follow-ups 📞", icon: Activity },
       { to: "/admin/followup-performance", label: "Follow-up performance 📊", icon: TrendingUp },
       { to: "/admin/followup-reminders", label: "Follow-up reminders 🔔", icon: Bell },
       { to: "/admin/auto-outreach", label: "Auto-outreach 🤖", icon: Bot },
-      { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
-      { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
-      { to: "/admin/sms-blast", label: "SMS blast", icon: Bell },
+    ],
+  },
+  {
+    label: "Site & Ops",
+    items: [
       { to: "/admin/site-footer", label: "Site footer", icon: LinkIcon },
       { to: "/admin/directory", label: "Directory moderation", icon: Building2 },
       { to: "/admin/claims", label: "Listing claims", icon: ShieldCheck },
@@ -117,7 +127,6 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/team", label: "Admin team", icon: ShieldCheck },
     ],
   },
-
 ];
 
 const ALL_ITEMS = GROUPS.flatMap((g) => g.items);
