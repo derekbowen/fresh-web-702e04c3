@@ -141,6 +141,7 @@ import { Route as AdminFollowUpsRouteImport } from './routes/admin.follow-ups'
 import { Route as AdminFaqGeneratorRouteImport } from './routes/admin.faq-generator'
 import { Route as AdminEmailVerifyRouteImport } from './routes/admin.email-verify'
 import { Route as AdminEmailQueueRouteImport } from './routes/admin.email-queue'
+import { Route as AdminEmailDeliverabilityRouteImport } from './routes/admin.email-deliverability'
 import { Route as AdminEmailComposerRouteImport } from './routes/admin.email-composer'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
@@ -890,6 +891,12 @@ const AdminEmailQueueRoute = AdminEmailQueueRouteImport.update({
   path: '/email-queue',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEmailDeliverabilityRoute =
+  AdminEmailDeliverabilityRouteImport.update({
+    id: '/email-deliverability',
+    path: '/email-deliverability',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminEmailComposerRoute = AdminEmailComposerRouteImport.update({
   id: '/email-composer',
   path: '/email-composer',
@@ -1305,6 +1312,7 @@ export interface FileRoutesByFullPath {
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
+  '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
   '/admin/email-queue': typeof AdminEmailQueueRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
@@ -1504,6 +1512,7 @@ export interface FileRoutesByTo {
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
+  '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
   '/admin/email-queue': typeof AdminEmailQueueRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
@@ -1704,6 +1713,7 @@ export interface FileRoutesById {
   '/admin/directory': typeof AdminDirectoryRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
+  '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
   '/admin/email-queue': typeof AdminEmailQueueRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
@@ -1905,6 +1915,7 @@ export interface FileRouteTypes {
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/email-composer'
+    | '/admin/email-deliverability'
     | '/admin/email-queue'
     | '/admin/email-verify'
     | '/admin/faq-generator'
@@ -2104,6 +2115,7 @@ export interface FileRouteTypes {
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/email-composer'
+    | '/admin/email-deliverability'
     | '/admin/email-queue'
     | '/admin/email-verify'
     | '/admin/faq-generator'
@@ -2303,6 +2315,7 @@ export interface FileRouteTypes {
     | '/admin/directory'
     | '/admin/email-branding'
     | '/admin/email-composer'
+    | '/admin/email-deliverability'
     | '/admin/email-queue'
     | '/admin/email-verify'
     | '/admin/faq-generator'
@@ -3495,6 +3508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEmailQueueRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/email-deliverability': {
+      id: '/admin/email-deliverability'
+      path: '/email-deliverability'
+      fullPath: '/admin/email-deliverability'
+      preLoaderRoute: typeof AdminEmailDeliverabilityRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/email-composer': {
       id: '/admin/email-composer'
       path: '/email-composer'
@@ -3986,6 +4006,7 @@ interface AdminRouteChildren {
   AdminDirectoryRoute: typeof AdminDirectoryRoute
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminEmailComposerRoute: typeof AdminEmailComposerRoute
+  AdminEmailDeliverabilityRoute: typeof AdminEmailDeliverabilityRoute
   AdminEmailQueueRoute: typeof AdminEmailQueueRoute
   AdminEmailVerifyRoute: typeof AdminEmailVerifyRoute
   AdminFaqGeneratorRoute: typeof AdminFaqGeneratorRoute
@@ -4054,6 +4075,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDirectoryRoute: AdminDirectoryRoute,
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminEmailComposerRoute: AdminEmailComposerRoute,
+  AdminEmailDeliverabilityRoute: AdminEmailDeliverabilityRoute,
   AdminEmailQueueRoute: AdminEmailQueueRoute,
   AdminEmailVerifyRoute: AdminEmailVerifyRoute,
   AdminFaqGeneratorRoute: AdminFaqGeneratorRoute,
