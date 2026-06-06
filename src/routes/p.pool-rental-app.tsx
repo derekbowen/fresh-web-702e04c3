@@ -218,6 +218,8 @@ function PoolRentalAppPage() {
                   src="/fw-assets/app/filter-search.png"
                   alt="Pool Rental Near Me app filter screen with water type, guest capacity, and event type options"
                   loading="lazy"
+                  width={883}
+                  height={1920}
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
                 />
                 <figcaption className="mt-2 text-center text-xs text-muted-foreground">
@@ -229,6 +231,8 @@ function PoolRentalAppPage() {
                   src="/fw-assets/app/sort-by.png"
                   alt="Sort search results by newest, oldest, closest distance, or price in the Pool Rental Near Me app"
                   loading="lazy"
+                  width={883}
+                  height={1920}
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
                 />
                 <figcaption className="mt-2 text-center text-xs text-muted-foreground">
@@ -274,6 +278,8 @@ function PoolRentalAppPage() {
                 src="/fw-assets/app/wishlist.png"
                 alt="Saved pools wishlist with hourly rates in the Pool Rental Near Me app"
                 loading="lazy"
+                  width={883}
+                  height={1920}
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
               />
               <figcaption className="mt-2 text-center text-xs text-muted-foreground">
@@ -303,6 +309,8 @@ function PoolRentalAppPage() {
                   src="/fw-assets/app/listing-creation-select-type.png"
                   alt="Select listing type screen when creating a new pool listing in the Pool Rental Near Me app"
                   loading="lazy"
+                  width={883}
+                  height={1920}
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
                 />
                 <figcaption className="mt-2 text-center text-xs text-muted-foreground">
@@ -314,6 +322,8 @@ function PoolRentalAppPage() {
                   src="/fw-assets/app/listing-creation-basic-info.png"
                   alt="Basic Info tab of the host listing flow with Hourly renting, Pool category, and Private Pool subcategory selected"
                   loading="lazy"
+                  width={883}
+                  height={1920}
                   className="w-full rounded-2xl border border-border bg-card shadow-sm"
                 />
                 <figcaption className="mt-2 text-center text-xs text-muted-foreground">
@@ -337,6 +347,8 @@ function PoolRentalAppPage() {
                 src="/fw-assets/app/listing-creation-form.png"
                 alt="Listing creation form showing category, pool name, description, square footage, and max guest fields"
                 loading="lazy"
+                  width={883}
+                  height={1920}
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
               />
               <figcaption className="mt-2 text-center text-xs text-muted-foreground">
@@ -387,6 +399,8 @@ function PoolRentalAppPage() {
                 src="/fw-assets/app/inbox.png"
                 alt="Direct in-app messaging between renters and pool hosts in the Pool Rental Near Me app"
                 loading="lazy"
+                  width={883}
+                  height={1920}
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
               />
               <figcaption className="mt-2 text-center text-xs text-muted-foreground">
@@ -415,6 +429,8 @@ function PoolRentalAppPage() {
                 src="/fw-assets/app/login.png"
                 alt="Pool Rental Near Me app login screen with email, password, Apple, Google, and Facebook sign-in options"
                 loading="lazy"
+                  width={883}
+                  height={1920}
                 className="w-full rounded-2xl border border-border bg-card shadow-sm"
               />
               <figcaption className="mt-2 text-center text-xs text-muted-foreground">
