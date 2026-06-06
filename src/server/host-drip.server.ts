@@ -14,7 +14,7 @@ import { HOST_SEQUENCE } from "@/lib/email-static/host-drip/_shared";
 import fs from "node:fs";
 import path from "node:path";
 
-const FROM = "Pool Rental Near Me <hello@notify.poolfriends.poolrentalnearme.com>";
+const FROM = "Pool Rental Near Me <support@poolrentalnearme.com>";
 const SITE_URL = "https://www.poolrentalnearme.com";
 
 // Templates are static HTML on disk. Read once per process.
