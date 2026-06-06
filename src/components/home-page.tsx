@@ -142,12 +142,23 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {/* ── HERO ─────────────────────────────────────────────── */}
         <section
           aria-label="Rent a backyard pool by the hour"
-          className="relative overflow-hidden bg-cover bg-center"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('${heroFamilyPool}')`,
-            minHeight: "60vh",
-          }}
+          className="relative overflow-hidden"
+          style={{ minHeight: "60vh" }}
         >
+          <img
+            src={heroFamilyPool}
+            alt=""
+            width={1600}
+            height={1067}
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+          />
           <div className="relative mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 lg:py-24">
             <h1 className="text-4xl font-bold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
               Summer is better shared.
