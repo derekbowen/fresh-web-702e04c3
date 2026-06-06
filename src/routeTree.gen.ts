@@ -144,6 +144,7 @@ import { Route as AdminEmailQueueRouteImport } from './routes/admin.email-queue'
 import { Route as AdminEmailDeliverabilityRouteImport } from './routes/admin.email-deliverability'
 import { Route as AdminEmailComposerRouteImport } from './routes/admin.email-composer'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
+import { Route as AdminDripSubscribersRouteImport } from './routes/admin.drip-subscribers'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDataImportRouteImport } from './routes/admin.data-import'
 import { Route as AdminDataExportRouteImport } from './routes/admin.data-export'
@@ -908,6 +909,11 @@ const AdminEmailBrandingRoute = AdminEmailBrandingRouteImport.update({
   path: '/email-branding',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDripSubscribersRoute = AdminDripSubscribersRouteImport.update({
+  id: '/drip-subscribers',
+  path: '/drip-subscribers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
   id: '/directory',
   path: '/directory',
@@ -1317,6 +1323,7 @@ export interface FileRoutesByFullPath {
   '/admin/data-export': typeof AdminDataExportRoute
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
+  '/admin/drip-subscribers': typeof AdminDripSubscribersRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
@@ -1518,6 +1525,7 @@ export interface FileRoutesByTo {
   '/admin/data-export': typeof AdminDataExportRoute
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
+  '/admin/drip-subscribers': typeof AdminDripSubscribersRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
@@ -1720,6 +1728,7 @@ export interface FileRoutesById {
   '/admin/data-export': typeof AdminDataExportRoute
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
+  '/admin/drip-subscribers': typeof AdminDripSubscribersRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
@@ -1923,6 +1932,7 @@ export interface FileRouteTypes {
     | '/admin/data-export'
     | '/admin/data-import'
     | '/admin/directory'
+    | '/admin/drip-subscribers'
     | '/admin/email-branding'
     | '/admin/email-composer'
     | '/admin/email-deliverability'
@@ -2124,6 +2134,7 @@ export interface FileRouteTypes {
     | '/admin/data-export'
     | '/admin/data-import'
     | '/admin/directory'
+    | '/admin/drip-subscribers'
     | '/admin/email-branding'
     | '/admin/email-composer'
     | '/admin/email-deliverability'
@@ -2325,6 +2336,7 @@ export interface FileRouteTypes {
     | '/admin/data-export'
     | '/admin/data-import'
     | '/admin/directory'
+    | '/admin/drip-subscribers'
     | '/admin/email-branding'
     | '/admin/email-composer'
     | '/admin/email-deliverability'
@@ -3543,6 +3555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEmailBrandingRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/drip-subscribers': {
+      id: '/admin/drip-subscribers'
+      path: '/drip-subscribers'
+      fullPath: '/admin/drip-subscribers'
+      preLoaderRoute: typeof AdminDripSubscribersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/directory': {
       id: '/admin/directory'
       path: '/directory'
@@ -4025,6 +4044,7 @@ interface AdminRouteChildren {
   AdminDataExportRoute: typeof AdminDataExportRoute
   AdminDataImportRoute: typeof AdminDataImportRoute
   AdminDirectoryRoute: typeof AdminDirectoryRoute
+  AdminDripSubscribersRoute: typeof AdminDripSubscribersRoute
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminEmailComposerRoute: typeof AdminEmailComposerRoute
   AdminEmailDeliverabilityRoute: typeof AdminEmailDeliverabilityRoute
@@ -4094,6 +4114,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDataExportRoute: AdminDataExportRoute,
   AdminDataImportRoute: AdminDataImportRoute,
   AdminDirectoryRoute: AdminDirectoryRoute,
+  AdminDripSubscribersRoute: AdminDripSubscribersRoute,
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminEmailComposerRoute: AdminEmailComposerRoute,
   AdminEmailDeliverabilityRoute: AdminEmailDeliverabilityRoute,
