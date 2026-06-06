@@ -2,15 +2,23 @@
  * Email Composer — server-only helpers.
  *
  * - getAudienceCount: count active recipients per audience
- * - generateBodyWithAI: Lovable AI Gateway → inner body HTML
+ * - generateBodyWithAI: Lovable AI Gateway → plain-text body
  * - sendComposerEmail: render branded shell per-recipient, send via Emailit,
  *   pace under 2/sec, log every send, respect unsubscribes + suppression.
+ * - scheduleComposerEmail: store campaign with scheduled_at; cron sends later.
+ * - runScheduledComposerEmails: cron entry point.
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { sendViaEmailit } from "@/lib/email/emailit";
-import { wrapInShell, renderForRecipient } from "@/lib/email-static/composer/_shell";
+import {
+  wrapInShell,
+  renderForRecipient,
+  composeFromPlainText,
+  toPlainText,
+} from "@/lib/email-static/composer/_shell";
 
 const FROM = "Pool Rental Near Me <support@poolrentalnearme.com>";
+const REPLY_TO = "support@poolrentalnearme.com";
 const SITE_URL = "https://www.poolrentalnearme.com";
 
 export type Audience =
@@ -60,17 +68,11 @@ export async function getAudienceCount(audience: Audience): Promise<number> {
   return 0;
 }
 
-// ---------- Resolve recipients ----------
-
-// (Inline tokens are used for composer recipients — see generateInlineToken below.)
-
+// ---------- Inline unsubscribe token (custom/waitlist/single) ----------
 
 function generateInlineToken(email: string): string {
-  // Deterministic per-email so retries land on the same link, but unguessable
-  // because it carries a server secret-derived suffix.
   const seed = process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 16) || "prnm-fallback";
   const raw = `${email}|${seed}`;
-  // simple FNV-1a hash
   let h = 2166136261;
   for (let i = 0; i < raw.length; i++) { h ^= raw.charCodeAt(i); h = (h * 16777619) >>> 0; }
   const sig = h.toString(36);
@@ -156,13 +158,11 @@ async function resolveRecipients(
 async function filterSuppressed(recipients: Recipient[]): Promise<Recipient[]> {
   if (recipients.length === 0) return [];
   const emails = recipients.map((r) => r.email);
-  // composer_unsubscribes
   const { data: unsubs } = await supabaseAdmin
     .from("composer_unsubscribes" as any)
     .select("email")
     .in("email", emails);
   const unsubSet = new Set((unsubs || []).map((r: any) => String(r.email).toLowerCase()));
-  // suppressed_emails (bounces / complaints)
   const { data: supp } = await supabaseAdmin
     .from("suppressed_emails")
     .select("email")
@@ -171,12 +171,12 @@ async function filterSuppressed(recipients: Recipient[]): Promise<Recipient[]> {
   return recipients.filter((r) => !unsubSet.has(r.email) && !suppSet.has(r.email));
 }
 
-// ---------- AI generation ----------
+// ---------- AI generation (plain text out) ----------
 
 export async function generateBodyWithAI(opts: {
   description: string;
   tone?: string;
-}): Promise<{ subject: string; bodyHtml: string }> {
+}): Promise<{ subject: string; bodyText: string }> {
   const apiKey = process.env.LOVABLE_API_KEY;
   if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
 
@@ -190,11 +190,18 @@ No em dashes. Numbers under 10 spelled out.
 
 OUTPUT FORMAT: Return ONLY a JSON object with two keys:
 - "subject": the email subject line (under 70 chars, no quotes)
-- "body": the inner email body as HTML using only <p>, <h2>, <ul>, <ol>, <li>, <a>, <strong>, <em> tags with inline styles. Use the placeholder {{first_name}} for the recipient's first name. Use #0c4a6e for h2 color and #0ea5e9 for link/button color. If a clear call to action fits, include a button like:
-<p style="margin:28px 0;"><a href="URL" style="background:#0ea5e9;color:#ffffff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">CTA TEXT</a></p>
+- "body": the email body as PLAIN TEXT with this tiny markdown:
+   # Heading
+   ## Subheading
+   - bullet
+   1. numbered
+   [Button text](https://url) on its own line for the call to action
+   **bold**  *italic*
+   {{first_name}} for the recipient's first name
+   Blank line between paragraphs.
 End with "— The PRNM Team".
 
-Do NOT include <html>, <head>, <body>, header, logo, or unsubscribe text — those are added by the system.
+Do NOT write HTML. Do NOT add a header or footer or unsubscribe text — the system adds them.
 Do NOT wrap your JSON in markdown code fences.`;
 
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -204,7 +211,7 @@ Do NOT wrap your JSON in markdown code fences.`;
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-3-flash-preview",
+      model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: system },
         { role: "user", content: opts.description + (opts.tone ? `\n\nTone: ${opts.tone}` : "") },
@@ -220,28 +227,32 @@ Do NOT wrap your JSON in markdown code fences.`;
   const content = data?.choices?.[0]?.message?.content || "{}";
   let parsed: any = {};
   try { parsed = JSON.parse(content); } catch {
-    // Best-effort fallback: try to extract from a code fence
     const m = content.match(/\{[\s\S]*\}/);
     if (m) { try { parsed = JSON.parse(m[0]); } catch {} }
   }
   const subject = String(parsed.subject || "").slice(0, 200);
-  const bodyHtml = String(parsed.body || "");
-  if (!bodyHtml) throw new Error("AI returned empty body");
-  return { subject, bodyHtml };
+  const bodyText = String(parsed.body || "");
+  if (!bodyText) throw new Error("AI returned empty body");
+  return { subject, bodyText };
 }
 
-// ---------- Send ----------
+// ---------- Send (immediate) ----------
 
 export async function sendComposerEmail(opts: {
   audience: Audience;
   customEmails?: string[];
   singleEmail?: string;
   subject: string;
-  bodyHtml: string;
+  /** Plain text body (markdown-lite). Required unless bodyHtml is supplied. */
+  bodyText?: string;
+  /** Pre-rendered HTML body (advanced). Overrides bodyText if both supplied. */
+  bodyHtml?: string;
   preview?: string;
   testOnly?: boolean;
   testRecipient?: string;
   createdBy?: string;
+  /** Existing campaign row to send (used by the scheduler). */
+  campaignId?: string;
 }): Promise<{
   campaignId: string;
   total: number;
@@ -250,7 +261,20 @@ export async function sendComposerEmail(opts: {
   skipped: number;
 }> {
   if (!opts.subject.trim()) throw new Error("Subject is required");
-  if (!opts.bodyHtml.trim()) throw new Error("Body is required");
+  const bodyText = opts.bodyText?.trim() || "";
+  let bodyHtml = opts.bodyHtml?.trim() || "";
+  let plainBody = bodyText;
+  if (!bodyHtml) {
+    if (!bodyText) throw new Error("Body is required");
+    const rendered = composeFromPlainText(bodyText);
+    bodyHtml = rendered.html;
+    plainBody = rendered.plain;
+  } else if (!plainBody) {
+    plainBody = bodyHtml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  } else {
+    plainBody = toPlainText(plainBody);
+  }
+  if (!bodyHtml) throw new Error("Body is required");
 
   let recipients: Recipient[];
   if (opts.testOnly) {
@@ -270,21 +294,34 @@ export async function sendComposerEmail(opts: {
     recipients = await filterSuppressed(recipients);
   }
 
-  const { data: campaign, error: cErr } = await supabaseAdmin
-    .from("composer_campaigns" as any)
-    .insert({
-      created_by: opts.createdBy ?? null,
-      subject: opts.subject,
-      audience: opts.testOnly ? `${opts.audience}:test` : opts.audience,
-      body_html: opts.bodyHtml,
-      recipient_count: recipients.length,
-      status: "sending",
-      test_only: !!opts.testOnly,
-    })
-    .select("id")
-    .single();
-  if (cErr || !campaign) throw new Error(`Failed to create campaign: ${cErr?.message}`);
-  const campaignId = (campaign as any).id as string;
+  // Create campaign row (or update existing scheduled one to "sending").
+  let campaignId = opts.campaignId || "";
+  if (campaignId) {
+    await supabaseAdmin.from("composer_campaigns" as any)
+      .update({
+        status: "sending",
+        recipient_count: recipients.length,
+      })
+      .eq("id", campaignId);
+  } else {
+    const { data: campaign, error: cErr } = await supabaseAdmin
+      .from("composer_campaigns" as any)
+      .insert({
+        created_by: opts.createdBy ?? null,
+        subject: opts.subject,
+        audience: opts.testOnly ? `${opts.audience}:test` : opts.audience,
+        body_html: bodyHtml,
+        plain_body: plainBody,
+        preview_text: opts.preview ?? null,
+        recipient_count: recipients.length,
+        status: "sending",
+        test_only: !!opts.testOnly,
+      })
+      .select("id")
+      .single();
+    if (cErr || !campaign) throw new Error(`Failed to create campaign: ${cErr?.message}`);
+    campaignId = (campaign as any).id as string;
+  }
 
   if (recipients.length === 0) {
     await supabaseAdmin.from("composer_campaigns" as any)
@@ -293,15 +330,14 @@ export async function sendComposerEmail(opts: {
     return { campaignId, total: 0, sent: 0, failed: 0, skipped: 0 };
   }
 
-  // Build the shell once (subject + body are constant); per-recipient
-  // substitution only swaps first_name and unsubscribe_url.
   const shellHtml = wrapInShell({
     subject: opts.subject,
-    bodyHtml: opts.bodyHtml,
+    bodyHtml,
     preview: opts.preview,
   });
 
-  let sent = 0, failed = 0, skipped = 0;
+  let sent = 0, failed = 0;
+  const skipped = 0;
 
   for (const r of recipients) {
     try {
@@ -309,13 +345,18 @@ export async function sendComposerEmail(opts: {
         firstName: r.firstName,
         unsubscribeUrl: r.unsubscribeUrl,
       });
+      const text = plainBody
+        .replaceAll("{{first_name}}", r.firstName || "there")
+        + `\n\n---\nUnsubscribe: ${r.unsubscribeUrl}`;
       const result = await sendViaEmailit({
         from: FROM,
         to: r.email,
         subject: opts.subject,
         html,
+        text,
+        replyTo: REPLY_TO,
         headers: {
-          "List-Unsubscribe": `<${r.unsubscribeUrl}>`,
+          "List-Unsubscribe": `<${r.unsubscribeUrl}>, <mailto:${REPLY_TO}?subject=unsubscribe>`,
           "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         },
       });
@@ -335,13 +376,11 @@ export async function sendComposerEmail(opts: {
         error: msg,
       });
       failed++;
-      // Respect 429 by sleeping longer
       if (err?.status === 429) {
         const wait = Math.max((err?.retryAfterSeconds ?? 2) * 1000, 2000);
         await new Promise((res) => setTimeout(res, wait));
       }
     }
-    // Pace at ~1.5/sec
     await new Promise((res) => setTimeout(res, 700));
   }
 
@@ -355,6 +394,102 @@ export async function sendComposerEmail(opts: {
     .eq("id", campaignId);
 
   return { campaignId, total: recipients.length, sent, failed, skipped };
+}
+
+// ---------- Schedule (send later) ----------
+
+export async function scheduleComposerEmail(opts: {
+  audience: Audience;
+  customEmails?: string[];
+  singleEmail?: string;
+  subject: string;
+  bodyText: string;
+  preview?: string;
+  scheduledAt: string; // ISO timestamp
+  createdBy?: string;
+}): Promise<{ campaignId: string; scheduledAt: string }> {
+  if (!opts.subject.trim()) throw new Error("Subject is required");
+  if (!opts.bodyText.trim()) throw new Error("Body is required");
+  const when = new Date(opts.scheduledAt);
+  if (isNaN(when.getTime())) throw new Error("Invalid scheduled time");
+  if (when.getTime() < Date.now() - 60_000) throw new Error("Scheduled time is in the past");
+
+  const { html, plain } = composeFromPlainText(opts.bodyText);
+
+  // Resolve count up-front (snapshot for UI; recipients are re-resolved at send time).
+  const recipients = await resolveRecipients(
+    opts.audience,
+    opts.customEmails ?? null,
+    opts.singleEmail ?? null,
+  );
+
+  const { data, error } = await supabaseAdmin
+    .from("composer_campaigns" as any)
+    .insert({
+      created_by: opts.createdBy ?? null,
+      subject: opts.subject,
+      audience: opts.audience,
+      body_html: html,
+      plain_body: plain,
+      preview_text: opts.preview ?? null,
+      custom_emails: opts.customEmails ?? null,
+      single_email: opts.singleEmail ?? null,
+      scheduled_at: when.toISOString(),
+      recipient_count: recipients.length,
+      status: "scheduled",
+      test_only: false,
+    })
+    .select("id, scheduled_at")
+    .single();
+  if (error || !data) throw new Error(`Failed to schedule: ${error?.message}`);
+  return {
+    campaignId: (data as any).id,
+    scheduledAt: (data as any).scheduled_at,
+  };
+}
+
+/** Cron: pick due scheduled campaigns and send. Returns counts. */
+export async function runScheduledComposerEmails(): Promise<{
+  picked: number;
+  results: Array<{ campaignId: string; sent: number; failed: number; total: number }>;
+}> {
+  const nowIso = new Date().toISOString();
+  const { data: due } = await supabaseAdmin
+    .from("composer_campaigns" as any)
+    .select("id, subject, audience, body_html, plain_body, preview_text, custom_emails, single_email")
+    .eq("status", "scheduled")
+    .lte("scheduled_at", nowIso)
+    .order("scheduled_at", { ascending: true })
+    .limit(5);
+
+  const rows = (due as any[]) || [];
+  const results: Array<{ campaignId: string; sent: number; failed: number; total: number }> = [];
+
+  for (const row of rows) {
+    try {
+      const r = await sendComposerEmail({
+        campaignId: row.id,
+        audience: row.audience as Audience,
+        customEmails: row.custom_emails || undefined,
+        singleEmail: row.single_email || undefined,
+        subject: row.subject,
+        bodyHtml: row.body_html,
+        bodyText: row.plain_body || undefined,
+        preview: row.preview_text || undefined,
+      });
+      results.push({ campaignId: r.campaignId, sent: r.sent, failed: r.failed, total: r.total });
+    } catch (err: any) {
+      await supabaseAdmin.from("composer_campaigns" as any)
+        .update({
+          status: "failed",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("id", row.id);
+      results.push({ campaignId: row.id, sent: 0, failed: 0, total: 0 });
+    }
+  }
+
+  return { picked: rows.length, results };
 }
 
 // ---------- Unsubscribe (composer) ----------
