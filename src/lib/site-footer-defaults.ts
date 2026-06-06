@@ -49,6 +49,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Host Connect", href: "https://connect.poolrentalnearme.com" },
     { label: "HOA Navigation Guide", href: "/p/elearning-academy-hoa-navigation-guide-pool-hosts" },
     { label: "Host Make More $$$", href: "/p/hosting" },
+    { label: "Affiliate program", href: "/referral/apply" },
   ],
   company_links: [
     { label: "About", href: "/p/how-it-works" },
