@@ -105,6 +105,7 @@ import { Route as AdminSocialLeadHunterRouteImport } from './routes/admin.social
 import { Route as AdminSmsBlastRouteImport } from './routes/admin.sms-blast'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSharetribePruneRouteImport } from './routes/admin.sharetribe-prune'
+import { Route as AdminSharetribeRouteImport } from './routes/admin.sharetribe'
 import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminSeoCriticRouteImport } from './routes/admin.seo-critic'
 import { Route as AdminSeoCoachRouteImport } from './routes/admin.seo-coach'
@@ -188,6 +189,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicHooksTwilioInboundRouteImport } from './routes/api/public/hooks/twilio-inbound'
+import { Route as ApiPublicHooksSyncSharetribeMirrorRouteImport } from './routes/api/public/hooks/sync-sharetribe-mirror'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiPublicHooksSyncAffiliateCommissionsRouteImport } from './routes/api/public/hooks/sync-affiliate-commissions'
 import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public/hooks/sms-sender'
@@ -719,6 +721,11 @@ const AdminSharetribePruneRoute = AdminSharetribePruneRouteImport.update({
   path: '/sharetribe-prune',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSharetribeRoute = AdminSharetribeRouteImport.update({
+  id: '/sharetribe',
+  path: '/sharetribe',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSeoHealthRoute = AdminSeoHealthRouteImport.update({
   id: '/seo-health',
   path: '/seo-health',
@@ -1143,6 +1150,12 @@ const ApiPublicHooksTwilioInboundRoute =
     path: '/api/public/hooks/twilio-inbound',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSyncSharetribeMirrorRoute =
+  ApiPublicHooksSyncSharetribeMirrorRouteImport.update({
+    id: '/api/public/hooks/sync-sharetribe-mirror',
+    path: '/api/public/hooks/sync-sharetribe-mirror',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSyncListingsRoute =
   ApiPublicHooksSyncListingsRouteImport.update({
     id: '/api/public/hooks/sync-listings',
@@ -1418,6 +1431,7 @@ export interface FileRoutesByFullPath {
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/sms-blast': typeof AdminSmsBlastRoute
@@ -1513,6 +1527,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
+  '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1628,6 +1643,7 @@ export interface FileRoutesByTo {
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/sms-blast': typeof AdminSmsBlastRoute
@@ -1723,6 +1739,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
+  '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -1839,6 +1856,7 @@ export interface FileRoutesById {
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
   '/admin/seo-health': typeof AdminSeoHealthRoute
+  '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
   '/admin/sms-blast': typeof AdminSmsBlastRoute
@@ -1934,6 +1952,7 @@ export interface FileRoutesById {
   '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
+  '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
   '/api/public/hooks/twilio-inbound': typeof ApiPublicHooksTwilioInboundRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -2051,6 +2070,7 @@ export interface FileRouteTypes {
     | '/admin/seo-coach'
     | '/admin/seo-critic'
     | '/admin/seo-health'
+    | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/sms-blast'
@@ -2146,6 +2166,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
+    | '/api/public/hooks/sync-sharetribe-mirror'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -2261,6 +2282,7 @@ export interface FileRouteTypes {
     | '/admin/seo-coach'
     | '/admin/seo-critic'
     | '/admin/seo-health'
+    | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/sms-blast'
@@ -2356,6 +2378,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
+    | '/api/public/hooks/sync-sharetribe-mirror'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -2471,6 +2494,7 @@ export interface FileRouteTypes {
     | '/admin/seo-coach'
     | '/admin/seo-critic'
     | '/admin/seo-health'
+    | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
     | '/admin/sms-blast'
@@ -2566,6 +2590,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
+    | '/api/public/hooks/sync-sharetribe-mirror'
     | '/api/public/hooks/twilio-inbound'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -2703,6 +2728,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSmsSenderRoute: typeof ApiPublicHooksSmsSenderRoute
   ApiPublicHooksSyncAffiliateCommissionsRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
+  ApiPublicHooksSyncSharetribeMirrorRoute: typeof ApiPublicHooksSyncSharetribeMirrorRoute
   ApiPublicHooksTwilioInboundRoute: typeof ApiPublicHooksTwilioInboundRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -3385,6 +3411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSharetribePruneRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sharetribe': {
+      id: '/admin/sharetribe'
+      path: '/sharetribe'
+      fullPath: '/admin/sharetribe'
+      preLoaderRoute: typeof AdminSharetribeRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/seo-health': {
       id: '/admin/seo-health'
       path: '/seo-health'
@@ -3966,6 +3999,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksTwilioInboundRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/sync-sharetribe-mirror': {
+      id: '/api/public/hooks/sync-sharetribe-mirror'
+      path: '/api/public/hooks/sync-sharetribe-mirror'
+      fullPath: '/api/public/hooks/sync-sharetribe-mirror'
+      preLoaderRoute: typeof ApiPublicHooksSyncSharetribeMirrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-listings': {
       id: '/api/public/hooks/sync-listings'
       path: '/api/public/hooks/sync-listings'
@@ -4247,6 +4287,7 @@ interface AdminRouteChildren {
   AdminSeoCoachRoute: typeof AdminSeoCoachRoute
   AdminSeoCriticRoute: typeof AdminSeoCriticRoute
   AdminSeoHealthRoute: typeof AdminSeoHealthRoute
+  AdminSharetribeRoute: typeof AdminSharetribeRoute
   AdminSharetribePruneRoute: typeof AdminSharetribePruneRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
   AdminSmsBlastRoute: typeof AdminSmsBlastRoute
@@ -4318,6 +4359,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSeoCoachRoute: AdminSeoCoachRoute,
   AdminSeoCriticRoute: AdminSeoCriticRoute,
   AdminSeoHealthRoute: AdminSeoHealthRoute,
+  AdminSharetribeRoute: AdminSharetribeRoute,
   AdminSharetribePruneRoute: AdminSharetribePruneRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
   AdminSmsBlastRoute: AdminSmsBlastRoute,
@@ -4535,6 +4577,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSyncAffiliateCommissionsRoute:
     ApiPublicHooksSyncAffiliateCommissionsRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
+  ApiPublicHooksSyncSharetribeMirrorRoute:
+    ApiPublicHooksSyncSharetribeMirrorRoute,
   ApiPublicHooksTwilioInboundRoute: ApiPublicHooksTwilioInboundRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

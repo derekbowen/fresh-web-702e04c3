@@ -4623,6 +4623,324 @@ export type Database = {
         }
         Relationships: []
       }
+      st_listings: {
+        Row: {
+          author_st_id: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          created_at_st: string | null
+          description: string | null
+          geolocation: Json | null
+          id: string
+          photos_count: number
+          price_amount: number | null
+          price_currency: string | null
+          public_data: Json
+          raw: Json
+          region: string | null
+          sharetribe_id: string
+          state: string | null
+          title: string | null
+          updated_at: string
+          updated_at_st: string | null
+        }
+        Insert: {
+          author_st_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_at_st?: string | null
+          description?: string | null
+          geolocation?: Json | null
+          id?: string
+          photos_count?: number
+          price_amount?: number | null
+          price_currency?: string | null
+          public_data?: Json
+          raw?: Json
+          region?: string | null
+          sharetribe_id: string
+          state?: string | null
+          title?: string | null
+          updated_at?: string
+          updated_at_st?: string | null
+        }
+        Update: {
+          author_st_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_at_st?: string | null
+          description?: string | null
+          geolocation?: Json | null
+          id?: string
+          photos_count?: number
+          price_amount?: number | null
+          price_currency?: string | null
+          public_data?: Json
+          raw?: Json
+          region?: string | null
+          sharetribe_id?: string
+          state?: string | null
+          title?: string | null
+          updated_at?: string
+          updated_at_st?: string | null
+        }
+        Relationships: []
+      }
+      st_messages: {
+        Row: {
+          content: string
+          created_at: string
+          created_at_st: string
+          id: string
+          raw: Json
+          scanned: boolean
+          sender_st_id: string | null
+          sharetribe_id: string
+          transaction_st_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_at_st: string
+          id?: string
+          raw?: Json
+          scanned?: boolean
+          sender_st_id?: string | null
+          sharetribe_id: string
+          transaction_st_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_at_st?: string
+          id?: string
+          raw?: Json
+          scanned?: boolean
+          sender_st_id?: string | null
+          sharetribe_id?: string
+          transaction_st_id?: string | null
+        }
+        Relationships: []
+      }
+      st_security_alerts: {
+        Row: {
+          category: Database["public"]["Enums"]["security_alert_category"]
+          created_at: string
+          id: string
+          matched_terms: string[]
+          message_st_id: string
+          notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          sender_st_id: string | null
+          severity: Database["public"]["Enums"]["security_alert_severity"]
+          snippet: string
+          status: Database["public"]["Enums"]["security_alert_status"]
+          transaction_st_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["security_alert_category"]
+          created_at?: string
+          id?: string
+          matched_terms?: string[]
+          message_st_id: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_st_id?: string | null
+          severity: Database["public"]["Enums"]["security_alert_severity"]
+          snippet: string
+          status?: Database["public"]["Enums"]["security_alert_status"]
+          transaction_st_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["security_alert_category"]
+          created_at?: string
+          id?: string
+          matched_terms?: string[]
+          message_st_id?: string
+          notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_st_id?: string | null
+          severity?: Database["public"]["Enums"]["security_alert_severity"]
+          snippet?: string
+          status?: Database["public"]["Enums"]["security_alert_status"]
+          transaction_st_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      st_sync_state: {
+        Row: {
+          last_cursor: string | null
+          last_run_at: string | null
+          last_run_error: string | null
+          last_run_rows: number
+          last_run_status: string | null
+          last_synced_at: string | null
+          resource: string
+          updated_at: string
+        }
+        Insert: {
+          last_cursor?: string | null
+          last_run_at?: string | null
+          last_run_error?: string | null
+          last_run_rows?: number
+          last_run_status?: string | null
+          last_synced_at?: string | null
+          resource: string
+          updated_at?: string
+        }
+        Update: {
+          last_cursor?: string | null
+          last_run_at?: string | null
+          last_run_error?: string | null
+          last_run_rows?: number
+          last_run_status?: string | null
+          last_synced_at?: string | null
+          resource?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      st_transactions: {
+        Row: {
+          booking_end: string | null
+          booking_start: string | null
+          created_at: string
+          created_at_st: string | null
+          currency: string | null
+          customer_commission_cents: number | null
+          customer_st_id: string | null
+          id: string
+          last_transition: string | null
+          last_transitioned_at: string | null
+          listing_st_id: string | null
+          listing_title: string | null
+          payin_total_cents: number | null
+          payout_total_cents: number | null
+          process_name: string | null
+          provider_commission_cents: number | null
+          provider_st_id: string | null
+          raw: Json
+          sharetribe_id: string
+          state: string | null
+          transitions: Json
+          updated_at: string
+        }
+        Insert: {
+          booking_end?: string | null
+          booking_start?: string | null
+          created_at?: string
+          created_at_st?: string | null
+          currency?: string | null
+          customer_commission_cents?: number | null
+          customer_st_id?: string | null
+          id?: string
+          last_transition?: string | null
+          last_transitioned_at?: string | null
+          listing_st_id?: string | null
+          listing_title?: string | null
+          payin_total_cents?: number | null
+          payout_total_cents?: number | null
+          process_name?: string | null
+          provider_commission_cents?: number | null
+          provider_st_id?: string | null
+          raw?: Json
+          sharetribe_id: string
+          state?: string | null
+          transitions?: Json
+          updated_at?: string
+        }
+        Update: {
+          booking_end?: string | null
+          booking_start?: string | null
+          created_at?: string
+          created_at_st?: string | null
+          currency?: string | null
+          customer_commission_cents?: number | null
+          customer_st_id?: string | null
+          id?: string
+          last_transition?: string | null
+          last_transitioned_at?: string | null
+          listing_st_id?: string | null
+          listing_title?: string | null
+          payin_total_cents?: number | null
+          payout_total_cents?: number | null
+          process_name?: string | null
+          provider_commission_cents?: number | null
+          provider_st_id?: string | null
+          raw?: Json
+          sharetribe_id?: string
+          state?: string | null
+          transitions?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      st_users: {
+        Row: {
+          banned: boolean
+          created_at: string
+          created_at_st: string | null
+          deleted: boolean
+          display_name: string | null
+          email: string | null
+          email_verified: boolean
+          first_name: string | null
+          id: string
+          last_name: string | null
+          pending_email: string | null
+          profile: Json
+          raw: Json
+          role: string | null
+          sharetribe_id: string
+          updated_at: string
+        }
+        Insert: {
+          banned?: boolean
+          created_at?: string
+          created_at_st?: string | null
+          deleted?: boolean
+          display_name?: string | null
+          email?: string | null
+          email_verified?: boolean
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          pending_email?: string | null
+          profile?: Json
+          raw?: Json
+          role?: string | null
+          sharetribe_id: string
+          updated_at?: string
+        }
+        Update: {
+          banned?: boolean
+          created_at?: string
+          created_at_st?: string | null
+          deleted?: boolean
+          display_name?: string | null
+          email?: string | null
+          email_verified?: boolean
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          pending_email?: string | null
+          profile?: Json
+          raw?: Json
+          role?: string | null
+          sharetribe_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       state_pool_regulations: {
         Row: {
           authority_name: string | null
@@ -5040,6 +5358,13 @@ export type Database = {
         | "converted"
         | "do_not_contact"
       lead_source: "host_lead" | "ig_lead" | "social_lead" | "provider_lead"
+      security_alert_category:
+        | "off_platform"
+        | "harassment"
+        | "fraud"
+        | "safety"
+      security_alert_severity: "low" | "medium" | "high"
+      security_alert_status: "open" | "reviewed" | "dismissed" | "escalated"
       touch_channel: "sms" | "call" | "email" | "dm" | "note" | "other"
       touch_outcome:
         | "sent"
@@ -5198,6 +5523,14 @@ export const Constants = {
         "do_not_contact",
       ],
       lead_source: ["host_lead", "ig_lead", "social_lead", "provider_lead"],
+      security_alert_category: [
+        "off_platform",
+        "harassment",
+        "fraud",
+        "safety",
+      ],
+      security_alert_severity: ["low", "medium", "high"],
+      security_alert_status: ["open", "reviewed", "dismissed", "escalated"],
       touch_channel: ["sms", "call", "email", "dm", "note", "other"],
       touch_outcome: [
         "sent",
