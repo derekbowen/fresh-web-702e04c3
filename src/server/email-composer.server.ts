@@ -62,23 +62,8 @@ export async function getAudienceCount(audience: Audience): Promise<number> {
 
 // ---------- Resolve recipients ----------
 
-async function getOrCreateComposerToken(email: string): Promise<string> {
-  const lower = email.trim().toLowerCase();
-  const { data: existing } = await supabaseAdmin
-    .from("composer_unsubscribes" as any)
-    .select("token")
-    .eq("email", lower)
-    .maybeSingle();
-  if (existing?.token) return existing.token as string;
-  // Mint a token but don't mark as unsubscribed; just pre-register a token.
-  // Trick: composer_unsubscribes is a suppression list — if email is in there
-  // it's suppressed. So we don't pre-insert here. Instead, generate a token
-  // tied to the email via a deterministic scheme stored in metadata, OR
-  // store tokens separately. Simpler: encode email as base64 in the URL and
-  // the unsubscribe route inserts a row when clicked.
-  // We'll use an inline token = base64url(email) + short hmac for unguessability.
-  return generateInlineToken(lower);
-}
+// (Inline tokens are used for composer recipients — see generateInlineToken below.)
+
 
 function generateInlineToken(email: string): string {
   // Deterministic per-email so retries land on the same link, but unguessable
