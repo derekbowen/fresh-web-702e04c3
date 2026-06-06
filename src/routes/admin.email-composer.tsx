@@ -542,6 +542,20 @@ function Page() {
     recent.refetch();
   }
 
+  function handleDuplicate(r: any) {
+    setSubject(r.subject || "");
+    setBodyText(r.plain_body || "");
+    setPreview(r.preview_text || "");
+    const aud = String(r.audience || "").split(":")[0];
+    if (["hosts", "renters", "waitlist", "custom", "single"].includes(aud)) {
+      setAudience(aud as Audience);
+    }
+    setSendMode("now");
+    setTab("write");
+    setResult(`📋 Duplicated "${r.subject}". Edit and send when ready.`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   return (
     <AdminLayout title="Email Composer">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
