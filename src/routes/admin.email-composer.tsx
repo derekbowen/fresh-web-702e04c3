@@ -887,6 +887,28 @@ function Page() {
               </div>
             )}
 
+            {(sendMode === "now" || sendMode === "later") && (
+              <div className="mb-3 text-xs border rounded p-2 bg-slate-50">
+                <label className="flex items-center gap-2 flex-wrap">
+                  <span className="font-medium">⏱ Throttle:</span>
+                  <input
+                    type="range" min={500} max={3000} step={100}
+                    value={delayMs}
+                    onChange={(e) => setDelayMs(Number(e.target.value))}
+                    className="flex-1 min-w-[120px]"
+                  />
+                  <span className="font-mono w-16 text-right">{delayMs}ms</span>
+                  <span className="text-slate-500">
+                    (~{Math.round(60000 / delayMs)}/min)
+                  </span>
+                </label>
+                <p className="text-slate-500 mt-1">
+                  Lower = faster, but Emailit caps at 2/sec. 700ms is safe.
+                </p>
+              </div>
+            )}
+
+
             <button
               onClick={handleSend}
               disabled={sending || (sendMode !== "sequence" && audienceCount === 0)}
