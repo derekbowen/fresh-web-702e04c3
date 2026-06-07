@@ -354,7 +354,7 @@ function Field({ label, value, className = "" }: { label: string; value: string;
 }
 
 function SdkListingsTable({ items }: { items: SdkListing[] }) {
-  if (items.length === 0) return <p className="text-slate-500 text-sm">No listings.</p>;
+  if (items.length === 0) return <p className="text-slate-500 text-sm">No pool listings.</p>;
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -363,21 +363,39 @@ function SdkListingsTable({ items }: { items: SdkListing[] }) {
             <th className="py-2 pr-3">Title</th>
             <th className="py-2 pr-3">State</th>
             <th className="py-2 pr-3">City</th>
-            <th className="py-2 pr-3">Price</th>
+            <th className="py-2 pr-3">Pool type</th>
+            <th className="py-2 pr-3">Size</th>
+            <th className="py-2 pr-3">Depth</th>
+            <th className="py-2 pr-3">Guests</th>
+            <th className="py-2 pr-3">Heated</th>
+            <th className="py-2 pr-3">Amenities</th>
+            <th className="py-2 pr-3">Price / hr</th>
+            <th className="py-2 pr-3">Type</th>
             <th className="py-2 pr-3">ID</th>
           </tr>
         </thead>
         <tbody>
           {items.map((l) => (
-            <tr key={l.id} className="border-b last:border-0">
+            <tr key={l.id} className="border-b last:border-0 align-top">
               <td className="py-2 pr-3 font-medium">{l.title}</td>
               <td className="py-2 pr-3 text-slate-600">{l.state}</td>
               <td className="py-2 pr-3 text-slate-600">{l.city ?? "—"}</td>
+              <td className="py-2 pr-3 text-slate-600">{l.poolType ?? "—"}</td>
+              <td className="py-2 pr-3 text-slate-600">{l.poolSize ?? "—"}</td>
+              <td className="py-2 pr-3 text-slate-600">{l.poolDepth ?? "—"}</td>
+              <td className="py-2 pr-3 text-slate-600">{l.maxGuests ?? "—"}</td>
+              <td className="py-2 pr-3 text-slate-600">
+                {l.isHeated == null ? "—" : l.isHeated ? "Yes" : "No"}
+              </td>
+              <td className="py-2 pr-3 text-slate-600 max-w-[14rem]">
+                {l.amenities.length ? l.amenities.join(", ") : "—"}
+              </td>
               <td className="py-2 pr-3">
                 {l.priceCents != null
-                  ? `$${(l.priceCents / 100).toFixed(2)} ${l.priceCurrency ?? ""}`
+                  ? `$${(l.priceCents / 100).toFixed(0)}/hr ${l.priceCurrency ?? ""}`
                   : "—"}
               </td>
+              <td className="py-2 pr-3 text-xs text-slate-500">{l.listingType ?? "—"}</td>
               <td className="py-2 pr-3 text-xs text-slate-400 font-mono">{l.id.slice(0, 8)}…</td>
             </tr>
           ))}
