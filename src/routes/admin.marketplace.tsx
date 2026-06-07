@@ -10,10 +10,13 @@ import {
 } from "@/lib/marketplace-console.functions";
 import {
   sdkTestPing,
-  sdkTestSearchListings,
+  sdkTestSyncListings,
+  sdkTestLatestSyncRun,
+  sdkTestListListings,
   type SdkPingResult,
   type SdkListing,
 } from "@/lib/sharetribe-test/test.functions";
+
 import {
   BarChart3,
   Users as UsersIcon,
