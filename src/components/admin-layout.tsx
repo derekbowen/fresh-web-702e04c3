@@ -125,6 +125,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
   {
     label: "Marketplace",
     items: [
+      { to: "/admin/marketplace", label: "Marketplace console 🏛", icon: Database },
       { to: "/admin/sharetribe", label: "Sharetribe mirror 🛰", icon: Database },
       { to: "/admin/affiliates", label: "Affiliates 💸", icon: Share2 },
     ],

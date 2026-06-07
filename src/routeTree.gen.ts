@@ -122,6 +122,7 @@ import { Route as AdminPageAuditorRouteImport } from './routes/admin.page-audito
 import { Route as AdminOpportunitiesRouteImport } from './routes/admin.opportunities'
 import { Route as AdminNoAccessRouteImport } from './routes/admin.no-access'
 import { Route as AdminMissingPagesRouteImport } from './routes/admin.missing-pages'
+import { Route as AdminMarketplaceRouteImport } from './routes/admin.marketplace'
 import { Route as AdminListingAuditorRouteImport } from './routes/admin.listing-auditor'
 import { Route as AdminLinkCheckerRouteImport } from './routes/admin.link-checker'
 import { Route as AdminLinkAutoRepairRouteImport } from './routes/admin.link-auto-repair'
@@ -806,6 +807,11 @@ const AdminMissingPagesRoute = AdminMissingPagesRouteImport.update({
   path: '/missing-pages',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMarketplaceRoute = AdminMarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminListingAuditorRoute = AdminListingAuditorRouteImport.update({
   id: '/listing-auditor',
   path: '/listing-auditor',
@@ -1414,6 +1420,7 @@ export interface FileRoutesByFullPath {
   '/admin/link-auto-repair': typeof AdminLinkAutoRepairRoute
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/listing-auditor': typeof AdminListingAuditorRoute
+  '/admin/marketplace': typeof AdminMarketplaceRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/opportunities': typeof AdminOpportunitiesRoute
@@ -1626,6 +1633,7 @@ export interface FileRoutesByTo {
   '/admin/link-auto-repair': typeof AdminLinkAutoRepairRoute
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/listing-auditor': typeof AdminListingAuditorRoute
+  '/admin/marketplace': typeof AdminMarketplaceRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/opportunities': typeof AdminOpportunitiesRoute
@@ -1839,6 +1847,7 @@ export interface FileRoutesById {
   '/admin/link-auto-repair': typeof AdminLinkAutoRepairRoute
   '/admin/link-checker': typeof AdminLinkCheckerRoute
   '/admin/listing-auditor': typeof AdminListingAuditorRoute
+  '/admin/marketplace': typeof AdminMarketplaceRoute
   '/admin/missing-pages': typeof AdminMissingPagesRoute
   '/admin/no-access': typeof AdminNoAccessRoute
   '/admin/opportunities': typeof AdminOpportunitiesRoute
@@ -2053,6 +2062,7 @@ export interface FileRouteTypes {
     | '/admin/link-auto-repair'
     | '/admin/link-checker'
     | '/admin/listing-auditor'
+    | '/admin/marketplace'
     | '/admin/missing-pages'
     | '/admin/no-access'
     | '/admin/opportunities'
@@ -2265,6 +2275,7 @@ export interface FileRouteTypes {
     | '/admin/link-auto-repair'
     | '/admin/link-checker'
     | '/admin/listing-auditor'
+    | '/admin/marketplace'
     | '/admin/missing-pages'
     | '/admin/no-access'
     | '/admin/opportunities'
@@ -2477,6 +2488,7 @@ export interface FileRouteTypes {
     | '/admin/link-auto-repair'
     | '/admin/link-checker'
     | '/admin/listing-auditor'
+    | '/admin/marketplace'
     | '/admin/missing-pages'
     | '/admin/no-access'
     | '/admin/opportunities'
@@ -3532,6 +3544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMissingPagesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/marketplace': {
+      id: '/admin/marketplace'
+      path: '/marketplace'
+      fullPath: '/admin/marketplace'
+      preLoaderRoute: typeof AdminMarketplaceRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/listing-auditor': {
       id: '/admin/listing-auditor'
       path: '/listing-auditor'
@@ -4273,6 +4292,7 @@ interface AdminRouteChildren {
   AdminLinkAutoRepairRoute: typeof AdminLinkAutoRepairRoute
   AdminLinkCheckerRoute: typeof AdminLinkCheckerRoute
   AdminListingAuditorRoute: typeof AdminListingAuditorRoute
+  AdminMarketplaceRoute: typeof AdminMarketplaceRoute
   AdminMissingPagesRoute: typeof AdminMissingPagesRoute
   AdminNoAccessRoute: typeof AdminNoAccessRoute
   AdminOpportunitiesRoute: typeof AdminOpportunitiesRoute
@@ -4345,6 +4365,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLinkAutoRepairRoute: AdminLinkAutoRepairRoute,
   AdminLinkCheckerRoute: AdminLinkCheckerRoute,
   AdminListingAuditorRoute: AdminListingAuditorRoute,
+  AdminMarketplaceRoute: AdminMarketplaceRoute,
   AdminMissingPagesRoute: AdminMissingPagesRoute,
   AdminNoAccessRoute: AdminNoAccessRoute,
   AdminOpportunitiesRoute: AdminOpportunitiesRoute,
