@@ -9,6 +9,12 @@ import {
   type StList,
 } from "@/lib/marketplace-console.functions";
 import {
+  sdkTestPing,
+  sdkTestSearchListings,
+  type SdkPingResult,
+  type SdkListing,
+} from "@/lib/sharetribe-test/test.functions";
+import {
   BarChart3,
   Users as UsersIcon,
   Package,
