@@ -67,6 +67,13 @@ export type SdkListing = {
   priceCents: number | null;
   priceCurrency: string | null;
   city: string | null;
+  listingType: string | null;
+  poolType: string | null;
+  poolSize: string | null;
+  poolDepth: string | null;
+  maxGuests: number | null;
+  isHeated: boolean | null;
+  amenities: string[];
 };
 
 export const sdkTestSearchListings = createServerFn({ method: "POST" })
@@ -96,7 +103,21 @@ export const sdkTestSearchListings = createServerFn({ method: "POST" })
         const res = await sdk.listings.query(params);
         const items: SdkListing[] = (res?.data?.data ?? []).map((l: any) => {
           const attrs = l.attributes ?? {};
-          const pd = attrs.publicData ?? {};
+          const pd = (attrs.publicData ?? {}) as Record<string, any>;
+          const heatedRaw = pd.is_heated;
+          const isHeated =
+            heatedRaw === true || heatedRaw === "yes"
+              ? true
+              : heatedRaw === false || heatedRaw === "no"
+                ? false
+                : null;
+          const maxGuestsRaw = pd.max_guests ?? pd.maxGuests;
+          const maxGuests =
+            typeof maxGuestsRaw === "number"
+              ? maxGuestsRaw
+              : typeof maxGuestsRaw === "string" && maxGuestsRaw.trim() !== ""
+                ? Number(maxGuestsRaw) || null
+                : null;
           return {
             id: l.id?.uuid ?? "",
             title: attrs.title ?? "(untitled)",
@@ -104,6 +125,17 @@ export const sdkTestSearchListings = createServerFn({ method: "POST" })
             priceCents: attrs.price?.amount ?? null,
             priceCurrency: attrs.price?.currency ?? null,
             city: pd.city ?? pd.location?.city ?? null,
+            listingType: pd.listingType ?? pd.listing_type ?? pd.category ?? null,
+            poolType: pd.pool_type ?? null,
+            poolSize: pd.poolsize ?? pd.pool_size ?? null,
+            poolDepth: pd.pool_depth ?? null,
+            maxGuests,
+            isHeated,
+            amenities: Array.isArray(pd.poolAmenities)
+              ? (pd.poolAmenities as string[])
+              : Array.isArray(pd.amenities)
+                ? (pd.amenities as string[])
+                : [],
           };
         });
         return {
