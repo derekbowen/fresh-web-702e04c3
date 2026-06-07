@@ -42,6 +42,7 @@ type View =
   | "transactions"
   | "gmv"
   | "reviews"
+  | "sdk_test"
   | "settings"
   | "library"
   | "access";
@@ -56,6 +57,7 @@ const NAV: Array<{ id: View; label: string; icon: any }> = [
   { id: "transactions", label: "Transactions", icon: Receipt },
   { id: "gmv", label: "GMV", icon: DollarSign },
   { id: "reviews", label: "Reviews", icon: Star },
+  { id: "sdk_test", label: "SDK Test (cardbay)", icon: Beaker },
   { id: "settings", label: "Settings", icon: SettingsIcon },
   { id: "library", label: "Master Library", icon: Library },
   { id: "access", label: "Access", icon: ShieldCheck },
