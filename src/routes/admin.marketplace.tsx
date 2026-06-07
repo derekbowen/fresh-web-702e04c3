@@ -9,6 +9,12 @@ import {
   type StList,
 } from "@/lib/marketplace-console.functions";
 import {
+  sdkTestPing,
+  sdkTestSearchListings,
+  type SdkPingResult,
+  type SdkListing,
+} from "@/lib/sharetribe-test/test.functions";
+import {
   BarChart3,
   Users as UsersIcon,
   Package,
@@ -23,6 +29,7 @@ import {
   FlaskConical,
   LogOut,
   RefreshCw,
+  Beaker,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
@@ -35,6 +42,7 @@ type View =
   | "transactions"
   | "gmv"
   | "reviews"
+  | "sdk_test"
   | "settings"
   | "library"
   | "access";
@@ -49,6 +57,7 @@ const NAV: Array<{ id: View; label: string; icon: any }> = [
   { id: "transactions", label: "Transactions", icon: Receipt },
   { id: "gmv", label: "GMV", icon: DollarSign },
   { id: "reviews", label: "Reviews", icon: Star },
+  { id: "sdk_test", label: "SDK Test (cardbay)", icon: Beaker },
   { id: "settings", label: "Settings", icon: SettingsIcon },
   { id: "library", label: "Master Library", icon: Library },
   { id: "access", label: "Access", icon: ShieldCheck },
@@ -188,7 +197,140 @@ function ViewBody({ view, env }: { view: View; env: Env }) {
   if (view === "transactions") return <ResourceView env={env} resource="transactions" />;
   if (view === "reviews") return <ResourceView env={env} resource="reviews" />;
   if (view === "catalog") return <CatalogView env={env} />;
+  if (view === "sdk_test") return <SdkTestView env={env} />;
   return <PlaceholderView view={view} />;
+}
+
+function SdkTestView({ env }: { env: Env }) {
+  const pingFn = useServerFn(sdkTestPing);
+  const searchFn = useServerFn(sdkTestSearchListings);
+  const [keywords, setKeywords] = useState("");
+  const ping = useQuery({
+    queryKey: ["mc.sdk_test.ping"],
+    queryFn: () => pingFn(),
+  });
+  const search = useQuery({
+    queryKey: ["mc.sdk_test.listings", keywords],
+    queryFn: () => searchFn({ data: { keywords: keywords || undefined, perPage: 10 } }),
+  });
+
+  if (env !== "test") {
+    return (
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
+        The cardbay Marketplace API SDK is only wired against the <b>TEST</b> marketplace.
+        Switch the env toggle in the sidebar to <b>Test</b> to use it.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <section className="rounded-lg border bg-white p-5 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold">SDK ping — marketplace.show()</h2>
+          <button
+            onClick={() => ping.refetch()}
+            className="text-xs flex items-center gap-1.5 px-2.5 py-1.5 rounded border hover:bg-slate-50"
+          >
+            <RefreshCw className="w-3.5 h-3.5" /> Refetch
+          </button>
+        </div>
+        {ping.isLoading && <p className="text-slate-500 text-sm">Pinging…</p>}
+        {ping.error && (
+          <p className="text-rose-600 text-sm">Error: {String((ping.error as any)?.message ?? ping.error)}</p>
+        )}
+        {ping.data && <SdkPingCard data={ping.data} />}
+      </section>
+
+      <section className="rounded-lg border bg-white p-5 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold">SDK search — listings.query</h2>
+          <div className="flex items-center gap-2">
+            <input
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
+              placeholder="keywords (optional)"
+              className="text-sm border rounded px-2.5 py-1.5 w-56"
+            />
+            <button
+              onClick={() => search.refetch()}
+              className="text-xs flex items-center gap-1.5 px-2.5 py-1.5 rounded border hover:bg-slate-50"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> Search
+            </button>
+          </div>
+        </div>
+        {search.isLoading && <p className="text-slate-500 text-sm">Loading…</p>}
+        {search.data?.error && (
+          <p className="text-rose-600 text-sm">SDK error: {search.data.error}</p>
+        )}
+        {search.data && !search.data.error && (
+          <div>
+            <p className="text-xs text-slate-500 mb-2">
+              {search.data.total} total listing{search.data.total === 1 ? "" : "s"} in TEST
+            </p>
+            <SdkListingsTable items={search.data.items} />
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function SdkPingCard({ data }: { data: SdkPingResult }) {
+  return (
+    <dl className="grid grid-cols-2 gap-3 text-sm">
+      <Field label="Status" value={data.ok ? "OK ✅" : "Failed ❌"} />
+      <Field label="Client ID suffix" value={`…${data.clientIdSuffix || "?"}`} />
+      <Field label="Marketplace name" value={data.marketplaceName ?? "—"} />
+      <Field label="Marketplace ID" value={data.marketplaceId ?? "—"} />
+      <Field label="Marketplace URL" value={data.marketplaceUrl ?? "—"} />
+      {data.error && <Field label="Error" value={data.error} className="col-span-2 text-rose-600" />}
+    </dl>
+  );
+}
+
+function Field({ label, value, className = "" }: { label: string; value: string; className?: string }) {
+  return (
+    <div className={className}>
+      <dt className="text-xs uppercase tracking-wider text-slate-500">{label}</dt>
+      <dd className="font-medium break-all">{value}</dd>
+    </div>
+  );
+}
+
+function SdkListingsTable({ items }: { items: SdkListing[] }) {
+  if (items.length === 0) return <p className="text-slate-500 text-sm">No listings.</p>;
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead className="text-left text-xs uppercase tracking-wider text-slate-500 border-b">
+          <tr>
+            <th className="py-2 pr-3">Title</th>
+            <th className="py-2 pr-3">State</th>
+            <th className="py-2 pr-3">City</th>
+            <th className="py-2 pr-3">Price</th>
+            <th className="py-2 pr-3">ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((l) => (
+            <tr key={l.id} className="border-b last:border-0">
+              <td className="py-2 pr-3 font-medium">{l.title}</td>
+              <td className="py-2 pr-3 text-slate-600">{l.state}</td>
+              <td className="py-2 pr-3 text-slate-600">{l.city ?? "—"}</td>
+              <td className="py-2 pr-3">
+                {l.priceCents != null
+                  ? `$${(l.priceCents / 100).toFixed(2)} ${l.priceCurrency ?? ""}`
+                  : "—"}
+              </td>
+              <td className="py-2 pr-3 text-xs text-slate-400 font-mono">{l.id.slice(0, 8)}…</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 function OverviewView({ env }: { env: Env }) {
