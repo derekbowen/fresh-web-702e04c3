@@ -114,6 +114,16 @@ export const listMarketplaceResource = createServerFn({ method: "POST" })
     if (data.resource === "transactions") query.include = "listing,customer,provider";
     if (data.resource === "reviews") query.include = "author,subject,listing";
 
-    const res = await stIntegGet<StList>(data.env, path, query);
-    return res;
+    try {
+      const res = await stIntegGet<StList>(data.env, path, query);
+      return res;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      // Integration API doesn't expose /reviews/query — treat 404 as empty.
+      if (/\[404\]/.test(msg)) {
+        return { data: [], included: [], meta: { totalItems: 0, totalPages: 0, page: data.page, perPage: data.perPage } } as unknown as StList;
+      }
+      throw e;
+    }
   });
+
