@@ -205,14 +205,22 @@ function SdkTestView({ env }: { env: Env }) {
   const pingFn = useServerFn(sdkTestPing);
   const searchFn = useServerFn(sdkTestSearchListings);
   const [keywords, setKeywords] = useState("");
+  const [pingTriggered, setPingTriggered] = useState(false);
+
   const ping = useQuery({
     queryKey: ["mc.sdk_test.ping"],
     queryFn: () => pingFn(),
+    enabled: pingTriggered,
   });
+
   const search = useQuery({
     queryKey: ["mc.sdk_test.listings", keywords],
     queryFn: () => searchFn({ data: { keywords: keywords || undefined, perPage: 10 } }),
   });
+
+  useEffect(() => {
+    setPingTriggered(false);
+  }, [env]);
 
   if (env !== "test") {
     return (
@@ -224,24 +232,52 @@ function SdkTestView({ env }: { env: Env }) {
   }
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg border bg-white p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">SDK ping — marketplace.show()</h2>
-          <button
-            onClick={() => ping.refetch()}
-            className="text-xs flex items-center gap-1.5 px-2.5 py-1.5 rounded border hover:bg-slate-50"
-          >
-            <RefreshCw className="w-3.5 h-3.5" /> Refetch
-          </button>
+    <div className="space-y-8">
+      {/* Prominent Ping SDK */}
+      <section className="rounded-xl border bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
+            <Beaker className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">SDK Connection Test</h2>
+            <p className="text-sm text-slate-500">Verify the Sharetribe TEST marketplace SDK is reachable.</p>
+          </div>
         </div>
-        {ping.isLoading && <p className="text-slate-500 text-sm">Pinging…</p>}
-        {ping.error && (
-          <p className="text-rose-600 text-sm">Error: {String((ping.error as any)?.message ?? ping.error)}</p>
+
+        {!pingTriggered && !ping.isLoading && (
+          <button
+            onClick={() => setPingTriggered(true)}
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition shadow-sm"
+          >
+            <RefreshCw className="w-4 h-4" /> Ping SDK
+          </button>
         )}
-        {ping.data && <SdkPingCard data={ping.data} />}
+
+        {ping.isLoading && (
+          <div className="flex items-center gap-3 text-sm text-slate-600">
+            <RefreshCw className="w-4 h-4 animate-spin" />
+            Pinging test marketplace…
+          </div>
+        )}
+
+        {ping.error && (
+          <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+            <p className="font-semibold mb-1">Ping failed</p>
+            <p>{String((ping.error as any)?.message ?? ping.error)}</p>
+            <button
+              onClick={() => ping.refetch()}
+              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-rose-300 bg-white text-rose-700 text-xs font-medium hover:bg-rose-100 transition"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> Retry
+            </button>
+          </div>
+        )}
+
+        {ping.data && <SdkPingCard data={ping.data} onRetry={() => ping.refetch()} />}
       </section>
 
+      {/* Search */}
       <section className="rounded-lg border bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold">SDK search — listings.query</h2>
@@ -277,16 +313,34 @@ function SdkTestView({ env }: { env: Env }) {
   );
 }
 
-function SdkPingCard({ data }: { data: SdkPingResult }) {
+function SdkPingCard({ data, onRetry }: { data: SdkPingResult; onRetry: () => void }) {
+  const ok = data.ok;
   return (
-    <dl className="grid grid-cols-2 gap-3 text-sm">
-      <Field label="Status" value={data.ok ? "OK ✅" : "Failed ❌"} />
-      <Field label="Client ID suffix" value={`…${data.clientIdSuffix || "?"}`} />
-      <Field label="Marketplace name" value={data.marketplaceName ?? "—"} />
-      <Field label="Marketplace ID" value={data.marketplaceId ?? "—"} />
-      <Field label="Marketplace URL" value={data.marketplaceUrl ?? "—"} />
-      {data.error && <Field label="Error" value={data.error} className="col-span-2 text-rose-600" />}
-    </dl>
+    <div className={`rounded-lg border p-4 ${ok ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"}`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-sm font-bold ${ok ? "bg-emerald-200 text-emerald-800" : "bg-rose-200 text-rose-800"}`}>
+            {ok ? "✓" : "✕"}
+          </span>
+          <span className={`font-semibold text-sm ${ok ? "text-emerald-800" : "text-rose-800"}`}>
+            {ok ? "SDK ping successful" : "SDK ping failed"}
+          </span>
+        </div>
+        <button
+          onClick={onRetry}
+          className="text-xs flex items-center gap-1.5 px-2.5 py-1.5 rounded border hover:bg-white/60 transition"
+        >
+          <RefreshCw className="w-3.5 h-3.5" /> Retry
+        </button>
+      </div>
+      <dl className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+        <Field label="Marketplace name" value={data.marketplaceName ?? "—"} />
+        <Field label="Marketplace ID" value={data.marketplaceId ?? "—"} />
+        <Field label="Marketplace URL" value={data.marketplaceUrl ?? "—"} />
+        <Field label="Client ID suffix" value={`…${data.clientIdSuffix || "?"}`} />
+        {data.error && <Field label="Error" value={data.error} className="col-span-2 md:col-span-3 text-rose-700" />}
+      </dl>
+    </div>
   );
 }
 
