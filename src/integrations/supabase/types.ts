@@ -4486,6 +4486,99 @@ export type Database = {
         }
         Relationships: []
       }
+      sharetribe_test_listings: {
+        Row: {
+          amenities: string[] | null
+          city: string | null
+          created_at: string
+          id: string
+          is_heated: boolean | null
+          last_synced_at: string
+          listing_type: string | null
+          max_guests: number | null
+          pool_depth: string | null
+          pool_size: string | null
+          pool_type: string | null
+          price_cents: number | null
+          price_currency: string | null
+          raw: Json | null
+          state: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          amenities?: string[] | null
+          city?: string | null
+          created_at?: string
+          id: string
+          is_heated?: boolean | null
+          last_synced_at?: string
+          listing_type?: string | null
+          max_guests?: number | null
+          pool_depth?: string | null
+          pool_size?: string | null
+          pool_type?: string | null
+          price_cents?: number | null
+          price_currency?: string | null
+          raw?: Json | null
+          state?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amenities?: string[] | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          is_heated?: boolean | null
+          last_synced_at?: string
+          listing_type?: string | null
+          max_guests?: number | null
+          pool_depth?: string | null
+          pool_size?: string | null
+          pool_type?: string | null
+          price_cents?: number | null
+          price_currency?: string | null
+          raw?: Json | null
+          state?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sharetribe_test_sync_runs: {
+        Row: {
+          error: string | null
+          finished_at: string | null
+          id: string
+          inserted_count: number
+          started_at: string
+          total_fetched: number
+          triggered_by: string | null
+          updated_count: number
+        }
+        Insert: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          inserted_count?: number
+          started_at?: string
+          total_fetched?: number
+          triggered_by?: string | null
+          updated_count?: number
+        }
+        Update: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          inserted_count?: number
+          started_at?: string
+          total_fetched?: number
+          triggered_by?: string | null
+          updated_count?: number
+        }
+        Relationships: []
+      }
       site_footer_settings: {
         Row: {
           bottom_text: string | null

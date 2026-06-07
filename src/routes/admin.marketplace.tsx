@@ -10,10 +10,13 @@ import {
 } from "@/lib/marketplace-console.functions";
 import {
   sdkTestPing,
-  sdkTestSearchListings,
+  sdkTestSyncListings,
+  sdkTestLatestSyncRun,
+  sdkTestListListings,
   type SdkPingResult,
   type SdkListing,
 } from "@/lib/sharetribe-test/test.functions";
+
 import {
   BarChart3,
   Users as UsersIcon,
@@ -203,9 +206,20 @@ function ViewBody({ view, env }: { view: View; env: Env }) {
 
 function SdkTestView({ env }: { env: Env }) {
   const pingFn = useServerFn(sdkTestPing);
-  const searchFn = useServerFn(sdkTestSearchListings);
-  const [keywords, setKeywords] = useState("");
+  const syncFn = useServerFn(sdkTestSyncListings);
+  const latestRunFn = useServerFn(sdkTestLatestSyncRun);
+  const listFn = useServerFn(sdkTestListListings);
+
   const [pingTriggered, setPingTriggered] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<null | Awaited<ReturnType<typeof syncFn>>>(null);
+
+  const [search, setSearch] = useState("");
+  const [city, setCity] = useState("");
+  const [heated, setHeated] = useState<"any" | "yes" | "no">("any");
+  const [minGuests, setMinGuests] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const perPage = 25;
 
   const ping = useQuery({
     queryKey: ["mc.sdk_test.ping"],
@@ -213,14 +227,41 @@ function SdkTestView({ env }: { env: Env }) {
     enabled: pingTriggered,
   });
 
-  const search = useQuery({
-    queryKey: ["mc.sdk_test.listings", keywords],
-    queryFn: () => searchFn({ data: { keywords: keywords || undefined, perPage: 10 } }),
+  const latestRun = useQuery({
+    queryKey: ["mc.sdk_test.latest_run"],
+    queryFn: () => latestRunFn(),
+  });
+
+  const listings = useQuery({
+    queryKey: ["mc.sdk_test.list", search, city, heated, minGuests, page],
+    queryFn: () =>
+      listFn({
+        data: {
+          search: search || undefined,
+          city: city || undefined,
+          heated,
+          minGuests: minGuests ? Number(minGuests) : undefined,
+          page,
+          perPage,
+        },
+      }),
   });
 
   useEffect(() => {
     setPingTriggered(false);
   }, [env]);
+
+  async function handleSync() {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await syncFn();
+      setSyncResult(res);
+      await Promise.all([latestRun.refetch(), listings.refetch()]);
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   if (env !== "test") {
     return (
@@ -231,9 +272,11 @@ function SdkTestView({ env }: { env: Env }) {
     );
   }
 
+  const totalPages = listings.data ? Math.max(1, Math.ceil(listings.data.total / perPage)) : 1;
+
   return (
     <div className="space-y-8">
-      {/* Prominent Ping SDK */}
+      {/* Ping SDK */}
       <section className="rounded-xl border bg-white p-6 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
@@ -253,65 +296,163 @@ function SdkTestView({ env }: { env: Env }) {
             <RefreshCw className="w-4 h-4" /> Ping SDK
           </button>
         )}
-
         {ping.isLoading && (
           <div className="flex items-center gap-3 text-sm text-slate-600">
-            <RefreshCw className="w-4 h-4 animate-spin" />
-            Pinging test marketplace…
+            <RefreshCw className="w-4 h-4 animate-spin" /> Pinging test marketplace…
           </div>
         )}
-
-        {ping.error && (
-          <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-            <p className="font-semibold mb-1">Ping failed</p>
-            <p>{String((ping.error as any)?.message ?? ping.error)}</p>
-            <button
-              onClick={() => ping.refetch()}
-              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-rose-300 bg-white text-rose-700 text-xs font-medium hover:bg-rose-100 transition"
-            >
-              <RefreshCw className="w-3.5 h-3.5" /> Retry
-            </button>
-          </div>
-        )}
-
         {ping.data && <SdkPingCard data={ping.data} onRetry={() => ping.refetch()} />}
       </section>
 
-      {/* Search */}
+      {/* Sync */}
+      <section className="rounded-xl border bg-white p-6 shadow-sm">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h2 className="text-lg font-semibold">Sync TEST listings to database</h2>
+            <p className="text-sm text-slate-500">
+              Pulls all pool listings from the TEST marketplace and upserts them into the local
+              database for fast browsing, filtering, and audit history.
+            </p>
+          </div>
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white font-semibold text-sm hover:bg-emerald-700 transition shadow-sm disabled:opacity-60"
+          >
+            <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+            {syncing ? "Syncing…" : "Sync now"}
+          </button>
+        </div>
+
+        <dl className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+          <Field label="Rows in DB" value={String(latestRun.data?.rowCount ?? "—")} />
+          <Field
+            label="Last sync"
+            value={
+              latestRun.data?.run?.finishedAt
+                ? new Date(latestRun.data.run.finishedAt).toLocaleString()
+                : latestRun.data?.run?.startedAt
+                  ? `started ${new Date(latestRun.data.run.startedAt).toLocaleString()}`
+                  : "never"
+            }
+          />
+          <Field label="Last fetched" value={String(latestRun.data?.run?.totalFetched ?? "—")} />
+          <Field
+            label="Last result"
+            value={
+              latestRun.data?.run?.error
+                ? `error: ${latestRun.data.run.error}`
+                : latestRun.data?.run
+                  ? `+${latestRun.data.run.inserted} / ~${latestRun.data.run.updated}`
+                  : "—"
+            }
+            className={latestRun.data?.run?.error ? "text-rose-700" : ""}
+          />
+        </dl>
+
+        {syncResult && (
+          <div
+            className={`mt-4 rounded-lg border p-3 text-sm ${
+              syncResult.ok
+                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                : "border-rose-200 bg-rose-50 text-rose-700"
+            }`}
+          >
+            {syncResult.ok
+              ? `Sync complete — fetched ${syncResult.totalFetched}, ${syncResult.inserted} new, ${syncResult.updated} updated.`
+              : `Sync failed: ${syncResult.error}`}
+          </div>
+        )}
+      </section>
+
+      {/* Listings (DB-backed) */}
       <section className="rounded-lg border bg-white p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">SDK search — listings.query</h2>
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h2 className="text-lg font-semibold">Synced pool listings</h2>
+          <div className="flex items-center gap-2 flex-wrap">
             <input
-              value={keywords}
-              onChange={(e) => setKeywords(e.target.value)}
-              placeholder="keywords (optional)"
-              className="text-sm border rounded px-2.5 py-1.5 w-56"
+              value={search}
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
+              placeholder="Search title…"
+              className="text-sm border rounded px-2.5 py-1.5 w-48"
             />
-            <button
-              onClick={() => search.refetch()}
-              className="text-xs flex items-center gap-1.5 px-2.5 py-1.5 rounded border hover:bg-slate-50"
+            <input
+              value={city}
+              onChange={(e) => {
+                setPage(1);
+                setCity(e.target.value);
+              }}
+              placeholder="City"
+              className="text-sm border rounded px-2.5 py-1.5 w-36"
+            />
+            <select
+              value={heated}
+              onChange={(e) => {
+                setPage(1);
+                setHeated(e.target.value as any);
+              }}
+              className="text-sm border rounded px-2 py-1.5"
             >
-              <RefreshCw className="w-3.5 h-3.5" /> Search
-            </button>
+              <option value="any">Heated: any</option>
+              <option value="yes">Heated: yes</option>
+              <option value="no">Heated: no</option>
+            </select>
+            <input
+              type="number"
+              min={0}
+              value={minGuests}
+              onChange={(e) => {
+                setPage(1);
+                setMinGuests(e.target.value);
+              }}
+              placeholder="Min guests"
+              className="text-sm border rounded px-2.5 py-1.5 w-28"
+            />
           </div>
         </div>
-        {search.isLoading && <p className="text-slate-500 text-sm">Loading…</p>}
-        {search.data?.error && (
-          <p className="text-rose-600 text-sm">SDK error: {search.data.error}</p>
+
+        {listings.isLoading && <p className="text-slate-500 text-sm">Loading…</p>}
+        {listings.data?.error && (
+          <p className="text-rose-600 text-sm">Error: {listings.data.error}</p>
         )}
-        {search.data && !search.data.error && (
-          <div>
+        {listings.data && !listings.data.error && (
+          <>
             <p className="text-xs text-slate-500 mb-2">
-              {search.data.total} total listing{search.data.total === 1 ? "" : "s"} in TEST
+              {listings.data.total} matching listing{listings.data.total === 1 ? "" : "s"}
+              {latestRun.data?.rowCount != null && ` of ${latestRun.data.rowCount} synced`}
             </p>
-            <SdkListingsTable items={search.data.items} />
-          </div>
+            <SdkListingsTable items={listings.data.items} />
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-3 text-sm">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-3 py-1.5 rounded border hover:bg-slate-50 disabled:opacity-50"
+                >
+                  ← Prev
+                </button>
+                <span className="text-slate-500">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  className="px-3 py-1.5 rounded border hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>
   );
 }
+
 
 function SdkPingCard({ data, onRetry }: { data: SdkPingResult; onRetry: () => void }) {
   const ok = data.ok;
