@@ -255,15 +255,18 @@ export const sdkTestSyncListings = createServerFn({ method: "POST" })
         page++;
       }
 
-      await supabaseAdmin
-        .from("sharetribe_test_sync_runs")
-        .update({
-          finished_at: new Date().toISOString(),
-          total_fetched: totalFetched,
-          inserted_count: inserted,
-          updated_count: updated,
-        })
-        .eq("id", runId);
+      if (runId) {
+        await supabaseAdmin
+          .from("sharetribe_test_sync_runs")
+          .update({
+            finished_at: new Date().toISOString(),
+            total_fetched: totalFetched,
+            inserted_count: inserted,
+            updated_count: updated,
+          })
+          .eq("id", runId);
+      }
+
 
       return { ok: true, totalFetched, inserted, updated, error: null, runId };
     } catch (e) {
