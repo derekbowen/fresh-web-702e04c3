@@ -47,7 +47,8 @@ export type HomeData = {
    */
   academyHealth: Record<string, AcademyHealth>;
   /** Jan's TheSwimpark featured-pool card data (hero image only). */
-  janFeatured: { heroImage: string | null } | null;
+  /** Jan's TheSwimpark featured-pool card data (hero image only). */
+  janFeatured?: { heroImage: string | null } | null;
 };
 
 const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
