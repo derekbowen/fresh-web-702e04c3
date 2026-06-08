@@ -23,6 +23,7 @@ import {
   ListChecks,
   Mountain,
   Heart,
+  Share2,
 } from "lucide-react";
 
 const LISTING_ID = "6a1a4c13-02fe-458e-89ba-e33b5fc7612b";
@@ -117,6 +118,7 @@ export const Route = createFileRoute("/p/jan")({
 function JanPage() {
   const { listing } = Route.useLoaderData() as { listing: ShareListing; origin: string };
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [shared, setShared] = useState(false);
   const locStr = [listing.city, listing.state].filter(Boolean).join(", ");
   const heroImg = listing.heroImage ?? "";
   const galleryRest = listing.images.slice(1, 5);
@@ -124,6 +126,25 @@ function JanPage() {
   const totalPhotos = listing.images.length;
   const bookHref = listing.bookUrl;
   const signupHref = `/signup?next=${encodeURIComponent(bookHref)}`;
+
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: document.title, url });
+      } catch {
+        // user cancelled
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setShared(true);
+        setTimeout(() => setShared(false), 2000);
+      } catch {
+        // clipboard denied
+      }
+    }
+  };
 
   return (
     <>
@@ -143,9 +164,18 @@ function JanPage() {
                 </p>
               </div>
             </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-1 text-[11px] font-bold text-black shadow">
-              <Heart className="h-3 w-3" /> PRNM Newest Featured Pool
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow hover:bg-primary/90 transition-transform hover:scale-[1.02]"
+              >
+                <Share2 className="h-4 w-4" />
+                {shared ? "Link copied!" : "Share this pool"}
+              </button>
+              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-1 text-[11px] font-bold text-black shadow">
+                <Heart className="h-3 w-3" /> PRNM Newest Featured Pool
+              </span>
+            </div>
           </div>
         </section>
 
