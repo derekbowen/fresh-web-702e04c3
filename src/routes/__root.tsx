@@ -121,7 +121,7 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const data = Route.useLoaderData();
   const isAdmin = pathname.startsWith("/admin");
-  const showIntercom = true;
+  const showIntercom = !isAdmin;
   const footer = data?.footer;
   const isAuthed = !!data?.isAuthed;
   const content = (
