@@ -4,11 +4,25 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { checkAdminRole } from "@/server/admin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+
+const DEFAULT_REDIRECT = "/account/learning";
+
+// After sign-in, if no explicit redirect was supplied, send admins to the
+// admin dashboard instead of the learner page.
+async function resolveRedirect(requested: string): Promise<string> {
+  if (requested !== DEFAULT_REDIRECT) return requested;
+  try {
+    const r = await checkAdminRole();
+    if (r?.isAdmin) return "/admin/dashboard";
+  } catch {}
+  return requested;
+}
 
 // Allow only same-origin internal paths: must start with "/" and not "//" or "/\".
 // Rejects "//evil.com", "/\\evil.com", and any value containing "://".
@@ -29,7 +43,8 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      throw redirect({ to: search.redirect as never });
+      const dest = await resolveRedirect(search.redirect);
+      throw redirect({ to: dest as never });
     }
   },
   component: AuthPage,
@@ -58,11 +73,15 @@ function AuthPage() {
 
   useEffect(() => {
     let active = true;
+    const go = async () => {
+      const dest = await resolveRedirect(search.redirect);
+      if (active) navigate({ to: dest as never });
+    };
     void supabase.auth.getSession().then(({ data }) => {
-      if (active && data.session) navigate({ to: search.redirect as never });
+      if (active && data.session) void go();
     });
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) navigate({ to: search.redirect as never });
+      if (session) void go();
     });
     return () => {
       active = false;
@@ -100,7 +119,8 @@ function AuthPage() {
           return;
         }
         toast.success("Signed in.");
-        navigate({ to: search.redirect as never });
+        const dest = await resolveRedirect(search.redirect);
+        navigate({ to: dest as never });
       }
     } finally {
       setBusy(false);
@@ -123,7 +143,8 @@ function AuthPage() {
       }
       if (!result.redirected) {
         toast.success("Signed in.");
-        navigate({ to: search.redirect as never });
+        const dest = await resolveRedirect(search.redirect);
+        navigate({ to: dest as never });
       }
     } finally {
       setBusy(false);
