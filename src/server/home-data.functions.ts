@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { searchListings } from "@/server/sharetribe.server";
+import { searchListings, fetchShareListing } from "@/server/sharetribe.server";
 import type { ListingSummary } from "@/server/sharetribe.functions";
+
+const JAN_LISTING_ID = "6a1a4c13-02fe-458e-89ba-e33b5fc7612b";
 import {
   ACADEMY_SLUGS,
   ACADEMY_OCCASION_SLUGS,
@@ -44,6 +46,8 @@ export type HomeData = {
    * - "published": published with substantial content (≥800 chars)
    */
   academyHealth: Record<string, AcademyHealth>;
+  /** Jan's TheSwimpark featured-pool card data (hero image only). */
+  janFeatured: { heroImage: string | null } | null;
 };
 
 const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
@@ -58,6 +62,7 @@ const EMPTY_HOME_DATA: HomeData = {
   academyHealth: Object.fromEntries(
     ACADEMY_SLUGS.map((s) => [s, "missing" as const]),
   ) as Record<string, "missing" | "short" | "published">,
+  janFeatured: null,
 };
 
 function haversineMiles(
