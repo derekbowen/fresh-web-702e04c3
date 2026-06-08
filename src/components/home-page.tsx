@@ -538,6 +538,44 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       </div>
                     </div>
                   </a>
+                  <a
+                    href="/p/jan"
+                    className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+                  >
+                    <div className="aspect-[4/3] overflow-hidden bg-muted">
+                      {data?.janFeatured?.heroImage ? (
+                        <img
+                          src={data.janFeatured.heroImage}
+                          alt="TheSwimpark, Bothell WA"
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sky-400 to-emerald-500 text-white">
+                          <span className="text-lg font-semibold">TheSwimpark</span>
+                        </div>
+                      )}
+                      <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-2.5 py-1 text-[11px] font-bold text-white shadow">
+                        ✨ NEW · Newest featured pool
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="line-clamp-1 text-base font-semibold text-foreground">
+                        TheSwimpark — hosted by Jan
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Pacific Northwest · 85° heated · Mountain views · Fits 50
+                      </p>
+                      <div className="mt-3 flex items-center justify-between gap-3">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                          Top provider
+                        </span>
+                        <span className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
+                          View pool →
+                        </span>
+                      </div>
+                    </div>
+                  </a>
                   {listings
                     .filter((l: ListingSummary) => !HIDE_LISTING_RE.test(l.title || ""))
                     .slice(0, 11)
