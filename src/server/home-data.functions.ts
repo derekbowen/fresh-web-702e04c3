@@ -168,7 +168,15 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         "academy availability query",
         [] as { slug: string | null; body_markdown: string | null }[],
       ),
+      safe(
+        fetchShareListing(JAN_LISTING_ID),
+        "Jan featured listing",
+        null,
+      ),
     ]);
+    const [cities, cityCountRes, categories, featuredResult, nearbyResult, academyRes, janListing] = [
+      ...arguments[0] ? [] : [],
+    ] as never;
 
     // Strip listings missing a real image — they render as a blank "no image"
     // card on the homepage and look like a broken/placeholder listing.
