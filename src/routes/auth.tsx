@@ -256,7 +256,18 @@ function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="pin">PIN</Label>
+              <Input
+                id="pin"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                placeholder="••••••"
               />
             </div>
             <div className="space-y-1.5">
