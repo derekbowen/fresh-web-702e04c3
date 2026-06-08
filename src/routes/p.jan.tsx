@@ -164,9 +164,18 @@ function JanPage() {
                 </p>
               </div>
             </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-1 text-[11px] font-bold text-black shadow">
-              <Heart className="h-3 w-3" /> PRNM Newest Featured Pool
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow hover:bg-primary/90 transition-transform hover:scale-[1.02]"
+              >
+                <Share2 className="h-4 w-4" />
+                {shared ? "Link copied!" : "Share this pool"}
+              </button>
+              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-1 text-[11px] font-bold text-black shadow">
+                <Heart className="h-3 w-3" /> PRNM Newest Featured Pool
+              </span>
+            </div>
           </div>
         </section>
 
