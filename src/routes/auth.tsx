@@ -289,8 +289,7 @@ function AuthPage() {
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                minLength={8}
-                required
+                minLength={mode === "signup" ? 8 : undefined}
               />
             </div>
             <Button type="submit" disabled={busy} className="w-full">
