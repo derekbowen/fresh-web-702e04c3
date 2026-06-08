@@ -4,10 +4,16 @@ import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
   CreditCard, Search, Bot, Mail, Activity, ChevronLeft, ChevronDown, Menu, X, Home, LinkIcon,
-  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell, Share2,
+  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell, Share2, LogOut,
 } from "lucide-react";
 import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 import { BgJobsRunner } from "@/components/bg-jobs-runner";
+import { supabase } from "@/integrations/supabase/client";
+
+async function adminSignOut() {
+  try { await supabase.auth.signOut(); } catch {}
+  if (typeof window !== "undefined") window.location.replace("/auth");
+}
 
 type Item = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
