@@ -118,6 +118,7 @@ export const Route = createFileRoute("/p/jan")({
 function JanPage() {
   const { listing } = Route.useLoaderData() as { listing: ShareListing; origin: string };
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [shared, setShared] = useState(false);
   const locStr = [listing.city, listing.state].filter(Boolean).join(", ");
   const heroImg = listing.heroImage ?? "";
   const galleryRest = listing.images.slice(1, 5);
