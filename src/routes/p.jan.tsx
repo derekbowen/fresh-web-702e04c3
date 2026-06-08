@@ -127,6 +127,25 @@ function JanPage() {
   const bookHref = listing.bookUrl;
   const signupHref = `/signup?next=${encodeURIComponent(bookHref)}`;
 
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: document.title, url });
+      } catch {
+        // user cancelled
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setShared(true);
+        setTimeout(() => setShared(false), 2000);
+      } catch {
+        // clipboard denied
+      }
+    }
+  };
+
   return (
     <>
       <SiteHeader />
