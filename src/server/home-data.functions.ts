@@ -261,6 +261,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       },
       academyAvailable,
       academyHealth,
+      janFeatured: janListing ? { heroImage: janListing.heroImage } : null,
     };
   } catch (err) {
     console.error("homepage getHomeData fatal failure, returning empty data:", err);
