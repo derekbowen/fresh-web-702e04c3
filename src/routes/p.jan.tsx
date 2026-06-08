@@ -235,23 +235,25 @@ function JanPage() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
               <video
-                src="/__l5e/assets-v1/addebcbf-5d46-4222-859b-99ed48b14f14/jan-swimpark.mov"
                 poster={heroImg || undefined}
                 controls
                 playsInline
                 preload="metadata"
                 className="h-auto w-full bg-black"
-              />
+              >
+                <source src="/__l5e/assets-v1/115e9299-b846-44cf-9392-b54189659e8c/jan-swimpark.mp4" type="video/mp4" />
+              </video>
             </div>
             <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
               <video
-                src="/__l5e/assets-v1/d5efacee-b226-4b19-bf69-3503e153a449/jan-swimpark-2.mov"
                 poster={heroImg || undefined}
                 controls
                 playsInline
                 preload="metadata"
                 className="h-auto w-full bg-black"
-              />
+              >
+                <source src="/__l5e/assets-v1/d84cc872-4898-46c3-87a2-062b1e06a4a8/jan-swimpark-2.mp4" type="video/mp4" />
+              </video>
             </div>
           </div>
           <div className="mt-5 flex flex-col items-center gap-2">
