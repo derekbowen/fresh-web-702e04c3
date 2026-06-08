@@ -4,10 +4,16 @@ import {
   LayoutDashboard, FileText, Wand2, Database, AlertTriangle, Newspaper,
   GraduationCap, Image as ImageIcon, MousePointerClick, Building2, ShieldCheck,
   CreditCard, Search, Bot, Mail, Activity, ChevronLeft, ChevronDown, Menu, X, Home, LinkIcon,
-  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell, Share2,
+  TrendingUp, Swords, Network, Radar, Sparkles, Instagram, CheckCircle2, Bell, Share2, LogOut,
 } from "lucide-react";
 import { SiteHeader, ShowChromeOverride } from "@/components/site-layout";
 import { BgJobsRunner } from "@/components/bg-jobs-runner";
+import { supabase } from "@/integrations/supabase/client";
+
+async function adminSignOut() {
+  try { await supabase.auth.signOut(); } catch {}
+  if (typeof window !== "undefined") window.location.replace("/auth");
+}
 
 type Item = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
@@ -337,7 +343,7 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
             })}
           </div>
 
-          <div className="mt-2 border-t border-border pt-2">
+          <div className="mt-2 space-y-1 border-t border-border pt-2">
             <button
               onClick={onToggleDemo}
               title={collapsed ? (demoMode ? "Exit demo mode" : "Enter demo mode") : undefined}
@@ -348,6 +354,14 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
             >
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
               {!collapsed && <span className="truncate">{demoMode ? "Demo mode: ON" : "Demo mode"}</span>}
+            </button>
+            <button
+              onClick={adminSignOut}
+              title={collapsed ? "Sign out" : undefined}
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted"
+            >
+              <LogOut className="h-3.5 w-3.5 shrink-0" />
+              {!collapsed && <span className="truncate">Sign out</span>}
             </button>
           </div>
         </nav>
@@ -420,6 +434,14 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
         >
           <Home className="h-4 w-4" />
         </Link>
+        <button
+          onClick={adminSignOut}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-muted"
+          aria-label="Sign out"
+          title="Sign out"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
       <div className="flex flex-1">
         <Sidebar
