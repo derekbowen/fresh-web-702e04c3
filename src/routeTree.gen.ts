@@ -73,6 +73,7 @@ import { Route as PPeerspaceVsPoolRentalNearMeRouteImport } from './routes/p.pee
 import { Route as PNeighborsRouteImport } from './routes/p.neighbors'
 import { Route as PLukesLoungeRouteImport } from './routes/p.lukes-lounge'
 import { Route as PLaSaltwaterFeaturedRouteImport } from './routes/p.la-saltwater-featured'
+import { Route as PJanRouteImport } from './routes/p.jan'
 import { Route as PHowItWorksRouteImport } from './routes/p.how-it-works'
 import { Route as PHostingRouteImport } from './routes/p.hosting'
 import { Route as PHostMarketingPlaybookRouteImport } from './routes/p.host-marketing-playbook'
@@ -558,6 +559,11 @@ const PLukesLoungeRoute = PLukesLoungeRouteImport.update({
 const PLaSaltwaterFeaturedRoute = PLaSaltwaterFeaturedRouteImport.update({
   id: '/p/la-saltwater-featured',
   path: '/p/la-saltwater-featured',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PJanRoute = PJanRouteImport.update({
+  id: '/p/jan',
+  path: '/p/jan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PHowItWorksRoute = PHowItWorksRouteImport.update({
@@ -1470,6 +1476,7 @@ export interface FileRoutesByFullPath {
   '/p/host-marketing-playbook': typeof PHostMarketingPlaybookRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/jan': typeof PJanRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
   '/p/lukes-lounge': typeof PLukesLoungeRoute
   '/p/neighbors': typeof PNeighborsRoute
@@ -1683,6 +1690,7 @@ export interface FileRoutesByTo {
   '/p/host-marketing-playbook': typeof PHostMarketingPlaybookRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/jan': typeof PJanRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
   '/p/lukes-lounge': typeof PLukesLoungeRoute
   '/p/neighbors': typeof PNeighborsRoute
@@ -1897,6 +1905,7 @@ export interface FileRoutesById {
   '/p/host-marketing-playbook': typeof PHostMarketingPlaybookRoute
   '/p/hosting': typeof PHostingRoute
   '/p/how-it-works': typeof PHowItWorksRoute
+  '/p/jan': typeof PJanRoute
   '/p/la-saltwater-featured': typeof PLaSaltwaterFeaturedRoute
   '/p/lukes-lounge': typeof PLukesLoungeRoute
   '/p/neighbors': typeof PNeighborsRoute
@@ -2112,6 +2121,7 @@ export interface FileRouteTypes {
     | '/p/host-marketing-playbook'
     | '/p/hosting'
     | '/p/how-it-works'
+    | '/p/jan'
     | '/p/la-saltwater-featured'
     | '/p/lukes-lounge'
     | '/p/neighbors'
@@ -2325,6 +2335,7 @@ export interface FileRouteTypes {
     | '/p/host-marketing-playbook'
     | '/p/hosting'
     | '/p/how-it-works'
+    | '/p/jan'
     | '/p/la-saltwater-featured'
     | '/p/lukes-lounge'
     | '/p/neighbors'
@@ -2538,6 +2549,7 @@ export interface FileRouteTypes {
     | '/p/host-marketing-playbook'
     | '/p/hosting'
     | '/p/how-it-works'
+    | '/p/jan'
     | '/p/la-saltwater-featured'
     | '/p/lukes-lounge'
     | '/p/neighbors'
@@ -2680,6 +2692,7 @@ export interface RootRouteChildren {
   PHostMarketingPlaybookRoute: typeof PHostMarketingPlaybookRoute
   PHostingRoute: typeof PHostingRoute
   PHowItWorksRoute: typeof PHowItWorksRoute
+  PJanRoute: typeof PJanRoute
   PLaSaltwaterFeaturedRoute: typeof PLaSaltwaterFeaturedRoute
   PLukesLoungeRoute: typeof PLukesLoungeRoute
   PNeighborsRoute: typeof PNeighborsRoute
@@ -3199,6 +3212,13 @@ declare module '@tanstack/react-router' {
       path: '/p/la-saltwater-featured'
       fullPath: '/p/la-saltwater-featured'
       preLoaderRoute: typeof PLaSaltwaterFeaturedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/jan': {
+      id: '/p/jan'
+      path: '/p/jan'
+      fullPath: '/p/jan'
+      preLoaderRoute: typeof PJanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/how-it-works': {
@@ -4520,6 +4540,7 @@ const rootRouteChildren: RootRouteChildren = {
   PHostMarketingPlaybookRoute: PHostMarketingPlaybookRoute,
   PHostingRoute: PHostingRoute,
   PHowItWorksRoute: PHowItWorksRoute,
+  PJanRoute: PJanRoute,
   PLaSaltwaterFeaturedRoute: PLaSaltwaterFeaturedRoute,
   PLukesLoungeRoute: PLukesLoungeRoute,
   PNeighborsRoute: PNeighborsRoute,
@@ -4600,13 +4621,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
