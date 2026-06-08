@@ -43,7 +43,8 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      throw redirect({ to: search.redirect as never });
+      const dest = await resolveRedirect(search.redirect);
+      throw redirect({ to: dest as never });
     }
   },
   component: AuthPage,
