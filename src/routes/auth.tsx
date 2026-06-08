@@ -73,11 +73,15 @@ function AuthPage() {
 
   useEffect(() => {
     let active = true;
+    const go = async () => {
+      const dest = await resolveRedirect(search.redirect);
+      if (active) navigate({ to: dest as never });
+    };
     void supabase.auth.getSession().then(({ data }) => {
-      if (active && data.session) navigate({ to: search.redirect as never });
+      if (active && data.session) void go();
     });
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) navigate({ to: search.redirect as never });
+      if (session) void go();
     });
     return () => {
       active = false;
