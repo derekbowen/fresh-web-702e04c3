@@ -343,7 +343,7 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
             })}
           </div>
 
-          <div className="mt-2 border-t border-border pt-2">
+          <div className="mt-2 space-y-1 border-t border-border pt-2">
             <button
               onClick={onToggleDemo}
               title={collapsed ? (demoMode ? "Exit demo mode" : "Enter demo mode") : undefined}
@@ -354,6 +354,14 @@ function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose, demoMode, onT
             >
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
               {!collapsed && <span className="truncate">{demoMode ? "Demo mode: ON" : "Demo mode"}</span>}
+            </button>
+            <button
+              onClick={adminSignOut}
+              title={collapsed ? "Sign out" : undefined}
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted"
+            >
+              <LogOut className="h-3.5 w-3.5 shrink-0" />
+              {!collapsed && <span className="truncate">Sign out</span>}
             </button>
           </div>
         </nav>
