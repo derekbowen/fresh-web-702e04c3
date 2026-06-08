@@ -23,6 +23,7 @@ import {
   ListChecks,
   Mountain,
   Heart,
+  Share2,
 } from "lucide-react";
 
 const LISTING_ID = "6a1a4c13-02fe-458e-89ba-e33b5fc7612b";
