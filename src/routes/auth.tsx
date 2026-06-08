@@ -68,6 +68,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [pin, setPin] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => setMode(search.mode), [search.mode]);
