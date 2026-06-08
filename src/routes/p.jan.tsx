@@ -233,7 +233,7 @@ function JanPage() {
               Book now
             </a>
             <p className="text-xs text-muted-foreground">
-              A quick walk-through from Jan · 85° heated saltwater pool
+              Summer fun pool vibes · 85° heated saltwater pool
             </p>
           </div>
         </section>
