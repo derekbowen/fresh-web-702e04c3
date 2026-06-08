@@ -109,7 +109,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, cityCountRes, categories, featuredResult, nearbyResult, academyRes] = await Promise.all([
+    const [cities, cityCountRes, categories, featuredResult, nearbyResult, academyRes, janListing] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -143,15 +143,6 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         "categories query",
         { data: [] as HomeCategory[] } as { data: HomeCategory[] | null },
       ),
-      // Single deterministic Featured Pools pull. Previously this merged a
-      // CA-specific pull with a general pull to guarantee 12 cards, but that
-      // forced a Sharetribe direct-API fallback whenever the mirror had <6
-      // CA rows — and SSR/client returning different listing orders inside
-      // the route loader's Suspense boundary triggered React #418. One pull,
-      // one source, deterministic order. If fewer than 12 come back, that's
-      // fine — show what the mirror has rather than chase ghosts.
-      // Over-fetch so we can drop listings without an image (placeholder/test
-      // rows) and still hand the grid a clean set of 12.
       safe(searchListings({ perPage: 24 }), "searchListings (featured)", emptyListingResult),
       origin
         ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
@@ -168,15 +159,8 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         "academy availability query",
         [] as { slug: string | null; body_markdown: string | null }[],
       ),
-      safe(
-        fetchShareListing(JAN_LISTING_ID),
-        "Jan featured listing",
-        null,
-      ),
+      safe(fetchShareListing(JAN_LISTING_ID), "Jan featured listing", null),
     ]);
-    const [cities, cityCountRes, categories, featuredResult, nearbyResult, academyRes, janListing] = [
-      ...arguments[0] ? [] : [],
-    ] as never;
 
     // Strip listings missing a real image — they render as a blank "no image"
     // card on the homepage and look like a broken/placeholder listing.
