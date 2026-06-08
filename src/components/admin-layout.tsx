@@ -434,6 +434,14 @@ export function AdminLayout({ title, children, maxWidth = "max-w-7xl" }: {
         >
           <Home className="h-4 w-4" />
         </Link>
+        <button
+          onClick={adminSignOut}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-muted"
+          aria-label="Sign out"
+          title="Sign out"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
       <div className="flex flex-1">
         <Sidebar
