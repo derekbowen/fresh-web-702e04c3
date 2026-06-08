@@ -202,19 +202,40 @@ function JanPage() {
 
         {/* VIDEO TOUR */}
         <section className="mx-auto mt-8 max-w-7xl px-4">
-          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-            <video
-              src="/__l5e/assets-v1/addebcbf-5d46-4222-859b-99ed48b14f14/jan-swimpark.mov"
-              poster={heroImg || undefined}
-              controls
-              playsInline
-              preload="metadata"
-              className="h-auto w-full bg-black"
-            />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+              <video
+                src="/__l5e/assets-v1/addebcbf-5d46-4222-859b-99ed48b14f14/jan-swimpark.mov"
+                poster={heroImg || undefined}
+                controls
+                playsInline
+                preload="metadata"
+                className="h-auto w-full bg-black"
+              />
+            </div>
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+              <video
+                src="/__l5e/assets-v1/d5efacee-b226-4b19-bf69-3503e153a449/jan-swimpark-2.mov"
+                poster={heroImg || undefined}
+                controls
+                playsInline
+                preload="metadata"
+                className="h-auto w-full bg-black"
+              />
+            </div>
           </div>
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            A quick walk-through from Jan
-          </p>
+          <div className="mt-5 flex flex-col items-center gap-2">
+            <a
+              href={bookHref}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground shadow-md transition-transform hover:scale-[1.02]"
+            >
+              <Calendar className="h-5 w-5" />
+              Book now
+            </a>
+            <p className="text-xs text-muted-foreground">
+              A quick walk-through from Jan · 85° heated saltwater pool
+            </p>
+          </div>
         </section>
 
         {/* TITLE + CTA */}
