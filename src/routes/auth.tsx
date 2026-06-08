@@ -119,7 +119,8 @@ function AuthPage() {
           return;
         }
         toast.success("Signed in.");
-        navigate({ to: search.redirect as never });
+        const dest = await resolveRedirect(search.redirect);
+        navigate({ to: dest as never });
       }
     } finally {
       setBusy(false);
