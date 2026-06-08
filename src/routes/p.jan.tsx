@@ -200,6 +200,23 @@ function JanPage() {
           </div>
         </section>
 
+        {/* VIDEO TOUR */}
+        <section className="mx-auto mt-8 max-w-7xl px-4">
+          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            <video
+              src="/__l5e/assets-v1/addebcbf-5d46-4222-859b-99ed48b14f14/jan-swimpark.mov"
+              poster={heroImg || undefined}
+              controls
+              playsInline
+              preload="metadata"
+              className="h-auto w-full bg-black"
+            />
+          </div>
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            A quick walk-through from Jan
+          </p>
+        </section>
+
         {/* TITLE + CTA */}
         <section className="mx-auto mt-8 max-w-7xl px-4">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
