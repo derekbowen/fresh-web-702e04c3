@@ -173,6 +173,7 @@ export function hostAcqSchemasForPage(
       sameAs: SITE_URL,
       logo: `${SITE_URL}/fw-assets/logo.png`,
     },
+    jobLocationType: "TELECOMMUTE",
     jobLocation: {
       "@type": "Place",
       address: {
