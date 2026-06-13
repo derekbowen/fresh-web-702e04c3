@@ -173,12 +173,15 @@ export function hostAcqSchemasForPage(
       sameAs: SITE_URL,
       logo: `${SITE_URL}/fw-assets/logo.png`,
     },
+    jobLocationType: "TELECOMMUTE",
     jobLocation: {
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
+        streetAddress: `${cityName} area (host's residence)`,
         addressLocality: cityName,
         addressRegion: stateCode,
+        postalCode: "00000",
         addressCountry: "US",
       },
     },
