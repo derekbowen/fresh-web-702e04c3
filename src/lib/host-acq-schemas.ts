@@ -178,10 +178,8 @@ export function hostAcqSchemasForPage(
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
-        streetAddress: `${cityName} area (host's residence)`,
         addressLocality: cityName,
         addressRegion: stateCode,
-        postalCode: "00000",
         addressCountry: "US",
       },
     },
