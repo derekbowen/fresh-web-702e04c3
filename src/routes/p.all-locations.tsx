@@ -154,6 +154,62 @@ function AllLocationsPage() {
           </div>
         </section>
 
+        {/* State → city index (above the fold for SEO + scannability) */}
+        {stateIndex.length > 0 && (
+          <section
+            id="by-state"
+            aria-label="Pool rentals by state"
+            className="border-b border-border bg-card/40"
+          >
+            <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
+              <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                    Pool rentals by state
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {stateIndex.length} states · {cityCount.toLocaleString()} cities with a private pool to rent
+                  </p>
+                </div>
+                <a
+                  href="/p/pool-rentals"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  See 50 state hubs →
+                </a>
+              </div>
+              <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+                {stateIndex.map((s) => (
+                  <div key={s.code}>
+                    <a
+                      href={s.hubHref}
+                      className="text-base font-semibold text-foreground hover:text-primary hover:underline"
+                    >
+                      {s.name}
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        ({s.cities.length})
+                      </span>
+                    </a>
+                    <ul className="mt-2 space-y-1">
+                      {s.cities.map((c) => (
+                        <li key={c.href}>
+                          <a
+                            href={c.href}
+                            className="text-sm text-muted-foreground hover:text-primary hover:underline"
+                          >
+                            {c.city}, {s.code}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+
         {/* Sticky chip nav */}
         <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
           <div className="mx-auto max-w-6xl overflow-x-auto px-4 py-3">
