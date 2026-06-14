@@ -65,13 +65,16 @@ function AllLocationsPage() {
           />
           <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              Pool near me
+              Pool rentals near me
             </p>
             <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Pool near me: every city and guide on Pool Rental Near Me
+              Pool rentals near me — every US city with a private pool for rent
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              Browse every city where you can find a pool for rent in the US. Every private pool rental city, host guide, course, and resource we publish. Built so you can find any page in two clicks and so search engines can crawl the whole site.
+              The full index of <strong>pool rentals near me</strong>, organized by state and city. Browse every US city where you can book a private backyard pool by the hour. $2M liability insurance included on every booking, flat 10% host fee, no memberships.
+            </p>
+            <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+              Jump straight to your state below, or scroll for the full directory of host guides, courses, and resources.
             </p>
 
             {/* Stat strip */}
