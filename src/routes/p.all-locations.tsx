@@ -45,6 +45,61 @@ function displayTitle(g: DirectoryGroup): string {
   return TITLE_OVERRIDES[g.id] ?? g.title;
 }
 
+const STATE_NAMES: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi",
+  MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire",
+  NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina",
+  ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania",
+  RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee",
+  TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
+  WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "Washington, D.C.",
+};
+
+function stateSlug(name: string): string {
+  return name.toLowerCase().replace(/[.,]/g, "").replace(/\s+/g, "-");
+}
+
+interface StateCity {
+  city: string;
+  href: string;
+}
+
+function buildStateIndex(hostAcqLinks: DirectoryLink[]): Array<{
+  code: string;
+  name: string;
+  hubHref: string;
+  cities: StateCity[];
+}> {
+  const byState = new Map<string, StateCity[]>();
+  for (const link of hostAcqLinks) {
+    // Slug: become-a-swimming-pool-host-{city-slug}-{xx}
+    const slug = link.href.replace(/^\/p\//, "");
+    const parts = slug.split("-");
+    const last = parts[parts.length - 1]?.toUpperCase() ?? "";
+    if (last.length !== 2 || !STATE_NAMES[last]) continue;
+    const cityParts = parts.slice(4, -1); // drop "become-a-swimming-pool-host" prefix and state
+    if (cityParts.length === 0) continue;
+    const city = cityParts
+      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+      .join(" ");
+    const arr = byState.get(last) ?? [];
+    arr.push({ city, href: link.href });
+    byState.set(last, arr);
+  }
+  return Array.from(byState.entries())
+    .map(([code, cities]) => ({
+      code,
+      name: STATE_NAMES[code],
+      hubHref: `/p/pool-rentals-${stateSlug(STATE_NAMES[code])}`,
+      cities: cities.sort((a, b) => a.city.localeCompare(b.city)),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 function AllLocationsPage() {
   const data = Route.useLoaderData();
   const cityCount =
@@ -52,6 +107,9 @@ function AllLocationsPage() {
   const academyCount =
     data.groups.find((g: DirectoryGroup) => g.id === "academy")?.links.length ?? 0;
   const sectionCount = data.groups.length;
+  const stateIndex = buildStateIndex(
+    data.groups.find((g: DirectoryGroup) => g.id === "host-acquisition")?.links ?? [],
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
