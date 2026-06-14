@@ -704,7 +704,14 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               Pool rentals in {cityCount.toLocaleString("en-US")}+ U.S. cities
             </h2>
             <p className="mt-2 text-muted-foreground">
-              Find a private pool in your zip code.
+              Find a private pool in your zip code, or browse the full{" "}
+              <a
+                href="/p/all-locations"
+                className="font-medium text-primary underline-offset-2 hover:underline"
+              >
+                pool rentals near me
+              </a>{" "}
+              directory.
             </p>
             <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {cities.map((c: HomeCity) => (
