@@ -743,6 +743,12 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               >
                 Browse all states →
               </a>
+              <a
+                href="/p/all-locations"
+                className="inline-flex items-center justify-center px-2 py-3 text-sm font-semibold text-primary hover:underline"
+              >
+                Pool rentals near me →
+              </a>
             </div>
           </section>
         )}
