@@ -15,9 +15,9 @@ export const Route = createFileRoute("/p/all-locations")({
   },
   head: ({ loaderData }) => {
     const meta = buildMeta({
-      title: `Pool rental directory: every city, guide, and resource`,
+      title: `Pool rentals near me — every US city with a private pool for rent`,
       description:
-        "Every US city with a private pool rental available. Browse 5,100+ pages of pool for rent listings, hourly bookings, $2M liability included.",
+        "Pool rentals near me, by state and city. Browse every US city with a private backyard pool to rent by the hour. $2M insurance included on every booking.",
       path: "/p/all-locations",
     });
     return { meta: meta.meta, links: meta.links };
@@ -45,6 +45,61 @@ function displayTitle(g: DirectoryGroup): string {
   return TITLE_OVERRIDES[g.id] ?? g.title;
 }
 
+const STATE_NAMES: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi",
+  MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire",
+  NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina",
+  ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania",
+  RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee",
+  TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
+  WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "Washington, D.C.",
+};
+
+function stateSlug(name: string): string {
+  return name.toLowerCase().replace(/[.,]/g, "").replace(/\s+/g, "-");
+}
+
+interface StateCity {
+  city: string;
+  href: string;
+}
+
+function buildStateIndex(hostAcqLinks: DirectoryLink[]): Array<{
+  code: string;
+  name: string;
+  hubHref: string;
+  cities: StateCity[];
+}> {
+  const byState = new Map<string, StateCity[]>();
+  for (const link of hostAcqLinks) {
+    // Slug: become-a-swimming-pool-host-{city-slug}-{xx}
+    const slug = link.href.replace(/^\/p\//, "");
+    const parts = slug.split("-");
+    const last = parts[parts.length - 1]?.toUpperCase() ?? "";
+    if (last.length !== 2 || !STATE_NAMES[last]) continue;
+    const cityParts = parts.slice(4, -1); // drop "become-a-swimming-pool-host" prefix and state
+    if (cityParts.length === 0) continue;
+    const city = cityParts
+      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+      .join(" ");
+    const arr = byState.get(last) ?? [];
+    arr.push({ city, href: link.href });
+    byState.set(last, arr);
+  }
+  return Array.from(byState.entries())
+    .map(([code, cities]) => ({
+      code,
+      name: STATE_NAMES[code],
+      hubHref: `/p/pool-rentals-${stateSlug(STATE_NAMES[code])}`,
+      cities: cities.sort((a, b) => a.city.localeCompare(b.city)),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 function AllLocationsPage() {
   const data = Route.useLoaderData();
   const cityCount =
@@ -52,6 +107,9 @@ function AllLocationsPage() {
   const academyCount =
     data.groups.find((g: DirectoryGroup) => g.id === "academy")?.links.length ?? 0;
   const sectionCount = data.groups.length;
+  const stateIndex = buildStateIndex(
+    data.groups.find((g: DirectoryGroup) => g.id === "host-acquisition")?.links ?? [],
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -65,13 +123,16 @@ function AllLocationsPage() {
           />
           <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              Pool near me
+              Pool rentals near me
             </p>
             <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Pool near me: every city and guide on Pool Rental Near Me
+              Pool rentals near me — every US city with a private pool for rent
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              Browse every city where you can find a pool for rent in the US. Every private pool rental city, host guide, course, and resource we publish. Built so you can find any page in two clicks and so search engines can crawl the whole site.
+              The full index of <strong>pool rentals near me</strong>, organized by state and city. Browse every US city where you can book a private backyard pool by the hour. $2M liability insurance included on every booking, flat 10% host fee, no memberships.
+            </p>
+            <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+              Jump straight to your state below, or scroll for the full directory of host guides, courses, and resources.
             </p>
 
             {/* Stat strip */}
@@ -92,6 +153,62 @@ function AllLocationsPage() {
             </p>
           </div>
         </section>
+
+        {/* State → city index (above the fold for SEO + scannability) */}
+        {stateIndex.length > 0 && (
+          <section
+            id="by-state"
+            aria-label="Pool rentals by state"
+            className="border-b border-border bg-card/40"
+          >
+            <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
+              <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                    Pool rentals by state
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {stateIndex.length} states · {cityCount.toLocaleString()} cities with a private pool to rent
+                  </p>
+                </div>
+                <a
+                  href="/p/pool-rentals"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  See 50 state hubs →
+                </a>
+              </div>
+              <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+                {stateIndex.map((s) => (
+                  <div key={s.code}>
+                    <a
+                      href={s.hubHref}
+                      className="text-base font-semibold text-foreground hover:text-primary hover:underline"
+                    >
+                      {s.name}
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        ({s.cities.length})
+                      </span>
+                    </a>
+                    <ul className="mt-2 space-y-1">
+                      {s.cities.map((c) => (
+                        <li key={c.href}>
+                          <a
+                            href={c.href}
+                            className="text-sm text-muted-foreground hover:text-primary hover:underline"
+                          >
+                            {c.city}, {s.code}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
 
         {/* Sticky chip nav */}
         <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
