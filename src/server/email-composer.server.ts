@@ -69,30 +69,69 @@ export async function getAudienceCount(audience: Audience): Promise<number> {
 }
 
 // ---------- Inline unsubscribe token (custom/waitlist/single) ----------
+//
+// Format: "v2.<b64email>.<hmac>" — HMAC-SHA256(email) truncated to 32 hex
+// chars, keyed by UNSUB_TOKEN_SECRET (falls back to SUPABASE_SERVICE_ROLE_KEY).
+// Legacy "v1" tokens (FNV-1a hash) are still accepted by decodeInlineToken
+// during migration; they will age out as new campaigns send.
+
+import { createHmac } from "crypto";
+
+function unsubSecret(): string {
+  return (
+    process.env.UNSUB_TOKEN_SECRET ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    ""
+  );
+}
+
+function b64UrlEncode(s: string): string {
+  return btoa(s).replace(/=+$/, "").replace(/\//g, "_").replace(/\+/g, "-");
+}
+function b64UrlDecode(s: string): string {
+  return atob(s.replace(/-/g, "+").replace(/_/g, "/"));
+}
 
 function generateInlineToken(email: string): string {
-  const seed = process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 16) || "prnm-fallback";
+  const secret = unsubSecret();
+  const sig = createHmac("sha256", secret).update(email.toLowerCase()).digest("hex").slice(0, 32);
+  return `v2.${b64UrlEncode(email)}.${sig}`;
+}
+
+function legacyFnvSig(email: string): string {
+  const seed = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").slice(0, 16);
+  if (!seed) return "";
   const raw = `${email}|${seed}`;
   let h = 2166136261;
   for (let i = 0; i < raw.length; i++) { h ^= raw.charCodeAt(i); h = (h * 16777619) >>> 0; }
-  const sig = h.toString(36);
-  const b64 = btoa(email).replace(/=+$/, "").replace(/\//g, "_").replace(/\+/g, "-");
-  return `${b64}.${sig}`;
+  return h.toString(36);
 }
 
 export function decodeInlineToken(token: string): string | null {
   try {
-    const [b64, sig] = token.split(".");
-    if (!b64 || !sig) return null;
-    const email = atob(b64.replace(/-/g, "+").replace(/_/g, "/")).toLowerCase();
-    const seed = process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 16) || "prnm-fallback";
-    const raw = `${email}|${seed}`;
-    let h = 2166136261;
-    for (let i = 0; i < raw.length; i++) { h ^= raw.charCodeAt(i); h = (h * 16777619) >>> 0; }
-    if (h.toString(36) !== sig) return null;
-    return email;
+    const parts = token.split(".");
+    if (parts.length === 3 && parts[0] === "v2") {
+      const email = b64UrlDecode(parts[1]).toLowerCase();
+      const secret = unsubSecret();
+      if (!secret) return null;
+      const expected = createHmac("sha256", secret).update(email).digest("hex").slice(0, 32);
+      // timing-safe compare
+      if (expected.length !== parts[2].length) return null;
+      let diff = 0;
+      for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ parts[2].charCodeAt(i);
+      return diff === 0 ? email : null;
+    }
+    // Legacy v1: "<b64email>.<fnvSig>"
+    if (parts.length === 2) {
+      const email = b64UrlDecode(parts[0]).toLowerCase();
+      const sig = legacyFnvSig(email);
+      if (sig && sig === parts[1]) return email;
+      return null;
+    }
+    return null;
   } catch { return null; }
 }
+
 
 async function resolveRecipients(
   audience: Audience,
