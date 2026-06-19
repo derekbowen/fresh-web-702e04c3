@@ -453,8 +453,8 @@ export const adminGenerateProviderContent = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     await requireAdmin((context as any).userId);
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) throw new Error("OPENROUTER_API_KEY is not configured");
     const { data: p } = await supabaseAdmin
       .from("providers")
       .select("id, name, city, state_code, primary_category, description, services, website_url")
@@ -467,7 +467,7 @@ export const adminGenerateProviderContent = createServerFn({ method: "POST" })
 
 Return JSON with shape: { "long_description": string (700-900 words, markdown, no headings above h3), "faq": Array<{question: string, answer: string}> (5 items, locally relevant) }.`;
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
@@ -508,8 +508,8 @@ export const adminBulkGenerateProviderContent = createServerFn({ method: "POST" 
   .inputValidator((d) => z.object({ limit: z.number().int().min(1).max(50).default(10), onlyMissing: z.boolean().default(true) }).parse(d))
   .handler(async ({ context, data }) => {
     await requireAdmin((context as any).userId);
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) throw new Error("OPENROUTER_API_KEY is not configured");
 
     let q = supabaseAdmin
       .from("providers")
@@ -526,7 +526,7 @@ export const adminBulkGenerateProviderContent = createServerFn({ method: "POST" 
       try {
         const sys = "You write SEO-optimized, factual long-form content for a pool services directory. Use second person, friendly founder-mentor tone. No banned words: leverage, utilize, seamlessly, robust, dive into, elevate, game-changer, unlock, journey, landscape, bustling, thriving, vibrant, state-of-the-art, cutting-edge. No em dashes. Output valid JSON only.";
         const user = `Write content for ${p.name}${p.city ? ` in ${p.city}, ${p.state_code}` : ""}. Category: ${p.primary_category ?? "pool services"}. Services: ${(p.services ?? []).join(", ") || "general pool services"}. Existing description: ${p.description ?? "(none)"}.\n\nReturn JSON: { "long_description": string (700-900 words, markdown, no headings above h3), "faq": Array<{question:string,answer:string}> (5 items) }.`;
-        const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
           body: JSON.stringify({

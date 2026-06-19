@@ -1,6 +1,7 @@
 // Twilio inbound SMS webhook. Handles STOP / START / HELP and logs replies.
+// SMS SENDING IS DISABLED — this route only handles inbound opt-out/opt-in.
 // Configure in Twilio: Phone Number → Messaging → "A message comes in" →
-//   POST https://fresh-web.lovable.app/api/public/hooks/twilio-inbound
+//   POST https://www.poolrentalnearme.com/api/public/hooks/twilio-inbound
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";

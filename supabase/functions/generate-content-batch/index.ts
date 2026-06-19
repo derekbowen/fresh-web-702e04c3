@@ -503,7 +503,7 @@ async function generateOne(
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 115_000);
   try {
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Lovable-API-Key": apiKey,
@@ -834,9 +834,9 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
+    const apiKey = Deno.env.get("OPENROUTER_API_KEY");
     if (!supabaseUrl || !serviceKey) throw new Error("Backend is not configured");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY missing in backend function environment");
+    if (!apiKey) throw new Error("OPENROUTER_API_KEY missing in backend function environment");
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
@@ -892,7 +892,7 @@ Deno.serve(async (req) => {
       let aiOk = false;
       let aiError: string | null = null;
       try {
-        const probe = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const probe = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
             "Lovable-API-Key": apiKey,

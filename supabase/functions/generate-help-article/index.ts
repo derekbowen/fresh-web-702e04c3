@@ -62,11 +62,11 @@ serve(async (req) => {
     }
 
     const { prompt } = await req.json();
-    const key = Deno.env.get("LOVABLE_API_KEY");
-    if (!key) throw new Error("LOVABLE_API_KEY missing");
+    const key = Deno.env.get("OPENROUTER_API_KEY");
+    if (!key) throw new Error("OPENROUTER_API_KEY missing");
     if (!prompt) throw new Error("prompt required");
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({

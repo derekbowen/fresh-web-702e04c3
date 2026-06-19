@@ -100,8 +100,8 @@ export const critiquePage = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ url_path: z.string().min(1).max(300) }).parse(d))
   .handler(async ({ data, context }): Promise<{ ok: boolean; critique?: SeoCritique; error?: string; suggestions?: { url_path: string; title: string }[] }> => {
     await assertAdmin((context as any).userId);
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
 
     const path = normalizePath(data.url_path);
     const slug = path.replace(/^\/p\//, "");
@@ -203,7 +203,7 @@ Rules: titles ≤60 chars, metas ≤155 chars. Suggested links MUST come from th
 
     let aiResp: Response;
     try {
-      aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      aiResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({

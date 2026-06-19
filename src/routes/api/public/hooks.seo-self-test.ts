@@ -94,8 +94,8 @@ async function runSerp() {
 
 async function runAudit() {
   const sb = supabaseAdmin as any;
-  const lovKey = process.env.LOVABLE_API_KEY;
-  if (!lovKey) return { error: "LOVABLE_API_KEY missing" };
+  const lovKey = process.env.OPENROUTER_API_KEY;
+  if (!lovKey) return { error: "OPENROUTER_API_KEY missing" };
   const { count: before } = await sb.from("page_audits").select("*", { count: "exact", head: true });
   const { data: page } = await sb.from("content_pages")
     .select("url_path, title, seo_description, body_markdown")
@@ -113,7 +113,7 @@ Body (truncated):
 ${ourBody}
 
 Return ONLY JSON, no markdown fences.`;
-  const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const aiResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${lovKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({ model: "google/gemini-3-flash-preview", messages: [{ role: "user", content: prompt }] }),

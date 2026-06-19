@@ -193,14 +193,14 @@ const TOOL_SCHEMA = {
 };
 
 async function callAI(row: Row, model: string): Promise<Generated> {
-  const apiKey = process.env.LOVABLE_API_KEY;
-  if (!apiKey) throw new Error("LOVABLE_API_KEY not set");
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("OPENROUTER_API_KEY not set");
   const { system, user } = buildPrompt(row);
 
   let attempt = 0;
   while (true) {
     attempt++;
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

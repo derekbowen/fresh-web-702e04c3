@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SR = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const KEY = process.env.LOVABLE_API_KEY;
+const KEY = process.env.OPENROUTER_API_KEY;
 const MODEL = process.env.MODEL || "google/gemini-2.5-flash";
 const BATCH = Number(process.env.BATCH || 60);
 const CONC = Number(process.env.CONC || 8);
@@ -52,7 +52,7 @@ const TOOL = { type:"function", function:{ name:"write_page", description:"Retur
 async function callAI(row) {
   const body = { model: MODEL, messages: [{role:"system",content:SYS},{role:"user",content:userPrompt(row)}], tools:[TOOL], tool_choice:{type:"function",function:{name:"write_page"}} };
   for (let i=1;i<=4;i++){
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", { method:"POST", headers:{Authorization:`Bearer ${KEY}`,"Content-Type":"application/json"}, body: JSON.stringify(body) });
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", { method:"POST", headers:{Authorization:`Bearer ${KEY}`,"Content-Type":"application/json"}, body: JSON.stringify(body) });
     if (r.status === 429) { await new Promise(res=>setTimeout(res, 1500*i)); continue; }
     if (r.status === 402) throw new Error("402 credits exhausted");
     if (!r.ok) { const t=await r.text(); throw new Error(`AI ${r.status}: ${t.slice(0,200)}`); }

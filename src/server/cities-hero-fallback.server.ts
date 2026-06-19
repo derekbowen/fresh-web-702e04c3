@@ -73,14 +73,14 @@ export async function generateAndUploadHero(
   cityName: string,
   state: string | null | undefined,
 ): Promise<FallbackResult> {
-  const apiKey = process.env.LOVABLE_API_KEY;
-  if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY is not configured" };
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY is not configured" };
 
   const prompt = buildPrompt(cityName, state);
 
   let res: Response;
   try {
-    res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

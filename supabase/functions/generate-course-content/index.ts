@@ -79,8 +79,8 @@ Deno.serve(async (req) => {
     if (!role) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...cors, "Content-Type": "application/json" } });
 
     const { course } = await req.json();
-    const KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!KEY) throw new Error("LOVABLE_API_KEY missing");
+    const KEY = Deno.env.get("OPENROUTER_API_KEY");
+    if (!KEY) throw new Error("OPENROUTER_API_KEY missing");
 
     const userPrompt = `Course title: ${course.title}
 Subtitle: ${course.subtitle}
@@ -89,7 +89,7 @@ Category: ${course.category}
 
 Write the full long-form course content for the PRNM Learning Academy. Total prose across overview + who_its_for + all module contents + host_playbook + pricing_tactics + faq answers MUST exceed 2,500 words. Be specific to this booking type. Reference real U.S. pool-rental market dynamics, typical hourly rates, deposit norms, and platform mechanics.`;
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({

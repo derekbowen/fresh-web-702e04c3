@@ -74,8 +74,8 @@ export const createQuickPage = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
 
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) throw new Error("OPENROUTER_API_KEY not configured");
 
     const baseSlug = slugify(data.slug || data.title);
     if (!baseSlug) throw new Error("Could not derive slug from title");
@@ -107,7 +107,7 @@ Length: 600-1200 words.
 Use ## for the main sections and ### for sub-points. Lead with a strong opening that gets right into the value — no fluff.
 seo_title (≤60 chars) and seo_description (≤155 chars) optimized for the topic.`;
 
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

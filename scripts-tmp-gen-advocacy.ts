@@ -3,7 +3,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
-const KEY = process.env.LOVABLE_API_KEY!;
+const KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = "google/gemini-2.5-pro";
 
 const STATE_FROM_SLUG: Record<string, string> = {
@@ -120,7 +120,7 @@ VOICE RULES:
 Return ONLY the markdown body starting with "# Pool host advocacy hub".`;
 
 async function callAI(prompt: string): Promise<string> {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({

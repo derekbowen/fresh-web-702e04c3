@@ -20,12 +20,12 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const FC_KEY = process.env.FIRECRAWL_API_KEY!;
-const LOV_KEY = process.env.LOVABLE_API_KEY!;
+const LOV_KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = "google/gemini-2.5-pro";
 
 if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error("Missing Supabase env");
 if (!FC_KEY) throw new Error("Missing FIRECRAWL_API_KEY");
-if (!LOV_KEY) throw new Error("Missing LOVABLE_API_KEY");
+if (!LOV_KEY) throw new Error("Missing OPENROUTER_API_KEY");
 
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
 
@@ -217,7 +217,7 @@ ${sourceBlocks}`;
 }
 
 async function generateWithGemini(prompt: string): Promise<string> {
-  const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${LOV_KEY}`,

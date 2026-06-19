@@ -83,8 +83,8 @@ Deno.serve(async (req: Request) => {
 
   const { city, sc, sn } = parseSlug(slug);
 
-  const aiKey = Deno.env.get("LOVABLE_API_KEY");
-  if (!aiKey) return Response.json({ error: "LOVABLE_API_KEY missing" }, { status: 500 });
+  const aiKey = Deno.env.get("OPENROUTER_API_KEY");
+  if (!aiKey) return Response.json({ error: "OPENROUTER_API_KEY missing" }, { status: 500 });
 
   const sb = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -102,7 +102,7 @@ Deno.serve(async (req: Request) => {
     return Response.json({ slug, ok: true, skipped: true, reason: "already-long", len: existingLen });
   }
 
-  const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const aiResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${aiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({

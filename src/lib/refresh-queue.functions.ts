@@ -295,7 +295,7 @@ export const runAiRefresh = createServerFn({ method: "POST" })
         };
       }
 
-      const apiKey = process.env.LOVABLE_API_KEY;
+      const apiKey = process.env.OPENROUTER_API_KEY;
       if (!apiKey) {
         return {
           success: false,
@@ -303,7 +303,7 @@ export const runAiRefresh = createServerFn({ method: "POST" })
           diff_summary: null,
           before_word_count: 0,
           after_word_count: 0,
-          error: "LOVABLE_API_KEY not configured",
+          error: "OPENROUTER_API_KEY not configured",
         };
       }
 
@@ -385,7 +385,7 @@ ${(page.body_markdown ?? "").slice(0, 18000)}
 """`;
 
       try {
-        const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${apiKey}`,

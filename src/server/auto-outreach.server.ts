@@ -1,7 +1,7 @@
 /**
  * Auto-outreach engine.
  * - Scans NEW lead_followups (host_lead, ig_lead, social_lead, provider_lead).
- * - Generates AI-personalized outreach via Lovable AI Gateway.
+ * - Generates AI-personalized outreach via OpenRouter.
  * - Schedules a 3-touch cadence (0d / 3d / 7d) into auto_outreach_messages.
  * - Drains pending messages: sends email via Emailit, SMS via Twilio, DMs are
  *   stored as drafts (status='draft') for a future browser-automation channel.
@@ -11,7 +11,7 @@ import { sendViaEmailit } from "@/lib/email/emailit";
 import { sendSms, isOptedOut, toE164 } from "@/server/sms.server";
 
 const sb = () => supabaseAdmin as any;
-const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const AI_URL = "https://openrouter.ai/api/v1/chat/completions";
 const AI_MODEL = "google/gemini-3-flash-preview";
 
 type LeadCtx = {
@@ -53,7 +53,7 @@ async function loadLead(source: string, lead_id: string): Promise<Omit<LeadCtx, 
 }
 
 async function aiGenerate(channel: "email" | "sms" | "dm", lead: LeadCtx, step: number): Promise<{ subject?: string; body: string } | null> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) return null;
   const fn = (lead.name || "there").split(" ")[0].slice(0, 40);
   const sys = `You write friendly, ultra-short outreach for Pool Rental Near Me — a Swimply alternative with a 10% flat host fee (vs 15%+) and $2M liability insurance included. Voice: founder, second person, sentence case, no em dashes, no hype words. Numbers $40-150/hr typical.`;

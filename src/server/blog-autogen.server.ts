@@ -35,7 +35,7 @@ function slugify(input: string): string {
 }
 
 async function callAiJson(apiKey: string, model: string, system: string, user: string): Promise<any> {
-  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -63,8 +63,8 @@ async function callAiJson(apiKey: string, model: string, system: string, user: s
 }
 
 export async function runBlogAutogen(input: BlogAutogenInput): Promise<BlogAutogenResult> {
-  const apiKey = process.env.LOVABLE_API_KEY;
-  if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("OPENROUTER_API_KEY is not configured");
 
   const model = input.model || "google/gemini-3-flash-preview";
   const count = Math.min(Math.max(input.count ?? 1, 1), 10);

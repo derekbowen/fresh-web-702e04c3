@@ -49,10 +49,10 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = process.env.LOVABLE_API_KEY
+        const apiKey = process.env.HOOKS_ADMIN_TOKEN
 
         if (!apiKey) {
-          console.error('LOVABLE_API_KEY not configured')
+          console.error('HOOKS_ADMIN_TOKEN not configured')
           return Response.json(
             { error: 'Server configuration error' },
             { status: 500 }

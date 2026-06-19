@@ -132,7 +132,7 @@ async function geminiRankCandidates(
   facts: ListingFacts,
   searchResults: Array<{ url: string; title: string; description: string; source: string }>,
 ): Promise<Candidate[]> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey || searchResults.length === 0) return [];
 
   const prompt = `You are a B2B lead qualifier. A pool owner is renting their pool on Swimply/Peerspace/Giggster. We extracted these public facts from the listing:
@@ -171,7 +171,7 @@ Return JSON array (max 5 entries, only confidence>=40). Each entry:
 Return ONLY the JSON array, no prose.`;
 
   try {
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({

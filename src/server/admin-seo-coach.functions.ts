@@ -133,8 +133,8 @@ export const seoCoachChat = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<{ ok: true; reply: string } | { ok: false; error: string }> => {
     await assertAdmin((context as any).userId);
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
 
     const snapshot = await buildSnapshot();
     const completedNote = data.completedRoutes?.length
@@ -149,7 +149,7 @@ export const seoCoachChat = createServerFn({ method: "POST" })
     ];
 
     try {
-      const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({ model: "google/gemini-3-flash-preview", messages }),

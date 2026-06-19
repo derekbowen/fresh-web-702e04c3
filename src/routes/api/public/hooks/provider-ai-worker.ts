@@ -39,7 +39,7 @@ async function generateOne(p: Provider, apiKey: string): Promise<{ id: string; o
 
 Return JSON: { "long_description": string (700-900 words, markdown, no headings above h3), "faq": Array<{question:string,answer:string}> (5 items, locally relevant) }.`;
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
@@ -97,9 +97,9 @@ export const Route = createFileRoute("/api/public/hooks/provider-ai-worker")({
         const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
 
-        const apiKey = process.env.LOVABLE_API_KEY;
+        const apiKey = process.env.OPENROUTER_API_KEY;
         if (!apiKey) {
-          return Response.json({ error: "LOVABLE_API_KEY not configured" }, { status: 500 });
+          return Response.json({ error: "OPENROUTER_API_KEY not configured" }, { status: 500 });
         }
 
         const url = new URL(request.url);

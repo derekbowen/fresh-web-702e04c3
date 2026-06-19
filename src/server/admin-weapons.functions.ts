@@ -599,8 +599,8 @@ export const auditPage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin((context as any).userId);
-    const lovKey = process.env.LOVABLE_API_KEY;
-    if (!lovKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
+    const lovKey = process.env.OPENROUTER_API_KEY;
+    if (!lovKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
 
     const path = normalizeAuditPath(data.url_path);
     const slugFromPath = path.replace(/^\/p\//, "");
@@ -673,7 +673,7 @@ ${compSummary}
 
 Return ONLY JSON, no markdown fences.`;
 
-    const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${lovKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -926,10 +926,10 @@ export const generateCompetitorDigest = createServerFn({ method: "POST" })
     const summary = Array.from(groups.values())
       .map((g) => `${g.domain} · ${g.kind} (${g.urls.length}): ${g.urls.slice(0, 8).join(", ")}`)
       .join("\n");
-    const apiKey = process.env.LOVABLE_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) return { ok: true, digest: `## Last ${data.days} days\n\n\`\`\`\n${summary}\n\`\`\``, count: list.length };
     try {
-      const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({

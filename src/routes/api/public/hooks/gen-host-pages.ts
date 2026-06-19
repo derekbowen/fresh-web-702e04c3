@@ -93,7 +93,7 @@ async function generateOne(
 
   const userMsg = `Write the host acquisition page for ${city}, ${state}. URL: ${row.url_path}. Title: "Become a swimming pool host in ${city}, ${stCode}". seo_title ≤60 chars, seo_description ≤155 chars.`;
 
-  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -172,9 +172,9 @@ export const Route = createFileRoute("/api/public/hooks/gen-host-pages")({
       POST: async ({ request }) => {
         const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
-        const apiKey = process.env.LOVABLE_API_KEY;
+        const apiKey = process.env.OPENROUTER_API_KEY;
         if (!apiKey) {
-          return new Response(JSON.stringify({ ok: false, error: "LOVABLE_API_KEY missing" }),
+          return new Response(JSON.stringify({ ok: false, error: "OPENROUTER_API_KEY missing" }),
             { status: 500, headers: { "Content-Type": "application/json" } });
         }
 

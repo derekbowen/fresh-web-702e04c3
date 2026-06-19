@@ -68,8 +68,8 @@ export const adminExpandBlogPost = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!post) throw new Error("Post not found");
 
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) throw new Error("OPENROUTER_API_KEY is not configured");
 
     const model = data.model || "google/gemini-3-flash-preview";
     const system =
@@ -84,7 +84,7 @@ No external links.
 Return ONLY valid JSON with this exact shape:
 {"seo_title": string (<=60 chars), "seo_description": string (<=160 chars), "excerpt": string (<=200 chars), "content_markdown": string}`;
 
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

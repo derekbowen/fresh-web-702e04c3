@@ -95,7 +95,7 @@ async function aiPickBest(
   candidates: Array<{ url_path: string; title: string | null }>,
 ): Promise<{ proposed_href: string | null; confidence: number; reason: string }> {
   if (!candidates.length) return { proposed_href: null, confidence: 0, reason: "No candidates found" };
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) return { proposed_href: candidates[0].url_path, confidence: 30, reason: "Heuristic fallback (no AI key)" };
 
   const prompt = `You are repairing a broken internal link on a pool-rental marketplace.
@@ -111,7 +111,7 @@ ${candidates.map((c, i) => `${i + 1}. ${c.url_path} — ${c.title || ""}`).join(
 Respond by calling the pick_replacement tool.`;
 
   try {
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({

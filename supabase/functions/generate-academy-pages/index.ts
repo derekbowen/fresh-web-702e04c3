@@ -161,8 +161,8 @@ Deno.serve(async (req) => {
       spec = { h1, kind: "course" };
     }
 
-    const KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!KEY) throw new Error("LOVABLE_API_KEY missing");
+    const KEY = Deno.env.get("OPENROUTER_API_KEY");
+    if (!KEY) throw new Error("OPENROUTER_API_KEY missing");
 
     const isCourse = spec.kind === "course";
     const tool = isCourse ? COURSE_TOOL : HUB_TOOL;
@@ -171,7 +171,7 @@ Deno.serve(async (req) => {
       ? `Write a course page.\n\nSlug: ${slug}\nH1 (use exactly as the # heading): ${spec.h1}\nDerive the topic from the H1.\n\nReturn JSON via the tool call. body_markdown MUST start with '# ${spec.h1}'.`
       : `Write the ${spec.h1} hub/landing page.\n\nSlug: ${slug}\nH1: ${spec.h1}\nThis is a ${spec.kind === "hub_index" ? "course catalog index" : "certifications and training overview"} page.\n\nReturn JSON via the tool call. body_markdown MUST start with '# ${spec.h1}'.`;
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({

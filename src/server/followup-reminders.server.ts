@@ -35,7 +35,7 @@ type Settings = {
 
 const FROM_EMAIL = "alerts@poolrentalnearme.com";
 const FROM_NAME = "PRNM Follow-ups";
-const APP_BASE = "https://fresh-web.lovable.app";
+const APP_BASE = "https://www.poolrentalnearme.com";
 
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
