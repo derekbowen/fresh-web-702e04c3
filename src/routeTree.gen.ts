@@ -180,7 +180,6 @@ import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/em
 import { Route as LovableEmailEmailitWebhookRouteImport } from './routes/lovable/email/emailit-webhook'
 import { Route as LSlugIdRouteImport } from './routes/l.$slug.$id'
 import { Route as ApiPublicTrackCityClickRouteImport } from './routes/api/public/track-city-click'
-import { Route as ApiPublicTestStAdminRouteImport } from './routes/api/public/test-st-admin'
 import { Route as ApiPublicLinkHealthRouteImport } from './routes/api/public/link-health'
 import { Route as ApiPublicBackfillContentPagesRouteImport } from './routes/api/public/backfill-content-pages'
 import { Route as ApiAdminDataExportRouteImport } from './routes/api/admin.data-export'
@@ -1103,11 +1102,6 @@ const ApiPublicTrackCityClickRoute = ApiPublicTrackCityClickRouteImport.update({
   path: '/api/public/track-city-click',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicTestStAdminRoute = ApiPublicTestStAdminRouteImport.update({
-  id: '/api/public/test-st-admin',
-  path: '/api/public/test-st-admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicLinkHealthRoute = ApiPublicLinkHealthRouteImport.update({
   id: '/api/public/link-health',
   path: '/api/public/link-health',
@@ -1512,7 +1506,6 @@ export interface FileRoutesByFullPath {
   '/api/admin/data-export': typeof ApiAdminDataExportRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
-  '/api/public/test-st-admin': typeof ApiPublicTestStAdminRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/emailit-webhook': typeof LovableEmailEmailitWebhookRoute
@@ -1727,7 +1720,6 @@ export interface FileRoutesByTo {
   '/api/admin/data-export': typeof ApiAdminDataExportRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
-  '/api/public/test-st-admin': typeof ApiPublicTestStAdminRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/emailit-webhook': typeof LovableEmailEmailitWebhookRoute
@@ -1943,7 +1935,6 @@ export interface FileRoutesById {
   '/api/admin/data-export': typeof ApiAdminDataExportRoute
   '/api/public/backfill-content-pages': typeof ApiPublicBackfillContentPagesRoute
   '/api/public/link-health': typeof ApiPublicLinkHealthRoute
-  '/api/public/test-st-admin': typeof ApiPublicTestStAdminRoute
   '/api/public/track-city-click': typeof ApiPublicTrackCityClickRoute
   '/l/$slug/$id': typeof LSlugIdRoute
   '/lovable/email/emailit-webhook': typeof LovableEmailEmailitWebhookRoute
@@ -2160,7 +2151,6 @@ export interface FileRouteTypes {
     | '/api/admin/data-export'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
-    | '/api/public/test-st-admin'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/emailit-webhook'
@@ -2375,7 +2365,6 @@ export interface FileRouteTypes {
     | '/api/admin/data-export'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
-    | '/api/public/test-st-admin'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/emailit-webhook'
@@ -2590,7 +2579,6 @@ export interface FileRouteTypes {
     | '/api/admin/data-export'
     | '/api/public/backfill-content-pages'
     | '/api/public/link-health'
-    | '/api/public/test-st-admin'
     | '/api/public/track-city-click'
     | '/l/$slug/$id'
     | '/lovable/email/emailit-webhook'
@@ -2733,7 +2721,6 @@ export interface RootRouteChildren {
   ApiAdminDataExportRoute: typeof ApiAdminDataExportRoute
   ApiPublicBackfillContentPagesRoute: typeof ApiPublicBackfillContentPagesRoute
   ApiPublicLinkHealthRoute: typeof ApiPublicLinkHealthRoute
-  ApiPublicTestStAdminRoute: typeof ApiPublicTestStAdminRoute
   ApiPublicTrackCityClickRoute: typeof ApiPublicTrackCityClickRoute
   LSlugIdRoute: typeof LSlugIdRoute
   LovableEmailEmailitWebhookRoute: typeof LovableEmailEmailitWebhookRoute
@@ -3976,13 +3963,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackCityClickRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/test-st-admin': {
-      id: '/api/public/test-st-admin'
-      path: '/api/public/test-st-admin'
-      fullPath: '/api/public/test-st-admin'
-      preLoaderRoute: typeof ApiPublicTestStAdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/link-health': {
       id: '/api/public/link-health'
       path: '/api/public/link-health'
@@ -4591,7 +4571,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminDataExportRoute: ApiAdminDataExportRoute,
   ApiPublicBackfillContentPagesRoute: ApiPublicBackfillContentPagesRoute,
   ApiPublicLinkHealthRoute: ApiPublicLinkHealthRoute,
-  ApiPublicTestStAdminRoute: ApiPublicTestStAdminRoute,
   ApiPublicTrackCityClickRoute: ApiPublicTrackCityClickRoute,
   LSlugIdRoute: LSlugIdRoute,
   LovableEmailEmailitWebhookRoute: LovableEmailEmailitWebhookRoute,
@@ -4642,13 +4621,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
