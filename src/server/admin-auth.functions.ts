@@ -1,25 +1,31 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 /**
- * Server-side admin role check. Used by /admin/* routes in beforeLoad to
- * prevent non-admin authenticated users from rendering the admin UI.
- * Returns { isAdmin: boolean } — caller decides where to redirect.
+ * Admin role check by verified-email allowlist.
+ * The previous version queried `user_roles` via supabaseAdmin, but this deploy
+ * only holds the ANON key in SUPABASE_SERVICE_ROLE_KEY (the live Supabase project
+ * is externally managed; its real service-role key is unavailable), so RLS blocked
+ * the query and isAdmin was always false. The email below comes from the
+ * cryptographically-verified JWT (requireSupabaseAuth), so it is trustworthy.
+ * Restore the user_roles lookup once we control the Supabase project.
  */
+const ADMIN_EMAILS = new Set([
+  "derekbowencorp@gmail.com",
+  "derekcbowen@outlook.com",
+  "derekcbowen@att.net",
+]);
+
 export const checkAdminRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<{ isAdmin: boolean }> => {
-    const { userId } = context as { userId: string };
-    const { data, error } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (error) {
-      console.error("[admin-auth] role lookup failed", error);
-      return { isAdmin: false };
+    const ctx = context as { claims?: { email?: string }; supabase?: any };
+    let email = (ctx.claims?.email ?? "").toLowerCase();
+    if (!email && ctx.supabase) {
+      try {
+        const { data } = await ctx.supabase.auth.getUser();
+        email = (data?.user?.email ?? "").toLowerCase();
+      } catch {}
     }
-    return { isAdmin: !!data };
+    return { isAdmin: ADMIN_EMAILS.has(email) };
   });

@@ -685,7 +685,7 @@ function GenerateContentPageInner() {
                   <span className="font-mono">{preflight.details.adminAuth ?? "unknown"}</span>
                 </li>
                 <li>
-                  OPENROUTER_API_KEY:{" "}
+                  LOVABLE_API_KEY:{" "}
                   <span className="font-mono">{preflight.details.lovableApiKey ?? "missing"}</span>
                 </li>
                 <li>

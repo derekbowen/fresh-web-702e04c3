@@ -1,5 +1,7 @@
-// Server-only SMS utilities. Sending disabled — Twilio connector removed.
+// Server-only Twilio SMS sender + sequence scheduling.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+const GATEWAY_URL = "https://connector-gateway.lovable.dev/twilio";
 
 export function toE164(raw: string): string | null {
   if (!raw) return null;
@@ -39,8 +41,26 @@ export async function recordOptIn(phoneE164: string) {
   await supabaseAdmin.from("sms_opt_outs").delete().eq("phone_e164", phoneE164);
 }
 
-export async function sendSms(_to: string, _body: string): Promise<{ sid?: string; error?: string }> {
-  return { error: "SMS disabled — Twilio connector removed" };
+export async function sendSms(to: string, body: string): Promise<{ sid?: string; error?: string }> {
+  const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+  const TWILIO_API_KEY = process.env.TWILIO_API_KEY;
+  const FROM = process.env.TWILIO_SMS_FROM;
+  if (!LOVABLE_API_KEY) return { error: "LOVABLE_API_KEY missing" };
+  if (!TWILIO_API_KEY) return { error: "TWILIO_API_KEY missing" };
+  if (!FROM) return { error: "TWILIO_SMS_FROM missing" };
+
+  const res = await fetch(`${GATEWAY_URL}/Messages.json`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${LOVABLE_API_KEY}`,
+      "X-Connection-Api-Key": TWILIO_API_KEY,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({ To: to, From: FROM, Body: body }),
+  });
+  const data = (await res.json().catch(() => ({}))) as { sid?: string; message?: string };
+  if (!res.ok) return { error: `Twilio ${res.status}: ${data.message || JSON.stringify(data)}` };
+  return { sid: data.sid };
 }
 
 // 5-touch cadence: 0m, 1d, 3d, 7d, 14d

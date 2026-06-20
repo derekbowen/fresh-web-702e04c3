@@ -534,8 +534,8 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<{ ok: true; reply: string; role: Role; toolsUsed: string[] } | { ok: false; error: string }> => {
     const ctx = context as any;
     await assertAdmin(ctx.userId);
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
     // Resolve role: explicit override (one-shot, this turn only) wins over the
     // persisted role; otherwise use the stored override or auto-detected role.
@@ -559,7 +559,7 @@ export const prnmCoachChat = createServerFn({ method: "POST" })
     for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
       let resp: Response;
       try {
-        resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -703,8 +703,8 @@ export const generateOpportunities = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<{ ok: true; count: number; role: Role; batchId: string } | { ok: false; error: string }> => {
     const ctx = context as any;
     await assertAdmin(ctx.userId);
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
     const resolved = await resolveRole(ctx.userId);
     const role: Role = data.role || resolved.role;
@@ -727,7 +727,7 @@ ${OPP_SCHEMA_PROMPT}`;
     for (let iter = 0; iter < MAX_ITER; iter++) {
       let resp: Response;
       try {
-        resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({

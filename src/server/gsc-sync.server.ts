@@ -36,8 +36,7 @@ export type GscSyncResult = {
 };
 
 const DEFAULT_SITE_URL = "sc-domain:poolrentalnearme.com";
-// TODO: Replace with direct Google Search Console API (OAuth service account)
-const GATEWAY_BASE = "https://connector-gateway.lovable.dev/google_search_console"; // DEAD — needs migration
+const GATEWAY_BASE = "https://connector-gateway.lovable.dev/google_search_console";
 
 function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);

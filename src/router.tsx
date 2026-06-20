@@ -1,4 +1,5 @@
 import { createRouter, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { routeTree } from "./routeTree.gen";
 
 function extractFirstLocation(stack?: string): string | null {
@@ -26,6 +27,20 @@ function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => vo
   const path = typeof window !== "undefined" ? window.location.pathname + window.location.search : "";
   const timestamp = new Date().toISOString();
   const code = `ERR-${hashCode(`${name}|${message}|${location}`)}`;
+
+  // Auto-recover from stale-deploy chunk errors: if a dynamic import failed because a
+  // newer deploy rehashed/deleted the old chunk, reload to fetch fresh HTML + chunks.
+  // The time-window guard prevents reload loops but still recovers from later deploys.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!/dynamically imported module|Importing a module script failed|error loading dynamically imported/i.test(message)) return;
+    const k = "fw_chunk_reload_at";
+    const last = Number(sessionStorage.getItem(k) || 0);
+    if (Date.now() - last > 10000) {
+      sessionStorage.setItem(k, String(Date.now()));
+      window.location.reload();
+    }
+  }, [message]);
 
   const details =
     `Code: ${code}\n` +
@@ -119,6 +134,19 @@ export const getRouter = () => {
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
   });
+
+  // Proactively auto-reload when Vite fails to preload a chunk (e.g. a deploy
+  // rehashed/deleted chunks while a tab was open). Same guard to avoid reload loops.
+  if (typeof window !== "undefined") {
+    window.addEventListener("vite:preloadError", () => {
+      const k = "fw_chunk_reload_at";
+      const last = Number(sessionStorage.getItem(k) || 0);
+      if (Date.now() - last > 10000) {
+        sessionStorage.setItem(k, String(Date.now()));
+        window.location.reload();
+      }
+    });
+  }
 
   return router;
 };

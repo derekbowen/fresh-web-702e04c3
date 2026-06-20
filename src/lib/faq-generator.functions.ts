@@ -113,8 +113,8 @@ async function generateFaqPreview(
     queries: [],
     page: { url_path, title: null, focus_keyword: null },
   };
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) return { ...empty, error: "OPENROUTER_API_KEY not configured" };
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) return { ...empty, error: "LOVABLE_API_KEY not configured" };
 
   const data = { url_path, count };
 
@@ -184,7 +184,7 @@ ${(page.body_markdown ?? "").slice(0, 6000)}
 Generate ${data.count} FAQ items grounded in these queries. Prefer the highest-impression queries and merge near-duplicates.`;
 
     try {
-      const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
