@@ -1,11 +1,16 @@
-import { createFileRoute, Link, useRouter, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter, notFound, redirect } from "@tanstack/react-router";
 import { getListing } from "@/server/sharetribe.functions";
+import { getPoolCanonicalPath } from "@/lib/pool-listing.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/l/$slug/$id")({
   loader: async ({ params }) => {
+    // 301 to the canonical /pools-for-rent/... URL once a frozen slug exists.
+    // Until backfillPoolSlugs has run, this is null and the legacy page renders.
+    const canonical = await getPoolCanonicalPath({ data: { id: params.id } });
+    if (canonical) throw redirect({ href: canonical, statusCode: 301 });
     const { listing } = await getListing({ data: { id: params.id } });
     if (!listing) throw notFound();
     return { listing };

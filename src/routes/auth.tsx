@@ -3,7 +3,6 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { checkAdminRole } from "@/server/admin-auth.functions";
 import { pinSignIn } from "@/server/pin-auth.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
@@ -154,22 +153,23 @@ function AuthPage() {
     if (busy) return;
     setBusy(true);
     try {
+      // Native Supabase Google OAuth (replaces the dead Lovable proxy).
+      // This performs a full-page redirect to Google; on return to /auth the
+      // onAuthStateChange effect above picks up the session and routes onward.
       const callbackUrl = new URL("/auth", window.location.origin);
       callbackUrl.searchParams.set("redirect", search.redirect);
       callbackUrl.searchParams.set("mode", "signin");
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: callbackUrl.toString(),
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callbackUrl.toString() },
       });
-      if ("error" in result && result.error) {
-        toast.error(result.error.message ?? "Google sign-in failed.");
-        return;
+      if (error) {
+        toast.error(error.message ?? "Google sign-in failed.");
+        setBusy(false);
       }
-      if (!result.redirected) {
-        toast.success("Signed in.");
-        const dest = await resolveRedirect(search.redirect);
-        navigate({ to: dest as never });
-      }
-    } finally {
+      // On success the browser is redirected to Google — no further code runs.
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Google sign-in failed.");
       setBusy(false);
     }
   }
