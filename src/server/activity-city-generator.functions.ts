@@ -26,7 +26,7 @@ async function requireAdmin(userId: string): Promise<void> {
   if (!data) throw new Error("Forbidden: admin only");
 }
 
-const AI_GATEWAY_URL = "https://openrouter.ai/api/v1/chat/completions";
+const AI_GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const DEFAULT_MODEL = "google/gemini-2.5-pro";
 
 const ACTIVITY_KEYS: [ActivityKey, ...ActivityKey[]] = [
@@ -97,8 +97,8 @@ function buildPrompt(activityKey: ActivityKey, cityName: string, stateCode: stri
 }
 
 async function callAi(prompt: string, model: string): Promise<PageContent> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY is not configured");
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
 
   const res = await fetch(AI_GATEWAY_URL, {
     method: "POST",

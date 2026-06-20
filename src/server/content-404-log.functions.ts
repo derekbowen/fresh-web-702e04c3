@@ -226,8 +226,8 @@ export const createPageFor404 = createServerFn({ method: "POST" })
       return { ok: true, alreadyExists: true };
     }
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
     // Fetch up to 30 real published /p/* pages so internal links actually resolve.
     const { data: linkPool } = await (supabaseAdmin as any)
@@ -248,7 +248,7 @@ export const createPageFor404 = createServerFn({ method: "POST" })
     const SYSTEM = `You write SEO content for Pool Rental Near Me, a marketplace where homeowners rent private pools by the hour. 10% flat host fee, $2M liability insurance included. Voice: confident, friendly, host-first, second person. Sentence case headings. No em dashes. Markdown only with ## and ### headings. Include 2-4 internal links chosen ONLY from the candidate list below (use exact url_path). Also include the marketplace CTAs: search /s, list a pool /l/draft/00000000-0000-0000-0000-000000000000/new/details. End with a CTA paragraph linking to the list-a-pool URL. Do NOT invent any other internal URLs. Return ONLY by calling write_page.\n\nCandidate internal links:\n${linkLines || "(none yet — use only /s and the list-a-pool CTA)"}`;
     const userPrompt = `Write a page for the URL ${row.url_path}. Inferred title: "${title}". Build the article around what someone landing on that URL would want. 600-1000 words. seo_title ≤60 chars, seo_description ≤155 chars.`;
 
-    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({

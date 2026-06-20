@@ -177,8 +177,8 @@ export async function generateBodyWithAI(opts: {
   description: string;
   tone?: string;
 }): Promise<{ subject: string; bodyText: string }> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY missing");
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
 
   const system = `You are an email copywriter for "Pool Rental Near Me", a peer-to-peer pool rental marketplace.
 
@@ -204,7 +204,7 @@ End with "— The PRNM Team".
 Do NOT write HTML. Do NOT add a header or footer or unsubscribe text — the system adds them.
 Do NOT wrap your JSON in markdown code fences.`;
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,

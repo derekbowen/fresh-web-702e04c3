@@ -273,7 +273,7 @@ async function scoreOne(input: {
   source: LeadSource;
   context: string;
 }): Promise<{ score: number; reason: string } | null> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.LOVABLE_API_KEY;
   if (!apiKey) return null;
 
   const sys =
@@ -281,7 +281,7 @@ async function scoreOne(input: {
   const user = `Lead source: ${input.source}\n\n${input.context}\n\nConsider: real pool indicators in bio/captions, location demand (CA/TX/FL/AZ high), profile completeness, contact intent signals, suburban single-family hints, age cohort. Penalize commercial accounts, agents, condos, vague bios.`;
 
   try {
-    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({

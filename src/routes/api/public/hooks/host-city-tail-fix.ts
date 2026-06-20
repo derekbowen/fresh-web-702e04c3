@@ -118,7 +118,7 @@ Output ONLY the markdown. No preamble, no code fence.`;
 
 async function callAi(apiKey: string, prompt: string): Promise<{ ok: true; text: string } | { ok: false; err: string }> {
   try {
-    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -147,9 +147,9 @@ export const Route = createFileRoute("/api/public/hooks/host-city-tail-fix")({
         const unauth = await authorizeHookRequest(request);
         if (unauth) return unauth;
 
-        const apiKey = process.env.OPENROUTER_API_KEY;
+        const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) {
-          return new Response(JSON.stringify({ ok: false, error: "OPENROUTER_API_KEY missing" }),
+          return new Response(JSON.stringify({ ok: false, error: "LOVABLE_API_KEY missing" }),
             { status: 500, headers: { "Content-Type": "application/json" } });
         }
 

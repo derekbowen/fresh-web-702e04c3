@@ -79,11 +79,17 @@ function AuthPage() {
       const dest = await resolveRedirect(search.redirect);
       if (active) navigate({ to: dest as never });
     };
-    void supabase.auth.getSession().then(({ data }) => {
-      if (active && data.session) void go();
+    // Validate the session against the server before redirecting. A stale/expired
+    // token in localStorage (getSession truthy but getUser rejecting it) caused an
+    // /auth <-> /admin/dashboard redirect loop; here we clear it instead of looping.
+    void supabase.auth.getUser().then(async ({ data }) => {
+      if (!active) return;
+      if (data.user) { void go(); return; }
+      const { data: s } = await supabase.auth.getSession();
+      if (s.session) { try { await supabase.auth.signOut(); } catch {} }
     });
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) void go();
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (active && session && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED")) void go();
     });
     return () => {
       active = false;

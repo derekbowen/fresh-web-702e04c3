@@ -283,8 +283,8 @@ function humanizeSlug(slug: string): string {
 export async function runSeoFix(pageId: string, mode: "full" | "meta_only" | "title_only"): Promise<
   { ok: true; newWords: number; newTitle: string } | { ok: false; error: string }
 > {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
   const { data: page, error: pErr } = await (supabaseAdmin as any)
     .from("content_pages")
@@ -328,7 +328,7 @@ ${currentBody ? `Existing body to expand/improve:\n---\n${currentBody.slice(0, 3
 Length: 800-1200 words. Use ## sections and ### sub-points. Strong opening, no fluff.`;
   }
 
-  const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -712,8 +712,8 @@ export const appendAiContentToPage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<{ ok: true; body_markdown: string; added: string } | { ok: false; error: string }> => {
     await assertAdmin((context as any).userId);
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
 
     const { data: page } = await (supabaseAdmin as any)
       .from("content_pages")
@@ -735,7 +735,7 @@ ${data.prompt}
 
 Write the new section now.`;
 
-    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -786,8 +786,8 @@ async function callAi(opts: {
   model?: string;
   json?: boolean;
 }): Promise<{ ok: true; content: string } | { ok: false; error: string }> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) return { ok: false, error: "OPENROUTER_API_KEY not configured" };
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY not configured" };
   const body: any = {
     model: opts.model ?? "google/gemini-2.5-pro",
     messages: [
@@ -796,7 +796,7 @@ async function callAi(opts: {
     ],
   };
   if (opts.json) body.response_format = { type: "json_object" };
-  const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),

@@ -143,8 +143,8 @@ export async function generateSequenceWithAI(opts: {
   touches: number; // 2..7
   tone?: string;
 }): Promise<{ drafts: Array<{ subject: string; bodyText: string; dayOffset: number; intent: string }> }> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY missing");
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
   const touches = Math.max(2, Math.min(7, Math.round(opts.touches)));
 
   const system = `You are an email sequence copywriter for "Pool Rental Near Me", a peer-to-peer pool rental marketplace.
@@ -172,7 +172,7 @@ Rules:
 - Do NOT write HTML. Do NOT add a header, footer, or unsubscribe text — the system adds them.
 - Do NOT wrap your JSON in markdown code fences.`;
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
