@@ -1,13 +1,16 @@
 /**
  * Cron: auto-pick A/B winners past their scheduled_winner_at.
- * Public endpoint — called by pg_cron every minute.
+ * Requires x-admin-token (HOOKS_ADMIN_TOKEN) — called by pg_cron every minute.
  */
 import { createFileRoute } from "@tanstack/react-router";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 
 export const Route = createFileRoute("/api/public/hooks/ab-auto-winner")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const unauth = await authorizeHookRequest(request);
+        if (unauth) return unauth;
         try {
           const { runAbAutoWinnerCron } = await import("@/server/email-composer-extras.server");
           const result = await runAbAutoWinnerCron();

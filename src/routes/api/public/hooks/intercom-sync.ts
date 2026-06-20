@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { authorizeHookRequest } from "@/server/hook-auth.server";
 import { syncAllToIntercom } from "@/server/intercom-sync.server";
 
 export const Route = createFileRoute("/api/public/hooks/intercom-sync")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const unauth = await authorizeHookRequest(request);
+        if (unauth) return unauth;
         try {
           const url = new URL(request.url);
           const dryRun =
@@ -27,7 +30,7 @@ export const Route = createFileRoute("/api/public/hooks/intercom-sync")({
         Response.json({
           ok: true,
           hint:
-            "POST to run sync. Add ?dryRun=1 to preview changes without writes. Optional ?limit=N (default 100, max 500).",
+            "POST with x-admin-token header to run sync. Add ?dryRun=1 to preview. Optional ?limit=N (default 100, max 500).",
         }),
     },
   },
