@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
-import { AUTHOR_PERSON_JSONLD_REF } from "@/lib/seo";
+import { AUTHOR_PERSON_JSONLD_REF, SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 export interface ComparisonPageProps {
   competitor: string;
@@ -198,7 +198,10 @@ export function buildComparisonMeta(opts: {
   title: string;
   description: string;
 }) {
-  const url = `https://www.poolrentalnearme.com/p/${opts.slug}`;
+  const url = `${SITE_URL}/p/${opts.slug}`;
+  const ogImage = DEFAULT_OG_IMAGE.startsWith("/")
+    ? `${SITE_URL}${DEFAULT_OG_IMAGE}`
+    : DEFAULT_OG_IMAGE;
   return {
     meta: [
       { title: opts.title },
@@ -207,9 +210,13 @@ export function buildComparisonMeta(opts: {
       { property: "og:description", content: opts.description },
       { property: "og:url", content: url },
       { property: "og:type", content: "article" },
+      { property: "og:image", content: ogImage },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: opts.title },
       { name: "twitter:description", content: opts.description },
+      { name: "twitter:image", content: ogImage },
       { name: "robots", content: "index,follow" },
     ],
     links: [{ rel: "canonical", href: url }],

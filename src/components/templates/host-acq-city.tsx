@@ -55,7 +55,12 @@ export function HostAcqCityTemplate({
   const body = page.body_markdown || page.content || null;
   const faqs = faqsForContentPage(page);
   const guide = city ? buildHostCityGuide(city) : null;
-  const fallbackCitySlug = cityForContentPage(page.template_type, page.slug);
+  // For host_acq_city pages whose slug lacks the "become-a-...host-" prefix
+  // (e.g. "austin-tx"), cityForContentPage() returns null — fall back to the
+  // page slug itself, which IS the city slug, so the H1/earnings card localize
+  // instead of rendering the literal "your city".
+  const fallbackCitySlug =
+    cityForContentPage(page.template_type, page.slug) ?? page.slug;
   const fallbackCity = fallbackCitySlug ? parseCitySlug(fallbackCitySlug) : null;
   const cityName = city?.name || fallbackCity?.city || "your city";
   const stateCode = (city?.state_code || fallbackCity?.stateCode || "").toUpperCase();

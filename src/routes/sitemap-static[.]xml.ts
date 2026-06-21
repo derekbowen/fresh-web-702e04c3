@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/seo";
 import { buildUrlsetXml, sitemapResponse, type SitemapUrl } from "@/lib/sitemap";
-import { STATE_NAMES } from "@/lib/states";
+import { getAllStateHubs, stateHubPath } from "@/server/state-hub.functions";
 
 /**
  * Static sub-sitemap: pages whose URLs and content are known at build time
@@ -33,10 +33,6 @@ const STATIC_URLS: Array<{ path: string; lastmod?: Date }> = [
   { path: "/p/host-marketing-playbook" },
   { path: "/p/pool-rules-generator" },
   { path: "/p/pool-wifi-guide" },
-  // 50 state hub pages — internal linking layer for the 3,400+ city pages.
-  ...Object.values(STATE_NAMES).map((name) => ({
-    path: `/p/pool-rentals-${name.toLowerCase().replace(/\s+/g, "-")}`,
-  })),
 ];
 
 export const Route = createFileRoute("/sitemap-static.xml")({
@@ -44,10 +40,24 @@ export const Route = createFileRoute("/sitemap-static.xml")({
     handlers: {
       GET: async () => {
         const now = new Date();
-        const urls: SitemapUrl[] = STATIC_URLS.map((entry) => ({
-          loc: `${SITE_URL}${entry.path}`,
-          lastmod: entry.lastmod ?? now,
-        }));
+        // State hub pages are data-driven: the /p/pool-rentals-$state route
+        // notFound()s any state with zero host_acq_city data. getAllStateHubs()
+        // already filters those out, so emit only states that actually render
+        // (was: hardcoded all 51, which fed Google 38 sitemap 404s).
+        let stateHubs: Awaited<ReturnType<typeof getAllStateHubs>> = [];
+        try {
+          stateHubs = await getAllStateHubs();
+        } catch {
+          stateHubs = [];
+        }
+        const stateEntries: Array<{ path: string; lastmod?: Date }> =
+          stateHubs.map((h) => ({ path: stateHubPath(h.stateName) }));
+        const urls: SitemapUrl[] = [...STATIC_URLS, ...stateEntries].map(
+          (entry) => ({
+            loc: `${SITE_URL}${entry.path}`,
+            lastmod: entry.lastmod ?? now,
+          }),
+        );
         return sitemapResponse(buildUrlsetXml(urls));
       },
     },
