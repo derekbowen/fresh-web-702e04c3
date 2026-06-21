@@ -233,7 +233,7 @@ export function HostAcqCityTemplate({
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="/signup"
+                  href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                   className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
                 >
                   List my pool — it's free
@@ -668,7 +668,7 @@ export function HostAcqCityTemplate({
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
-                href="/signup"
+                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                 className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
               >
                 List my pool — it's free
@@ -696,7 +696,7 @@ export function HostAcqCityTemplate({
             </div>
           </div>
           <a
-            href="/signup"
+            href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
             className="shrink-0 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
           >
             List my pool
