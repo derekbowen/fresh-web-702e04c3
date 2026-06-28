@@ -62,6 +62,11 @@ export const Route = createFileRoute("/api/public/link-health")({
 });
 
 async function handle(request: Request) {
+  // Require hook admin token: prevents unauthenticated DB writes via persist=1
+  // and prevents anonymous abuse of the crawler against the production origin.
+  const denied = await authorizeHookRequest(request);
+  if (denied) return denied;
+
   const t0 = Date.now();
   const url = new URL(request.url);
   const seedsParam = url.searchParams.get("seeds");
