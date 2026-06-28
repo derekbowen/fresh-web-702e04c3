@@ -975,8 +975,9 @@ function renderMarkdown(src: string): string {
   const lines = src.split(/\r?\n/);
   let html = ""; let inList = false; let inPara = false;
   const close = () => { if (inList) { html += "</ul>"; inList = false; } if (inPara) { html += "</p>"; inPara = false; } };
+  const safeHref = (u: string) => (/^(https?:|mailto:|\/|#)/i.test(u.trim()) ? u : "#");
   const inline = (s: string) => escape(s)
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary underline">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m: string, label: string, href: string) => `<a href="${safeHref(href)}" class="text-primary underline">${label}</a>`)
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/\*([^*]+)\*/g, "<em>$1</em>")
     .replace(/`([^`]+)`/g, "<code>$1</code>");

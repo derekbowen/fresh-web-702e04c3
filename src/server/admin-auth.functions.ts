@@ -10,11 +10,12 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
  * cryptographically-verified JWT (requireSupabaseAuth), so it is trustworthy.
  * Restore the user_roles lookup once we control the Supabase project.
  */
-const ADMIN_EMAILS = new Set([
-  "derekbowencorp@gmail.com",
-  "derekcbowen@outlook.com",
-  "derekcbowen@att.net",
-]);
+function getAdminEmails(): Set<string> {
+  const raw = process.env.ADMIN_EMAILS || "";
+  return new Set(
+    raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
+  );
+}
 
 export const checkAdminRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -27,5 +28,5 @@ export const checkAdminRole = createServerFn({ method: "POST" })
         email = (data?.user?.email ?? "").toLowerCase();
       } catch {}
     }
-    return { isAdmin: ADMIN_EMAILS.has(email) };
+    return { isAdmin: getAdminEmails().has(email) };
   });
