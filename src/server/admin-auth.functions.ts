@@ -28,5 +28,5 @@ export const checkAdminRole = createServerFn({ method: "POST" })
         email = (data?.user?.email ?? "").toLowerCase();
       } catch {}
     }
-    return { isAdmin: ADMIN_EMAILS.has(email) };
+    return { isAdmin: getAdminEmails().has(email) };
   });
