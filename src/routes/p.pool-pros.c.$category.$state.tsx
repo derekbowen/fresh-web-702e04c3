@@ -19,6 +19,12 @@ export const Route = createFileRoute("/p/pool-pros/c/$category/$state")({
     const title = `${c.plural_name} in ${sn} | Pool Rental Near Me`;
     const description = `Find ${c.plural_name.toLowerCase()} across ${sn}. Browse vetted local pool pros by city.`;
     const meta = buildMeta({ title, description, path, image: c.hero_image_url });
+    // Canonical is emitted only by the deepest (leaf) matched route. TanStack
+    // concatenates <link> tags across every matched route, so parent routes each
+    // emitting their own canonical produced multiple rel=canonical tags on child
+    // pages (a city page showed 4). Strip it on this intermediate route; when this
+    // page IS the leaf it self-canonicalizes via Google's implicit-self rule.
+    meta.links = meta.links.filter((l) => l.rel !== "canonical");
     const crumbs = breadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "Pool Pros", path: "/p/pool-pros" },
