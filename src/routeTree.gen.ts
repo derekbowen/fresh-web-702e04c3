@@ -53,6 +53,7 @@ import { Route as VerifyUidRouteImport } from './routes/verify.$uid'
 import { Route as TechnicalSupportSplatRouteImport } from './routes/technical-support.$'
 import { Route as PoolManagementSplatRouteImport } from './routes/pool-management.$'
 import { Route as PWaiverGeneratorRouteImport } from './routes/p.waiver-generator'
+import { Route as PWaitlistSignupRouteImport } from './routes/p.waitlist-signup'
 import { Route as PSwimplyAlternativeVsPoolRentalNearMeRouteImport } from './routes/p.swimply-alternative-vs-pool-rental-near-me'
 import { Route as PStartHostingRouteImport } from './routes/p.start-hosting'
 import { Route as PSharetribeRouteImport } from './routes/p.sharetribe'
@@ -452,6 +453,11 @@ const PoolManagementSplatRoute = PoolManagementSplatRouteImport.update({
 const PWaiverGeneratorRoute = PWaiverGeneratorRouteImport.update({
   id: '/p/waiver-generator',
   path: '/p/waiver-generator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PWaitlistSignupRoute = PWaitlistSignupRouteImport.update({
+  id: '/p/waitlist-signup',
+  path: '/p/waitlist-signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PSwimplyAlternativeVsPoolRentalNearMeRoute =
@@ -1499,6 +1505,7 @@ export interface FileRoutesByFullPath {
   '/p/sharetribe': typeof PSharetribeRoute
   '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  '/p/waitlist-signup': typeof PWaitlistSignupRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
@@ -1713,6 +1720,7 @@ export interface FileRoutesByTo {
   '/p/sharetribe': typeof PSharetribeRoute
   '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  '/p/waitlist-signup': typeof PWaitlistSignupRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
@@ -1928,6 +1936,7 @@ export interface FileRoutesById {
   '/p/sharetribe': typeof PSharetribeRoute
   '/p/start-hosting': typeof PStartHostingRoute
   '/p/swimply-alternative-vs-pool-rental-near-me': typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  '/p/waitlist-signup': typeof PWaitlistSignupRoute
   '/p/waiver-generator': typeof PWaiverGeneratorRoute
   '/pool-management/$': typeof PoolManagementSplatRoute
   '/technical-support/$': typeof TechnicalSupportSplatRoute
@@ -2144,6 +2153,7 @@ export interface FileRouteTypes {
     | '/p/sharetribe'
     | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
+    | '/p/waitlist-signup'
     | '/p/waiver-generator'
     | '/pool-management/$'
     | '/technical-support/$'
@@ -2358,6 +2368,7 @@ export interface FileRouteTypes {
     | '/p/sharetribe'
     | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
+    | '/p/waitlist-signup'
     | '/p/waiver-generator'
     | '/pool-management/$'
     | '/technical-support/$'
@@ -2572,6 +2583,7 @@ export interface FileRouteTypes {
     | '/p/sharetribe'
     | '/p/start-hosting'
     | '/p/swimply-alternative-vs-pool-rental-near-me'
+    | '/p/waitlist-signup'
     | '/p/waiver-generator'
     | '/pool-management/$'
     | '/technical-support/$'
@@ -2715,6 +2727,7 @@ export interface RootRouteChildren {
   PSharetribeRoute: typeof PSharetribeRoute
   PStartHostingRoute: typeof PStartHostingRoute
   PSwimplyAlternativeVsPoolRentalNearMeRoute: typeof PSwimplyAlternativeVsPoolRentalNearMeRoute
+  PWaitlistSignupRoute: typeof PWaitlistSignupRoute
   PWaiverGeneratorRoute: typeof PWaiverGeneratorRoute
   PoolManagementSplatRoute: typeof PoolManagementSplatRoute
   TechnicalSupportSplatRoute: typeof TechnicalSupportSplatRoute
@@ -3073,6 +3086,13 @@ declare module '@tanstack/react-router' {
       path: '/p/waiver-generator'
       fullPath: '/p/waiver-generator'
       preLoaderRoute: typeof PWaiverGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/waitlist-signup': {
+      id: '/p/waitlist-signup'
+      path: '/p/waitlist-signup'
+      fullPath: '/p/waitlist-signup'
+      preLoaderRoute: typeof PWaitlistSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/swimply-alternative-vs-pool-rental-near-me': {
@@ -4565,6 +4585,7 @@ const rootRouteChildren: RootRouteChildren = {
   PStartHostingRoute: PStartHostingRoute,
   PSwimplyAlternativeVsPoolRentalNearMeRoute:
     PSwimplyAlternativeVsPoolRentalNearMeRoute,
+  PWaitlistSignupRoute: PWaitlistSignupRoute,
   PWaiverGeneratorRoute: PWaiverGeneratorRoute,
   PoolManagementSplatRoute: PoolManagementSplatRoute,
   TechnicalSupportSplatRoute: TechnicalSupportSplatRoute,
