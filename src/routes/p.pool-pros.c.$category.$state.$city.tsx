@@ -19,7 +19,7 @@ export const Route = createFileRoute("/p/pool-pros/c/$category/$state/$city")({
     const title = `${c.plural_name} in ${loaderData.cityName}, ${loaderData.stateCode}`;
     const description = `Top ${c.plural_name.toLowerCase()} serving ${loaderData.cityName}, ${loaderData.stateName}. Compare local pool pros, ratings and contact info.`;
     const path = `/p/pool-pros/c/${params.category}/${params.state.toLowerCase()}/${params.city.toLowerCase()}`;
-    const meta = buildMeta({ title: `${title} | Pool Rental Near Me`, description, path, image: c.hero_image_url });
+    const meta = buildMeta({ title: `${title} | Pool Rental Near Me`, description, path, image: c.hero_image_url, noindex: true });
     const crumbs = breadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "Pool Pros", path: "/p/pool-pros" },

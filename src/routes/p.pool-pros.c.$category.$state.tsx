@@ -18,7 +18,7 @@ export const Route = createFileRoute("/p/pool-pros/c/$category/$state")({
     const path = `/p/pool-pros/c/${params.category}/${params.state.toLowerCase()}`;
     const title = `${c.plural_name} in ${sn} | Pool Rental Near Me`;
     const description = `Find ${c.plural_name.toLowerCase()} across ${sn}. Browse vetted local pool pros by city.`;
-    const meta = buildMeta({ title, description, path, image: c.hero_image_url });
+    const meta = buildMeta({ title, description, path, image: c.hero_image_url, noindex: true });
     // Canonical is emitted only by the deepest (leaf) matched route. TanStack
     // concatenates <link> tags across every matched route, so parent routes each
     // emitting their own canonical produced multiple rel=canonical tags on child

@@ -23,6 +23,7 @@ export const Route = createFileRoute("/p/pool-pros/$slug")({
       description,
       path,
       image: p.hero_image_url || p.logo_url,
+      noindex: true,
     });
     const business: Record<string, unknown> = {
       "@context": "https://schema.org",

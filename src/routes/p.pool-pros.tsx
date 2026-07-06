@@ -16,6 +16,7 @@ export const Route = createFileRoute("/p/pool-pros")({
       description:
         "Search pool builders, cleaners, and service pros across the US. Filter by service type, city, and rating.",
       path: "/p/pool-pros",
+      noindex: true,
     });
     // Canonical is emitted only by the deepest (leaf) matched route. TanStack
     // concatenates <link> tags across every matched route, so parent routes each
