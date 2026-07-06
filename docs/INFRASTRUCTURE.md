@@ -12,7 +12,7 @@ _Generated 2026-07-06. Key **values** are never stored here — only their locat
 
 | When | Item | Notes |
 |---|---|---|
-| **set 2026-07-06 · do after 24h** | 🔴 Rotate/deactivate AWS `claude-deploy` key | IAM user `claude-deploy`, key `AKIA3M7ACVBG2OGIKAEI`. Used for EC2 Instance Connect tunneling. Deactivate in IAM once migration is stable (~2026-07-07). **Remind at this mark.** |
+| **set 2026-07-06 · do after 24h** | 🔴 Rotate/deactivate AWS `claude-deploy` key | IAM user `claude-deploy`, key `AKIA…KAEI` (full ID in the IAM console under user `claude-deploy`). Used for EC2 Instance Connect tunneling. Deactivate in IAM once migration is stable (~2026-07-07). **Remind at this mark.** |
 | **≈2026-07-07 (after 24h)** | 🟡 Decommission old Supabase project | `ptfjspcphskifoseidut` is the rollback. Keep live through the 24h window, then pause/delete. **Remind at this mark.** |
 | **Phase 2** | 🟡 Content-gen pipeline — deploy, hold the cron | 9 edge functions + `pg_cron` (`auto-generate-content-batch`, every 5 min). Deploy functions; **do NOT enable the cron until explicit go.** |
 | optional | 🔵 Rotate new DB password + service_role key | Both transited chat during setup; rotate + re-run env swap when convenient. |
