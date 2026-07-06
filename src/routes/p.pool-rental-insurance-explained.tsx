@@ -11,9 +11,9 @@ import {
 
 const PATH = "/p/pool-rental-insurance-explained";
 const TITLE =
-  "Pool rental insurance: Swimply vs PRNM vs Peerspace (2026)";
+  "Do You Need Insurance to Rent Out Your Pool? (2026)";
 const DESCRIPTION =
-  "Side-by-side: Swimply's self-funded $1M guarantee vs PRNM's $2M Hartford-backed BOP vs Peerspace and Giggster. With carriers, limits, and proof.";
+  "Yes \u2014 most homeowners policies exclude paid pool rentals, so you need commercial liability coverage. Here's what you actually need, plus how Swimply, PRNM, Peerspace and Giggster compare on carriers, limits, and proof.";
 const LAST_UPDATED = "2026-05-22";
 
 const faqs = [
@@ -154,7 +154,7 @@ function InsuranceExplainedPage() {
         </nav>
 
         <h1 className="text-3xl font-bold leading-tight md:text-4xl">
-          Pool rental insurance, explained: what each platform actually covers
+          Do you need insurance to rent out your pool?
         </h1>
         <p className="mt-2 text-sm text-slate-500">
           Last updated {LAST_UPDATED} · Reviewed by Derek Bowen, CEO, PRNM Corp

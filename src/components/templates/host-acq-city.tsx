@@ -55,10 +55,22 @@ export function HostAcqCityTemplate({
   const body = page.body_markdown || page.content || null;
   const faqs = faqsForContentPage(page);
   const guide = city ? buildHostCityGuide(city) : null;
-  const fallbackCitySlug = cityForContentPage(page.template_type, page.slug);
+  // For host_acq_city pages whose slug lacks the "become-a-...host-" prefix
+  // (e.g. "austin-tx"), cityForContentPage() returns null — fall back to the
+  // page slug itself, which IS the city slug, so the H1/earnings card localize
+  // instead of rendering the literal "your city".
+  const fallbackCitySlug =
+    cityForContentPage(page.template_type, page.slug) ?? page.slug;
   const fallbackCity = fallbackCitySlug ? parseCitySlug(fallbackCitySlug) : null;
-  const cityName = city?.name || fallbackCity?.city || "your city";
+  const rawCityName = city?.name || fallbackCity?.city || "your city";
   const stateCode = (city?.state_code || fallbackCity?.stateCode || "").toUpperCase();
+  // Some cities store the state inside the name ("Washington DC", "New Haven CT"),
+  // which rendered a doubled "Name XX, XX" in titles/breadcrumbs. Strip a trailing
+  // state token so `${cityName}, ${stateCode}` reads cleanly. No-op for clean names.
+  const cityName =
+    stateCode && rawCityName.toUpperCase().endsWith(" " + stateCode)
+      ? rawCityName.slice(0, rawCityName.length - stateCode.length - 1).trimEnd()
+      : rawCityName;
   const tier = guide?.cityTier ?? "standard";
   const hourlyRate = guide?.defaultHourlyRate ?? 75;
 
@@ -228,7 +240,7 @@ export function HostAcqCityTemplate({
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="/signup"
+                  href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                   className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
                 >
                   List my pool — it's free
@@ -663,7 +675,7 @@ export function HostAcqCityTemplate({
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
-                href="/signup"
+                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                 className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
               >
                 List my pool — it's free
@@ -691,7 +703,7 @@ export function HostAcqCityTemplate({
             </div>
           </div>
           <a
-            href="/signup"
+            href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
             className="shrink-0 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
           >
             List my pool
