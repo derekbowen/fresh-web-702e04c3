@@ -5,7 +5,7 @@ SELECT cron.schedule(
   '* * * * *',
   $$
   SELECT net.http_post(
-    url := 'https://ptfjspcphskifoseidut.supabase.co/functions/v1/generate-content-batch',
+    url := 'https://qbzpjsiahqgyoazjurqy.supabase.co/functions/v1/generate-content-batch',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'x-admin-token', public.get_hooks_admin_token()
