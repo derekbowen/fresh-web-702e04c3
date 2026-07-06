@@ -166,6 +166,10 @@ export async function buildContentPagesSitemap(
     .eq("in_sitemap", true)
     .eq("status", "published")
     .not("slug", "is", null)
+    // /p/pool-rentals-{state} is now served by the data-driven state-hub route
+    // (advertised in sitemap-static.xml). Exclude any legacy content_pages rows
+    // with these slugs so they aren't duplicated/mislisted here.
+    .not("slug", "like", "pool-rentals-%")
     .order("slug")
     .range(offset, offset + SITEMAP_PAGE_SIZE - 1);
 

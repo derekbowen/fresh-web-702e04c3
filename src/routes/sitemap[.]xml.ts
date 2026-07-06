@@ -53,11 +53,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           lastmod: new Date(),
         });
 
-        // 1c. Pool pros directory (categories + providers)
-        entries.push({
-          loc: `${SITE_URL}/sitemap-directory.xml`,
-          lastmod: new Date(),
-        });
+        // Pool pros directory sitemap removed 2026-07-06: the /p/pool-pros tree
+        // is noindexed (see commit b8672f38), so it must not be advertised in sitemaps.
 
         // 2. Per-template-type content_pages sub-sitemaps (with auto-pagination)
         for (const group of TEMPLATE_GROUPS) {

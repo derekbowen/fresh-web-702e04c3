@@ -6,7 +6,7 @@ import { buildMeta } from "@/lib/seo";
 import { getStateHub } from "@/server/state-hub.functions";
 import { queryListings, type ListingSummary } from "@/server/sharetribe.functions";
 
-export const Route = createFileRoute("/p/pool-rentals-$state")({
+export const Route = createFileRoute("/p/pool-rentals-{$state}")({
   loader: async ({ params }) => {
     // Any failure (bad slug, Zod throw, supabase outage) collapses to a
     // clean notFound() — never the scary "Something went wrong" screen.

@@ -60,7 +60,7 @@ import { Route as PPrivatePoolRentalRouteImport } from './routes/p.private-pool-
 import { Route as PPrivacyRequestRouteImport } from './routes/p.privacy-request'
 import { Route as PPoolWifiGuideRouteImport } from './routes/p.pool-wifi-guide'
 import { Route as PPoolRulesGeneratorRouteImport } from './routes/p.pool-rules-generator'
-import { Route as PPoolRentalsStateRouteImport } from './routes/p.pool-rentals-$state'
+import { Route as PPoolRentalsChar123stateChar125RouteImport } from './routes/p.pool-rentals-{$state}'
 import { Route as PPoolRentalsRouteImport } from './routes/p.pool-rentals'
 import { Route as PPoolRentalPermitsByStateRouteImport } from './routes/p.pool-rental-permits-by-state'
 import { Route as PPoolRentalInsuranceExplainedRouteImport } from './routes/p.pool-rental-insurance-explained'
@@ -490,11 +490,12 @@ const PPoolRulesGeneratorRoute = PPoolRulesGeneratorRouteImport.update({
   path: '/p/pool-rules-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PPoolRentalsStateRoute = PPoolRentalsStateRouteImport.update({
-  id: '/p/pool-rentals-$state',
-  path: '/p/pool-rentals-$state',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const PPoolRentalsChar123stateChar125Route =
+  PPoolRentalsChar123stateChar125RouteImport.update({
+    id: '/p/pool-rentals-{$state}',
+    path: '/p/pool-rentals-{$state}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PPoolRentalsRoute = PPoolRentalsRouteImport.update({
   id: '/p/pool-rentals',
   path: '/p/pool-rentals',
@@ -1490,7 +1491,7 @@ export interface FileRoutesByFullPath {
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
-  '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
+  '/p/pool-rentals-{$state}': typeof PPoolRentalsChar123stateChar125Route
   '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/pool-wifi-guide': typeof PPoolWifiGuideRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
@@ -1704,7 +1705,7 @@ export interface FileRoutesByTo {
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
-  '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
+  '/p/pool-rentals-{$state}': typeof PPoolRentalsChar123stateChar125Route
   '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/pool-wifi-guide': typeof PPoolWifiGuideRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
@@ -1919,7 +1920,7 @@ export interface FileRoutesById {
   '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
-  '/p/pool-rentals-$state': typeof PPoolRentalsStateRoute
+  '/p/pool-rentals-{$state}': typeof PPoolRentalsChar123stateChar125Route
   '/p/pool-rules-generator': typeof PPoolRulesGeneratorRoute
   '/p/pool-wifi-guide': typeof PPoolWifiGuideRoute
   '/p/privacy-request': typeof PPrivacyRequestRoute
@@ -2135,7 +2136,7 @@ export interface FileRouteTypes {
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
-    | '/p/pool-rentals-$state'
+    | '/p/pool-rentals-{$state}'
     | '/p/pool-rules-generator'
     | '/p/pool-wifi-guide'
     | '/p/privacy-request'
@@ -2349,7 +2350,7 @@ export interface FileRouteTypes {
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
-    | '/p/pool-rentals-$state'
+    | '/p/pool-rentals-{$state}'
     | '/p/pool-rules-generator'
     | '/p/pool-wifi-guide'
     | '/p/privacy-request'
@@ -2563,7 +2564,7 @@ export interface FileRouteTypes {
     | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
-    | '/p/pool-rentals-$state'
+    | '/p/pool-rentals-{$state}'
     | '/p/pool-rules-generator'
     | '/p/pool-wifi-guide'
     | '/p/privacy-request'
@@ -2706,7 +2707,7 @@ export interface RootRouteChildren {
   PPoolRentalInsuranceExplainedRoute: typeof PPoolRentalInsuranceExplainedRoute
   PPoolRentalPermitsByStateRoute: typeof PPoolRentalPermitsByStateRoute
   PPoolRentalsRoute: typeof PPoolRentalsRoute
-  PPoolRentalsStateRoute: typeof PPoolRentalsStateRoute
+  PPoolRentalsChar123stateChar125Route: typeof PPoolRentalsChar123stateChar125Route
   PPoolRulesGeneratorRoute: typeof PPoolRulesGeneratorRoute
   PPoolWifiGuideRoute: typeof PPoolWifiGuideRoute
   PPrivacyRequestRoute: typeof PPrivacyRequestRoute
@@ -3123,11 +3124,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PPoolRulesGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/pool-rentals-$state': {
-      id: '/p/pool-rentals-$state'
-      path: '/p/pool-rentals-$state'
-      fullPath: '/p/pool-rentals-$state'
-      preLoaderRoute: typeof PPoolRentalsStateRouteImport
+    '/p/pool-rentals-{$state}': {
+      id: '/p/pool-rentals-{$state}'
+      path: '/p/pool-rentals-{$state}'
+      fullPath: '/p/pool-rentals-{$state}'
+      preLoaderRoute: typeof PPoolRentalsChar123stateChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/pool-rentals': {
@@ -4555,7 +4556,7 @@ const rootRouteChildren: RootRouteChildren = {
   PPoolRentalInsuranceExplainedRoute: PPoolRentalInsuranceExplainedRoute,
   PPoolRentalPermitsByStateRoute: PPoolRentalPermitsByStateRoute,
   PPoolRentalsRoute: PPoolRentalsRoute,
-  PPoolRentalsStateRoute: PPoolRentalsStateRoute,
+  PPoolRentalsChar123stateChar125Route: PPoolRentalsChar123stateChar125Route,
   PPoolRulesGeneratorRoute: PPoolRulesGeneratorRoute,
   PPoolWifiGuideRoute: PPoolWifiGuideRoute,
   PPrivacyRequestRoute: PPrivacyRequestRoute,
@@ -4621,3 +4622,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
