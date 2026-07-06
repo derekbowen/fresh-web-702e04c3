@@ -1,8 +1,12 @@
 import { sendLovableEmail } from '@lovable.dev/email-js'
+import { sendViaEmailit } from '@/lib/email/emailit'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 
 const MAX_RETRIES = 5
+// Verified emailit sender + Intercom-routed reply-to (set by owner).
+const EMAILIT_FROM = 'Pool Rental Near Me <noreply@poolrentalnearme.com>'
+const EMAILIT_REPLY_TO = 'support@poolrentalnearme.com'
 const DEFAULT_BATCH_SIZE = 10
 const DEFAULT_SEND_DELAY_MS = 200
 const DEFAULT_AUTH_TTL_MINUTES = 15
@@ -64,7 +68,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = process.env.LOVABLE_API_KEY
+        const apiKey = process.env.EMAILIT_API_KEY
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -221,23 +225,18 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
             }
 
             try {
-              await sendLovableEmail(
-                {
-                  run_id: payload.run_id,
-                  to: payload.to,
-                  from: payload.from,
-                  sender_domain: payload.sender_domain,
-                  subject: payload.subject,
-                  html: payload.html,
-                  text: payload.text,
-                  purpose: payload.purpose,
-                  label: payload.label,
-                  idempotency_key: payload.idempotency_key,
-                  unsubscribe_token: payload.unsubscribe_token,
-                  message_id: payload.message_id,
-                },
-                { apiKey, sendUrl: process.env.LOVABLE_SEND_URL }
-              )
+              // Send via the owned emailit account (drops the Lovable-cloud relay).
+              // `from` is overridden to the emailit-verified domain; reply-to routes
+              // to Intercom. The rendered template body already carries an
+              // unsubscribe link (List-Unsubscribe header is a later deliverability add).
+              await sendViaEmailit({
+                from: EMAILIT_FROM,
+                to: payload.to,
+                subject: payload.subject,
+                html: payload.html,
+                text: payload.text,
+                replyTo: EMAILIT_REPLY_TO,
+              })
 
               // Log success
               await supabase.from('email_send_log').insert({
