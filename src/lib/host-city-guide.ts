@@ -113,7 +113,7 @@ export function buildHostCityGuide(city: CityRow): HostCityGuide {
     {
       heading: `How PRNM's 10% fee compares to alternatives`,
       paragraphs: [
-        `Pool Rental Near Me charges hosts a flat 10% fee on each booking. That's roughly a third of what the largest competitor (Swimply) takes once you stack their host fee, guest fee, and processing — typically 15%+ on the host side and another markup baked into the guest's total. On a $200 booking in ${cityName}, that fee difference is real money: roughly $20 to PRNM versus $30+ to Swimply, every single time. Multiply that across a busy ${state} weekend and the gap pays for itself.`,
+        `Pool Rental Near Me charges hosts 0% host fees in 2026 on each booking — you keep 100%. Swimply takes 15%+ once you stack their host fee, guest fee, and processing. On a $200 booking in ${cityName}, that difference is real money: $0 to PRNM versus $30+ to Swimply, every single time. Across a busy ${state} weekend the gap pays for itself.`,
         `Beyond the fee, PRNM was built for hosts who want to keep more of what they earn, set their own rules, and stop competing on a platform that quietly takes a bigger cut every year. Listing on PRNM is free, there's no exclusivity, and you can publish your ${cityName} pool today.`,
       ],
     },

@@ -21,16 +21,16 @@ import { absUrl } from "@/lib/site-origin";
 const SLUG = "peerspace-vs-pool-rental-near-me";
 const TITLE = "Peerspace vs Pool Rental Near Me (2026): Fees, Insurance & Best Pool Host Platform";
 const DESCRIPTION =
-  "Peerspace vs Pool Rental Near Me 2026: 10% vs 20% host fee, $2M vs $1M liability, pool-specialized vs general venue. Side-by-side comparison for pool owners.";
+  "Peerspace vs Pool Rental Near Me 2026: 0% vs 20% host fee (2026), $2M vs $1M liability, pool-specialized vs general venue. Side-by-side comparison for pool owners.";
 
 const faqs = [
   {
     q: "What does Peerspace charge hosts?",
-    a: "Peerspace's published support article confirms a 20% host service fee charged on the booking subtotal plus add-ons like cleaning. Peerspace also charges guests a separate processing fee at checkout. Pool Rental Near Me charges a flat 10% host commission and a 10% renter service fee.",
+    a: "Peerspace's published support article confirms a 20% host service fee charged on the booking subtotal plus add-ons like cleaning. Peerspace also charges guests a separate processing fee at checkout. Pool Rental Near Me charges a flat 0% host commission through 2026 — you keep 100% — with a guest service fee at checkout.",
   },
   {
     q: "Is Peerspace a good Swimply alternative for pool rentals?",
-    a: "Peerspace lists pools alongside lofts, warehouses, mansions and event halls — it's a general venue marketplace, not a pool marketplace. If you want a true Swimply alternative built only for pools, Pool Rental Near Me is the closer match: lower 10% host fee, $2M liability, and 5,100+ pool-intent landing pages driving guests who specifically searched for a pool.",
+    a: "Peerspace lists pools alongside lofts, warehouses, mansions and event halls — it's a general venue marketplace, not a pool marketplace. If you want a true Swimply alternative built only for pools, Pool Rental Near Me is the closer match: 0% host fees through 2026, $2M liability, and 5,100+ pool-intent landing pages driving guests who specifically searched for a pool.",
   },
   {
     q: "Is Peerspace mainly for pool rentals?",
@@ -58,28 +58,28 @@ const faqs = [
   },
   {
     q: "Why is fee math different on a venue platform vs a pool platform?",
-    a: "Venue platforms spread their take across many categories — Peerspace's 20% host fee is the same whether you're listing a loft, a warehouse, or a pool. Pool Rental Near Me's flat 10% host fee is built specifically around pool unit economics, which is why it's lower.",
+    a: "Venue platforms spread their take across many categories — Peerspace's 20% host fee is the same whether you're listing a loft, a warehouse, or a pool. Pool Rental Near Me's 0% host fees through 2026 is built specifically around pool unit economics, which is why it's lower.",
   },
   {
     q: "Is Pool Rental Near Me cheaper than Peerspace for hosts?",
-    a: "Yes — Pool Rental Near Me's 10% host commission is half of Peerspace's published 20% host fee. On a $300 booking, that's $30 to Pool Rental Near Me vs $60 to Peerspace, putting an extra $30 per booking in your pocket.",
+    a: "Yes — Pool Rental Near Me's 0% host commission (through 2026) beats Peerspace's published 20% host fee. On a $300 booking, that's $0 to Pool Rental Near Me vs $60 to Peerspace, putting the full $60 per booking back in your pocket.",
   },
 ];
 
 const tableRows = [
   {
     label: "Host service fee",
-    prnm: <strong>10% flat</strong>,
+    prnm: <strong>0% (2026)</strong>,
     competitor: "20% on subtotal + add-ons",
   },
   {
     label: "Renter / guest fee",
-    prnm: "10% renter service fee",
+    prnm: "Guest fee at checkout",
     competitor: "Variable processing fee at checkout",
   },
   {
     label: "Host take-home (per $300 booking)",
-    prnm: <strong>$270 (90%)</strong>,
+    prnm: <strong>$300 (100%)</strong>,
     competitor: "$240 (80%)",
   },
   {
@@ -156,7 +156,7 @@ function PeerspaceComparisonPage() {
       <blockquote>
         <strong>TL;DR — Peerspace vs Pool Rental Near Me</strong>
         <ul>
-          <li><strong>Lower host fee:</strong> Pool Rental Near Me 10% flat vs Peerspace's 20% host fee.</li>
+          <li><strong>Lower host fee:</strong> Pool Rental Near Me 0% (through 2026) vs Peerspace's 20% host fee.</li>
           <li><strong>Bigger insurance:</strong> $2M per-occurrence vs Peerspace's $1M general liability.</li>
           <li><strong>Pool-specialized vs venue-generic:</strong> Pool Rental Near Me is built for pool bookings; Peerspace lists pools alongside every other venue type.</li>
           <li><strong>Peerspace's edge:</strong> Production crews, event planners, and corporate buyers searching for premium photogenic venues.</li>
@@ -187,7 +187,7 @@ function PeerspaceComparisonPage() {
       <p>Compare to Pool Rental Near Me:</p>
 
       <ul>
-        <li><strong>Pool Rental Near Me:</strong> 10% host commission + 10% renter service fee. Hosts keep 90% of the booking subtotal.</li>
+        <li><strong>Pool Rental Near Me:</strong> 0% host commission through 2026 — you keep 100%, with a guest service fee applied at checkout.</li>
         <li><strong>Peerspace:</strong> 20% host fee on booking subtotal + add-ons, plus a separate guest processing fee disclosed at checkout.</li>
       </ul>
 
@@ -310,7 +310,7 @@ function PeerspaceComparisonPage() {
       <p>
         If you're researching Peerspace, you've probably also looked at
         Swimply. Swimply pioneered the pool rental category but charges a 15%
-        host fee. Pool Rental Near Me's 10% host fee is the lowest of the
+        host fee. Pool Rental Near Me's 0% host fee (2026) is the lowest of the
         three. See the full breakdown in{" "}
         <a href="/p/swimply-alternative-vs-pool-rental-near-me">
           Swimply Alternative vs Pool Rental Near Me
@@ -334,7 +334,7 @@ function PeerspaceComparisonPage() {
 
       <p>Pool Rental Near Me is the right call if:</p>
       <ul>
-        <li>You want to <strong>keep 90%</strong> of every booking subtotal vs Peerspace's published 80% retention.</li>
+        <li>You want to <strong>keep 100%</strong> of every booking subtotal (0% host fees through 2026) vs Peerspace's published 80% retention.</li>
         <li>You want the larger <strong>$2M general liability</strong> coverage sized for residential pool incidents.</li>
         <li>You want guests who specifically searched for a pool — not for a "venue."</li>
         <li>You want structured <a href="/p/learningacademy">free training</a> built around pool hosting.</li>
@@ -381,8 +381,7 @@ function PeerspaceComparisonPage() {
           <a href="/p/terms-of-service">Terms of Service</a>.
         </li>
         <li>
-          <strong>10% Pool Rental Near Me Host Commission</strong> — 10% platform
-          fee on completed bookings plus a 10% renter service fee. Rates current
+          <strong>0% Pool Rental Near Me Host Commission (2026)</strong> — 0% platform fee on completed bookings through 2026; you keep 100%, with a guest service fee at checkout. Rates current
           as of May 2026.
         </li>
         <li>

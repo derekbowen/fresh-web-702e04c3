@@ -377,7 +377,7 @@ function MidContentCta() {
       </p>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         Owners on Pool Rental Near Me earn money renting their pool by the hour —
-        no membership, flat 10% host fee, $2M liability insurance included.
+        no membership, 0% host fees through 2026, $2M liability insurance included.
       </p>
       <div className="mt-4">
         <a
@@ -402,7 +402,7 @@ function PrnmCta() {
       </h2>
       <p className="mt-3 max-w-2xl text-base text-muted-foreground">
         Hosts on Pool Rental Near Me earn $3K–$10K/month renting their pool by the
-        hour. Flat 10% host fee (vs Swimply's 15%+), $2M liability insurance
+        hour. 0% host fees through 2026 (vs Swimply's 15%+), $2M liability insurance
         included, you set the rules. Listing takes 10 minutes.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">

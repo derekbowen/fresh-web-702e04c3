@@ -194,8 +194,7 @@ function StateHubPage() {
           <h2 className="text-xl font-semibold">Want to host?</h2>
           <p className="mt-2 text-muted-foreground">
             Pool owners in {stateName} typically earn $3,000–$10,000 per month
-            renting their backyard pool. You keep 90%, we charge a flat 10% host
-            fee, and every booking includes $2M liability coverage.
+            renting their backyard pool. You keep 100% — we charge 0% host fees through 2026, and every booking includes $2M liability coverage.
           </p>
           <a
             href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"

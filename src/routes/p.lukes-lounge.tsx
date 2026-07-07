@@ -313,7 +313,7 @@ function LukesLoungePage() {
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  <span>10% flat host fee, no surprises</span>
+                  <span>0% host fees through 2026, no surprises</span>
                 </div>
               </div>
             </div>
@@ -461,7 +461,7 @@ function LukesLoungePage() {
               Book Luke's Lounge — ${listing.pricePerHour}/hour
             </a>
             <p className="mt-3 text-xs text-muted-foreground">
-              10% flat host fee · $2M liability insurance included
+              0% host fees through 2026 · $2M liability insurance included
             </p>
           </div>
         </section>

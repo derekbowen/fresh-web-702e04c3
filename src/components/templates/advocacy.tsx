@@ -71,7 +71,7 @@ function StatStrip() {
     <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
       {[
         { k: "$2M", v: "Liability per booking" },
-        { k: "10%", v: "Flat host fee" },
+        { k: "0%", v: "Host fee (2026)" },
         { k: "$0", v: "To list your pool" },
         { k: "24/7", v: "US-based support" },
       ].map((s) => (
@@ -98,7 +98,7 @@ function SidebarCTA({ stateName }: { stateName?: string | null }) {
           Ready to host{stateName ? ` in ${stateName}` : ""}?
         </h3>
         <p className="mt-2 text-sm text-primary-foreground/85">
-          Free to list. $2M liability on every confirmed booking. 10% flat host fee.
+          Free to list. $2M liability on every confirmed booking. 0% host fees through 2026.
         </p>
         <a
           href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
@@ -357,7 +357,7 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
                   Hosting{state?.name ? ` in ${state.name}` : ""} starts here.
                 </h3>
                 <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-                  Free to list. $2M liability insurance on every confirmed booking. 10% flat host fee — the lowest of any pool rental platform.
+                  Free to list. $2M liability insurance on every confirmed booking. 0% host fees through 2026 — the lowest of any pool rental platform.
                 </p>
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                   <a

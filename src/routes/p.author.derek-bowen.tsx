@@ -196,8 +196,7 @@ function AuthorPage() {
                 <p>
                   Pool Rental Near Me is now a national peer-to-peer pool rental
                   marketplace with thousands of indexed city pages and pool hosts earning
-                  $3,000 to $12,000 a month from their backyard pools. We charge a flat 10%
-                  host fee, include $2M in liability coverage, and have built every piece
+                  $3,000 to $12,000 a month from their backyard pools. We charge 0% host fees through 2026 — you keep 100% — include $2M in liability coverage, and have built every piece
                   of the platform — iOS, Android, web, calendar sync, waivers, insurance
                   — without outside funding.
                 </p>
@@ -307,7 +306,7 @@ function AuthorPage() {
               Want to rent out your own pool?
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
-              List your pool on Pool Rental Near Me. Flat 10% host fee, $2M liability
+              List your pool on Pool Rental Near Me. 0% host fees through 2026, $2M liability
               coverage included, and you keep your calendar in your control.
             </p>
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">

@@ -193,10 +193,7 @@ function PoolPartyRentalsPage() {
             <p>
               Most pool party rentals on Pool Rental Near Me cost $40 to $200
               per hour depending on group size, amenities, and city. Hosts set
-              their own pricing, minimum hours, and house rules. You pay a flat
-              10% guest service fee on top of the hourly rate. Hosts keep 90%
-              of every booking. We eat the credit card processing fees, so 90%
-              means 90%.
+              their own pricing, minimum hours, and house rules. A guest service fee is applied at checkout on top of the hourly rate. Hosts keep 100% of every booking — 0% host fees through 2026.
             </p>
 
             <h2>Party types that work great in a backyard pool</h2>
@@ -420,8 +417,8 @@ function PoolPartyRentalsPage() {
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
               Hosts who allow parties earn $2,000 to $10,000 a month renting
-              their backyard pool by the hour. Flat 10% host fee, so you keep
-              90% of every booking. We eat the credit card processing fees, so
+              their backyard pool by the hour. 0% host fees through 2026, so you keep
+              100% of every booking. We eat the credit card processing fees, so
               90% means 90%. $2M liability coverage included.
             </p>
             <a

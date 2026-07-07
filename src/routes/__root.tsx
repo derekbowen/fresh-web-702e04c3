@@ -63,7 +63,7 @@ export const Route = createRootRoute({
     const meta = buildMeta({
       title: "Pool Rental Near Me - Starting at $25 hour - Rent a pool now",
       description:
-        "Rent a private pool by the hour or become a pool host. 10% flat fee, $2M liability coverage, 5,100+ pages across the US.",
+        "Rent a private pool by the hour or become a pool host. 0% host fees in 2026, $2M liability coverage, 5,100+ pages across the US.",
       path: "/",
       // Do NOT set og:image here. Root head() concatenates into every match,
       // so a root-level og:image would override every leaf route's share

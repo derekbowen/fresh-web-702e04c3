@@ -80,7 +80,7 @@ export function HostAcqCityTemplate({
   );
   const variantCopy = variant ? getVariantCopy(variant, cityName, stateCode) : null;
 
-  // Tier-tuned monthly earnings band (gross, before 10% fee)
+  // Tier-tuned monthly earnings band (gross — 0% host fees in 2026)
   const lo = Math.round(hourlyRate * 8 * 4); // ~8 hrs/wk
   const hi = Math.round(hourlyRate * 18 * 4); // ~18 hrs/wk
   const earningsBand = `$${lo.toLocaleString()}–$${hi.toLocaleString()}+`;
@@ -255,7 +255,7 @@ export function HostAcqCityTemplate({
 
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <span className="text-primary">✓</span> 10% flat fee
+                  <span className="text-primary">✓</span> 0% host fees (2026)
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="text-primary">✓</span> $2M coverage included
@@ -285,7 +285,7 @@ export function HostAcqCityTemplate({
                   at ~${hourlyRate}/hr · 12 booked hrs/week
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-5 text-center">
-                  <Stat label="Host fee" value="10%" sub="vs 15%+" />
+                  <Stat label="Host fee" value="0%" sub="vs 15%+ (2026)" />
                   <Stat label="Coverage" value="$2M" sub="included" />
                   <Stat label="Payout" value="24h" sub="direct" />
                 </div>
@@ -320,8 +320,8 @@ export function HostAcqCityTemplate({
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               <Pillar
                 kicker="Lowest fee"
-                title="Keep 90%"
-                body="Flat 10% host fee. Swimply takes 15%+ once you stack their host fee, guest fee, and processing. On a $200 booking that's real money — every time."
+                title="Keep 100%"
+                body="0% host fees through 2026. Swimply takes 15%+ once you stack their host fee, guest fee, and processing. On a $200 booking that's real money — every time."
               />
               <Pillar
                 kicker="Real protection"
@@ -365,7 +365,7 @@ export function HostAcqCityTemplate({
                 </thead>
                 <tbody className="divide-y divide-border">
                   {[
-                    ["Host service fee", "10% flat", "15%+"],
+                    ["Host service fee", "0% (2026)", "15%+"],
                     ["You take home on $200", "$180", "≈ $170 or less"],
                     ["Liability coverage", "$2M included", "$1M"],
                     ["Payout speed", "24 hours", "2–5 days"],

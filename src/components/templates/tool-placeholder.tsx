@@ -234,7 +234,7 @@ export function ToolPlaceholderPage({
               href="/p/hosting"
               className="rounded-xl border border-border bg-card p-4 text-sm font-medium text-foreground transition hover:border-primary/40"
             >
-              List your pool — 10% flat host fee →
+              List your pool — 0% host fees through 2026 →
             </a>
             <a
               href="/p/learningacademy"

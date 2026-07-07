@@ -113,8 +113,7 @@ export function EarningsCalculator({
       <p className="mt-6 text-xs text-muted-foreground">
         Estimates are illustrative and depend on demand, season, photo quality,
         and how quickly you respond to bookings. Pool Rental Near Me takes a flat
-        10% host fee — already excluded from the numbers above is nothing,
-        these figures are gross. Subtract 10% for net.
+        these figures are gross. With 0% host fees through 2026, your net equals your gross.
       </p>
     </section>
   );

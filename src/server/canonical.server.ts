@@ -37,7 +37,12 @@ function readHeader(request: Request | undefined, name: string): string | null {
 export function getCanonicalOrigin(request?: Request): string {
   const fwdHost = readHeader(request, "x-forwarded-host");
   if (fwdHost && !isLovableHost(fwdHost)) {
-    const proto = readHeader(request, "x-forwarded-proto") ?? "https";
+    // The public site is https-only. The prod proxy chain (WEST nginx :443 ->
+    // EAST nginx :80) rewrites X-Forwarded-Proto to "http", so the header is
+    // unreliable here — derive the scheme from the host. localhost stays http
+    // for local dev proxies.
+    const isLocal = /^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(fwdHost);
+    const proto = isLocal ? "http" : "https";
     return `${proto}://${fwdHost}`;
   }
 

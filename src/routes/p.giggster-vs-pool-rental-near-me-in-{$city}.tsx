@@ -62,7 +62,7 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$ci
     if (!city) return { meta: [{ title: "City not found" }] };
     const slug = `giggster-vs-pool-rental-near-me-in-${city.slug}`;
     const title = `Giggster vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026): Fees, Insurance & Best Use`;
-    const description = `${city.name}, ${city.state} pool hosts: Giggster vs Pool Rental Near Me compared with verified 2026 facts — 19% vs 10% host commission, renter COI vs included $2M Hartford liability, production vs recreational buyers, and the smart play for a ${city.name} pool.`;
+    const description = `${city.name}, ${city.state} pool hosts: Giggster vs Pool Rental Near Me compared with verified 2026 facts — 19% vs 0% host commission (2026), renter COI vs included $2M Hartford liability, production vs recreational buyers, and the smart play for a ${city.name} pool.`;
     return {
       ...buildComparisonMeta({ slug, title, description }),
       scripts: [
@@ -118,11 +118,11 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `What does Giggster charge ${city.name} pool hosts in 2026?`,
-      a: `Giggster's national rate applies in ${city.name}: per Giggster's Help Center article "How much commission does Giggster take?" (verified May 2026), Giggster takes a 19% commission out of the host's total payout (location fee + additional fees) for the booking, plus a separate Processing Fee charged to the renter at checkout that scales with booking size. Pool Rental Near Me charges ${city.name} hosts a flat 10% host commission plus a 10% renter service fee.`,
+      a: `Giggster's national rate applies in ${city.name}: per Giggster's Help Center article "How much commission does Giggster take?" (verified May 2026), Giggster takes a 19% commission out of the host's total payout (location fee + additional fees) for the booking, plus a separate Processing Fee charged to the renter at checkout that scales with booking size. Pool Rental Near Me charges ${city.name} hosts 0% host commission through 2026 — you keep 100% — with a guest service fee applied at checkout.`,
     },
     {
       q: `On a $400 ${city.name} booking, how much do I keep on each platform?`,
-      a: `On Pool Rental Near Me a $400 host payout becomes $360 after the 10% host commission. On Giggster a $400 host payout becomes $324 after the 19% host commission. That's $36 more per booking on Pool Rental Near Me from the same gross payout, before payment processing on either side.`,
+      a: `On Pool Rental Near Me a $400 host payout is yours in full — 0% host commission through 2026. On Giggster a $400 host payout becomes $324 after the 19% host commission. That’s $76 more per booking on Pool Rental Near Me from the same gross payout, before payment processing on either side.`,
     },
     {
       q: `What insurance do I need to host a pool in ${city.name} on Giggster?`,
@@ -155,7 +155,7 @@ function GiggsterCityPage() {
     },
     {
       label: "Host commission",
-      prnm: <strong>10% flat</strong>,
+      prnm: <strong>0% (2026)</strong>,
       competitor: "19% (per Giggster Help Center)",
     },
     {
@@ -230,7 +230,7 @@ function GiggsterCityPage() {
             so the highest-yield strategy for a camera-ready pool is to list on
             <em> both</em>: production rates on Giggster (weekday) and
             recreational rates on Pool Rental Near Me (weekend). On a same-size
-            host payout, PRNM's 10% commission keeps more in your pocket per
+            host payout, PRNM's 0% commission (2026) keeps more in your pocket per
             booking; Giggster's premium per-hour production rates can make up
             the difference on a smaller number of larger bookings.
           </>
@@ -239,7 +239,7 @@ function GiggsterCityPage() {
             For a typical residential pool in {city.name}, Pool Rental Near Me
             is the realistic channel — recreational demand is broadly
             distributed, while Giggster's production buyers concentrate in a
-            handful of hub metros. PRNM's 10% host commission, included
+            handful of hub metros. PRNM's 0% host commission (2026), included
             $2M Hartford liability on every approved booking, and pool-specific
             training are sized for residential pool hosting in {city.name}.
           </>
@@ -261,8 +261,7 @@ function GiggsterCityPage() {
         size and features.
       </p>
       <p>
-        Pool Rental Near Me charges {city.name} hosts a flat 10% host
-        commission plus a 10% renter service fee. Hosts keep 90% of the
+        Pool Rental Near Me charges {city.name} hosts 0% host commission through 2026 — you keep 100%, with a guest service fee applied at checkout. Hosts keep 100% of the
         booking subtotal.
       </p>
 
@@ -274,7 +273,7 @@ function GiggsterCityPage() {
                 {city.name} gross host payout
               </th>
               <th className="px-4 py-3 text-left font-semibold text-primary">
-                Keep on PRNM (10%)
+                Keep on PRNM (0% in 2026)
               </th>
               <th className="px-4 py-3 text-left font-semibold">
                 Keep on Giggster (19%)

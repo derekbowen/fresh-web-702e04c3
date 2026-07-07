@@ -40,7 +40,7 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$c
     if (!city) return { meta: [{ title: "City not found" }] };
     const slug = `peerspace-vs-pool-rental-near-me-in-${city.slug}`;
     const title = `Peerspace vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026)`;
-    const description = `${city.name} pool hosts: should you list on Peerspace or Pool Rental Near Me? 10% vs 20% host fee, $2M vs $1M liability, local pricing benchmarks for ${city.name}, ${city.state}.`;
+    const description = `${city.name} pool hosts: should you list on Peerspace or Pool Rental Near Me? 0% vs 20% host fee (2026), $2M vs $1M liability, local pricing benchmarks for ${city.name}, ${city.state}.`;
     return {
       ...buildComparisonMeta({ slug, title, description }),
       scripts: [
@@ -76,11 +76,11 @@ function buildFaqs(city: CityRow) {
   return [
     {
       q: `Is Peerspace or Pool Rental Near Me better in ${city.name}?`,
-      a: `For typical residential pools in ${city.name}, ${city.state} renting at $45–$150/hour for recreational use, Pool Rental Near Me is the better-fit channel: 10% host fee vs Peerspace's 20%, $2M liability vs $1M, and pool-specific guest demand. Peerspace makes sense in ${city.name} if your pool is luxury/photogenic and you want production crew or event-planner bookings at $200+/hour.`,
+      a: `For typical residential pools in ${city.name}, ${city.state} renting at $45–$150/hour for recreational use, Pool Rental Near Me is the better-fit channel: 0% host fee (2026) vs Peerspace's 20%, $2M liability vs $1M, and pool-specific guest demand. Peerspace makes sense in ${city.name} if your pool is luxury/photogenic and you want production crew or event-planner bookings at $200+/hour.`,
     },
     {
       q: `What does Peerspace charge ${city.name} pool hosts?`,
-      a: `Peerspace charges hosts in ${city.name} the same 20% service fee it charges nationally — applied to the booking subtotal plus add-ons like cleaning. Pool Rental Near Me charges ${city.name} hosts a flat 10% commission.`,
+      a: `Peerspace charges hosts in ${city.name} the same 20% service fee it charges nationally — applied to the booking subtotal plus add-ons like cleaning. Pool Rental Near Me charges ${city.name} hosts 0% commission through 2026 — you keep 100%.`,
     },
     {
       q: `How much can I earn renting my pool in ${city.name}?`,
@@ -98,7 +98,7 @@ function PeerspaceCityPage() {
   const faqs = buildFaqs(city);
 
   const tableRows = [
-    { label: "Host service fee", prnm: <strong>10% flat</strong>, competitor: "20%" },
+    { label: "Host service fee", prnm: <strong>0% (2026)</strong>, competitor: "20%" },
     { label: `Take-home on $300 ${city.name} booking`, prnm: <strong>$270</strong>, competitor: "$240" },
     { label: "General liability", prnm: <strong>$2M / $4M</strong>, competitor: "$1M" },
     { label: "Property protection", prnm: <strong>$150K STRETCH® PLUS</strong>, competitor: "$25K" },
@@ -127,7 +127,7 @@ function PeerspaceCityPage() {
 
       <blockquote>
         <strong>Bottom line for {city.name} pool hosts:</strong> Pool Rental
-        Near Me's 10% host fee is half of Peerspace's 20%, and the $2M
+        Near Me's 0% host fee (2026) beats Peerspace's 20%, and the $2M
         liability is double. For typical {city.name} pools renting at
         $45–$150/hr, Pool Rental Near Me wins on economics. Peerspace wins for
         production-grade luxury pools chasing $200+/hr event bookings.
@@ -145,7 +145,7 @@ function PeerspaceCityPage() {
         On a $300 {city.name} booking:
       </p>
       <ul>
-        <li><strong>Pool Rental Near Me (10% fee):</strong> you keep $270</li>
+        <li><strong>Pool Rental Near Me (0% fee, 2026):</strong> you keep $300</li>
         <li><strong>Peerspace (20% fee):</strong> you keep $240</li>
         <li><strong>Difference:</strong> $30 more per booking on Pool Rental Near Me</li>
       </ul>

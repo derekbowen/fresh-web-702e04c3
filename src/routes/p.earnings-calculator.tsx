@@ -12,7 +12,7 @@ const PATH = "/p/earnings-calculator";
 const TITLE =
   "Pool Rental Earnings Calculator — See What Your Pool Could Earn";
 const DESCRIPTION =
-  "Free calculator: estimate how much your backyard pool can earn on Pool Rental Near Me. Adjust hourly rate, hours per week, and season length to see annual income after the 10% host fee.";
+  "Free calculator: estimate how much your backyard pool can earn on Pool Rental Near Me. Adjust hourly rate, hours per week, and season length to see annual income with 0% host fees in 2026 — you keep 100%.";
 
 const PRESETS: Record<string, { rate: number; hpw: number; weeks: number }> = {
   "Warm climate (FL/AZ/TX/CA)": { rate: 50, hpw: 12, weeks: 50 },
@@ -21,7 +21,7 @@ const PRESETS: Record<string, { rate: number; hpw: number; weeks: number }> = {
   "Custom": { rate: 45, hpw: 10, weeks: 30 },
 };
 
-const HOST_FEE = 0.1; // 10% flat
+const HOST_FEE = 0; // 0% host fees through 2026
 
 function fmt(n: number) {
   return n.toLocaleString("en-US", {
@@ -75,7 +75,7 @@ export const Route = createFileRoute("/p/earnings-calculator")({
               name: "What fee does Pool Rental Near Me take?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "PRNM charges a flat 10% host fee — no monthly subscription, no listing fee, no surprise deductions. Every booking includes $2M liability coverage at no extra cost.",
+                text: "PRNM charges 0% host fees through 2026 — no monthly subscription, no listing fee, no surprise deductions. Every booking includes $2M liability coverage at no extra cost.",
               },
             },
             {
@@ -83,7 +83,7 @@ export const Route = createFileRoute("/p/earnings-calculator")({
               name: "How is this different from Swimply?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "PRNM's host fee is 10% versus Swimply's 15%. On the same $50/hr rate that means you keep $45 vs $42.50 per hour booked — roughly $1,000 more per year for an average host.",
+                text: "PRNM's host fee is 0% through 2026 versus Swimply's 15%. On the same $50/hr rate that means you keep $50 vs $42.50 per hour booked — roughly $2,000 more per year for an average host.",
               },
             },
           ],
@@ -135,8 +135,7 @@ function EarningsCalculatorPage() {
               <p className="mt-4 text-lg text-muted-foreground">
                 See exactly what your backyard pool could earn on Pool Rental
                 Near Me. Adjust your hourly rate, weekly bookings, and swim
-                season — get an honest annual estimate after our flat 10% host
-                fee.
+                season — get an honest annual estimate with 0% host fees in 2026 — you keep every dollar.
               </p>
             </div>
           </div>
@@ -233,14 +232,14 @@ function EarningsCalculatorPage() {
                     </span>
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    ≈ {fmt(monthly)}/mo · after 10% host fee
+                    ≈ {fmt(monthly)}/mo · 0% host fees in 2026
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-border bg-card p-6 text-sm">
                   <Row label="Gross bookings" value={fmt(gross)} />
                   <Row
-                    label="PRNM host fee (10%)"
+                    label="PRNM host fee (0% in 2026)"
                     value={`− ${fmt(fee)}`}
                     muted
                   />
@@ -293,7 +292,7 @@ function EarningsCalculatorPage() {
               a="Yes — they're based on actual host data. The calculator is intentionally conservative on hours/week. A single 4-hour weekend booking at $50/hr puts you at $200; doing that twice a week for a 30-week season is $12,000 gross."
             />
             <Faq
-              q="What does the 10% host fee cover?"
+              q="Is there really a 0% host fee in 2026?"
               a="Payment processing, $2M liability insurance per booking, guest screening, the booking platform, customer support, and marketing that drives renters to your listing. There are no other fees — no listing fee, no monthly subscription, no per-photo charge."
             />
             <Faq

@@ -37,7 +37,7 @@ import heroImage from "@/assets/how-it-works-hero.jpg";
 const PATH = "/p/how-it-works";
 const TITLE = "How Pool Rental Near Me Works | Book a Private Pool by the Hour";
 const DESCRIPTION =
-  "Rent private backyard pools by the hour for parties, family swims, or quiet afternoons. Up to $2M insurance per booking, 24/7 support, transparent flat 10% service fee. Book in 5 minutes.";
+  "Rent private backyard pools by the hour for parties, family swims, or quiet afternoons. Up to $2M insurance per booking, 24/7 support, a transparent guest service fee shown at checkout. Book in 5 minutes.";
 
 const STEPS = [
   {
@@ -107,7 +107,7 @@ const USE_CASES = [
 const FAQS = [
   {
     q: "How much does it cost to rent a pool?",
-    a: "Hourly rates are set by each host and typically range from $40 to $150 per hour, depending on pool size, amenities (hot tub, slides, etc.), and location. The booking total includes any cleaning fee and extra-guest fees, plus our flat 10% service fee. Everything is shown upfront before you confirm — no surprise charges.",
+    a: "Hourly rates are set by each host and typically range from $40 to $150 per hour, depending on pool size, amenities (hot tub, slides, etc.), and location. The booking total includes any cleaning fee and extra-guest fees, plus a guest service fee shown at checkout. Everything is shown upfront before you confirm — no surprise charges.",
   },
   {
     q: "Is the pool insured during my booking?",
@@ -359,9 +359,9 @@ function HowItWorksPage() {
                     <Row label="Extra-guest fee (2 over base)" value="$20.00" />
                     <div className="my-2 border-t border-border" />
                     <Row label="Subtotal" value="$225.00" />
-                    <Row label="PRNM service fee (10%)" value="$22.50" />
+                    <Row label="PRNM guest service fee" value="At checkout" />
                     <div className="my-2 border-t border-border" />
-                    <Row label="Total you pay" value="$247.50" bold />
+                    <Row label="Total you pay" value="Shown at checkout" bold />
                   </dl>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
@@ -373,14 +373,10 @@ function HowItWorksPage() {
               {/* Why we charge */}
               <div>
                 <h3 className="text-lg font-semibold text-foreground">
-                  Our 10% covers the platform
+                  What the guest service fee covers
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  A flat 10% is added to your booking subtotal. That fee covers
-                  payment processing, the $2M insurance policy on every
-                  booking, our 24/7 support team, and the verification process
-                  that keeps bad listings off the platform. Hosts pay the same
-                  10% on their side — totally transparent.
+                  A guest service fee is added to your booking subtotal at checkout. It covers payment processing, the $2M insurance policy on every booking, our 24/7 support team, and the verification process that keeps bad listings off the platform. Hosts keep 100% of their rate — 0% host fees through 2026.
                 </p>
                 <div className="mt-6 rounded-xl border border-border bg-muted/40 p-4 text-sm text-foreground">
                   <span className="font-semibold">Compare:</span> Swimply

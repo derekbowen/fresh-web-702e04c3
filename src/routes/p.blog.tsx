@@ -107,7 +107,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "How do I list my pool to start earning?",
-    a: "Click List a pool on any page, add photos, set your hourly rate, and publish. Hosts on the platform typically earn $3,000 to $10,000 a month in summer. We charge a flat 10% host fee — lower than the 15%+ taken by competing platforms.",
+    a: "Click List a pool on any page, add photos, set your hourly rate, and publish. Hosts on the platform typically earn $3,000 to $10,000 a month in summer. We charge 0% host fees through 2026 — lower than the 15%+ taken by competing platforms.",
   },
 ];
 
@@ -407,7 +407,7 @@ function BlogHubPage() {
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
               Hosts on Pool Rental Near Me earn $3,000 to $10,000 a month in
-              summer. Flat 10% host fee, $2 million liability coverage included
+              summer. 0% host fees through 2026, $2 million liability coverage included
               on every booking, listings live in under 10 minutes.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">

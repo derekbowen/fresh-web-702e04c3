@@ -130,7 +130,7 @@ function AboutCompanyPage() {
                 icon={Building2}
                 name="PRNM Corp"
                 jurisdiction="Delaware C-Corporation"
-                description="PRNM Corp operates Pool Rental Near Me, a peer-to-peer pool rental marketplace serving 40+ U.S. states. Every booking includes $2,000,000 in liability coverage. With a flat 10% host fee, PRNM Corp is the leading marketplace for pool hosts who want to keep more of what they earn."
+                description="PRNM Corp operates Pool Rental Near Me, a peer-to-peer pool rental marketplace serving 40+ U.S. states. Every booking includes $2,000,000 in liability coverage. With 0% host fees through 2026, PRNM Corp is the leading marketplace for pool hosts who want to keep more of what they earn."
                 brands={PRNM_BRANDS}
               />
               <EntityCard

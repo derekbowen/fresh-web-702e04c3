@@ -112,7 +112,7 @@ export function ActivityCityTemplate({
                 <tbody className="divide-y divide-border">
                   <tr>
                     <td className="px-4 py-3 font-medium">Host fee</td>
-                    <td className="px-4 py-3">10% flat</td>
+                    <td className="px-4 py-3">0% (2026)</td>
                     <td className="px-4 py-3 text-muted-foreground">15%+</td>
                   </tr>
                   <tr>

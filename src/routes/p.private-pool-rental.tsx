@@ -6,7 +6,7 @@ import heroImage from "@/assets/hero-family-pool.jpg";
 const PATH = "/p/private-pool-rental";
 const TITLE = "Private Pool Rental by the Hour | Pool Rental Near Me";
 const DESCRIPTION =
-  "Book a private pool rental by the hour. Heated pools, hot tubs, saltwater backyards. $2M liability included, hosts keep 90% of every booking.";
+  "Book a private pool rental by the hour. Heated pools, hot tubs, saltwater backyards. $2M liability included, hosts keep 100% of every booking.";
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 
 const CITY_LINKS = [
@@ -400,8 +400,8 @@ function PrivatePoolRentalPage() {
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
               Hosts on Pool Rental Near Me earn $1,500 to $8,000 a month renting
-              their backyard pool by the hour. Flat 10% host fee, so you keep
-              90% of every booking. We eat the credit card processing fees, so
+              their backyard pool by the hour. 0% host fees through 2026, so you keep
+              100% of every booking. We eat the credit card processing fees, so
               90% means 90%. $2M liability coverage included.
             </p>
             <a

@@ -22,12 +22,12 @@ const SLUG = "giggster-vs-pool-rental-near-me";
 const TITLE =
   "Giggster vs Pool Rental Near Me (2026): Fees, Insurance & Best Use Cases";
 const DESCRIPTION =
-  "Side-by-side 2026 comparison of Giggster vs Pool Rental Near Me for pool owners — verified 19% vs 10% host commission, COI vs included $2M insurance, production vs recreational buyers, and which platform pays more in LA, NYC, Atlanta, Austin, and Chicago.";
+  "Side-by-side 2026 comparison of Giggster vs Pool Rental Near Me for pool owners — verified 19% vs 0% host commission (2026), COI vs included $2M insurance, production vs recreational buyers, and which platform pays more in LA, NYC, Atlanta, Austin, and Chicago.";
 
 const faqs = [
   {
     q: "What is the Giggster host commission in 2026?",
-    a: "Per Giggster's published Help Center article \"How much commission does Giggster take?\" (last updated by Giggster staff April 13, 2023, still live as of May 2026): \"Giggster takes a 19% commission out of the host's total payout (location fee + additional fees (if any)) for the booking.\" Giggster also collects a separate Processing Fee from the renter that scales with the overall cost and features of the booking. Pool Rental Near Me charges a flat 10% host commission plus a 10% renter service fee.",
+    a: "Per Giggster's published Help Center article \"How much commission does Giggster take?\" (last updated by Giggster staff April 13, 2023, still live as of May 2026): \"Giggster takes a 19% commission out of the host's total payout (location fee + additional fees (if any)) for the booking.\" Giggster also collects a separate Processing Fee from the renter that scales with the overall cost and features of the booking. Pool Rental Near Me charges a flat 0% host commission through 2026 — you keep 100% — with a guest service fee applied at checkout.",
   },
   {
     q: "Is Giggster a pool rental marketplace?",
@@ -39,7 +39,7 @@ const faqs = [
   },
   {
     q: "On a $400 pool booking, how much do I keep on Giggster vs PRNM?",
-    a: "On Pool Rental Near Me, a $400 host payout is reduced by the 10% host commission ($40), so you keep $360 before payment processing. On Giggster, a $400 host payout is reduced by the 19% host commission ($76), so you keep $324. PRNM hosts keep approximately $36 more per $400 booking. The renter-side fees on each platform are separate and are charged to the renter, not the host.",
+    a: "On Pool Rental Near Me, a $400 host payout is yours in full — 0% host commission through 2026, so you keep $400. On Giggster, a $400 host payout is reduced by the 19% host commission ($76), so you keep $324. PRNM hosts keep $76 more per $400 booking. The renter-side fees on each platform are separate and are charged to the renter, not the host.",
   },
   {
     q: "Can I list my pool on both Giggster and Pool Rental Near Me at the same time?",
@@ -134,7 +134,7 @@ function GiggsterComparisonPage() {
         <strong>TL;DR — Giggster vs Pool Rental Near Me (May 2026)</strong>
         <ul>
           <li>
-            <strong>Host commission:</strong> 10% on PRNM vs{" "}
+            <strong>Host commission:</strong> 0% on PRNM through 2026 vs{" "}
             <strong>19% on Giggster</strong> (Giggster Help Center, April 2023, still live).
           </li>
           <li>
@@ -172,13 +172,13 @@ function GiggsterComparisonPage() {
           },
           {
             label: "Host commission",
-            prnm: "10% flat on completed booking subtotal",
+            prnm: "0% through 2026 — you keep 100%",
             competitor:
               "19% of host payout (location fee + additional fees) — per Giggster Help Center",
           },
           {
             label: "Renter-side fee",
-            prnm: "10% renter service fee",
+            prnm: "Guest fee at checkout",
             competitor:
               "Variable Processing Fee at checkout (Giggster: \"depends on the overall cost and features of the booking\")",
           },
@@ -236,8 +236,7 @@ function GiggsterComparisonPage() {
 
       <ul>
         <li>
-          <strong>Pool Rental Near Me:</strong> 10% host commission + 10% renter
-          service fee. Hosts keep 90% of the booking subtotal.
+          <strong>Pool Rental Near Me:</strong> 0% host commission through 2026 — you keep 100%, with a guest service fee applied at checkout.
         </li>
         <li>
           <strong>Giggster:</strong> 19% host commission on location fee + add-ons,
@@ -256,7 +255,7 @@ function GiggsterComparisonPage() {
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Gross host payout</th>
               <th className="px-4 py-3 text-left font-semibold text-primary">
-                You keep on PRNM (10%)
+                You keep on PRNM (0% in 2026)
               </th>
               <th className="px-4 py-3 text-left font-semibold">
                 You keep on Giggster (19%)
@@ -562,7 +561,7 @@ function GiggsterComparisonPage() {
       <p>Pick PRNM (or list there in addition to Giggster) if:</p>
       <ul>
         <li>
-          You want to <strong>keep 90%</strong> of every booking subtotal at a
+          You want to <strong>keep 100%</strong> of every booking subtotal at a
           flat published rate.
         </li>
         <li>
@@ -628,7 +627,7 @@ function GiggsterComparisonPage() {
         Giggster and Pool Rental Near Me are not really competitors — they are{" "}
         <em>complementary</em> marketplaces serving two different pool-rental
         economies. If we had to pick one for a typical residential pool host,
-        PRNM wins on fees (10% vs 19%), included insurance ($2M / $4M Hartford
+        PRNM wins on fees (0% vs 19% in 2026), included insurance ($2M / $4M Hartford
         on every booking vs renter-supplied COI), buyer fit (recreational vs
         production), and pool-specific training (Pool Host Academy vs production
         help center).
@@ -700,9 +699,7 @@ function GiggsterComparisonPage() {
           .
         </li>
         <li>
-          <strong>10% PRNM host commission</strong> — Pool Rental Near Me charges
-          hosts a 10% platform fee on completed bookings plus a 10% renter
-          service fee. Rates current as of May 2026; verify in-app at booking.
+          <strong>0% PRNM host commission (2026)</strong> — Pool Rental Near Me charges hosts 0% on completed bookings through 2026, so you keep 100%; a guest service fee applies at checkout. Rates current as of May 2026; verify in-app at booking.
         </li>
         <li>
           <strong>70+ Pool Host Academy courses</strong> — Free training library:{" "}
