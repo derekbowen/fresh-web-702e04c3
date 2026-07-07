@@ -193,10 +193,58 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
+        {/* ── 0% HOST FEES PROMO ───────────────────── */}
+        <section
+          aria-label="Zero percent host fees all of 2026"
+          className="relative overflow-hidden"
+          style={{ background: "linear-gradient(135deg, #0B4A6F 0%, #0EA5E9 58%, #38BDF8 100%)" }}
+        >
+          <div className="mx-auto max-w-4xl px-4 py-10 text-center text-white sm:py-14">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/85 sm:text-sm">
+              🌞&nbsp;100 Days of Summer
+            </p>
+            <div className="mt-4 flex items-baseline justify-center gap-3 sm:gap-4">
+              <s className="text-3xl font-bold text-white/50 decoration-[3px] sm:text-4xl">10%</s>
+              <span className="text-7xl font-black leading-none tracking-tighter drop-shadow-sm sm:text-8xl">
+                0%
+              </span>
+            </div>
+            <h2 className="mt-3 text-2xl font-extrabold uppercase tracking-tight sm:text-4xl">
+              Host Fees&nbsp;—&nbsp;All of 2026
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg font-semibold text-white sm:text-xl">
+              You keep 100% of every booking. List your pool free.
+            </p>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-white/90 sm:text-base">
+              Plus: 5% guest booking fees all summer&nbsp;—&nbsp;100 Days of Summer&nbsp;🌞
+            </p>
+            <div className="mt-7">
+              <a
+                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                aria-label="List your pool for free"
+                className="inline-flex items-center justify-center rounded-full bg-white px-9 py-4 text-base font-bold text-[#0B4A6F] shadow-xl transition-transform hover:scale-[1.03] sm:text-lg"
+              >
+                List Your Pool&nbsp;&nbsp;&rarr;
+              </a>
+            </div>
+            <p className="mx-auto mt-6 max-w-2xl text-[11px] leading-relaxed text-white/70 sm:text-xs">
+              0% host fees valid through Dec 31, 2026 on all bookings. Guest service fee
+              applies at checkout. Promotional guest fee valid for a limited time.{" "}
+              <a
+                href="/legal-and-compliance/terms-of-service-pool-rental-near-me"
+                className="underline underline-offset-2 hover:text-white"
+              >
+                Terms
+              </a>{" "}
+              apply.
+            </p>
+          </div>
+        </section>
+
         {/* Trust line under hero */}
         <div className="border-b border-border bg-background">
           <p className="mx-auto max-w-5xl px-4 py-3 text-center text-xs text-muted-foreground sm:text-sm">
-            10% flat host fee · $2M Hartford-backed insurance · 100% US-based support
+            0% host fees through 2026 · $2M Hartford-backed insurance · 100% US-based support
           </p>
         </div>
 
@@ -242,7 +290,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="text-4xl" aria-hidden>🌴</span>
                 <h3 className="mt-3 text-xl font-semibold">I'm sharing my pool</h3>
                 <p className="mt-2 text-sm text-white/90">
-                  Earn $3K-$10K a month renting your pool by the hour. $2M Hartford-backed insurance and 10% flat fees.
+                  Earn $3K-$10K a month renting your pool by the hour. $2M Hartford-backed insurance and 0% host fees through 2026 — you keep 100%.
                 </p>
                 <span
                   className="mt-auto inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-foreground"
