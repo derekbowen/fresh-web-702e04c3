@@ -28,9 +28,9 @@ type Row = {
 const TABLE: Row[] = [
   {
     platform: "Pool Rental Near Me",
-    hostCommission: "10% flat",
-    guestFee: "~10% booking fee",
-    effectiveTake: "~10% of host subtotal",
+    hostCommission: "0% (through 2026)",
+    guestFee: "Applied at checkout",
+    effectiveTake: "0% host-side (2026)",
     payout: "24 hours after checkout",
     source: "poolrentalnearme.com host terms",
   },
@@ -63,7 +63,7 @@ const TABLE: Row[] = [
 const faqs = [
   {
     q: "Which pool rental platform has the lowest host fee?",
-    a: "Pool Rental Near Me charges a 10% flat host commission, the lowest of any major peer-to-peer pool rental marketplace. Swimply, Peerspace, and Giggster each charge 15% or higher on the host side, before any additional guest service fees.",
+    a: "Pool Rental Near Me charges a 0% flat host commission through 2026 — you keep 100% — the lowest of any major peer-to-peer pool rental marketplace. Swimply, Peerspace, and Giggster each charge 15% or higher on the host side, before any additional guest service fees.",
   },
   {
     q: "What is the difference between host commission and guest service fee?",
@@ -75,7 +75,7 @@ const faqs = [
   },
   {
     q: "Are there any hidden fees beyond the host commission?",
-    a: "On PRNM, the 10% commission is the only platform fee — there are no per-booking add-ons, no insurance surcharges (insurance is included), and no listing fees. Other platforms may charge optional insurance upgrades, premium placement, or processing fees on top of the headline commission.",
+    a: "On PRNM, the host commission is 0% through 2026 — the lowest of any platform — there are no per-booking add-ons, no insurance surcharges (insurance is included), and no listing fees. Other platforms may charge optional insurance upgrades, premium placement, or processing fees on top of the headline commission.",
   },
 ];
 
@@ -153,9 +153,9 @@ function FeesComparedPage() {
         </p>
 
         <p className="mt-6 text-lg leading-relaxed">
-          Pool Rental Near Me charges hosts a 10% flat commission on every
-          booking, the lowest published host fee of any major peer-to-peer pool
-          rental marketplace. Swimply, Peerspace, and Giggster each take 15% or
+          Pool Rental Near Me charges hosts 0% commission on every booking through
+          2026 — you keep 100% — the lowest published host fee of any major
+          peer-to-peer pool rental marketplace. Swimply, Peerspace, and Giggster each take 15% or
           more from host earnings. Here is the side-by-side breakdown, sourced
           from each platform's published terms.
         </p>

@@ -19,16 +19,16 @@ import {
 const SLUG = "swimply-alternative-vs-pool-rental-near-me";
 const TITLE = "Swimply vs Pool Rental Near Me: 2026 Comparison";
 const DESCRIPTION =
-  "Honest 2026 comparison of Swimply vs Pool Rental Near Me. PRNM charges 10% host commission, includes $2M insurance, and ships 70+ free Pool Host Academy courses. Compare fees, insurance, training and reach.";
+  "Honest 2026 comparison of Swimply vs Pool Rental Near Me. PRNM charges 0% host commission through 2026 (down from 10%), includes $2M insurance, and ships 70+ free Pool Host Academy courses. Compare fees, insurance, training and reach.";
 
 const faqs = [
   {
     q: "How much does Swimply take from hosts?",
-    a: "Swimply's published Host Service Fee article states hosts keep 70–80% of earnings, meaning Swimply's host take is roughly 20–30% depending on location, regulatory and risk factors. PRNM charges a flat 10% host commission and a 10% renter service fee — a 20% total platform take, transparent on every booking.",
+    a: "Swimply's published Host Service Fee article states hosts keep 70–80% of earnings, meaning Swimply's host take is roughly 20–30% depending on location, regulatory and risk factors. PRNM charges a flat 0% host commission through 2026 — you keep 100% — with a guest service fee applied at checkout.",
   },
   {
     q: "Is Pool Rental Near Me really cheaper than Swimply?",
-    a: "Compare the published numbers. Swimply's hosts keep 70–80% of earnings; PRNM hosts keep 90% of the booking subtotal. On a $200 booking, the difference is roughly $20–$40 more in your pocket on PRNM, every booking.",
+    a: "Compare the published numbers. Swimply's hosts keep 70–80% of earnings; PRNM hosts keep 100% of the booking subtotal through 2026. On a $200 booking that’s the full $200 in your pocket — roughly $40–$60 more than Swimply, every booking.",
   },
   {
     q: "What insurance does Swimply provide vs Pool Rental Near Me?",
@@ -100,7 +100,7 @@ function SwimplyComparisonPage() {
         <strong>TL;DR — Swimply vs Pool Rental Near Me</strong>
         <ul>
           <li>
-            <strong>Hosts keep more on PRNM:</strong> 90% of the subtotal vs
+            <strong>Hosts keep more on PRNM:</strong> 100% of the subtotal (0% host fees through 2026) vs
             Swimply's published 70–80%.
           </li>
           <li>
@@ -149,8 +149,8 @@ function SwimplyComparisonPage() {
 
       <ul>
         <li>
-          <strong>Pool Rental Near Me:</strong> 10% host commission + 10% renter
-          service fee = 20% total platform take. Hosts keep 90% of the booking
+          <strong>Pool Rental Near Me:</strong> 0% host commission through 2026 —
+          you keep 100%, with a guest service fee applied at checkout. Hosts keep 100% of the booking
           subtotal.
         </li>
         <li>
@@ -329,8 +329,8 @@ function SwimplyComparisonPage() {
 
       <ul>
         <li>
-          You want to <strong>keep 90%</strong> of every booking subtotal with a
-          flat, transparent fee.
+          You want to <strong>keep 100%</strong> of every booking subtotal — 0% host
+          fees through 2026, flat and transparent.
         </li>
         <li>
           You want the larger <strong>$2M per-occurrence / $4M aggregate</strong>{" "}
@@ -425,9 +425,9 @@ function SwimplyComparisonPage() {
           .
         </li>
         <li>
-          <strong>10% PRNM Host Commission</strong> — Pool Rental Near Me
-          charges hosts a 10% platform fee on completed bookings plus a 10%
-          renter service fee = 20% total platform take. Rates current as of
+          <strong>0% PRNM Host Commission (2026)</strong> — Pool Rental Near Me
+          charges hosts 0% on completed bookings through 2026, so you keep 100%.
+          A guest service fee applies at checkout. Rates current as of
           May 2026.
         </li>
         <li>

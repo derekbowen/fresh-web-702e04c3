@@ -203,7 +203,11 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/85 sm:text-sm">
               🌞&nbsp;100 Days of Summer
             </p>
-            <div className="mt-4 flex items-baseline justify-center gap-3 sm:gap-4">
+            <p className="mx-auto mt-5 max-w-2xl text-xl font-semibold leading-snug text-white sm:text-2xl">
+              <span style={{ color: "#FFE08A" }}>Thank you.</span> To every host and
+              guest who made this community what it is&nbsp;— we&rsquo;re giving back.
+            </p>
+            <div className="mt-6 flex items-baseline justify-center gap-3 sm:gap-4">
               <s className="text-3xl font-bold text-white/50 decoration-[3px] sm:text-4xl">10%</s>
               <span className="text-7xl font-black leading-none tracking-tighter drop-shadow-sm sm:text-8xl">
                 0%
