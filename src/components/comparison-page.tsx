@@ -53,7 +53,7 @@ export function CTAPrimary() {
         🏊 List Your Pool Free →
       </a>
       <p className="mt-3 text-sm font-medium text-foreground">
-        Keep 90% · $2M Insurance · 70+ Free Courses · You Control Everything
+        Keep 100% · $2M Insurance · 70+ Free Courses · You Control Everything
       </p>
     </div>
   );

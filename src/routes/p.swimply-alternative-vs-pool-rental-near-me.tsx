@@ -162,7 +162,7 @@ function SwimplyComparisonPage() {
 
       <p>
         On a $200 booking, those numbers matter. At Swimply's 80% retention you
-        keep $160; at 70% you keep $140. On PRNM, you keep $180. Run the math
+        keep $160; at 70% you keep $140. On PRNM, you keep the full $200. Run the math
         with our <a href="https://hostpro.poolrentalnearme.com/">earnings
         calculator</a> for your real average booking size.
       </p>

@@ -283,7 +283,7 @@ function GiggsterComparisonPage() {
       </div>
 
       <p>
-        On a $3,000 production-style booking, you'd keep <strong>$270 more</strong>{" "}
+        On a $3,000 production-style booking, you'd keep <strong>$570 more</strong>{" "}
         on PRNM than on Giggster from the same gross host payout. The flip side
         is that Giggster's average production booking on a camera-ready pool can
         be substantially larger than a typical recreational booking — so on volume,

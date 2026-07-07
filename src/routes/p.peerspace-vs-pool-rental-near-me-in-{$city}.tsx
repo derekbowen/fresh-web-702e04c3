@@ -84,7 +84,7 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `How much can I earn renting my pool in ${city.name}?`,
-      a: `Most ${city.name} pool hosts price between $45 and $150 per hour depending on amenities, capacity, and season. At a 10% Pool Rental Near Me fee on a $300 booking you keep $270; on Peerspace's 20% fee you'd keep $240 — a $30 swing per booking.`,
+      a: `Most ${city.name} pool hosts price between $45 and $150 per hour depending on amenities, capacity, and season. With 0% Pool Rental Near Me host fees through 2026, on a $300 booking you keep the full $300; on Peerspace's 20% fee you'd keep $240 — a $60 swing per booking.`,
     },
     {
       q: `Is pool rental legal in ${city.state}?`,
@@ -99,7 +99,7 @@ function PeerspaceCityPage() {
 
   const tableRows = [
     { label: "Host service fee", prnm: <strong>0% (2026)</strong>, competitor: "20%" },
-    { label: `Take-home on $300 ${city.name} booking`, prnm: <strong>$270</strong>, competitor: "$240" },
+    { label: `Take-home on $300 ${city.name} booking`, prnm: <strong>$300</strong>, competitor: "$240" },
     { label: "General liability", prnm: <strong>$2M / $4M</strong>, competitor: "$1M" },
     { label: "Property protection", prnm: <strong>$150K STRETCH® PLUS</strong>, competitor: "$25K" },
     { label: `Built for ${city.name} pool guests`, prnm: "Yes — pool-specialized", competitor: "No — general venue marketplace" },
