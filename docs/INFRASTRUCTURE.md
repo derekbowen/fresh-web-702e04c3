@@ -64,3 +64,25 @@ DB access: PostgREST via anon/service_role keys (HTTPS); DDL via pooler
 
 **Rollback (instant):** restore `/home/ubuntu/fresh-web.env.bak.precutover.*` → `.env` → `npm run build` →
 `pm2 restart fresh-web`. Old project is untouched.
+
+---
+
+## SEO protection — standing policy & deploy guardrail
+
+**Crown jewels (GSC 2026-07-06):** the homepage alone is ~26% of organic clicks; the top-30 pages are ~59%. 86% of clicks are non-brand head terms ("pool rentals near me", "rent a pool") landing mostly on `/`. Protect these first.
+
+### Standing policy (owner sign-off required)
+**No change to `title`, canonical, `H1`, URL, or robots/noindex on the homepage or any top-30 money page without Derek's explicit sign-off.** Body/content copy edits (e.g., the 0% fee sweep) are fine — those are additive and don't move ranking signals. The protected set is `scripts/seo-guardrail.targets.json`.
+
+- **Approved exception (2026-07-06):** `/p/hosting` title changed "Earn 10% More than Swimply" → "0% Host Fees All of 2026" (intentional, part of the 0% launch). **Watch its ranking for 2 weeks; report if it slips.**
+
+### Deploy checklist — guardrail (run every deploy)
+The guardrail snapshots the ranking-critical signals (status, title, canonical, robots, H1, word count) of the top-30 money pages and diffs a live run against a known-good baseline.
+
+```
+# after every EAST deploy (npm run build + pm2 restart):
+npm run guardrail          # PASS/FAIL vs baseline; exit 1 on a critical regression
+```
+- **CRITICAL (fails the deploy):** a money page goes non-200, gains `noindex`, loses its canonical, or its content collapses (>40% word-count drop = blank-shell).
+- **REVIEW (warns):** title / canonical / H1 changed, or a 20–40% content dip — intentional or not, eyeball it.
+- **Re-baseline only after an approved, verified change:** `npm run guardrail:snapshot` (updates `scripts/seo-guardrail.baseline.json`). Baseline is committed, so regressions are caught against a known-good reference.
