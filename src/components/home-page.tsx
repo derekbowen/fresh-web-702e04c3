@@ -271,7 +271,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="text-4xl" aria-hidden>🏖</span>
                 <h3 className="mt-3 text-xl font-semibold text-foreground">I'm going swimming</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Simple, affordable, and the best Saturday your kids will remember this summer.
+                  Rent a private swimming pool by the hour and find private pools near you — simple, affordable, and the best Saturday your kids will remember this summer.
                 </p>
                 <span
                   className="mt-auto inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white"

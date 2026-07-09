@@ -129,7 +129,7 @@ function AllLocationsPage() {
               Pool rentals near me — every US city with a private pool for rent
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              The full index of <strong>pool rentals near me</strong>, organized by state and city. Browse every US city where you can book a private backyard pool by the hour. $2M liability insurance included on every booking, 0% host fees through 2026, no memberships.
+              The full index of <strong>pool rentals near me</strong> — private pools near me in every US city — organized by state and city. Browse every US city where you can rent a swimming pool by the hour. $2M liability insurance included on every booking, 0% host fees through 2026, no memberships.
             </p>
             <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
               Jump straight to your state below, or scroll for the full directory of host guides, courses, and resources.
