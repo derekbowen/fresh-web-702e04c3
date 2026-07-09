@@ -325,6 +325,21 @@ function AllLocationsPage() {
           <TopCitiesBlock cities={data.topCities} />
 
           {/* Bottom jump nav */}
+          {/* GSC page-2 sprint: keyword-anchored links to featured city pool rentals */}
+          <section aria-label="Popular pool rentals" className="mt-12">
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Popular pool rentals</h2>
+            <nav className="mt-4 flex flex-wrap gap-2">
+              <a href="/p/new-york-ny" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Pool rental New York</a>
+              <a href="/p/san-diego-ca" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Pool rental San Diego</a>
+              <a href="/p/atlanta" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Pool rental Atlanta</a>
+              <a href="/p/riverside" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Pool rental Riverside, CA</a>
+              <a href="/p/las-vegas-search-page" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Pool rentals in Las Vegas</a>
+              <a href="/p/sacramentobestprivatepools" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Private pool rental Sacramento</a>
+              <a href="/p/allentown" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Pool rental Allentown, PA</a>
+              <a href="/p/annapolis" className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary">Pool rental Annapolis, MD</a>
+            </nav>
+          </section>
+
           <section
             id="bottom-nav"
             aria-label="All sections"
