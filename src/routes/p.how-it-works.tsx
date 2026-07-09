@@ -35,7 +35,7 @@ import heroImage from "@/assets/how-it-works-hero.jpg";
  */
 
 const PATH = "/p/how-it-works";
-const TITLE = "How Pool Rental Near Me Works | Book a Private Pool by the Hour";
+const TITLE = "How Does Pool Rental Work? Book a Private Pool by the Hour";
 const DESCRIPTION =
   "Rent private backyard pools by the hour for parties, family swims, or quiet afternoons. Up to $2M insurance per booking, 24/7 support, a transparent guest service fee shown at checkout. Book in 5 minutes.";
 
