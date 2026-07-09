@@ -34,7 +34,7 @@ import heroImage from "@/assets/hosting-hero.jpg";
  * /p/hosting — host-acquisition landing page.
  *
  * Centerpiece is the embedded earnings calculator that compares PRNM's flat
- * 10% take vs Swimply's 15–30% range. Static segment beats /p/$slug.
+ * 0% take (through 2026) vs Swimply's 15–30% range. Static segment beats /p/$slug.
  */
 
 const PATH = "/p/hosting";
@@ -170,7 +170,7 @@ const FAQS = [
   },
   {
     q: "How is PRNM different from Swimply?",
-    a: "Four things hosts tell us. (1) Our host fee is a flat 10% — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 135 free classes and a private host community board — Swimply has a Facebook group.",
+    a: "Four things hosts tell us. (1) Our host fee is 0% through 2026 — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 135 free classes and a private host community board — Swimply has a Facebook group.",
   },
   {
     q: "I'm currently on Swimply. Can I list on both?",
@@ -634,6 +634,27 @@ function HostingPage() {
                 </a>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* SECTION 8b — HOST RESOURCE CLUSTER + FLEXIBLE INCOME (SEO internal links) */}
+        <section className="border-t border-border bg-background py-16">
+          <div className="mx-auto max-w-4xl px-4">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Pool hosting: flexible income from home
+            </h2>
+            <p className="mt-3 max-w-2xl text-muted-foreground">
+              Think of pool hosting as a flexible job you run from home — you set
+              your hours, keep 100% with 0% host fees through 2026, and only work
+              the bookings you accept. Go deeper with these host guides:
+            </p>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              <li><a className="font-semibold text-primary hover:underline" href="/p/learningacademy">Free Pool Host Academy — training to earn from your pool</a></li>
+              <li><a className="font-semibold text-primary hover:underline" href="/p/pool-rental-host-fees-compared">Pool rental host fees compared: Swimply vs PRNM (0% fees)</a></li>
+              <li><a className="font-semibold text-primary hover:underline" href="/p/why-hosts-are-leaving-swimply">Why hosts are leaving Swimply in 2026</a></li>
+              <li><a className="font-semibold text-primary hover:underline" href="/p/insurance-guide-for-pool-owners">Pool rental insurance guide for hosts</a></li>
+              <li><a className="font-semibold text-primary hover:underline" href="/p/howtoturnyourbackyardpoolintoabusinessasset">Turn your backyard pool into a business asset</a></li>
+            </ul>
           </div>
         </section>
 
