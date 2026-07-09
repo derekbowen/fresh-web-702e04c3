@@ -17,7 +17,7 @@ export const SITE_LOGO = `${SITE_URL}/icon-512.png`;
 
 export const SOCIAL_PROFILES = [
   "https://www.facebook.com/poolrentalnearme",
-  "https://x.com/poolrentalnearme",
+  "https://x.com/poolrentalnearm",
   "https://www.youtube.com/@poolrentalnearme",
   "https://www.linkedin.com/company/poolrentalnearme",
   "https://www.instagram.com/poolrentalnearme",

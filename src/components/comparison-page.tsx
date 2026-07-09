@@ -132,7 +132,7 @@ export function organizationJsonLd() {
       sameAs: [
         "https://www.facebook.com/poolrentalnearme",
         "https://www.instagram.com/poolrentalnearme",
-        "https://x.com/poolrentalnearme",
+        "https://x.com/poolrentalnearm",
         "https://www.linkedin.com/company/pool-rental-near-me",
       ],
     }),

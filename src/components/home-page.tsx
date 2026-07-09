@@ -204,7 +204,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               🌞&nbsp;100 Days of Summer
             </p>
             <p className="mx-auto mt-5 max-w-2xl text-xl font-semibold leading-snug text-white sm:text-2xl">
-              <span style={{ color: "#FFE08A" }}>Thank you.</span> To every host and
+              <span className="text-gold">Thank you.</span> To every host and
               guest who made this community what it is&nbsp;— we&rsquo;re giving back.
             </p>
             <div className="mt-6 flex items-baseline justify-center gap-3 sm:gap-4">
@@ -369,7 +369,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">As featured in</span>
               <a
-                href="https://realestate.einnews.com/pr_news/908834379/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours"
+                href="https://lifestyle.kbew98country.com/story/194285/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
@@ -455,7 +455,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       variant="full"
                       className="h-32 w-32 drop-shadow-xl sm:h-44 sm:w-44 lg:h-56 lg:w-56"
                     />
-                    <span className="absolute -right-2 -top-1 inline-flex items-center rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-yellow-950 shadow-md sm:text-xs">
+                    <span className="absolute -right-2 -top-1 inline-flex items-center rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gold-foreground shadow-md sm:text-xs">
                       Your coach
                     </span>
                   </div>
@@ -569,7 +569,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                      <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-2.5 py-1 text-[11px] font-bold text-black shadow">
+                      <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-gold px-2.5 py-1 text-[11px] font-bold text-gold-foreground shadow">
                         🏆 Top 9 Pools in LA 2025
                       </div>
                     </div>

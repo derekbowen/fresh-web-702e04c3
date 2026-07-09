@@ -153,7 +153,7 @@ export function HostAcqCityTemplate({
         sameAs: [
           "https://www.facebook.com/poolrentalnearme",
           "https://www.instagram.com/poolrentalnearme",
-          "https://x.com/poolrentalnearme",
+          "https://x.com/poolrentalnearm",
         ],
       },
     ],

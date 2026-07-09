@@ -76,7 +76,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
   ],
   socials: [
     { label: "Facebook", href: "https://www.facebook.com/poolrentalnearme", icon: "facebook" },
-    { label: "X", href: "https://x.com/poolrentalnearme", icon: "x" },
+    { label: "X", href: "https://x.com/poolrentalnearm", icon: "x" },
     { label: "YouTube", href: "https://www.youtube.com/@poolrentalnearme", icon: "youtube" },
     { label: "LinkedIn", href: "https://www.linkedin.com/company/poolrentalnearme", icon: "linkedin" },
     { label: "Instagram", href: "https://www.instagram.com/poolrentalnearme", icon: "instagram" },

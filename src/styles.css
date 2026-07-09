@@ -6,6 +6,21 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
+ * PRNM unified brand font: Manrope (self-hosted, OFL).
+ * Unifies with the marketplace (Sharetribe) which also uses Manrope.
+ * Weights 400/500/600/700/800.
+ */
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 400; font-display: swap; src: url("./fonts/manrope-400.woff2") format("woff2"); }
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 500; font-display: swap; src: url("./fonts/manrope-500.woff2") format("woff2"); }
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 600; font-display: swap; src: url("./fonts/manrope-600.woff2") format("woff2"); }
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 700; font-display: swap; src: url("./fonts/manrope-700.woff2") format("woff2"); }
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 800; font-display: swap; src: url("./fonts/manrope-800.woff2") format("woff2"); }
+
+@theme {
+  --font-sans: "Manrope", -apple-system, system-ui, sans-serif;
+}
+
+/*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
@@ -36,6 +51,8 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-glow: var(--primary-glow);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -75,6 +92,9 @@
   --primary: oklch(0.65 0.15 230);
   --primary-foreground: oklch(0.99 0.005 240);
   --primary-glow: oklch(0.72 0.13 220);
+  /* PRNM brand gold #F5B301 — unified accent (badges, highlights, 0% campaign). */
+  --gold: #F5B301;
+  --gold-foreground: oklch(0.3 0.05 62);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
@@ -110,6 +130,8 @@
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: oklch(0.929 0.013 255.508);
   --primary-foreground: oklch(0.208 0.042 265.755);
+  --gold: #F5B301;
+  --gold-foreground: oklch(0.28 0.05 62);
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
   --muted: oklch(0.279 0.041 260.031);
@@ -139,6 +161,10 @@
 @layer base {
   * {
     border-color: var(--color-border);
+  }
+
+  html {
+    font-family: "Manrope", -apple-system, system-ui, sans-serif;
   }
 
   body {
