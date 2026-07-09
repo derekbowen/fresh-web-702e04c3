@@ -1,0 +1,1 @@
+import{j as e,S as s,g as t}from"./index-D10uf40O.js";const r=()=>e.jsxs("div",{className:"flex min-h-screen flex-col",children:[e.jsx(s,{}),e.jsx("main",{className:"mx-auto max-w-3xl flex-1 px-4 py-16 text-center",children:e.jsx("h1",{className:"text-3xl font-bold",children:"Something went wrong"})}),e.jsx(t,{})]});export{r as errorComponent};
