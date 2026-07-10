@@ -20,6 +20,7 @@ const EN: Record<string, CategoryMeta> = {
 };
 
 const ES: Record<string, CategoryMeta> = {
+  safety: { label: "Seguridad y Rescate", description: "RCP, prevención de ahogamientos, supervisión y planes de emergencia.", emoji: "" },
   spanish: { label: "Aprende a Rentar tu Piscina", description: "Cursos en español para anfitriones de piscinas.", emoji: "🇪🇸" },
 };
 
