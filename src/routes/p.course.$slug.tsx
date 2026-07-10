@@ -9,6 +9,7 @@ import { getCourse, getRelatedCourses } from "@/server/courses.functions";
 import { getCategoryMeta, I18N, getTierMeta, type Lang } from "@/lib/academy";
 import { resolveAcademyHero } from "@/lib/academy-images";
 import { academyHubPath, coursePath } from "@/lib/course-urls";
+import { courseTwinSlug } from "@/lib/course-twins";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL, SITE_NAME } from "@/lib/seo";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -48,6 +49,15 @@ export const Route = createFileRoute("/p/course/$slug")({
     const description = (c.seo_description || c.excerpt || c.subtitle || titleBase || "").slice(0, 160);
     const image = c.cover_image_url || undefined;
 
+    const twinSlug = courseTwinSlug(params.slug, lang);
+    const twinLang = lang === "es" ? "en" : "es";
+    const hreflang = twinSlug
+      ? [
+          { lang, href: `${SITE_URL}${path}` },
+          { lang: twinLang, href: `${SITE_URL}/p/course/${twinSlug}` },
+          { lang: "x-default", href: `${SITE_URL}${lang === "en" ? path : `/p/course/${twinSlug}`}` },
+        ]
+      : undefined;
     const meta = buildMeta({
       title,
       description,
@@ -55,6 +65,7 @@ export const Route = createFileRoute("/p/course/$slug")({
       canonicalPath: path,
       image: image ?? null,
       type: "article",
+      hreflang,
     });
 
     const hubPath = academyHubPath(lang);
@@ -166,7 +177,11 @@ function CoursePage() {
           <div className="mb-4">
             <LanguageSwitcher
               current={lang}
-              alternateHref={academyHubPath(lang === "en" ? "es" : "en")}
+              alternateHref={
+                courseTwinSlug(course.slug, lang)
+                  ? coursePath(courseTwinSlug(course.slug, lang)!)
+                  : academyHubPath(lang === "en" ? "es" : "en")
+              }
             />
           </div>
           <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-medium">
