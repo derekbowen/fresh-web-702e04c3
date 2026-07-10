@@ -20,7 +20,10 @@ const EN: Record<string, CategoryMeta> = {
 };
 
 const ES: Record<string, CategoryMeta> = {
+  "getting-started": { label: "Primeros Pasos", description: "Publica tu alberca, entiende los pagos y prepárate para tu primera reserva.", emoji: "" },
+  pricing: { label: "Precios e Ingresos", description: "Cómo fijar precios, maximizar ingresos y entender tus pagos.", emoji: "" },
   safety: { label: "Seguridad y Rescate", description: "RCP, prevención de ahogamientos, supervisión y planes de emergencia.", emoji: "" },
+  legal: { label: "Legal y Cumplimiento", description: "Seguros, exenciones, impuestos, permisos, HOA y estructura de negocio.", emoji: "" },
   spanish: { label: "Aprende a Rentar tu Piscina", description: "Cursos en español para anfitriones de piscinas.", emoji: "🇪🇸" },
 };
 
