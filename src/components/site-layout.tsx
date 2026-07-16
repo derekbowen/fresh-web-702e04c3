@@ -479,13 +479,9 @@ function SiteFooterInner() {
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-3">
             <a href="/" aria-label="Pool Rental Near Me" className="inline-flex">
-              <img
-                src="/icon.svg"
-                alt="Pool Rental Near Me"
-                className="h-14 w-14 rounded-2xl shadow-sm"
-                width="56"
-                height="56"
-              />
+              <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7" aria-hidden="true">
+                <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1v3c-1.5 0-2.5 1-4 1s-2.5-1-4-1-2.5 1-4 1-2.5-1-4-1-2.5 1-4 1v-3zM6 14V5a3 3 0 0 1 6 0v9M12 9h6a3 3 0 0 1 0 6" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+              </svg>
             </a>
             {data.contact_phone_label && (
               <p className="mt-5 text-sm text-foreground">
