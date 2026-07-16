@@ -89,7 +89,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
-    "@lovable.dev/vite-tanstack-config": "2.6.2",
+    "@lovable.dev/vite-tanstack-config": "2.7.6",
     "@tailwindcss/typography": "^0.5.19",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.16.5",
