@@ -173,7 +173,11 @@ export function hostAcqSchemasForPage(
       sameAs: SITE_URL,
       logo: `${SITE_URL}/fw-assets/logo.png`,
     },
-    jobLocationType: "TELECOMMUTE",
+    // No jobLocationType: hosting is inherently on-site — the pool is the
+    // host's own backyard in this city. Claiming TELECOMMUTE was also what
+    // forced applicantLocationRequirements to be present, and Google only
+    // accepts Country there, so every posting was rejected as invalid.
+    // jobLocation below carries the geography.
     jobLocation: {
       "@type": "Place",
       address: {
@@ -195,10 +199,6 @@ export function hostAcqSchemasForPage(
     },
     directApply: true,
     url: pageUrl,
-    applicantLocationRequirements: {
-      "@type": "City",
-      name: cityName,
-    },
   };
 
   return [webPage, professionalService, offer, howTo, jobPosting];
