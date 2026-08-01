@@ -52,14 +52,33 @@ export function GenericPageTemplate({
           <p className="mt-4 text-lg text-muted-foreground">{page.description}</p>
         )}
         {(page.cover_image_url || page.hero_image_url) && (
-          <div className="mt-8 aspect-video overflow-hidden rounded-2xl">
+          <div className="relative mt-8 aspect-video overflow-hidden rounded-2xl">
             <img
               src={(page.cover_image_url || page.hero_image_url) as string}
-              alt={page.title || ""}
+              alt={((page as any).hero_image_alt as string) || page.title || ""}
               className="h-full w-full object-cover"
               loading="eager"
               fetchPriority="high"
             />
+            <div
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(to top, rgba(2,6,23,0.72) 0%, rgba(2,6,23,0.45) 35%, rgba(2,6,23,0) 70%)" }}
+            />
+            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-3 p-4 sm:p-6">
+              <a
+                href="/s"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-6 text-sm font-bold text-[#0B4A6F] shadow-lg"
+              >
+                Find a pool near you
+              </a>
+              <a
+                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                aria-label="List your pool — keep 100%, zero host fees"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-white/90 px-6 text-sm font-semibold text-white"
+              >
+                Have a pool? Keep 100% &mdash; zero host fees&nbsp;&rarr;
+              </a>
+            </div>
           </div>
         )}
         {(page.content || page.body_markdown) && (
