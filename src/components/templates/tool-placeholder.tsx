@@ -240,7 +240,7 @@ export function ToolPlaceholderPage({
               href="/p/learningacademy"
               className="rounded-xl border border-border bg-card p-4 text-sm font-medium text-foreground transition hover:border-primary/40"
             >
-              Pool Host Academy — 135 free classes →
+              Pool Host Academy — 193 free classes →
             </a>
             <a
               href="/p/free-host-tools"

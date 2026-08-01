@@ -579,7 +579,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       href="/p/learningacademy"
                       className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                     >
-                      Learn with Fred — 135 free classes →
+                      Learn with Fred — 193 free classes →
                     </a>
                   )}
                 </div>
