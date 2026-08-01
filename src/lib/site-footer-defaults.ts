@@ -11,6 +11,7 @@ export type SiteFooterSettings = {
   explore_links: FooterLink[];
   host_links: FooterLink[];
   company_links: FooterLink[];
+  values_links: FooterLink[];
   compare_links: FooterLink[];
   popular_markets: FooterMarket[];
   socials: FooterSocial[];
@@ -60,6 +61,14 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Refer Pool Owners", href: "/p/affiliate" },
     { label: "Investors", href: "/p/investors" },
   ],
+  values_links: [
+    { label: "Environment", href: "/p/environment" },
+    { label: "Water Safety", href: "/p/water-safety" },
+    { label: "Accessibility", href: "/p/accessibility" },
+    { label: "Community", href: "/p/neighbors" },
+    { label: "Economic Opportunity", href: "/p/hosting" },
+    { label: "Privacy", href: "/p/privacy-policy" },
+  ],
   // Slugs map to published `content_pages` (host_acq_city template) so each
   // link resolves through the /p/$slug dispatcher. The cities table has rows
   // for the short slugs (los-angeles-ca etc.) but the dispatcher only checks
@@ -76,7 +85,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
   ],
   socials: [
     { label: "Facebook", href: "https://www.facebook.com/poolrentalnearme", icon: "facebook" },
-    { label: "X", href: "https://x.com/poolrentalnearme", icon: "x" },
+    { label: "X", href: "https://x.com/poolrentalnearm", icon: "x" },
     { label: "YouTube", href: "https://www.youtube.com/@poolrentalnearme", icon: "youtube" },
     { label: "LinkedIn", href: "https://www.linkedin.com/company/poolrentalnearme", icon: "linkedin" },
     { label: "Instagram", href: "https://www.instagram.com/poolrentalnearme", icon: "instagram" },

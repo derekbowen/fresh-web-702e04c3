@@ -1,0 +1,1 @@
+import{e as a,j as e,H as o}from"./index-DyB1rxs6.js";function s(){const{data:t}=a.useLoaderData();return e.jsx(o,{data:t})}export{s as component};

@@ -61,7 +61,7 @@ function PoolRentalsIndex() {
           {states.map((s: StateIndexEntry) => (
             <li key={s.stateCode}>
               <Link
-                to="/p/pool-rentals-$state"
+                to="/p/pool-rentals-{$state}"
                 params={{ state: s.citySlug }}
                 className="group block rounded-md border border-border bg-card px-4 py-3 transition hover:border-primary"
               >

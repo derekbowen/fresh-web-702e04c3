@@ -16,6 +16,8 @@ const PoolWaitlistForm = lazy(() =>
 );
 import heroPool from "@/assets/pool-hero-default.webp";
 import heroFamilyPool from "@/assets/hero-family-pool.jpg";
+import loveHero from "@/assets/love-hero.jpg";
+import loveFriends from "@/assets/love-friends.jpg";
 import laSaltwaterFeatured from "@/assets/la-saltwater/hero-night.jpg";
 
 const HIDE_LISTING_RE = /swim\s*spa|aquatic|rehab/i;
@@ -78,6 +80,23 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     setHydrated(true);
+  }, []);
+
+  // Intercom messenger on the public homepage (the app id is public client-side;
+  // WEST already boots it on internal pages - this is the missing EAST half).
+  // Deferred to idle so it never competes with the hero paint.
+  useEffect(() => {
+    const w = window as any;
+    if (w.Intercom) return;
+    const boot = () => {
+      w.intercomSettings = { api_base: "https://api-iam.intercom.io", app_id: "nuuc4281" };
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = "https://widget.intercom.io/widget/nuuc4281";
+      document.head.appendChild(s);
+    };
+    if ("requestIdleCallback" in w) w.requestIdleCallback(boot, { timeout: 4000 });
+    else setTimeout(boot, 2500);
   }, []);
 
   const safe: HomeData = (data && typeof data === "object" ? data : null) ?? {
@@ -146,10 +165,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           style={{ minHeight: "60vh" }}
         >
           <img
-            src={heroFamilyPool}
+            src={loveHero}
             alt=""
-            width={1600}
-            height={1067}
+            width={1024}
+            height={1024}
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover"
@@ -157,14 +176,14 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           <div
             aria-hidden="true"
             className="absolute inset-0"
-            style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+            style={{ background: "linear-gradient(to top, rgba(11,39,51,0.82) 0%, rgba(11,39,51,0.28) 45%, rgba(11,39,51,0.05) 100%)" }}
           />
           <div className="relative mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 lg:py-24">
-            <h1 className="text-4xl font-bold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
-              Rent a private pool by the hour
+            <h1 className="text-4xl font-extrabold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
+              Find the pool <span style={{ color: "#7fe0ff" }}>you&rsquo;ll fall in love with</span>.
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-base text-white/95 drop-shadow sm:text-lg">
-              Find a private pool for rent by the hour, anywhere in America. From quiet family days to full pool party rentals.
+            <p className="mx-auto mt-4 max-w-xl text-base font-semibold text-white/95 drop-shadow sm:text-lg">
+              Rent a private pool by the hour, anywhere in America — real neighbors, real backyards, booked in minutes.
             </p>
             <div className="mt-7 flex flex-col items-center gap-3">
               <a
@@ -189,6 +208,19 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               >
                 Get the pool rental app &rarr;
               </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ── HOST-LOVE BAND + REAL-POOLS TICKER (c-love) ───────── */}
+        <section aria-label="We love pool hosts" className="overflow-hidden text-white" style={{ backgroundColor: "#0EA5E9" }}>
+          <p className="mx-auto max-w-3xl px-4 pt-4 text-center text-base font-extrabold">
+            We love pool hosts — it&rsquo;s why this marketplace is what it is. ❤️ 0% host fees. Hosts keep every dollar.
+          </p>
+          <div className="mt-2 w-full overflow-hidden pb-3">
+            <style>{`@keyframes prnmTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}.prnm-ticker{display:inline-block;white-space:nowrap;will-change:transform;animation:prnmTicker 45s linear infinite}@media (prefers-reduced-motion:reduce){.prnm-ticker{animation:none}}`}</style>
+            <div className="prnm-ticker text-sm font-bold opacity-95">
+              {"🏊 Hallico Outdoor Oasis — Spring Hill, TN  ·  🏊 Twin Palms Oasis — Las Vegas, NV  ·  🏊 Nobody Likes A Shady Beach — La Grange, KY  ·  🏊 Richmond Hideout — Richmond, TX  ·  🏊 Backyard Bliss — Union, NJ  ·  🏊 The Backyard Blue — Chestertown, MD  ·  🏊 Hallico Outdoor Oasis — Spring Hill, TN  ·  🏊 Twin Palms Oasis — Las Vegas, NV  ·  🏊 Nobody Likes A Shady Beach — La Grange, KY  ·  🏊 Richmond Hideout — Richmond, TX  ·  🏊 Backyard Bliss — Union, NJ  ·  🏊 The Backyard Blue — Chestertown, MD  ·  "}
             </div>
           </div>
         </section>
@@ -218,9 +250,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg font-semibold text-white sm:text-xl">
               You keep 100% of every booking. List your pool free.
-            </p>
-            <p className="mx-auto mt-2 max-w-xl text-sm text-white/90 sm:text-base">
-              Plus: 5% guest booking fees all summer&nbsp;—&nbsp;100 Days of Summer&nbsp;🌞
             </p>
             <div className="mt-7">
               <a
@@ -256,7 +285,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         <section aria-label="Two ways to use Pool Rental Near Me" className="bg-background">
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <h2 className="text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Two ways to make summer happen.
+              Two ways to fall for summer.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
               Book a swimming pool rental as a guest, or list your private pool and earn $3K–$10K/month as a host.
@@ -285,19 +314,21 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               <a
                 href="/p/hosting"
                 aria-label="I'm sharing my pool — list my pool on Pool Rental Near Me"
-                className="group relative flex min-h-[260px] flex-col items-start overflow-hidden rounded-xl border border-border p-6 text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+                className="group relative flex min-h-[260px] flex-col items-start overflow-hidden rounded-xl p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
                 style={{
-                  backgroundImage:
-                    "linear-gradient(135deg, #0c4a6e 0%, #0EA5E9 100%)",
+                  backgroundColor: "#ffb8d9",
+                  border: "3px dashed #ffd21f",
+                  color: "#22303c",
                 }}
               >
-                <span className="text-4xl" aria-hidden>🌴</span>
-                <h3 className="mt-3 text-xl font-semibold">I'm sharing my pool</h3>
-                <p className="mt-2 text-sm text-white/90">
-                  Earn $3K-$10K a month renting your pool by the hour. $2M Hartford-backed insurance and 0% host fees through 2026 — you keep 100%.
+                <span className="text-4xl" aria-hidden>💙</span>
+                <h3 className="mt-3 text-xl font-bold">I'm sharing my pool</h3>
+                <p className="mt-2 text-sm font-medium" style={{ color: "#46323c" }}>
+                  If you can text a photo, you can host. We set it all up with you — $2M Hartford-backed insurance, 0% host fees through 2026, you keep every dollar. Earn $3K-$10K a month.
                 </p>
                 <span
-                  className="mt-auto inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-foreground"
+                  className="mt-auto inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold text-white"
+                  style={{ backgroundColor: "#0EA5E9" }}
                 >
                   List my pool &rarr;
                 </span>
@@ -337,6 +368,29 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
 
 
 
+        {/* ── SCRAPBOOK COLLAGE (c-love, from the approved preview) ── */}
+        <section aria-label="Real swim days on Pool Rental Near Me" className="bg-background">
+          <div className="relative mx-auto h-[300px] w-full max-w-3xl px-4 py-2">
+            <div className="absolute left-4 top-8 w-[52%] -rotate-3">
+              <div className="overflow-hidden rounded-[22px] bg-white p-1.5" style={{ boxShadow: "0 6px 18px rgba(34,48,60,0.14)" }}>
+                <img src={loveHero} alt="Sunlit backyard pool" loading="lazy" className="h-[190px] w-full rounded-[18px] object-cover" />
+              </div>
+            </div>
+            <div className="absolute right-4 top-0 w-[44%] rotate-2">
+              <div className="relative overflow-hidden rounded-[22px] bg-white p-1.5" style={{ boxShadow: "0 6px 18px rgba(34,48,60,0.14)" }}>
+                <img src={loveFriends} alt="Friends laughing poolside" loading="lazy" className="h-[230px] w-full rounded-[18px] object-cover" />
+                <span className="absolute left-3 top-3 rounded-full px-3 py-1.5 text-[12px] font-extrabold text-white" style={{ backgroundColor: "#0EA5E9" }}>
+                  Booked in 2 taps
+                </span>
+              </div>
+            </div>
+            <div className="absolute bottom-2 right-5 z-10 flex h-[70px] w-[70px] flex-col items-center justify-center rounded-full text-white" style={{ backgroundColor: "#ff6f52", boxShadow: "0 6px 18px rgba(34,48,60,0.2)" }}>
+              <span className="text-[19px] font-extrabold leading-none">0%</span>
+              <span className="mt-0.5 text-[10px] font-extrabold leading-none">host fees</span>
+            </div>
+          </div>
+        </section>
+
         {/* Comparative trust strip */}
         <section aria-label="Why book with Pool Rental Near Me" className="border-b border-border bg-secondary/30">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 text-center sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
@@ -346,9 +400,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               <div className="mt-1 text-xs text-muted-foreground">2× the industry standard</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">10%</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">Flat guest fee</div>
-              <div className="mt-1 text-xs text-muted-foreground">Lowest of any pool platform</div>
+              <div className="text-2xl font-bold text-primary">0%</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">Host fees through 2026</div>
+              <div className="mt-1 text-xs text-muted-foreground">Hosts keep every dollar</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-primary">40+</div>
@@ -400,6 +454,30 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               >
                 KBEW
               </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ── LOVE NOTES (c-love): real words from real people ── */}
+        <section aria-label="Love notes from swimmers and hosts" className="bg-background">
+          <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+            <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">Love notes 💌</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Five hearts is our whole review system.</p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              {[
+                ["“I love you guys over at Pool Rental Near Me — the founder personally called me to make sure I was all right.”", "Demarco", "Queens, NY"],
+                ["“Rock on, Derek — I see your hustle this year and it&rsquo;s legit. My pool paid for our summer.”", "Salty Without The Sharks", "CA"],
+                ["“Eight kids, one cannonball contest, and a card that just worked. I did not touch a thing.”", "Trish", "Riverside, CA"],
+              ].map(([q, who, where]) => (
+                <div key={who} className="rounded-2xl p-5" style={{ backgroundColor: "#e4f4fc" }}>
+                  <div className="text-sm tracking-wide" style={{ color: "#ff6f52" }}>❤️❤️❤️❤️❤️</div>
+                  <p className="mt-2 text-[15px] font-bold leading-relaxed text-foreground" dangerouslySetInnerHTML={{ __html: q }} />
+                  <div className="mt-4">
+                    <div className="text-sm font-extrabold text-foreground">{who}</div>
+                    <div className="text-xs font-semibold text-muted-foreground">{where}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -464,14 +542,14 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       Learn with Fred — the only Pool Host Academy on the internet.
                     </h2>
                     <div className="relative mt-3 inline-block rounded-2xl bg-card px-4 py-2 text-sm font-medium text-foreground shadow-md ring-1 ring-border sm:text-base">
-                      <span className="font-semibold">Hey, I'm Fred.</span> I've coached 5,000+ hosts. I'll show you what actually works.
+                      <span className="font-semibold">Hi, I&rsquo;m Fred! 👋</span> I teach pool people how to earn more and stress less.
                       <div className="absolute -left-1.5 top-4 h-3 w-3 rotate-45 bg-card ring-1 ring-border" />
                     </div>
                   </div>
                 </div>
 
                 <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-                  135 free classes on safety, pricing, marketing, AI tools, guest experience, and the highest-paying booking niches. No other platform teaches you how to host — Fred wrote the playbook.
+                  193 free classes on safety, pricing, marketing, AI tools, guest experience, and the highest-paying booking niches. Five minutes each. Zero homework, all heart — Fred wrote the playbook.
                 </p>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -821,6 +899,64 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             >
               List your pool →
             </a>
+          </div>
+        </section>
+        {/* ── LOVE CLOSER: Text Derek + socials + smart app (c-love) ── */}
+        <section aria-label="Text the founder and follow Pool Rental Near Me" className="bg-background">
+          <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+            <div className="rounded-2xl p-7 text-center" style={{ backgroundColor: "#ffb8d9", border: "3px dashed #ffd21f" }}>
+              <div className="text-2xl" aria-hidden>👋</div>
+              <h2 className="mt-1 text-xl font-extrabold" style={{ color: "#22303c" }}>Stuck on anything? Text Derek.</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm font-medium" style={{ color: "#46323c" }}>
+                He founded Pool Rental Near Me and answers hosts himself, usually within the hour.
+              </p>
+              <a
+                href={"sms:+18556178207?&body=" + encodeURIComponent("Hi Derek! I\u2019m looking at Pool Rental Near Me and I have a question.")}
+                className="mt-4 inline-flex min-h-[48px] w-full max-w-md items-center justify-center rounded-full bg-white px-6 text-[15px] font-extrabold"
+                style={{ color: "#0EA5E9" }}
+              >
+                Text Derek
+              </a>
+            </div>
+            <div className="mt-6 rounded-2xl border border-border bg-background p-6 text-center shadow-sm">
+              <h2 className="text-lg font-extrabold text-foreground">Swim with us everywhere 💙</h2>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+                {[
+                  ["Facebook", "https://www.facebook.com/poolrentalnearme"],
+                  ["Instagram", "https://www.instagram.com/poolrentalnearme"],
+                  ["TikTok", "https://www.tiktok.com/@poolrentalnearme"],
+                  ["YouTube", "https://www.youtube.com/@poolrentalnearme"],
+                  ["X", "https://x.com/poolrentalnearm"],
+                  ["LinkedIn", "https://www.linkedin.com/company/poolrentalnearme"],
+                  ["Pinterest", "https://www.pinterest.com/poolrentalnearme"],
+                ].map(([name, url]) => (
+                  <a
+                    key={name}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-full px-4 py-2 text-[13px] font-bold"
+                    style={{ backgroundColor: "#e4f4fc", color: "#0369a1" }}
+                  >
+                    {name}
+                  </a>
+                ))}
+              </div>
+              <a
+                href="https://apps.apple.com/us/app/pool-rental-near-me-swim-fun/id6737762373"
+                onClick={(e) => {
+                  if (typeof navigator !== "undefined" && /android/i.test(navigator.userAgent)) {
+                    e.preventDefault();
+                    window.location.href = "https://play.google.com/store/apps/details?id=com.poolrentalnearme.app.prod";
+                  }
+                }}
+                className="mt-5 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white"
+                style={{ backgroundColor: "#0b2733" }}
+              >
+                📱 Get the app — it knows your phone
+              </a>
+              <p className="mt-4 text-[15px] font-extrabold text-foreground">Made with ❤️ for pool people.</p>
+            </div>
           </div>
         </section>
       </main>

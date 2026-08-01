@@ -14,14 +14,14 @@ const CITY_LINKS = [
   { name: "San Diego, CA", slug: "san-diego-ca" },
   { name: "Sacramento, CA", slug: "sacramento-ca" },
   { name: "Phoenix, AZ", slug: "phoenix-az" },
-  { name: "Las Vegas, NV", slug: "las-vegas-nv" },
-  { name: "Miami, FL", slug: "miami-fl" },
-  { name: "Orlando, FL", slug: "orlando-fl" },
+  { name: "Las Vegas, NV", slug: "pool-rentals-nevada" },
+  { name: "Miami, FL", slug: "pool-rentals-florida" },
+  { name: "Orlando, FL", slug: "pool-rentals-florida" },
   { name: "Tampa, FL", slug: "tampa-fl" },
   { name: "Austin, TX", slug: "austin-tx" },
   { name: "Dallas, TX", slug: "dallas-tx" },
   { name: "Houston, TX", slug: "houston-tx" },
-  { name: "Atlanta, GA", slug: "atlanta-ga" },
+  { name: "Atlanta, GA", slug: "atlanta" },
 ];
 
 const FAQS: { q: string; a: string }[] = [

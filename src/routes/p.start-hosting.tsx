@@ -39,7 +39,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "What does it cost to start hosting?",
-    a: "Nothing. Listing is free. There's no monthly fee. We take a flat 10% per booking — Swimply charges 15% to 30%.",
+    a: "Nothing. Listing is free. There's no monthly fee. And with our 2026 promotion, host fees are 0% — you keep 100% of every booking. Swimply charges 15% to 30%.",
   },
   {
     q: "Do I need my own insurance to host?",

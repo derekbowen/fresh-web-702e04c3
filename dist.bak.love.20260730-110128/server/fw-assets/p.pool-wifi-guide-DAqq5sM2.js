@@ -1,0 +1,124 @@
+import { jsx } from "react/jsx-runtime";
+import { x as BREADCRUMBS, y as FAQS, i as heroImage } from "./router-CKC3KRbd.js";
+import { T as ToolPlaceholderPage } from "./tool-placeholder-D1f51_Mp.js";
+import "@tanstack/react-router";
+import "react";
+import "@tanstack/react-query";
+import "./site-footer-defaults-asWdr-hi.js";
+import "./cities.functions-DKA5O9eJ.js";
+import "../server.js";
+import "node:async_hooks";
+import "h3-v2";
+import "@tanstack/router-core";
+import "seroval";
+import "@tanstack/history";
+import "@tanstack/router-core/ssr/client";
+import "@tanstack/router-core/ssr/server";
+import "@tanstack/react-router/ssr/server";
+import "zod";
+import "./client.server-D5ro3rAQ.js";
+import "@supabase/supabase-js";
+import "./auth-middleware-Bd-cw3tB.js";
+import "./createMiddleware-BvN2ghIY.js";
+import "./site-origin-DalDu5p3.js";
+import "./city-slug-Bqls2qOy.js";
+import "@tanstack/zod-adapter";
+import "./client-Dh5RMKgP.js";
+import "./transactional-email.server-BoL6nxoQ.js";
+import "@react-email/components";
+import "./_unsubscribe-footer-DXp0Y_3B.js";
+import "lucide-react";
+import "./states-UIdvqlKs.js";
+import "./courses.server-Bfz1suZ4.js";
+import "@lovable.dev/webhooks-js";
+import "crypto";
+import "./emailit-DRsipvVx.js";
+import "@lovable.dev/email-js";
+import "./reauthentication-CCohUDQL.js";
+import "node:crypto";
+import "./sms.server-BJah3xxU.js";
+import "./sharetribe-mirror.server-D8Jwl9-L.js";
+import "./sharetribe.server-BZ7y3aGI.js";
+import "./listing-sync.server-C2GpYdIM.js";
+import "./renter-drip.server-BojrhpHE.js";
+import "node:fs";
+import "node:path";
+import "./host-drip.server-BKqTDlWn.js";
+import "./ig-lead-hunter.server-BzgLZUba.js";
+import "./gsc-sync.server-BxVUz4Yz.js";
+import "./followup-reminders.server-cq9Qg0-p.js";
+import "./blog-autogen.server-CC6RPtlf.js";
+import "./auto-outreach.server-DLLupcxB.js";
+import "./alias-backfill.server-CG8T_N6R.js";
+import "./academy-config-B5vgptOj.js";
+const WHY_EXISTS = {
+  heading: "Why a pool wifi guide exists",
+  paragraphs: ["Wifi is the number-three complaint in pool rental reviews, behind temperature and cleanliness, and ahead of parking. Hosts assume their home wifi reaches the backyard because their kids can scroll TikTok on the patio. They forget that the pool deck is another 30 feet past the patio, through a privacy fence, with three loungers full of metal frames bouncing the signal sideways.", `Most hosts only discover the problem the first time a guest leaves a 4-star review that says "great spot, wifi was spotty at the deep end." That single line drops your conversion rate by 8 to 12 percent over the next dozen prospective bookings, and there's no way to remove it. The fix is a $120 mesh node and one afternoon. The cost of not fixing it is two seasons of mediocre reviews.`, "This guide walks through the actual fix path used by hosts in the Pool Host Academy: how to measure what you actually have at the pool, the three setups that work, the two that don't, and how to wire guest access so visitors never see your security cameras, your work laptop, or your smart home."]
+};
+const WHO_USES = {
+  heading: "Who this guide is for",
+  paragraphs: ['Brand-new hosts in their first booking window get the most value. You can fix wifi before any guest sees it, and avoid baking the complaint into your earliest reviews — the ones that determine whether you ever break out of "new host" search position.', "Established hosts coming off a wifi-related review need this guide to triage fast. Most of you have a perfectly fine ISP plan and just have the router in the wrong room. A 20-minute mesh setup and a guest network reset usually closes the issue before the next booking.", "Hosts with detached pool houses, casitas, or cabanas need the dedicated outdoor access point section. A mesh node inside the house won't punch through stucco walls plus 40 feet of open yard. You need a hardwired outdoor unit, and the guide covers the two models that actually survive a wet summer in the sun."]
+};
+const HOW_IT_WORKS = {
+  heading: "How to set up pool wifi the right way",
+  steps: [{
+    title: "Measure what you actually have at the pool",
+    body: "Stand on the deck farthest from your house. Run a speedtest on your phone. Note both download and upload. Anything under 15 Mbps down at that spot means a guest's video call will stutter, period. Don't trust the dashboard your router shows — trust the speedtest at the chair where the guest will sit."
+  }, {
+    title: "Decide between mesh and outdoor AP",
+    body: "Pool within 50 feet of the house, signal passes through one wall: a single mesh node by the back door fixes it. Pool more than 75 feet away or behind a detached structure: budget for a hardwired outdoor access point and a 50-foot run of outdoor-rated ethernet."
+  }, {
+    title: "Set up a guest network with its own SSID",
+    body: `Every router made in the last six years supports this. Name it something obvious like "PoolGuest" so guests find it on arrival. Set a fresh password — not your main one — and toggle "client isolation" so guests on the network can't even see each other's devices, let alone yours.`
+  }, {
+    title: "Cap bandwidth and block sketchy traffic",
+    body: "Most routers let you cap the guest network's total bandwidth and block BitTorrent at the firewall. Cap it at 25 to 50 Mbps so a guest's 4K stream doesn't kill your own work-from-home call. Block torrents so the next DMCA notice from your ISP doesn't have your name on it."
+  }, {
+    title: "Print the wifi card and stage it poolside",
+    body: "Laminated card with SSID, password, and a QR code that auto-connects. Tape it to the cabana wall, the fridge, and the inside of the bathroom door. Guests forget where it was 20 seconds after you tell them. Three copies, three locations, zero text messages asking for the password mid-booking."
+  }, {
+    title: "Re-test every 90 days",
+    body: "ISPs throttle, mesh nodes lose their place, neighbors change channels and step on yours. Rerun the poolside speedtest seasonally. If you've dropped under 15 Mbps, the fix is almost always a reboot, a channel change, or repositioning the mesh node 4 feet higher up."
+  }]
+};
+const SCENARIOS = {
+  heading: "Common scenarios",
+  items: [{
+    title: "The suburban pool, 35 feet from a single-story house",
+    body: "Single mesh node on a kitchen counter, line of sight to the patio door. 50 to 80 Mbps poolside, no dead spots, $120 total spend, 15-minute install. Most hosts in this profile don't need anything more."
+  }, {
+    title: "The two-story house with the pool tucked behind a privacy fence",
+    body: "Wifi through two walls and an outdoor fence drops below usable. Mesh node by the back door plus a second node on the patio roof. Roughly $250 total. Solves it for the long-term."
+  }, {
+    title: "The detached pool house or casita",
+    body: "Stucco walls and 60+ feet of open yard kill mesh. Run outdoor-rated Cat6 from your main router to a wall-mounted outdoor access point (Ubiquiti UniFi U6-Mesh is the safest pick). Roughly $200 in hardware plus 2 hours of cable running. Lasts 10 years."
+  }, {
+    title: "The host with security cameras and a smart home",
+    body: "Don't even consider sharing the main network. Set the guest network on a separate VLAN if your router supports it. Guests can use wifi all day and never see, ping, or reach a single one of your IoT devices. Pair with the digital waiver so guests acknowledge the network terms in writing."
+  }]
+};
+const PROPS = {
+  eyebrow: "Free guide · Coming soon",
+  h1: "Pool wifi guide: setup, range, and guest access",
+  intro: "Most pool wifi complaints come from one missing $120 mesh node. This guide walks through what to actually measure, the three setups that work, and how to give guests internet access without exposing your cameras, work laptop, or smart home.",
+  heroSrc: heroImage,
+  heroAlt: "Poolside lounger with a phone showing a wifi speedtest result above 50 Mbps, mesh node visible through the back door",
+  bullets: ["Measure real poolside speed (not the router dashboard)", "Pick mesh vs. outdoor access point in 60 seconds", "Set up a guest SSID guests can't escape from", "Cap bandwidth and block sketchy traffic at the router", "Print scannable QR wifi cards for the cabana", "Re-test every 90 days, fix drift before it becomes a review"],
+  whyExists: WHY_EXISTS,
+  whoUses: WHO_USES,
+  howItWorks: HOW_IT_WORKS,
+  scenarios: SCENARIOS,
+  faqs: FAQS,
+  primaryCta: {
+    label: "Notify me when it launches",
+    href: "/p/hosting"
+  },
+  secondaryCta: {
+    label: "See all free host tools",
+    href: "/p/free-host-tools"
+  }
+};
+const SplitComponent = () => /* @__PURE__ */ jsx(ToolPlaceholderPage, { ...PROPS, breadcrumbItems: BREADCRUMBS });
+export {
+  SplitComponent as component
+};

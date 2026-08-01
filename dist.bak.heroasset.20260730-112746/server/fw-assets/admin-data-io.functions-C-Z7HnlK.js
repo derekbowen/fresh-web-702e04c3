@@ -1,0 +1,55 @@
+import { c as createSsrRpc } from "./cities.functions-DKA5O9eJ.js";
+import { r as requireSupabaseAuth } from "./auth-middleware-Bd-cw3tB.js";
+import { c as createServerFn } from "../server.js";
+const TABLES = ["content_plan", "content_pages"];
+createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => {
+  if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+  return d;
+}).handler(createSsrRpc("8ec52f704257d0a24eee1ce5ae9039e676ce015f215602c840c8d2ca6240f65e"));
+createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => {
+  if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+  if (!d.csv) throw new Error("Empty CSV");
+  if (d.csv.length > 25 * 1024 * 1024) throw new Error("CSV too large (>25MB)");
+  return d;
+}).handler(createSsrRpc("a717a5d95a084d2805aa97e8eaee46426243ec90e90c4bf7a2cf1d26c4100377"));
+const importTable = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => {
+  if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+  if (!d.csv || d.csv.length === 0) throw new Error("Empty CSV");
+  if (d.csv.length > 25 * 1024 * 1024) throw new Error("CSV too large (>25MB)");
+  return d;
+}).handler(createSsrRpc("86c0d5d22d23d76931b7a9499f0aefa088e7598a5f90171665c66698e12bff85"));
+const getImportSchema = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => {
+  if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+  return d;
+}).handler(createSsrRpc("9c54f877a8bb397df8cee4cecca63b33dad10f189978d03d056e3fad2644b23e"));
+const lookupExistingKeys = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => {
+  if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+  if (!Array.isArray(d.values)) throw new Error("values must be an array");
+  if (d.values.length > 5e3) throw new Error("Too many keys (max 5000 per call)");
+  return d;
+}).handler(createSsrRpc("1420b7be3e7eeedba6bd4fcf0cfbb88052ef0f5be697cdbbd173c3f1a2b32534"));
+const importTableRows = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => {
+  if (!TABLES.includes(d.table)) throw new Error("Invalid table");
+  if (!Array.isArray(d.rows)) throw new Error("rows must be an array");
+  if (d.rows.length === 0) throw new Error("rows is empty");
+  if (d.rows.length > 500) throw new Error("Chunk too large (max 500 rows)");
+  return d;
+}).handler(createSsrRpc("2367840c643efe5074c61f17e21d25d61b5198cdcb733373adc6874491678f54"));
+export {
+  importTable as a,
+  getImportSchema as g,
+  importTableRows as i,
+  lookupExistingKeys as l
+};

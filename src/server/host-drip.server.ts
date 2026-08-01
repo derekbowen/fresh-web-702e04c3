@@ -17,6 +17,20 @@ import path from "node:path";
 const FROM = "Pool Rental Near Me <support@poolrentalnearme.com>";
 const SITE_URL = "https://www.poolrentalnearme.com";
 
+// Look up a host_subscriber by Sharetribe id OR email without interpolating
+// untrusted values into a PostgREST .or() filter string (a crafted email could
+// otherwise break or manipulate the filter). Values go through .eq() so the
+// client encodes them safely.
+async function findSubscriberByIdOrEmail(stUserId: string, email: string) {
+  const sel = "id, sequence_scheduled, status";
+  const { data: byId } = await supabaseAdmin
+    .from("host_subscribers").select(sel).eq("st_user_id", stUserId).maybeSingle();
+  if (byId) return byId;
+  const { data: byEmail } = await supabaseAdmin
+    .from("host_subscribers").select(sel).eq("email", email).maybeSingle();
+  return byEmail ?? null;
+}
+
 // Templates are static HTML on disk. Read once per process.
 const TEMPLATE_CACHE = new Map<string, string>();
 function loadTemplate(kind: string): string {
@@ -114,11 +128,7 @@ export async function pollSharetribeHosts(): Promise<{
     for (const [stUserId, info] of seenAuthors) {
       const name = `${info.firstName} ${info.lastName}`.trim() || null;
 
-      const { data: existing } = await supabaseAdmin
-        .from("host_subscribers")
-        .select("id, sequence_scheduled, status")
-        .or(`st_user_id.eq.${stUserId},email.eq.${info.email}`)
-        .maybeSingle();
+      const existing = await findSubscriberByIdOrEmail(stUserId, info.email);
 
       let subscriberId: string;
       if (existing) {
@@ -367,4 +377,115 @@ export async function queueBroadcast(kind: string): Promise<{
   }
 
   return { queued: rows.length, skipped, total: list.length };
+}
+
+// ---------- New-signup enrollment (welcome drip, new-signups-only) ----------
+
+/**
+ * Enroll only genuinely NEW provider signups into the welcome drip.
+ * Uses host_drip_state.last_st_created_at as a high-water mark. On the very
+ * first run (null HWM) it seeds the mark to "now" and enrolls nobody — so we
+ * never backfill the whole host base. Idempotent: subscribers whose sequence
+ * is already scheduled are skipped. Provider-intent only (userType==='provider').
+ */
+export async function enrollNewSignups(): Promise<{
+  fetched: number; enrolled: number; skipped: number; hwm: string;
+}> {
+  const { integrationGet } = await import("@/server/sharetribe.server");
+  const nowISO = new Date().toISOString();
+
+  const { data: state } = await supabaseAdmin
+    .from("host_drip_state").select("*").eq("id", 1).maybeSingle();
+  let hwm: string | null = (state as any)?.last_st_created_at ?? null;
+  if (!hwm) {
+    await supabaseAdmin.from("host_drip_state")
+      .update({ last_st_created_at: nowISO, updated_at: nowISO }).eq("id", 1);
+    return { fetched: 0, enrolled: 0, skipped: 0, hwm: nowISO };
+  }
+
+  let page = 1, fetched = 0, enrolled = 0, skipped = 0, newest = hwm;
+  // Advance the high-water mark only past users we FULLY handled (enrolled or
+  // legitimately skipped). The first transient failure freezes the cursor so
+  // the next run resumes there instead of skipping that new host forever.
+  let advancing = true;
+  try {
+    while (page <= 20) {
+      const res: any = await integrationGet("/users/query", {
+        createdAtStart: hwm,
+        sort: "createdAt",
+        perPage: 100,
+        page,
+        "fields.user": "email,createdAt,profile.firstName,profile.lastName,profile.publicData",
+      });
+      const users: any[] = Array.isArray(res?.data) ? res.data : [];
+      if (users.length === 0) break;
+
+      for (const u of users) {
+        const id = typeof u.id === "string" ? u.id : u.id?.uuid || u.id?._ref;
+        const attr = u.attributes || {};
+        const createdAt: string | undefined = attr.createdAt;
+        let handled = false;
+        try {
+          const email = (attr.email || "").toLowerCase().trim();
+          const userType = attr.profile?.publicData?.userType;
+          if (!id || !email) {
+            skipped++;
+            handled = true; // permanent skip — nothing to enroll
+          } else if (userType !== "provider") {
+            skipped++;
+            handled = true; // permanent skip — not a provider signup
+          } else {
+            fetched++;
+            const name =
+              `${attr.profile?.firstName || ""} ${attr.profile?.lastName || ""}`.trim() || null;
+            const existing = await findSubscriberByIdOrEmail(id, email);
+            if (existing) {
+              if ((existing as any).sequence_scheduled || (existing as any).status !== "active") {
+                skipped++;
+                handled = true; // already enrolled / inactive — permanent skip
+              } else {
+                await supabaseAdmin.from("host_subscribers")
+                  .update({ st_user_id: id, email, name, last_synced_at: nowISO })
+                  .eq("id", (existing as any).id);
+                await scheduleSequence((existing as any).id, new Date());
+                enrolled++;
+                handled = true;
+              }
+            } else {
+              const { data: ins } = await supabaseAdmin
+                .from("host_subscribers")
+                .insert({ st_user_id: id, email, name, last_synced_at: nowISO })
+                .select("id").single();
+              if (!ins) {
+                skipped++; // TRANSIENT failure — leave handled=false so we retry
+              } else {
+                await scheduleSequence((ins as any).id, new Date());
+                enrolled++;
+                handled = true;
+              }
+            }
+          }
+        } catch (e: any) {
+          console.error("enrollNewSignups user error:", e?.message || e);
+          // handled stays false → freeze the cursor at this user
+        }
+
+        if (handled && advancing) {
+          if (createdAt && createdAt > newest) newest = createdAt;
+        } else if (!handled) {
+          advancing = false;
+        }
+      }
+
+      const totalPages = res?.meta?.totalPages ?? 1;
+      if (page >= totalPages) break;
+      page++;
+    }
+  } catch (err: any) {
+    console.error("enrollNewSignups error:", err?.message || err);
+  }
+
+  await supabaseAdmin.from("host_drip_state")
+    .update({ last_st_created_at: newest, updated_at: nowISO }).eq("id", 1);
+  return { fetched, enrolled, skipped, hwm: newest };
 }

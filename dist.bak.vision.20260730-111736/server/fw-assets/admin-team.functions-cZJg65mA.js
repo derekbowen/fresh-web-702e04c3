@@ -1,0 +1,47 @@
+import { c as createSsrRpc } from "./cities.functions-DKA5O9eJ.js";
+import { z } from "zod";
+import { r as requireSupabaseAuth } from "./auth-middleware-C3cX-s7a.js";
+import { c as createServerFn } from "../server.js";
+const getAdminIdentity = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).handler(createSsrRpc("50aa65b5b9181806d2feddede74d5380bd60351713a76029858b88959742b3c8"));
+const listAdmins = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).handler(createSsrRpc("89e2192d03c338025d51b96431f650ce8526adc36a6e06c87a128df76a6cd303"));
+const createAdminUser = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  full_name: z.string().optional()
+}).parse(d)).handler(createSsrRpc("15d9f54d7fe9711865453d5c84d6a89717f660a1fa6ca993cab1b796bb5bbc6c"));
+const setAdminPassword = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => z.object({
+  user_id: z.string().uuid(),
+  password: z.string().min(8)
+}).parse(d)).handler(createSsrRpc("d2b27083bbb30769e31d762ae698178df643c755fca2fe92efce05d347cf5e8a"));
+const sendAdminPasswordReset = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => z.object({
+  email: z.string().email()
+}).parse(d)).handler(createSsrRpc("d05505b209fbcec1efdc32a7133ad7faf1db5e66b0720ed7cd6640020c4851a5"));
+const grantAdmin = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => z.object({
+  identifier: z.string().min(3)
+}).parse(d)).handler(createSsrRpc("557134d69be0875c7502382a6a37b9427b65f248b03f22baa19c81bb31c4c8e5"));
+const revokeAdmin = createServerFn({
+  method: "POST"
+}).middleware([requireSupabaseAuth]).inputValidator((d) => z.object({
+  user_id: z.string().uuid()
+}).parse(d)).handler(createSsrRpc("0c129d6bd923c4f8404b9df18bac9feb6db7d9a42c4ebfac9bc676d84b2838d8"));
+export {
+  sendAdminPasswordReset as a,
+  getAdminIdentity as b,
+  createAdminUser as c,
+  grantAdmin as g,
+  listAdmins as l,
+  revokeAdmin as r,
+  setAdminPassword as s
+};

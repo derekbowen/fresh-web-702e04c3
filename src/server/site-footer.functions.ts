@@ -32,6 +32,7 @@ export async function loadSiteFooter(): Promise<SiteFooterSettings> {
       explore_links: arr(row.explore_links, DEFAULT_FOOTER.explore_links),
       host_links: arr(row.host_links, DEFAULT_FOOTER.host_links),
       company_links: arr(row.company_links, DEFAULT_FOOTER.company_links),
+      values_links: arr(row.values_links, DEFAULT_FOOTER.values_links),
       compare_links: arr(row.compare_links, DEFAULT_FOOTER.compare_links),
       popular_markets: arr(row.popular_markets, DEFAULT_FOOTER.popular_markets),
       socials: arr(row.socials, DEFAULT_FOOTER.socials),

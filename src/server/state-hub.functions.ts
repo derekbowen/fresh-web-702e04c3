@@ -70,6 +70,7 @@ async function fetchAllHostAcqSlugs(): Promise<string[]> {
       .from("content_pages")
       .select("slug")
       .like("slug", `${HOST_ACQ_PREFIX}%`)
+      .eq("is_published", true)
       .range(from, from + PAGE - 1);
     if (error || !data || data.length === 0) break;
     for (const r of data) out.push(r.slug);

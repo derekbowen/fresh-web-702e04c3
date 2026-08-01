@@ -153,7 +153,7 @@ export function HostAcqCityTemplate({
         sameAs: [
           "https://www.facebook.com/poolrentalnearme",
           "https://www.instagram.com/poolrentalnearme",
-          "https://x.com/poolrentalnearme",
+          "https://x.com/poolrentalnearm",
         ],
       },
     ],
@@ -570,7 +570,7 @@ export function HostAcqCityTemplate({
                   LinkedIn
                 </a>
                 <a
-                  href="https://www.amazon.com/stores/Derek-Bowen/author"
+                  href="https://www.amazon.com/stores/Derek-Bowen/author/B0FJM55Y12"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-full border border-border bg-background px-4 py-2 text-foreground transition hover:bg-muted"
