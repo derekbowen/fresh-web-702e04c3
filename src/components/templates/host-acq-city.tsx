@@ -255,7 +255,7 @@ export function HostAcqCityTemplate({
 
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <span className="text-primary">✓</span> 0% host fees (2026)
+                  <span className="text-primary">✓</span> 0% host fees
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="text-primary">✓</span> $2M coverage included
@@ -285,7 +285,7 @@ export function HostAcqCityTemplate({
                   at ~${hourlyRate}/hr · 12 booked hrs/week
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-5 text-center">
-                  <Stat label="Host fee" value="0%" sub="vs 15%+ (2026)" />
+                  <Stat label="Host fee" value="0%" sub="vs 15%+ elsewhere" />
                   <Stat label="Coverage" value="$2M" sub="included" />
                   <Stat label="Payout" value="24h" sub="direct" />
                 </div>

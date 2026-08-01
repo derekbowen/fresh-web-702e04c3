@@ -234,7 +234,7 @@ function GiggsterCityPage() {
             so the highest-yield strategy for a camera-ready pool is to list on
             <em> both</em>: production rates on Giggster (weekday) and
             recreational rates on Pool Rental Near Me (weekend). On a same-size
-            host payout, PRNM's 0% commission (2026) keeps more in your pocket per
+            host payout, PRNM's 0% commission keeps more in your pocket per
             booking; Giggster's premium per-hour production rates can make up
             the difference on a smaller number of larger bookings.
           </>

@@ -71,7 +71,7 @@ function StatStrip() {
     <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
       {[
         { k: "$2M", v: "Liability per booking" },
-        { k: "0%", v: "Host fee (2026)" },
+        { k: "0%", v: "Host fee" },
         { k: "$0", v: "To list your pool" },
         { k: "24/7", v: "US-based support" },
       ].map((s) => (
