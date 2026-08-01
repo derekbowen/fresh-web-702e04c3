@@ -245,6 +245,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <p className="mx-auto mt-4 max-w-xl text-lg font-semibold text-white sm:text-xl">
               You keep 100% of every booking. List your pool free.
             </p>
+            <p className="mx-auto mt-3 max-w-md text-sm font-medium opacity-90">
+              On a $1,000 month: Swimply hosts keep roughly $700&ndash;$850. PRNM hosts keep $1,000.
+            </p>
             <div className="mt-7">
               <a
                 href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
