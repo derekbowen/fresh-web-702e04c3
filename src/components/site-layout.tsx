@@ -544,7 +544,6 @@ function SiteFooterInner() {
         </div>
 
         <div className="mt-12 border-t border-border pt-10">
-          </div>
           <div className="mt-8 border-t border-border pt-6 text-xs leading-relaxed text-muted-foreground">
             Pool Rental Near Me is operated by PRNM Corp, a Delaware C-Corporation.{" "}
             <a href={rel("/p/about-our-company")} className="font-medium text-foreground hover:text-primary">
