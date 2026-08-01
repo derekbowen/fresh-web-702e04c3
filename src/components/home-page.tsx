@@ -948,19 +948,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   </a>
                 ))}
               </div>
-              <a
-                href="https://apps.apple.com/us/app/pool-rental-near-me-swim-fun/id6737762373"
-                onClick={(e) => {
-                  if (typeof navigator !== "undefined" && /android/i.test(navigator.userAgent)) {
-                    e.preventDefault();
-                    window.location.href = "https://play.google.com/store/apps/details?id=com.poolrentalnearme.app.prod";
-                  }
-                }}
-                className="mt-5 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white"
-                style={{ backgroundColor: "#0b2733" }}
-              >
-                📱 Get the app — it knows your phone
-              </a>
               <p className="mt-4 text-[15px] font-extrabold text-foreground">Made with ❤️ for pool people.</p>
             </div>
           </div>
