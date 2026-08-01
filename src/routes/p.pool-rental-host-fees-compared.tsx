@@ -12,7 +12,7 @@ import {
 const PATH = "/p/pool-rental-host-fees-compared";
 const TITLE = "Pool Rental Host Fees Compared 2026: Swimply vs PRNM (0% Fees)";
 const DESCRIPTION =
-  "See what Swimply (15–20%+ plus a ~$29/mo Premium Pass), Peerspace and Giggster charge hosts — vs 0% host fees on Pool Rental Near Me for 2026. Sourced from each platform's terms.";
+  "See what Swimply (15–20%+ plus a ~$29/mo Premium Pass), Peerspace and Giggster charge hosts — vs 0% host fees on Pool Rental Near Me. Sourced from each platform's terms.";
 const LAST_UPDATED = "2026-07-09";
 
 type Row = {
@@ -160,8 +160,7 @@ function FeesComparedPage() {
         </p>
 
         <p className="mt-6 text-lg leading-relaxed">
-          Pool Rental Near Me charges hosts 0% commission on every booking through
-          2026 — you keep 100% — the lowest published host fee of any major
+          Pool Rental Near Me charges hosts 0% commission on every booking — you keep 100% — the lowest published host fee of any major
           peer-to-peer pool rental marketplace. Swimply, Peerspace, and Giggster each take 15% or
           more from host earnings. Here is the side-by-side breakdown, sourced
           from each platform's published terms.
