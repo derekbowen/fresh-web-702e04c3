@@ -111,6 +111,10 @@ function buildFaqs(city: CityRow) {
   const isHub = cityTier(city) === "hub";
   return [
     {
+      q: `If hosts never pay a fee, how does Pool Rental Near Me make money?`,
+      a: `Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.`,
+    },
+    {
       q: `Is Giggster or Pool Rental Near Me better for a pool in ${city.name}?`,
       a: isHub
         ? `${city.name} is one of Giggster's strongest production-hub markets, so a camera-ready ${city.name} pool can earn premium per-hour production rates ($150–$500+/hour) on Giggster while still capturing recreational weekend bookings ($45–$150/hour) on Pool Rental Near Me. The smart play in ${city.name} is to list on both, segment your calendar (weekday production / weekend recreational), and let each platform's buyer base do its job.`

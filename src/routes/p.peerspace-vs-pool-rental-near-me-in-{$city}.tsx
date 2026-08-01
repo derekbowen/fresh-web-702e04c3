@@ -75,8 +75,12 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$c
 function buildFaqs(city: CityRow) {
   return [
     {
+      q: `If hosts never pay a fee, how does Pool Rental Near Me make money?`,
+      a: `Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.`,
+    },
+    {
       q: `Is Peerspace or Pool Rental Near Me better in ${city.name}?`,
-      a: `For typical residential pools in ${city.name}, ${city.state} renting at $45–$150/hour for recreational use, Pool Rental Near Me is the better-fit channel: 0% host fee (2026) vs Peerspace's 20%, $2M liability vs $1M, and pool-specific guest demand. Peerspace makes sense in ${city.name} if your pool is luxury/photogenic and you want production crew or event-planner bookings at $200+/hour.`,
+      a: `For typical residential pools in ${city.name}, ${city.state} renting at $45–$150/hour for recreational use, Pool Rental Near Me is the better-fit channel: 0% host fee vs Peerspace's 20%, $2M liability vs $1M, and pool-specific guest demand. Peerspace makes sense in ${city.name} if your pool is luxury/photogenic and you want production crew or event-planner bookings at $200+/hour.`,
     },
     {
       q: `What does Peerspace charge ${city.name} pool hosts?`,
