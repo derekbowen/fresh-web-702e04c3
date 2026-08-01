@@ -45,7 +45,7 @@ export const HOST_SEQUENCE: HostStep[] = [
   {
     step: 4,
     kind: "05-share-link",
-    subject: "Got customers asking? Share your booking link, keep 90%",
+    subject: "Got customers asking? Share your booking link, keep 100%",
     day: 30,
   },
   {

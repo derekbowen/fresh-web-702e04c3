@@ -434,7 +434,7 @@ function LaSaltwaterPage() {
             </h2>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {[
-                { label: "Flat host fee", prnm: "10%", other: "15–30%+" },
+                { label: "Host fee", prnm: "0% — never", other: "15–30%+" },
                 { label: "Direct host messaging", prnm: "Yes", other: "Limited" },
                 { label: "US-based support", prnm: "Yes", other: "Varies" },
               ].map((row) => (

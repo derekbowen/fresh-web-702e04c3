@@ -17,7 +17,7 @@ export const COACHING_TEMPLATES: CoachingTemplate[] = [
     id: "facebook-group",
     label: "Facebook group post",
     channel: "facebook",
-    body: `Just got my pool listed for private hourly rentals through Pool Rental Near Me. It's like Airbnb but for pools — I keep 90% of every booking and the $2M liability insurance is included. Book your group, a kid's party, or a date night here: [paste your listing URL]`,
+    body: `Just got my pool listed for private hourly rentals through Pool Rental Near Me. It's like Airbnb but for pools — I keep 100% of every booking and the $2M liability insurance is included. Book your group, a kid's party, or a date night here: [paste your listing URL]`,
   },
   {
     id: "text-a-friend",
