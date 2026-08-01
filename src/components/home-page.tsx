@@ -302,7 +302,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               Two ways to fall for summer.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
-              Book a swimming pool rental as a guest, or list your private pool and earn $3K–$10K/month as a host.
+              Book a swimming pool rental as a guest, or list your private pool — hosts like Katy charge $100/hour, and you keep all of it.
             </p>
             <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
               {/* Card A — Renter */}
@@ -338,7 +338,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="text-4xl" aria-hidden>💙</span>
                 <h3 className="mt-3 text-xl font-bold">I'm sharing my pool</h3>
                 <p className="mt-2 text-sm font-medium" style={{ color: "#46323c" }}>
-                  If you can text a photo, you can host. We set it all up with you — $2M Hartford-backed insurance, 0% host fees through 2026, you keep every dollar. Earn $3K-$10K a month.
+                  If you can text a photo, you can host. We set it all up with you — $2M Hartford-backed insurance, 0% host fees through 2026, you keep every dollar. Hosts like Katy charge $100/hour — eight booked hours a weekend is $800.
                 </p>
                 <span
                   className="mt-auto inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold text-white"
@@ -904,7 +904,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 Got a pool? Turn it into income.
               </h2>
               <p className="mt-2 max-w-2xl text-primary-foreground/85">
-                Top hosts earn $3,000–$10,000 per month renting their backyard a few hours at a time. Free to list, insured on every booking.
+                Hosts like Katy charge $100/hour — eight booked hours a weekend is $800, and you keep all of it. Free to list, insured on every booking.
               </p>
             </div>
             <a
