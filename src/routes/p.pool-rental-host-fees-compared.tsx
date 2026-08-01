@@ -62,7 +62,7 @@ const TABLE: Row[] = [
 const faqs = [
   {
     q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
-    a: "Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
   },
   {
     q: "How much does Swimply charge hosts?",
@@ -199,14 +199,19 @@ function FeesComparedPage() {
 
         <section className="mt-10 rounded-lg border-l-4 border-blue-600 bg-blue-50 p-5">
           <h3 className="text-lg font-bold text-blue-900">
-            What 5% of every booking actually means
+            What 0% host fees actually mean
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-blue-950">
-            A host renting their pool at $75/hour for 20 hours per week keeps
-            roughly $1,350 more per month on PRNM than on Swimply — purely from
-            the 5-point fee gap. Across a 20-week pool season that is $27,000
-            in additional take-home, before counting the cost of self-funded
-            vs carrier-backed insurance.
+            A host renting their pool at $75/hour for 20 hours per week grosses
+            $1,500 a week. On PRNM you keep all of it — on Swimply's 15% host
+            fee, $225 of every week goes to the platform. Across a 20-week pool
+            season that is $4,500 in additional take-home, before counting the
+            cost of self-funded vs carrier-backed insurance.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-blue-950">
+            Total take rate: Swimply&rsquo;s is roughly 25% combined (host fee
+            plus guest fee). Ours is 15% total, all paid by the guest at
+            checkout &mdash; hosts pay nothing.
           </p>
         </section>
 

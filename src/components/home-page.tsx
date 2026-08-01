@@ -56,7 +56,7 @@ export const HOMEPAGE_FAQS = [
   },
   {
     q: "How does Pool Rental Near Me make money?",
-    a: "Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
   },
 ];
 
@@ -278,9 +278,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </a>
             </div>
             <p className="mx-auto mt-6 max-w-2xl text-[11px] leading-relaxed text-white/70 sm:text-xs">
-              Hosts never pay a fee. We make money from a small guest service fee at
-              checkout, which covers payment processing, $2M insurance on every booking,
-              and 24/7 support. Hosts are the business&nbsp;&mdash; we don&rsquo;t tax the business.{" "}
+              Hosts never pay a fee. We make money from one clear service fee guests
+              pay at checkout, which covers payment processing, $2M insurance on every
+              booking, and 24/7 support. Hosts are the business&nbsp;&mdash; we don&rsquo;t tax the business.{" "}
               <a
                 href="/legal-and-compliance/terms-of-service-pool-rental-near-me"
                 className="underline underline-offset-2 hover:text-white"
