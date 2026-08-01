@@ -230,8 +230,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               Keep doing it. Add your pool here too and keep 100% of every booking we send you. No exclusivity, no host fees, no catch.
             </p>
             <div className="mt-3.5 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-5">
-              <a href="/p/course/migrating-from-swimply-to-prnm-complete-switch-guide" className="text-sm font-semibold text-primary underline-offset-4 hover:underline">Switching from Swimply &rarr;</a>
-              <a href="/p/course/multi-platform-hosting-cross-listing-prnm-swimply-peerspace" className="text-sm font-semibold text-primary underline-offset-4 hover:underline">Cross-listing guide &rarr;</a>
+              <a href="/p/course/migrating-from-swimply-to-prnm-complete-switch-guide" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-4 hover:underline">Switching from Swimply &rarr;</a>
+              <a href="/p/course/multi-platform-hosting-cross-listing-prnm-swimply-peerspace" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-4 hover:underline">Cross-listing guide &rarr;</a>
               <a href="/l/draft/00000000-0000-0000-0000-000000000000/new/details" className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary-glow">List your pool &rarr;</a>
             </div>
           </div>
