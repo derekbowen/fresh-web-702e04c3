@@ -17,6 +17,7 @@ const PoolWaitlistForm = lazy(() =>
 import heroPool from "@/assets/pool-hero-default.webp";
 import heroFamilyPool from "@/assets/hero-family-pool-card.webp";
 import loveHero from "@/assets/love-hero.jpg";
+import paradiseHero from "@/assets/paradise-hero.webp";
 import loveFriends from "@/assets/love-friends.jpg";
 import laSaltwaterFeatured from "@/assets/la-saltwater/hero-night.jpg";
 
@@ -57,7 +58,7 @@ export const HOMEPAGE_FAQS = [
 
 // Family pool hero — used for the in-page hero AND the og:image / twitter:image
 // share preview so social CTR matches what visitors actually see on the page.
-export const HOMEPAGE_HERO_IMAGE = heroFamilyPool;
+export const HOMEPAGE_HERO_IMAGE = paradiseHero;
 // Kept exported so existing call sites that wanted the stock fallback still resolve.
 export const HOMEPAGE_HERO_FALLBACK = heroPool;
 
@@ -165,10 +166,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           style={{ minHeight: "60vh" }}
         >
           <img
-            src={loveHero}
+            src={paradiseHero}
             alt=""
             width={1024}
-            height={1024}
+            height={768}
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover"
@@ -176,7 +177,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           <div
             aria-hidden="true"
             className="absolute inset-0"
-            style={{ background: "linear-gradient(to top, rgba(11,39,51,0.82) 0%, rgba(11,39,51,0.28) 45%, rgba(11,39,51,0.05) 100%)" }}
+            style={{ background: "linear-gradient(to top, rgba(11,39,51,0.82) 0%, rgba(11,39,51,0.45) 45%, rgba(11,39,51,0.05) 100%)" }}
           />
           <div className="relative mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 lg:py-24">
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
