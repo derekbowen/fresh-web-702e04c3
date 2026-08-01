@@ -441,6 +441,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
             >
               List your space
               <span className="ml-1.5 rounded-full bg-white/25 px-1.5 py-0.5 text-[10px] font-bold leading-none">0% fees</span>
+              <span className="ml-1.5 rounded-full bg-white/25 px-1.5 py-0.5 text-[10px] font-bold leading-none">0% fees</span>
             </a>
           </div>
         </div>

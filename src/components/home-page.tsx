@@ -195,11 +195,11 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 Find a pool near me&nbsp;&nbsp;&rarr;
               </a>
               <a
-                href="/p/hosting"
-                aria-label="Learn how to list your pool"
-                className="text-sm font-medium text-white/95 underline-offset-4 hover:underline sm:text-base"
+                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                aria-label="List your pool with 0% host fees"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/90 px-8 py-3 text-base font-semibold text-white transition-transform hover:scale-[1.02] sm:text-lg"
               >
-                Have a pool? List it in 10 minutes &rarr;
+                Have a pool? Earn with 0% host fees&nbsp;&rarr;
               </a>
               <a
                 href="/p/pool-rental-app"
