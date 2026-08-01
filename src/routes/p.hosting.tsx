@@ -120,6 +120,10 @@ const COMPARE: Array<[string, string, string]> = [
 
 const FAQS = [
   {
+    q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
+    a: "Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+  },
+  {
     q: "How do I get paid?",
     a: "Guests are charged upfront through Stripe — same as Swimply. We process your payout within 24 hours of each booking ending, with 0% host fees — you keep 100%. Most banks deposit it 1–3 business days later. (Swimply takes 48 hours to start, then 3–7 more days. So your money lands 4–7 days faster with us.)",
   },

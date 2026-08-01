@@ -23,6 +23,10 @@ const DESCRIPTION =
 
 const faqs = [
   {
+    q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
+    a: "Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+  },
+  {
     q: "How much does Swimply take from hosts?",
     a: "Swimply's published Host Service Fee article states hosts keep 70–80% of earnings, meaning Swimply's host take is roughly 20–30% depending on location, regulatory and risk factors. PRNM charges a flat 0% host commission — you keep 100% — with a guest service fee applied at checkout.",
   },

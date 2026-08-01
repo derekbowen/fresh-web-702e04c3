@@ -54,6 +54,10 @@ export const HOMEPAGE_FAQS = [
     q: "Is it free for kids and families?",
     a: "Pricing is set per-hour by each host, often with a per-guest fee for groups over a threshold (e.g. 6 guests). Many family-friendly hosts include kids under 12 free. Check each listing's price breakdown before booking.",
   },
+  {
+    q: "How does Pool Rental Near Me make money?",
+    a: "Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+  },
 ];
 
 // Family pool hero — used for the in-page hero AND the og:image / twitter:image
@@ -746,7 +750,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 Questions? <span className="text-primary">We've thought of everything.</span>
               </h2>
               <p className="mt-3 text-muted-foreground">
-                The four things first-time renters and hosts ask us most.
+                The five things first-time renters and hosts ask us most.
               </p>
               <div className="mt-8 space-y-3">
                 {HOMEPAGE_FAQS.map((f, i) => (

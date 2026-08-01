@@ -26,6 +26,10 @@ const DESCRIPTION =
 
 const faqs = [
   {
+    q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
+    a: "Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+  },
+  {
     q: "What is the Giggster host commission in 2026?",
     a: "Per Giggster's published Help Center article \"How much commission does Giggster take?\" (last updated by Giggster staff April 13, 2023, still live as of May 2026): \"Giggster takes a 19% commission out of the host's total payout (location fee + additional fees (if any)) for the booking.\" Giggster also collects a separate Processing Fee from the renter that scales with the overall cost and features of the booking. Pool Rental Near Me charges a flat 0% host commission — you keep 100% — with a guest service fee applied at checkout.",
   },

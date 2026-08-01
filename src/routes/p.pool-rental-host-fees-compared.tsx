@@ -61,6 +61,10 @@ const TABLE: Row[] = [
 
 const faqs = [
   {
+    q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
+    a: "Hosts never pay a fee. We make money from a small guest service fee at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+  },
+  {
     q: "How much does Swimply charge hosts?",
     a: "Swimply charges hosts roughly 15%–20% per booking, and now promotes a ~$29/month Premium Pass for better search placement and features. On Pool Rental Near Me, host fees are 0% — no commission and no monthly pass — so hosts keep everything they earn.",
   },
