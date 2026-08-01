@@ -1,0 +1,78 @@
+const DEFAULT_FOOTER = {
+  contact_phone: "tel:18889404247",
+  contact_phone_label: "Call us 888-940-4247",
+  contact_phone_hours: "10am - 5pm PST",
+  contact_email: "support@poolrentalnearme.com",
+  bottom_text: "© 2026 PRNM CORP Riverside, Ca 92509",
+  explore_links: [
+    { label: "Search Listings", href: "/s" },
+    { label: "How It Works", href: "/p/how-it-works" },
+    { label: "Neighbors", href: "/p/neighbors" },
+    { label: "Start a Business", href: "/p/hosting" },
+    { label: "Liability Waivers", href: "https://rentalwaivers.com" },
+    { label: "Browse All States", href: "/p/pool-rentals" },
+    { label: "Pool Rental App", href: "/p/pool-rental-app" }
+  ],
+  compare_links: [
+    { label: "Pool Rental Near Me vs Swimply", href: "/p/swimply-alternative-vs-pool-rental-near-me" },
+    { label: "Pool Rental Near Me vs Peerspace", href: "/p/peerspace-vs-pool-rental-near-me" },
+    { label: "Pool Rental Near Me vs Giggster", href: "/p/giggster-vs-pool-rental-near-me" },
+    { label: "Pool Rental Near Me vs ResortPass", href: "/p/resortpass-vs-pool-rental-near-me" },
+    { label: "Pool Rental Near Me vs Airbnb", href: "/p/airbnb-vs-pool-rental-near-me" },
+    { label: "Pool Rental Near Me vs Vrbo", href: "/p/vrbo-vs-pool-rental-near-me" }
+  ],
+  host_links: [
+    { label: "List Your Pool for Free", href: "/l/draft/00000000-0000-0000-0000-000000000000/new/details" },
+    { label: "How Hosting Works", href: "/p/hosting" },
+    { label: "Find Locations Near You", href: "/p/all-locations" },
+    { label: "Earnings Calculator", href: "/p/earnings-calculator" },
+    { label: "Host Pro Tools", href: "/p/free-host-tools" },
+    { label: "Host Connect", href: "https://connect.poolrentalnearme.com" },
+    { label: "HOA Navigation Guide", href: "/p/elearning-academy-hoa-navigation-guide-pool-hosts" },
+    { label: "Host Make More $$$", href: "/p/hosting" },
+    { label: "Affiliate program", href: "/p/affiliate-program" }
+  ],
+  company_links: [
+    { label: "About", href: "/p/how-it-works" },
+    { label: "Careers", href: "/p/careers" },
+    { label: "Terms", href: "/p/terms-of-service" },
+    { label: "Privacy", href: "/p/privacy-policy" },
+    { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
+    { label: "Refer Pool Owners", href: "/p/affiliate" },
+    { label: "Investors", href: "/p/investors" }
+  ],
+  values_links: [
+    { label: "Environment", href: "/p/environment" },
+    { label: "Water Safety", href: "/p/water-safety" },
+    { label: "Accessibility", href: "/p/accessibility" },
+    { label: "Community", href: "/p/neighbors" },
+    { label: "Economic Opportunity", href: "/p/hosting" },
+    { label: "Privacy", href: "/p/privacy-policy" }
+  ],
+  // Slugs map to published `content_pages` (host_acq_city template) so each
+  // link resolves through the /p/$slug dispatcher. The cities table has rows
+  // for the short slugs (los-angeles-ca etc.) but the dispatcher only checks
+  // content_pages — that mismatch was 404ing every link before this fix.
+  popular_markets: [
+    { name: "Los Angeles, CA", slug: "become-a-swimming-pool-host-los-angeles-ca" },
+    { name: "San Diego, CA", slug: "become-a-swimming-pool-host-san-diego-ca" },
+    { name: "Riverside, CA", slug: "become-a-swimming-pool-host-riverside-ca" },
+    { name: "Sacramento, CA", slug: "become-a-swimming-pool-host-sacramento-ca" },
+    { name: "Tampa, FL", slug: "become-a-swimming-pool-host-tampa-fl" },
+    { name: "Scottsdale, AZ", slug: "become-a-swimming-pool-host-scottsdale-az" },
+    { name: "Phoenix, AZ", slug: "become-a-swimming-pool-host-phoenix-az" },
+    { name: "Katy, TX", slug: "become-a-swimming-pool-host-katy-tx" }
+  ],
+  socials: [
+    { label: "Facebook", href: "https://www.facebook.com/poolrentalnearme", icon: "facebook" },
+    { label: "X", href: "https://x.com/poolrentalnearm", icon: "x" },
+    { label: "YouTube", href: "https://www.youtube.com/@poolrentalnearme", icon: "youtube" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/poolrentalnearme", icon: "linkedin" },
+    { label: "Instagram", href: "https://www.instagram.com/poolrentalnearme", icon: "instagram" },
+    { label: "TikTok", href: "https://www.tiktok.com/@poolrentalnearme", icon: "tiktok" },
+    { label: "Pinterest", href: "https://www.pinterest.com/poolrentalnearme", icon: "pinterest" }
+  ]
+};
+export {
+  DEFAULT_FOOTER as D
+};
