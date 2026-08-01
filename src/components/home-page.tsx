@@ -197,10 +197,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </a>
               <a
                 href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
-                aria-label="List your pool with 0% host fees"
+                aria-label="List your pool — keep 100%, zero host fees"
                 className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/90 px-8 py-3 text-base font-semibold text-white transition-transform hover:scale-[1.02] sm:text-lg"
               >
-                Have a pool? Earn with 0% host fees&nbsp;&rarr;
+                Have a pool? Keep 100% &mdash; zero host fees&nbsp;&rarr;
               </a>
             </div>
           </div>
