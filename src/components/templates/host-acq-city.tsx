@@ -80,7 +80,7 @@ export function HostAcqCityTemplate({
   );
   const variantCopy = variant ? getVariantCopy(variant, cityName, stateCode) : null;
 
-  // Tier-tuned monthly earnings band (gross — 0% host fees in 2026)
+  // Tier-tuned monthly earnings band (gross — 0% host fees)
   const lo = Math.round(hourlyRate * 8 * 4); // ~8 hrs/wk
   const hi = Math.round(hourlyRate * 18 * 4); // ~18 hrs/wk
   const earningsBand = `$${lo.toLocaleString()}–$${hi.toLocaleString()}+`;

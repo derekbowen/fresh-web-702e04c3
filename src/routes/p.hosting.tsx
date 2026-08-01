@@ -71,7 +71,7 @@ type Reason = { icon: LucideIcon; title: string; body: string; cta?: { label: st
 const REASONS: Reason[] = [
   {
     icon: DollarSign,
-    title: "Keep 100% — 0% host fees in 2026",
+    title: "Keep 100% — 0% host fees",
     body: "We charge a flat 0% — you keep 100%. Swimply charges 15% to 30% per booking depending on which pricing structure you use. On a $1,000 weekend, you keep the full $1,000 with us versus $700–$850 with them. Over a season, that's thousands in your pocket instead of theirs.",
   },
   {
@@ -615,7 +615,7 @@ function HostingPage() {
             </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                { href: "/p/start-hosting", title: "Start hosting", body: "Earn $1,500–$8,000/month — 0% host fees in 2026, $2M coverage." },
+                { href: "/p/start-hosting", title: "Start hosting", body: "Earn $1,500–$8,000/month — 0% host fees, $2M coverage." },
                 { href: "/p/ai-listing-generator", title: "AI listing generator", body: "Upload one photo, get a booking-ready listing draft." },
                 { href: "/p/pool-heating-cost-calculator", title: "Pool heating cost calculator", body: "Gas vs heat pump vs solar — monthly run-cost and payback." },
                 { href: "/p/pool-rules-generator", title: "Pool rules generator", body: "Printable house rules tuned to your pool — in 60 seconds." },

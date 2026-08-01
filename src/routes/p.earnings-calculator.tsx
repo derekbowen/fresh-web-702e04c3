@@ -12,7 +12,7 @@ const PATH = "/p/earnings-calculator";
 const TITLE =
   "Pool Rental Earnings Calculator — See What Your Pool Could Earn";
 const DESCRIPTION =
-  "Free calculator: estimate how much your backyard pool can earn on Pool Rental Near Me. Adjust hourly rate, hours per week, and season length to see annual income with 0% host fees in 2026 — you keep 100%.";
+  "Free calculator: estimate how much your backyard pool can earn on Pool Rental Near Me. Adjust hourly rate, hours per week, and season length to see annual income with 0% host fees — you keep 100%.";
 
 const PRESETS: Record<string, { rate: number; hpw: number; weeks: number }> = {
   "Warm climate (FL/AZ/TX/CA)": { rate: 50, hpw: 12, weeks: 50 },
@@ -135,7 +135,7 @@ function EarningsCalculatorPage() {
               <p className="mt-4 text-lg text-muted-foreground">
                 See exactly what your backyard pool could earn on Pool Rental
                 Near Me. Adjust your hourly rate, weekly bookings, and swim
-                season — get an honest annual estimate with 0% host fees in 2026 — you keep every dollar.
+                season — get an honest annual estimate with 0% host fees — you keep every dollar.
               </p>
             </div>
           </div>
@@ -232,14 +232,14 @@ function EarningsCalculatorPage() {
                     </span>
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    ≈ {fmt(monthly)}/mo · 0% host fees in 2026
+                    ≈ {fmt(monthly)}/mo · 0% host fees
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-border bg-card p-6 text-sm">
                   <Row label="Gross bookings" value={fmt(gross)} />
                   <Row
-                    label="PRNM host fee (0% in 2026)"
+                    label="PRNM host fee (0%)"
                     value={`− ${fmt(fee)}`}
                     muted
                   />
@@ -292,7 +292,7 @@ function EarningsCalculatorPage() {
               a="Yes — they're based on actual host data. The calculator is intentionally conservative on hours/week. A single 4-hour weekend booking at $50/hr puts you at $200; doing that twice a week for a 30-week season is $12,000 gross."
             />
             <Faq
-              q="Is there really a 0% host fee in 2026?"
+              q="Is there really a 0% host fee?"
               a="Payment processing, $2M liability insurance per booking, guest screening, the booking platform, customer support, and marketing that drives renters to your listing. There are no other fees — no listing fee, no monthly subscription, no per-photo charge."
             />
             <Faq

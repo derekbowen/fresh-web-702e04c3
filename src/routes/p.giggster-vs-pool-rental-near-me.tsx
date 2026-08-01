@@ -259,7 +259,7 @@ function GiggsterComparisonPage() {
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Gross host payout</th>
               <th className="px-4 py-3 text-left font-semibold text-primary">
-                You keep on PRNM (0% in 2026)
+                You keep on PRNM (0%)
               </th>
               <th className="px-4 py-3 text-left font-semibold">
                 You keep on Giggster (19%)
@@ -631,7 +631,7 @@ function GiggsterComparisonPage() {
         Giggster and Pool Rental Near Me are not really competitors — they are{" "}
         <em>complementary</em> marketplaces serving two different pool-rental
         economies. If we had to pick one for a typical residential pool host,
-        PRNM wins on fees (0% vs 19% in 2026), included insurance ($2M / $4M Hartford
+        PRNM wins on fees (0% vs 19%), included insurance ($2M / $4M Hartford
         on every booking vs renter-supplied COI), buyer fit (recreational vs
         production), and pool-specific training (Pool Host Academy vs production
         help center).

@@ -277,7 +277,7 @@ function GiggsterCityPage() {
                 {city.name} gross host payout
               </th>
               <th className="px-4 py-3 text-left font-semibold text-primary">
-                Keep on PRNM (0% in 2026)
+                Keep on PRNM (0%)
               </th>
               <th className="px-4 py-3 text-left font-semibold">
                 Keep on Giggster (19%)
