@@ -71,16 +71,6 @@ const PRIMARY_NAV: NavLink[] = [
 ];
 
 const APP_NAV: NavLink[] = [
-  {
-    label: "iOS app",
-    href: "https://apps.apple.com/us/app/pool-rental-near-me-swim-fun/id6737762373",
-    external: true,
-  },
-  {
-    label: "Google Play",
-    href: "https://play.google.com/store/apps/details?id=com.poolrentalnearme.app.prod",
-    external: true,
-  },
 ];
 
 const LIST_SPACE_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
