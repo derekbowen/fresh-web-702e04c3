@@ -209,7 +209,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {/* ── HOST-LOVE BAND + REAL-POOLS TICKER (c-love) ───────── */}
         <section aria-label="We love pool hosts" className="overflow-hidden text-white" style={{ backgroundColor: "#0EA5E9" }}>
           <p className="mx-auto max-w-3xl px-4 pt-4 text-center text-base font-extrabold">
-            We love pool hosts — it&rsquo;s why this marketplace is what it is. ❤️ 0% host fees. Hosts keep every dollar.
+            We built this for hosts. ❤️ 0% host fees — you keep every dollar you earn.
           </p>
           <div className="mt-2 w-full overflow-hidden pb-3">
             <style>{`@keyframes prnmTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}.prnm-ticker{display:inline-block;white-space:nowrap;will-change:transform;animation:prnmTicker 45s linear infinite}@media (prefers-reduced-motion:reduce){.prnm-ticker{animation:none}}`}</style>
