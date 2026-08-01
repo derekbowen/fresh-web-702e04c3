@@ -56,11 +56,11 @@ async function aiGenerate(channel: "email" | "sms" | "dm", lead: LeadCtx, step: 
   const apiKey = process.env.LOVABLE_API_KEY;
   if (!apiKey) return null;
   const fn = (lead.name || "there").split(" ")[0].slice(0, 40);
-  const sys = `You write friendly, ultra-short outreach for Pool Rental Near Me — a Swimply alternative with a 10% flat host fee (vs 15%+) and $2M liability insurance included. Voice: founder, second person, sentence case, no em dashes, no hype words. Numbers $40-150/hr typical.`;
+  const sys = `You write friendly, ultra-short outreach for Pool Rental Near Me — a Swimply alternative with 0% host fees (vs Swimply's 15%+) and $2M liability insurance included. Voice: founder, second person, sentence case, no em dashes, no hype words. Numbers $40-150/hr typical.`;
   const stepHint = step === 1
     ? "First touch. Warm, curious, ask if they'd consider hosting their pool. One soft CTA."
     : step === 2
-    ? "Second touch (3 days later). Lead with one concrete benefit (10% fee or $2M insurance). One soft CTA."
+    ? "Second touch (3 days later). Lead with one concrete benefit (0% host fees or $2M insurance). One soft CTA."
     : "Last touch (7 days later). Brief, no pressure, leave the door open.";
   const channelHint = channel === "email"
     ? "Output JSON {subject, body}. Body 70-110 words, plain text with line breaks. Sign 'PRNM team'."

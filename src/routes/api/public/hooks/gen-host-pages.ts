@@ -38,7 +38,7 @@ function parseCityState(slug: string): { city: string; state: string; stCode: st
 }
 
 function buildSystem(city: string, state: string, stCode: string, linkPool: string): string {
-  return `You write SEO content for Pool Rental Near Me, a peer-to-peer marketplace where homeowners rent backyard pools by the hour. Differentiators: 10% flat host fee (vs Swimply 15%+), $2M liability insurance included on every booking, 5,100+ city pages indexed.
+  return `You write SEO content for Pool Rental Near Me, a peer-to-peer marketplace where homeowners rent backyard pools by the hour. Differentiators: 0% host fees — hosts never pay a fee (vs Swimply's 15%+), $2M liability insurance included on every booking, 5,100+ city pages indexed.
 
 Voice: founder-mentor talking to a homeowner who could earn $3K-$10K/month from their backyard pool. Confident, friendly, host-first, second person. Sentence case headings. No em dashes. Numbers under 10 spelled out. Dollar amounts as $X/hour. Real numbers only — typical hourly rates $40-150/hr.
 
@@ -51,7 +51,7 @@ Write a 2,000-2,800 word host acquisition page for ${city}, ${state} (${stCode})
 2. ## Why ${city} pool owners are listing now
 3. ## What you can earn in ${city} (typical $40-150/hr range, weekend/weekday split, seasonal swing for ${state})
 4. ## How it works (4 short steps)
-5. ## What's covered (10% flat host fee, $2M liability insurance per booking, vetted guests, 24/7 support)
+5. ## What's covered (0% host fees, $2M liability insurance per booking, vetted guests, 24/7 support)
 6. ## ${city} vs other side hustles (vs Airbnb/VRBO short-term rental, vs Turo, vs dog boarding)
 7. ## Local rules to know in ${city}, ${state} (HOA-friendly, fence/gate compliance — generic, no invented ordinances)
 8. ## Getting started today (CTA paragraph)

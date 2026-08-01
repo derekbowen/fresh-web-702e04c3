@@ -248,7 +248,7 @@ export const getIndexingStats = createServerFn({ method: "GET" })
 
 const SEO_SYSTEM = `
 You write SEO + brand content for Pool Rental Near Me (PRNM), a marketplace where homeowners rent out private pools by the hour.
-Differentiators (mention naturally): 10% flat host fee (vs Swimply's 15%+), $2M liability insurance included.
+Differentiators (mention naturally): 0% host fees — hosts never pay a fee (vs Swimply's 15%+), $2M liability insurance included.
 Voice: confident, friendly, host-first. Short paragraphs. Real, useful copy. No filler. Sentence case headings. No em dashes.
 Format: Markdown only. Use ## and ### headings. Include 3-5 internal links from this set where relevant:
   /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works
@@ -775,7 +775,7 @@ Brand voice rules (apply to ALL output):
 - Numbers under 10 spelled out, 10+ as numerals.
 - Dollar amounts as $X/hour, not "$X per hour".
 - Real numbers only. Typical hourly rates $40-150/hr. Never invent statistics.
-- Differentiators (mention naturally where relevant): 10% flat host fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages indexed.
+- Differentiators (mention naturally where relevant): 0% host fees — hosts never pay a fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages indexed.
 - Internal links to use where relevant: /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works
 - List Your Pool CTA URL: /l/draft/00000000-0000-0000-0000-000000000000/new/details
 `.trim();

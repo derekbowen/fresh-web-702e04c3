@@ -104,7 +104,7 @@ function buildPrompt(row: Row): { system: string; user: string } {
 
   const sharedRules = `
 You write SEO content for Pool Rental Near Me (PRNM), a marketplace where homeowners rent out their private pools by the hour.
-Differentiators to mention naturally: 10% flat host fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages.
+Differentiators to mention naturally: 0% host fees — hosts never pay a fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages.
 Markdown only. Use H2 (##) and H3 (###). Short paragraphs. Real, useful content — no filler, no "in this article we will". Do not invent statistics.
 Internal links allowed: /s, /s?address={City%2C+ST}, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works, /p/waivers, /p/hoa-pool-rental-defense-kit.
 List Your Pool CTA URL: /l/draft/00000000-0000-0000-0000-000000000000/new/details
@@ -124,14 +124,14 @@ Required sections (use ## headings, paraphrase the heading text — don't copy v
 2. What pools rent best here (architectural styles, heated/saltwater/spa, capacity)
 3. Best seasons & peak demand windows for ${cls.city}'s climate
 4. Realistic pricing tips ($/hour ranges, weekend premiums, peak vs shoulder)
-5. Why list on PRNM — 10% flat fee vs Swimply's 15%+, $2M insurance, fast payouts. Link to /p/earnings-calculator and /p/hosting.
+5. Why list on PRNM — 0% host fees vs Swimply's 15%+, $2M insurance, fast payouts. Link to /p/earnings-calculator and /p/hosting.
 6. Nearby cities also strong for hosting (mention 3-5 real cities near ${cls.city} the host could also serve)
 7. FAQ — 5 questions specific to ${cls.city}/${cls.stateName} hosting (insurance, neighbors/HOA, taxes, season, getting started)
 
 End with a one-sentence CTA linking to /l/draft/00000000-0000-0000-0000-000000000000/new/details ("List your pool free").
 
 seo_title (≤60 chars): "Become a Pool Host in ${cls.city}, ${cls.stateCode} | PRNM"
-seo_description (≤155 chars): mention earnings, 10% fee, ${cls.city}.`,
+seo_description (≤155 chars): mention earnings, 0% host fees, ${cls.city}.`,
     };
   }
 
