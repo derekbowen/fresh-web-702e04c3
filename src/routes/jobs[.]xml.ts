@@ -75,7 +75,7 @@ export const Route = createFileRoute("/jobs.xml")({
 <h3>What we include</h3>
 <ul>
 <li>$2,000,000 liability insurance on every booking</li>
-<li>0% host fees through 2026 (lower than Swimply's 15%+)</li>
+<li>0% host fees (lower than Swimply's 15%+)</li>
 <li>Guest verification and secure payouts</li>
 </ul>
 <h3>Requirements</h3>

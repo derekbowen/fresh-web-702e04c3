@@ -21,7 +21,7 @@ const PRESETS: Record<string, { rate: number; hpw: number; weeks: number }> = {
   "Custom": { rate: 45, hpw: 10, weeks: 30 },
 };
 
-const HOST_FEE = 0; // 0% host fees through 2026
+const HOST_FEE = 0; // 0% host fees
 
 function fmt(n: number) {
   return n.toLocaleString("en-US", {
@@ -75,7 +75,7 @@ export const Route = createFileRoute("/p/earnings-calculator")({
               name: "What fee does Pool Rental Near Me take?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "PRNM charges 0% host fees through 2026 — no monthly subscription, no listing fee, no surprise deductions. Every booking includes $2M liability coverage at no extra cost.",
+                text: "PRNM charges 0% host fees — no monthly subscription, no listing fee, no surprise deductions. Every booking includes $2M liability coverage at no extra cost.",
               },
             },
             {
@@ -83,7 +83,7 @@ export const Route = createFileRoute("/p/earnings-calculator")({
               name: "How is this different from Swimply?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "PRNM's host fee is 0% through 2026 versus Swimply's 15%. On the same $50/hr rate that means you keep $50 vs $42.50 per hour booked — roughly $2,000 more per year for an average host.",
+                text: "PRNM's host fee is 0% versus Swimply's 15%. On the same $50/hr rate that means you keep $50 vs $42.50 per hour booked — roughly $2,000 more per year for an average host.",
               },
             },
           ],

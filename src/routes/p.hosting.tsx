@@ -34,14 +34,14 @@ import heroImage from "@/assets/hosting-hero.jpg";
  * /p/hosting — host-acquisition landing page.
  *
  * Centerpiece is the embedded earnings calculator that compares PRNM's flat
- * 0% take (through 2026) vs Swimply's 15–30% range. Static segment beats /p/$slug.
+ * 0% take vs Swimply's 15–30% range. Static segment beats /p/$slug.
  */
 
 const PATH = "/p/hosting";
 const TITLE =
-  "List Your Pool — 0% Host Fees All of 2026 | Pool Rental Near Me";
+  "List Your Pool — 0% Host Fees | Pool Rental Near Me";
 const DESCRIPTION =
-  "Earn $1,500–$8,000+ a month renting your pool. 0% host fees through 2026 — Swimply charges 15–30%. Free to list, $2M coverage, 193 free classes, 24-hr payouts.";
+  "Earn $1,500–$8,000+ a month renting your pool. 0% host fees — Swimply charges 15–30%. Free to list, $2M coverage, 193 free classes, 24-hr payouts.";
 
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 const ACADEMY_HREF = "/p/learningacademy";
@@ -72,7 +72,7 @@ const REASONS: Reason[] = [
   {
     icon: DollarSign,
     title: "Keep 100% — 0% host fees in 2026",
-    body: "We charge a flat 0% through 2026 — you keep 100%. Swimply charges 15% to 30% per booking depending on which pricing structure you use. On a $1,000 weekend, you keep the full $1,000 with us versus $700–$850 with them. Over a season, that's thousands in your pocket instead of theirs.",
+    body: "We charge a flat 0% — you keep 100%. Swimply charges 15% to 30% per booking depending on which pricing structure you use. On a $1,000 weekend, you keep the full $1,000 with us versus $700–$850 with them. Over a season, that's thousands in your pocket instead of theirs.",
   },
   {
     icon: ShieldCheck,
@@ -82,12 +82,12 @@ const REASONS: Reason[] = [
   {
     icon: FileCheck,
     title: "One predictable fee, every booking",
-    body: "Swimply charges 15–30% per booking, depending on pricing structure, guest count, and booking type. We charge 0% through all of 2026. You can do the math in your head before you accept a request.",
+    body: "Swimply charges 15–30% per booking, depending on pricing structure, guest count, and booking type. We charge 0%. You can do the math in your head before you accept a request.",
   },
   {
     icon: GraduationCap,
     title: "193 free classes on hosting",
-    body: "Pool Host Academy is the only training platform built specifically for pool hosts. 135 video lessons covering pricing strategy, guest screening, insurance, taxes, marketing, holiday upcharges, and difficult-guest scenarios. 100% free, English and Spanish, host certifications you can share. Swimply has webinars. We built a real curriculum.",
+    body: "Pool Host Academy is the only training platform built specifically for pool hosts. 193 video lessons covering pricing strategy, guest screening, insurance, taxes, marketing, holiday upcharges, and difficult-guest scenarios. 100% free, English and Spanish, host certifications you can share. Swimply has webinars. We built a real curriculum.",
     cta: { label: "Browse 193 free classes →", href: ACADEMY_HREF },
   },
   {
@@ -108,11 +108,11 @@ const COURSES: Array<{ icon: LucideIcon; title: string; desc: string }> = [
 ];
 
 const COMPARE: Array<[string, string, string]> = [
-  ["Host service fee", "15–30% (varies)", "0% (through 2026)"],
+  ["Host service fee", "15–30% (varies)", "0% — never"],
   ["Hosts keep", "70–85%", "100%"],
   ["Liability coverage", "$1,000,000", "$2,000,000"],
   ["Payout speed", "48 hr + 3–7 days to bank", "24 hr + 1–3 days to bank"],
-  ["Fee predictability", "Varies by tier", "0% through 2026"],
+  ["Fee predictability", "Varies by tier", "Always 0%"],
   ["Host education", "Webinars, help articles", "193 free classes (Pool Host Academy)"],
   ["Host community", "Facebook group", "Private board (PRNM Connect)"],
   ["Listing fee", "Free", "Free"],
@@ -121,11 +121,11 @@ const COMPARE: Array<[string, string, string]> = [
 const FAQS = [
   {
     q: "How do I get paid?",
-    a: "Guests are charged upfront through Stripe — same as Swimply. We process your payout within 24 hours of each booking ending, with 0% host fees through 2026 — you keep 100%. Most banks deposit it 1–3 business days later. (Swimply takes 48 hours to start, then 3–7 more days. So your money lands 4–7 days faster with us.)",
+    a: "Guests are charged upfront through Stripe — same as Swimply. We process your payout within 24 hours of each booking ending, with 0% host fees — you keep 100%. Most banks deposit it 1–3 business days later. (Swimply takes 48 hours to start, then 3–7 more days. So your money lands 4–7 days faster with us.)",
   },
   {
     q: "How much does it cost to list my pool?",
-    a: "$0 to list. We charge 0% host fees through 2026 only on confirmed bookings. Free to list, free to keep listed, free if you take a month off. You only pay when you earn. Swimply charges 15–30% per booking depending on the pricing structure you use — ours is 0% on every booking through 2026, no exceptions.",
+    a: "$0 to list. We charge 0% host fees only on confirmed bookings. Free to list, free to keep listed, free if you take a month off. You only pay when you earn. Swimply charges 15–30% per booking depending on the pricing structure you use — ours is 0% on every booking, no exceptions.",
   },
   {
     q: "What protection do I get on every booking?",
@@ -133,7 +133,7 @@ const FAQS = [
   },
   {
     q: "Are the host classes really free?",
-    a: "Yes. 135 video lessons in the Pool Host Academy, all free, no credit card required, no upsell. We built it because Swimply hosts kept telling us they had to learn everything by trial and error. Topics include pricing strategy, guest screening, holiday upcharges, taxes, insurance, difficult guest scenarios, and booking acceleration. English and Spanish. Host certifications you can display on your listing.",
+    a: "Yes. 193 video lessons in the Pool Host Academy, all free, no credit card required, no upsell. We built it because Swimply hosts kept telling us they had to learn everything by trial and error. Topics include pricing strategy, guest screening, holiday upcharges, taxes, insurance, difficult guest scenarios, and booking acceleration. English and Spanish. Host certifications you can display on your listing.",
   },
   {
     q: "Do I need to be home during bookings?",
@@ -170,7 +170,7 @@ const FAQS = [
   },
   {
     q: "How is PRNM different from Swimply?",
-    a: "Four things hosts tell us. (1) Our host fee is 0% through 2026 — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 193 free classes and a private host community board — Swimply has a Facebook group.",
+    a: "Four things hosts tell us. (1) Our host fee is 0% — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 193 free classes and a private host community board — Swimply has a Facebook group.",
   },
   {
     q: "I'm currently on Swimply. Can I list on both?",
@@ -290,7 +290,7 @@ function HostingPage() {
                 Turn your pool into income — and keep more of it.
               </h1>
               <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
-                Swimply's host fee runs 15% to 30% per booking. Ours is 0% through all of 2026. Plus $2M coverage versus their $1M, money in your bank
+                Swimply's host fee runs 15% to 30% per booking. Ours is 0%. Plus $2M coverage versus their $1M, money in your bank
                 4–7 days faster, and 193 free classes on hosting. No
                 other platform does that.
               </p>
@@ -312,7 +312,7 @@ function HostingPage() {
               <ul className="mt-8 grid grid-cols-2 gap-3 text-sm text-foreground sm:flex sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
                 {[
                   "Free to list",
-                  "0% host fees through 2026",
+                  "0% host fees",
                   "$2M liability per booking",
                   "193 free classes",
                 ].map((t) => (
@@ -645,7 +645,7 @@ function HostingPage() {
             </h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
               Think of pool hosting as a flexible job you run from home — you set
-              your hours, keep 100% with 0% host fees through 2026, and only work
+              your hours, keep 100% with 0% host fees, and only work
               the bookings you accept. Go deeper with these host guides:
             </p>
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -819,7 +819,7 @@ function EarningsCalc() {
               {fmt.format(prnm)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              100% of gross — 0% PRNM host fees through 2026
+              100% of gross — 0% PRNM host fees
             </p>
             <p className="mt-2 text-xs italic text-muted-foreground">
               Plus a guest service fee applies at checkout. We never touch your

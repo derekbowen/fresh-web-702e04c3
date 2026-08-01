@@ -400,7 +400,7 @@ function PrivatePoolRentalPage() {
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
               Hosts on Pool Rental Near Me earn $1,500 to $8,000 a month renting
-              their backyard pool by the hour. 0% host fees through 2026, so you keep
+              their backyard pool by the hour. 0% host fees, so you keep
               100% of every booking. We eat the credit card processing fees, so
               90% means 90%. $2M liability coverage included.
             </p>

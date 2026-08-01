@@ -118,11 +118,11 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `What does Giggster charge ${city.name} pool hosts in 2026?`,
-      a: `Giggster's national rate applies in ${city.name}: per Giggster's Help Center article "How much commission does Giggster take?" (verified May 2026), Giggster takes a 19% commission out of the host's total payout (location fee + additional fees) for the booking, plus a separate Processing Fee charged to the renter at checkout that scales with booking size. Pool Rental Near Me charges ${city.name} hosts 0% host commission through 2026 — you keep 100% — with a guest service fee applied at checkout.`,
+      a: `Giggster's national rate applies in ${city.name}: per Giggster's Help Center article "How much commission does Giggster take?" (verified May 2026), Giggster takes a 19% commission out of the host's total payout (location fee + additional fees) for the booking, plus a separate Processing Fee charged to the renter at checkout that scales with booking size. Pool Rental Near Me charges ${city.name} hosts 0% host commission — you keep 100% — with a guest service fee applied at checkout.`,
     },
     {
       q: `On a $400 ${city.name} booking, how much do I keep on each platform?`,
-      a: `On Pool Rental Near Me a $400 host payout is yours in full — 0% host commission through 2026. On Giggster a $400 host payout becomes $324 after the 19% host commission. That’s $76 more per booking on Pool Rental Near Me from the same gross payout, before payment processing on either side.`,
+      a: `On Pool Rental Near Me a $400 host payout is yours in full — 0% host commission. On Giggster a $400 host payout becomes $324 after the 19% host commission. That’s $76 more per booking on Pool Rental Near Me from the same gross payout, before payment processing on either side.`,
     },
     {
       q: `What insurance do I need to host a pool in ${city.name} on Giggster?`,
@@ -261,7 +261,7 @@ function GiggsterCityPage() {
         size and features.
       </p>
       <p>
-        Pool Rental Near Me charges {city.name} hosts 0% host commission through 2026 — you keep 100%, with a guest service fee applied at checkout. Hosts keep 100% of the
+        Pool Rental Near Me charges {city.name} hosts 0% host commission — you keep 100%, with a guest service fee applied at checkout. Hosts keep 100% of the
         booking subtotal.
       </p>
 

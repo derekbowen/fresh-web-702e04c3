@@ -238,26 +238,25 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         </section>
 
         <section
-          aria-label="Zero percent host fees all of 2026"
+          aria-label="Zero percent host fees — hosts never pay a fee"
           className="relative overflow-hidden"
           style={{ background: "linear-gradient(135deg, #0B4A6F 0%, #0EA5E9 58%, #38BDF8 100%)" }}
         >
           <div className="mx-auto max-w-4xl px-4 py-10 text-center text-white sm:py-14">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/85 sm:text-sm">
-              🌞&nbsp;100 Days of Summer
+              Hosts never pay a fee
             </p>
             <p className="mx-auto mt-5 max-w-2xl text-xl font-semibold leading-snug text-white sm:text-2xl">
-              <span style={{ color: "#FFE08A" }}>Thank you.</span> To every host and
-              guest who made this community what it is&nbsp;— we&rsquo;re giving back.
+              <span style={{ color: "#FFE08A" }}>It&rsquo;s permanent.</span> 0% host fees
+              started as a thank-you to this community. It&rsquo;s now how we run the business.
             </p>
             <div className="mt-6 flex items-baseline justify-center gap-3 sm:gap-4">
-              <s className="text-3xl font-bold text-white/50 decoration-[3px] sm:text-4xl">10%</s>
               <span className="text-7xl font-black leading-none tracking-tighter drop-shadow-sm sm:text-8xl">
                 0%
               </span>
             </div>
             <h2 className="mt-3 text-2xl font-extrabold uppercase tracking-tight sm:text-4xl">
-              Host Fees&nbsp;—&nbsp;All of 2026
+              Host Fees&nbsp;—&nbsp;Now Permanent
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg font-semibold text-white sm:text-xl">
               You keep 100% of every booking. List your pool free.
@@ -275,8 +274,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </a>
             </div>
             <p className="mx-auto mt-6 max-w-2xl text-[11px] leading-relaxed text-white/70 sm:text-xs">
-              0% host fees valid through Dec 31, 2026 on all bookings. Guest service fee
-              applies at checkout. Promotional guest fee valid for a limited time.{" "}
+              Hosts never pay a fee. We make money from a small guest service fee at
+              checkout, which covers payment processing, $2M insurance on every booking,
+              and 24/7 support. Hosts are the business&nbsp;&mdash; we don&rsquo;t tax the business.{" "}
               <a
                 href="/legal-and-compliance/terms-of-service-pool-rental-near-me"
                 className="underline underline-offset-2 hover:text-white"
@@ -291,7 +291,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {/* Trust line under hero */}
         <div className="border-b border-border bg-background">
           <p className="mx-auto max-w-5xl px-4 py-3 text-center text-xs text-muted-foreground sm:text-sm">
-            0% host fees through 2026 · $2M Hartford-backed insurance · 100% US-based support
+            0% host fees · $2M Hartford-backed insurance · 100% US-based support
           </p>
         </div>
 
@@ -338,7 +338,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="text-4xl" aria-hidden>💙</span>
                 <h3 className="mt-3 text-xl font-bold">I'm sharing my pool</h3>
                 <p className="mt-2 text-sm font-medium" style={{ color: "#46323c" }}>
-                  If you can text a photo, you can host. We set it all up with you — $2M Hartford-backed insurance, 0% host fees through 2026, you keep every dollar. Hosts like Katy charge $100/hour — eight booked hours a weekend is $800.
+                  If you can text a photo, you can host. We set it all up with you — $2M Hartford-backed insurance, 0% host fees, you keep every dollar. Hosts like Katy charge $100/hour — eight booked hours a weekend is $800.
                 </p>
                 <span
                   className="mt-auto inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold text-white"
@@ -415,7 +415,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </div>
             <div>
               <div className="text-2xl font-bold text-primary">0%</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">Host fees through 2026</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">Host fees</div>
               <div className="mt-1 text-xs text-muted-foreground">Hosts keep every dollar</div>
             </div>
             <div>

@@ -98,7 +98,7 @@ function SidebarCTA({ stateName }: { stateName?: string | null }) {
           Ready to host{stateName ? ` in ${stateName}` : ""}?
         </h3>
         <p className="mt-2 text-sm text-primary-foreground/85">
-          Free to list. $2M liability on every confirmed booking. 0% host fees through 2026.
+          Free to list. $2M liability on every confirmed booking. 0% host fees.
         </p>
         <a
           href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
@@ -357,7 +357,7 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
                   Hosting{state?.name ? ` in ${state.name}` : ""} starts here.
                 </h3>
                 <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-                  Free to list. $2M liability insurance on every confirmed booking. 0% host fees through 2026 — the lowest of any pool rental platform.
+                  Free to list. $2M liability insurance on every confirmed booking. 0% host fees — the lowest of any pool rental platform.
                 </p>
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                   <a

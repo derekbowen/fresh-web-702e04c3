@@ -27,7 +27,7 @@ type Row = {
 const TABLE: Row[] = [
   {
     platform: "Pool Rental Near Me",
-    hostCommission: "0% (through 2026)",
+    hostCommission: "0% — never",
     guestFee: "Applied at checkout",
     effectiveTake: "0% host-side (2026)",
     payout: "24 hours after checkout",
@@ -62,11 +62,11 @@ const TABLE: Row[] = [
 const faqs = [
   {
     q: "How much does Swimply charge hosts?",
-    a: "Swimply charges hosts roughly 15%–20% per booking, and now promotes a ~$29/month Premium Pass for better search placement and features. On Pool Rental Near Me, host fees are 0% through 2026 — no commission and no monthly pass — so hosts keep everything they earn.",
+    a: "Swimply charges hosts roughly 15%–20% per booking, and now promotes a ~$29/month Premium Pass for better search placement and features. On Pool Rental Near Me, host fees are 0% — no commission and no monthly pass — so hosts keep everything they earn.",
   },
   {
     q: "Which pool rental platform has the lowest host fee?",
-    a: "Pool Rental Near Me charges a 0% flat host commission through 2026 — you keep 100% — the lowest of any major peer-to-peer pool rental marketplace. Swimply, Peerspace, and Giggster each charge 15% or higher on the host side, before any additional guest service fees.",
+    a: "Pool Rental Near Me charges a 0% flat host commission — you keep 100% — the lowest of any major peer-to-peer pool rental marketplace. Swimply, Peerspace, and Giggster each charge 15% or higher on the host side, before any additional guest service fees.",
   },
   {
     q: "What is the difference between host commission and guest service fee?",
@@ -78,7 +78,7 @@ const faqs = [
   },
   {
     q: "Are there any hidden fees beyond the host commission?",
-    a: "On PRNM, the host commission is 0% through 2026 — the lowest of any platform — there are no per-booking add-ons, no insurance surcharges (insurance is included), and no listing fees. Other platforms may charge optional insurance upgrades, premium placement, or processing fees on top of the headline commission.",
+    a: "On PRNM, the host commission is 0% — the lowest of any platform — there are no per-booking add-ons, no insurance surcharges (insurance is included), and no listing fees. Other platforms may charge optional insurance upgrades, premium placement, or processing fees on top of the headline commission.",
   },
 ];
 

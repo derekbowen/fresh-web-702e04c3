@@ -80,11 +80,11 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `What does Peerspace charge ${city.name} pool hosts?`,
-      a: `Peerspace charges hosts in ${city.name} the same 20% service fee it charges nationally — applied to the booking subtotal plus add-ons like cleaning. Pool Rental Near Me charges ${city.name} hosts 0% commission through 2026 — you keep 100%.`,
+      a: `Peerspace charges hosts in ${city.name} the same 20% service fee it charges nationally — applied to the booking subtotal plus add-ons like cleaning. Pool Rental Near Me charges ${city.name} hosts 0% commission — you keep 100%.`,
     },
     {
       q: `How much can I earn renting my pool in ${city.name}?`,
-      a: `Most ${city.name} pool hosts price between $45 and $150 per hour depending on amenities, capacity, and season. With 0% Pool Rental Near Me host fees through 2026, on a $300 booking you keep the full $300; on Peerspace's 20% fee you'd keep $240 — a $60 swing per booking.`,
+      a: `Most ${city.name} pool hosts price between $45 and $150 per hour depending on amenities, capacity, and season. With 0% Pool Rental Near Me host fees, on a $300 booking you keep the full $300; on Peerspace's 20% fee you'd keep $240 — a $60 swing per booking.`,
     },
     {
       q: `Is pool rental legal in ${city.state}?`,

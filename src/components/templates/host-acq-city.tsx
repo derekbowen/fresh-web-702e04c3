@@ -321,7 +321,7 @@ export function HostAcqCityTemplate({
               <Pillar
                 kicker="Lowest fee"
                 title="Keep 100%"
-                body="0% host fees through 2026. Swimply takes 15%+ once you stack their host fee, guest fee, and processing. On a $200 booking that's real money — every time."
+                body="0% host fees. Swimply takes 15%+ once you stack their host fee, guest fee, and processing. On a $200 booking that's real money — every time."
               />
               <Pillar
                 kicker="Real protection"

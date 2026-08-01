@@ -27,7 +27,7 @@ const DESCRIPTION =
 const faqs = [
   {
     q: "What is the Giggster host commission in 2026?",
-    a: "Per Giggster's published Help Center article \"How much commission does Giggster take?\" (last updated by Giggster staff April 13, 2023, still live as of May 2026): \"Giggster takes a 19% commission out of the host's total payout (location fee + additional fees (if any)) for the booking.\" Giggster also collects a separate Processing Fee from the renter that scales with the overall cost and features of the booking. Pool Rental Near Me charges a flat 0% host commission through 2026 — you keep 100% — with a guest service fee applied at checkout.",
+    a: "Per Giggster's published Help Center article \"How much commission does Giggster take?\" (last updated by Giggster staff April 13, 2023, still live as of May 2026): \"Giggster takes a 19% commission out of the host's total payout (location fee + additional fees (if any)) for the booking.\" Giggster also collects a separate Processing Fee from the renter that scales with the overall cost and features of the booking. Pool Rental Near Me charges a flat 0% host commission — you keep 100% — with a guest service fee applied at checkout.",
   },
   {
     q: "Is Giggster a pool rental marketplace?",
@@ -39,7 +39,7 @@ const faqs = [
   },
   {
     q: "On a $400 pool booking, how much do I keep on Giggster vs PRNM?",
-    a: "On Pool Rental Near Me, a $400 host payout is yours in full — 0% host commission through 2026, so you keep $400. On Giggster, a $400 host payout is reduced by the 19% host commission ($76), so you keep $324. PRNM hosts keep $76 more per $400 booking. The renter-side fees on each platform are separate and are charged to the renter, not the host.",
+    a: "On Pool Rental Near Me, a $400 host payout is yours in full — 0% host commission, so you keep $400. On Giggster, a $400 host payout is reduced by the 19% host commission ($76), so you keep $324. PRNM hosts keep $76 more per $400 booking. The renter-side fees on each platform are separate and are charged to the renter, not the host.",
   },
   {
     q: "Can I list my pool on both Giggster and Pool Rental Near Me at the same time?",
@@ -134,7 +134,7 @@ function GiggsterComparisonPage() {
         <strong>TL;DR — Giggster vs Pool Rental Near Me (May 2026)</strong>
         <ul>
           <li>
-            <strong>Host commission:</strong> 0% on PRNM through 2026 vs{" "}
+            <strong>Host commission:</strong> 0% on PRNM vs{" "}
             <strong>19% on Giggster</strong> (Giggster Help Center, April 2023, still live).
           </li>
           <li>
@@ -172,7 +172,7 @@ function GiggsterComparisonPage() {
           },
           {
             label: "Host commission",
-            prnm: "0% through 2026 — you keep 100%",
+            prnm: "0% — you keep 100%",
             competitor:
               "19% of host payout (location fee + additional fees) — per Giggster Help Center",
           },
@@ -236,7 +236,7 @@ function GiggsterComparisonPage() {
 
       <ul>
         <li>
-          <strong>Pool Rental Near Me:</strong> 0% host commission through 2026 — you keep 100%, with a guest service fee applied at checkout.
+          <strong>Pool Rental Near Me:</strong> 0% host commission — you keep 100%, with a guest service fee applied at checkout.
         </li>
         <li>
           <strong>Giggster:</strong> 19% host commission on location fee + add-ons,
@@ -699,7 +699,7 @@ function GiggsterComparisonPage() {
           .
         </li>
         <li>
-          <strong>0% PRNM host commission (2026)</strong> — Pool Rental Near Me charges hosts 0% on completed bookings through 2026, so you keep 100%; a guest service fee applies at checkout. Rates current as of May 2026; verify in-app at booking.
+          <strong>0% PRNM host commission</strong> — Pool Rental Near Me charges hosts 0% on completed bookings, so you keep 100%; a guest service fee applies at checkout. Rates current as of May 2026; verify in-app at booking.
         </li>
         <li>
           <strong>70+ Pool Host Academy courses</strong> — Free training library:{" "}

@@ -376,13 +376,13 @@ function HowItWorksPage() {
                   What the guest service fee covers
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  A guest service fee is added to your booking subtotal at checkout. It covers payment processing, the $2M insurance policy on every booking, our 24/7 support team, and the verification process that keeps bad listings off the platform. Hosts keep 100% of their rate — 0% host fees through 2026.
+                  A guest service fee is added to your booking subtotal at checkout. It covers payment processing, the $2M insurance policy on every booking, our 24/7 support team, and the verification process that keeps bad listings off the platform. Hosts keep 100% of their rate — 0% host fees.
                 </p>
                 <div className="mt-6 rounded-xl border border-border bg-muted/40 p-4 text-sm text-foreground">
                   <span className="font-semibold">Compare:</span> Swimply
                   charges guests 9–13% per booking (varies, not always shown
-                  upfront) plus charges hosts 15–30%. Our flat 10/10 is the
-                  most transparent in the industry.
+                  upfront) plus charges hosts 15–30%. Ours is simpler: hosts pay 0%, and
+                  guests pay one clear service fee at checkout.
                 </div>
               </div>
             </div>

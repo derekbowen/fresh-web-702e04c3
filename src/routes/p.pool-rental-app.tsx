@@ -43,7 +43,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Can I list my pool from the app?",
-    a: "Yes. Tap List your pool in the app, add photos, set your hourly rate and house rules, and you are live. Hosts keep 100% of every booking — 0% host fees through 2026. We eat the credit card processing fees, so 100% means 100%.",
+    a: "Yes. Tap List your pool in the app, add photos, set your hourly rate and house rules, and you are live. Hosts keep 100% of every booking — 0% host fees. We eat the credit card processing fees, so 100% means 100%.",
   },
   {
     q: "Is the app safe to use?",
@@ -338,7 +338,7 @@ function PoolRentalAppPage() {
               minutes and add depth later. The description field allows up to
               5,000 characters, so you have room to tell your story. Hourly
               renting is the primary booking model. Hosts keep 100% of every
-              booking with 0% host fees through 2026, and $2M liability coverage
+              booking with 0% host fees, and $2M liability coverage
               is included.
             </p>
 
@@ -527,7 +527,7 @@ function PoolRentalAppPage() {
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
               Hosts on Pool Rental Near Me earn $1,500 to $8,000 a month renting
-              their backyard pool by the hour. 0% host fees through 2026, so you keep
+              their backyard pool by the hour. 0% host fees, so you keep
               100% of every booking. We eat the credit card processing fees, so
               90% means 90%. $2M liability coverage included.
             </p>

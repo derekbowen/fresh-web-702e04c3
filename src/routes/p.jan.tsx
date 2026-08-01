@@ -404,7 +404,7 @@ function JanPage() {
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  <span>0% host fees through 2026 — lower than Swimply</span>
+                  <span>0% host fees — lower than Swimply</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
@@ -562,7 +562,7 @@ function JanPage() {
               Book TheSwimpark — ${listing.pricePerHour}/hour
             </a>
             <p className="mt-3 text-xs text-muted-foreground">
-              0% host fees through 2026 · $2M liability insurance included
+              0% host fees · $2M liability insurance included
             </p>
           </div>
         </section>
