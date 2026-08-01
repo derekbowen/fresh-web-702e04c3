@@ -21,7 +21,7 @@ import { absUrl } from "@/lib/site-origin";
 const SLUG = "peerspace-vs-pool-rental-near-me";
 const TITLE = "Peerspace vs Pool Rental Near Me (2026): Fees, Insurance & Best Pool Host Platform";
 const DESCRIPTION =
-  "Peerspace vs Pool Rental Near Me 2026: 0% vs 20% host fee (2026), $2M vs $1M liability, pool-specialized vs general venue. Side-by-side comparison for pool owners.";
+  "Peerspace vs Pool Rental Near Me 2026: 0% vs 20% host fee, $2M vs $1M liability, pool-specialized vs general venue. Side-by-side comparison for pool owners.";
 
 const faqs = [
   {
@@ -73,7 +73,7 @@ const faqs = [
 const tableRows = [
   {
     label: "Host service fee",
-    prnm: <strong>0% (2026)</strong>,
+    prnm: <strong>0%</strong>,
     competitor: "20% on subtotal + add-ons",
   },
   {
@@ -314,7 +314,7 @@ function PeerspaceComparisonPage() {
       <p>
         If you're researching Peerspace, you've probably also looked at
         Swimply. Swimply pioneered the pool rental category but charges a 15%
-        host fee. Pool Rental Near Me's 0% host fee (2026) is the lowest of the
+        host fee. Pool Rental Near Me's 0% host fee is the lowest of the
         three. See the full breakdown in{" "}
         <a href="/p/swimply-alternative-vs-pool-rental-near-me">
           Swimply Alternative vs Pool Rental Near Me

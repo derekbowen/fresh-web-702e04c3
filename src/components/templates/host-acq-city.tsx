@@ -365,7 +365,7 @@ export function HostAcqCityTemplate({
                 </thead>
                 <tbody className="divide-y divide-border">
                   {[
-                    ["Host service fee", "0% (2026)", "15%+"],
+                    ["Host service fee", "0%", "15%+"],
                     ["You take home on $200", "$180", "≈ $170 or less"],
                     ["Liability coverage", "$2M included", "$1M"],
                     ["Payout speed", "24 hours", "2–5 days"],

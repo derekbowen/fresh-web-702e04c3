@@ -29,7 +29,7 @@ const TABLE: Row[] = [
     platform: "Pool Rental Near Me",
     hostCommission: "0% — never",
     guestFee: "Applied at checkout",
-    effectiveTake: "0% host-side (2026)",
+    effectiveTake: "0% host-side",
     payout: "24 hours after checkout",
     source: "poolrentalnearme.com host terms",
   },

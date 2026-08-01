@@ -22,7 +22,7 @@ const SLUG = "giggster-vs-pool-rental-near-me";
 const TITLE =
   "Giggster vs Pool Rental Near Me (2026): Fees, Insurance & Best Use Cases";
 const DESCRIPTION =
-  "Side-by-side 2026 comparison of Giggster vs Pool Rental Near Me for pool owners — verified 19% vs 0% host commission (2026), COI vs included $2M insurance, production vs recreational buyers, and which platform pays more in LA, NYC, Atlanta, Austin, and Chicago.";
+  "Side-by-side 2026 comparison of Giggster vs Pool Rental Near Me for pool owners — verified 19% vs 0% host commission, COI vs included $2M insurance, production vs recreational buyers, and which platform pays more in LA, NYC, Atlanta, Austin, and Chicago.";
 
 const faqs = [
   {

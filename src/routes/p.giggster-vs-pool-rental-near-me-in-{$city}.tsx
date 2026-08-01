@@ -62,7 +62,7 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$ci
     if (!city) return { meta: [{ title: "City not found" }] };
     const slug = `giggster-vs-pool-rental-near-me-in-${city.slug}`;
     const title = `Giggster vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026): Fees, Insurance & Best Use`;
-    const description = `${city.name}, ${city.state} pool hosts: Giggster vs Pool Rental Near Me compared with verified 2026 facts — 19% vs 0% host commission (2026), renter COI vs included $2M Hartford liability, production vs recreational buyers, and the smart play for a ${city.name} pool.`;
+    const description = `${city.name}, ${city.state} pool hosts: Giggster vs Pool Rental Near Me compared with verified 2026 facts — 19% vs 0% host commission, renter COI vs included $2M Hartford liability, production vs recreational buyers, and the smart play for a ${city.name} pool.`;
     return {
       ...buildComparisonMeta({ slug, title, description }),
       scripts: [
@@ -159,7 +159,7 @@ function GiggsterCityPage() {
     },
     {
       label: "Host commission",
-      prnm: <strong>0% (2026)</strong>,
+      prnm: <strong>0%</strong>,
       competitor: "19% (per Giggster Help Center)",
     },
     {
@@ -243,7 +243,7 @@ function GiggsterCityPage() {
             For a typical residential pool in {city.name}, Pool Rental Near Me
             is the realistic channel — recreational demand is broadly
             distributed, while Giggster's production buyers concentrate in a
-            handful of hub metros. PRNM's 0% host commission (2026), included
+            handful of hub metros. PRNM's 0% host commission, included
             $2M Hartford liability on every approved booking, and pool-specific
             training are sized for residential pool hosting in {city.name}.
           </>

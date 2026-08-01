@@ -40,7 +40,7 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$c
     if (!city) return { meta: [{ title: "City not found" }] };
     const slug = `peerspace-vs-pool-rental-near-me-in-${city.slug}`;
     const title = `Peerspace vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026)`;
-    const description = `${city.name} pool hosts: should you list on Peerspace or Pool Rental Near Me? 0% vs 20% host fee (2026), $2M vs $1M liability, local pricing benchmarks for ${city.name}, ${city.state}.`;
+    const description = `${city.name} pool hosts: should you list on Peerspace or Pool Rental Near Me? 0% vs 20% host fee, $2M vs $1M liability, local pricing benchmarks for ${city.name}, ${city.state}.`;
     return {
       ...buildComparisonMeta({ slug, title, description }),
       scripts: [
@@ -102,7 +102,7 @@ function PeerspaceCityPage() {
   const faqs = buildFaqs(city);
 
   const tableRows = [
-    { label: "Host service fee", prnm: <strong>0% (2026)</strong>, competitor: "20%" },
+    { label: "Host service fee", prnm: <strong>0%</strong>, competitor: "20%" },
     { label: `Take-home on $300 ${city.name} booking`, prnm: <strong>$300</strong>, competitor: "$240" },
     { label: "General liability", prnm: <strong>$2M / $4M</strong>, competitor: "$1M" },
     { label: "Property protection", prnm: <strong>$150K STRETCH® PLUS</strong>, competitor: "$25K" },
@@ -131,7 +131,7 @@ function PeerspaceCityPage() {
 
       <blockquote>
         <strong>Bottom line for {city.name} pool hosts:</strong> Pool Rental
-        Near Me's 0% host fee (2026) beats Peerspace's 20%, and the $2M
+        Near Me's 0% host fee beats Peerspace's 20%, and the $2M
         liability is double. For typical {city.name} pools renting at
         $45–$150/hr, Pool Rental Near Me wins on economics. Peerspace wins for
         production-grade luxury pools chasing $200+/hr event bookings.

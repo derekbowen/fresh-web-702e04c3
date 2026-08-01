@@ -429,7 +429,7 @@ function SwimplyComparisonPage() {
           .
         </li>
         <li>
-          <strong>0% PRNM Host Commission (2026)</strong> — Pool Rental Near Me
+          <strong>0% PRNM Host Commission</strong> — Pool Rental Near Me
           charges hosts 0% on completed bookings, so you keep 100%.
           A guest service fee applies at checkout. Rates current as of
           May 2026.
