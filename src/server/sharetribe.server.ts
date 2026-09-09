@@ -673,3 +673,97 @@ export async function fetchAvailableTimeSlots(
   }
 }
 
+// ---------- Curated homepage listings (fetched by id, marketplace display price) ----------
+
+/**
+ * Guest-facing display price = host price + the mandatory 15% guest booking fee,
+ * rounded to the cent. Same math as the marketplace's ListingCard
+ * (poolrentalnearme-web src/util/currency.js priceWithBookingFee). Keep in sync
+ * with the Console customer-commission percentage.
+ */
+export const CUSTOMER_BOOKING_FEE_PCT = 15;
+
+export interface CuratedListing extends ListingSummary {
+  /** All-in hourly price in cents (host price + guest booking fee), or null. */
+  allInCents: number | null;
+  /** True when the listing has more than one price variant ("from" pricing). */
+  hasPriceVariants: boolean;
+  /** Property guest limit from publicData.guestallowed, if the host set one. */
+  guests: number | null;
+  /** The listing's first amenity when it is a spa / hot tub (name + host add-on price). */
+  spa: { name: string; priceCents: number } | null;
+  /** Sharetribe categoryLevel2 (e.g. "indoorpools", "heatedpools"), if set. */
+  category: string | null;
+}
+
+const SPA_AMENITY_RE = /hot\s*tub|\bspa\b|jacuzzi/i;
+
+/**
+ * Fetch specific published listings by id (Marketplace API `ids` filter) and
+ * return them in the order requested. Missing / unpublished ids are dropped.
+ * Everything on the card comes from the live record — nothing is hardcoded.
+ */
+export async function fetchListingsByIds(ids: string[]): Promise<CuratedListing[]> {
+  if (ids.length === 0) return [];
+  try {
+    const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
+      ids: ids.join(","),
+      perPage: ids.length,
+      ...IMAGE_VARIANT_PARAMS,
+    });
+    const byId = new Map<string, CuratedListing>();
+    for (const l of res.data ?? []) {
+      if (l.attributes.state !== "published") continue;
+      const base = summarize(l, res.included);
+      const pd = (l.attributes.publicData ?? {}) as Record<string, unknown>;
+      const loc = (pd.location as Record<string, unknown> | undefined) ?? {};
+      // City / state fallback from the address string. Hosts often enter just
+      // "Pflugerville, TX 78660" or "Fillmore, CA" — a two-part address whose
+      // second part is a state code is city + state, never a street, so it is
+      // safe to show. Anything longer keeps the structured fields only.
+      let city = base.city;
+      let state = base.state;
+      if (typeof loc.address === "string") {
+        const addr = loc.address as string;
+        const parts = addr.split(",").map((p) => p.trim()).filter(Boolean);
+        const stateZip = /^([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/;
+        if (!city && parts.length === 2 && stateZip.test(parts[1])) city = parts[0];
+        if (!state) {
+          const m = addr.match(/,\s*([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?\s*(?:,|$)/);
+          if (m) state = m[1];
+        }
+      }
+      if (state && state.length > 2) state = STATE_ABBR[state.toLowerCase()] ?? state;
+      const amenities = Array.isArray(pd.amenities)
+        ? (pd.amenities as Array<Record<string, unknown>>)
+        : [];
+      const first = amenities[0];
+      const firstName = first ? String(first.name ?? "").trim() : "";
+      const spa =
+        first && SPA_AMENITY_RE.test(firstName)
+          ? {
+              name: firstName,
+              priceCents: Number((first.price as { amount?: number } | undefined)?.amount ?? 0),
+            }
+          : null;
+      const variants = Array.isArray(pd.priceVariants) ? (pd.priceVariants as unknown[]) : [];
+      const price = l.attributes.price ?? null;
+      byId.set(l.id, {
+        ...base,
+        city,
+        state,
+        allInCents: price
+          ? Math.round((price.amount / 100) * (1 + CUSTOMER_BOOKING_FEE_PCT / 100) * 100)
+          : null,
+        hasPriceVariants: pd.priceVariationsEnabled === true && variants.length > 1,
+        guests: typeof pd.guestallowed === "number" ? (pd.guestallowed as number) : null,
+        spa,
+        category: typeof pd.categoryLevel2 === "string" ? (pd.categoryLevel2 as string) : null,
+      });
+    }
+    return ids.map((id) => byId.get(id)).filter((x): x is CuratedListing => Boolean(x));
+  } catch (err) {
+    console.error("fetchListingsByIds error:", err);
+    return [];
+  }
+}

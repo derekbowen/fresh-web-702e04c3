@@ -73,7 +73,7 @@ const PRIMARY_NAV: NavLink[] = [
 const APP_NAV: NavLink[] = [
 ];
 
-const LIST_SPACE_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
+const LIST_SPACE_HREF = "/wizard/";
 
 const ACCOUNT_LINKS: NavLink[] = [
   { label: "Inbox", href: "/inbox/sales" },
@@ -469,6 +469,8 @@ function SiteFooterInner() {
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-3">
+            {/* Sitewide contextual anchor: consolidates the money term onto the
+                homepage from every pSEO page. One link, natural anchor text. */}
             <a href="/" aria-label="Pool Rental Near Me" className="inline-flex">
               <img
                 src="/icon.svg"
@@ -495,6 +497,11 @@ function SiteFooterInner() {
                 </a>
               </p>
             )}
+            <p className="mt-4 text-sm">
+              <a href="/" className="font-semibold text-foreground hover:text-primary">
+                Rent a pool near you &rarr;
+              </a>
+            </p>
             {data.socials.length > 0 && (
               <ul className="mt-5 flex flex-wrap items-center gap-3 text-muted-foreground">
                 {data.socials.map((s) => (
@@ -553,7 +560,7 @@ function SiteFooterInner() {
           <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <span>{data.bottom_text || `© ${FOOTER_YEAR} PRNM CORP`}</span>
             <div className="flex items-center gap-4">
-              <a href="/public-pools" className="hover:text-primary">Public Pools</a>
+              <a href="/public-pools/" className="hover:text-primary">Public Pools</a>
               <a href="/p/blog" className="hover:text-primary">Blog</a>
               <a href="/sitemap.xml" className="hover:text-primary">Sitemap</a>
             </div>

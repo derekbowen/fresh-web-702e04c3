@@ -42,11 +42,11 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
     { label: "Pool Rental Near Me vs Vrbo", href: "/p/vrbo-vs-pool-rental-near-me" },
   ],
   host_links: [
-    { label: "List Your Pool for Free", href: "/l/draft/00000000-0000-0000-0000-000000000000/new/details" },
+    { label: "List Your Pool for Free", href: "/wizard/" },
     { label: "How Hosting Works", href: "/p/hosting" },
     { label: "Find Locations Near You", href: "/p/all-locations" },
     { label: "Earnings Calculator", href: "/p/earnings-calculator" },
-    { label: "Host Pro Tools", href: "/p/free-host-tools" },
+    { label: "Host Pro Tools", href: "/p/pool-host-tools" },
     { label: "Host Connect", href: "https://connect.poolrentalnearme.com" },
     { label: "HOA Navigation Guide", href: "/p/elearning-academy-hoa-navigation-guide-pool-hosts" },
     { label: "Host Make More $$$", href: "/p/hosting" },
@@ -55,7 +55,7 @@ export const DEFAULT_FOOTER: SiteFooterSettings = {
   company_links: [
     { label: "About", href: "/p/how-it-works" },
     { label: "Careers", href: "/p/careers" },
-    { label: "Terms", href: "/p/terms-of-service" },
+    { label: "Terms", href: "/terms-of-service" },
     { label: "Privacy", href: "/p/privacy-policy" },
     { label: "Video Chat Support", href: "https://meetn.com/poolrentalnearme" },
     { label: "Refer Pool Owners", href: "/p/affiliate" },

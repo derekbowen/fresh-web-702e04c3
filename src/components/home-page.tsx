@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 
-import { ListingCard } from "@/components/listing-card";
 import { ErrorBoundary } from "@/components/error-boundary";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 import type { HomeCity, HomeData } from "@/server/home-data.functions";
@@ -25,7 +24,9 @@ const HIDE_LISTING_RE = /swim\s*spa|aquatic|rehab/i;
 
 const NEARBY_RADIUS_MILES = 500;
 
-// Real courses from the `courses` table — link straight to /p/course/{slug}.
+type CuratedListing = NonNullable<HomeData["curated"]>[number];
+
+// Real courses from the `courses` table — link straight to /p/elearning-academy-{slug}.
 // Hand-picked to only include "rich" courses (cover image + video + long-form content)
 // so every tile leads to a fully-populated lesson page, not a stub.
 const FEATURED_OCCASIONS = [
@@ -39,8 +40,16 @@ const FEATURED_OCCASIONS = [
 
 export const HOMEPAGE_FAQS = [
   {
+    q: "How do I rent a pool near me?",
+    a: "Type your city or zip into the search, pick a private pool you like, choose a date and hours, and book — the host approves and you're set. Most pools rent by the hour, and the total you see includes everything before you pay.",
+  },
+  {
+    q: "How much does it cost to rent a pool?",
+    a: "Hosts set their own hourly rates — most private pool rentals run $45–$150 per hour depending on size, amenities, and location. The all-in price is shown up front, and hosts pay 0% fees, so they keep 100% of their rate.",
+  },
+  {
     q: "Is the pool host insured if a guest gets hurt?",
-    a: "Every confirmed booking on PoolRentalNearMe includes $2M liability insurance for the host, so you're protected if a guest is injured during their reservation. Hosts also get the option to add property damage protection for higher-value pools.",
+    a: "Pool Rental Near Me does not provide or arrange insurance. Every booking requires a signed guest waiver, and we do not verify whether hosts carry insurance — most homeowner policies exclude paid rentals, so check with your carrier before you host.",
   },
   {
     q: "How do I contact a pool owner before booking?",
@@ -48,7 +57,7 @@ export const HOMEPAGE_FAQS = [
   },
   {
     q: "Can strangers really swim in my private pool safely?",
-    a: "Yes — and the data is on your side. Swimply has hosted millions of bookings without serious incident, and PRNM bookings include built-in liability coverage, ID-verified guests, security deposits, and clear house rules you set yourself. Most hosts say guests treat the pool more carefully than friends do.",
+    a: "Yes — and the data is on your side. Most hosts say guests treat the pool more carefully than friends do.",
   },
   {
     q: "Is it free for kids and families?",
@@ -56,7 +65,7 @@ export const HOMEPAGE_FAQS = [
   },
   {
     q: "How does Pool Rental Near Me make money?",
-    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing and 24/7 support. Hosts are the business — we don't tax the business.",
   },
 ];
 
@@ -125,6 +134,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
   const cities = Array.isArray(safe.cities) ? safe.cities : [];
   const cityCount = typeof safe.cityCount === "number" ? safe.cityCount : cities.length;
   void safe.categories; // categories now rendered by static PoolTypeGrid below
+  void cityCount; // heading is count-free; the directory link carries the full list
   const rawListings = Array.isArray(safe.listings) ? safe.listings : [];
   // distanceMiles is computed server-side from Cloudflare geo headers, which
   // may differ between the upstream SSR request (proxied via /landing-page)
@@ -134,6 +144,23 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
   const listings = hydrated
     ? rawListings
     : rawListings.map((l) => ({ ...l, distanceMiles: null }));
+  const curated: CuratedListing[] = Array.isArray(safe.curated) ? safe.curated : [];
+  // Curated spa / heated / indoor picks lead the inventory row. If that fetch
+  // failed, fall back to the newest generic listings (same all-in price math).
+  const inventory: CuratedListing[] =
+    curated.length > 0
+      ? curated
+      : listings
+          .filter((l: ListingSummary) => !HIDE_LISTING_RE.test(l.title || ""))
+          .slice(0, 9)
+          .map((l: ListingSummary) => ({
+            ...l,
+            allInCents: l.price ? Math.round((l.price.amount / 100) * 1.15 * 100) : null,
+            hasPriceVariants: false,
+            guests: null,
+            spa: null,
+            category: null,
+          }));
   const rawNearby = (safe.nearby && typeof safe.nearby === "object" ? safe.nearby : null) ?? {
     city: null,
     region: null,
@@ -185,10 +212,10 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           />
           <div className="relative mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center text-white sm:py-16 lg:py-24">
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight drop-shadow-md sm:text-5xl lg:text-6xl">
-              Find the pool <span style={{ color: "#7fe0ff" }}>you&rsquo;ll fall in love with</span>.
+              Rent a pool <span style={{ color: "#7fe0ff" }}>you&rsquo;ll fall in love with</span>.
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-base font-semibold text-white/95 drop-shadow sm:text-lg">
-              Rent a private pool by the hour, anywhere in America — real neighbors, real backyards, booked in minutes.
+              Private pool rentals by the hour, anywhere in America — real neighbors, real backyards, booked in minutes.
             </p>
             <div className="mt-7 flex flex-col items-center gap-3">
               <a
@@ -200,7 +227,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 Find a pool near me&nbsp;&nbsp;&rarr;
               </a>
               <a
-                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                href="/wizard/"
                 aria-label="List your pool — keep 100%, zero host fees"
                 className="inline-flex min-h-12 items-center justify-center rounded-full border-2 border-white/90 px-8 py-3 text-base font-semibold text-white transition-transform hover:scale-[1.02] sm:text-lg"
               >
@@ -234,9 +261,9 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               Keep doing it. Add your pool here too and keep 100% of every booking we send you. No exclusivity, no host fees, no catch.
             </p>
             <div className="mt-3.5 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-5">
-              <a href="/p/course/migrating-from-swimply-to-prnm-complete-switch-guide" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-4 hover:underline">Switching from Swimply &rarr;</a>
-              <a href="/p/course/multi-platform-hosting-cross-listing-prnm-swimply-peerspace" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-4 hover:underline">Cross-listing guide &rarr;</a>
-              <a href="/l/draft/00000000-0000-0000-0000-000000000000/new/details" className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary-glow">List your pool &rarr;</a>
+              <a href="/p/elearning-academy-migrating-from-swimply-to-prnm-complete-switch-guide" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-4 hover:underline">Switching from Swimply &rarr;</a>
+              <a href="/p/elearning-academy-multi-platform-hosting-cross-listing-prnm-swimply-peerspace" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-4 hover:underline">Cross-listing guide &rarr;</a>
+              <a href="/wizard/" className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary-glow">List your pool &rarr;</a>
             </div>
           </div>
         </section>
@@ -270,7 +297,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </p>
             <div className="mt-7">
               <a
-                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                href="/wizard/"
                 aria-label="List your pool for free"
                 className="inline-flex items-center justify-center rounded-full bg-white px-9 py-4 text-base font-bold text-[#0B4A6F] shadow-xl transition-transform hover:scale-[1.03] sm:text-lg"
               >
@@ -278,9 +305,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               </a>
             </div>
             <p className="mx-auto mt-6 max-w-2xl text-[11px] leading-relaxed text-white/70 sm:text-xs">
-              Hosts never pay a fee. We make money from one clear service fee guests
-              pay at checkout, which covers payment processing, $2M insurance on every
-              booking, and 24/7 support. Hosts are the business&nbsp;&mdash; we don&rsquo;t tax the business.{" "}
+              Hosts never pay a fee. We make money from one clear service fee guests pay at
+              checkout, which covers payment processing and 24/7 support. Hosts are the business&nbsp;&mdash; we don&rsquo;t tax the business.{" "}
               <a
                 href="/legal-and-compliance/terms-of-service-pool-rental-near-me"
                 className="underline underline-offset-2 hover:text-white"
@@ -295,7 +321,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {/* Trust line under hero */}
         <div className="border-b border-border bg-background">
           <p className="mx-auto max-w-5xl px-4 py-3 text-center text-xs text-muted-foreground sm:text-sm">
-            0% host fees · $2M Hartford-backed insurance · 100% US-based support
           </p>
         </div>
 
@@ -303,7 +328,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         <section aria-label="Two ways to use Pool Rental Near Me" className="bg-background">
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <h2 className="text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Two ways to fall for summer.
+              Two ways to fall for a pool.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
               Book a swimming pool rental as a guest, or list your private pool — hosts like Katy charge $100/hour, and you keep all of it.
@@ -318,7 +343,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="text-4xl" aria-hidden>🏖</span>
                 <h3 className="mt-3 text-xl font-semibold text-foreground">I'm going swimming</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Rent a private swimming pool by the hour and find private pools near you — simple, affordable, and the best Saturday your kids will remember this summer.
+                  Rent a private swimming pool by the hour and find private pools near you — simple, affordable, and the best Saturday your kids will remember.
                 </p>
                 <span
                   className="mt-auto inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white"
@@ -342,7 +367,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 <span className="text-4xl" aria-hidden>💙</span>
                 <h3 className="mt-3 text-xl font-bold">I'm sharing my pool</h3>
                 <p className="mt-2 text-sm font-medium" style={{ color: "#46323c" }}>
-                  If you can text a photo, you can host. We set it all up with you — $2M Hartford-backed insurance, 0% host fees, you keep every dollar. Hosts like Katy charge $100/hour — eight booked hours a weekend is $800.
+                  If you can text a photo, you can host. Hosts like Katy charge $100/hour — eight booked hours a weekend is $800.
                 </p>
                 <span
                   className="mt-auto inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold text-white"
@@ -363,11 +388,11 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </h2>
             <div className="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4 md:max-w-4xl md:grid-cols-3">
               {[
-                { emoji: "👰", label: "Bachelorette", href: "/s?event=bachelorette", aria: "bachelorette parties" },
-                { emoji: "🎂", label: "Birthday", href: "/s?event=birthday", aria: "birthday parties" },
-                { emoji: "👨‍👩‍👧", label: "Family Day", href: "/s?event=family-day", aria: "family days" },
-                { emoji: "🏊", label: "Swim Lesson", href: "/s?event=swim-lesson", aria: "swim lessons" },
-                { emoji: "🎉", label: "Pool Party", href: "/s?event=pool-party", aria: "pool parties" },
+                { emoji: "👰", label: "Bachelorette", href: "/s?keywords=bachelorette", aria: "bachelorette parties" },
+                { emoji: "🎂", label: "Birthday", href: "/s?keywords=birthday", aria: "birthday parties" },
+                { emoji: "👨‍👩‍👧", label: "Family Day", href: "/s?keywords=family", aria: "family days" },
+                { emoji: "🏊", label: "Swim Lesson", href: "/s?keywords=lesson", aria: "swim lessons" },
+                { emoji: "🎉", label: "Pool Party", href: "/s?keywords=party", aria: "pool parties" },
                 { emoji: "🌤", label: "Just Tuesday", href: "/s", aria: "any day of the week" },
               ].map((t) => (
                 <a
@@ -391,12 +416,12 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           <div className="relative mx-auto h-[300px] w-full max-w-3xl px-4 py-2">
             <div className="absolute left-4 top-8 w-[52%] -rotate-3">
               <div className="overflow-hidden rounded-[22px] bg-white p-1.5" style={{ boxShadow: "0 6px 18px rgba(34,48,60,0.14)" }}>
-                <img src={loveHero} alt="Sunlit backyard pool" loading="lazy" className="h-[190px] w-full rounded-[18px] object-cover" />
+                <img src={loveHero} alt="Sunlit backyard pool" width={800} height={800} loading="lazy" decoding="async" className="h-[190px] w-full rounded-[18px] object-cover" />
               </div>
             </div>
             <div className="absolute right-4 top-0 w-[44%] rotate-2">
               <div className="relative overflow-hidden rounded-[22px] bg-white p-1.5" style={{ boxShadow: "0 6px 18px rgba(34,48,60,0.14)" }}>
-                <img src={loveFriends} alt="Friends laughing poolside" loading="lazy" className="h-[230px] w-full rounded-[18px] object-cover" />
+                <img src={loveFriends} alt="Friends laughing poolside" width={800} height={447} loading="lazy" decoding="async" className="h-[230px] w-full rounded-[18px] object-cover" />
                 <span className="absolute left-3 top-3 rounded-full px-3 py-1.5 text-[12px] font-extrabold text-white" style={{ backgroundColor: "#0EA5E9" }}>
                   Booked in 2 taps
                 </span>
@@ -412,11 +437,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
         {/* Comparative trust strip */}
         <section aria-label="Why book with Pool Rental Near Me" className="border-b border-border bg-secondary/30">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 text-center sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
-            <div>
-              <div className="text-2xl font-bold text-primary">$2M</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">Insurance per booking</div>
-              <div className="mt-1 text-xs text-muted-foreground">2× the industry standard</div>
-            </div>
             <div>
               <div className="text-2xl font-bold text-primary">0%</div>
               <div className="mt-1 text-sm font-semibold text-foreground">Host fees</div>
@@ -448,22 +468,6 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               >
                 National Law Review
               </a>
-              <a
-                href="https://lifestyle.myeaglecountry.com/story/194280/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
-              >
-                Eagle Country
-              </a>
-              <a
-                href="https://lifestyle.kbew98country.com/story/194285/two-truck-drivers-built-a-national-pool-rental-marketplace-on-their-off-hours/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
-              >
-                KBEW
-              </a>
             </div>
           </div>
         </section>
@@ -475,9 +479,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             <p className="mt-1 text-sm text-muted-foreground">Five hearts is our whole review system.</p>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               {[
-                ["“I love you guys over at Pool Rental Near Me — the founder personally called me to make sure I was all right.”", "Demarco", "Queens, NY"],
-                ["“Rock on, Derek — I see your hustle this year and it&rsquo;s legit. My pool paid for our summer.”", "Salty Without The Sharks", "CA"],
-                ["“Eight kids, one cannonball contest, and a card that just worked. I did not touch a thing.”", "Trish", "Riverside, CA"],
+                ["“I love you guys over at Pool Rental Near Me — the founder and co-founder personally called me to make sure I&rsquo;m all right.”", "Demarco", "Queens, NY"],
+                ["“Rock on, Derek. I see your hustle this year and it&rsquo;s legit.”", "Salty Without The Sharks", "CA"],
               ].map(([q, who, where]) => (
                 <div key={who} className="rounded-2xl p-5" style={{ backgroundColor: "#e4f4fc" }}>
                   <div className="text-sm tracking-wide" style={{ color: "#ff6f52" }}>❤️❤️❤️❤️❤️</div>
@@ -596,13 +599,15 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   {visibleOccasions.slice(0, 4).map((o, idx) => (
                     <a
                       key={o.slug}
-                      href={`/p/course/${o.slug}`}
+                      href={`/p/elearning-academy-${o.slug}`}
                       className={`group relative overflow-hidden rounded-2xl shadow-md transition-all hover:-translate-y-1 hover:shadow-xl ${idx % 2 === 0 ? "translate-y-4" : ""}`}
                     >
                       <div className="aspect-square overflow-hidden">
                         <img
                           src={ACADEMY_HERO_MAP[o.img]}
                           alt={`${o.title} hosting course`}
+                          width={800}
+                          height={440}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                           loading="lazy"
                         />
@@ -632,28 +637,30 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             </Suspense>
           </ErrorBoundary>
         ) : (
-          listings.length > 0 && (
+          inventory.length > 0 && (
             <ErrorBoundary name="NearbyListingsSection" silent>
               <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
                 <div className="flex flex-col items-center text-center">
                   <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                     {hasNearbyPools && nearbyLabel
-                      ? `Pools near ${nearbyLabel}`
-                      : "Pools near you"}
+                      ? `Rent a pool near ${nearbyLabel}`
+                      : "Rent a pool near you"}
                   </h2>
                   <p className="mt-3 max-w-xl text-muted-foreground">
-                    Real backyards from real hosts. Pick one and you could be poolside this weekend.
+                    Real backyards from real hosts — heated pools, spas and indoor swims included. Prices are per hour, all fees in.
                   </p>
                 </div>
-                <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
                   <a
                     href="/p/la-saltwater-featured"
-                    className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+                    className="group relative block w-[78vw] max-w-[320px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg sm:w-auto sm:max-w-none"
                   >
                     <div className="aspect-[4/3] overflow-hidden bg-muted">
                       <img
                         src={laSaltwaterFeatured}
                         alt="La Saltwater Pool & Spa, Sherman Oaks"
+                        width={400}
+                        height={300}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -680,7 +687,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                   </a>
                   <a
                     href="/p/jan"
-                    className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+                    className="group relative block w-[78vw] max-w-[320px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg sm:w-auto sm:max-w-none"
                   >
                     <div className="aspect-[4/3] overflow-hidden bg-muted">
                       {data?.janFeatured?.heroImage ? (
@@ -716,18 +723,11 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       </div>
                     </div>
                   </a>
-                  {listings
-                    .filter((l: ListingSummary) => !HIDE_LISTING_RE.test(l.title || ""))
-                    .slice(0, 11)
-                    .map((l: ListingSummary) => (
-                      <ErrorBoundary
-                        key={l.id}
-                        name={`ListingCard:${l.id}`}
-                        fallback={null}
-                      >
-                        <ListingCard listing={l} />
-                      </ErrorBoundary>
-                    ))}
+                  {inventory.map((l) => (
+                    <ErrorBoundary key={l.id} name={`FeaturedPoolCard:${l.id}`} fallback={null}>
+                      <FeaturedPoolCard listing={l} />
+                    </ErrorBoundary>
+                  ))}
                 </div>
                 <div className="mt-10 text-center">
                   <a
@@ -750,7 +750,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 Questions? <span className="text-primary">We've thought of everything.</span>
               </h2>
               <p className="mt-3 text-muted-foreground">
-                The five things first-time renters and hosts ask us most.
+                The questions first-time renters and hosts ask us most.
               </p>
               <div className="mt-8 space-y-3">
                 {HOMEPAGE_FAQS.map((f, i) => (
@@ -836,12 +836,13 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
           </div>
         </section>
 
+        <HowToRentSection />
         <PoolTypeGrid />
 
         {cities.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Pool rentals in {cityCount.toLocaleString("en-US")}+ U.S. cities
+              Pool rentals by city
             </h2>
             <p className="mt-2 text-muted-foreground">
               Find a private pool in your zip code, or browse the full{" "}
@@ -854,11 +855,11 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               directory.
             </p>
             <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {cities.map((c: HomeCity) => (
+              {cities.map((c: HomeCity, i: number) => (
                 <a
                   key={c.slug}
                   href={`/p/${c.slug}`}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
+                  className={`text-sm text-muted-foreground transition-colors hover:text-primary hover:underline${i >= 24 ? " hidden sm:block" : ""}`}
                 >
                   {c.name}, {c.state_code}
                 </a>
@@ -872,7 +873,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 Find a pool near you
               </a>
               <a
-                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                href="/wizard/"
                 className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition hover:border-primary hover:text-primary"
               >
                 List your pool
@@ -900,11 +901,11 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 Got a pool? Turn it into income.
               </h2>
               <p className="mt-2 max-w-2xl text-primary-foreground/85">
-                Hosts like Katy charge $100/hour — eight booked hours a weekend is $800, and you keep all of it. Free to list, insured on every booking.
+                Hosts charge up to $100/hour — eight booked hours a weekend is $800, and you keep all of it. Free to list, 0% host fees.
               </p>
             </div>
             <a
-              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+              href="/wizard/"
               className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-7 py-3 text-base font-semibold text-primary shadow-lg transition-transform hover:scale-105"
             >
               List your pool →
@@ -971,25 +972,80 @@ import poolTypeHotTub from "@/assets/pool-types/hot-tub.jpg";
 import poolTypeKitchen from "@/assets/pool-types/outdoor-kitchen.jpg";
 import poolTypeFire from "@/assets/pool-types/fire-pit.jpg";
 import poolTypePet from "@/assets/pool-types/pet-friendly.jpg";
-import poolTypeAccessible from "@/assets/pool-types/accessible.jpg";
 import poolTypeTheater from "@/assets/pool-types/outdoor-theater.jpg";
 import poolTypeIndoor from "@/assets/pool-types/indoor.jpg";
-import poolTypeInfinity from "@/assets/pool-types/infinity.jpg";
 
-const POOL_TYPES: { name: string; slug: string; img: string }[] = [
-  { name: "Saltwater Pools", slug: "saltwater", img: poolTypeSalt },
-  { name: "Heated Pools", slug: "heated", img: poolTypeHeated },
-  { name: "Resort-Style Pools", slug: "resort-style", img: poolTypeResort },
-  { name: "Lap Pools", slug: "lap", img: poolTypeLap },
-  { name: "Pools with Hot Tubs", slug: "hot-tub", img: poolTypeHotTub },
-  { name: "Pools with Outdoor Kitchens", slug: "outdoor-kitchen", img: poolTypeKitchen },
-  { name: "Pools with Fire Pits", slug: "fire-pit", img: poolTypeFire },
-  { name: "Pet-Friendly Pools", slug: "pet-friendly", img: poolTypePet },
-  { name: "Wheelchair-Accessible Pools", slug: "accessible", img: poolTypeAccessible },
-  { name: "Pools with Outdoor Theaters", slug: "outdoor-theater", img: poolTypeTheater },
-  { name: "Indoor Pools", slug: "indoor", img: poolTypeIndoor },
-  { name: "Infinity Pools", slug: "infinity", img: poolTypeInfinity },
+// Each tile links to a marketplace search that actually narrows results
+// (keyword search, or the indoor category). Result counts verified 2026-09-09.
+const POOL_TYPES: { name: string; href: string; img: string }[] = [
+  { name: "Saltwater Pools", href: "/s?keywords=saltwater", img: poolTypeSalt },
+  { name: "Heated Pools", href: "/s?keywords=heated", img: poolTypeHeated },
+  { name: "Resort-Style Pools", href: "/s?keywords=resort", img: poolTypeResort },
+  { name: "Lap Pools", href: "/s?keywords=lap", img: poolTypeLap },
+  { name: "Pools with Hot Tubs", href: "/s?keywords=hot%20tub", img: poolTypeHotTub },
+  { name: "Pools with Outdoor Kitchens", href: "/s?keywords=kitchen", img: poolTypeKitchen },
+  { name: "Pools with Fire Pits", href: "/s?keywords=fire%20pit", img: poolTypeFire },
+  { name: "Pet-Friendly Pools", href: "/s?keywords=pet", img: poolTypePet },
+  { name: "Pools with Outdoor Theaters", href: "/s?keywords=theater", img: poolTypeTheater },
+  { name: "Indoor Pools", href: "/s?pub_categoryLevel1=pool&pub_categoryLevel2=indoorpools", img: poolTypeIndoor },
 ];
+
+function HowToRentSection() {
+  return (
+    <section className="bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          How to rent a pool
+        </h2>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          Renting a pool near you takes about five minutes. Every listing is a real
+          backyard from a real host — you book by the hour, and the price you see is
+          the price you pay.
+        </p>
+        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <span className="text-2xl" aria-hidden>🔍</span>
+            <h3 className="mt-3 text-lg font-semibold text-foreground">1. Search pools near you</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Enter your city or zip and browse private pools, heated pools, and hot
+              tubs — with photos, hourly rates, and guest limits on every listing.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <span className="text-2xl" aria-hidden>📅</span>
+            <h3 className="mt-3 text-lg font-semibold text-foreground">2. Pick your hours and book</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Choose a date and time that works. The all-in total is shown before you
+              pay, and the host approves every booking — no surprises on either side.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <span className="text-2xl" aria-hidden>🏊</span>
+            <h3 className="mt-3 text-lg font-semibold text-foreground">3. Sign the waiver and swim</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Every booking includes a signed guest waiver, then the pool is all yours
+              for your hours — birthday party, family swim, or a quiet float.
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <a
+            href="/s"
+            className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          >
+            Find a pool rental near you
+          </a>
+          <a href="/p/how-it-works" className="text-sm font-semibold text-primary hover:underline">
+            How it works, in detail &rarr;
+          </a>
+          <a href="/p/hosting" className="text-sm font-semibold text-primary hover:underline">
+            Got a pool? 0% host fees &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function PoolTypeGrid() {
   return (
@@ -999,18 +1055,20 @@ function PoolTypeGrid() {
           Browse by pool type
         </h2>
         <p className="mt-2 text-muted-foreground">
-          Heated pools, hot tubs, infinity edges, fire pits, outdoor theaters — find your vibe.
+          Heated pools, hot tubs, saltwater, fire pits, outdoor theaters — find your vibe.
         </p>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div className="-mx-4 mt-8 flex snap-x gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0 md:grid-cols-4 lg:grid-cols-5">
           {POOL_TYPES.map((t) => (
             <a
-              key={t.slug}
-              href={`/s?pub_category=${encodeURIComponent(t.slug)}`}
-              className="group relative aspect-[4/5] overflow-hidden rounded-2xl shadow-sm ring-1 ring-border transition-transform duration-200 hover:scale-[1.03] hover:shadow-lg"
+              key={t.name}
+              href={t.href}
+              className="group relative aspect-[4/5] w-[150px] shrink-0 snap-start overflow-hidden rounded-2xl shadow-sm ring-1 ring-border transition-transform duration-200 hover:scale-[1.03] hover:shadow-lg sm:w-auto"
             >
               <img
                 src={t.img}
                 alt={t.name}
+                width={640}
+                height={800}
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
@@ -1028,3 +1086,69 @@ function PoolTypeGrid() {
   );
 }
 
+// --- Homepage inventory card: marketplace display price (all-in, cents kept) ---
+function formatAllIn(cents: number): string {
+  const dollars = cents / 100;
+  return Number.isInteger(dollars) ? `$${dollars}` : `$${dollars.toFixed(2)}`;
+}
+
+function spaLabel(spa: { name: string; priceCents: number }): string {
+  // Host-listed add-on amount, quoted as listed (not part of the hourly price).
+  return spa.priceCents > 0 ? `Spa add-on +${formatAllIn(spa.priceCents)}` : "Spa included";
+}
+
+function FeaturedPoolCard({ listing }: { listing: CuratedListing }) {
+  const place = [listing.city, listing.state].filter(Boolean).join(", ");
+  const feature = listing.spa
+    ? spaLabel(listing.spa)
+    : listing.category === "indoorpools"
+      ? "Indoor pool"
+      : listing.category === "heatedpools"
+        ? "Heated pool"
+        : null;
+  const meta = [place || null, listing.guests ? `Fits ${listing.guests}` : null, feature].filter(Boolean);
+  return (
+    <a
+      href={`/l/${listing.slug}/${listing.id}`}
+      className="group relative block w-[78vw] max-w-[320px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg sm:w-auto sm:max-w-none"
+    >
+      <div className="aspect-[4/3] overflow-hidden bg-muted">
+        {listing.imageUrl ? (
+          <img
+            src={listing.imageUrl}
+            alt={listing.title}
+            width={800}
+            height={533}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+            No image
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <h3 className="line-clamp-1 text-base font-semibold text-foreground">{listing.title}</h3>
+        {meta.length > 0 && (
+          <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{meta.join(" · ")}</p>
+        )}
+        <div className="mt-3 flex items-center justify-between gap-3">
+          {listing.allInCents != null ? (
+            <p className="text-sm font-semibold text-foreground">
+              {listing.hasPriceVariants ? "from " : ""}
+              {formatAllIn(listing.allInCents)}{" "}
+              <span className="font-normal text-muted-foreground">/ hour, all-in</span>
+            </p>
+          ) : (
+            <span />
+          )}
+          <span className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
+            Book now →
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}

@@ -1,10 +1,31 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { searchListings, fetchShareListing } from "@/server/sharetribe.server";
+import {
+  searchListings,
+  fetchShareListing,
+  fetchListingsByIds,
+  type CuratedListing,
+} from "@/server/sharetribe.server";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 
 const JAN_LISTING_ID = "6a1a4c13-02fe-458e-89ba-e33b5fc7612b";
+
+// Homepage inventory row: hand-picked spa-first and indoor listings (verified
+// 2026-09-09). Order here is display order. Only published listings render, and
+// every field on the card (title, photo, city/state, guest limit, price, first
+// amenity) is read from the live marketplace record at request time.
+const CURATED_LISTING_IDS = [
+  "69da42df-c2c8-4d20-ac98-889e5e0af82c", // Luxury Indoor Pool (indoor, hot tub add-on)
+  "69fb6104-fdb3-44a3-97b5-026928bb6d90", // Tropical Oasis — Patio, Pool & Spa
+  "6a4221ff-511f-43b9-9cd4-cb624aef210b", // My Backyard Oasis
+  "6a90f031-5164-4945-af2e-f79cb199e3f9", // Fillmore's Exclusive Tropical Resort Living
+  "685ed1bc-d63b-4004-9123-aa3e41dc8fd7", // Private Heated Saltwater Oasis w/ hot tub
+  "687891ff-95ed-432b-8e91-125fd5095786", // Tropical Paradise Heated Pool and Spa
+  "6a713580-85d9-43eb-8f84-35a431128c2f", // The Backyard Oasis (indoor)
+  "68816fa0-2ddf-40c7-9cc9-fe673a156a9a", // Indoor NYC Pool (indoor)
+  "68bbb61e-990d-4147-8244-c61db6ad9a30", // Tiki Oasis (spa add-on)
+];
 import {
   ACADEMY_SLUGS,
   ACADEMY_OCCASION_SLUGS,
@@ -49,6 +70,8 @@ export type HomeData = {
   /** Jan's TheSwimpark featured-pool card data (hero image only). */
   /** Jan's TheSwimpark featured-pool card data (hero image only). */
   janFeatured?: { heroImage: string | null } | null;
+  /** Hand-picked spa / heated / indoor listings for the homepage inventory row, in display order. */
+  curated?: CuratedListing[];
 };
 
 const emptyListingResult = { total: 0, listings: [], page: 1, totalPages: 0 };
@@ -109,7 +132,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       }
     };
 
-    const [cities, cityCountRes, categories, featuredResult, nearbyResult, academyRes, janListing] = await Promise.all([
+    const [cities, cityCountRes, categories, featuredResult, nearbyResult, academyRes, janListing, curated] = await Promise.all([
       safe(
         Promise.resolve(
           supabaseAdmin
@@ -117,7 +140,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
             .select("slug, name, state_code")
             .eq("is_published", true)
             .order("name")
-            .limit(60),
+            .limit(72),
         ),
         "cities query",
         { data: [] as HomeCity[] } as { data: HomeCity[] | null },
@@ -160,6 +183,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         [] as { slug: string | null; body_markdown: string | null }[],
       ),
       safe(fetchShareListing(JAN_LISTING_ID), "Jan featured listing", null),
+      safe(fetchListingsByIds(CURATED_LISTING_IDS), "curated listings", [] as CuratedListing[]),
     ]);
 
     // Strip listings missing a real image — they render as a blank "no image"
@@ -247,7 +271,27 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       );
     }
 
-    const cityList = (cities.data ?? []) as HomeCity[];
+    // Drop city links whose page now redirects (content_pages.redirect_to) and
+    // duplicate labels (e.g. "Boston, MA" listed twice), then cap the grid at 60.
+    let cityList = (cities.data ?? []) as HomeCity[];
+    try {
+      const { data: redirected } = await supabaseAdmin
+        .from("content_pages")
+        .select("slug")
+        .in("slug", cityList.map((c) => c.slug))
+        .not("redirect_to", "is", null);
+      const dead = new Set((redirected ?? []).map((r: { slug: string | null }) => r.slug));
+      const seen = new Set<string>();
+      cityList = cityList.filter((c) => {
+        const label = `${c.name}, ${c.state_code}`;
+        if (dead.has(c.slug) || seen.has(label)) return false;
+        seen.add(label);
+        return true;
+      });
+    } catch (err) {
+      console.error("homepage city redirect filter failed:", err);
+    }
+    cityList = cityList.slice(0, 60);
     return {
       cities: cityList,
       cityCount: cityCountRes.count ?? cityList.length,
@@ -262,6 +306,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       academyAvailable,
       academyHealth,
       janFeatured: janListing ? { heroImage: janListing.heroImage } : null,
+      curated,
     };
   } catch (err) {
     console.error("homepage getHomeData fatal failure, returning empty data:", err);
