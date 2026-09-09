@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildMeta, ldJsonScript } from "@/lib/seo";
-import { getHomeData, type HomeData } from "@/server/home-data.functions";
+import {
+  getHomeData,
+  getWinterHomeData,
+  type HomeData,
+  type WinterHomeData,
+} from "@/server/home-data.functions";
 import { HomePageContent, HOMEPAGE_FAQS, HOMEPAGE_HERO_IMAGE } from "@/components/home-page";
+import { WinterHomePage } from "@/components/home-page-winter";
 
 const EMPTY_HOME_DATA: HomeData = {
   cities: [],
@@ -13,24 +19,53 @@ const EMPTY_HOME_DATA: HomeData = {
   academyHealth: {},
 };
 
+const EMPTY_WINTER_DATA: WinterHomeData = { featured: [], cityCards: [], cities: [] };
+
+/**
+ * `/?preview=winter` renders the Phase 1 winter homepage (2026-09-09 brief)
+ * server-side, for Derek's review only. Production visitors at `/` get the
+ * current page untouched. The preview render carries a noindex meta tag,
+ * canonicalises to `/`, and getWinterHomeData sets Cache-Control: no-store +
+ * X-Robots-Tag on the response so no cache can hand it out at `/`. Nothing on
+ * the site links to the preview URL.
+ */
+type HomeSearch = { preview?: "winter" };
+
+type HomeLoaderData =
+  | { preview: "winter"; winter: WinterHomeData }
+  | { preview?: undefined; home: HomeData };
+
 export const Route = createFileRoute("/")({
-  loader: async (): Promise<HomeData> => {
+  validateSearch: (search: Record<string, unknown>): HomeSearch =>
+    search.preview === "winter" ? { preview: "winter" } : {},
+  loaderDeps: ({ search }) => ({ preview: search.preview }),
+  loader: async ({ deps }): Promise<HomeLoaderData> => {
+    if (deps.preview === "winter") {
+      try {
+        return { preview: "winter", winter: (await getWinterHomeData()) ?? EMPTY_WINTER_DATA };
+      } catch (err) {
+        console.error("winter preview loader failed:", err);
+        return { preview: "winter", winter: EMPTY_WINTER_DATA };
+      }
+    }
     try {
-      return (await getHomeData()) ?? EMPTY_HOME_DATA;
+      return { home: (await getHomeData()) ?? EMPTY_HOME_DATA };
     } catch (err) {
       console.error("index loader failed:", err);
-      return EMPTY_HOME_DATA;
+      return { home: EMPTY_HOME_DATA };
     }
   },
-  head: () => {
+  head: ({ loaderData }) => {
+    const isPreview = loaderData?.preview === "winter";
     const meta = buildMeta({
-      title: "Pool Rental Near Me: Rent a Private Pool by the Hour",
+      title: "Pool Rental Near Me — Rent a Pool by the Hour | Private Pools Near You",
       description:
-        "Find and book a private pool for rent by the hour. Heated pools, hot tubs, and luxury backyards. Swimming pool rental with $2M liability insurance included.",
+        "Rent a pool near you by the hour — private backyard pools, heated pools & hot tubs from real hosts. 0% host fees, hosts keep 100%. Book a private pool rental in minutes.",
       path: "/",
       // Indexability is controlled by the X-Robots-Tag HTTP header in src/start.ts
       // (preview hosts get noindex; production www.poolrentalnearme.com is indexable).
-      // Do NOT add a noindex meta tag here — it would deindex the production homepage.
+      // Do NOT add a noindex meta tag here for the production render — it would
+      // deindex the homepage. The ONLY noindex below is scoped to ?preview=winter.
       image: HOMEPAGE_HERO_IMAGE,
     });
     // Organization + WebSite JSON-LD are emitted once in __root.tsx and
@@ -47,6 +82,10 @@ export const Route = createFileRoute("/")({
     };
     return {
       ...meta,
+      meta: [
+        ...(meta.meta ?? []),
+        ...(isPreview ? [{ name: "robots", content: "noindex, nofollow" }] : []),
+      ],
       links: [
         ...(meta.links ?? []),
         // Speed up navigation to the Sharetribe marketplace search page.
@@ -63,5 +102,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const data = Route.useLoaderData();
-  return <HomePageContent data={data} />;
+  if (data?.preview === "winter") return <WinterHomePage data={data.winter} />;
+  return <HomePageContent data={data?.home} />;
 }

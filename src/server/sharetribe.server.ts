@@ -694,6 +694,10 @@ export interface CuratedListing extends ListingSummary {
   spa: { name: string; priceCents: number } | null;
   /** Sharetribe categoryLevel2 (e.g. "indoorpools", "heatedpools"), if set. */
   category: string | null;
+  /** Average rating from publicData.avgRating, only when the listing really has reviews. */
+  rating: number | null;
+  /** publicData.reviewCount, or null. */
+  reviewCount: number | null;
 }
 
 const SPA_AMENITY_RE = /hot\s*tub|\bspa\b|jacuzzi/i;
@@ -759,6 +763,8 @@ export async function fetchListingsByIds(ids: string[]): Promise<CuratedListing[
         guests: typeof pd.guestallowed === "number" ? (pd.guestallowed as number) : null,
         spa,
         category: typeof pd.categoryLevel2 === "string" ? (pd.categoryLevel2 as string) : null,
+        rating: typeof pd.avgRating === "number" ? (pd.avgRating as number) : null,
+        reviewCount: typeof pd.reviewCount === "number" ? (pd.reviewCount as number) : null,
       });
     }
     return ids.map((id) => byId.get(id)).filter((x): x is CuratedListing => Boolean(x));

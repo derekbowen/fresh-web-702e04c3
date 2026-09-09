@@ -160,6 +160,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
             guests: null,
             spa: null,
             category: null,
+            rating: null,
+            reviewCount: null,
           }));
   const rawNearby = (safe.nearby && typeof safe.nearby === "object" ? safe.nearby : null) ?? {
     city: null,
