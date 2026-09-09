@@ -18,7 +18,6 @@ const JAN_LISTING_ID = "6a1a4c13-02fe-458e-89ba-e33b5fc7612b";
 const CURATED_LISTING_IDS = [
   "69da42df-c2c8-4d20-ac98-889e5e0af82c", // Luxury Indoor Pool (indoor, hot tub add-on)
   "69fb6104-fdb3-44a3-97b5-026928bb6d90", // Tropical Oasis — Patio, Pool & Spa
-  "6a4221ff-511f-43b9-9cd4-cb624aef210b", // My Backyard Oasis
   "6a90f031-5164-4945-af2e-f79cb199e3f9", // Fillmore's Exclusive Tropical Resort Living
   "685ed1bc-d63b-4004-9123-aa3e41dc8fd7", // Private Heated Saltwater Oasis w/ hot tub
   "687891ff-95ed-432b-8e91-125fd5095786", // Tropical Paradise Heated Pool and Spa
