@@ -52,9 +52,12 @@ function rel(path: string): string {
 const marketplace = (path: string): string =>
   path.startsWith("/") ? path : `/${path}`;
 
-export function SiteHeader({ isAuthed = false }: { isAuthed?: boolean } = {}) {
+export function SiteHeader({
+  isAuthed = false,
+  hideMobileBar = false,
+}: { isAuthed?: boolean; /** The winter homepage renders its own dismissable bar. */ hideMobileBar?: boolean } = {}) {
   if (useSuppressChrome()) return null;
-  return <SiteHeaderInner isAuthed={isAuthed} />;
+  return <SiteHeaderInner isAuthed={isAuthed} hideMobileBar={hideMobileBar} />;
 }
 
 type NavLink = {
@@ -127,7 +130,7 @@ function NavAnchor({
   );
 }
 
-function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
+function SiteHeaderInner({ isAuthed, hideMobileBar = false }: { isAuthed: boolean; hideMobileBar?: boolean }) {
   const [open, setOpen] = React.useState(false);
   const [accountOpen, setAccountOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
@@ -416,7 +419,7 @@ function SiteHeaderInner({ isAuthed }: { isAuthed: boolean }) {
       </div>
 
       {/* Sticky bottom CTA — mobile only. Auto-hides while the slide-out menu is open. */}
-      {!open && (
+      {!open && !hideMobileBar && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.25)] backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden">
           <div className="flex items-center gap-2">
             <a

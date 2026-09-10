@@ -33,7 +33,7 @@ export function WinterHomePage({ data }: { data: WinterHomeData | null | undefin
   const featured = safe.featured.slice(0, WINTER_FEATURED_COUNT);
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+      <SiteHeader hideMobileBar />
       <main className="flex-1">
         <ErrorBoundary name="WinterHero" silent>
           <WinterHero />
@@ -52,6 +52,7 @@ export function WinterHomePage({ data }: { data: WinterHomeData | null | undefin
         </ErrorBoundary>
       </main>
       <SiteFooter />
+      <WinterStickyBar />
     </div>
   );
 }
@@ -60,7 +61,7 @@ export function WinterHomePage({ data }: { data: WinterHomeData | null | undefin
 
 function WinterHero() {
   return (
-    <section aria-label="Swim all winter" className="relative overflow-hidden">
+    <section id="winter-hero" aria-label="Swim all winter" className="relative overflow-hidden">
       <picture>
         <source media="(max-width: 767px)" srcSet={heroMobile} type="image/webp" />
         <img
@@ -235,7 +236,15 @@ function HeroSearch() {
           )}
           <input type="hidden" name="bounds" value={bounds} />
         </div>
-        <div className="flex-1">
+        <div className="flex h-14 flex-1 items-center rounded-2xl border border-border bg-background focus-within:ring-2 focus-within:ring-primary/40">
+          <button
+            type="button"
+            aria-label="Fewer guests"
+            onClick={() => setGuests((g) => { const n = (parseInt(g, 10) || 0) - 1; return n > 0 ? String(n) : ""; })}
+            className="h-14 w-12 shrink-0 rounded-l-2xl text-xl font-semibold text-muted-foreground hover:bg-secondary"
+          >
+            −
+          </button>
           <label htmlFor="winter-guests" className="sr-only">Guests</label>
           <input
             id="winter-guests"
@@ -246,8 +255,16 @@ function HeroSearch() {
             value={guests}
             onChange={(e) => setGuests(e.target.value)}
             placeholder="Guests"
-            className="h-14 w-full rounded-2xl border border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="h-14 w-full min-w-0 bg-transparent text-center text-base text-foreground placeholder:text-muted-foreground focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
+          <button
+            type="button"
+            aria-label="More guests"
+            onClick={() => setGuests((g) => String(Math.min(100, (parseInt(g, 10) || 0) + 1)))}
+            className="h-14 w-12 shrink-0 rounded-r-2xl text-xl font-semibold text-muted-foreground hover:bg-secondary"
+          >
+            +
+          </button>
         </div>
         <button
           type="submit"
@@ -268,10 +285,10 @@ function TrustStrip() {
   const items = [
     "All-in hourly pricing — no fees at checkout",
     "Real humans, 24/7",
-    // Third slot: the booking process pre-authorizes on request and captures on
-    // host accept, but instant-book listings accept automatically. Wording is
-    // Derek's call — visible placeholder until he decides (brief §2).
-    "[Third trust line — pending Derek]",
+    // Verified against default-booking process.edn 2026-09-10: the card is only
+    // captured on accept (request-to-book) or on the automatic operator-accept
+    // right after checkout (instant book); decline/expire refund the hold.
+    "You're only charged when your booking is confirmed.",
   ];
   return (
     <section aria-label="Why book here" className="border-b border-border bg-secondary/30">
@@ -491,12 +508,12 @@ function HostBand() {
             <div className="mt-6 flex items-center gap-4 rounded-2xl bg-white/10 p-4 ring-1 ring-white/20">
               <FredMascot variant="full" className="h-16 w-16 shrink-0 drop-shadow-lg sm:h-20 sm:w-20" />
               <p className="text-sm text-white/95 sm:text-base">
-                <a href="/p/learningacademy" className="font-semibold underline underline-offset-4">
+                <a href="/p/learningacademy" className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4">
                   Learn with Fred — {ACADEMY_CLASS_COUNT} free classes
                 </a>
                 <span className="block text-white/80">
                   Already on Swimply?{" "}
-                  <a href={SWITCH_FROM_SWIMPLY_URL} className="underline underline-offset-4">Read the switching guide &rarr;</a>
+                  <a href={SWITCH_FROM_SWIMPLY_URL} className="inline-flex min-h-11 items-center underline underline-offset-4">Read the switching guide &rarr;</a>
                 </span>
               </p>
             </div>
@@ -570,7 +587,7 @@ function FaqAndTextDerek() {
               </a>
               <p className="mt-4 text-sm font-medium" style={{ color: "#46323c" }}>
                 Planning a 30-person reunion or a film shoot?{" "}
-                <a href="mailto:hello@poolrentalnearme.com" className="font-bold underline underline-offset-2">Email the concierge</a>.
+                <a href="mailto:hello@poolrentalnearme.com" className="inline-flex min-h-11 items-center font-bold underline underline-offset-2">Email the concierge</a>.
               </p>
             </div>
           </div>
@@ -638,7 +655,7 @@ function CitiesSection({ cards, cities }: { cards: WinterCityCard[]; cities: Hom
                 <a
                   key={c.slug}
                   href={`/p/${c.slug}`}
-                  className="flex min-h-9 items-center text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
+                  className="flex min-h-11 items-center text-sm text-muted-foreground transition-colors hover:text-primary hover:underline"
                 >
                   {c.name}, {c.state_code}
                 </a>
@@ -656,5 +673,74 @@ function CitiesSection({ cards, cities }: { cards: WinterCityCard[]; cities: Hom
         )}
       </div>
     </section>
+  );
+}
+
+/* ─────────────────────── Phone bottom bar (Phase 2) ─────────────────── */
+
+/**
+ * Replaces the site-wide two-button bar on this page only. Appears once the
+ * hero has scrolled out of view, can be dismissed (remembered for the session),
+ * and renders nothing on the server so hydration stays identical.
+ */
+function WinterStickyBar() {
+  const [show, setShow] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  useEffect(() => {
+    try {
+      if (window.sessionStorage.getItem("winter-bar-dismissed") === "1") {
+        setDismissed(true);
+        return;
+      }
+    } catch {
+      /* storage unavailable: just show it */
+    }
+    const hero = document.getElementById("winter-hero");
+    if (!hero || !("IntersectionObserver" in window)) {
+      setShow(true);
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => setShow(!entry.isIntersecting), { threshold: 0 });
+    io.observe(hero);
+    return () => io.disconnect();
+  }, []);
+  const dismiss = () => {
+    setDismissed(true);
+    try {
+      window.sessionStorage.setItem("winter-bar-dismissed", "1");
+    } catch {
+      /* ignore */
+    }
+  };
+  if (dismissed || !show) return null;
+  return (
+    <div
+      role="region"
+      aria-label="Quick actions"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.25)] backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden"
+    >
+      <div className="flex items-center gap-2">
+        <a
+          href="/s"
+          className="inline-flex h-11 flex-1 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-sm"
+        >
+          Find a pool
+        </a>
+        <a
+          href="/wizard/"
+          className="inline-flex h-11 items-center justify-center rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground"
+        >
+          List your space
+        </a>
+        <button
+          type="button"
+          onClick={dismiss}
+          aria-label="Hide this bar"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
   );
 }

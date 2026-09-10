@@ -21,6 +21,8 @@ export function FredMascot({
     <img
       src={src}
       alt={alt}
+      width={variant === "full" ? 448 : 64}
+      height={variant === "full" ? 630 : 50}
       className={className}
       loading="lazy"
       decoding="async"
@@ -39,7 +41,7 @@ const FRED_TIPS: string[] = [
   "List on PRNM, Swimply, and Peerspace. Hosts on 3 platforms earn 60% more.",
   "Heated pools book year-round in Texas, Arizona, Florida. Worth the gas bill.",
   "Photoshoots and content creators pay the highest hourly rates. Pitch them direct.",
-  "$2M liability insurance is included on every PRNM booking. Mention it in your listing.",
+  "Mention it in your listing.",
 ];
 
 /**

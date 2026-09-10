@@ -41,6 +41,8 @@ export function LiteYouTube({
           <img
             src={poster}
             alt={title}
+            width={480}
+            height={360}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
