@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouterState } from "@tanstack/react-router";
 // Header/footer use plain <a> tags instead of TanStack <Link> to avoid React #418
 // hydration mismatches: Link auto-applies class="active" + data-status="active" +
 // aria-current="page" when its `to` matches the router's current path. Through the
@@ -132,6 +133,13 @@ function NavAnchor({
 
 function SiteHeaderInner({ isAuthed, hideMobileBar = false }: { isAuthed: boolean; hideMobileBar?: boolean }) {
   const [open, setOpen] = React.useState(false);
+  // The winter homepage (/?preview=winter, home-page-winter.tsx) renders its own
+  // dismissable bar. Search params are identical on server and client, so this
+  // cannot cause a hydration mismatch (unlike pathname through the nginx proxy).
+  const isWinterPreview = useRouterState({
+    select: (st) => (st.location.search as { preview?: string }).preview === "winter",
+  });
+  const hideBar = hideMobileBar || isWinterPreview;
   const [accountOpen, setAccountOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
   const accountRef = React.useRef<HTMLDivElement | null>(null);
@@ -419,7 +427,7 @@ function SiteHeaderInner({ isAuthed, hideMobileBar = false }: { isAuthed: boolea
       </div>
 
       {/* Sticky bottom CTA — mobile only. Auto-hides while the slide-out menu is open. */}
-      {!open && !hideMobileBar && (
+      {!open && !hideBar && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.25)] backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden">
           <div className="flex items-center gap-2">
             <a
