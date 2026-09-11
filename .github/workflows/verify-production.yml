@@ -1,0 +1,52 @@
+name: Verify production
+
+# Blocks merges and records a verifiable gate before deploy.
+# Failure is a non-zero exit -- this workflow must be a required status check
+# on the default branch for it to actually block.
+
+on:
+  pull_request:
+    paths: ['src/**', 'scripts/**', 'package.json', '.github/workflows/verify-production.yml']
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Hourly drift/invariant sweep against live production
+    - cron: '17 * * * *'
+
+jobs:
+  build:
+    name: Install, typecheck and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+      - run: npx tsc --noEmit -p tsconfig.json
+        continue-on-error: true   # repo carries a known 5-error baseline
+      - run: npm run build
+
+  verify:
+    name: Production URL invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: build
+    env:
+      BASE_URL: https://www.poolrentalnearme.com
+      MAX_SITEMAP_URLS: '250'
+      CONCURRENCY: '8'
+      TIMEOUT_MS: '20000'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: check:tools-hub
+        run: node scripts/check-tools-hub.mjs
+      - name: check:homepage-cities
+        run: node scripts/check-homepage-cities.mjs
+      - name: check:dev-hostnames
+        run: node scripts/check-dev-hostnames.mjs
+      - name: check:emitted-urls
+        run: node scripts/check-emitted-urls.mjs
