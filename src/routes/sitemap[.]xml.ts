@@ -28,7 +28,7 @@ const TEMPLATE_GROUPS: TemplateGroup[] = [
   { basePath: "/sitemap-pages-cities.xml", templateTypes: ["city_main"] },
   { basePath: "/sitemap-pages-host-acquisition.xml", templateTypes: ["host_acq_city", "host_acq_hub"] },
   { basePath: "/sitemap-pages-event-guides.xml", templateTypes: ["event_guide"] },
-  { basePath: "/sitemap-pages-articles.xml", templateTypes: ["resource", "other", "pool_maintenance", "pool_maintenance_hub"] },
+  { basePath: "/sitemap-pages-articles.xml", templateTypes: ["resource", "other", "pool_maintenance", "pool_maintenance_hub", "country_launch"] },
   { basePath: "/sitemap-pages-academy.xml", templateTypes: ["elearning"] },
   { basePath: "/sitemap-pages-advocacy.xml", templateTypes: ["host_advocacy_hub", "host_advocacy_state"] },
   { basePath: "/sitemap-pages-spanish.xml", templateTypes: ["spanish_host_acq", "spanish_resource", "host_acq_city_es"] },
@@ -44,13 +44,11 @@ export const Route = createFileRoute("/sitemap.xml")({
         // 1. Static sub-sitemap
         entries.push({
           loc: `${SITE_URL}/sitemap-static.xml`,
-          lastmod: new Date(),
         });
 
         // 1b. Comparison pages (pillar + city variants)
         entries.push({
           loc: `${SITE_URL}/sitemap-pages-comparisons.xml`,
-          lastmod: new Date(),
         });
 
         // Pool pros directory sitemap removed 2026-07-06: the /p/pool-pros tree
@@ -64,6 +62,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             .in("template_type", group.templateTypes)
             .eq("in_sitemap", true)
             .eq("status", "published")
+            .is("redirect_to", null)
             .not("slug", "is", null);
 
           if (error) {
@@ -72,22 +71,14 @@ export const Route = createFileRoute("/sitemap.xml")({
           }
           if (!count) continue;
 
-          const { data: latest } = await (supabaseAdmin as any)
-            .from("content_pages")
-            .select("updated_at")
-            .in("template_type", group.templateTypes)
-            .eq("in_sitemap", true)
-            .eq("status", "published")
-            .not("slug", "is", null)
-            .order("updated_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-
+          // No index-level lastmod: max(updated_at) was re-stamped monthly by
+          // the related-slug refresh, so it advertised fake freshness. Each
+          // URL carries its own content-based lastmod inside the sub-sitemap.
           const pageCount = Math.ceil(count / SITEMAP_PAGE_SIZE);
           for (let p = 1; p <= pageCount; p++) {
             const loc =
               p === 1 ? `${SITE_URL}${group.basePath}` : `${SITE_URL}${group.basePath}?page=${p}`;
-            entries.push({ loc, lastmod: latest?.updated_at });
+            entries.push({ loc });
           }
         }
 
@@ -118,34 +109,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("[sitemap] blog_posts count error", err);
         }
 
-        // 2c. Courses (sourced from `courses`, served at /p/course/{slug})
-        try {
-          const { count: courseCount } = await (supabaseAdmin as any)
-            .from("courses")
-            .select("*", { count: "exact", head: true })
-            .eq("is_published", true)
-            .not("slug", "is", null);
-          if (courseCount && courseCount > 0) {
-            const { data: latestCourse } = await (supabaseAdmin as any)
-              .from("courses")
-              .select("updated_at")
-              .eq("is_published", true)
-              .not("slug", "is", null)
-              .order("updated_at", { ascending: false })
-              .limit(1)
-              .maybeSingle();
-            const coursePageCount = Math.ceil(courseCount / SITEMAP_PAGE_SIZE);
-            for (let p = 1; p <= coursePageCount; p++) {
-              const loc =
-                p === 1
-                  ? `${SITE_URL}/sitemap-pages-courses.xml`
-                  : `${SITE_URL}/sitemap-pages-courses.xml?page=${p}`;
-              entries.push({ loc, lastmod: latestCourse?.updated_at });
-            }
-          }
-        } catch (err) {
-          console.error("[sitemap] courses count error", err);
-        }
+        // 2c. Courses sub-sitemap retired 2026-09-02: every /p/course/{slug} URL is a
+        // nginx 301 to its /p/elearning-academy-* page, and all 193 targets are already
+        // listed in sitemap-pages-academy.xml (crawl 2026-09-01). Advertising 193
+        // redirects only cost crawl budget. The route still answers with an empty
+        // urlset so the URL never 404s in Search Console.
 
         // 2d. Sharetribe listings (mirror in `synced_listings`, served at /l/{slug}/{id})
         try {

@@ -80,10 +80,20 @@ function buildPrompt(activityKey: ActivityKey, cityName: string, stateCode: stri
     ``,
     `Required structure (use H2 / H3 markdown, NO H1 — the page wraps an H1 already):`,
     `1. Intro (3-4 paragraphs). Must include at least 2 specific signals about ${where}: a real neighborhood name, the climate or swim season, the local event scene, or a landmark. Do NOT copy these from other cities.`,
-    `2. ## Why book a ${a.promptTopic} through Pool Rental Near Me. Sub-bullets: $2M liability insurance included on every booking, hourly rates ($40-150 typical), instant book, host fee is 10% flat (lower than competitors).`,
+    `2. ## Why book a ${a.promptTopic} through Pool Rental Near Me. Sub-bullets: hourly rates ($40-150 typical), instant book, 0% host fees (hosts keep 100%).
+
+HARD CONSTRAINT — INSURANCE:
+NEVER state, imply, or suggest that PRNM provides, includes, arranges, or
+guarantees insurance coverage of any kind. Do not name any insurance
+carrier. Do not cite policy limits, coverage amounts, or claims processes.
+PRNM's only insurance-related content is a referral to third-party
+providers. If insurance is relevant to the page topic, the ONLY permitted
+framing is that hosts should carry their own coverage and that referral
+options exist. Do not link to or name a specific referral partner or page.
+`,
     `3. ## What to expect at a ${a.promptTopic} in ${cityName}. Activity-specific guidance: typical capacity, common amenities renters look for, time-of-day tips, hourly rate band for this activity in this city.`,
     `4. ## Pool features that matter for ${a.promptTopic}. List 4-6 specific features (heated pool, shallow end, shade, restroom access, parking, BBQ, sound system) and why each matters for this activity.`,
-    `5. ## How to book your ${cityName} pool. Three-step walkthrough: search, message host, instant book. Mention $2M cover.`,
+    `5. ## How to book your ${cityName} pool. Three-step walkthrough: search, message host, instant book.`,
     `6. ## ${cityName} pool rental rates for ${a.promptTopic}. One paragraph with a realistic hourly range for this activity in this city. Never invent specific dollar averages.`,
     ``,
     `Output format: JSON only, no markdown fences, exactly this shape:`,

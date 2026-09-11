@@ -166,7 +166,7 @@ export const critiquePage = createServerFn({ method: "POST" })
     const voiceIssues = detectVoiceIssues(page);
 
     // Build AI prompt for the four-dimension critique
-    const prompt = `You are an SEO + brand-voice critic for Pool Rental Near Me (Swimply alternative, 0% host fees, $2M insurance).
+    const prompt = `You are an SEO + brand-voice critic for Pool Rental Near Me (Swimply alternative, 0% host fees).
 
 Voice rules: sentence case headings, second person, no em dashes, no hype words. Banned: ${BANNED_WORDS.join(", ")}.
 

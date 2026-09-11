@@ -34,7 +34,7 @@ const BOOKS: Book[] = [
       "Transform Your Pool into a Money-Making Machine — The Complete Guide to Starting, Growing, and Scaling Your Pool Hosting Business",
     cover: "51y-llKFeQL",
     blurb:
-      "Proven strategies for building a $50K+/year pool rental business, from the first listing through scaling to multiple properties.",
+      "Strategies for building a pool rental business, from the first listing through scaling to multiple properties.",
   },
   {
     asin: "B0FY67SZTJ",
@@ -86,7 +86,7 @@ const BOOKS: Book[] = [
       "The Complete Guide to Earning $3K–$12K Monthly by Hosting Pool Rentals on Pool Rental Near Me",
     cover: "616h0KNFbjL",
     blurb:
-      "A step-by-step guide to $3K–$12K monthly recurring income from one backyard pool using Pool Rental Near Me.",
+      "A step-by-step guide to building rental income from one backyard pool using Pool Rental Near Me.",
   },
 ];
 
@@ -103,7 +103,7 @@ const PERSON_LD = {
   url: `${SITE_URL}${PATH}`,
   jobTitle: "Founder & CEO, PRNM Corp",
   description:
-    "Founder of Pool Rental Near Me and author of seven books on the pool rental economy. 20+ years of marketplace and e-commerce experience.",
+    "Founder of Pool Rental Near Me and author of seven books on the pool rental economy.",
   worksFor: {
     "@type": "Organization",
     name: "PRNM Corp",
@@ -188,17 +188,16 @@ function AuthorPage() {
             <div className="mt-8 grid gap-8 md:grid-cols-3">
               <div className="md:col-span-2 space-y-4 text-base leading-7 text-foreground/90">
                 <p>
-                  I&apos;m a Class A CDL truck driver and serial entrepreneur with over 20
-                  years building marketplace businesses. I founded PRNM Corp in 2024 after
-                  three years of building Pool Rental Near Me from truck stops across the
-                  country during my off-hours, alongside my co-founder Brandon Elias.
+                  I&apos;m a Class A CDL truck driver and entrepreneur. I founded PRNM
+                  Corp in 2024 after three years of building Pool Rental Near Me from
+                  truck stops across the country during my off-hours, alongside my
+                  co-founder Brandon Elias.
                 </p>
                 <p>
                   Pool Rental Near Me is now a national peer-to-peer pool rental
-                  marketplace with thousands of indexed city pages and pool hosts earning
-                  $3,000 to $12,000 a month from their backyard pools. We charge 0% host fees — you keep 100% — include $2M in liability coverage, and have built every piece
-                  of the platform — iOS, Android, web, calendar sync, waivers, insurance
-                  — without outside funding.
+                  marketplace with thousands of indexed city pages and hosts across the
+                  country. We built every piece of the platform — iOS, Android, web,
+                  calendar sync, waivers — without outside funding.
                 </p>
                 <p>
                   I&apos;ve written seven books on the pool rental economy, covering
@@ -306,8 +305,7 @@ function AuthorPage() {
               Want to rent out your own pool?
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
-              List your pool on Pool Rental Near Me. 0% host fees, $2M liability
-              coverage included, and you keep your calendar in your control.
+              List your pool on Pool Rental Near Me.
             </p>
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a

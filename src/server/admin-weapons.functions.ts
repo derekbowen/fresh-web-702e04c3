@@ -885,7 +885,7 @@ export const createCounterPageFromGap = createServerFn({ method: "POST" })
       url_path,
       title: `Pool rental in ${cityName}${stateLabel}`,
       seo_title: `Pool rental ${cityName}${stateLabel} — book hourly swim time`,
-      seo_description: `Find heated, private pools to rent by the hour in ${cityName}${stateLabel}. Book a backyard pool for your party, family, or workout — vetted hosts, $2M insurance included.`,
+      seo_description: `Find heated, private pools to rent by the hour in ${cityName}${stateLabel}. Book a backyard pool for your party, family, or workout — vetted hosts, 0% host fees.`,
       status: "draft",
       category: "city",
       template_type: "city",

@@ -11,13 +11,13 @@ export const COACHING_TEMPLATES: CoachingTemplate[] = [
     id: "nextdoor-post",
     label: "Nextdoor post",
     channel: "nextdoor",
-    body: `Hey neighbors — I just opened up my backyard pool for private hourly bookings on Pool Rental Near Me. $60/hour, fully insured, families only. If you're hunting for a way to cool off without the public-pool chaos, here's my listing: [paste your listing URL]`,
+    body: `Hey neighbors — I just opened up my backyard pool for private hourly bookings on Pool Rental Near Me. $60/hour, waiver required, families only. If you're hunting for a way to cool off without the public-pool chaos, here's my listing: [paste your listing URL]`,
   },
   {
     id: "facebook-group",
     label: "Facebook group post",
     channel: "facebook",
-    body: `Just got my pool listed for private hourly rentals through Pool Rental Near Me. It's like Airbnb but for pools — I keep 100% of every booking and the $2M liability insurance is included. Book your group, a kid's party, or a date night here: [paste your listing URL]`,
+    body: `Just got my pool listed for private hourly rentals through Pool Rental Near Me. It'Book your group, a kid's party, or a date night here: [paste your listing URL]`,
   },
   {
     id: "text-a-friend",
@@ -29,6 +29,6 @@ export const COACHING_TEMPLATES: CoachingTemplate[] = [
     id: "instagram-story",
     label: "Instagram story script",
     channel: "instagram",
-    body: `Story 1: photo of pool + "My backyard is now bookable by the hour 👇" + swipe-up sticker. Story 2: "$60/hr, fully insured, book here ↓" with link sticker pointing to your listing URL.`,
+    body: `Story 1: photo of pool + "My backyard is now bookable by the hour 👇" + swipe-up sticker. Story 2: "$60/hr, waiver required, book here ↓" with link sticker pointing to your listing URL.`,
   },
 ];

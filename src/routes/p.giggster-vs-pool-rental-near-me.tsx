@@ -8,7 +8,6 @@ import {
   FooterBlock,
   FAQList,
   LastUpdated,
-  HartfordKnockout,
   RelatedCompares,
   buildComparisonMeta,
   faqJsonLd,
@@ -22,12 +21,12 @@ const SLUG = "giggster-vs-pool-rental-near-me";
 const TITLE =
   "Giggster vs Pool Rental Near Me (2026): Fees, Insurance & Best Use Cases";
 const DESCRIPTION =
-  "Side-by-side 2026 comparison of Giggster vs Pool Rental Near Me for pool owners — verified 19% vs 0% host commission, COI vs included $2M insurance, production vs recreational buyers, and which platform pays more in LA, NYC, Atlanta, Austin, and Chicago.";
+  "Side-by-side 2026 comparison of Giggster vs Pool Rental Near Me for pool owners — verified 19% vs 0% host commission, renter COI requirements vs waiver-based hosting, production vs recreational buyers, and which platform pays more in LA, NYC, Atlanta, Austin, and Chicago.";
 
 const faqs = [
   {
     q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
-    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing and 24/7 support. Hosts are the business — we don't tax the business.",
   },
   {
     q: "What is the Giggster host commission in 2026?",
@@ -39,7 +38,7 @@ const faqs = [
   },
   {
     q: "What insurance does Giggster require vs Pool Rental Near Me?",
-    a: "Per Giggster's Help Center articles \"As a host, do I need insurance?\" and \"Do I need insurance to host production?\": Giggster hosts must carry their own homeowner's insurance, and renters must provide a Certificate of Insurance (COI) with at least $2 million in general liability + property damage before each booking. Renters can buy Giggster's optional Production/Event Insurance at checkout or supply their own. Pool Rental Near Me's parent company PRNM Corp maintains a Business Owner's Policy through Hartford Underwriters that provides $2,000,000 per-occurrence / $4,000,000 aggregate general liability, $10,000 medical-expenses-per-person, and a $150,000 STRETCH® PLUS property coverage blanket on every approved booking — no separate renter COI required.",
+    a: "Per Giggster's Help Center articles \"As a host, do I need insurance?\" and \"Do I need insurance to host production?\": Giggster hosts must carry their own homeowner's insurance, and renters must provide a Certificate of Insurance (COI) with at least $2 million in general liability + property damage before each booking. Renters can buy Giggster's optional Production/Event Insurance at checkout or supply their own. Pool Rental Near Me does not provide or arrange insurance: every booking requires a signed guest waiver, hosts approve each reservation individually, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing on either platform.",
   },
   {
     q: "On a $400 pool booking, how much do I keep on Giggster vs PRNM?",
@@ -142,9 +141,10 @@ function GiggsterComparisonPage() {
             <strong>19% on Giggster</strong> (Giggster Help Center, April 2023, still live).
           </li>
           <li>
-            <strong>Insurance:</strong> PRNM includes $2M / $4M Hartford-backed general
-            liability on every approved booking. Giggster requires the host to carry
-            homeowner's insurance and the renter to supply a $2M COI.
+            <strong>Insurance:</strong> neither platform insures your pool for you.
+            Giggster requires the host to carry homeowner's insurance and the renter
+            to supply a $2M COI; PRNM requires a signed guest waiver on every booking
+            and we do not verify whether hosts carry insurance.
           </li>
           <li>
             <strong>Buyer base:</strong> Giggster = production crews. PRNM = recreational
@@ -187,21 +187,10 @@ function GiggsterComparisonPage() {
               "Variable Processing Fee at checkout (Giggster: \"depends on the overall cost and features of the booking\")",
           },
           {
-            label: "Included liability insurance",
-            prnm: "$2M per-occurrence / $4M aggregate (Hartford) on every approved booking",
+            label: "Platform-provided insurance",
+            prnm: "None — PRNM does not provide or arrange insurance; every booking requires a signed guest waiver and we do not verify whether hosts carry insurance",
             competitor:
               "Not included — host must carry homeowner's insurance; renter must supply $2M COI for production bookings",
-          },
-          {
-            label: "Property damage coverage",
-            prnm: "$150K STRETCH® PLUS blanket on every approved booking",
-            competitor:
-              "Per renter-supplied COI (or Giggster's optional add-on Production/Event Insurance at checkout)",
-          },
-          {
-            label: "Medical expense coverage",
-            prnm: "$10,000 per person on every approved booking",
-            competitor: "Not published as a host-side included benefit",
           },
           {
             label: "Typical hourly rate range",
@@ -220,7 +209,7 @@ function GiggsterComparisonPage() {
           },
           {
             label: "Best for hosts who…",
-            prnm: "Want predictable recreational weekend bookings + included insurance",
+            prnm: "Want predictable recreational weekend bookings + 0% host fees",
             competitor:
               "Have a camera-ready pool in a production-hub city and can host weekday crews",
           },
@@ -269,11 +258,11 @@ function GiggsterComparisonPage() {
           </thead>
           <tbody>
             {[
-              [200, 180, 162, 18],
-              [400, 360, 324, 36],
-              [800, 720, 648, 72],
-              [1500, 1350, 1215, 135],
-              [3000, 2700, 2430, 270],
+              [200, 200, 162, 38],
+              [400, 400, 324, 76],
+              [800, 800, 648, 152],
+              [1500, 1500, 1215, 285],
+              [3000, 3000, 2430, 570],
             ].map(([g, p, gg, diff]) => (
               <tr key={g} className="border-t border-border">
                 <td className="px-4 py-3 font-medium text-foreground">${g}</td>
@@ -294,20 +283,12 @@ function GiggsterComparisonPage() {
         the right answer is often <em>both</em>, not <em>either</em>.
       </p>
 
-      <h2 id="insurance">Insurance &amp; liability coverage (the most important section)</h2>
-
-      <HartfordKnockout
-        competitor="Giggster"
-        secondSentence={
-          <>
-            Giggster's host protection is a $1M general liability plus property damage coverage administered through their booking system — coverage limits and carrier disclosure are not as transparently published as PRNM's Hartford-backed policy, and on production bookings the renter (not the platform) is required to supply a $2M COI.
-          </>
-        }
-      />
+      <h2 id="insurance">Insurance &amp; liability (the most important section)</h2>
 
       <p>
         For a residential pool host, insurance is the single biggest risk
-        consideration. The two platforms approach it very differently.
+        consideration. Neither platform insures your pool for you — the two
+        platforms just handle that reality differently.
       </p>
 
 
@@ -332,27 +313,31 @@ function GiggsterComparisonPage() {
         it is operational overhead.
       </p>
 
-      <h3>Pool Rental Near Me's insurance model</h3>
+      <h3>Pool Rental Near Me's approach</h3>
       <p>
-        PRNM Corp maintains a Business Owner's Policy through Hartford Underwriters
-        that automatically covers every approved booking with no separate renter
-        policy required:
+        Pool Rental Near Me does not provide or arrange insurance. Instead, the
+        platform is built around host control and documentation:
       </p>
       <ul>
         <li>
-          <strong>$2,000,000 per-occurrence / $4,000,000 aggregate</strong> general
-          liability
+          <strong>Signed guest waiver</strong> required on every booking — every
+          guest signs before they swim.
         </li>
-        <li><strong>$10,000 medical expenses</strong> per person</li>
         <li>
-          <strong>$150,000 STRETCH® PLUS</strong> property coverage blanket
+          <strong>Host approval</strong> on every reservation — you see who is
+          booking and can decline.
+        </li>
+        <li>
+          <strong>Your own cover is your cover.</strong> Most homeowner policies
+          exclude paid rentals under a business-pursuits exclusion, so talk to
+          your carrier or an independent agent about a short-term-rental or
+          business endorsement before you host.
         </li>
       </ul>
       <p>
-        For a recreational, residential pool host the practical upshot is that
-        you don't need to chase COIs per booking, and you have a verifiable
-        carrier-backed liability layer on top of your own homeowner's
-        coverage.<sup>[⁴]</sup>
+        The practical upshot: no per-booking COIs to chase, but the insurance
+        decision stays yours — same as it ultimately is on Giggster, where the
+        Terms also put the coverage obligation on the host.
       </p>
 
       <h2 id="buyers">Buyer base: who's actually booking your pool</h2>
@@ -569,8 +554,8 @@ function GiggsterComparisonPage() {
           flat published rate.
         </li>
         <li>
-          You want guaranteed <strong>$2M general liability</strong> on every
-          approved booking — no COIs to chase.
+          You want simple <strong>waiver-based recreational bookings</strong> —
+          every guest signs before they swim, and there are no COIs to chase.
         </li>
         <li>
           Your buyers are <strong>families, friend groups, and small parties</strong>{" "}
@@ -631,10 +616,9 @@ function GiggsterComparisonPage() {
         Giggster and Pool Rental Near Me are not really competitors — they are{" "}
         <em>complementary</em> marketplaces serving two different pool-rental
         economies. If we had to pick one for a typical residential pool host,
-        PRNM wins on fees (0% vs 19%), included insurance ($2M / $4M Hartford
-        on every booking vs renter-supplied COI), buyer fit (recreational vs
-        production), and pool-specific training (Pool Host Academy vs production
-        help center).
+        PRNM wins on fees (0% host commission vs 19%), buyer fit (recreational
+        vs production), and pool-specific training (Pool Host Academy vs
+        production help center).
       </p>
       <p>
         If you're in a production-hub city <em>and</em> your pool is camera-ready,
@@ -691,12 +675,9 @@ function GiggsterComparisonPage() {
           .
         </li>
         <li>
-          <strong>$2,000,000 PRNM general liability insurance</strong> — PRNM
-          Corp maintains a Business Owner's Policy through Hartford Underwriters
-          providing $2M per-occurrence / $4M aggregate general liability,
-          $10,000 medical expenses per person, and a $150,000 STRETCH® PLUS
-          property coverage blanket on every approved booking at no cost to
-          the host. Full terms in the{" "}
+          <strong>PRNM waiver requirement</strong> — every Pool Rental Near Me
+          booking requires a signed guest waiver; PRNM does not provide or
+          arrange insurance. Full terms in the{" "}
           <a href="/p/terms-of-service">
             Pool Rental Near Me Terms of Service
           </a>

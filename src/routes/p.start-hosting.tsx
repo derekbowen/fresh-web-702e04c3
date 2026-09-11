@@ -24,9 +24,9 @@ const PUBLISHED = "2026-05-23T00:00:00Z";
 const MODIFIED = "2026-05-23T00:00:00Z";
 
 const TITLE =
-  "Start hosting your pool: earn $1,500 to $8,000 a month | Pool Rental Near Me";
+  "Start hosting your pool: 0% host fees | Pool Rental Near Me";
 const DESCRIPTION =
-  "Start hosting your pool on Pool Rental Near Me. 0% host fees, $2M liability included, free to list, 24-hour payouts. Be live in 15 minutes.";
+  "Start hosting your pool on Pool Rental Near Me. Be live in 15 minutes.";
 
 const FAQS: Array<{ q: string; a: string }> = [
   {
@@ -35,7 +35,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "How much can I earn hosting a pool?",
-    a: "Most hosts earn $1,500 to $8,000 a month in season. Earnings depend on your city, pool size, amenities, and how aggressively you price weekends and holidays.",
+    a: "That depends on your city, pool size, amenities, and how you price weekends and holidays — there is no typical figure we can stand behind. Hosts pay 0% in fees and keep 100% of the listed price. Use the earnings calculator for an illustrative estimate from your own numbers.",
   },
   {
     q: "What does it cost to start hosting?",
@@ -43,7 +43,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "Do I need my own insurance to host?",
-    a: "No. Every booking includes up to $2,000,000 in third-party liability coverage built into the host fee. Most hosts also keep their own homeowner policy in place.",
+    a: "No. Most hosts also keep their own homeowner policy in place.",
   },
   {
     q: "Can I host without being home?",
@@ -56,7 +56,7 @@ const WHY_EXISTS = {
   paragraphs: [
     "A backyard pool is one of the most underused assets in American real estate. The average residential pool gets swum in about 25 days a year. The other 340 days it sits idle, costing $200 to $500 a month in chemicals, electricity, and water — a recurring drain on your household budget that produces no income.",
     "Hosting flips that math. The same pool that's costing you $300 a month becomes one that's making you $3,000 a month — and in the right city, in season, $8,000 a month is normal, not exceptional. Hosts in Los Angeles, Phoenix, Miami, Houston, Dallas, and Atlanta routinely break $10,000 in peak July weekends alone.",
-    "Pool Rental Near Me is built specifically for this. 0% host fees — Swimply charges 15–30%. $2M liability insurance baked into every booking at no extra cost. Free to list, no monthly fees, payouts within 24 hours. The economics finally favor the person who actually owns the pool.",
+    "Pool Rental Near Me is built specifically for this. 0% host fees — Swimply charges 15–30%. Free to list, no monthly fees, payouts initiated after each completed booking (bank arrival times may vary). The economics finally favor the person who actually owns the pool.",
   ],
 };
 
@@ -81,7 +81,7 @@ const HOW_IT_WORKS = {
 };
 
 const SCENARIOS = {
-  heading: "Common host scenarios",
+  heading: "Illustrative host scenarios (examples, not real hosts or guaranteed results)",
   items: [
     { title: "The $3K/month suburban host", body: "Standard 30,000-gallon in-ground in a Phoenix suburb. $65/hour, books 50 hours a month May through September, $325 in monthly hosting costs net. Pool pays for itself plus a car payment." },
     { title: "The $8K/month luxury host", body: "Heated pool with hot tub, outdoor kitchen, and shade structures in Beverly Hills. $150/hour weekends, books out four to six weekends a month, plus weekday corporate offsites and photo shoots." },
@@ -92,16 +92,15 @@ const SCENARIOS = {
 
 const PROPS: Omit<ToolPlaceholderProps, "breadcrumbItems"> = {
   eyebrow: "Earn from your pool",
-  h1: "Start hosting your pool: earn $1,500 to $8,000 a month",
+  h1: "Start hosting your pool: 0% host fees, you keep 100%",
   intro:
-    "Your backyard pool can pay for itself. Start hosting on Pool Rental Near Me with 0% host fees, $2M liability on every booking, and 24-hour payouts. Free to list, no monthly cost, be live in 15 minutes.",
+    "Your backyard pool can pay for itself. Free to list, no monthly cost, be live in 15 minutes.",
   heroSrc: heroImage,
   heroAlt:
     "Smiling pool host welcoming guests to a clean backyard pool on a sunny afternoon",
   bullets: [
     "0% host fees (Swimply charges 15–30%)",
-    "$2,000,000 liability coverage on every booking",
-    "24-hour payouts, free to list, no monthly fees",
+    "Paid after each completed booking, free to list, no monthly fees",
     "Approve every guest or auto-approve trusted renters",
     "Pool Host Academy: 135 free classes to ramp up fast",
     "Free Host Pro app: pricing, calendar, waivers, taxes",

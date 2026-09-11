@@ -184,7 +184,7 @@ function renderAuditHtml(row: any): string {
     ${row.pricing_notes ? `<h2 style="font-size:15px;margin:20px 0 6px;">Pricing</h2><p style="margin:0 0 14px;">${escape(row.pricing_notes)}</p>` : ""}
     ${row.photo_notes ? `<h2 style="font-size:15px;margin:20px 0 6px;">Photos</h2><p style="margin:0 0 14px;">${escape(row.photo_notes)}</p>` : ""}
 
-    <p style="margin:24px 0 4px;color:#64748b;font-size:12px;">Pool Rental Near Me · 10% flat host fee · $2M liability included on every booking.</p>
+    <p style="margin:24px 0 4px;color:#64748b;font-size:12px;">Pool Rental Near Me · 0% host fees — hosts keep 100%.</p>
   </div>
 </body></html>`;
 }

@@ -8,6 +8,42 @@ import { SITE_URL } from "@/lib/seo";
  */
 const PROD_HOST = "poolrentalnearme.com";
 
+/**
+ * Country domains. Each serves the same app as .com and self-canonicalises, so
+ * they must NOT be opened up wholesale - that would advertise four copies of
+ * every page. Each one is allowed to be crawled only for its own country's
+ * pages, and points at a country-scoped sitemap on its own origin.
+ */
+const COUNTRY_HOSTS: Record<string, { label: string; allow: string[] }> = {
+  "poolrentalnearme.com.au": {
+    label: "Australia",
+    allow: [
+      "/p/*-australia$",
+      "/p/australian-*",
+      "/p/rent-out-your-pool-sydney$",
+      "/p/rent-out-your-pool-melbourne$",
+    ],
+  },
+  "poolrentalnearme.co.uk": {
+    label: "United Kingdom",
+    allow: [
+      "/p/*-uk$",
+      "/p/*-united-kingdom$",
+      "/p/rent-out-your-pool-london$",
+      "/p/rent-out-your-pool-manchester$",
+    ],
+  },
+  "poolrentalnearme.ca": {
+    label: "Canada",
+    allow: [
+      "/p/*-canada$",
+      "/p/canadian-*",
+      "/p/rent-out-your-pool-toronto$",
+      "/p/rent-out-your-pool-vancouver$",
+    ],
+  },
+};
+
 export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
@@ -21,6 +57,8 @@ export const Route = createFileRoute("/robots.txt")({
         })();
 
         const isProd = host === PROD_HOST || host === `www.${PROD_HOST}`;
+        const bareHost = host.replace(/^www\./, "");
+        const country = isProd ? undefined : COUNTRY_HOSTS[bareHost];
 
         const body = isProd
           ? `User-agent: *
@@ -52,7 +90,17 @@ Disallow: /s?
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `
-          : `# Non-production host (${host || "unknown"}): block all crawling.
+          : country
+            ? `# ${country.label} domain for Pool Rental Near Me.
+# Only this country's pages are crawlable here; everything else lives on
+# ${SITE_URL} and must not be duplicated across origins.
+User-agent: *
+Disallow: /
+${country.allow.map((p) => `Allow: ${p}`).join("\n")}
+
+Sitemap: https://${host}/sitemap-country.xml
+`
+            : `# Non-production host (${host || "unknown"}): block all crawling.
 User-agent: *
 Disallow: /
 `;
@@ -62,7 +110,7 @@ Disallow: /
           headers: {
             "Content-Type": "text/plain; charset=utf-8",
             "Cache-Control": "public, max-age=3600",
-            "X-Robots-Tag": isProd ? "all" : "noindex, nofollow",
+            "X-Robots-Tag": isProd || country ? "all" : "noindex, nofollow",
           },
         });
       },

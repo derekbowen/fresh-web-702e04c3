@@ -35,7 +35,7 @@ export const Route = createFileRoute("/p/pool-rentals-{$state}")({
     if (!loaderData) return { meta: [], links: [] };
     const { stateName, cities } = loaderData;
     const title = `Pool rentals in ${stateName} — ${cities.length} cities | Pool Rental Near Me`;
-    const description = `Browse private backyard pool rentals across ${cities.length} cities in ${stateName}. Book by the hour, $40–150/hour typical, with $2M liability insurance included.`;
+    const description = `Browse private backyard pool rentals across ${cities.length} cities in ${stateName}.`;
     const stateSlug = stateName.toLowerCase().replace(/\s+/g, "-");
     const meta = buildMeta({
       title,
@@ -108,8 +108,7 @@ function StateHubPage() {
           <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             Browse private backyard pool rentals across{" "}
             <strong className="text-foreground">{cities.length}</strong>{" "}
-            {stateName} cities. Book by the hour, $40–150/hour typical, with $2M
-            liability insurance included on every booking.
+            {stateName} cities.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -193,8 +192,8 @@ function StateHubPage() {
         <aside className="mt-12 rounded-2xl border border-border bg-muted/30 p-6">
           <h2 className="text-xl font-semibold">Want to host?</h2>
           <p className="mt-2 text-muted-foreground">
-            Pool owners in {stateName} typically earn $3,000–$10,000 per month
-            renting their backyard pool. You keep 100% — we charge 0% host fees, and every booking includes $2M liability coverage.
+            Pool owners in {stateName} rent their backyard pools by the hour
+            and keep 100% of their listed price — 0% host fees.
           </p>
           <a
             href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"

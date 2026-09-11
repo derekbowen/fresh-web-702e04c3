@@ -15,16 +15,17 @@ const STATIC_URLS: Array<{ path: string; lastmod?: Date }> = [
   { path: "/p/become-a-host" },
   { path: "/p/become-a-swimming-pool-host" },
   { path: "/p/privacy-policy" },
-  { path: "/p/terms-of-service" },
   { path: "/p/about" },
   { path: "/p/howitworksforguests" },
   { path: "/p/make-money" },
   { path: "/p/investors" },
   { path: "/p/all-locations" },
   { path: "/p/pool-rentals" },
-  { path: "/p/pool-rental-insurance-explained" },
+  { path: "/phoenix" },
+  { path: "/riverside" },
   { path: "/p/pool-rental-host-fees-compared" },
   { path: "/p/pool-rental-permits-by-state" },
+  { path: "/p/corpus-christi-pool-rental-laws" },
   // Phase 1 subdomain consolidation — six new keyword-targeted tool routes.
   { path: "/p/start-hosting" },
   { path: "/p/pool-heating-cost-calculator" },
@@ -39,7 +40,6 @@ export const Route = createFileRoute("/sitemap-static.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const now = new Date();
         // State hub pages are data-driven: the /p/pool-rentals-$state route
         // notFound()s any state with zero host_acq_city data. getAllStateHubs()
         // already filters those out, so emit only states that actually render
@@ -53,9 +53,11 @@ export const Route = createFileRoute("/sitemap-static.xml")({
         const stateEntries: Array<{ path: string; lastmod?: Date }> =
           stateHubs.map((h) => ({ path: stateHubPath(h.stateName) }));
         const urls: SitemapUrl[] = [...STATIC_URLS, ...stateEntries].map(
+          // No lastmod unless a real change date is known: a "now" stamp on
+          // every request is a fabricated freshness signal (audit 2026-09-01).
           (entry) => ({
             loc: `${SITE_URL}${entry.path}`,
-            lastmod: entry.lastmod ?? now,
+            ...(entry.lastmod ? { lastmod: entry.lastmod } : {}),
           }),
         );
         return sitemapResponse(buildUrlsetXml(urls));

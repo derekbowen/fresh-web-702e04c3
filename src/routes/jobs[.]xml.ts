@@ -63,9 +63,9 @@ export const Route = createFileRoute("/jobs.xml")({
 
           const refnum = `prnm-host-${seed}`;
           const url = `${origin}${p.url_path}`;
-          const title = `Rent your backyard pool in ${city}, ${stateCode} — earn $40–$150/hour`;
+          const title = `Rent your backyard pool in ${city}, ${stateCode} — you set the hourly rate`;
 
-          const desc = `<p>Turn your backyard pool in ${city}, ${stateCode} into income. ${SITE_NAME} connects pool owners with local guests who book by the hour. Typical hosts earn $40–$150/hour depending on pool size and amenities.</p>
+          const desc = `<p>Turn your backyard pool in ${city}, ${stateCode} into income. ${SITE_NAME} connects pool owners with local guests who book by the hour. You set the hourly rate and hosts pay 0% in fees.</p>
 <h3>What you do</h3>
 <ul>
 <li>List your pool with photos and an hourly rate you control</li>
@@ -74,7 +74,6 @@ export const Route = createFileRoute("/jobs.xml")({
 </ul>
 <h3>What we include</h3>
 <ul>
-<li>$2,000,000 liability insurance on every booking</li>
 <li>0% host fees (lower than Swimply's 15%+)</li>
 <li>Guest verification and secure payouts</li>
 </ul>
@@ -100,7 +99,7 @@ export const Route = createFileRoute("/jobs.xml")({
 <country>US</country>
 <postalcode></postalcode>
 <description><![CDATA[${desc}]]></description>
-<salary><![CDATA[$40-$150/hour]]></salary>
+<salary><![CDATA[Host sets the hourly rate; 0% platform fee]]></salary>
 <education><![CDATA[None]]></education>
 <jobtype>contract</jobtype>
 <category>Income Opportunity</category>

@@ -73,7 +73,6 @@ export function SwimInstructorCityTemplate({
             <h2 className="mt-10 text-2xl font-bold text-foreground">What you need before your first {cityName} class</h2>
             <ul className="mt-4 space-y-2 text-foreground/90">
               <li>· <strong>Certification:</strong> Red Cross WSI, ASCA Level 1+, USA Swimming, or Starfish Aquatics</li>
-              <li>· <strong>Insurance:</strong> $2M liability is included on every Pool Rental Near Me booking — bring your own professional liability policy on top</li>
               <li>· <strong>Equipment:</strong> kickboards, noodles, dive rings; some {cityName} hosts include them</li>
               <li>· <strong>Permission to instruct:</strong> filter for hosts who have "lessons / instruction allowed" enabled</li>
             </ul>

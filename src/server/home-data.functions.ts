@@ -140,7 +140,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
             .select("slug, name, state_code")
             .eq("is_published", true)
             .order("name")
-            .limit(72),
+            .limit(150),
         ),
         "cities query",
         { data: [] as HomeCity[] } as { data: HomeCity[] | null },
@@ -271,27 +271,15 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
       );
     }
 
-    // Drop city links whose page now redirects (content_pages.redirect_to) and
-    // duplicate labels (e.g. "Boston, MA" listed twice), then cap the grid at 60.
+    // A city is linked only when its /p/<slug> page exists, is published and does
+    // not redirect. Fails closed: a broken link is worse than a shorter grid.
     let cityList = (cities.data ?? []) as HomeCity[];
     try {
-      const { data: redirected } = await supabaseAdmin
-        .from("content_pages")
-        .select("slug")
-        .in("slug", cityList.map((c) => c.slug))
-        .not("redirect_to", "is", null);
-      const dead = new Set((redirected ?? []).map((r: { slug: string | null }) => r.slug));
-      const seen = new Set<string>();
-      cityList = cityList.filter((c) => {
-        const label = `${c.name}, ${c.state_code}`;
-        if (dead.has(c.slug) || seen.has(label)) return false;
-        seen.add(label);
-        return true;
-      });
+      cityList = await selectEligibleCities(cityList, 60);
     } catch (err) {
-      console.error("homepage city redirect filter failed:", err);
+      console.error("homepage city eligibility filter failed:", err);
+      cityList = [];
     }
-    cityList = cityList.slice(0, 60);
     return {
       cities: cityList,
       cityCount: cityCountRes.count ?? cityList.length,
@@ -337,7 +325,56 @@ export type WinterHomeData = {
   cities: HomeCity[];
 };
 
-/** City links exactly as the current homepage builds them (72 → drop redirects/dupes → 60). */
+/**
+ * A city may only be linked from the homepage when its /p/<slug> page actually
+ * exists and is servable.
+ *
+ * The grid is sourced from the `cities` table, but each card links to /p/<slug>,
+ * which is a `content_pages` page. Those two sets are not the same: on
+ * 2026-09-11, 73 of 200 published cities had no `content_pages` row at all, and
+ * six of them were inside the rendered 60, shipping dead links on the homepage.
+ * The previous filter only dropped rows that HAD a row carrying `redirect_to`,
+ * so a city with no page at all sailed through.
+ *
+ * Eligibility (all must hold):
+ *   - a content_pages row exists for the slug
+ *   - its status is "published" (NOT the legacy `is_published` column, which is
+ *     false on every row in this table and means nothing)
+ *   - it carries no redirect_to
+ *
+ * Duplicate "City, ST" labels are dropped, then the list is capped. One database
+ * round-trip -- never a per-render HTTP check of each link.
+ */
+type CityPageRow = { slug: string; redirect_to: string | null; status: string | null };
+
+async function selectEligibleCities(candidates: HomeCity[], cap: number): Promise<HomeCity[]> {
+  if (!candidates.length) return [];
+  const { data, error } = await supabaseAdmin
+    .from("content_pages")
+    .select("slug, redirect_to, status")
+    .in(
+      "slug",
+      candidates.map((c) => c.slug),
+    );
+  if (error) throw error;
+  const rows = (data ?? []) as unknown as CityPageRow[];
+  const eligible = new Set(
+    rows.filter((r) => r.redirect_to == null && r.status === "published").map((r) => r.slug),
+  );
+  const seen = new Set<string>();
+  const out: HomeCity[] = [];
+  for (const c of candidates) {
+    if (!eligible.has(c.slug)) continue;
+    const label = `${c.name}, ${c.state_code}`;
+    if (seen.has(label)) continue;
+    seen.add(label);
+    out.push(c);
+    if (out.length >= cap) break;
+  }
+  return out;
+}
+
+/** City links for the winter preview -- same eligibility rules as the live homepage. */
 async function loadCityLinks(): Promise<HomeCity[]> {
   try {
     const { data } = await supabaseAdmin
@@ -345,22 +382,8 @@ async function loadCityLinks(): Promise<HomeCity[]> {
       .select("slug, name, state_code")
       .eq("is_published", true)
       .order("name")
-      .limit(72);
-    let cityList = (data ?? []) as HomeCity[];
-    const { data: redirected } = await supabaseAdmin
-      .from("content_pages")
-      .select("slug")
-      .in("slug", cityList.map((c) => c.slug))
-      .not("redirect_to", "is", null);
-    const dead = new Set((redirected ?? []).map((r: { slug: string | null }) => r.slug));
-    const seen = new Set<string>();
-    cityList = cityList.filter((c) => {
-      const label = `${c.name}, ${c.state_code}`;
-      if (dead.has(c.slug) || seen.has(label)) return false;
-      seen.add(label);
-      return true;
-    });
-    return cityList.slice(0, 60);
+      .limit(150);
+    return await selectEligibleCities((data ?? []) as HomeCity[], 60);
   } catch (err) {
     console.error("winter city links failed:", err);
     return [];

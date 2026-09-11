@@ -16,7 +16,12 @@
     "check:breadcrumbs": "bun scripts/check-breadcrumb-jsonld.mjs",
     "format": "prettier --write .",
     "guardrail": "node scripts/seo-guardrail.mjs",
-    "guardrail:snapshot": "node scripts/seo-guardrail.mjs --snapshot"
+    "guardrail:snapshot": "node scripts/seo-guardrail.mjs --snapshot",
+    "check:tools-hub": "node scripts/check-tools-hub.mjs",
+    "check:homepage-cities": "node scripts/check-homepage-cities.mjs",
+    "check:dev-hostnames": "node scripts/check-dev-hostnames.mjs",
+    "check:emitted-urls": "node scripts/check-emitted-urls.mjs",
+    "verify:production": "npm run check:tools-hub && npm run check:homepage-cities && npm run check:dev-hostnames && npm run check:emitted-urls"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

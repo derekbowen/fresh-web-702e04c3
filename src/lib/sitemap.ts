@@ -155,9 +155,14 @@ export async function buildContentPagesSitemap(
   const offset = (page - 1) * SITEMAP_PAGE_SIZE;
   const minBodyChars = options?.minBodyChars ?? 0;
 
+  // lastmod comes from content_refreshed_at (set only when the body is
+  // actually regenerated), falling back to created_at. updated_at is bumped
+  // by any column write — the monthly related-slug refresh re-stamped 4,452
+  // rows on the 1st of every month and advertised it to Google as fresh
+  // content (audit 2026-09-01).
   const cols = minBodyChars > 0
-    ? "slug, url_path, status, updated_at, hero_image_url, body_markdown"
-    : "slug, url_path, status, updated_at, hero_image_url";
+    ? "slug, url_path, status, content_refreshed_at, created_at, hero_image_url, body_markdown"
+    : "slug, url_path, status, content_refreshed_at, created_at, hero_image_url";
 
   const { data, error } = await supabase
     .from("content_pages")
@@ -165,6 +170,8 @@ export async function buildContentPagesSitemap(
     .in("template_type", templateTypes)
     .eq("in_sitemap", true)
     .eq("status", "published")
+    // Rows that 301 elsewhere must never be advertised (2026-09-01 crawl: 14).
+    .is("redirect_to", null)
     .not("slug", "is", null)
     // /p/pool-rentals-{state} is now served by the data-driven state-hub route
     // (advertised in sitemap-static.xml). Exclude any legacy content_pages rows
@@ -194,7 +201,7 @@ export async function buildContentPagesSitemap(
       : `${siteUrl}${pathPrefix}/${row.slug}`;
     const sitemapUrl: SitemapUrl = {
       loc,
-      lastmod: row.updated_at,
+      lastmod: row.content_refreshed_at ?? row.created_at ?? null,
     };
     if (row.hero_image_url) {
       sitemapUrl.images = [{ loc: row.hero_image_url }];

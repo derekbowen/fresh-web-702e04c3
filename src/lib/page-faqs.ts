@@ -51,7 +51,7 @@ function hostAcqFaqs(city: string, stateCode: string | null): FaqItem[] {
   return [
     {
       question: `How much can I earn renting out my pool in ${where}?`,
-      answer: `Most Pool Rental Near Me hosts in ${where} earn $5,000–$15,000 per month during peak season. Earnings depend on your pool's amenities, photos, and how many hours you make it available.`,
+      answer: `Earnings depend on your hourly rate, your pool's amenities, photos, and how many hours you make it available. Hosts pay 0% in fees and keep 100% of the listed price. The earnings calculator gives an illustrative estimate from your own numbers — not a guarantee.`,
     },
     {
       question: `What does it cost to list my pool in ${where}?`,
@@ -59,7 +59,7 @@ function hostAcqFaqs(city: string, stateCode: string | null): FaqItem[] {
     },
     {
       question: `Is my pool covered by insurance when I host in ${where}?`,
-      answer: `Yes. Every booking includes $2 million in liability protection at no extra cost to the host.`,
+      answer: `No. Pool Rental Near Me does not provide, arrange or include insurance. Every booking requires a signed guest waiver, and hosts should carry their own cover — most homeowners policies exclude paid rentals.`,
     },
     {
       question: `How is Pool Rental Near Me different from Swimply?`,
@@ -88,15 +88,15 @@ function hostAdvocacyFaqs(stateName: string): FaqItem[] {
     },
     {
       question: `Will hosting affect my homeowner's insurance in ${stateName}?`,
-      answer: `Standard homeowner's policies contain a business-pursuits exclusion that can void coverage for guest injuries during a paid rental. Every Pool Rental Near Me booking includes $2 million in liability protection, but you should still notify your homeowner's carrier in writing so unrelated claims are not affected.`,
+      answer: `Standard homeowner's policies contain a business-pursuits exclusion that can void coverage for guest injuries during a paid rental. Pool Rental Near Me does not provide or arrange insurance, so the cover is yours to carry: talk to your carrier in writing before you host and ask what a paid rental would need.`,
     },
     {
       question: `How much can I earn renting my pool in ${stateName}?`,
-      answer: `${stateName} hosts typically charge $40–$150 per hour and earn $3,000–$10,000 per month during peak season, depending on location, amenities, and how many hours the pool is available. Pool Rental Near Me charges 0% host fees, lower than competing platforms.`,
+      answer: `What ${stateName} hosts earn depends on their hourly rate, location, amenities, and how many hours the pool is available; there is no typical figure we can stand behind. Pool Rental Near Me charges 0% host fees, lower than competing platforms.`,
     },
     {
       question: `Can my HOA stop me from renting my pool in ${stateName}?`,
-      answer: `An HOA can enforce its CC&Rs, which often include a "no commercial use" clause. The rule is enforceable through fines or a lien but it is private contract law, not state law. Many ${stateName} HOAs approve pool rentals when given a written hosting plan, proof of $2M liability coverage, and clear house rules.`,
+      answer: `An HOA can enforce its CC&Rs, which often include a "no commercial use" clause. The rule is enforceable through fines or a lien but it is private contract law, not state law. Many ${stateName} HOAs approve pool rentals when given a written hosting plan, proof of your own liability cover, and clear house rules.`,
     },
   ];
 }
@@ -117,7 +117,7 @@ function hostAdvocacyHubFaqs(): FaqItem[] {
     },
     {
       question: `Does my homeowner's insurance cover pool rental income?`,
-      answer: `Standard HO-3 and HO-5 policies contain a business-pursuits exclusion that typically denies coverage for guest injuries during a paid rental. Pool Rental Near Me includes $2 million in per-booking liability coverage, and we recommend notifying your homeowner's carrier in writing as well.`,
+      answer: `Standard HO-3 and HO-5 policies contain a business-pursuits exclusion that typically denies coverage for guest injuries during a paid rental. Pool Rental Near Me does not provide insurance of any kind, so notify your homeowner's carrier in writing and ask what endorsement a paid rental would require.`,
     },
     {
       question: `How is pool rental income taxed?`,
@@ -147,7 +147,7 @@ function swimInstructorCityFaqs(city: string, stateCode: string | null): FaqItem
     },
     {
       question: `Am I covered by insurance when teaching lessons in a rented ${where} pool?`,
-      answer: `Pool Rental Near Me bookings include $2M in property liability for the host. Instructors should carry their own professional liability policy (commonly through K&K or a swim-school carrier) to cover the lessons themselves.`,
+      answer: `No. Pool Rental Near Me does not provide insurance to instructors or hosts. Carry your own professional liability policy (commonly through K&K or a swim-school carrier) for the lessons, and confirm the host carries their own cover for the property.`,
     },
     {
       question: `How do I find pools in ${where} that allow swim instruction?`,
@@ -172,7 +172,7 @@ function swimInstructorHubFaqs(): FaqItem[] {
     },
     {
       question: `Is there liability coverage when teaching in a rented pool?`,
-      answer: `Each booking includes $2M in property liability for the host. Instructors should carry their own professional liability insurance for the lessons themselves.`,
+      answer: `Not from the platform. Pool Rental Near Me does not provide insurance. Carry your own professional liability insurance for the lessons, and confirm the host's own cover for the pool itself.`,
     },
   ];
 }
@@ -193,7 +193,7 @@ function eventGuideFaqs(eventLabel: string, where: string): FaqItem[] {
     },
     {
       question: `Is there liability coverage for a ${eventLabel} pool rental?`,
-      answer: `Yes. Every Pool Rental Near Me booking includes $2 million in liability coverage at no extra cost to the guest or host.`,
+      answer: `Pool Rental Near Me does not provide insurance. Every booking requires a signed guest waiver, and the host is responsible for their own cover. Bring your own event cover if your group needs it.`,
     },
     {
       question: `How far in advance should I book a pool for a ${eventLabel} in ${where}?`,
@@ -206,7 +206,7 @@ function genericResourceFaqs(title: string): FaqItem[] {
   return [
     {
       question: `What is Pool Rental Near Me?`,
-      answer: `Pool Rental Near Me is a peer-to-peer marketplace where homeowners rent out their backyard pools by the hour. Guests get a private pool, hosts earn money, and every booking includes $2M in liability coverage.`,
+      answer: `Pool Rental Near Me is a peer-to-peer marketplace where homeowners rent out their backyard pools by the hour. Guests get a private pool, hosts earn money, and every booking requires a signed guest waiver. Hosts carry their own insurance.`,
     },
     {
       question: `How much does a private pool rental cost?`,
@@ -214,11 +214,11 @@ function genericResourceFaqs(title: string): FaqItem[] {
     },
     {
       question: `How much can I earn renting out my pool?`,
-      answer: `Typical hosts earn $3,000–$10,000 per month during peak season, with top hosts clearing $15,000+. Pool Rental Near Me charges 0% host fees — lower than Swimply's 15%+.`,
+      answer: `That depends on your hourly rate, amenities, and how many hours you host — there is no typical figure we can stand behind. Pool Rental Near Me charges 0% host fees, so you keep 100% of your listed price.`,
     },
     {
       question: `Is there liability insurance included?`,
-      answer: `Yes. Every booking includes $2 million in liability protection at no extra cost to the host or guest. (Reference: ${title}.)`,
+      answer: `No. Pool Rental Near Me does not provide, arrange or include insurance. Every booking requires a signed guest waiver, and hosts should carry their own cover — most homeowners policies exclude paid rentals. (Reference: ${title}.)`,
     },
   ];
 }

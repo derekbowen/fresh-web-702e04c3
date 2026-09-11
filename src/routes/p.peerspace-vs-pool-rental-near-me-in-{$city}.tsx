@@ -40,7 +40,7 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$c
     if (!city) return { meta: [{ title: "City not found" }] };
     const slug = `peerspace-vs-pool-rental-near-me-in-${city.slug}`;
     const title = `Peerspace vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026)`;
-    const description = `${city.name} pool hosts: should you list on Peerspace or Pool Rental Near Me? 0% vs 20% host fee, $2M vs $1M liability, local pricing benchmarks for ${city.name}, ${city.state}.`;
+    const description = `${city.name} pool hosts: should you list on Peerspace or Pool Rental Near Me?`;
     return {
       ...buildComparisonMeta({ slug, title, description }),
       scripts: [
@@ -76,11 +76,11 @@ function buildFaqs(city: CityRow) {
   return [
     {
       q: `If hosts never pay a fee, how does Pool Rental Near Me make money?`,
-      a: `Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.`,
+      a: `Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing and 24/7 support. Hosts are the business — we don't tax the business.`,
     },
     {
       q: `Is Peerspace or Pool Rental Near Me better in ${city.name}?`,
-      a: `For typical residential pools in ${city.name}, ${city.state} renting at $45–$150/hour for recreational use, Pool Rental Near Me is the better-fit channel: 0% host fee vs Peerspace's 20%, $2M liability vs $1M, and pool-specific guest demand. Peerspace makes sense in ${city.name} if your pool is luxury/photogenic and you want production crew or event-planner bookings at $200+/hour.`,
+      a: `For typical residential pools in ${city.name}, ${city.state} renting at $45–$150/hour for recreational use, Pool Rental Near Me is the better-fit channel: 0% host fee vs Peerspace's 20%, and pool-specific guest demand. Peerspace makes sense in ${city.name} if your pool is luxury/photogenic and you want production crew or event-planner bookings at $200+/hour.`,
     },
     {
       q: `What does Peerspace charge ${city.name} pool hosts?`,
@@ -92,7 +92,7 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `Is pool rental legal in ${city.state}?`,
-      a: `Pool rentals are legal in most ${city.state} jurisdictions when you carry adequate liability coverage and follow local zoning, occupancy and noise rules. Pool Rental Near Me's $2M liability policy is structured for residential pool hosting. Always check ${city.name} city ordinances before listing.`,
+      a: `Pool rentals are legal in most ${city.state} jurisdictions when you carry adequate liability coverage and follow local zoning, occupancy and noise rules. Pool Rental Near Me does not provide or arrange insurance — every booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Always check ${city.name} city ordinances before listing.`,
     },
   ];
 }
@@ -104,8 +104,7 @@ function PeerspaceCityPage() {
   const tableRows = [
     { label: "Host service fee", prnm: <strong>0%</strong>, competitor: "20%" },
     { label: `Take-home on $300 ${city.name} booking`, prnm: <strong>$300</strong>, competitor: "$240" },
-    { label: "General liability", prnm: <strong>$2M / $4M</strong>, competitor: "$1M" },
-    { label: "Property protection", prnm: <strong>$150K STRETCH® PLUS</strong>, competitor: "$25K" },
+    { label: "Platform-provided insurance", prnm: "None — signed guest waiver on every booking", competitor: "$1M liability + $25K property guarantee" },
     { label: `Built for ${city.name} pool guests`, prnm: "Yes — pool-specialized", competitor: "No — general venue marketplace" },
     { label: "Free pool host training", prnm: "70+ courses", competitor: "Generic venue support" },
   ];
@@ -124,15 +123,14 @@ function PeerspaceCityPage() {
         If you own a pool in <strong>{city.name}, {city.state}</strong> and
         you're deciding between <strong>Peerspace</strong> and{" "}
         <strong>Pool Rental Near Me</strong>, this guide breaks down which
-        platform pays you more per booking, which carries the right insurance
+        platform pays you more per booking, how each handles insurance
         for residential pool hosting, and which one actually drives{" "}
         {city.name} pool-intent traffic to your listing.
       </p>
 
       <blockquote>
         <strong>Bottom line for {city.name} pool hosts:</strong> Pool Rental
-        Near Me's 0% host fee beats Peerspace's 20%, and the $2M
-        liability is double. For typical {city.name} pools renting at
+        Near Me's 0% host fee beats Peerspace's 20%. For typical {city.name} pools renting at
         $45–$150/hr, Pool Rental Near Me wins on economics. Peerspace wins for
         production-grade luxury pools chasing $200+/hr event bookings.
       </blockquote>
@@ -151,10 +149,10 @@ function PeerspaceCityPage() {
       <ul>
         <li><strong>Pool Rental Near Me (0% fee, 2026):</strong> you keep $300</li>
         <li><strong>Peerspace (20% fee):</strong> you keep $240</li>
-        <li><strong>Difference:</strong> $30 more per booking on Pool Rental Near Me</li>
+        <li><strong>Difference:</strong> $60 more per booking on Pool Rental Near Me</li>
       </ul>
       <p>
-        Across a 50-booking {city.name} summer season, that's $1,500 in fee
+        Across a 50-booking {city.name} summer season, that's $3,000 in fee
         savings. Run your specific {city.name} numbers in the{" "}
         <a href="/p/earnings-calculator">
           earnings calculator
@@ -180,14 +178,16 @@ function PeerspaceCityPage() {
         </a>.
       </p>
 
-      <h2>Insurance that actually fits a {city.state} residential pool</h2>
+      <h2>Insurance for a {city.state} residential pool</h2>
       <p>
-        Pool injuries can be catastrophic. Peerspace's <strong>$1M general
-        liability</strong> is supplemental coverage built around general
-        venue rentals. Pool Rental Near Me's <strong>$2M per-occurrence /
-        $4M aggregate</strong> Hartford-backed policy is sized for
-        residential pool exposure — plus a $150K STRETCH® PLUS property
-        blanket on every approved booking.
+        Pool injuries can be catastrophic, so understand each platform's
+        model before listing. Peerspace publishes a <strong>$1M host
+        liability</strong> policy plus a $25K Property Damage Guarantee for
+        qualifying bookings. Pool Rental Near Me does not provide or arrange
+        insurance: every booking requires a <strong>signed guest
+        waiver</strong>, and we do not verify whether hosts carry insurance —
+        most homeowner policies exclude paid rentals, so talk to your
+        carrier before hosting in {city.name}.
       </p>
 
       <CTAMid />

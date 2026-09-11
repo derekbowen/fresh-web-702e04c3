@@ -116,11 +116,6 @@ export function ActivityCityTemplate({
                     <td className="px-4 py-3 text-muted-foreground">15%+</td>
                   </tr>
                   <tr>
-                    <td className="px-4 py-3 font-medium">Liability insurance</td>
-                    <td className="px-4 py-3">$2M, included on every booking</td>
-                    <td className="px-4 py-3 text-muted-foreground">$1M self-funded guarantee</td>
-                  </tr>
-                  <tr>
                     <td className="px-4 py-3 font-medium">Payout speed</td>
                     <td className="px-4 py-3">Next-day after the booking ends</td>
                     <td className="px-4 py-3 text-muted-foreground">Up to a week</td>
@@ -210,7 +205,7 @@ export function ActivityCityTemplate({
               Book a {cityName} pool by the hour.
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Real backyard pools, real reviews, $2M liability on every booking. No membership.
+              No membership.
             </p>
             <div className="mt-6">
               <a

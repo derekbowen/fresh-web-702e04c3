@@ -104,7 +104,17 @@ function buildPrompt(row: Row): { system: string; user: string } {
 
   const sharedRules = `
 You write SEO content for Pool Rental Near Me (PRNM), a marketplace where homeowners rent out their private pools by the hour.
-Differentiators to mention naturally: 0% host fees — hosts never pay a fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages.
+Differentiators to mention naturally: 0% host fees — hosts never pay a fee (vs Swimply's 15%+), 5,100+ city pages.
+
+HARD CONSTRAINT — INSURANCE:
+NEVER state, imply, or suggest that PRNM provides, includes, arranges, or
+guarantees insurance coverage of any kind. Do not name any insurance
+carrier. Do not cite policy limits, coverage amounts, or claims processes.
+PRNM's only insurance-related content is a referral to third-party
+providers. If insurance is relevant to the page topic, the ONLY permitted
+framing is that hosts should carry their own coverage and that referral
+options exist. Do not link to or name a specific referral partner or page.
+
 Markdown only. Use H2 (##) and H3 (###). Short paragraphs. Real, useful content — no filler, no "in this article we will". Do not invent statistics.
 Internal links allowed: /s, /s?address={City%2C+ST}, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works, /p/waivers, /p/hoa-pool-rental-defense-kit.
 List Your Pool CTA URL: /l/draft/00000000-0000-0000-0000-000000000000/new/details
@@ -124,7 +134,7 @@ Required sections (use ## headings, paraphrase the heading text — don't copy v
 2. What pools rent best here (architectural styles, heated/saltwater/spa, capacity)
 3. Best seasons & peak demand windows for ${cls.city}'s climate
 4. Realistic pricing tips ($/hour ranges, weekend premiums, peak vs shoulder)
-5. Why list on PRNM — 0% host fees vs Swimply's 15%+, $2M insurance, fast payouts. Link to /p/earnings-calculator and /p/hosting.
+5. Why list on PRNM — 0% host fees vs Swimply's 15%+, fast payouts. Link to /p/earnings-calculator and /p/hosting.
 6. Nearby cities also strong for hosting (mention 3-5 real cities near ${cls.city} the host could also serve)
 7. FAQ — 5 questions specific to ${cls.city}/${cls.stateName} hosting (insurance, neighbors/HOA, taxes, season, getting started)
 
@@ -147,7 +157,7 @@ Required sections:
 1. Is short-term pool rental legal in ${cls.stateName}? (general status — most states have no statewide ban; regulation is municipal)
 2. Permits & business licenses commonly required at the city/county level
 3. HOA & deed restrictions — how to defend your right to host (link to /p/hoa-pool-rental-defense-kit)
-4. Insurance requirements — note PRNM's included $2M liability
+4. Insurance requirements — hosts must arrange their own coverage; PRNM does not provide insurance
 5. Tax implications — Schedule E vs Schedule C, lodging tax, sales tax
 6. How to operate compliantly — waivers (link /p/waivers), capacity limits, neighbor relations
 7. FAQ — 5 questions specific to ${cls.stateName} hosts

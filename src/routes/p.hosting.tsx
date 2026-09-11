@@ -41,7 +41,7 @@ const PATH = "/p/hosting";
 const TITLE =
   "List Your Pool — 0% Host Fees | Pool Rental Near Me";
 const DESCRIPTION =
-  "Earn $1,500–$8,000+ a month renting your pool. 0% host fees — Swimply charges 15–30%. Free to list, $2M coverage, 193 free classes, 24-hr payouts.";
+  "Rent your pool by the hour on Pool Rental Near Me. 0% host fees — you keep 100% of your listed price.";
 
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 const ACADEMY_HREF = "/p/learningacademy";
@@ -61,8 +61,8 @@ const STEPS = [
   },
   {
     n: "3",
-    title: "Get paid in 24 hours",
-    body: "We process your payout within 24 hours of each booking ending. Most banks deposit it 1–3 business days later. Swimply takes 48 hours just to start, then 3–7 more days. We handle payments, taxes (1099-K), and guest messaging. You just host.",
+    title: "Get paid after each booking",
+    body: "Payouts are initiated after the booking is completed; bank arrival times may vary. You keep 100% of your listed price.",
   },
 ];
 
@@ -76,8 +76,8 @@ const REASONS: Reason[] = [
   },
   {
     icon: ShieldCheck,
-    title: "$2M liability on every booking",
-    body: "Every booking is automatically protected by up to $2 million in third-party liability insurance, included on every booking. No add-ons, no separate premium. Swimply's protection is $1M.",
+    title: "Signed waiver on every booking",
+    body: "Every guest signs a liability waiver before access. Pool Rental Near Me does not provide insurance — we do not verify whether hosts carry insurance, and most homeowner policies exclude paid rentals.",
   },
   {
     icon: FileCheck,
@@ -110,7 +110,6 @@ const COURSES: Array<{ icon: LucideIcon; title: string; desc: string }> = [
 const COMPARE: Array<[string, string, string]> = [
   ["Host service fee", "15–30% (varies)", "0% — never"],
   ["Hosts keep", "70–85%", "100%"],
-  ["Liability coverage", "$1,000,000", "$2,000,000"],
   ["Payout speed", "48 hr + 3–7 days to bank", "24 hr + 1–3 days to bank"],
   ["Fee predictability", "Varies by tier", "Always 0%"],
   ["Host education", "Webinars, help articles", "193 free classes (Pool Host Academy)"],
@@ -121,11 +120,11 @@ const COMPARE: Array<[string, string, string]> = [
 const FAQS = [
   {
     q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
-    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing and 24/7 support. Hosts are the business — we don't tax the business.",
   },
   {
     q: "How do I get paid?",
-    a: "Guests are charged upfront through Stripe — same as Swimply. We process your payout within 24 hours of each booking ending, with 0% host fees — you keep 100%. Most banks deposit it 1–3 business days later. (Swimply takes 48 hours to start, then 3–7 more days. So your money lands 4–7 days faster with us.)",
+    a: "Guests are charged upfront through Stripe. Payouts are initiated after the booking is completed; bank arrival times may vary. Hosts pay 0% in fees and keep 100% of the listed price.",
   },
   {
     q: "How much does it cost to list my pool?",
@@ -133,7 +132,7 @@ const FAQS = [
   },
   {
     q: "What protection do I get on every booking?",
-    a: "Up to $2 million in third-party liability insurance, automatically, on every booking. No add-ons, no extra premium, included on every booking. Most homeowner insurance policies don't cover paid pool rentals — that gap is exactly why this matters. (Swimply's coverage is $1M.)",
+    a: "Every guest signs a liability waiver before they get access, and payments run through Stripe. Pool Rental Near Me does not provide insurance. Most homeowner policies don't cover paid pool rentals, so ask your carrier what a paid rental would need before you host.",
   },
   {
     q: "Are the host classes really free?",
@@ -170,11 +169,11 @@ const FAQS = [
   },
   {
     q: "What if a guest damages my pool or property?",
-    a: "Document the damage with photos within 24 hours, file a report through our app, and we'll work directly with the guest's account to resolve charges. Severe damage is escalated to our liability insurance partner. (Note: Swimply offers $10K in property damage coverage. We're adding equivalent coverage in the next 60 days. For now, our $2M liability covers injury claims — the bigger insurance exposure for most hosts.)",
+    a: "Document the damage with photos within 24 hours and file a report through our app. We'll work directly with the guest's account to resolve charges. Pool Rental Near Me does not provide insurance, so anything beyond that is between you and your own insurer, if you have one — worth confirming with your carrier what a paid rental needs before you host.",
   },
   {
     q: "How is PRNM different from Swimply?",
-    a: "Four things hosts tell us. (1) Our host fee is 0% — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) We include $2M liability vs Swimply's $1M. (3) Money reaches your bank 4–7 days faster with us. (4) We have 193 free classes and a private host community board — Swimply has a Facebook group.",
+    a: "Four things hosts tell us. (1) Our host fee is 0% — Swimply's is 15–30%, and most hosts don't realize until they see their deposit. (2) Every booking requires a signed guest waiver before access. (3) Money reaches your bank 4–7 days faster with us. (4) We have 193 free classes and a private host community board — Swimply has a Facebook group.",
   },
   {
     q: "I'm currently on Swimply. Can I list on both?",
@@ -185,7 +184,7 @@ const FAQS = [
         <span className="block mt-2">
           We even have a free course on this exact topic:{" "}
           <a
-            href="/p/course/multi-platform-hosting-cross-listing-prnm-swimply-peerspace"
+            href="/p/elearning-academy-multi-platform-hosting-cross-listing-prnm-swimply-peerspace"
             className="font-semibold text-primary hover:underline"
           >
             Multi-platform hosting: cross-listing PRNM, Swimply &amp; Peerspace
@@ -294,7 +293,7 @@ function HostingPage() {
                 Turn your pool into income — and keep more of it.
               </h1>
               <p className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
-                Swimply's host fee runs 15% to 30% per booking. Ours is 0%. Plus $2M coverage versus their $1M, money in your bank
+                Swimply's host fee runs 15% to 30% per booking. Ours is 0%. Money in your bank
                 4–7 days faster, and 193 free classes on hosting. No
                 other platform does that.
               </p>
@@ -317,7 +316,6 @@ function HostingPage() {
                 {[
                   "Free to list",
                   "0% host fees",
-                  "$2M liability per booking",
                   "193 free classes",
                 ].map((t) => (
                   <li key={t} className="flex items-center gap-1.5">
@@ -615,7 +613,6 @@ function HostingPage() {
             </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                { href: "/p/start-hosting", title: "Start hosting", body: "Earn $1,500–$8,000/month — 0% host fees, $2M coverage." },
                 { href: "/p/ai-listing-generator", title: "AI listing generator", body: "Upload one photo, get a booking-ready listing draft." },
                 { href: "/p/pool-heating-cost-calculator", title: "Pool heating cost calculator", body: "Gas vs heat pump vs solar — monthly run-cost and payback." },
                 { href: "/p/pool-rules-generator", title: "Pool rules generator", body: "Printable house rules tuned to your pool — in 60 seconds." },
@@ -808,7 +805,7 @@ function EarningsCalc() {
               {fmt.format(grossMonthly)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              rate × bookings/wk × hours × 4.33
+              Illustrative estimate from your inputs: rate × bookings/wk × hours × 4.33. Not a guarantee.
             </p>
           </div>
 

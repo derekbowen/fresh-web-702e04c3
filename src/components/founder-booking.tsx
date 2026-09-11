@@ -7,7 +7,7 @@ type Lang = "en" | "es";
 const COPY = {
   en: {
     heading: "Thinking about listing your pool? Talk to Derek, the founder.",
-    sub: "Book 15 minutes with me. I'll walk you through how it works, what you could earn, how insurance covers you, and how to get your first booking. No pressure, no sales pitch.",
+    sub: "Book 15 minutes with me. I'll walk you through how it works, what you could earn, how waivers and booking approval protect you, and how to get your first booking. No pressure, no sales pitch.",
     slide: "Still thinking it over?",
     slideCta: "Talk to the founder, 15 min",
     dismiss: "Dismiss",

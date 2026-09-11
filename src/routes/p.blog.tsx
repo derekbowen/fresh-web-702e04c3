@@ -103,11 +103,11 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: "Can I rent a pool through Pool Rental Near Me?",
-    a: "Yes. Search private pool rentals in your city at /s, browse a specific listing, and book by the hour. Most US pools rent for $40 to $150 per hour. Liability coverage of $2 million is included on every booking.",
+    a: "Yes. Search private pool rentals in your city at /s, browse a specific listing, and book by the hour. Most US pools rent for $40 to $150 per hour.",
   },
   {
     q: "How do I list my pool to start earning?",
-    a: "Click List a pool on any page, add photos, set your hourly rate, and publish. Hosts on the platform typically earn $3,000 to $10,000 a month in summer. We charge 0% host fees — lower than the 15%+ taken by competing platforms.",
+    a: "Click List a pool on any page, add photos, set your hourly rate, and publish. We charge 0% host fees — lower than the 15%+ taken by competing platforms.",
   },
 ];
 
@@ -406,9 +406,8 @@ function BlogHubPage() {
               Reading about pools? Why not get paid to host yours.
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Hosts on Pool Rental Near Me earn $3,000 to $10,000 a month in
-              summer. 0% host fees, $2 million liability coverage included
-              on every booking, listings live in under 10 minutes.
+              Hosts on Pool Rental Near Me keep 100% of their listed price
+              on every booking, and listings go live in under 10 minutes.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a

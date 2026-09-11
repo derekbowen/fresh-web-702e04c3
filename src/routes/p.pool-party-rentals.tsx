@@ -6,7 +6,7 @@ import heroImage from "@/assets/hero-pool-party.jpg";
 const PATH = "/p/pool-party-rentals";
 const TITLE = "Pool Party Rentals by the Hour | Pool Rental Near Me";
 const DESCRIPTION =
-  "Book a private backyard for your birthday, graduation, baby shower, or company offsite. Pool party rentals across America with $2M liability included.";
+  "Book a private backyard for your birthday, graduation, baby shower, or company offsite.";
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 
 const CITY_LINKS = [
@@ -67,7 +67,7 @@ const serviceJsonLd = {
   serviceType: "Pool party rental",
   name: "Pool party rentals by the hour",
   description:
-    "Hourly pool party rentals across America. Birthdays, graduations, baby showers, bachelorettes, and company offsites with $2M liability insurance included on every booking.",
+    "Hourly pool party rentals across America.",
   provider: {
     "@type": "Organization",
     name: "Pool Rental Near Me",
@@ -149,7 +149,6 @@ function PoolPartyRentalsPage() {
             <p className="mt-5 text-lg leading-relaxed text-white/90 sm:text-xl">
               Book a private backyard for your birthday, graduation, baby
               shower, or company offsite. Pool party rentals across America,
-              hourly pricing, and $2M in liability coverage on every booking.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
@@ -355,7 +354,7 @@ function PoolPartyRentalsPage() {
               </li>
               <li>
                 <strong>Pack out, rate your host.</strong> Bag your trash and
-                head home. Every booking carries $2M in liability coverage at
+                head home.
                 no extra cost.
               </li>
             </ol>
@@ -399,8 +398,7 @@ function PoolPartyRentalsPage() {
               Ready to book a pool party rental?
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
-              Browse party-friendly backyards in your city. $2M liability
-              coverage included on every booking.
+              Browse party-friendly backyards in your city.
             </p>
             <a
               href="/s?keyword=pool%20party"
@@ -416,10 +414,9 @@ function PoolPartyRentalsPage() {
               Have a pool? Host parties and earn
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
-              Hosts who allow parties earn $2,000 to $10,000 a month renting
+              Hosts who allow parties rent
               their backyard pool by the hour. 0% host fees, so you keep
-              100% of every booking. We eat the credit card processing fees, so
-              90% means 90%. $2M liability coverage included.
+              100% of your listed price.
             </p>
             <a
               href={LIST_HREF}

@@ -36,7 +36,7 @@ export const ACTIVITIES: ActivityDef[] = [
     h1: (w) => `Pool party venues in ${w}`,
     seoTitle: (w) => `Pool party venues in ${w}: rent by the hour`,
     heroSubtitle: (w) =>
-      `Book a private backyard pool in ${w} by the hour. $2M liability included. No membership.`,
+      `Book a private backyard pool in ${w} by the hour. No membership.`,
     ctaLabel: (c) => `Find a ${c} pool party venue`,
     promptTopic: "pool party venue",
   },
@@ -47,7 +47,7 @@ export const ACTIVITIES: ActivityDef[] = [
     h1: (w) => `Baby shower venues in ${w}`,
     seoTitle: (w) => `Baby shower venues in ${w}: private pool rentals`,
     heroSubtitle: (w) =>
-      `Host a poolside baby shower in ${w}. Private backyard pools by the hour, $2M cover, instant book.`,
+      `Host a poolside baby shower in ${w}. Private backyard pools by the hour, instant book.`,
     ctaLabel: (c) => `Find a ${c} baby shower venue`,
     promptTopic: "baby shower venue (poolside)",
   },
@@ -58,7 +58,7 @@ export const ACTIVITIES: ActivityDef[] = [
     h1: (w) => `Birthday party venues in ${w}`,
     seoTitle: (w) => `Birthday party at a pool in ${w}: book by the hour`,
     heroSubtitle: (w) =>
-      `Throw a birthday party at a private pool in ${w}. Hourly rates, $2M liability included, no monthly fees.`,
+      `Throw a birthday party at a private pool in ${w}. Hourly rates, no monthly fees.`,
     ctaLabel: (c) => `Find a ${c} birthday venue`,
     promptTopic: "birthday party venue at a pool",
   },
@@ -69,7 +69,7 @@ export const ACTIVITIES: ActivityDef[] = [
     h1: (w) => `Hot tub rental in ${w}`,
     seoTitle: (w) => `Hot tub rental in ${w}: book a private hot tub by the hour`,
     heroSubtitle: (w) =>
-      `Rent a private hot tub by the hour in ${w}. Some hosts include sauna access. $2M cover on every booking.`,
+      `Rent a private hot tub by the hour in ${w}. Some hosts include sauna access.`,
     ctaLabel: (c) => `Find a ${c} hot tub`,
     promptTopic: "private hot tub rental",
   },

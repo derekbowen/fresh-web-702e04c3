@@ -7,7 +7,6 @@ import {
   FooterBlock,
   FAQList,
   LastUpdated,
-  HartfordKnockout,
   RelatedCompares,
   buildComparisonMeta,
   faqJsonLd,
@@ -19,12 +18,12 @@ import {
 const SLUG = "swimply-alternative-vs-pool-rental-near-me";
 const TITLE = "Swimply vs Pool Rental Near Me: 2026 Comparison";
 const DESCRIPTION =
-  "Honest 2026 comparison of Swimply vs Pool Rental Near Me. PRNM charges 0% host commission (down from 10%), includes $2M insurance, and ships 70+ free Pool Host Academy courses. Compare fees, insurance, training and reach.";
+  "Honest 2026 comparison of Swimply vs Pool Rental Near Me. Compare fees, insurance, training and reach.";
 
 const faqs = [
   {
     q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
-    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing and 24/7 support. Hosts are the business — we don't tax the business.",
   },
   {
     q: "How much does Swimply take from hosts?",
@@ -36,7 +35,7 @@ const faqs = [
   },
   {
     q: "What insurance does Swimply provide vs Pool Rental Near Me?",
-    a: "Swimply's published Protection Guarantee provides up to $1,000,000 USD per occurrence in liability protection plus up to $10,000 in property damage protection, secondary to the host's homeowners policy. PRNM's Business Owner's Policy through Hartford Underwriters provides $2,000,000 per-occurrence / $4M aggregate general liability, $10,000 medical expenses per person, and a $150,000 STRETCH® PLUS property coverage blanket — also secondary to your homeowners policy.",
+    a: "Swimply's published Protection Guarantee provides up to $1,000,000 USD per occurrence in liability protection plus up to $10,000 in property damage protection, secondary to the host's homeowners policy. Pool Rental Near Me does not provide or arrange insurance — every booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing on either platform.",
   },
   {
     q: "Can I list my pool on both Swimply and PRNM?",
@@ -48,7 +47,7 @@ const faqs = [
   },
   {
     q: "Does Swimply have more pools than Pool Rental Near Me?",
-    a: "In several flagship metros (Los Angeles, Phoenix, Miami, NYC/NJ) Swimply has been operating since 2018 and has more brand recognition. PRNM is growing across 40+ states and continues to onboard hosts in those same cities. New hosts often choose PRNM for the lower fee structure, larger insurance coverage and free training library.",
+    a: "In several flagship metros (Los Angeles, Phoenix, Miami, NYC/NJ) Swimply has been operating since 2018 and has more brand recognition. PRNM is growing across 40+ states and continues to onboard hosts in those same cities. New hosts often choose PRNM for the lower fee structure and free training library.",
   },
   {
     q: "How do I switch from Swimply to Pool Rental Near Me?",
@@ -108,10 +107,6 @@ function SwimplyComparisonPage() {
             Swimply's published 70–80%.
           </li>
           <li>
-            <strong>Bigger insurance on PRNM:</strong> $2M per-occurrence
-            general liability + $4M aggregate vs Swimply's $1M per-occurrence.
-          </li>
-          <li>
             <strong>More free training on PRNM:</strong> 70+ Pool Host Academy
             courses included free.
           </li>
@@ -154,8 +149,8 @@ function SwimplyComparisonPage() {
       <ul>
         <li>
           <strong>Pool Rental Near Me:</strong> 0% host commission —
-          you keep 100%, with a guest service fee applied at checkout. Hosts keep 100% of the booking
-          subtotal.
+          you keep 100% of the booking subtotal, with a guest service fee
+          applied at checkout.
         </li>
         <li>
           <strong>Swimply (per published article):</strong> hosts keep 70–80% of
@@ -171,47 +166,30 @@ function SwimplyComparisonPage() {
         calculator</a> for your real average booking size.
       </p>
 
-      <h2>Insurance & Liability Coverage</h2>
-
-      <HartfordKnockout
-        competitor="Swimply"
-        secondSentence={
-          <>
-            Swimply's coverage is a self-funded host guarantee — Swimply no longer carries a third-party liability insurance policy for hosts as of 2023, per public reporting.<sup>[⁶]</sup>
-          </>
-        }
-      />
+      <h2>Insurance & Liability</h2>
 
       <p>
-        Both platforms publish a "secondary" insurance model — meaning the
-        platform's coverage applies after your homeowners policy responds. The
-        coverage limits are very different.
+        <strong>Swimply Protection Guarantee (published)</strong>: up to
+        $1,000,000 USD per occurrence in liability protection when a guest is
+        injured during a Swimply reservation, plus up to $10,000 in property
+        damage protection if the guest is unwilling or unable to pay. The
+        Guarantee is conditioned on the host maintaining a valid homeowners or
+        liability policy, acts as secondary coverage, and per public reporting
+        is a self-funded host guarantee rather than a third-party insurance
+        policy.<sup>[²]</sup><sup>[⁶]</sup> If platform-provided protection
+        is your deciding factor, Swimply publishes one and Pool Rental Near Me
+        does not.
       </p>
 
       <p>
-        <strong>Swimply Protection Guarantee (published)</strong>: up to{" "}
-        $1,000,000 USD per occurrence in liability protection in the US and
-        Canada when a guest is injured during a Swimply reservation, plus up to{" "}
-        $10,000 in property damage protection if the guest is unwilling or
-        unable to pay. The Guarantee is conditioned on the host maintaining a
-        valid homeowners or liability policy and acts as secondary coverage.<sup>[²]</sup>
-      </p>
-
-      <p>
-        <strong>Pool Rental Near Me insurance</strong>: PRNM Corp maintains a
-        Business Owner's Policy through Hartford Underwriters Insurance Company
-        providing <strong>$2,000,000 per-occurrence general liability with a
-        $4,000,000 aggregate</strong>, $10,000 medical expenses per person, and
-        a <strong>$150,000 STRETCH® PLUS property coverage blanket</strong> —
-        attached to every approved booking at no cost to the host, and also
-        secondary to your personal homeowners policy.<sup>[³]</sup>
-      </p>
-
-
-      <p>
-        For pool hosts, the per-occurrence number is the one that matters most
-        because pool injuries can be catastrophic. The published gap between $1M
-        and $2M is significant and easy to verify.
+        <strong>Pool Rental Near Me</strong> does not provide or arrange
+        insurance. Every booking requires a <strong>signed guest
+        waiver</strong>, hosts approve each reservation individually, and
+        we do not verify whether hosts carry insurance. Most homeowner policies
+        exclude paid rentals under a business-pursuits exclusion, so talk to
+        your carrier or an independent agent about a short-term-rental or
+        business endorsement before you host — whichever platform you
+        list on.<sup>[³]</sup>
       </p>
 
       <h2>Host Support & Training</h2>
@@ -230,8 +208,7 @@ function SwimplyComparisonPage() {
         and <a href="/p/elearning-academy-maximizing-revenue-upselling-pool-amenities">
         revenue optimization</a>. PRNM also publishes the{" "}
         <a href="/p/hoa-pool-rental-defense-kit">
-        HOA Defense Kit</a> for hosts dealing with HOA pushback, and CEO Derek
-        Bowen has authored multiple Amazon books on pool hosting.
+        HOA Defense Kit</a> for hosts dealing with HOA pushback.
       </p>
 
       <p>
@@ -317,8 +294,8 @@ function SwimplyComparisonPage() {
           consumer brand on your listing.
         </li>
         <li>
-          You're comfortable with the published 70–80% retention range and the
-          $1M / $10K coverage limits.
+          You're comfortable with the published 70–80% retention range and
+          want Swimply's published $1M / $10K protection guarantee.
         </li>
       </ul>
 
@@ -335,10 +312,6 @@ function SwimplyComparisonPage() {
         <li>
           You want to <strong>keep 100%</strong> of every booking subtotal — 0% host
           fees, flat and transparent.
-        </li>
-        <li>
-          You want the larger <strong>$2M per-occurrence / $4M aggregate</strong>{" "}
-          general liability coverage with a $150K property blanket.
         </li>
         <li>
           You want structured <a href="/p/learningacademy">
@@ -407,7 +380,6 @@ function SwimplyComparisonPage() {
         <li>
           <strong>Swimply Protection Guarantee</strong> — Swimply Help Center,
           "Swimply Protection Guarantee": $1,000,000 USD/CAD per-occurrence
-          liability protection, $10,000 property damage protection, secondary
           to host homeowners policy. Source:{" "}
           <a
             href="https://swimply.zendesk.com/hc/en-us/articles/30451314804755-Swimply-Protection-Guarantee"
@@ -417,12 +389,9 @@ function SwimplyComparisonPage() {
           </a>
         </li>
         <li>
-          <strong>$2,000,000 PRNM General Liability Insurance</strong> — PRNM
-          Corp maintains a Business Owner's Policy through Hartford Underwriters
-          Insurance Company providing $2M per-occurrence / $4M aggregate general
-          liability, $10K medical expenses per person, and a $150K STRETCH®
-          PLUS property coverage blanket on every approved booking at no cost
-          to the host. Full terms in our{" "}
+          <strong>PRNM waiver requirement</strong> — every Pool Rental Near Me
+          booking requires a signed guest waiver; PRNM does not provide or
+          arrange insurance. Full terms in our{" "}
           <a href="/p/terms-of-service">
             Terms of Service
           </a>

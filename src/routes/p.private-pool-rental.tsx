@@ -6,7 +6,7 @@ import heroImage from "@/assets/hero-family-pool.jpg";
 const PATH = "/p/private-pool-rental";
 const TITLE = "Private Pool Rental by the Hour | Pool Rental Near Me";
 const DESCRIPTION =
-  "Book a private pool rental by the hour. Heated pools, hot tubs, saltwater backyards. $2M liability included, hosts keep 100% of every booking.";
+  "Book a private pool rental by the hour. Heated pools, hot tubs, saltwater backyards.";
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 
 const CITY_LINKS = [
@@ -31,7 +31,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What is included in a private pool rental?",
-    a: "Exclusive use of the pool and yard for your group during your booking, plus seating, restroom access, and any amenities the host lists (hot tub, grill, sound system, shade). Every booking on Pool Rental Near Me includes $2M in liability coverage at no extra cost.",
+    a: "Exclusive use of the pool and yard for your group during your booking, plus seating, restroom access, and any amenities the host lists (hot tub, grill, sound system, shade).",
   },
   {
     q: "How many people can I bring?",
@@ -43,7 +43,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Are private pool rentals safe?",
-    a: "Hosts on Pool Rental Near Me are reviewed before going live and rated by every guest. There is no lifeguard on site, so adults are responsible for supervising swimmers. Every booking carries $2M in liability insurance.",
+    a: "Hosts on Pool Rental Near Me are reviewed before going live and rated by every guest. There is no lifeguard on site, so adults are responsible for supervising swimmers.",
   },
   {
     q: "Can I bring my dog?",
@@ -63,7 +63,7 @@ const serviceJsonLd = {
   serviceType: "Private pool rental",
   name: "Private pool rental by the hour",
   description:
-    "Hourly private pool rental marketplace. Heated pools, hot tubs, and luxury backyards with $2M liability insurance included on every booking.",
+    "Hourly private pool rental marketplace.",
   provider: {
     "@type": "Organization",
     name: "Pool Rental Near Me",
@@ -145,7 +145,6 @@ function PrivatePoolRentalPage() {
             <p className="mt-5 text-lg leading-relaxed text-white/90 sm:text-xl">
               Book a private pool for an afternoon, an evening, or a full day.
               Heated pools, hot tubs, and saltwater backyards across America. You
-              get the whole place to yourself, with $2M in liability coverage
               included on every booking.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -341,8 +340,8 @@ function PrivatePoolRentalPage() {
                 booked window. Leave the space the way you found it.
               </li>
               <li>
-                <strong>Rate your host.</strong> Every booking carries $2M in
-                liability coverage at no extra cost to you.
+                <strong>Rate your host.</strong> Reviews are how the next guest
+                knows what to expect.
               </li>
             </ol>
 
@@ -383,7 +382,6 @@ function PrivatePoolRentalPage() {
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
               Browse heated pools, hot tubs, and luxury backyards in your city.
-              $2M liability coverage included on every booking.
             </p>
             <a
               href="/s"
@@ -399,10 +397,9 @@ function PrivatePoolRentalPage() {
               Have a pool? List it free
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
-              Hosts on Pool Rental Near Me earn $1,500 to $8,000 a month renting
+              Hosts on Pool Rental Near Me rent
               their backyard pool by the hour. 0% host fees, so you keep
-              100% of every booking. We eat the credit card processing fees, so
-              90% means 90%. $2M liability coverage included.
+              100% of your listed price.
             </p>
             <a
               href={LIST_HREF}

@@ -53,7 +53,6 @@ export function CTAPrimary() {
         🏊 List Your Pool Free →
       </a>
       <p className="mt-3 text-sm font-medium text-foreground">
-        Keep 100% · $2M Insurance · 70+ Free Courses · You Control Everything
       </p>
     </div>
   );
@@ -84,24 +83,6 @@ export function LastUpdated({ date }: { date: string }) {
       <time dateTime={date}>Last updated: {new Date(date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</time>
       {" · "}Reviewed by Derek Bowen, Founder & CEO, PRNM Corp
     </p>
-  );
-}
-
-export function HartfordKnockout({
-  competitor,
-  secondSentence,
-}: {
-  competitor: string;
-  secondSentence: React.ReactNode;
-}) {
-  return (
-    <div className="not-prose my-6 rounded-xl border-l-4 border-primary bg-primary/5 p-4">
-      <p className="m-0 text-sm leading-relaxed text-foreground">
-        <strong>Pool Rental Near Me's $2M per-occurrence / $4M aggregate general liability is carrier-backed third-party insurance</strong>{" "}
-        underwritten by <strong>Hartford Underwriters Insurance Company</strong>. {secondSentence}{" "}
-        <span className="text-muted-foreground">(Coverage comparison verified May 2026; check {competitor}'s current published terms before listing.)</span>
-      </p>
-    </div>
   );
 }
 
@@ -145,13 +126,9 @@ export function AuthorBlock() {
       <h2>About the Author</h2>
       <p>
         <strong>Derek Bowen</strong> is the founder and CEO of PRNM Corp, the
-        parent company behind Pool Rental Near Me. A lifelong entrepreneur with
-        20+ years of marketplace and e-commerce experience, Derek launched Pool
-        Rental Near Me to give pool owners a host-first alternative to high-fee
-        competitors. He is the author of multiple Amazon-published books on
-        pool hosting, including <em>Pool Host Riches</em>,{" "}
-        <em>The Backyard Entrepreneur</em>, and the Pool Host Academy companion
-        guides.
+        parent company behind Pool Rental Near Me. Derek launched Pool Rental
+        Near Me to give pool owners a host-first alternative to high-fee
+        competitors: 0% host fees, hosts keep 100% of their booking price.
       </p>
       <p>
         Connect:{" "}

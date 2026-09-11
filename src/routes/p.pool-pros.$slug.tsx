@@ -235,7 +235,7 @@ function ProviderPage() {
               {(p.city && p.state_code) && (
                 <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 to-secondary p-5">
                   <h3 className="text-sm font-bold uppercase tracking-wide">Rent your pool</h3>
-                  <p className="mt-2 text-sm text-foreground/80">List your pool in {p.city} and earn $40–$150/hr.</p>
+                  <p className="mt-2 text-sm text-foreground/80">List your pool in {p.city}. You set the hourly rate and keep 100% of it.</p>
                   <a href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
                     className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
                     List a pool

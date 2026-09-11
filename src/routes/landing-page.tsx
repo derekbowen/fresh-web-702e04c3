@@ -35,7 +35,7 @@ export const Route = createFileRoute("/landing-page")({
     const meta = buildMeta({
       title: "Pool Rental Near Me — Rent a Private Pool by the Hour",
       description:
-        "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards. Hourly bookings with $2M liability insurance included.",
+        "Find and book private pool rentals near you. Heated pools, hot tubs, and luxury backyards.",
       path: "/landing-page",
       // Reverse proxy serves this upstream at https://www.poolrentalnearme.com/.
       // Canonicalize to the root so Google never indexes /landing-page as a

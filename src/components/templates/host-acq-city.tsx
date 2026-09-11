@@ -8,6 +8,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
+import { LiveInventory } from "@/components/live-inventory";
+import { listingsInCity } from "@/lib/live-inventory";
 import { RelatedPages, type RelatedPagesItem } from "@/components/related-pages";
 import { relatedSlugsToItems } from "@/lib/related-city-anchors";
 import { ADVOCACY_STATES } from "@/lib/advocacy-states";
@@ -80,10 +82,8 @@ export function HostAcqCityTemplate({
   );
   const variantCopy = variant ? getVariantCopy(variant, cityName, stateCode) : null;
 
-  // Tier-tuned monthly earnings band (gross — 0% host fees)
-  const lo = Math.round(hourlyRate * 8 * 4); // ~8 hrs/wk
-  const hi = Math.round(hourlyRate * 18 * 4); // ~18 hrs/wk
-  const earningsBand = `$${lo.toLocaleString()}–$${hi.toLocaleString()}+`;
+  // Earnings band removed 2026-09-02: a rate×hours projection presented as
+  // "hosts earn" was an unsourced claim on ~3,900 pages (audit 2026-09-01).
 
   const tierLabel =
     tier === "premium"
@@ -105,7 +105,7 @@ export function HostAcqCityTemplate({
     "@graph": [
       {
         "@type": "Article",
-        headline: `Become a Pool Host in ${cityName}, ${stateCode} — Earn ${earningsBand}/Month`,
+        headline: `Become a Pool Host in ${cityName}, ${stateCode} — 0% Host Fees`,
         author: AUTHOR_PERSON_JSONLD_REF,
         publisher: {
           "@type": "Organization",
@@ -217,7 +217,7 @@ export function HostAcqCityTemplate({
                   <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                     Rent your {cityName} pool by the hour.{" "}
                     <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-                      Earn {earningsBand}/mo.
+                      0% host fees. Keep 100%.
                     </span>
                   </h1>
                   <AuthorByline date={dateModified} />
@@ -258,10 +258,7 @@ export function HostAcqCityTemplate({
                   <span className="text-primary">✓</span> 0% host fees
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="text-primary">✓</span> $2M coverage included
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="text-primary">✓</span> Paid in 24 hours
+                  <span className="text-primary">✓</span> Paid after each completed booking
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="text-primary">✓</span> Live in 15 min
@@ -286,8 +283,7 @@ export function HostAcqCityTemplate({
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-5 text-center">
                   <Stat label="Host fee" value="0%" sub="vs 15%+ elsewhere" />
-                  <Stat label="Coverage" value="$2M" sub="included" />
-                  <Stat label="Payout" value="24h" sub="direct" />
+                  <Stat label="Payout" value="After booking" sub="bank times vary" />
                 </div>
                 <a
                   href="#calculator"
@@ -325,13 +321,13 @@ export function HostAcqCityTemplate({
               />
               <Pillar
                 kicker="Real protection"
-                title="$2M liability"
-                body="Every booking is auto-covered up to $2 million in third-party liability. No add-ons, no separate premium, no fine print games."
+                title="Signed waivers"
+                body="Every guest signs a liability waiver before they get access."
               />
               <Pillar
-                kicker="Fast money"
-                title="24-hour payouts"
-                body="Direct deposit within 24 hours of each booking ending. Most platforms hold for 2–5 days. We trust our hosts."
+                kicker="Your money"
+                title="Paid after every booking"
+                body="Payouts are initiated after the booking is completed; bank arrival times may vary. You keep 100% of your listed price."
               />
               <Pillar
                 kicker="You're in charge"
@@ -367,8 +363,7 @@ export function HostAcqCityTemplate({
                   {[
                     ["Host service fee", "0%", "15%+"],
                     ["You take home on $200", "$180", "≈ $170 or less"],
-                    ["Liability coverage", "$2M included", "$1M"],
-                    ["Payout speed", "24 hours", "2–5 days"],
+                    ["Payout timing", "Initiated after each completed booking", "See their published terms"],
                     ["Listing fee", "Free", "Free"],
                     ["Guest approval", "Full host approval", "Auto-approve default"],
                   ].map(([label, prnm, sw]) => (
@@ -388,25 +383,6 @@ export function HostAcqCityTemplate({
           </div>
         </section>
 
-        {/* HARTFORD INSURANCE CALLOUT */}
-        <section className="border-b border-border py-12 sm:py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-2xl border-l-4 border-primary bg-primary/5 p-6 sm:p-8">
-              <div>
-                <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                  Real insurance, not a self-funded guarantee
-                </h2>
-                <p className="mt-3 text-base leading-relaxed text-foreground/90">
-                  Pool Rental Near Me's <strong>$2M per-occurrence / $4M aggregate general liability</strong>{" "}
-                  is carrier-backed third-party insurance underwritten by{" "}
-                  <strong>Hartford Underwriters Insurance Company</strong> — not a self-funded host
-                  guarantee. Includes <strong>$150K STRETCH® PLUS property coverage</strong> and{" "}
-                  <strong>$10K medical expenses per person</strong>.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* CALCULATOR */}
         <section
@@ -455,8 +431,8 @@ export function HostAcqCityTemplate({
                 },
                 {
                   n: "03",
-                  title: "Get paid in 24 hours",
-                  body: "Direct deposit within 24 hours of booking end. We handle payments, taxes, and guest messaging.",
+                  title: "Get paid after each booking",
+                  body: "Payouts are initiated after the booking is completed; bank arrival times may vary. We handle payments and guest messaging.",
                 },
               ].map((s) => (
                 <div
@@ -527,6 +503,10 @@ export function HostAcqCityTemplate({
             )}
           </div>
         </section>
+
+        {/* LIVE INVENTORY — real bookable pools in this exact city; renders nothing when empty */}
+        <LiveInventory listings={listingsInCity(cityName, stateCode)}
+          heading={`Pools you can book right now in ${cityName}`} />
 
         {/* NEARBY + FAQ */}
         <section className="border-b border-border py-16">
@@ -670,7 +650,7 @@ export function HostAcqCityTemplate({
               Your {cityName} pool could be earning this week.
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Free to list. No monthly fees. $2M coverage on every booking.
+              Free to list. No monthly fees.
               Live in 15 minutes.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -696,10 +676,10 @@ export function HostAcqCityTemplate({
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="truncate text-xs text-muted-foreground">
-              {cityName} hosts earn
+              {cityName} hosts keep
             </div>
             <div className="truncate text-sm font-bold text-foreground">
-              {earningsBand}/mo
+              100% — 0% host fees
             </div>
           </div>
           <a

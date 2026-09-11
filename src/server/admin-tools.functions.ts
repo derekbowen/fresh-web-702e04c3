@@ -248,7 +248,17 @@ export const getIndexingStats = createServerFn({ method: "GET" })
 
 const SEO_SYSTEM = `
 You write SEO + brand content for Pool Rental Near Me (PRNM), a marketplace where homeowners rent out private pools by the hour.
-Differentiators (mention naturally): 0% host fees — hosts never pay a fee (vs Swimply's 15%+), $2M liability insurance included.
+Differentiators (mention naturally): 0% host fees — hosts never pay a fee (vs Swimply's 15%+).
+
+HARD CONSTRAINT — INSURANCE:
+NEVER state, imply, or suggest that PRNM provides, includes, arranges, or
+guarantees insurance coverage of any kind. Do not name any insurance
+carrier. Do not cite policy limits, coverage amounts, or claims processes.
+PRNM's only insurance-related content is a referral to third-party
+providers. If insurance is relevant to the page topic, the ONLY permitted
+framing is that hosts should carry their own coverage and that referral
+options exist. Do not link to or name a specific referral partner or page.
+
 Voice: confident, friendly, host-first. Short paragraphs. Real, useful copy. No filler. Sentence case headings. No em dashes.
 Format: Markdown only. Use ## and ### headings. Include 3-5 internal links from this set where relevant:
   /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works
@@ -775,7 +785,17 @@ Brand voice rules (apply to ALL output):
 - Numbers under 10 spelled out, 10+ as numerals.
 - Dollar amounts as $X/hour, not "$X per hour".
 - Real numbers only. Typical hourly rates $40-150/hr. Never invent statistics.
-- Differentiators (mention naturally where relevant): 0% host fees — hosts never pay a fee (vs Swimply's 15%+), $2M liability insurance included, 5,100+ city pages indexed.
+- Differentiators (mention naturally where relevant): 0% host fees — hosts never pay a fee (vs Swimply's 15%+), 5,100+ city pages indexed.
+
+HARD CONSTRAINT — INSURANCE:
+NEVER state, imply, or suggest that PRNM provides, includes, arranges, or
+guarantees insurance coverage of any kind. Do not name any insurance
+carrier. Do not cite policy limits, coverage amounts, or claims processes.
+PRNM's only insurance-related content is a referral to third-party
+providers. If insurance is relevant to the page topic, the ONLY permitted
+framing is that hosts should carry their own coverage and that referral
+options exist. Do not link to or name a specific referral partner or page.
+
 - Internal links to use where relevant: /s, /p/hosting, /p/all-locations, /p/earnings-calculator, /p/how-it-works
 - List Your Pool CTA URL: /l/draft/00000000-0000-0000-0000-000000000000/new/details
 `.trim();
@@ -944,9 +964,9 @@ export const SECTION_PRESETS = [
   { key: "pricing_table", label: "Pricing table", prompt: "Add a pricing comparison section. Use a Markdown table with columns: Pool size, Typical hourly rate, Best for. Use realistic PRNM ranges ($40-150/hr)." },
   { key: "what_to_expect", label: "What to expect checklist", prompt: 'Add a "What to expect" section with a checklist of 6-8 items using `- [ ]` Markdown task list syntax, tailored to this page topic.' },
   { key: "landmarks", label: "Local landmarks (city pages)", prompt: "Add a 'Things to do nearby' section listing 5-7 well-known local landmarks, parks, or attractions for this city. Each as a bullet with a one-sentence note on why pool guests would care." },
-  { key: "insurance", label: "Insurance & liability", prompt: "Add an 'Insurance and liability' section explaining PRNM's $2M liability coverage, what it covers, what it doesn't, and how it compares to Swimply." },
+  { key: "insurance", label: "Insurance & liability", prompt: "Add an 'Insurance and liability' section. PRNM does not provide, arrange or include insurance of any kind — never state or imply otherwise, and never name a carrier or cite coverage amounts. Explain that hosts must carry their own coverage, that most homeowners policies exclude paid rentals, and what to ask their own agent." },
   { key: "host_tips", label: "Host tips & safety", prompt: "Add a 'Host tips and safety' section with 5 actionable tips a new pool host should follow before their first booking. Use a numbered list." },
-  { key: "comparison", label: "PRNM vs Swimply", prompt: "Add a comparison section using a Markdown table with rows: Host fee, Liability insurance, Payout speed, Support, Listing approval time. Be factual and PRNM-favorable." },
+  { key: "comparison", label: "PRNM vs Swimply", prompt: "Add a comparison section using a Markdown table with rows: Host fee, Payout speed, Support, Listing approval time. Be factual and PRNM-favorable." },
   { key: "internal_links", label: "Related cities (auto)", prompt: "__INTERNAL_LINKS__" },
   { key: "testimonials", label: "Testimonials block", prompt: "Add a 'What hosts are saying' section with 3 short testimonial-style quotes (placeholder names like 'Sarah, host in [generic city]'). Mark clearly that they are placeholders so the admin can replace them." },
 ] as const;

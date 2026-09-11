@@ -21,9 +21,8 @@ const Email = ({ firstName, unsubUrl }: Props) => (
           near you is to know the host yourself.
         </Text>
         <Text style={text}>
-          Hosts on Pool Rental Near Me typically earn <strong>$3,000–$10,000/month</strong> from a
-          backyard they already own. We only charge a 10% host fee (Swimply takes 15%+), and every
-          booking includes $2M of liability insurance.
+          Pool owners on Pool Rental Near Me set their own hourly rate and keep{" "}
+          <strong>100% of it</strong> — hosts pay 0% in fees.
         </Text>
         <Section style={cta}>
           <Button href="https://www.poolrentalnearme.com/p/become-a-pool-host" style={btn}>

@@ -114,6 +114,20 @@ export const Route = createFileRoute("/p/$slug")({
     if (result.kind === "not_found") {
       // Fire-and-forget: log the missing slug for admin review. The server fn
       // captures referer/user-agent from the request context server-side.
+      // Host-funnel fallback: 501 distinct become-a-*-host-{city} URLs were
+      // 404ing (content_404_log, 2026-08-19) because city variants were sent
+      // in texts and emails that never had pages. A prospective host on a
+      // dead end is a lost host; land them on the live signup funnel instead.
+      if (
+        params.slug.startsWith("become-a-swimming-pool-host-") ||
+        params.slug.startsWith("become-a-pool-host-") ||
+        params.slug === "host" ||
+        params.slug === "hosts" ||
+        params.slug === "become-a-pool-host"
+      ) {
+        void log404({ data: { urlPath: `/p/${params.slug}`, slug: params.slug } });
+        throw redirect({ href: "https://www.poolrentalnearme.com/become-a-host", statusCode: 301, replace: true });
+      }
       void log404({ data: { urlPath: `/p/${params.slug}`, slug: params.slug } });
       throw notFound();
     }
@@ -122,95 +136,90 @@ export const Route = createFileRoute("/p/$slug")({
   },
   loader: async ({ context }) => {
     const page = (context as { page: ContentPage }).page;
-    let nearbyCities: NearbyCity[] = [];
-    let city: CityRow | null = null;
-    let citySources: CitySource[] = [];
-    if (
+
+    // These lookups used to await in series, which cost host_acq_city pages ~500ms
+    // of TTFB for six or seven sequential Supabase round trips (measured 2026-08-17
+    // against 60-130ms for every other template). Only getInternalLinkTargets
+    // genuinely depends on an earlier result - it needs the nearby city slugs - so
+    // everything else fires in one wave and that call follows in a second.
+    const isCityTemplate =
       page.template_type === "host_acq_city" ||
       page.template_type === "spanish_host_acq" ||
       page.template_type === "swim_instructor_city" ||
-      page.template_type === "activity_city"
-    ) {
-      try {
-        const requirePathPrefix =
-          page.template_type === "host_acq_city"
-            ? "become-a-swimming-pool-host-"
-            : page.template_type === "swim_instructor_city"
-              ? "swim-instructor-pool-rental-"
-              : undefined;
-        nearbyCities = await getNearbyCitiesForPage({
-          data: {
-            templateType: page.template_type,
-            slug: page.slug,
-            limit: 6,
-            ...(requirePathPrefix ? { requirePathPrefix } : {}),
-          },
-        });
-      } catch {
-        nearbyCities = [];
-      }
-      const citySlug = cityForContentPage(page.template_type, page.slug);
-      if (citySlug) {
-        try {
-          city = await getCityBySlug({ data: { slug: citySlug } });
-        } catch {
-          city = null;
-        }
-        if (page.template_type === "host_acq_city") {
-          try {
-            citySources = await getCitySources({ data: { slug: citySlug } });
-          } catch {
-            citySources = [];
-          }
-        }
-      }
-    }
-    let linkTargets: LinkTarget[] = [];
-    try {
-      const citySlug = cityForContentPage(page.template_type, page.slug);
-      linkTargets = await getInternalLinkTargets({
+      page.template_type === "activity_city";
+    const requirePathPrefix =
+      page.template_type === "host_acq_city"
+        ? "become-a-swimming-pool-host-"
+        : page.template_type === "swim_instructor_city"
+          ? "swim-instructor-pool-rental-"
+          : undefined;
+    const citySlug = cityForContentPage(page.template_type, page.slug);
+    const academyLang = academyLangForSlug(page.slug);
+    const pageForSibling = page as { hreflang_group?: string | null };
+    const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs;
+
+    // Each lookup keeps the same swallow-and-fall-back behaviour it had when it
+    // was its own try/catch, so one failing lookup still cannot fail the page.
+    const safe = <T,>(p: Promise<T>, fallback: T): Promise<T> => p.then((v) => v ?? fallback).catch(() => fallback);
+
+    const [nearbyCities, city, citySources, academyHub, hreflangRes, relatedRes, origin] =
+      await Promise.all([
+        isCityTemplate
+          ? safe(
+              getNearbyCitiesForPage({
+                data: {
+                  templateType: page.template_type,
+                  slug: page.slug,
+                  limit: 6,
+                  ...(requirePathPrefix ? { requirePathPrefix } : {}),
+                },
+              }),
+              [] as NearbyCity[],
+            )
+          : Promise.resolve([] as NearbyCity[]),
+        isCityTemplate && citySlug
+          ? safe(getCityBySlug({ data: { slug: citySlug } }), null as CityRow | null)
+          : Promise.resolve(null as CityRow | null),
+        isCityTemplate && citySlug && page.template_type === "host_acq_city"
+          ? safe(getCitySources({ data: { slug: citySlug } }), [] as CitySource[])
+          : Promise.resolve([] as CitySource[]),
+        academyLang
+          ? safe(getAcademyHub({ data: { language: academyLang } }), null as AcademyHubData | null)
+          : Promise.resolve(null as AcademyHubData | null),
+        pageForSibling.hreflang_group
+          ? safe(getHreflangSibling({ data: { pageId: page.id } }), {
+              sibling: null as { slug: string; language: string } | null,
+            })
+          : Promise.resolve({ sibling: null as { slug: string; language: string } | null }),
+        Array.isArray(relatedSlugs) && relatedSlugs.length > 0
+          ? safe(getRelatedBlogMeta({ data: { slugs: relatedSlugs.slice(0, 8) } }), {
+              posts: [] as RelatedPostMeta[],
+            })
+          : Promise.resolve({ posts: [] as RelatedPostMeta[] }),
+        getRouteOrigin(),
+      ]);
+
+    const linkTargets = await safe(
+      getInternalLinkTargets({
         data: {
           citySlug: citySlug ?? null,
           nearbyCitySlugs: nearbyCities.map((c) => c.slug),
         },
-      });
-    } catch {
-      linkTargets = [];
-    }
-    let academyHub: AcademyHubData | null = null;
-    const academyLang = academyLangForSlug(page.slug);
-    if (academyLang) {
-      try {
-        academyHub = await getAcademyHub({ data: { language: academyLang } });
-      } catch {
-        academyHub = null;
-      }
-    }
-    let hreflangSibling: { slug: string; language: string } | null = null;
-    const pageForSibling = page as { hreflang_group?: string | null };
-    if (pageForSibling.hreflang_group) {
+      }),
+      [] as LinkTarget[],
+    );
 
-      try {
-        const res = await getHreflangSibling({ data: { pageId: page.id } });
-        hreflangSibling = res.sibling;
-      } catch {
-        hreflangSibling = null;
-      }
-    }
-
-    let relatedPosts: RelatedPostMeta[] = [];
-    const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs;
-    if (Array.isArray(relatedSlugs) && relatedSlugs.length > 0) {
-      try {
-        const r = await getRelatedBlogMeta({ data: { slugs: relatedSlugs.slice(0, 8) } });
-        relatedPosts = r.posts;
-      } catch {
-        relatedPosts = [];
-      }
-    }
-    const origin = await getRouteOrigin();
-    return { page, nearbyCities, city, citySources, linkTargets, academyHub, hreflangSibling, relatedPosts, origin };
-
+    return {
+      page,
+      nearbyCities,
+      city,
+      citySources,
+      linkTargets,
+      academyHub,
+      hreflangSibling: hreflangRes.sibling,
+      relatedPosts: relatedRes.posts,
+      origin,
+    };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.page) return {};

@@ -160,7 +160,7 @@ export const queueSpanishCityBatch = createServerFn({ method: "POST" })
         slug: `conviertete-en-anfitrion-de-alberca-${citySlug}-${stateLower}`,
         h1: `Conviértete en Anfitrión de Alberca en ${city}, ${st}`,
         meta_title: `Renta Tu Alberca en ${city}, ${st} – Gana $4K-$8K+/Mes`,
-        meta_description: `Convierte tu alberca en ${city} en ingresos premium. Seguro de $2M. 90% de ganancias. Soporte en español.`,
+        meta_description: `Convierte tu alberca en ${city} en ingresos premium. 0% de comisión para anfitriones: te quedas con el 100%. Soporte en español.`,
         primary_keyword: `renta de alberca ${city}`,
         supporting_keywords: `renta de alberca ${city}; anfitrión de alberca ${city} ${st}; alberca privada ${city}`,
         uniqueness_angle: `Página en español para hispanohablantes en ${city}, ${row.state ?? st}.`,

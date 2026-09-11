@@ -40,8 +40,11 @@ import { Route as SitemapIndexDotxmlRouteImport } from './routes/sitemap-index[.
 import { Route as SitemapHubDotxmlRouteImport } from './routes/sitemap-hub[.]xml'
 import { Route as SitemapDirectoryDotxmlRouteImport } from './routes/sitemap-directory[.]xml'
 import { Route as SitemapDefaultDotxmlRouteImport } from './routes/sitemap-default[.]xml'
+import { Route as SitemapCountryDotxmlRouteImport } from './routes/sitemap-country[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as RiversideRouteImport } from './routes/riverside'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
+import { Route as PhoenixRouteImport } from './routes/phoenix'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
 import { Route as JobsDotxmlRouteImport } from './routes/jobs[.]xml'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -64,7 +67,6 @@ import { Route as PPoolRulesGeneratorRouteImport } from './routes/p.pool-rules-g
 import { Route as PPoolRentalsChar123stateChar125RouteImport } from './routes/p.pool-rentals-{$state}'
 import { Route as PPoolRentalsRouteImport } from './routes/p.pool-rentals'
 import { Route as PPoolRentalPermitsByStateRouteImport } from './routes/p.pool-rental-permits-by-state'
-import { Route as PPoolRentalInsuranceExplainedRouteImport } from './routes/p.pool-rental-insurance-explained'
 import { Route as PPoolRentalHostFeesComparedRouteImport } from './routes/p.pool-rental-host-fees-compared'
 import { Route as PPoolRentalAppRouteImport } from './routes/p.pool-rental-app'
 import { Route as PPoolProsRouteImport } from './routes/p.pool-pros'
@@ -84,6 +86,7 @@ import { Route as PGiggsterVsPoolRentalNearMeRouteImport } from './routes/p.gigg
 import { Route as PFreeHostToolsRouteImport } from './routes/p.free-host-tools'
 import { Route as PEarningsCalculatorRouteImport } from './routes/p.earnings-calculator'
 import { Route as PDogRouteImport } from './routes/p.dog'
+import { Route as PCorpusChristiPoolRentalLawsRouteImport } from './routes/p.corpus-christi-pool-rental-laws'
 import { Route as PBlogRouteImport } from './routes/p.blog'
 import { Route as PAllLocationsRouteImport } from './routes/p.all-locations'
 import { Route as PAiListingGeneratorRouteImport } from './routes/p.ai-listing-generator'
@@ -390,9 +393,19 @@ const SitemapDefaultDotxmlRoute = SitemapDefaultDotxmlRouteImport.update({
   path: '/sitemap-default.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapCountryDotxmlRoute = SitemapCountryDotxmlRouteImport.update({
+  id: '/sitemap-country.xml',
+  path: '/sitemap-country.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiversideRoute = RiversideRouteImport.update({
+  id: '/riverside',
+  path: '/riverside',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoolsDirectorySitemapDotxmlRoute =
@@ -401,6 +414,11 @@ const PoolsDirectorySitemapDotxmlRoute =
     path: '/pools-directory-sitemap.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
+const PhoenixRoute = PhoenixRouteImport.update({
+  id: '/phoenix',
+  path: '/phoenix',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LandingPageRoute = LandingPageRouteImport.update({
   id: '/landing-page',
   path: '/landing-page',
@@ -514,12 +532,6 @@ const PPoolRentalPermitsByStateRoute =
     path: '/p/pool-rental-permits-by-state',
     getParentRoute: () => rootRouteImport,
   } as any)
-const PPoolRentalInsuranceExplainedRoute =
-  PPoolRentalInsuranceExplainedRouteImport.update({
-    id: '/p/pool-rental-insurance-explained',
-    path: '/p/pool-rental-insurance-explained',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const PPoolRentalHostFeesComparedRoute =
   PPoolRentalHostFeesComparedRouteImport.update({
     id: '/p/pool-rental-host-fees-compared',
@@ -621,6 +633,12 @@ const PDogRoute = PDogRouteImport.update({
   path: '/p/dog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PCorpusChristiPoolRentalLawsRoute =
+  PCorpusChristiPoolRentalLawsRouteImport.update({
+    id: '/p/corpus-christi-pool-rental-laws',
+    path: '/p/corpus-christi-pool-rental-laws',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PBlogRoute = PBlogRouteImport.update({
   id: '/p/blog',
   path: '/p/blog',
@@ -1360,8 +1378,11 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
+  '/phoenix': typeof PhoenixRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
+  '/riverside': typeof RiversideRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-country.xml': typeof SitemapCountryDotxmlRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -1482,6 +1503,7 @@ export interface FileRoutesByFullPath {
   '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
+  '/p/corpus-christi-pool-rental-laws': typeof PCorpusChristiPoolRentalLawsRoute
   '/p/dog': typeof PDogRoute
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
@@ -1501,7 +1523,6 @@ export interface FileRoutesByFullPath {
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-app': typeof PPoolRentalAppRoute
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
-  '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-{$state}': typeof PPoolRentalsChar123stateChar125Route
@@ -1576,8 +1597,11 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRouteWithChildren
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
+  '/phoenix': typeof PhoenixRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
+  '/riverside': typeof RiversideRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-country.xml': typeof SitemapCountryDotxmlRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -1698,6 +1722,7 @@ export interface FileRoutesByTo {
   '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
+  '/p/corpus-christi-pool-rental-laws': typeof PCorpusChristiPoolRentalLawsRoute
   '/p/dog': typeof PDogRoute
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
@@ -1717,7 +1742,6 @@ export interface FileRoutesByTo {
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-app': typeof PPoolRentalAppRoute
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
-  '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-{$state}': typeof PPoolRentalsChar123stateChar125Route
@@ -1793,8 +1817,11 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/jobs.xml': typeof JobsDotxmlRoute
   '/landing-page': typeof LandingPageRoute
+  '/phoenix': typeof PhoenixRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
+  '/riverside': typeof RiversideRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-country.xml': typeof SitemapCountryDotxmlRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -1915,6 +1942,7 @@ export interface FileRoutesById {
   '/p/ai-listing-generator': typeof PAiListingGeneratorRoute
   '/p/all-locations': typeof PAllLocationsRoute
   '/p/blog': typeof PBlogRoute
+  '/p/corpus-christi-pool-rental-laws': typeof PCorpusChristiPoolRentalLawsRoute
   '/p/dog': typeof PDogRoute
   '/p/earnings-calculator': typeof PEarningsCalculatorRoute
   '/p/free-host-tools': typeof PFreeHostToolsRoute
@@ -1934,7 +1962,6 @@ export interface FileRoutesById {
   '/p/pool-pros': typeof PPoolProsRouteWithChildren
   '/p/pool-rental-app': typeof PPoolRentalAppRoute
   '/p/pool-rental-host-fees-compared': typeof PPoolRentalHostFeesComparedRoute
-  '/p/pool-rental-insurance-explained': typeof PPoolRentalInsuranceExplainedRoute
   '/p/pool-rental-permits-by-state': typeof PPoolRentalPermitsByStateRoute
   '/p/pool-rentals': typeof PPoolRentalsRoute
   '/p/pool-rentals-{$state}': typeof PPoolRentalsChar123stateChar125Route
@@ -2011,8 +2038,11 @@ export interface FileRouteTypes {
     | '/blog'
     | '/jobs.xml'
     | '/landing-page'
+    | '/phoenix'
     | '/pools-directory-sitemap.xml'
+    | '/riverside'
     | '/robots.txt'
+    | '/sitemap-country.xml'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
@@ -2133,6 +2163,7 @@ export interface FileRouteTypes {
     | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
+    | '/p/corpus-christi-pool-rental-laws'
     | '/p/dog'
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
@@ -2152,7 +2183,6 @@ export interface FileRouteTypes {
     | '/p/pool-pros'
     | '/p/pool-rental-app'
     | '/p/pool-rental-host-fees-compared'
-    | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-{$state}'
@@ -2227,8 +2257,11 @@ export interface FileRouteTypes {
     | '/blog'
     | '/jobs.xml'
     | '/landing-page'
+    | '/phoenix'
     | '/pools-directory-sitemap.xml'
+    | '/riverside'
     | '/robots.txt'
+    | '/sitemap-country.xml'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
@@ -2349,6 +2382,7 @@ export interface FileRouteTypes {
     | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
+    | '/p/corpus-christi-pool-rental-laws'
     | '/p/dog'
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
@@ -2368,7 +2402,6 @@ export interface FileRouteTypes {
     | '/p/pool-pros'
     | '/p/pool-rental-app'
     | '/p/pool-rental-host-fees-compared'
-    | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-{$state}'
@@ -2443,8 +2476,11 @@ export interface FileRouteTypes {
     | '/blog'
     | '/jobs.xml'
     | '/landing-page'
+    | '/phoenix'
     | '/pools-directory-sitemap.xml'
+    | '/riverside'
     | '/robots.txt'
+    | '/sitemap-country.xml'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
@@ -2565,6 +2601,7 @@ export interface FileRouteTypes {
     | '/p/ai-listing-generator'
     | '/p/all-locations'
     | '/p/blog'
+    | '/p/corpus-christi-pool-rental-laws'
     | '/p/dog'
     | '/p/earnings-calculator'
     | '/p/free-host-tools'
@@ -2584,7 +2621,6 @@ export interface FileRouteTypes {
     | '/p/pool-pros'
     | '/p/pool-rental-app'
     | '/p/pool-rental-host-fees-compared'
-    | '/p/pool-rental-insurance-explained'
     | '/p/pool-rental-permits-by-state'
     | '/p/pool-rentals'
     | '/p/pool-rentals-{$state}'
@@ -2660,8 +2696,11 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   JobsDotxmlRoute: typeof JobsDotxmlRoute
   LandingPageRoute: typeof LandingPageRoute
+  PhoenixRoute: typeof PhoenixRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
+  RiversideRoute: typeof RiversideRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapCountryDotxmlRoute: typeof SitemapCountryDotxmlRoute
   SitemapDefaultDotxmlRoute: typeof SitemapDefaultDotxmlRoute
   SitemapDirectoryDotxmlRoute: typeof SitemapDirectoryDotxmlRoute
   SitemapHubDotxmlRoute: typeof SitemapHubDotxmlRoute
@@ -2710,6 +2749,7 @@ export interface RootRouteChildren {
   PAiListingGeneratorRoute: typeof PAiListingGeneratorRoute
   PAllLocationsRoute: typeof PAllLocationsRoute
   PBlogRoute: typeof PBlogRoute
+  PCorpusChristiPoolRentalLawsRoute: typeof PCorpusChristiPoolRentalLawsRoute
   PDogRoute: typeof PDogRoute
   PEarningsCalculatorRoute: typeof PEarningsCalculatorRoute
   PFreeHostToolsRoute: typeof PFreeHostToolsRoute
@@ -2729,7 +2769,6 @@ export interface RootRouteChildren {
   PPoolProsRoute: typeof PPoolProsRouteWithChildren
   PPoolRentalAppRoute: typeof PPoolRentalAppRoute
   PPoolRentalHostFeesComparedRoute: typeof PPoolRentalHostFeesComparedRoute
-  PPoolRentalInsuranceExplainedRoute: typeof PPoolRentalInsuranceExplainedRoute
   PPoolRentalPermitsByStateRoute: typeof PPoolRentalPermitsByStateRoute
   PPoolRentalsRoute: typeof PPoolRentalsRoute
   PPoolRentalsChar123stateChar125Route: typeof PPoolRentalsChar123stateChar125Route
@@ -3011,6 +3050,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDefaultDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-country.xml': {
+      id: '/sitemap-country.xml'
+      path: '/sitemap-country.xml'
+      fullPath: '/sitemap-country.xml'
+      preLoaderRoute: typeof SitemapCountryDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/robots.txt': {
       id: '/robots.txt'
       path: '/robots.txt'
@@ -3018,11 +3064,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/riverside': {
+      id: '/riverside'
+      path: '/riverside'
+      fullPath: '/riverside'
+      preLoaderRoute: typeof RiversideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pools-directory-sitemap.xml': {
       id: '/pools-directory-sitemap.xml'
       path: '/pools-directory-sitemap.xml'
       fullPath: '/pools-directory-sitemap.xml'
       preLoaderRoute: typeof PoolsDirectorySitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/phoenix': {
+      id: '/phoenix'
+      path: '/phoenix'
+      fullPath: '/phoenix'
+      preLoaderRoute: typeof PhoenixRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/landing-page': {
@@ -3179,13 +3239,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PPoolRentalPermitsByStateRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/pool-rental-insurance-explained': {
-      id: '/p/pool-rental-insurance-explained'
-      path: '/p/pool-rental-insurance-explained'
-      fullPath: '/p/pool-rental-insurance-explained'
-      preLoaderRoute: typeof PPoolRentalInsuranceExplainedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/p/pool-rental-host-fees-compared': {
       id: '/p/pool-rental-host-fees-compared'
       path: '/p/pool-rental-host-fees-compared'
@@ -3317,6 +3370,13 @@ declare module '@tanstack/react-router' {
       path: '/p/dog'
       fullPath: '/p/dog'
       preLoaderRoute: typeof PDogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/corpus-christi-pool-rental-laws': {
+      id: '/p/corpus-christi-pool-rental-laws'
+      path: '/p/corpus-christi-pool-rental-laws'
+      fullPath: '/p/corpus-christi-pool-rental-laws'
+      preLoaderRoute: typeof PCorpusChristiPoolRentalLawsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/blog': {
@@ -4522,8 +4582,11 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   JobsDotxmlRoute: JobsDotxmlRoute,
   LandingPageRoute: LandingPageRoute,
+  PhoenixRoute: PhoenixRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
+  RiversideRoute: RiversideRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapCountryDotxmlRoute: SitemapCountryDotxmlRoute,
   SitemapDefaultDotxmlRoute: SitemapDefaultDotxmlRoute,
   SitemapDirectoryDotxmlRoute: SitemapDirectoryDotxmlRoute,
   SitemapHubDotxmlRoute: SitemapHubDotxmlRoute,
@@ -4573,6 +4636,7 @@ const rootRouteChildren: RootRouteChildren = {
   PAiListingGeneratorRoute: PAiListingGeneratorRoute,
   PAllLocationsRoute: PAllLocationsRoute,
   PBlogRoute: PBlogRoute,
+  PCorpusChristiPoolRentalLawsRoute: PCorpusChristiPoolRentalLawsRoute,
   PDogRoute: PDogRoute,
   PEarningsCalculatorRoute: PEarningsCalculatorRoute,
   PFreeHostToolsRoute: PFreeHostToolsRoute,
@@ -4594,7 +4658,6 @@ const rootRouteChildren: RootRouteChildren = {
   PPoolProsRoute: PPoolProsRouteWithChildren,
   PPoolRentalAppRoute: PPoolRentalAppRoute,
   PPoolRentalHostFeesComparedRoute: PPoolRentalHostFeesComparedRoute,
-  PPoolRentalInsuranceExplainedRoute: PPoolRentalInsuranceExplainedRoute,
   PPoolRentalPermitsByStateRoute: PPoolRentalPermitsByStateRoute,
   PPoolRentalsRoute: PPoolRentalsRoute,
   PPoolRentalsChar123stateChar125Route: PPoolRentalsChar123stateChar125Route,

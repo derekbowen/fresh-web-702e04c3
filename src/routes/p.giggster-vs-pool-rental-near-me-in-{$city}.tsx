@@ -62,7 +62,7 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$ci
     if (!city) return { meta: [{ title: "City not found" }] };
     const slug = `giggster-vs-pool-rental-near-me-in-${city.slug}`;
     const title = `Giggster vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026): Fees, Insurance & Best Use`;
-    const description = `${city.name}, ${city.state} pool hosts: Giggster vs Pool Rental Near Me compared with verified 2026 facts — 19% vs 0% host commission, renter COI vs included $2M Hartford liability, production vs recreational buyers, and the smart play for a ${city.name} pool.`;
+    const description = `${city.name}, ${city.state} pool hosts: Giggster vs Pool Rental Near Me compared with verified 2026 facts — 19% vs 0% host commission, renter COI requirements vs waiver-based hosting, production vs recreational buyers, and the smart play for a ${city.name} pool.`;
     return {
       ...buildComparisonMeta({ slug, title, description }),
       scripts: [
@@ -112,7 +112,7 @@ function buildFaqs(city: CityRow) {
   return [
     {
       q: `If hosts never pay a fee, how does Pool Rental Near Me make money?`,
-      a: `Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.`,
+      a: `Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing and 24/7 support. Hosts are the business — we don't tax the business.`,
     },
     {
       q: `Is Giggster or Pool Rental Near Me better for a pool in ${city.name}?`,
@@ -130,7 +130,7 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `What insurance do I need to host a pool in ${city.name} on Giggster?`,
-      a: `Per Giggster's Help Center articles "As a host, do I need insurance?" and "Do I need insurance to host production?", ${city.name} hosts on Giggster must carry their own homeowner's insurance, and renters (production crews) must supply a Certificate of Insurance with at least $2 million in general liability and property damage before each shoot. Renters can purchase Giggster's optional Production/Event Insurance at checkout or use their own. Pool Rental Near Me automatically covers every approved ${city.name} booking with $2,000,000 per-occurrence / $4,000,000 aggregate Hartford-backed general liability — no separate renter COI required.`,
+      a: `Per Giggster's Help Center articles "As a host, do I need insurance?" and "Do I need insurance to host production?", ${city.name} hosts on Giggster must carry their own homeowner's insurance, and renters (production crews) must supply a Certificate of Insurance with at least $2 million in general liability and property damage before each shoot. Renters can purchase Giggster's optional Production/Event Insurance at checkout or use their own. Pool Rental Near Me does not provide or arrange insurance: every ${city.name} booking requires a signed guest waiver, and we do not verify whether hosts carry insurance — most homeowner policies exclude paid rentals, so check with your carrier before listing.`,
     },
     {
       q: `Can I list my ${city.name} pool on Giggster and Pool Rental Near Me at the same time?`,
@@ -164,19 +164,14 @@ function GiggsterCityPage() {
     },
     {
       label: `Take-home on a $400 ${city.name} booking`,
-      prnm: <strong>$360</strong>,
+      prnm: <strong>$400</strong>,
       competitor: "$324",
     },
     {
-      label: "Included general liability",
-      prnm: <strong>$2M / $4M Hartford on every approved booking</strong>,
+      label: "Platform-provided insurance",
+      prnm: "None — signed guest waiver required on every booking; we do not verify whether hosts carry insurance",
       competitor:
         "Not included — host carries homeowner's; renter must supply $2M COI for production",
-    },
-    {
-      label: "Property damage coverage",
-      prnm: "$150K STRETCH® PLUS blanket",
-      competitor: "Per renter-supplied COI (or Giggster's optional add-on at checkout)",
     },
     {
       label: "Typical hourly rate band",
@@ -243,9 +238,8 @@ function GiggsterCityPage() {
             For a typical residential pool in {city.name}, Pool Rental Near Me
             is the realistic channel — recreational demand is broadly
             distributed, while Giggster's production buyers concentrate in a
-            handful of hub metros. PRNM's 0% host commission, included
-            $2M Hartford liability on every approved booking, and pool-specific
-            training are sized for residential pool hosting in {city.name}.
+            handful of hub metros. PRNM's 0% host commission and free
+            host training are sized for residential pool hosting in {city.name}.
           </>
         )}
       </blockquote>
@@ -265,8 +259,9 @@ function GiggsterCityPage() {
         size and features.
       </p>
       <p>
-        Pool Rental Near Me charges {city.name} hosts 0% host commission — you keep 100%, with a guest service fee applied at checkout. Hosts keep 100% of the
-        booking subtotal.
+        Pool Rental Near Me charges {city.name} hosts 0% host
+        commission — you keep 100% of the booking subtotal, with a guest
+        service fee applied at checkout.
       </p>
 
       <div className="not-prose my-6 overflow-x-auto rounded-2xl border border-border">
@@ -287,11 +282,11 @@ function GiggsterCityPage() {
           </thead>
           <tbody>
             {[
-              [200, 180, 162, 18],
-              [400, 360, 324, 36],
-              [800, 720, 648, 72],
-              [1500, 1350, 1215, 135],
-              [3000, 2700, 2430, 270],
+              [200, 200, 162, 38],
+              [400, 400, 324, 76],
+              [800, 800, 648, 152],
+              [1500, 1500, 1215, 285],
+              [3000, 3000, 2430, 570],
             ].map(([g, p, gg, diff]) => (
               <tr key={g} className="border-t border-border">
                 <td className="px-4 py-3 font-medium text-foreground">${g}</td>
@@ -330,35 +325,38 @@ function GiggsterCityPage() {
         Insurance" before the booking start date.<sup>[²]</sup> For
         production bookings specifically, Giggster's <em>"Do I need insurance
         to host production?"</em> article states that every renter must carry
-        production insurance with a $2 million minimum in general liability
-        and property damage and supply the host with a Certificate of
+        production insurance with at least $2 million in general liability
+        and property damage, and supply the host with a Certificate of
         Insurance (COI) before the shoot.<sup>[³]</sup> Renters can purchase
         Giggster's optional Production/Event Insurance at checkout or supply
         their own.
       </p>
 
-      <h3>Pool Rental Near Me's insurance model in {city.name}</h3>
+      <h3>Pool Rental Near Me's approach in {city.name}</h3>
       <p>
-        PRNM Corp maintains a Business Owner's Policy through Hartford
-        Underwriters that automatically covers every approved {city.name}{" "}
-        booking with no separate renter policy required:
+        Pool Rental Near Me does not provide or arrange insurance. Instead,
+        the platform is built around host control and documentation:
       </p>
       <ul>
         <li>
-          <strong>$2,000,000 per-occurrence / $4,000,000 aggregate</strong>{" "}
-          general liability
+          <strong>Signed guest waiver</strong> required on every {city.name}{" "}
+          booking — every guest signs before they swim.
         </li>
         <li>
-          <strong>$10,000 medical expenses</strong> per person
+          <strong>Host approval</strong> on every reservation — you see who is
+          booking and can decline.
         </li>
         <li>
-          <strong>$150,000 STRETCH® PLUS</strong> property coverage blanket
+          <strong>Your own cover is your cover.</strong> Most homeowner
+          policies exclude paid rentals, so talk to your carrier or an
+          independent agent about a short-term-rental or business endorsement
+          before you host in {city.name}.
         </li>
       </ul>
       <p>
-        For a residential {city.name} pool host, the practical upshot is that
-        you don't have to chase a COI per booking — coverage attaches the
-        moment a booking is approved.<sup>[⁴]</sup>
+        The practical upshot: no per-booking COIs to chase, but the insurance
+        decision stays yours — same as it ultimately is on Giggster, where
+        the Terms also put the coverage obligation on the host.
       </p>
 
       <h2 id="buyers">Who actually books pools in {city.name}?</h2>
@@ -559,9 +557,9 @@ function GiggsterCityPage() {
           .
         </li>
         <li>
-          <strong>$2,000,000 PRNM general liability insurance</strong> — PRNM
-          Corp's Business Owner's Policy through Hartford Underwriters. Full
-          terms in the{" "}
+          <strong>PRNM waiver requirement</strong> — every Pool Rental Near Me
+          booking requires a signed guest waiver; PRNM does not provide or
+          arrange insurance. Full terms in the{" "}
           <a href="/p/terms-of-service">
             Pool Rental Near Me Terms of Service
           </a>

@@ -6,7 +6,7 @@ import heroImage from "@/assets/pool-hero-default.jpg";
 const PATH = "/p/pool-rental-app";
 const TITLE = "Pool Rental App: Book a Private Pool From Your Phone | Pool Rental Near Me";
 const DESCRIPTION =
-  "Download the Pool Rental Near Me app. Find and book private pools by the hour. Heated pools, hot tubs, and backyard parties with $2M liability included.";
+  "Download the Pool Rental Near Me app. Find and book private pools by the hour.";
 const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
 
 const APP_STORE_URL = "https://apps.apple.com/us/app/pool-rental-near-me-swim-fun/id6737762373";
@@ -35,7 +35,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What can I do in the app?",
-    a: "Search private pools near you, filter by date, group size, heated, hot tub, saltwater, or pet-friendly, message the host, pay in-app, and manage your bookings. Every booking carries $2M in liability coverage at no extra cost.",
+    a: "Search private pools near you, filter by date, group size, heated, hot tub, saltwater, or pet-friendly, message the host, pay in-app, and manage your bookings.",
   },
   {
     q: "Does the app work in my city?",
@@ -47,7 +47,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Is the app safe to use?",
-    a: "Hosts are reviewed before listings go live, payments run through the app, and every booking includes $2M in liability coverage. Message the host inside the app to keep your contact info private until you are ready to share.",
+    a: "Message the host inside the app to keep your contact info private until you are ready to share.",
   },
   {
     q: "Do I need the app, or can I book on the website?",
@@ -153,8 +153,7 @@ function PoolRentalAppPage() {
               Find a private pool for rent by the hour, anywhere in America. The
               Pool Rental Near Me app puts heated pools, hot tubs, and
               party-friendly backyards in your pocket. Book in minutes, message
-              your host, and show up ready to swim. Every booking carries $2M
-              in liability coverage at no extra cost.
+              your host, and show up ready to swim.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
@@ -338,7 +337,6 @@ function PoolRentalAppPage() {
               minutes and add depth later. The description field allows up to
               5,000 characters, so you have room to tell your story. Hourly
               renting is the primary booking model. Hosts keep 100% of every
-              booking with 0% host fees, and $2M liability coverage
               is included.
             </p>
 
@@ -389,8 +387,8 @@ function PoolRentalAppPage() {
                 booked window. Leave the space the way you found it.
               </li>
               <li>
-                <strong>Rate your host.</strong> Every booking carries $2M in
-                liability coverage at no extra cost to you.
+                <strong>Rate your host.</strong> Reviews are how the next guest
+                knows what to expect.
               </li>
             </ol>
 
@@ -498,7 +496,7 @@ function PoolRentalAppPage() {
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
               Free on the App Store and Google Play. Find a private pool near
-              you in under a minute. $2M liability coverage on every booking.
+              you in under a minute.
             </p>
             <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
@@ -526,10 +524,9 @@ function PoolRentalAppPage() {
               Have a pool? List it free
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
-              Hosts on Pool Rental Near Me earn $1,500 to $8,000 a month renting
+              Hosts on Pool Rental Near Me rent
               their backyard pool by the hour. 0% host fees, so you keep
-              100% of every booking. We eat the credit card processing fees, so
-              90% means 90%. $2M liability coverage included.
+              100% of your listed price.
             </p>
             <a
               href={LIST_HREF}

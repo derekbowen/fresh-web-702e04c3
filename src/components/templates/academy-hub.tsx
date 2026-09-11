@@ -116,7 +116,7 @@ export function AcademyHubTemplate({
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                { href: "/p/start-hosting", title: "Start hosting", body: "Earn $1,500–$8,000/month renting your pool." },
+                { href: "/p/start-hosting", title: "Start hosting", body: "Rent your pool by the hour with 0% host fees." },
                 { href: "/p/ai-listing-generator", title: "AI listing generator", body: "Turn one photo into a booking-ready listing." },
                 { href: "/p/pool-heating-cost-calculator", title: "Pool heating cost calculator", body: "Gas vs heat pump vs solar — monthly cost." },
                 { href: "/p/pool-rules-generator", title: "Pool rules generator", body: "Printable house rules in under a minute." },

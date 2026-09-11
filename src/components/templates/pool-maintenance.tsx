@@ -304,11 +304,11 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
             <RelatedPages
               heading={isHub ? "Turn your maintenance know-how into income" : "Related on Pool Rental Near Me"}
               items={[
-                { to: "/p/hosting", label: "Become a pool host", description: "Earn $3K–$10K/month renting your pool by the hour" },
+                { to: "/p/hosting", label: "Become a pool host", description: "Rent your pool by the hour — 0% host fees" },
                 { to: "/p/earnings-calculator", label: "Pool host earnings calculator", description: "See what your pool could make this month" },
                 { to: "/p/free-host-tools", label: "Free host tools", description: "Calculators, checklists, and templates" },
                 { to: "/p/all-locations", label: "Browse all pool rental cities", description: "5,000+ city pages across the US" },
-                { to: "/p/how-it-works", label: "How pool rental works", description: "Booking, payouts, and insurance, end to end" },
+                { to: "/p/how-it-works", label: "How pool rental works", description: "Booking, payouts, and waivers, end to end" },
                 ...(isHub
                   ? []
                   : [{ to: "/p/pool-maintenance", label: "Back to the Pool Maintenance Guide", description: "Pillar guide and every chapter in one place" }]),
@@ -377,7 +377,6 @@ function MidContentCta() {
       </p>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         Owners on Pool Rental Near Me earn money renting their pool by the hour —
-        no membership, 0% host fees, $2M liability insurance included.
       </p>
       <div className="mt-4">
         <a
@@ -401,9 +400,8 @@ function PrnmCta() {
         Stop paying for pool upkeep. Get paid for it instead.
       </h2>
       <p className="mt-3 max-w-2xl text-base text-muted-foreground">
-        Hosts on Pool Rental Near Me earn $3K–$10K/month renting their pool by the
-        hour. 0% host fees (vs Swimply's 15%+), $2M liability insurance
-        included, you set the rules. Listing takes 10 minutes.
+        Hosts on Pool Rental Near Me rent their pool by the
+        hour. 0% host fees (vs Swimply's 15%+), you set the rules. Listing takes 10 minutes.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <a

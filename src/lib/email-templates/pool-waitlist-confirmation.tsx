@@ -74,7 +74,7 @@ const PoolWaitlistConfirmationEmail = ({
           </Section>
 
           <Text style={tipText}>
-            Know someone with a pool? Hosts earn $100–$300+ per booking.{' '}
+            Know someone with a pool? Hosts set their own hourly rate and keep 100% of it.{' '}
             <a href={`${SITE_URL}/p/hosting`} style={link}>
               Tell them about hosting
             </a>

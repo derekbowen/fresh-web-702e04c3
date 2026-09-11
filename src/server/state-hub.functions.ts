@@ -70,7 +70,11 @@ async function fetchAllHostAcqSlugs(): Promise<string[]> {
       .from("content_pages")
       .select("slug")
       .like("slug", `${HOST_ACQ_PREFIX}%`)
-      .eq("is_published", true)
+      // NO is_published filter. That column is false on ~99% of content_pages
+      // (6,334 of 6,404 sitemap rows) - status="published" is the real flag.
+      // Adding .eq("is_published", true) here on 2026-07-31 silently emptied
+      // every state hub: zero slugs -> zero cities -> the /p/pool-rentals-
+      // {state} route threw notFound() for all 50 states for 19 days.
       .range(from, from + PAGE - 1);
     if (error || !data || data.length === 0) break;
     for (const r of data) out.push(r.slug);

@@ -116,9 +116,9 @@ export function hostAcqSchemasForPage(
       {
         "@type": "HowToStep",
         position: 3,
-        name: "Get verified and insured",
-        text: "Every booking includes $2M liability coverage at no extra cost to you.",
-        url: `${pageUrl}#step-insured`,
+        name: "Get verified",
+        text: "Confirm your details and pool safety basics, then go live.",
+        url: `${pageUrl}#step-verified`,
       },
       {
         "@type": "HowToStep",
@@ -130,76 +130,15 @@ export function hostAcqSchemasForPage(
     ],
   };
 
-  // JobPosting — gets the page into the Google for Jobs widget.
-  // Uses CONTRACTOR + directApply so it's honest about being independent
-  // gig income, not W2 employment. Rolling 60-day validThrough that we
-  // derive from the page slug so the date is stable per URL (no SSR drift).
-  const slugSeed = page.slug ?? page.url_path ?? cityName;
-  const slugHash = slugSeed
-    .split("")
-    .reduce((acc, ch) => (acc * 31 + ch.charCodeAt(0)) | 0, 0);
-  const dayOffset = Math.abs(slugHash) % 30; // 0–29 day jitter
-  const postedAt = new Date();
-  postedAt.setUTCHours(0, 0, 0, 0);
-  postedAt.setUTCDate(postedAt.getUTCDate() - dayOffset);
-  const validThrough = new Date(postedAt);
-  validThrough.setUTCDate(validThrough.getUTCDate() + 60);
-
-  // Lead the description with city-specific copy from the page itself when
-  // we have it (better signal to Google + Indeed than the generic template),
-  // then append the standard "what you do / include / requirements" block so
-  // structured fields stay consistent across all 1,200+ cities.
-  const cityHook =
-    (page.seo_description && page.seo_description.trim().length > 60
-      ? page.seo_description.trim()
-      : `Turn your backyard pool in ${cityName}, ${stateCode} into income. ${SITE_NAME} connects pool owners with local guests who book by the hour. Hosts typically earn $40–$150/hour depending on pool size, location, and amenities.`);
-
-  const jobPosting: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "JobPosting",
-    title: `Rent your backyard pool in ${cityName}, ${stateCode} — earn $40–$150/hour`,
-    description: `<p>${cityHook}</p><h3>What you do</h3><ul><li>List your pool with photos and an hourly rate</li><li>Approve booking requests on your schedule</li><li>Welcome guests, then get paid</li></ul><h3>What we include</h3><ul><li>$2,000,000 liability insurance on every booking</li><li>0% host fees (lower than Swimply's 15%+)</li><li>Guest verification and secure payouts</li></ul><h3>Requirements</h3><ul><li>You own (or have permission to rent) a residential pool in or near ${cityName}</li><li>Pool is clean, safe, and accessible to guests</li><li>You can respond to booking requests within 24 hours</li></ul><p><strong>This is an independent income opportunity, not W2 employment.</strong> You set your own schedule, rates, and house rules.</p>`,
-    identifier: {
-      "@type": "PropertyValue",
-      name: SITE_NAME,
-      value: `host-${slugSeed}`,
-    },
-    datePosted: postedAt.toISOString().slice(0, 10),
-    validThrough: validThrough.toISOString().slice(0, 10),
-    employmentType: "CONTRACTOR",
-    hiringOrganization: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      sameAs: SITE_URL,
-      logo: `${SITE_URL}/fw-assets/logo.png`,
-    },
-    jobLocationType: "TELECOMMUTE",
-    jobLocation: {
-      "@type": "Place",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: cityName,
-        addressRegion: stateCode,
-        addressCountry: "US",
-      },
-    },
-    baseSalary: {
-      "@type": "MonetaryAmount",
-      currency: "USD",
-      value: {
-        "@type": "QuantitativeValue",
-        minValue: 40,
-        maxValue: 150,
-        unitText: "HOUR",
-      },
-    },
-    directApply: true,
-    url: pageUrl,
-    applicantLocationRequirements: {
-      "@type": "City",
-      name: cityName,
-    },
-  };
-
-  return [webPage, professionalService, offer, howTo, jobPosting];
+  // JobPosting REMOVED 2026-08-20 (Derek's call, on Codex + internal review).
+  // Google's JobPosting policy requires the publisher to be hiring for an
+  // actual job; a marketplace recruiting hosts is "promotional content that
+  // does not represent a hiring opportunity" and risks a sitewide manual
+  // action against all structured data — a trade of ~1,200 job-widget
+  // impressions against the whole pSEO footprint. The removed block also
+  // carried two defects (datePosted derived from new Date() rolled forward
+  // on every render; baseSalary stated earnings that are not wages).
+  // Indexing for these pages now rides on the state-hub internal links,
+  // the sitemap, and the four legitimate blocks below.
+  return [webPage, professionalService, offer, howTo];
 }

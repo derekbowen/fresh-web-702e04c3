@@ -93,7 +93,17 @@ REQUIREMENTS:
 - Start with an H2 like "## Why ${city} pools earn" or "## Renting your ${city} pool"
 - Must mention: ${city}, ${state}, 2-3 real neighborhoods or districts in ${city}, one climate/season detail specific to ${city} (months pools are usable, summer highs, monsoon, humidity, etc.)
 - One CTA paragraph with a markdown link to /p/hosting
-- Mention Pool Rental Near Me's 0% host fees (hosts never pay a fee) and $2M liability insurance naturally, once
+- Mention Pool Rental Near Me's 0% host fees (hosts never pay a fee) naturally, once
+
+HARD CONSTRAINT — INSURANCE:
+NEVER state, imply, or suggest that PRNM provides, includes, arranges, or
+guarantees insurance coverage of any kind. Do not name any insurance
+carrier. Do not cite policy limits, coverage amounts, or claims processes.
+PRNM's only insurance-related content is a referral to third-party
+providers. If insurance is relevant to the page topic, the ONLY permitted
+framing is that hosts should carry their own coverage and that referral
+options exist. Do not link to or name a specific referral partner or page.
+
 ${VOICE_RULES}
 
 Output ONLY the markdown block. No preamble, no commentary, no code fence.`;
@@ -107,7 +117,7 @@ STRUCTURE (use these exact H2 headings in order):
 2. ## Why ${city} backyard pools earn (climate, pool season months, why local demand is real — ~200 words)
 3. ## What you can earn in ${city} (hourly $40-150, monthly $3,000-$10,000 in season, one math example — ~200 words)
 4. ## Neighborhoods where pools rent fastest (2-3 real neighborhoods or districts in ${city} with one sentence each on why — ~200 words)
-5. ## What hosting actually looks like (booking, $2M liability insurance, 0% host fees, payouts — ~200 words)
+5. ## What hosting actually looks like (booking, 0% host fees, payouts — ~200 words)
 6. ## ${city} vs other side hustles (vs Airbnb short-term rental, vs Turo, vs dog boarding — ~150 words)
 7. ## Get started in ${city} (numbered steps, link to /p/hosting and /signup — ~150 words)
 

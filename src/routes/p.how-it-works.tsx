@@ -37,7 +37,7 @@ import heroImage from "@/assets/how-it-works-hero.jpg";
 const PATH = "/p/how-it-works";
 const TITLE = "How Does Pool Rental Work? Book a Private Pool by the Hour";
 const DESCRIPTION =
-  "Rent private backyard pools by the hour for parties, family swims, or quiet afternoons. Up to $2M insurance per booking, 24/7 support, a transparent guest service fee shown at checkout. Book in 5 minutes.";
+  "Rent private backyard pools by the hour for parties, family swims, or quiet afternoons. Book in 5 minutes.";
 
 const STEPS = [
   {
@@ -62,8 +62,8 @@ const INCLUDED = [
   },
   {
     icon: ShieldCheck,
-    title: "Up to $2M liability protection",
-    body: "Every booking is automatically protected by up to $2 million in third-party liability insurance, covering both the host's property and guests during the rental window. No extra cost, no add-ons.",
+    title: "Signed waiver on every booking",
+    body: "Every guest signs a liability waiver before access. Pool Rental Near Me does not provide insurance — we do not verify whether hosts carry insurance, and most homeowner policies exclude paid rentals.",
   },
   {
     icon: Star,
@@ -111,7 +111,7 @@ const FAQS = [
   },
   {
     q: "Is the pool insured during my booking?",
-    a: "Yes. Every Pool Rental Near Me booking includes up to $2 million in liability protection at no extra cost — covering both the host's property and guests during the rental window. (For comparison, Swimply offers $1M.)",
+    a: "No. Pool Rental Near Me does not provide or arrange insurance. Every booking requires a signed guest waiver, and we do not verify whether the host carries insurance.",
   },
   {
     q: "How do I know the pool is clean and safe?",
@@ -243,7 +243,6 @@ function HowItWorksPage() {
               Pool Rental Near Me lets you rent private backyard pools by the
               hour for parties, family swims, photoshoots, or a quiet
               afternoon. Every booking is paid securely and protected by up to
-              $2&nbsp;million in liability insurance.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
@@ -264,7 +263,6 @@ function HowItWorksPage() {
             <ul className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-3 text-left text-sm text-white sm:grid-cols-4 sm:text-center">
               {[
                 "Verified hosts and real reviews",
-                "$2M liability per booking",
                 "Secure online payment",
                 "24/7 support team",
               ].map((t) => (
@@ -376,7 +374,7 @@ function HowItWorksPage() {
                   What the guest service fee covers
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  A guest service fee is added to your booking subtotal at checkout. It covers payment processing, the $2M insurance policy on every booking, our 24/7 support team, and the verification process that keeps bad listings off the platform. Hosts keep 100% of their rate — 0% host fees.
+                  A guest service fee is added to your booking subtotal at checkout. Hosts keep 100% of their rate — 0% host fees.
                 </p>
                 <div className="mt-6 rounded-xl border border-border bg-muted/40 p-4 text-sm text-foreground">
                   <span className="font-semibold">Compare:</span> Swimply

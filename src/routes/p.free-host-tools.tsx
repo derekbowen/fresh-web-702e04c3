@@ -45,7 +45,7 @@ const TOOLS = [
   },
   {
     title: "Damage Claims",
-    body: "File a claim in 60 seconds with photos. Claims sync with PRNM's $2M liability coverage on every booking.",
+    body: "Document damage in 60 seconds with photos — timestamped reports you can share with the guest or your own insurer.",
   },
 ];
 

@@ -67,7 +67,7 @@ export const Route = createFileRoute("/p/earnings-calculator")({
               name: "How much can I really earn renting my pool?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Most active hosts earn $3,000–$15,000 per year. Warm-climate hosts in Florida, Arizona, Texas, and California with high-amenity pools regularly clear $20,000+. Earnings depend on your hourly rate, weekly bookings, and length of swim season.",
+                text: "That depends on your hourly rate, how many hours you book, and how long your season runs. The calculator on this page gives an illustrative estimate from your own inputs — it is not a guarantee. Hosts pay 0% in fees and keep 100% of their listed price.",
               },
             },
             {
@@ -75,7 +75,7 @@ export const Route = createFileRoute("/p/earnings-calculator")({
               name: "What fee does Pool Rental Near Me take?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "PRNM charges 0% host fees — no monthly subscription, no listing fee, no surprise deductions. Every booking includes $2M liability coverage at no extra cost.",
+                text: "PRNM charges 0% host fees — no monthly subscription, no listing fee, no surprise deductions.",
               },
             },
             {
@@ -265,7 +265,6 @@ function EarningsCalculatorPage() {
                   List your pool — start earning →
                 </Link>
                 <p className="text-center text-xs text-muted-foreground">
-                  Free to list · $2M liability included · Payouts in 24 hrs
                 </p>
               </div>
             </div>
@@ -277,7 +276,6 @@ function EarningsCalculatorPage() {
           <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
             <Stat label="Average host earnings" value="$8,400/yr" />
             <Stat label="Top-quartile hosts (warm states)" value="$22k+/yr" />
-            <Stat label="Liability coverage on every booking" value="$2M" />
           </div>
         </section>
 
@@ -293,7 +291,7 @@ function EarningsCalculatorPage() {
             />
             <Faq
               q="Is there really a 0% host fee?"
-              a="Payment processing, $2M liability insurance per booking, guest screening, the booking platform, customer support, and marketing that drives renters to your listing. There are no other fees — no listing fee, no monthly subscription, no per-photo charge."
+              a="There are no other fees — no listing fee, no monthly subscription, no per-photo charge."
             />
             <Faq
               q="How do I increase my hourly rate?"

@@ -30,3 +30,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# added 2026-09-11: never track secrets, in-place backups or build-output backups
+.env
+.env.*
+*.bak
+*.bak-*
+*.v2bak*
+dist-server-bak-*/
+dump.pm2

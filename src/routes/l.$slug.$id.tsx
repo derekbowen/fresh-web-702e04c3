@@ -16,7 +16,7 @@ export const Route = createFileRoute("/l/$slug/$id")({
     const loc = [l.city, l.state].filter(Boolean).join(", ");
     const title = `${l.title}${loc ? ` — ${loc}` : ""} | Pool Rental Near Me`;
     const desc =
-      (l.description || `Rent ${l.title} by the hour. Book instantly with $2M liability insurance included.`)
+      (l.description || `Rent ${l.title} by the hour.`)
         .replace(/\s+/g, " ")
         .slice(0, 160);
     const meta = buildMeta({
@@ -170,7 +170,6 @@ function ListingPage() {
                 Book this pool
               </a>
               <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
-                <li>✓ $2M liability insurance included</li>
                 <li>✓ Instant booking confirmation</li>
                 <li>✓ Hourly rentals — flexible</li>
               </ul>

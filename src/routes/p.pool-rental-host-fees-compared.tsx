@@ -30,7 +30,7 @@ const TABLE: Row[] = [
     hostCommission: "0% — never",
     guestFee: "Applied at checkout",
     effectiveTake: "0% host-side",
-    payout: "24 hours after checkout",
+    payout: "Initiated after the booking is completed; bank arrival times may vary",
     source: "poolrentalnearme.com host terms",
   },
   {
@@ -46,7 +46,7 @@ const TABLE: Row[] = [
     hostCommission: "15% host service fee",
     guestFee: "~6% guest service fee",
     effectiveTake: "~15% of host subtotal",
-    payout: "24 hours after booking ends",
+    payout: "Initiated after the booking is completed; bank arrival times may vary",
     source: "peerspace.com host terms",
   },
   {
@@ -62,7 +62,7 @@ const TABLE: Row[] = [
 const faqs = [
   {
     q: "If hosts never pay a fee, how does Pool Rental Near Me make money?",
-    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing, $2M insurance on every booking, and 24/7 support. Hosts are the business — we don't tax the business.",
+    a: "Hosts never pay a fee. We make money from one clear service fee guests pay at checkout, which covers payment processing and 24/7 support. Hosts are the business — we don't tax the business.",
   },
   {
     q: "How much does Swimply charge hosts?",
@@ -82,7 +82,7 @@ const faqs = [
   },
   {
     q: "Are there any hidden fees beyond the host commission?",
-    a: "On PRNM, the host commission is 0% — the lowest of any platform — there are no per-booking add-ons, no insurance surcharges (insurance is included), and no listing fees. Other platforms may charge optional insurance upgrades, premium placement, or processing fees on top of the headline commission.",
+    a: "On PRNM, the host commission is 0% — the lowest of any platform — there are no per-booking add-ons, no insurance surcharges, and no listing fees. Other platforms may charge optional insurance upgrades, premium placement, or processing fees on top of the headline commission.",
   },
 ];
 
@@ -205,8 +205,7 @@ function FeesComparedPage() {
             A host renting their pool at $75/hour for 20 hours per week grosses
             $1,500 a week. On PRNM you keep all of it — on Swimply's 15% host
             fee, $225 of every week goes to the platform. Across a 20-week pool
-            season that is $4,500 in additional take-home, before counting the
-            cost of self-funded vs carrier-backed insurance.
+            season that is $4,500 in additional take-home.
           </p>
           <p className="mt-2 text-sm leading-relaxed text-blue-950">
             Total take rate: Swimply&rsquo;s is roughly 25% combined (host fee
@@ -232,7 +231,6 @@ function FeesComparedPage() {
         <section className="mt-10 rounded-lg bg-slate-50 p-5">
           <h2 className="text-xl font-bold">Related reading</h2>
           <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-blue-700">
-            <li><Link to="/p/pool-rental-insurance-explained" className="hover:underline">Pool rental insurance, explained</Link></li>
             <li><Link to="/p/swimply-alternative-vs-pool-rental-near-me" className="hover:underline">Swimply vs Pool Rental Near Me</Link></li>
             <li><Link to="/p/peerspace-vs-pool-rental-near-me" className="hover:underline">Peerspace vs Pool Rental Near Me</Link></li>
             <li><Link to="/p/giggster-vs-pool-rental-near-me" className="hover:underline">Giggster vs Pool Rental Near Me</Link></li>

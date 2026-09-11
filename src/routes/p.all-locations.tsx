@@ -15,9 +15,13 @@ export const Route = createFileRoute("/p/all-locations")({
   },
   head: ({ loaderData }) => {
     const meta = buildMeta({
-      title: `Pool rentals near me — every US city with a private pool for rent`,
+      // CTR rewrite 2026-08-20: 16,660 impressions at position ~19 with 0.64%
+      // CTR (GSC). The old title read like a sitemap; searchers on "pool
+      // rentals near me" want to book, so lead with the action and the price
+      // anchor the homepage already claims.
+      title: `Pool Rentals Near Me — Book a Private Pool by the Hour from $25`,
       description:
-        "Pool rentals near me, by state and city. Browse every US city with a private backyard pool to rent by the hour. $2M insurance included on every booking.",
+        "Find private backyard pools for rent in 3,400+ US cities. Pick your city, see photos and hourly prices, and book online — most pools start around $25/hour.",
       path: "/p/all-locations",
     });
     return { meta: meta.meta, links: meta.links };
@@ -129,7 +133,7 @@ function AllLocationsPage() {
               Pool rentals near me — every US city with a private pool for rent
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-              The full index of <strong>pool rentals near me</strong> — private pools near me in every US city — organized by state and city. Browse every US city where you can rent a swimming pool by the hour. $2M liability insurance included on every booking, 0% host fees, no memberships.
+              The full index of <strong>pool rentals near me</strong> — private pools near me in every US city — organized by state and city. Browse every US city where you can rent a swimming pool by the hour. 0% host fees, signed guest waivers on every booking, no memberships.
             </p>
             <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
               Jump straight to your state below, or scroll for the full directory of host guides, courses, and resources.

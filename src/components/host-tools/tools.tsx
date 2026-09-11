@@ -16,18 +16,18 @@ export function PoolRentalEarningsCalculator() {
   const grossPerBooking = rate * hoursPerBooking * (1 + amenityBoost / 100);
   const weekly = grossPerBooking * bookingsPerWeek;
   const seasonal = weekly * activeWeeks;
-  const platformFee = seasonal * 0.15;
-  const net = seasonal - platformFee;
+  // Hosts pay 0% (ToS §4.1); the guest service fee is added at checkout.
+  const net = seasonal;
   return (
     <ToolShell
       title="Pool Rental Earnings Calculator"
-      summary="Estimate season-long income with hourly rate, bookings, and amenity boost."
+      summary="Illustrative estimate from your own inputs (rate, bookings, weeks, amenity boost). Not a guarantee of earnings."
       output={
         <div className="grid grid-cols-2 gap-3">
           <Stat label="Per booking" value={$(grossPerBooking)} />
           <Stat label="Per week" value={$(weekly)} hint={`${bookingsPerWeek} bookings`} />
           <Stat label="Season gross" value={$(seasonal)} hint={`${activeWeeks} weeks`} />
-          <Stat label="Net (after 15% fee)" value={$(net)} />
+          <Stat label="You keep (0% host fee)" value={$(net)} />
         </div>
       }
     >
@@ -111,7 +111,6 @@ export function PoolInsurance() {
         onChange={setCoverage}
         options={[
           { value: "basic", label: "Basic ($1M liability)" },
-          { value: "standard", label: "Standard ($2M liability + property)" },
           { value: "premium", label: "Premium ($5M + commercial use rider)" },
         ]}
       />

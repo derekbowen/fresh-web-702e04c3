@@ -55,7 +55,7 @@ const WHY_EXISTS = {
 const WHO_USES = {
   heading: "Who the waiver generator is for",
   paragraphs: [
-    "Every host on the platform — full stop. There is no booking volume or pool size where skipping the waiver makes sense. The $2M liability insurance included with each booking pairs with a signed waiver to give you the strongest possible defense if a claim ever materializes.",
+    "Every host on the platform — full stop. There is no booking volume or pool size where skipping the waiver makes sense.",
     "Hosts who allow kids, pets, or after-dark hosting get the most direct value. The generator includes specific clauses for under-18 supervision, animal behavior near water, and reduced-visibility nighttime risk that generic waivers miss.",
     "Hosts in plaintiff-friendly states — California, Florida, New York, Illinois — should never host without one. State-specific language inside the generator addresses the assumption-of-risk standards that courts in those states actually apply, instead of the boilerplate language that often gets thrown out.",
   ],
@@ -75,7 +75,6 @@ const HOW_IT_WORKS = {
 const SCENARIOS = {
   heading: "Common scenarios",
   items: [
-    { title: "The slip-and-fall", body: "Guest slips on a wet deck, bruises a hip, threatens a claim. The signed waiver acknowledging slipping risk on wet surfaces, combined with the $2M policy, typically resolves the situation before it becomes a lawsuit." },
     { title: "The unsupervised kid", body: "Adult turns away for 90 seconds, eight-year-old who can't swim panics in the deep end. Waiver includes a specific adult-supervision-at-all-times clause that materially changes how the claim is evaluated." },
     { title: "The intoxicated guest", body: "Guest gets drunk and hurts themselves. Waiver includes acknowledgment of alcohol risk and host's right to end the booking — both critical pieces if the guest later sues." },
     { title: "The disputed damage", body: "Guest claims they didn't break the patio furniture; you have video showing they did. Signed waiver includes acknowledgment of host's right to charge for damage from the booking's security deposit." },

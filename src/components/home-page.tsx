@@ -310,7 +310,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               Hosts never pay a fee. We make money from one clear service fee guests pay at
               checkout, which covers payment processing and 24/7 support. Hosts are the business&nbsp;&mdash; we don&rsquo;t tax the business.{" "}
               <a
-                href="/legal-and-compliance/terms-of-service-pool-rental-near-me"
+                href="/terms-of-service"
                 className="underline underline-offset-2 hover:text-white"
               >
                 Terms
@@ -469,6 +469,14 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                 className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
               >
                 National Law Review
+              </a>
+              <a
+                href="https://esimoney.com/side-hustle-interview-12/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-serif text-base font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              >
+                ESI Money
               </a>
             </div>
           </div>

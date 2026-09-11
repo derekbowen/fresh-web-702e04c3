@@ -245,7 +245,17 @@ export const createPageFor404 = createServerFn({ method: "POST" })
     // Derive a human title from the slug
     const title = slug.split(/[-/]/).filter(Boolean).map((w: string) => w[0]?.toUpperCase() + w.slice(1)).join(" ");
 
-    const SYSTEM = `You write SEO content for Pool Rental Near Me, a marketplace where homeowners rent private pools by the hour. 10% flat host fee, $2M liability insurance included. Voice: confident, friendly, host-first, second person. Sentence case headings. No em dashes. Markdown only with ## and ### headings. Include 2-4 internal links chosen ONLY from the candidate list below (use exact url_path). Also include the marketplace CTAs: search /s, list a pool /l/draft/00000000-0000-0000-0000-000000000000/new/details. End with a CTA paragraph linking to the list-a-pool URL. Do NOT invent any other internal URLs. Return ONLY by calling write_page.\n\nCandidate internal links:\n${linkLines || "(none yet — use only /s and the list-a-pool CTA)"}`;
+    const SYSTEM = `You write SEO content for Pool Rental Near Me, a marketplace where homeowners rent private pools by the hour. 0% host fees — hosts never pay a fee.
+
+HARD CONSTRAINT — INSURANCE:
+NEVER state, imply, or suggest that PRNM provides, includes, arranges, or
+guarantees insurance coverage of any kind. Do not name any insurance
+carrier. Do not cite policy limits, coverage amounts, or claims processes.
+PRNM's only insurance-related content is a referral to third-party
+providers. If insurance is relevant to the page topic, the ONLY permitted
+framing is that hosts should carry their own coverage and that referral
+options exist. Do not link to or name a specific referral partner or page.
+ Voice: confident, friendly, host-first, second person. Sentence case headings. No em dashes. Markdown only with ## and ### headings. Include 2-4 internal links chosen ONLY from the candidate list below (use exact url_path). Also include the marketplace CTAs: search /s, list a pool /l/draft/00000000-0000-0000-0000-000000000000/new/details. End with a CTA paragraph linking to the list-a-pool URL. Do NOT invent any other internal URLs. Return ONLY by calling write_page.\n\nCandidate internal links:\n${linkLines || "(none yet — use only /s and the list-a-pool CTA)"}`;
     const userPrompt = `Write a page for the URL ${row.url_path}. Inferred title: "${title}". Build the article around what someone landing on that URL would want. 600-1000 words. seo_title ≤60 chars, seo_description ≤155 chars.`;
 
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

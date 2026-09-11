@@ -76,7 +76,7 @@ export function buildSequence(firstName: string): Array<{ step: number; offsetMs
     {
       step: 2,
       offsetMs: 1 * day,
-      body: `Hi ${fn}, following up — most hosts in your area earn $40-150/hr. Want a free rate estimate? Reply YES and we'll send it. Reply STOP to opt out.`,
+      body: `Hi ${fn}, following up — you set your own hourly rate and keep 100% of it. Want a free rate estimate? Reply YES and we'll send it. Reply STOP to opt out.`,
     },
     {
       step: 3,
@@ -86,7 +86,7 @@ export function buildSequence(firstName: string): Array<{ step: number; offsetMs
     {
       step: 4,
       offsetMs: 7 * day,
-      body: `${fn} — quick check-in. We include $2M liability insurance + a 10% flat host fee (vs Swimply's 15%+). Worth a 5-min call? STOP to opt out.`,
+      body: `${fn} — quick check-in. We charge 0% host fees — you keep 100% (Swimply takes 15%+). Worth a 5-min call? STOP to opt out.`,
     },
     {
       step: 5,

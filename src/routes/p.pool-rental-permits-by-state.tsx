@@ -267,7 +267,6 @@ function PermitsByStatePage() {
           <h2 className="text-xl font-bold">Related reading</h2>
           <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-blue-700">
             <li><Link to="/p/host-advocacy" className="hover:underline">Host advocacy hub (all 50 state guides)</Link></li>
-            <li><Link to="/p/pool-rental-insurance-explained" className="hover:underline">Pool rental insurance, explained</Link></li>
             <li><Link to="/p/pool-rental-host-fees-compared" className="hover:underline">Pool rental host fees compared</Link></li>
             <li><Link to="/p/hoa-pool-rental-defense-kit" className="hover:underline">HOA defense kit</Link></li>
             <li><Link to="/p/earnings-calculator" className="hover:underline">Pool rental earnings calculator</Link></li>

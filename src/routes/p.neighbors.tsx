@@ -55,7 +55,6 @@ const PRACTICES = [
 ];
 
 const HOST_RULES = [
-  { icon: ShieldCheck, title: "Verified hosts", body: "ID verified, listing photos reviewed, $2M liability insurance on every booking." },
   { icon: Volume2, title: "Quiet hours", body: "Music kept to conversational volume after 8pm. No outdoor speakers facing neighboring yards." },
   { icon: Car, title: "Parking caps", body: "Guest car limit set per listing based on driveway and street space, never overflow onto neighbor frontage." },
   { icon: Users, title: "Guest limits", body: "Group sizes capped to what the pool and yard safely fit. Larger groups require host on property." },
