@@ -21,7 +21,11 @@
     "check:homepage-cities": "node scripts/check-homepage-cities.mjs",
     "check:dev-hostnames": "node scripts/check-dev-hostnames.mjs",
     "check:emitted-urls": "node scripts/check-emitted-urls.mjs",
-    "verify:production": "npm run check:tools-hub && npm run check:homepage-cities && npm run check:dev-hostnames && npm run check:emitted-urls"
+    "verify:production": "npm run check:deployed-sha && npm run check:tools-hub && npm run check:homepage-cities && npm run check:dev-hostnames && npm run check:emitted-urls",
+    "postbuild": "node scripts/stamp-build.mjs",
+    "check:deployed-sha": "node scripts/check-deployed-sha.mjs",
+    "check:production-drift": "node scripts/check-production-drift.mjs",
+    "verify:deploy": "npm run verify:production && npm run check:production-drift"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

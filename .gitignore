@@ -39,3 +39,7 @@ dist-ssr
 *.v2bak*
 dist-server-bak-*/
 dump.pm2
+
+# runtime deploy attestation, written by ops/deploy-east.sh
+.deployed-sha
+dist-prev-deploy/
