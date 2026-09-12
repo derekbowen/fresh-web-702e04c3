@@ -6,9 +6,9 @@
  *                verified*. ops/deploy-east.sh writes it only after
  *                verify:production passes, so its presence is an attestation,
  *                not a note.
- *   2. DEPLOYED  dist/client/__build.json: what the build output was actually
+ *   2. DEPLOYED  dist/client/fw-assets/__build.json: what the build output was
  *                built from, stamped by the build itself (npm postbuild).
- *   3. ACTUAL    {BASE_URL}/__build.json fetched over the network, plus the
+ *   3. ACTUAL    {BASE_URL}/fw-assets/__build.json fetched over the network, plus the
  *                live working tree (git HEAD + dirty source files).
  *
  * The earlier version of this script compared only .deployed-sha against HEAD.
@@ -30,7 +30,7 @@ import { join } from "node:path";
 const REPO = process.env.REPO_DIR || "/home/ubuntu/fresh-web";
 const BASE = (process.env.BASE_URL || "https://www.poolrentalnearme.com").replace(/\/$/, "");
 const SHA_FILE = process.env.DEPLOYED_SHA_FILE || join(REPO, ".deployed-sha");
-const LOCAL_STAMP = join(REPO, "dist", "client", "__build.json");
+const LOCAL_STAMP = join(REPO, "dist", "client", "fw-assets", "__build.json");
 const SKIP_REMOTE = process.env.SKIP_REMOTE === "1";
 
 const IGNORE = [
@@ -103,13 +103,13 @@ if (!SKIP_REMOTE) {
   try {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), Number(process.env.TIMEOUT_MS || 20000));
-    const r = await fetch(`${BASE}/__build.json`, { signal: ctl.signal, redirect: "follow" });
+    const r = await fetch(`${BASE}/fw-assets/__build.json`, { signal: ctl.signal, redirect: "follow" });
     clearTimeout(t);
-    if (r.status !== 200) problems.push(`${BASE}/__build.json returned ${r.status} — production cannot state its SHA`);
+    if (r.status !== 200) problems.push(`${BASE}/fw-assets/__build.json returned ${r.status} — production cannot state its SHA`);
     else live = await r.json().catch(() => null);
-    if (!SKIP_REMOTE && r.status === 200 && !live) problems.push(`${BASE}/__build.json is not valid JSON`);
+    if (!SKIP_REMOTE && r.status === 200 && !live) problems.push(`${BASE}/fw-assets/__build.json is not valid JSON`);
   } catch (e) {
-    problems.push(`${BASE}/__build.json unreachable: ${String(e).slice(0, 100)}`);
+    problems.push(`${BASE}/fw-assets/__build.json unreachable: ${String(e).slice(0, 100)}`);
   }
 }
 

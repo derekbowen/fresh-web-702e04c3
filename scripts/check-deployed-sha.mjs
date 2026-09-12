@@ -2,7 +2,7 @@
 /**
  * check:deployed-sha — production must be able to prove which commit it serves.
  *
- * Fetches {BASE_URL}/__build.json (written by scripts/stamp-build.mjs as npm's
+ * Fetches {BASE_URL}/fw-assets/__build.json (written by scripts/stamp-build.mjs as npm's
  * postbuild) and fails closed when production cannot answer, answers with an
  * unknown SHA, or answers with a SHA built from a dirty tree.
  *
@@ -30,16 +30,16 @@ const ctl = new AbortController();
 const timer = setTimeout(() => ctl.abort(), TIMEOUT_MS);
 let res;
 try {
-  res = await fetch(`${BASE}/__build.json`, { signal: ctl.signal, redirect: "follow" });
+  res = await fetch(`${BASE}/fw-assets/__build.json`, { signal: ctl.signal, redirect: "follow" });
 } catch (e) {
-  fail(`${BASE}/__build.json is unreachable (${String(e).slice(0, 120)}). ` +
+  fail(`${BASE}/fw-assets/__build.json is unreachable (${String(e).slice(0, 120)}). ` +
        `Production cannot prove which commit it is running.`);
 } finally {
   clearTimeout(timer);
 }
 
 if (res.status !== 200) {
-  fail(`${BASE}/__build.json returned ${res.status}. Either this build predates ` +
+  fail(`${BASE}/fw-assets/__build.json returned ${res.status}. Either this build predates ` +
        `stamp-build, or the deploy did not run "npm run build".`);
 }
 
@@ -47,7 +47,7 @@ let info;
 try {
   info = await res.json();
 } catch {
-  fail(`${BASE}/__build.json is not valid JSON`);
+  fail(`${BASE}/fw-assets/__build.json is not valid JSON`);
 }
 
 console.log(`check:deployed-sha — base ${BASE}`);

@@ -8,11 +8,12 @@
  * build, not by a deploy wrapper, so a deploy that skips the wrapper still
  * carries an honest stamp and still gets caught by check:production-drift.
  *
- * Writes dist/client/__build.json, which serve.mjs already serves as a static
+ * Writes the stamp into dist/client/fw-assets/ (and dist/client/ for a direct-
+ * origin check); serve.mjs already serves both as static
  * file — no server change, no new route, no restart semantics to get wrong.
  * Production can therefore be asked what it is running:
  *
- *     curl https://www.poolrentalnearme.com/__build.json
+ *     curl https://www.poolrentalnearme.com/fw-assets/__build.json
  *
  * Fields:
  *   sha         git HEAD at build time
@@ -37,7 +38,11 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = process.env.REPO_DIR || join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT_DIR = join(ROOT, "dist", "client");
-const OUT = join(OUT_DIR, "__build.json");
+// WEST proxies only "/" and "/fw-assets" through to EAST; anything else falls
+// through to the marketplace, which 404s it. The stamp therefore lives under
+// fw-assets so production can actually be asked what it is running.
+const ASSET_DIR = join(OUT_DIR, "fw-assets");
+const OUTS = [join(ASSET_DIR, "__build.json"), join(OUT_DIR, "__build.json")];
 
 // Generated, runtime or backup paths are not "source" for dirtiness purposes.
 const IGNORE = [
@@ -79,7 +84,7 @@ try {
 let assets = "none";
 const assetDir = join(OUT_DIR, "fw-assets");
 if (existsSync(assetDir)) {
-  const names = readdirSync(assetDir).sort();
+  const names = readdirSync(assetDir).filter((n) => n !== "__build.json").sort();
   assets = createHash("sha256").update(names.join("\n")).digest("hex");
 }
 
@@ -93,10 +98,13 @@ const info = {
   builtAt: new Date().toISOString(),
 };
 
-if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
-writeFileSync(OUT, JSON.stringify(info, null, 2) + "\n");
+for (const out of OUTS) {
+  const dir = out.slice(0, out.lastIndexOf("/"));
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+  writeFileSync(out, JSON.stringify(info, null, 2) + "\n");
+}
 console.log(
-  `stamp-build: ${OUT} -> sha ${sha.slice(0, 8)} tree ${tree.slice(0, 8)} dirty ${info.dirty} assets ${assets.slice(0, 8)}`,
+  `stamp-build: ${OUTS.join(", ")} -> sha ${sha.slice(0, 8)} tree ${tree.slice(0, 8)} dirty ${info.dirty} assets ${assets.slice(0, 8)}`,
 );
 if (info.dirty) {
   console.warn(`stamp-build: WARNING built from ${info.dirty} uncommitted source change(s):`);

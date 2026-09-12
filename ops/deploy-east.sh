@@ -5,11 +5,11 @@
 # every gate before it has passed:
 #
 #   1. the working tree must be clean            -> production always has a real SHA
-#   2. build (npm postbuild stamps dist/client/__build.json)
+#   2. build (npm postbuild stamps dist/client/fw-assets/__build.json)
 #   3. the stamp must equal HEAD and be dirty=0  -> the stamp is honest
 #   4. smoke the new build on a spare port with .env loaded
 #   5. pm2 restart
-#   6. production must report HEAD at /__build.json
+#   6. production must report HEAD at /fw-assets/__build.json
 #   7. verify:production (the four live invariants)
 #   8. only now write .deployed-sha               -> it is an attestation
 #   9. check:production-drift as the closing gate
@@ -26,7 +26,7 @@ BASE="${BASE_URL:-https://www.poolrentalnearme.com}"
 SMOKE_PORT="${SMOKE_PORT:-3005}"
 PM2="sudo -u ubuntu PM2_HOME=/home/ubuntu/.pm2 pm2"
 GIT="git -c safe.directory=$REPO -C $REPO"
-STAMP="$REPO/dist/client/__build.json"
+STAMP="$REPO/dist/client/fw-assets/__build.json"
 PREV="$REPO/dist-prev-deploy"
 
 cd "$REPO"
@@ -80,7 +80,7 @@ SMOKE_PID=$!
 trap 'kill $SMOKE_PID 2>/dev/null || true' EXIT
 for i in $(seq 1 40); do
   sleep 1
-  curl -fsS "http://127.0.0.1:$SMOKE_PORT/__build.json" >/dev/null 2>&1 && break
+  curl -fsS "http://127.0.0.1:$SMOKE_PORT/fw-assets/__build.json" >/dev/null 2>&1 && break
   [ "$i" = "40" ] && { kill $SMOKE_PID 2>/dev/null || true; restore_dist; die "smoke server never came up"; }
 done
 # EAST-served routes only. /s and /l/* belong to the marketplace on WEST and
@@ -98,7 +98,7 @@ say "5. restart fresh-web"
 $PM2 restart fresh-web --update-env
 for i in $(seq 1 40); do
   sleep 1
-  curl -fsS "$BASE/__build.json" >/dev/null 2>&1 && break
+  curl -fsS "$BASE/fw-assets/__build.json" >/dev/null 2>&1 && break
 done
 
 # ---- 6. production must report HEAD ----------------------------------------
