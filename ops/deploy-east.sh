@@ -83,7 +83,9 @@ for i in $(seq 1 40); do
   curl -fsS "http://127.0.0.1:$SMOKE_PORT/__build.json" >/dev/null 2>&1 && break
   [ "$i" = "40" ] && { kill $SMOKE_PID 2>/dev/null || true; restore_dist; die "smoke server never came up"; }
 done
-for p in / /p/pool-host-tools /s; do
+# EAST-served routes only. /s and /l/* belong to the marketplace on WEST and
+# are 404 here by design — smoking them would abort every deploy.
+for p in / /p/pool-host-tools /p/corpus-christi-pool-rental-laws; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$SMOKE_PORT$p")
   echo "  $p -> $code"
   [ "$code" = "200" ] || { kill $SMOKE_PID 2>/dev/null || true; restore_dist; die "smoke $p returned $code"; }
