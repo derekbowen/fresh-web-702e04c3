@@ -43,12 +43,26 @@ const TEMPLATE_GROUPS: TemplateGroup[] = [
  * points at answered in 0.3-0.66s. They are independent, so they now run in one
  * wave and the whole index costs one round trip instead of eleven.
  *
- * A short in-process memo sits in front of that. The response already carries
- * `max-age=300, stale-while-revalidate=86400`, but nothing absorbed a cache
- * MISS, and a crawler hitting a cold index waited the full 8s.
+ * Parallelising alone was NOT enough, and the first version of this comment
+ * claimed otherwise. Measured after that change: warm 0.37-0.59s, but a cold
+ * index still took 6.5s (verified by waiting out the memo TTL and re-fetching).
+ * Individually every count answers in 69-747ms, so the cold cost is contention
+ * between eleven concurrent PostgREST count scans, not their sum.
+ *
+ * So the memo is now stale-while-revalidate rather than a plain TTL: once an
+ * index has been built, every later request is served from memory INSTANTLY and
+ * a stale entry triggers a background rebuild instead of making the caller wait.
+ * A build is also kicked off at module load, so the one genuinely cold request
+ * per process happens before any crawler asks. If the very first request does
+ * arrive before that finishes, it awaits the same in-flight promise rather than
+ * starting a second pile of count queries.
  */
-const INDEX_CACHE_MS = 300_000;
+/** Younger than this: serve as-is, no rebuild. */
+const INDEX_FRESH_MS = 300_000;
+/** Older than FRESH but younger than this: serve stale, rebuild in background. */
+const INDEX_STALE_MS = 24 * 60 * 60 * 1000;
 let indexCache: { at: number; xml: string } | null = null;
+let indexInFlight: Promise<string> | null = null;
 
 type CountResult = { count: number | null; error: unknown };
 
@@ -66,150 +80,172 @@ const countRows = async (
   }
 };
 
+async function buildIndexXml(): Promise<string> {
+  const entries: SitemapIndexEntry[] = [];
+
+  // 1. Static sub-sitemap
+  entries.push({ loc: `${SITE_URL}/sitemap-static.xml` });
+
+  // 1b. Comparison pages (pillar + city variants)
+  entries.push({ loc: `${SITE_URL}/sitemap-pages-comparisons.xml` });
+
+  // Pool pros directory sitemap removed 2026-07-06: the /p/pool-pros tree
+  // is noindexed (see commit b8672f38), so it must not be advertised in sitemaps.
+
+  // ---- every count in one wave -------------------------------------
+  const [groupCounts, blogCount, blogLatest, listingCount, listingLatest] =
+    await Promise.all([
+      Promise.all(
+        TEMPLATE_GROUPS.map((group) =>
+          countRows("content_pages", (q: any) =>
+            q
+              .in("template_type", group.templateTypes)
+              .eq("in_sitemap", true)
+              .eq("status", "published")
+              .is("redirect_to", null)
+              .not("slug", "is", null),
+          ),
+        ),
+      ),
+      countRows("blog_posts", (q: any) => q.eq("is_published", true)),
+      (async () => {
+        try {
+          const { data } = await (supabaseAdmin as any)
+            .from("blog_posts")
+            .select("updated_at")
+            .eq("is_published", true)
+            .order("updated_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          return data?.updated_at as string | undefined;
+        } catch {
+          return undefined;
+        }
+      })(),
+      countRows("synced_listings", (q: any) =>
+        q
+          .eq("state", "published")
+          .eq("is_deleted", false)
+          .not("slug", "is", null)
+          .not("sharetribe_id", "is", null),
+      ),
+      (async () => {
+        try {
+          const { data } = await (supabaseAdmin as any)
+            .from("synced_listings")
+            .select("updated_at")
+            .eq("state", "published")
+            .eq("is_deleted", false)
+            .not("slug", "is", null)
+            .not("sharetribe_id", "is", null)
+            .order("updated_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          return data?.updated_at as string | undefined;
+        } catch {
+          return undefined;
+        }
+      })(),
+    ]);
+
+  // 2. Per-template-type content_pages sub-sitemaps (with auto-pagination)
+  //
+  // A count that ERRORS used to `continue`, which dropped the whole
+  // sub-sitemap from the index — so an intermittent Supabase error made a
+  // few thousand live pages invisible to Google until the next crawl that
+  // happened to succeed. The logs show exactly that happening to
+  // /sitemap-pages-event-guides.xml. A failed count is now a pagination
+  // problem, not a visibility one: page 1 is always advertised, and only
+  // the extra pages are lost.
+  TEMPLATE_GROUPS.forEach((group, i) => {
+    const { count, error } = groupCounts[i]!;
+    if (error) {
+      console.error(
+        `[sitemap] count failed for ${group.basePath} — advertising page 1 only`,
+        error,
+      );
+      entries.push({ loc: `${SITE_URL}${group.basePath}` });
+      return;
+    }
+    if (!count) return;
+
+    // No index-level lastmod: max(updated_at) was re-stamped monthly by
+    // the related-slug refresh, so it advertised fake freshness. Each
+    // URL carries its own content-based lastmod inside the sub-sitemap.
+    const pageCount = Math.ceil(count / SITEMAP_PAGE_SIZE);
+    for (let p = 1; p <= pageCount; p++) {
+      entries.push({
+        loc: p === 1 ? `${SITE_URL}${group.basePath}` : `${SITE_URL}${group.basePath}?page=${p}`,
+      });
+    }
+  });
+
+  // 2b. Blog posts (sourced from blog_posts, served at /p/{slug})
+  if (blogCount.error) {
+    console.error("[sitemap] blog_posts count error — advertising page 1 only", blogCount.error);
+    entries.push({ loc: `${SITE_URL}/sitemap-pages-blog.xml` });
+  } else if (blogCount.count && blogCount.count > 0) {
+    const blogPageCount = Math.ceil(blogCount.count / SITEMAP_PAGE_SIZE);
+    for (let p = 1; p <= blogPageCount; p++) {
+      entries.push({
+        loc: p === 1 ? `${SITE_URL}/sitemap-pages-blog.xml` : `${SITE_URL}/sitemap-pages-blog.xml?page=${p}`,
+        lastmod: blogLatest,
+      });
+    }
+  }
+
+  // 2c. Courses sub-sitemap retired 2026-09-02: every /p/course/{slug} URL is a
+  // nginx 301 to its /p/elearning-academy-* page, and all 193 targets are already
+  // listed in sitemap-pages-academy.xml (crawl 2026-09-01). Advertising 193
+  // redirects only cost crawl budget. The route still answers with an empty
+  // urlset so the URL never 404s in Search Console.
+
+  // 2d. Sharetribe listings (mirror in `synced_listings`, served at /l/{slug}/{id})
+  if (listingCount.error) {
+    console.error("[sitemap] synced_listings count error — advertising page 1 only", listingCount.error);
+    entries.push({ loc: `${SITE_URL}/sitemap-listings.xml` });
+  } else if (listingCount.count && listingCount.count > 0) {
+    const listingPageCount = Math.ceil(listingCount.count / SITEMAP_PAGE_SIZE);
+    for (let p = 1; p <= listingPageCount; p++) {
+      entries.push({
+        loc: p === 1 ? `${SITE_URL}/sitemap-listings.xml` : `${SITE_URL}/sitemap-listings.xml?page=${p}`,
+        lastmod: listingLatest,
+      });
+    }
+  }
+
+  const xml = buildSitemapIndexXml(entries);
+  indexCache = { at: Date.now(), xml };
+  return xml;
+}
+
+/** One build at a time, shared by every caller that arrives while it runs. */
+function rebuildIndex(): Promise<string> {
+  if (!indexInFlight) {
+    indexInFlight = buildIndexXml().finally(() => {
+      indexInFlight = null;
+    });
+  }
+  return indexInFlight;
+}
+
+// Warm at module load so the one unavoidable cold build does not land on a
+// crawler. Errors are swallowed: a failed warm just means the first real
+// request builds it, exactly as before.
+void rebuildIndex().catch((err) => console.error("[sitemap] warm-up failed", err));
+
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        if (indexCache && Date.now() - indexCache.at < INDEX_CACHE_MS) {
+        const age = indexCache ? Date.now() - indexCache.at : Infinity;
+        if (indexCache && age < INDEX_FRESH_MS) return sitemapResponse(indexCache.xml);
+        if (indexCache && age < INDEX_STALE_MS) {
+          // Stale but usable: answer now, refresh behind the response.
+          void rebuildIndex().catch((err) => console.error("[sitemap] background rebuild failed", err));
           return sitemapResponse(indexCache.xml);
         }
-
-        const entries: SitemapIndexEntry[] = [];
-
-        // 1. Static sub-sitemap
-        entries.push({ loc: `${SITE_URL}/sitemap-static.xml` });
-
-        // 1b. Comparison pages (pillar + city variants)
-        entries.push({ loc: `${SITE_URL}/sitemap-pages-comparisons.xml` });
-
-        // Pool pros directory sitemap removed 2026-07-06: the /p/pool-pros tree
-        // is noindexed (see commit b8672f38), so it must not be advertised in sitemaps.
-
-        // ---- every count in one wave -------------------------------------
-        const [groupCounts, blogCount, blogLatest, listingCount, listingLatest] =
-          await Promise.all([
-            Promise.all(
-              TEMPLATE_GROUPS.map((group) =>
-                countRows("content_pages", (q: any) =>
-                  q
-                    .in("template_type", group.templateTypes)
-                    .eq("in_sitemap", true)
-                    .eq("status", "published")
-                    .is("redirect_to", null)
-                    .not("slug", "is", null),
-                ),
-              ),
-            ),
-            countRows("blog_posts", (q: any) => q.eq("is_published", true)),
-            (async () => {
-              try {
-                const { data } = await (supabaseAdmin as any)
-                  .from("blog_posts")
-                  .select("updated_at")
-                  .eq("is_published", true)
-                  .order("updated_at", { ascending: false })
-                  .limit(1)
-                  .maybeSingle();
-                return data?.updated_at as string | undefined;
-              } catch {
-                return undefined;
-              }
-            })(),
-            countRows("synced_listings", (q: any) =>
-              q
-                .eq("state", "published")
-                .eq("is_deleted", false)
-                .not("slug", "is", null)
-                .not("sharetribe_id", "is", null),
-            ),
-            (async () => {
-              try {
-                const { data } = await (supabaseAdmin as any)
-                  .from("synced_listings")
-                  .select("updated_at")
-                  .eq("state", "published")
-                  .eq("is_deleted", false)
-                  .not("slug", "is", null)
-                  .not("sharetribe_id", "is", null)
-                  .order("updated_at", { ascending: false })
-                  .limit(1)
-                  .maybeSingle();
-                return data?.updated_at as string | undefined;
-              } catch {
-                return undefined;
-              }
-            })(),
-          ]);
-
-        // 2. Per-template-type content_pages sub-sitemaps (with auto-pagination)
-        //
-        // A count that ERRORS used to `continue`, which dropped the whole
-        // sub-sitemap from the index — so an intermittent Supabase error made a
-        // few thousand live pages invisible to Google until the next crawl that
-        // happened to succeed. The logs show exactly that happening to
-        // /sitemap-pages-event-guides.xml. A failed count is now a pagination
-        // problem, not a visibility one: page 1 is always advertised, and only
-        // the extra pages are lost.
-        TEMPLATE_GROUPS.forEach((group, i) => {
-          const { count, error } = groupCounts[i]!;
-          if (error) {
-            console.error(
-              `[sitemap] count failed for ${group.basePath} — advertising page 1 only`,
-              error,
-            );
-            entries.push({ loc: `${SITE_URL}${group.basePath}` });
-            return;
-          }
-          if (!count) return;
-
-          // No index-level lastmod: max(updated_at) was re-stamped monthly by
-          // the related-slug refresh, so it advertised fake freshness. Each
-          // URL carries its own content-based lastmod inside the sub-sitemap.
-          const pageCount = Math.ceil(count / SITEMAP_PAGE_SIZE);
-          for (let p = 1; p <= pageCount; p++) {
-            entries.push({
-              loc: p === 1 ? `${SITE_URL}${group.basePath}` : `${SITE_URL}${group.basePath}?page=${p}`,
-            });
-          }
-        });
-
-        // 2b. Blog posts (sourced from blog_posts, served at /p/{slug})
-        if (blogCount.error) {
-          console.error("[sitemap] blog_posts count error — advertising page 1 only", blogCount.error);
-          entries.push({ loc: `${SITE_URL}/sitemap-pages-blog.xml` });
-        } else if (blogCount.count && blogCount.count > 0) {
-          const blogPageCount = Math.ceil(blogCount.count / SITEMAP_PAGE_SIZE);
-          for (let p = 1; p <= blogPageCount; p++) {
-            entries.push({
-              loc: p === 1 ? `${SITE_URL}/sitemap-pages-blog.xml` : `${SITE_URL}/sitemap-pages-blog.xml?page=${p}`,
-              lastmod: blogLatest,
-            });
-          }
-        }
-
-        // 2c. Courses sub-sitemap retired 2026-09-02: every /p/course/{slug} URL is a
-        // nginx 301 to its /p/elearning-academy-* page, and all 193 targets are already
-        // listed in sitemap-pages-academy.xml (crawl 2026-09-01). Advertising 193
-        // redirects only cost crawl budget. The route still answers with an empty
-        // urlset so the URL never 404s in Search Console.
-
-        // 2d. Sharetribe listings (mirror in `synced_listings`, served at /l/{slug}/{id})
-        if (listingCount.error) {
-          console.error("[sitemap] synced_listings count error — advertising page 1 only", listingCount.error);
-          entries.push({ loc: `${SITE_URL}/sitemap-listings.xml` });
-        } else if (listingCount.count && listingCount.count > 0) {
-          const listingPageCount = Math.ceil(listingCount.count / SITEMAP_PAGE_SIZE);
-          for (let p = 1; p <= listingPageCount; p++) {
-            entries.push({
-              loc: p === 1 ? `${SITE_URL}/sitemap-listings.xml` : `${SITE_URL}/sitemap-listings.xml?page=${p}`,
-              lastmod: listingLatest,
-            });
-          }
-        }
-
-        const xml = buildSitemapIndexXml(entries);
-        indexCache = { at: Date.now(), xml };
-        return sitemapResponse(xml);
+        return sitemapResponse(await rebuildIndex());
       },
     },
   },
