@@ -101,7 +101,10 @@ for p in / /p/pool-host-tools /p/corpus-christi-pool-rental-laws; do
   body=$(mktemp)
   code=$(curl -s -o "$body" -w '%{http_code}' "http://127.0.0.1:$SMOKE_PORT$p")
   bytes=$(wc -c < "$body" | tr -d ' ')
-  h1s=$(grep -o '<h1' "$body" | wc -l | tr -d ' ')
+  # -a is load-bearing: the SSR payload can contain bytes grep treats as
+  # binary, and without it grep prints "binary file matches" instead of the
+  # matches, so `wc -l` reports 0 and a perfectly good page fails the gate.
+  h1s=$(grep -ao '<h1' "$body" | wc -l | tr -d ' ')
   echo "  $p -> $code  ${bytes}B  h1=$h1s"
   # NB: plain `cond && cond && assign` chains are not safe here. Under
   # `set -e` a chain whose last test is simply FALSE returns non-zero and kills
@@ -117,7 +120,7 @@ for p in / /p/pool-host-tools /p/corpus-christi-pool-rental-laws; do
     fail="rendered $h1s <h1> elements, expected 1"
   elif [ "$bytes" -lt 20000 ]; then
     fail="only ${bytes} bytes — looks like a shell render"
-  elif grep -q 'Something went wrong loading this section' "$body"; then
+  elif grep -aq 'Something went wrong loading this section' "$body"; then
     fail="an ErrorBoundary fallback is visible"
   fi
   rm -f "$body"
