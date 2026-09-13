@@ -96,9 +96,14 @@ trap - EXIT
 # ---- 5. flip ---------------------------------------------------------------
 say "5. restart fresh-web"
 $PM2 restart fresh-web --update-env
-for i in $(seq 1 40); do
-  sleep 1
-  curl -fsS "$BASE/fw-assets/__build.json" >/dev/null 2>&1 && break
+# Wait for production to report THIS sha, not merely to return 200. The stamp
+# has a stable URL, so a 200 proves nothing about which build answered it.
+for i in $(seq 1 60); do
+  sleep 2
+  LIVE=$(curl -fsS -H 'Cache-Control: no-cache' "$BASE/fw-assets/__build.json?cb=$RANDOM$i" 2>/dev/null \
+         | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(JSON.parse(s).sha||'')}catch{}})" 2>/dev/null || true)
+  [ "$LIVE" = "$HEAD" ] && { echo "production reports $HEAD after ${i} poll(s)"; break; }
+  [ "$i" = "60" ] && echo "WARNING: production still reports '${LIVE:-none}' after 120s; step 6 will decide"
 done
 
 # ---- 6. production must report HEAD ----------------------------------------

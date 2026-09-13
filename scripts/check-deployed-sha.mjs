@@ -30,7 +30,7 @@ const ctl = new AbortController();
 const timer = setTimeout(() => ctl.abort(), TIMEOUT_MS);
 let res;
 try {
-  res = await fetch(`${BASE}/fw-assets/__build.json`, { signal: ctl.signal, redirect: "follow" });
+  res = await fetch(`${BASE}/fw-assets/__build.json?cb=${Date.now()}`, { signal: ctl.signal, redirect: "follow", cache: "no-store", headers: { "Cache-Control": "no-cache", Pragma: "no-cache" } });
 } catch (e) {
   fail(`${BASE}/fw-assets/__build.json is unreachable (${String(e).slice(0, 120)}). ` +
        `Production cannot prove which commit it is running.`);

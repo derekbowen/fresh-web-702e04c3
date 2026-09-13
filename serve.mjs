@@ -28,7 +28,14 @@ async function tryStatic(url, nodeRes) {
     const mime = MIME[extname(filePath)] || "application/octet-stream";
     const headers = { "Content-Type": mime, "Content-Length": data.length };
     if (url.startsWith("/fw-assets/")) {
-      headers["Cache-Control"] = "public, max-age=31536000, immutable";
+      // Everything under /fw-assets/ is content-hashed and safe to cache
+      // forever — except the build stamp, which has a stable name and changing
+      // content. Serving it `immutable` made WEST hand back a cached stamp
+      // after a deploy (X-Cache: HIT), so check:deployed-sha read the PREVIOUS
+      // SHA and aborted a deploy that had actually succeeded.
+      headers["Cache-Control"] = url.split("?")[0].endsWith("/__build.json")
+        ? "no-store, must-revalidate"
+        : "public, max-age=31536000, immutable";
     }
     nodeRes.writeHead(200, headers);
     nodeRes.end(data);

@@ -103,7 +103,7 @@ if (!SKIP_REMOTE) {
   try {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), Number(process.env.TIMEOUT_MS || 20000));
-    const r = await fetch(`${BASE}/fw-assets/__build.json`, { signal: ctl.signal, redirect: "follow" });
+    const r = await fetch(`${BASE}/fw-assets/__build.json?cb=${Date.now()}`, { signal: ctl.signal, redirect: "follow", cache: "no-store", headers: { "Cache-Control": "no-cache", Pragma: "no-cache" } });
     clearTimeout(t);
     if (r.status !== 200) problems.push(`${BASE}/fw-assets/__build.json returned ${r.status} — production cannot state its SHA`);
     else live = await r.json().catch(() => null);
