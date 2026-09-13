@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { LiteYouTube } from "@/components/lite-youtube";
@@ -52,7 +52,16 @@ export function WinterHomePage({ data }: { data: WinterHomeData | null | undefin
         </ErrorBoundary>
       </main>
       <SiteFooter />
-      <WinterStickyBar />
+      {/* No sticky bar here. Back when this page only served ?preview=winter,
+          SiteHeaderInner detected that param and suppressed the global mobile
+          CTA bar, so WinterStickyBar was the only one on screen. Promoted to
+          `/` the param is gone, the global bar returns, and the two would stack
+          — and the honest way to tell "am I the homepage" from __root is the
+          pathname, which this proxy is documented to report differently during
+          SSR than in the browser (see the note atop site-layout.tsx), exactly
+          on `/`. The global bar is the same two CTAs plus the "0% fees" badge,
+          so it wins and WinterStickyBar is retired rather than deduplicated
+          through a check that can mismatch on hydration. */}
     </div>
   );
 }
@@ -676,71 +685,3 @@ function CitiesSection({ cards, cities }: { cards: WinterCityCard[]; cities: Hom
   );
 }
 
-/* ─────────────────────── Phone bottom bar (Phase 2) ─────────────────── */
-
-/**
- * Replaces the site-wide two-button bar on this page only. Appears once the
- * hero has scrolled out of view, can be dismissed (remembered for the session),
- * and renders nothing on the server so hydration stays identical.
- */
-function WinterStickyBar() {
-  const [show, setShow] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
-  useEffect(() => {
-    try {
-      if (window.sessionStorage.getItem("winter-bar-dismissed") === "1") {
-        setDismissed(true);
-        return;
-      }
-    } catch {
-      /* storage unavailable: just show it */
-    }
-    const hero = document.getElementById("winter-hero");
-    if (!hero || !("IntersectionObserver" in window)) {
-      setShow(true);
-      return;
-    }
-    const io = new IntersectionObserver(([entry]) => setShow(!entry.isIntersecting), { threshold: 0 });
-    io.observe(hero);
-    return () => io.disconnect();
-  }, []);
-  const dismiss = () => {
-    setDismissed(true);
-    try {
-      window.sessionStorage.setItem("winter-bar-dismissed", "1");
-    } catch {
-      /* ignore */
-    }
-  };
-  if (dismissed || !show) return null;
-  return (
-    <div
-      role="region"
-      aria-label="Quick actions"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-6px_20px_-12px_rgba(0,0,0,0.25)] backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden"
-    >
-      <div className="flex items-center gap-2">
-        <a
-          href="/s"
-          className="inline-flex h-11 flex-1 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-sm"
-        >
-          Find a pool
-        </a>
-        <a
-          href="/wizard/"
-          className="inline-flex h-11 items-center justify-center rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground"
-        >
-          List your space
-        </a>
-        <button
-          type="button"
-          onClick={dismiss}
-          aria-label="Hide this bar"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary"
-        >
-          ✕
-        </button>
-      </div>
-    </div>
-  );
-}

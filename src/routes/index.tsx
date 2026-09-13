@@ -22,41 +22,47 @@ const EMPTY_HOME_DATA: HomeData = {
 const EMPTY_WINTER_DATA: WinterHomeData = { featured: [], cityCards: [], cities: [] };
 
 /**
- * `/?preview=winter` renders the Phase 1 winter homepage (2026-09-09 brief)
- * server-side, for Derek's review only. Production visitors at `/` get the
- * current page untouched. The preview render carries a noindex meta tag,
- * canonicalises to `/`, and getWinterHomeData sets Cache-Control: no-store +
- * X-Robots-Tag on the response so no cache can hand it out at `/`. Nothing on
- * the site links to the preview URL.
+ * The winter homepage (2026-09-09 brief) is the production homepage at `/` as
+ * of 2026-09-13, on Derek's go. The gate that used to expose it at
+ * `/?preview=winter` is now INVERTED: the previous homepage is still built and
+ * still reachable at `/?preview=classic`, so the two can be compared side by
+ * side and a rollback is a URL, not a deploy.
+ *
+ * The noindex meta below is scoped to the classic preview and must stay that
+ * way — `/` itself must never carry it. getWinterHomeData used to set
+ * `x-robots-tag: noindex, nofollow` and `cache-control: no-store` on every
+ * response back when it only served the preview; both were removed when it was
+ * promoted, because a response header would have deindexed `/` no matter what
+ * this file said. Indexability is decided by host in src/start.ts.
  */
-type HomeSearch = { preview?: "winter" };
+type HomeSearch = { preview?: "classic" };
 
 type HomeLoaderData =
-  | { preview: "winter"; winter: WinterHomeData }
-  | { preview?: undefined; home: HomeData };
+  | { preview: "classic"; home: HomeData }
+  | { preview?: undefined; winter: WinterHomeData };
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): HomeSearch =>
-    search.preview === "winter" ? { preview: "winter" } : {},
+    search.preview === "classic" ? { preview: "classic" } : {},
   loaderDeps: ({ search }) => ({ preview: search.preview }),
   loader: async ({ deps }): Promise<HomeLoaderData> => {
-    if (deps.preview === "winter") {
+    if (deps.preview === "classic") {
       try {
-        return { preview: "winter", winter: (await getWinterHomeData()) ?? EMPTY_WINTER_DATA };
+        return { preview: "classic", home: (await getHomeData()) ?? EMPTY_HOME_DATA };
       } catch (err) {
-        console.error("winter preview loader failed:", err);
-        return { preview: "winter", winter: EMPTY_WINTER_DATA };
+        console.error("classic homepage loader failed:", err);
+        return { preview: "classic", home: EMPTY_HOME_DATA };
       }
     }
     try {
-      return { home: (await getHomeData()) ?? EMPTY_HOME_DATA };
+      return { winter: (await getWinterHomeData()) ?? EMPTY_WINTER_DATA };
     } catch (err) {
       console.error("index loader failed:", err);
-      return { home: EMPTY_HOME_DATA };
+      return { winter: EMPTY_WINTER_DATA };
     }
   },
   head: ({ loaderData }) => {
-    const isPreview = loaderData?.preview === "winter";
+    const isPreview = loaderData?.preview === "classic";
     const meta = buildMeta({
       title: "Pool Rental Near Me — Rent a Pool by the Hour | Private Pools Near You",
       description:
@@ -65,7 +71,7 @@ export const Route = createFileRoute("/")({
       // Indexability is controlled by the X-Robots-Tag HTTP header in src/start.ts
       // (preview hosts get noindex; production www.poolrentalnearme.com is indexable).
       // Do NOT add a noindex meta tag here for the production render — it would
-      // deindex the homepage. The ONLY noindex below is scoped to ?preview=winter.
+      // deindex the homepage. The ONLY noindex below is scoped to ?preview=classic.
       image: HOMEPAGE_HERO_IMAGE,
     });
     // Organization + WebSite JSON-LD are emitted once in __root.tsx and
@@ -102,6 +108,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const data = Route.useLoaderData();
-  if (data?.preview === "winter") return <WinterHomePage data={data.winter} />;
-  return <HomePageContent data={data?.home} />;
+  if (data?.preview === "classic") return <HomePageContent data={data.home} />;
+  return <WinterHomePage data={data?.winter} />;
 }
