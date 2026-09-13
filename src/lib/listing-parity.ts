@@ -213,9 +213,21 @@ function numericallyEqual(a: unknown, b: unknown): boolean {
 export type ListingLike = Partial<Record<string, unknown>>;
 
 /** Fields where any difference changes what a visitor sees. */
-const BLOCKING_FIELDS = new Set(["id", "title", "price", "url", "slug"]);
-/** Fields where a difference is real but softer. */
+const BLOCKING_FIELDS = new Set(["id", "title", "price"]);
+/**
+ * Fields where a difference is real but softer.
+ *
+ * `slug` and `url` were blocking here on the strength of the audit's claim that
+ * a differing slug splits the canonical URL. Probing production disproved it:
+ * the marketplace registers /l/:slug/:id AND /l/:id and its canonicalRoutePath
+ * strips the slug, so every variant returns 200 with the same slug-less
+ * canonical and Google consolidates them. A slug mismatch is now a consistency
+ * problem — worth reporting, not worth blocking a cutover over. See
+ * src/lib/listing-url.ts.
+ */
 const DEGRADED_FIELDS = new Set([
+  "slug",
+  "url",
   "description",
   "city",
   "state",

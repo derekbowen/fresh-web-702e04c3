@@ -23,6 +23,8 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 // Phase 1b: which image URL the mirror serves. Defaults to the Sharetribe URL,
 // so this is inert until PRNM_IMAGE_SOURCE=prnm is set.
 import { preferredImageUrl, resolveImageSource } from "@/lib/listing-images";
+// One slug formula for the whole app, ported from the marketplace.
+import { createSlug, listingPathWithSlug } from "@/lib/listing-url";
 
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
 const INTEGRATION_API_BASE = "https://flex-integ-api.sharetribe.com";
@@ -268,15 +270,7 @@ export interface ListingSummary {
   distanceMiles?: number | null;
 }
 
-function slugify(s: string): string {
-  return (
-    s
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-      .slice(0, 80) || "pool"
-  );
-}
+
 
 function pickImage(
   listing: STListing,
@@ -330,7 +324,7 @@ function summarize(
     (pd.state as string) ||
     (pd.state_code as string) ||
     null;
-  const slug = slugify(listing.attributes.title || "pool");
+  const slug = createSlug(listing.attributes.title);
   return {
     id: listing.id,
     slug,
@@ -340,7 +334,7 @@ function summarize(
     city: city || null,
     state: state || null,
     imageUrl: pickImage(listing, included),
-    url: `/l/${slug}/${listing.id}`,
+    url: listingPathWithSlug(slug, listing.id),
     geolocation: listing.attributes.geolocation ?? null,
   };
 }
@@ -470,7 +464,7 @@ export async function fetchShareListing(id: string): Promise<ShareListing | null
       priceCents: Number((x.price as { amount?: number } | undefined)?.amount ?? 0),
     })).filter((x) => x.name);
 
-    const slug = slugify(a.title || "pool");
+    const slug = createSlug(a.title);
     return {
       id: data.id,
       slug,
@@ -490,7 +484,7 @@ export async function fetchShareListing(id: string): Promise<ShareListing | null
       advantages: Array.isArray(pd.advantagesSelection) ? (pd.advantagesSelection as string[]) : [],
       houseRules: Array.isArray(pd.houseRules) ? (pd.houseRules as string[]) : [],
       poolAmenities: Array.isArray(pd.poolAmenities) ? (pd.poolAmenities as string[]) : [],
-      bookUrl: `/l/${slug}/${data.id}`,
+      bookUrl: listingPathWithSlug(slug, data.id),
       geolocation: a.geolocation ?? null,
     };
   } catch (err) {
@@ -615,7 +609,7 @@ export async function fetchListingFromMirror(
       city: row.city ?? null,
       state: row.state_code ?? null,
       imageUrl: preferredImageUrl(row.prnm_primary_image_url, row.primary_image_url, imageSource),
-      url: `/l/${row.slug}/${row.sharetribe_id}`,
+      url: listingPathWithSlug(row.slug, row.sharetribe_id),
       geolocation:
         row.latitude && row.longitude
           ? { lat: Number(row.latitude), lng: Number(row.longitude) }
@@ -704,7 +698,7 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
         city: row.city ?? null,
         state: row.state_code ?? null,
         imageUrl: preferredImageUrl(row.prnm_primary_image_url, row.primary_image_url, imageSource),
-        url: `/l/${row.slug}/${row.sharetribe_id}`,
+        url: listingPathWithSlug(row.slug, row.sharetribe_id),
         geolocation: row.latitude && row.longitude
           ? { lat: Number(row.latitude), lng: Number(row.longitude) }
           : null,

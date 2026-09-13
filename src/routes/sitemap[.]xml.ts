@@ -150,14 +150,14 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("[sitemap] courses count error", err);
         }
 
-        // 2d. Sharetribe listings (mirror in `synced_listings`, served at /l/{slug}/{id})
+        // 2d. Sharetribe listings (mirror in `synced_listings`). Advertised at the
+        // marketplace's canonical /l/{id} — see sitemap-listings[.]xml.ts.
         try {
           const { count: listingCount } = await (supabaseAdmin as any)
             .from("synced_listings")
             .select("*", { count: "exact", head: true })
             .eq("state", "published")
             .eq("is_deleted", false)
-            .not("slug", "is", null)
             .not("sharetribe_id", "is", null);
           if (listingCount && listingCount > 0) {
             const { data: latestListing } = await (supabaseAdmin as any)

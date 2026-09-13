@@ -99,15 +99,26 @@ Severities: **blocking** = cutting over changes what a visitor sees ·
 
 | Field | Sharetribe | `synced_listings` | Why it blocks |
 |---|---|---|---|
-| `slug` | `slugify(title)` — `sharetribe.server.ts:330` | `slugify(\`${title}-${id.slice(0,8)}\`)` — `listing-sync.server.ts:106` | **Different formula.** Every listing gets a different slug depending on source. |
-| `url` | `/l/${slug}/${id}` | same template, different slug | Canonical URL changes per source. SEO-visible, and `sitemap-listings.xml` publishes the mirror's spelling while `/l/` pages built from a Sharetribe read use the other. |
+
 | `imageUrl` host | `sharetribe.imgix.net`, signed | same string, snapshotted at sync time | **Dies with Sharetribe.** See below. |
 | `imageUrl` variant | detail read asks `scaled-large`, `scaled-medium`, `landscape-crop2x` (`sharetribe.server.ts:423`) | sync stored `landscape-crop2x`, `landscape-crop`, `default` (`listing-sync.server.ts:65`) | Same image, different crop and resolution. The detail page renders a visibly different asset. |
 | membership | live query | tombstoned on runs that complete | A run that breaks out of pagination early (`listings.length < PER_PAGE` while more pages remain, `listing-sync.server.ts:207`) tombstones every unseen listing. Mass false-delete risk. |
 
-Two more `slugify` implementations exist and disagree on the empty-title
-fallback: `"pool"` in `sharetribe.server.ts:274`, `"listing"` in
-`listing-sync.server.ts:22`.
+> **Correction (Phase 1c).** An earlier version of this document listed `slug`
+> and `url` as **blocking**, on the reasoning that a differing slug splits the
+> canonical URL. That was wrong, and it was wrong because I inferred it from the
+> code instead of checking production.
+>
+> The marketplace registers **both** `/l/:slug/:id` and `/l/:id`, and its
+> `canonicalRoutePath()` strips the slug. Every listing page emits a slug-less
+> `rel="canonical"`. Verified live — three different slugs for the same id all
+> return 200 with the identical canonical `/l/{id}`. A wrong slug does not 404
+> and does not split indexing.
+>
+> Slug divergence is real but **degraded**, not blocking, and the parity engine
+> now scores it that way. The genuine defect was that our *sitemaps* advertised
+> the non-canonical `/l/{slug}/{id}`. Fixed in
+> [Phase 1c](./SHARETRIBE-PHASE1C-SLUG-RECONCILIATION.md).
 
 ### Degraded
 

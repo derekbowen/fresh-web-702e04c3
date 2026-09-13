@@ -3,6 +3,14 @@ import { getListing } from "@/server/sharetribe.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
+import { canonicalListingPath, canonicalListingUrl } from "@/lib/listing-url";
+
+// NOTE: /l/ is proxied to the marketplace in production, so this route is
+// normally shadowed by nginx. It still must canonicalise the way the
+// marketplace does: it previously echoed params.slug into rel="canonical",
+// the Product JSON-LD url and the breadcrumbs, which means /l/{anything}/{id}
+// would self-canonicalise as a distinct page — unbounded duplicate content the
+// moment this route ever served traffic.
 
 export const Route = createFileRoute("/l/$slug/$id")({
   loader: async ({ params }) => {
@@ -22,7 +30,7 @@ export const Route = createFileRoute("/l/$slug/$id")({
     const meta = buildMeta({
       title,
       description: desc,
-      path: `/l/${params.slug}/${params.id}`,
+      path: canonicalListingPath(params.id),
       image: l.imageUrl,
       type: "product",
     });
@@ -32,7 +40,7 @@ export const Route = createFileRoute("/l/$slug/$id")({
       name: l.title,
       description: desc,
       image: l.imageUrl ? [l.imageUrl] : undefined,
-      url: `${SITE_URL}/l/${params.slug}/${params.id}`,
+      url: canonicalListingUrl(params.id, SITE_URL),
       ...(l.price && {
         offers: {
           "@type": "Offer",
@@ -51,7 +59,7 @@ export const Route = createFileRoute("/l/$slug/$id")({
     const crumbs = breadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "Pool Rentals", path: "/" },
-      { name: l.title, path: `/l/${params.slug}/${params.id}` },
+      { name: l.title, path: canonicalListingPath(params.id) },
     ]);
     return {
       ...meta,
@@ -111,7 +119,7 @@ function ListingPage() {
   const { listing } = Route.useLoaderData();
   const params = Route.useParams();
   const loc = [listing.city, listing.state].filter(Boolean).join(", ");
-  const externalUrl = `https://www.poolrentalnearme.com/l/${params.slug}/${params.id}`;
+  const externalUrl = canonicalListingUrl(params.id, "https://www.poolrentalnearme.com");
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -121,7 +129,7 @@ function ListingPage() {
           items={[
             { name: "Home", path: "/" },
             { name: loc || "Pool Rentals", path: "/" },
-            { name: listing.title, path: `/l/${params.slug}/${params.id}` },
+            { name: listing.title, path: canonicalListingPath(params.id) },
           ]}
         />
 

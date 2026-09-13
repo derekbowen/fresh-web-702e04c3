@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ListingSummary } from "@/server/sharetribe.functions";
+import { listingPathWithSlug } from "@/lib/listing-url";
 
 function formatDistance(miles: number): string {
   if (!Number.isFinite(miles) || miles < 0) return "";
@@ -11,7 +12,7 @@ function formatDistance(miles: number): string {
 export function ListingCard({ listing }: { listing: ListingSummary }) {
   return (
     <a
-      href={`/l/${listing.slug}/${listing.id}`}
+      href={listingPathWithSlug(listing.slug, listing.id)}
       className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
     >
       <div className="aspect-[4/3] overflow-hidden bg-muted">

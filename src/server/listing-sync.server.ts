@@ -4,6 +4,7 @@
  * Server-only.
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { createSlug } from "@/lib/listing-url";
 import {
   integrationGet,
   type STImage,
@@ -13,6 +14,10 @@ import {
 
 const PER_PAGE = 100;
 
+/**
+ * City slugs only. Listing slugs come from createSlug (src/lib/listing-url.ts),
+ * which is the marketplace's own formula — see the note on the slug: field below.
+ */
 function slugify(s: string): string {
   return (
     s
@@ -103,7 +108,12 @@ function toRow(listing: STListing, included: STResponse<unknown>["included"]) {
 
   return {
     sharetribe_id: listing.id,
-    slug: slugify(`${a.title}-${listing.id.slice(0, 8)}`),
+    // Was slugify(`${title}-${id.slice(0,8)}`), which disagreed with the slug
+    // the marketplace itself renders. /l/ is served by the marketplace, so its
+    // createSlug is the authority; a slug we invent here is just a different
+    // URL for the same page. Nothing resolves listings by slug, so changing it
+    // is safe — the next full sync rewrites every row.
+    slug: createSlug(a.title),
     title: a.title ?? "Untitled",
     description: a.description ?? null,
     price_amount: a.price?.amount ?? null,

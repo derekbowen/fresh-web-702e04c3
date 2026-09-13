@@ -262,8 +262,11 @@ describe("field-level parity", () => {
     expect(f[0]?.severity).toBe("degraded");
   });
 
-  test("the real slug divergence between the two sources is caught", () => {
-    // sharetribe.server.ts slugify(title); listing-sync.server.ts slugify(`${title}-${id.slice(0,8)}`)
+  test("slug divergence is still caught, but as degraded rather than blocking", () => {
+    // The two formulas really did disagree. What the audit got wrong was the
+    // severity: the marketplace canonicalises /l/{slug}/{id} to a slug-less
+    // /l/{id}, so every slug variant 200s and consolidates to one canonical.
+    // A mismatch is a consistency defect, not a reason to block a cutover.
     const st = baseSharetribe();
     const mi = baseMirror({
       slug: "sunny-backyard-pool-11111111",
@@ -272,8 +275,16 @@ describe("field-level parity", () => {
     const f = diffListing(st, mi);
     expect(codes(f)).toContain("field-mismatch:slug");
     expect(codes(f)).toContain("field-mismatch:url");
-    expect(byField(f, "slug")[0]?.severity).toBe("blocking");
-    expect(byField(f, "url")[0]?.severity).toBe("blocking");
+    expect(byField(f, "slug")[0]?.severity).toBe("degraded");
+    expect(byField(f, "url")[0]?.severity).toBe("degraded");
+  });
+
+  test("a slug mismatch alone does not make a read unserveable", () => {
+    const f = diffListing(
+      baseSharetribe({ imageUrl: null }),
+      baseMirror({ imageUrl: null, slug: "different-slug" }),
+    );
+    expect(buildParityReport("t", 1, f).mirrorCanServe).toBe(true);
   });
 
   test("a field the mirror omits entirely is reported", () => {

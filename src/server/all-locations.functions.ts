@@ -5,6 +5,7 @@
  * category. Uses supabaseAdmin (service role) because content_pages has no
  * public SELECT grants.
  */
+import { listingPathWithSlug } from "@/lib/listing-url";
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
@@ -176,7 +177,7 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
         const links = data
           .filter((l) => l.slug && l.sharetribe_id)
           .map((l) => ({
-            href: `/l/${l.slug}/${l.sharetribe_id}`,
+            href: listingPathWithSlug(l.slug, l.sharetribe_id),
             label: l.title,
             sub: [l.city, l.state_code].filter(Boolean).join(", ") || null,
           }));
