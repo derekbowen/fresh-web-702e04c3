@@ -314,9 +314,9 @@ function WinterPoolCard({ listing }: { listing: WinterListing }) {
   return (
     <a
       href={`/l/${listing.slug}/${listing.id}`}
-      className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
     >
-      <div className="aspect-[4/3] overflow-hidden bg-muted">
+      <div className="aspect-[4/3] w-full shrink-0 overflow-hidden bg-muted">
         {listing.imageUrl ? (
           <img
             src={listing.imageUrl}
@@ -331,7 +331,7 @@ function WinterPoolCard({ listing }: { listing: WinterListing }) {
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">No photo yet</div>
         )}
       </div>
-      <div className="p-4">
+      <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">
           <h3 className="line-clamp-1 text-base font-semibold text-foreground">{listing.title}</h3>
           {hasReviews && (
@@ -344,7 +344,7 @@ function WinterPoolCard({ listing }: { listing: WinterListing }) {
         <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
           {[place || null, listing.guests ? `Fits ${listing.guests}` : null].filter(Boolean).join(" · ")}
         </p>
-        <div className="mt-3 flex items-center justify-between gap-3">
+        <div className="mt-auto flex items-center justify-between gap-3 pt-3">
           {listing.allInCents != null ? (
             <p className="text-sm font-semibold text-foreground">
               from {formatAllIn(listing.allInCents)}
@@ -412,7 +412,7 @@ function FeaturedWinterPools({ listings }: { listings: WinterListing[] }) {
         </h2>
         <p className="mt-2 text-muted-foreground">Prices are per hour with every fee included.</p>
         {listings.length > 0 ? (
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {listings.map((l) => (
               <ErrorBoundary key={l.id} name={`WinterPoolCard:${l.id}`} fallback={null}>
                 <WinterPoolCard listing={l} />
