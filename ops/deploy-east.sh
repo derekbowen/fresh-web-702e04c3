@@ -10,7 +10,7 @@
 #   4. smoke the new build on a spare port with .env loaded
 #   5. pm2 restart
 #   6. production must report HEAD at /fw-assets/__build.json
-#   7. verify:production (the four live invariants)
+#   7. verify:production (the live invariants) + check:price-variants
 #   8. only now write .deployed-sha               -> it is an attestation
 #   9. check:production-drift as the closing gate
 #
@@ -110,6 +110,11 @@ BASE_URL="$BASE" EXPECTED_SHA="$HEAD" npm run --silent check:deployed-sha \
 say "7. verify:production"
 BASE_URL="$BASE" npm run --silent verify:production \
   || { restore_dist; die "verify:production failed against the new build"; }
+
+# ---- 7b. tiered listings must offer their tiers -----------------------------
+say "7b. check:price-variants"
+npm run --silent check:price-variants \
+  || { restore_dist; die "a tiered listing is not offering its tiers"; }
 
 # ---- 8. attest -------------------------------------------------------------
 say "8. record the verified deploy"

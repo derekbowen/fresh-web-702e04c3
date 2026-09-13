@@ -25,7 +25,8 @@
     "postbuild": "node scripts/stamp-build.mjs",
     "check:deployed-sha": "node scripts/check-deployed-sha.mjs",
     "check:production-drift": "node scripts/check-production-drift.mjs",
-    "verify:deploy": "npm run verify:production && npm run check:production-drift"
+    "verify:deploy": "npm run verify:production && npm run check:price-variants && npm run check:production-drift",
+    "check:price-variants": "node scripts/check-price-variants.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
