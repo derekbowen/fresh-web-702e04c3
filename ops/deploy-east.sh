@@ -117,9 +117,17 @@ BASE_URL="$BASE" npm run --silent verify:production \
   || { restore_dist; die "verify:production failed against the new build"; }
 
 # ---- 7b. tiered listings must offer their tiers -----------------------------
+# Run it with .env loaded: the Integration API credentials live there, and
+# without them the check reports SKIPPED — which, on the deploy path, is a gate
+# that silently passes. A skip here is treated as a failure.
 say "7b. check:price-variants"
-npm run --silent check:price-variants \
-  || { restore_dist; die "a tiered listing is not offering its tiers"; }
+PV_OUT=$(node --env-file="$REPO/.env" "$REPO/scripts/check-price-variants.mjs" 2>&1) || {
+  echo "$PV_OUT"; restore_dist; die "a tiered listing is not offering its tiers"
+}
+echo "$PV_OUT"
+case "$PV_OUT" in
+  *SKIPPED*) restore_dist; die "check:price-variants skipped — Integration API credentials missing from $REPO/.env; the gate would not have enforced anything" ;;
+esac
 
 # ---- 8. attest -------------------------------------------------------------
 say "8. record the verified deploy"
