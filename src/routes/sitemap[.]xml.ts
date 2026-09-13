@@ -66,10 +66,7 @@ let indexInFlight: Promise<string> | null = null;
 
 type CountResult = { count: number | null; error: unknown };
 
-const countRows = async (
-  table: string,
-  apply: (q: any) => any,
-): Promise<CountResult> => {
+const countOnce = async (table: string, apply: (q: any) => any): Promise<CountResult> => {
   try {
     const { count, error } = await apply(
       (supabaseAdmin as any).from(table).select("*", { count: "exact", head: true }),
@@ -78,6 +75,35 @@ const countRows = async (
   } catch (err) {
     return { count: null, error: err };
   }
+};
+
+/**
+ * One retry, because these counts fail intermittently and a failure is not
+ * cosmetic: a missing count costs the index that group's ?page=N entries, and
+ * before the page-1 fallback existed it cost the group entirely.
+ */
+const countRows = async (table: string, apply: (q: any) => any): Promise<CountResult> => {
+  const first = await countOnce(table, apply);
+  if (!first.error) return first;
+  console.warn(`[sitemap] count on ${table} failed, retrying once`, first.error);
+  return countOnce(table, apply);
+};
+
+/**
+ * Sequential, on purpose. Running all eleven counts through Promise.all made
+ * the index FASTER and LESS RELIABLE: concurrent `count: "exact"` scans contend,
+ * some return an empty-message error, and the index then shipped without those
+ * groups' pagination — observed live as /sitemap.xml alternating between 1602
+ * and 1257 bytes, the difference being host-acquisition pages 2-4.
+ *
+ * Since the index is now built behind a stale-while-revalidate cache and warmed
+ * at boot, NOTHING waits on this function. Latency here is free; a wrong index
+ * is not. So the counts go one at a time.
+ */
+const inSeries = async <T, R>(items: T[], fn: (item: T) => Promise<R>): Promise<R[]> => {
+  const out: R[] = [];
+  for (const item of items) out.push(await fn(item));
+  return out;
 };
 
 async function buildIndexXml(): Promise<string> {
@@ -92,21 +118,22 @@ async function buildIndexXml(): Promise<string> {
   // Pool pros directory sitemap removed 2026-07-06: the /p/pool-pros tree
   // is noindexed (see commit b8672f38), so it must not be advertised in sitemaps.
 
-  // ---- every count in one wave -------------------------------------
-  const [groupCounts, blogCount, blogLatest, listingCount, listingLatest] =
+  // ---- every count, one at a time (see inSeries above) ----------------
+  const groupCounts = await inSeries(TEMPLATE_GROUPS, (group) =>
+    countRows("content_pages", (q: any) =>
+      q
+        .in("template_type", group.templateTypes)
+        .eq("in_sitemap", true)
+        .eq("status", "published")
+        .is("redirect_to", null)
+        .not("slug", "is", null),
+    ),
+  );
+  // These four are a different shape each (two counts, two lastmod lookups) and
+  // hit three different tables, so they do not contend the way nine identical
+  // content_pages scans did. They stay concurrent.
+  const [blogCount, blogLatest, listingCount, listingLatest] =
     await Promise.all([
-      Promise.all(
-        TEMPLATE_GROUPS.map((group) =>
-          countRows("content_pages", (q: any) =>
-            q
-              .in("template_type", group.templateTypes)
-              .eq("in_sitemap", true)
-              .eq("status", "published")
-              .is("redirect_to", null)
-              .not("slug", "is", null),
-          ),
-        ),
-      ),
       countRows("blog_posts", (q: any) => q.eq("is_published", true)),
       (async () => {
         try {
