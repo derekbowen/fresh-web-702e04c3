@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   searchListings,
@@ -395,13 +395,14 @@ const WINTER_CACHE_MS = 60_000;
 
 export const getWinterHomeData = createServerFn({ method: "GET" }).handler(
   async (): Promise<WinterHomeData> => {
-    // Preview-only response headers: never cache this render, never index it.
-    try {
-      setResponseHeader("cache-control", "no-store, max-age=0");
-      setResponseHeader("x-robots-tag", "noindex, nofollow");
-    } catch (err) {
-      console.warn("winter preview: could not set response headers:", err);
-    }
+    // This used to set `cache-control: no-store` and `x-robots-tag: noindex,
+    // nofollow` unconditionally, because it only ever served /?preview=winter.
+    // It is now the PRODUCTION homepage loader, and those two headers would
+    // have deindexed / and killed its caching the moment it was promoted — a
+    // response header no meta-tag change could have overridden. They are gone
+    // on purpose. Indexability is decided by host in src/start.ts (preview
+    // hosts get noindex, unknown hosts default to indexable); the classic
+    // homepage at /?preview=classic carries its own noindex from the route.
     if (winterCache && Date.now() - winterCache.at < WINTER_CACHE_MS) return winterCache.data;
     const safe = async <T,>(p: Promise<T>, label: string, fallback: T): Promise<T> => {
       try {

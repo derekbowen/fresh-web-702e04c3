@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useRouterState } from "@tanstack/react-router";
 // Header/footer use plain <a> tags instead of TanStack <Link> to avoid React #418
 // hydration mismatches: Link auto-applies class="active" + data-status="active" +
 // aria-current="page" when its `to` matches the router's current path. Through the
@@ -133,13 +132,13 @@ function NavAnchor({
 
 function SiteHeaderInner({ isAuthed, hideMobileBar = false }: { isAuthed: boolean; hideMobileBar?: boolean }) {
   const [open, setOpen] = React.useState(false);
-  // The winter homepage (/?preview=winter, home-page-winter.tsx) renders its own
-  // dismissable bar. Search params are identical on server and client, so this
-  // cannot cause a hydration mismatch (unlike pathname through the nginx proxy).
-  const isWinterPreview = useRouterState({
-    select: (st) => (st.location.search as { preview?: string }).preview === "winter",
-  });
-  const hideBar = hideMobileBar || isWinterPreview;
+  // The winter homepage renders its own dismissable bottom bar, so the global
+  // mobile bar must not double up on it. This used to be detected here by
+  // reading `?preview=winter` off the router; that stopped working the moment
+  // the winter page became the default render at `/` and the param went away,
+  // which would have shipped TWO stacked bars to the live homepage. The caller
+  // decides now — see __root.tsx, which owns the only rendered SiteHeader.
+  const hideBar = hideMobileBar;
   const [accountOpen, setAccountOpen] = React.useState(false);
   const close = React.useCallback(() => setOpen(false), []);
   const accountRef = React.useRef<HTMLDivElement | null>(null);
