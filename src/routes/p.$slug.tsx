@@ -126,7 +126,12 @@ export const Route = createFileRoute("/p/$slug")({
         params.slug === "become-a-pool-host"
       ) {
         void log404({ data: { urlPath: `/p/${params.slug}`, slug: params.slug } });
-        throw redirect({ href: "https://www.poolrentalnearme.com/become-a-host", statusCode: 301, replace: true });
+        // The target is `/p/become-a-host`, NOT `/become-a-host`. This pointed
+        // at the bare path and that path is a 404 (verified 2026-09-13:
+        // /become-a-host -> 404, /p/become-a-host -> 200), so the rescue above
+        // was 301-ing every one of those 501 prospective hosts from one dead
+        // end to another. Relative, so it cannot drift from the origin either.
+        throw redirect({ href: "/p/become-a-host", statusCode: 301, replace: true });
       }
       void log404({ data: { urlPath: `/p/${params.slug}`, slug: params.slug } });
       throw notFound();
