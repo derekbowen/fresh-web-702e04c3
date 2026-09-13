@@ -5,9 +5,13 @@
 # every gate before it has passed:
 #
 #   1. the working tree must be clean            -> production always has a real SHA
+#   1b. typecheck                                -> `vite build` never typechecks,
+#       so an undefined identifier used to reach production and throw at render
 #   2. build (npm postbuild stamps dist/client/fw-assets/__build.json)
 #   3. the stamp must equal HEAD and be dirty=0  -> the stamp is honest
-#   4. smoke the new build on a spare port with .env loaded
+#   4. smoke the new build on a spare port with .env loaded, asserting CONTENT
+#       (an <h1> and real markup) and not merely a 200 — a page that throws
+#       during render still answers 200 with a well-formed shell
 #   5. pm2 restart
 #   6. production must report HEAD at /fw-assets/__build.json
 #   7. verify:production (the live invariants) + check:price-variants
@@ -59,6 +63,14 @@ HEAD=$($GIT rev-parse HEAD)
 TREE=$($GIT rev-parse 'HEAD^{tree}')
 echo "clean at $HEAD (tree $TREE)"
 
+# ---- 1b. typecheck ---------------------------------------------------------
+# `npm run build` is `vite build`: esbuild strips types and never checks them.
+# On 2026-09-13 `useRef` was used but not imported, the build passed, and the
+# homepage threw ReferenceError on every render while still returning 200 — so
+# every downstream gate passed too. This runs before the build on purpose.
+say "1b. typecheck"
+npm run --silent check:types || die "typecheck failed — fix it before building"
+
 # ---- 2. build --------------------------------------------------------------
 say "2. build"
 [ -d "$REPO/dist" ] && { rm -rf "$PREV"; cp -a "$REPO/dist" "$PREV"; echo "previous dist/ saved to $PREV"; }
@@ -86,9 +98,30 @@ done
 # EAST-served routes only. /s and /l/* belong to the marketplace on WEST and
 # are 404 here by design — smoking them would abort every deploy.
 for p in / /p/pool-host-tools /p/corpus-christi-pool-rental-laws; do
-  code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$SMOKE_PORT$p")
-  echo "  $p -> $code"
-  [ "$code" = "200" ] || { kill $SMOKE_PID 2>/dev/null || true; restore_dist; die "smoke $p returned $code"; }
+  body=$(mktemp)
+  code=$(curl -s -o "$body" -w '%{http_code}' "http://127.0.0.1:$SMOKE_PORT$p")
+  bytes=$(wc -c < "$body" | tr -d ' ')
+  h1s=$(grep -o '<h1' "$body" | wc -l | tr -d ' ')
+  echo "  $p -> $code  ${bytes}B  h1=$h1s"
+  # NB: plain `cond && cond && assign` chains are not safe here. Under
+  # `set -e` a chain whose last test is simply FALSE returns non-zero and kills
+  # the script, so every check below is a real if-block.
+  fail=""
+  if [ "$code" != "200" ]; then
+    fail="returned $code"
+  # A render that throws still answers 200 with a valid shell. Every page here
+  # is a content page and must carry exactly one non-empty <h1>.
+  elif [ "$h1s" -lt 1 ]; then
+    fail="returned 200 but rendered no <h1> (shell render)"
+  elif [ "$h1s" -gt 1 ]; then
+    fail="rendered $h1s <h1> elements, expected 1"
+  elif [ "$bytes" -lt 20000 ]; then
+    fail="only ${bytes} bytes — looks like a shell render"
+  elif grep -q 'Something went wrong loading this section' "$body"; then
+    fail="an ErrorBoundary fallback is visible"
+  fi
+  rm -f "$body"
+  [ -z "$fail" ] || { kill $SMOKE_PID 2>/dev/null || true; restore_dist; die "smoke $p $fail"; }
 done
 kill $SMOKE_PID 2>/dev/null || true
 trap - EXIT

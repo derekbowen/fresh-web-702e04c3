@@ -1,0 +1,6 @@
+{
+  "src/routes/p.pool-party-rentals.tsx|TS2322": 1,
+  "src/routes/p.pool-rental-app.tsx|TS2322": 1,
+  "src/routes/p.pool-rental-permits-by-state.tsx|TS2322": 2,
+  "src/routes/p.private-pool-rental.tsx|TS2322": 1
+}
