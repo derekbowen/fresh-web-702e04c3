@@ -314,7 +314,7 @@ function WinterPoolCard({ listing }: { listing: WinterListing }) {
   return (
     <a
       href={`/l/${listing.slug}/${listing.id}`}
-      className="group relative block w-[82vw] max-w-[340px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg md:w-auto md:max-w-none"
+      className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
     >
       <div className="aspect-[4/3] overflow-hidden bg-muted">
         {listing.imageUrl ? (
@@ -412,7 +412,7 @@ function FeaturedWinterPools({ listings }: { listings: WinterListing[] }) {
         </h2>
         <p className="mt-2 text-muted-foreground">Prices are per hour with every fee included.</p>
         {listings.length > 0 ? (
-          <div className="-mx-4 mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
             {listings.map((l) => (
               <ErrorBoundary key={l.id} name={`WinterPoolCard:${l.id}`} fallback={null}>
                 <WinterPoolCard listing={l} />
@@ -440,9 +440,9 @@ function BrowseRow() {
     <section aria-label="Browse pools" className="border-y border-border bg-secondary/20">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h2 className="text-lg font-bold tracking-tight text-foreground">Browse by what you're planning</h2>
-        <ul className="-mx-4 mt-3 flex snap-x gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+        <ul className="mt-3 flex flex-wrap gap-2">
           {BROWSE_CHIPS.map((c) => (
-            <li key={c.label} className="shrink-0 snap-start">
+            <li key={c.label}>
               <a
                 href={c.href}
                 className="inline-flex min-h-11 items-center rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
