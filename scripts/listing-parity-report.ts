@@ -148,7 +148,9 @@ async function main() {
   }
 
   // ── Image durability summary ───────────────────────────────────────────────
-  const sharetribeHosted = imageUrls.filter((u) => classifyImageUrl(u).diesWithSharetribe);
+  const facts = imageUrls.map((u) => classifyImageUrl(u));
+  const sharetribeHosted = facts.filter((f) => f.diesWithSharetribe);
+  const prnmHosted = facts.filter((f) => f.prnmHosted);
   const imageIds = sharetribeImageIds(imageUrls);
 
   const report = buildParityReport(
@@ -166,6 +168,7 @@ async function main() {
           images: {
             urlsSeen: imageUrls.length,
             sharetribeHosted: sharetribeHosted.length,
+            prnmHosted: prnmHosted.length,
             distinctSharetribeImageIds: imageIds.length,
             imageIds,
           },
@@ -186,13 +189,17 @@ async function main() {
     }
     console.log("");
     console.log("Images:");
-    console.log(`  URLs seen:                       ${imageUrls.length}`);
+    const pct = imageUrls.length
+      ? ((prnmHosted.length / imageUrls.length) * 100).toFixed(1)
+      : "0.0";
+    console.log(`  URLs seen:                          ${imageUrls.length}`);
+    console.log(`  PRNM-hosted (survive cutover):      ${prnmHosted.length}  (${pct}%)`);
     console.log(`  Sharetribe-hosted (die at cutover): ${sharetribeHosted.length}`);
     console.log(`  Distinct Sharetribe image UUIDs:    ${imageIds.length}`);
-    console.log(
-      "  Those UUIDs are the Phase 1b download worklist — the bytes are only fetchable while",
-    );
-    console.log("  Sharetribe still serves them.");
+    if (sharetribeHosted.length > 0) {
+      console.log("  Those UUIDs are the Phase 1b worklist — the bytes are only fetchable while");
+      console.log("  Sharetribe still serves them. Run: bun run rehost:images");
+    }
   }
 
   const gate = report.bySeverity.blocking + report.bySeverity.unsupported;

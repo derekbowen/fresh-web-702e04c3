@@ -31,6 +31,11 @@ const IMG_B = "6a728312-0de2-4766-8144-d45e538c24b1";
 const stImage = (imageId: string, variantQuery = "auto=format&fit=crop&h=480&w=480") =>
   `https://${SHARETRIBE_IMAGE_HOST}/${MARKETPLACE}/${imageId}?${variantQuery}&s=4a0a4df147d7228754c0f7b1fb92b5eb`;
 
+const LISTING_ID = "11111111-1111-4111-8111-111111111111";
+/** The same picture after Phase 1b: our bucket, image UUID kept in the filename. */
+const prnmImage = (imageId: string) =>
+  `https://ptfjspcphskifoseidut.supabase.co/storage/v1/object/public/listing-images/${LISTING_ID}/${imageId}.jpg`;
+
 /** A listing as the Sharetribe read returns it. */
 const baseSharetribe = (over: ListingLike = {}): ListingLike => ({
   id: "11111111-1111-4111-8111-111111111111",
@@ -163,11 +168,61 @@ describe("image classification — the migration blocker", () => {
     expect(f.imageId).toBeNull();
   });
 
-  test("every listing with a hero image raises a blocking durability finding", () => {
+  test("a listing whose mirror image is still on imgix raises exactly one blocking finding", () => {
     const f = diffListing(baseSharetribe(), baseMirror());
     const durability = f.filter((x) => x.code === "image-host-dies-with-sharetribe");
-    expect(durability.length).toBeGreaterThan(0);
-    expect(durability.every((x) => x.severity === "blocking")).toBe(true);
+    expect(durability).toHaveLength(1);
+    expect(durability[0]!.severity).toBe("blocking");
+    expect(durability[0]!.field).toBe("imageUrl.mirror");
+  });
+
+  test("durability is asked only of the mirror — the Sharetribe side dying is a tautology", () => {
+    // Mirror re-hosted, Sharetribe still on imgix. The Sharetribe URL obviously
+    // dies with Sharetribe; that is the point of leaving, not a finding.
+    const f = diffListing(
+      baseSharetribe({ imageUrl: stImage(IMG_A) }),
+      baseMirror({ imageUrl: prnmImage(IMG_A) }),
+    );
+    expect(f.filter((x) => x.code === "image-host-dies-with-sharetribe")).toEqual([]);
+  });
+
+  test("a re-hosted image reads as success, not a mismatch, and never blocks", () => {
+    const f = diffListing(
+      baseSharetribe({ imageUrl: stImage(IMG_A) }),
+      baseMirror({ imageUrl: prnmImage(IMG_A) }),
+    );
+    const rehosted = f.filter((x) => x.code === "image-rehosted-to-prnm");
+    expect(rehosted).toHaveLength(1);
+    expect(rehosted[0]!.severity).toBe("cosmetic");
+    expect(f.some((x) => x.severity === "blocking")).toBe(false);
+    // The parity gate must let the migration land.
+    expect(buildParityReport("t", 1, f).mirrorCanServe).toBe(true);
+  });
+
+  test("the image UUID is recovered from a re-hosted path, so same-picture is provable", () => {
+    const facts = classifyImageUrl(prnmImage(IMG_A));
+    expect(facts.prnmHosted).toBe(true);
+    expect(facts.imageId).toBe(IMG_A);
+    expect(facts.diesWithSharetribe).toBe(false);
+    expect(facts.marketplaceId).toBeNull();
+  });
+
+  test("a re-host pointing at a DIFFERENT picture is still a mismatch", () => {
+    const f = diffListing(
+      baseSharetribe({ imageUrl: stImage(IMG_A) }),
+      baseMirror({ imageUrl: prnmImage(IMG_B) }),
+    );
+    expect(f.map((x) => x.code)).toContain("image-mismatch");
+    expect(f.map((x) => x.code)).not.toContain("image-rehosted-to-prnm");
+  });
+
+  test("a mirror with no image at all is still blocking, re-host or not", () => {
+    const f = diffListing(
+      baseSharetribe({ imageUrl: stImage(IMG_A) }),
+      baseMirror({ imageUrl: null }),
+    );
+    const imageFindings = f.filter((x) => x.field === "imageUrl");
+    expect(imageFindings[0]!.severity).toBe("blocking");
   });
 });
 

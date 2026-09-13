@@ -16,7 +16,9 @@
     "check:breadcrumbs": "bun scripts/check-breadcrumb-jsonld.mjs",
     "format": "prettier --write .",
     "test": "bun test",
-    "parity:listings": "bun scripts/listing-parity-report.ts"
+    "parity:listings": "bun scripts/listing-parity-report.ts",
+    "rehost:images": "bun scripts/rehost-listing-images.ts",
+    "rehost:images:progress": "bun scripts/rehost-listing-images.ts --progress"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

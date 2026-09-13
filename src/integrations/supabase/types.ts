@@ -3244,6 +3244,63 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_image_assets: {
+        Row: {
+          attempts: number
+          bytes: number | null
+          content_type: string | null
+          created_at: string
+          last_error: string | null
+          listing_st_id: string
+          position: number
+          public_url: string | null
+          sha256: string | null
+          sharetribe_image_id: string
+          source_url: string | null
+          source_variant: string | null
+          status: Database["public"]["Enums"]["listing_image_status"]
+          storage_path: string | null
+          stored_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          bytes?: number | null
+          content_type?: string | null
+          created_at?: string
+          last_error?: string | null
+          listing_st_id: string
+          position?: number
+          public_url?: string | null
+          sha256?: string | null
+          sharetribe_image_id: string
+          source_url?: string | null
+          source_variant?: string | null
+          status?: Database["public"]["Enums"]["listing_image_status"]
+          storage_path?: string | null
+          stored_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          bytes?: number | null
+          content_type?: string | null
+          created_at?: string
+          last_error?: string | null
+          listing_st_id?: string
+          position?: number
+          public_url?: string | null
+          sha256?: string | null
+          sharetribe_image_id?: string
+          source_url?: string | null
+          source_variant?: string | null
+          status?: Database["public"]["Enums"]["listing_image_status"]
+          storage_path?: string | null
+          stored_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       listing_sync_log: {
         Row: {
           created_at: string
@@ -5211,6 +5268,9 @@ export type Database = {
           price_amount: number | null
           price_currency: string | null
           primary_image_url: string | null
+          prnm_image_urls: string[]
+          prnm_images_synced_at: string | null
+          prnm_primary_image_url: string | null
           public_data: Json
           sharetribe_id: string
           slug: string
@@ -5240,6 +5300,9 @@ export type Database = {
           price_amount?: number | null
           price_currency?: string | null
           primary_image_url?: string | null
+          prnm_image_urls?: string[]
+          prnm_images_synced_at?: string | null
+          prnm_primary_image_url?: string | null
           public_data?: Json
           sharetribe_id: string
           slug: string
@@ -5269,6 +5332,9 @@ export type Database = {
           price_amount?: number | null
           price_currency?: string | null
           primary_image_url?: string | null
+          prnm_image_urls?: string[]
+          prnm_images_synced_at?: string | null
+          prnm_primary_image_url?: string | null
           public_data?: Json
           sharetribe_id?: string
           slug?: string
@@ -5522,6 +5588,7 @@ export type Database = {
         | "not_interested"
         | "converted"
         | "do_not_contact"
+      listing_image_status: "pending" | "stored" | "failed" | "unavailable"
       lead_source: "host_lead" | "ig_lead" | "social_lead" | "provider_lead"
       security_alert_category:
         | "off_platform"
@@ -5689,6 +5756,7 @@ export const Constants = {
         "converted",
         "do_not_contact",
       ],
+      listing_image_status: ["pending", "stored", "failed", "unavailable"],
       lead_source: ["host_lead", "ig_lead", "social_lead", "provider_lead"],
       security_alert_category: [
         "off_platform",

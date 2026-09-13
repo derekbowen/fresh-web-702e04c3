@@ -20,6 +20,9 @@
  * Use `integrationGet` / `integrationPost` for Integration API calls.
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+// Phase 1b: which image URL the mirror serves. Defaults to the Sharetribe URL,
+// so this is inert until PRNM_IMAGE_SOURCE=prnm is set.
+import { preferredImageUrl, resolveImageSource } from "@/lib/listing-images";
 
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
 const INTEGRATION_API_BASE = "https://flex-integ-api.sharetribe.com";
@@ -583,7 +586,7 @@ export async function fetchListingFromMirror(
     const { data, error } = await supabaseAdmin
       .from("synced_listings")
       .select(
-        "sharetribe_id, slug, title, description, price_amount, price_currency, city, state_code, primary_image_url, latitude, longitude, author_id, state, is_deleted, public_data, metadata",
+        "sharetribe_id, slug, title, description, price_amount, price_currency, city, state_code, primary_image_url, prnm_primary_image_url, latitude, longitude, author_id, state, is_deleted, public_data, metadata",
       )
       .eq("sharetribe_id", id)
       .maybeSingle();
@@ -598,6 +601,8 @@ export async function fetchListingFromMirror(
     // Same gate as fetchListing: never expose draft / closed / deleted rows.
     if (row.state !== "published" || row.is_deleted === true) return null;
 
+    const imageSource = resolveImageSource().source;
+
     return {
       id: row.sharetribe_id,
       slug: row.slug,
@@ -609,7 +614,7 @@ export async function fetchListingFromMirror(
           : null,
       city: row.city ?? null,
       state: row.state_code ?? null,
-      imageUrl: row.primary_image_url ?? null,
+      imageUrl: preferredImageUrl(row.prnm_primary_image_url, row.primary_image_url, imageSource),
       url: `/l/${row.slug}/${row.sharetribe_id}`,
       geolocation:
         row.latitude && row.longitude
@@ -659,7 +664,10 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
     const to = from + perPage - 1;
     let query = supabaseAdmin
       .from("synced_listings")
-      .select("sharetribe_id, slug, title, description, price_amount, price_currency, city, state_code, primary_image_url, latitude, longitude", { count: "exact" })
+      .select(
+        "sharetribe_id, slug, title, description, price_amount, price_currency, city, state_code, primary_image_url, prnm_primary_image_url, latitude, longitude",
+        { count: "exact" },
+      )
       .eq("state", "published")
       .eq("is_deleted", false);
     if (opts.citySlug) query = query.eq("city_slug", opts.citySlug);
@@ -681,6 +689,9 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
         `[searchSyncedListings] zero rows for stateCode="${normalizedState}" — mirror likely missing state_code values`,
       );
     }
+    // Resolved once per query, not once per row.
+    const imageSource = resolveImageSource().source;
+
     return {
       listings: rows.map((row) => ({
         id: row.sharetribe_id,
@@ -692,7 +703,7 @@ async function searchSyncedListings(opts: SearchOptions): Promise<{
           : null,
         city: row.city ?? null,
         state: row.state_code ?? null,
-        imageUrl: row.primary_image_url ?? null,
+        imageUrl: preferredImageUrl(row.prnm_primary_image_url, row.primary_image_url, imageSource),
         url: `/l/${row.slug}/${row.sharetribe_id}`,
         geolocation: row.latitude && row.longitude
           ? { lat: Number(row.latitude), lng: Number(row.longitude) }

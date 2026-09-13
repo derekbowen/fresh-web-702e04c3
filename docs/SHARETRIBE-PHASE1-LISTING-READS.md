@@ -173,11 +173,12 @@ So:
 `bun run parity:listings` prints the count of distinct Sharetribe image UUIDs
 seen. That number is the size of the Phase 1b download job.
 
-**This is not fixable by any amount of mirror work.** It needs a byte migration:
-download every original, re-host on PRNM storage + CDN, add
-`synced_listings.prnm_image_urls`, backfill, and serve from PRNM with imgix as
-fallback. Until that lands, `mirror` mode is as exposed to a Sharetribe outage as
-`sharetribe` mode is.
+**This is not fixable by any amount of mirror work.** It needs a byte migration,
+which is now built: see **[Phase 1b](./SHARETRIBE-PHASE1B-IMAGE-REHOST.md)** —
+`listing_image_assets`, `synced_listings.prnm_image_urls`, the
+`PRNM_IMAGE_SOURCE` flag and `bun run rehost:images`. Until that worker has
+actually run, `mirror` mode is as exposed to a Sharetribe outage as `sharetribe`
+mode is.
 
 ---
 
@@ -207,6 +208,8 @@ report.
    identically.
 4. Fix the early-break tombstone in `runListingSync` before trusting mirror
    membership.
-5. Re-host images (Phase 1b). Until then the mirror is not a Sharetribe-outage hedge.
+5. Re-host images — [Phase 1b](./SHARETRIBE-PHASE1B-IMAGE-REHOST.md) is built;
+   it needs a first real run on EAST. Until then the mirror is not a
+   Sharetribe-outage hedge.
 6. Add PostGIS + FTS indexes so `origin`/`bounds`/`keywords` stop being unsupported.
 7. Only then flip `PRNM_LISTING_READ_SOURCE=mirror`, one route at a time.

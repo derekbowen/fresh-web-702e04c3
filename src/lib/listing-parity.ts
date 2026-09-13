@@ -11,6 +11,8 @@
  * would hide exactly the divergence this harness exists to find.
  */
 
+import { isPrnmHostedImageUrl } from "./listing-images";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Findings
 // ─────────────────────────────────────────────────────────────────────────────
@@ -68,6 +70,8 @@ export interface ImageUrlFacts {
   marketplaceId: string | null;
   /** Sharetribe image UUID from the path — the only durable handle we persist. */
   imageId: string | null;
+  /** True when the bytes are already served from PRNM-owned Supabase Storage. */
+  prnmHosted: boolean;
   /**
    * True when the URL dies with Sharetribe. A signed, Sharetribe-hosted URL
    * cannot be re-signed by us and the bytes cannot be re-fetched afterwards, so
@@ -95,6 +99,7 @@ export function classifyImageUrl(url: unknown): ImageUrlFacts {
     signed: false,
     marketplaceId: null,
     imageId: null,
+    prnmHosted: false,
     diesWithSharetribe: false,
   };
 
@@ -109,12 +114,22 @@ export function classifyImageUrl(url: unknown): ImageUrlFacts {
 
   const host = parsed.host.toLowerCase();
   const sharetribeHosted = host === SHARETRIBE_IMAGE_HOST || host.endsWith(".sharetribe.com");
+  const prnmHosted = isPrnmHostedImageUrl(url);
   const signed = parsed.searchParams.has("s");
 
-  // Path is /{marketplaceId}/{imageId}
   const segments = parsed.pathname.split("/").filter(Boolean);
+
+  // Sharetribe path is /{marketplaceId}/{imageId}.
   const marketplaceId = segments[0] && UUID_RE.test(segments[0]) ? segments[0] : null;
-  const imageId = segments[1] && UUID_RE.test(segments[1]) ? segments[1] : null;
+  let imageId = segments[1] && UUID_RE.test(segments[1]) ? segments[1] : null;
+
+  // A re-hosted object is .../listing-images/{listingId}/{imageId}.{ext}, so the
+  // Sharetribe image UUID survives in the filename. Recovering it is what lets
+  // the diff tell "same picture, now ours" from "two different pictures".
+  if (prnmHosted && !imageId) {
+    const stem = (segments[segments.length - 1] ?? "").replace(/\.[a-z0-9]+$/i, "");
+    if (UUID_RE.test(stem)) imageId = stem;
+  }
 
   return {
     ...base,
@@ -123,6 +138,7 @@ export function classifyImageUrl(url: unknown): ImageUrlFacts {
     signed,
     marketplaceId,
     imageId,
+    prnmHosted,
     diesWithSharetribe: sharetribeHosted,
   };
 }
@@ -446,6 +462,25 @@ function diffImages(st: ListingLike, mi: ListingLike, path: string): ParityFindi
     // asset on the page (different dimensions and crop), so it is degraded
     // rather than cosmetic.
     const sameImage = !!stFacts.imageId && !!miFacts.imageId && stFacts.imageId === miFacts.imageId;
+
+    // Phase 1b's intended end state: Sharetribe still serves imgix, the mirror
+    // now serves the same picture from our own storage. The URLs differ by
+    // design, so this is success, not a defect — and it must never read as
+    // blocking or the parity gate would refuse to let the migration land.
+    if (sameImage && miFacts.prnmHosted && !stFacts.prnmHosted) {
+      out.push({
+        field: p("imageUrl"),
+        severity: "cosmetic",
+        code: "image-rehosted-to-prnm",
+        sharetribe: stUrl,
+        mirror: miUrl,
+        detail:
+          `Image ${miFacts.imageId} has been re-hosted: Sharetribe still serves it from ` +
+          `${stFacts.host}, the mirror serves the same picture from PRNM storage. This URL ` +
+          "survives Sharetribe being switched off.",
+      });
+    }
+
     out.push({
       field: p("imageUrl"),
       severity: stUrl == null || miUrl == null ? "blocking" : "degraded",
@@ -464,25 +499,27 @@ function diffImages(st: ListingLike, mi: ListingLike, path: string): ParityFindi
     });
   }
 
-  // Durability: independent of whether the two sources agree.
-  for (const [label, value] of [
-    ["sharetribe", stUrl],
-    ["mirror", miUrl],
-  ] as const) {
-    if (value == null) continue;
-    const facts = classifyImageUrl(value);
+  // Durability, asked only of the MIRROR's URL.
+  //
+  // The Sharetribe read's URL dying with Sharetribe is a tautology, not a
+  // finding — we are leaving Sharetribe. What matters is whether the URL the
+  // mirror would serve after cutover survives, so the count of these findings is
+  // exactly the Phase 1b work remaining.
+  if (miUrl != null) {
+    const facts = classifyImageUrl(miUrl);
     if (facts.diesWithSharetribe) {
       out.push({
-        field: p(`imageUrl.${label}`),
+        field: p("imageUrl.mirror"),
         severity: "blocking",
         code: "image-host-dies-with-sharetribe",
-        sharetribe: label === "sharetribe" ? value : undefined,
-        mirror: label === "mirror" ? value : undefined,
+        sharetribe: undefined,
+        mirror: miUrl,
         detail:
           `Served by ${facts.host}${facts.signed ? " with an imgix signature we cannot re-mint" : ""}. ` +
           `The mirror persists the URL string only — no bytes, and the image UUID ` +
           `(${facts.imageId ?? "unparseable"}) is recoverable from the path but the bytes are ` +
-          "only fetchable while Sharetribe still serves them. Every listing photo 404s at cutover.",
+          "only fetchable while Sharetribe still serves them. Re-host it (bun run rehost:images) " +
+          "or this photo 404s at cutover.",
       });
     }
   }
