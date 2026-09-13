@@ -1,5 +1,9 @@
 {
   "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "eslint.config.js"],
+  // Bun test files are typechecked and run by `bun test`, which supplies the
+  // bun:test types. tsc has no bun types installed, so exclude them here rather
+  // than adding a devDependency only tsc would use.
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",

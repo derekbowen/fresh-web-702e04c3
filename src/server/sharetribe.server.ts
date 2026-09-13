@@ -509,12 +509,120 @@ export interface SearchOptions {
   stateCode?: string; // e.g. "CA" — synced_listings only
 }
 
-export async function searchListings(opts: SearchOptions = {}): Promise<{
+export interface ListingSearchResult {
   listings: ListingSummary[];
   total: number;
   page: number;
   totalPages: number;
-}> {
+}
+
+export const EMPTY_LISTING_SEARCH_RESULT: ListingSearchResult = {
+  listings: [],
+  total: 0,
+  page: 1,
+  totalPages: 0,
+};
+
+/**
+ * The direct Integration API listing search — no mirror involvement.
+ *
+ * Split out of searchListings so the Phase 1 read facade
+ * (src/server/listing-read.server.ts) can address each source explicitly
+ * instead of inferring one from the shape of `opts`. Throws on API failure;
+ * searchListings keeps the swallow-and-return-empty behaviour callers rely on.
+ */
+export async function searchListingsFromSharetribe(
+  opts: SearchOptions = {},
+): Promise<ListingSearchResult> {
+  const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
+    page: opts.page ?? 1,
+    perPage: opts.perPage ?? 24,
+    states: "published",
+    // Explicit sort so the API doesn't rely on a default that can shift
+    // between calls. Newest-first matches the synced mirror's ordering.
+    sort: "-createdAt",
+    keywords: opts.keywords,
+    origin: opts.origin,
+    bounds: opts.bounds,
+    pub_category: opts.pub_category,
+    ...IMAGE_VARIANT_PARAMS,
+  });
+  return {
+    listings: (res.data ?? []).map((l) => summarize(l, res.included)),
+    total: res.meta?.totalItems ?? 0,
+    page: res.meta?.page ?? 1,
+    totalPages: res.meta?.totalPages ?? 1,
+  };
+}
+
+/**
+ * The synced_listings mirror search. Returns null when the query itself
+ * errored, which is how callers tell "mirror is broken" from "mirror
+ * legitimately has no rows for this filter".
+ */
+export async function searchListingsFromMirror(
+  opts: SearchOptions = {},
+): Promise<ListingSearchResult | null> {
+  return searchSyncedListings(opts);
+}
+
+/**
+ * Single-listing read from the synced_listings mirror, shaped like the
+ * ListingSummary that fetchListing returns.
+ *
+ * Mirrors fetchListing's public-visibility rule exactly: anything not
+ * `published`, and anything tombstoned, resolves to null rather than being
+ * rendered. Returns `undefined` (not null) when the query itself failed, so
+ * shadow mode can tell a broken mirror from a legitimately absent listing —
+ * null is a real answer here.
+ */
+export async function fetchListingFromMirror(
+  id: string,
+): Promise<ListingSummary | null | undefined> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("synced_listings")
+      .select(
+        "sharetribe_id, slug, title, description, price_amount, price_currency, city, state_code, primary_image_url, latitude, longitude, author_id, state, is_deleted, public_data, metadata",
+      )
+      .eq("sharetribe_id", id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("fetchListingFromMirror error:", error);
+      return undefined;
+    }
+    if (!data) return null;
+
+    const row = data as Record<string, any>;
+    // Same gate as fetchListing: never expose draft / closed / deleted rows.
+    if (row.state !== "published" || row.is_deleted === true) return null;
+
+    return {
+      id: row.sharetribe_id,
+      slug: row.slug,
+      title: row.title,
+      description: row.description ?? "",
+      price:
+        row.price_amount && row.price_currency
+          ? { amount: row.price_amount, currency: row.price_currency }
+          : null,
+      city: row.city ?? null,
+      state: row.state_code ?? null,
+      imageUrl: row.primary_image_url ?? null,
+      url: `/l/${row.slug}/${row.sharetribe_id}`,
+      geolocation:
+        row.latitude && row.longitude
+          ? { lat: Number(row.latitude), lng: Number(row.longitude) }
+          : null,
+    };
+  } catch (err) {
+    console.error("fetchListingFromMirror threw:", err);
+    return undefined;
+  }
+}
+
+export async function searchListings(opts: SearchOptions = {}): Promise<ListingSearchResult> {
   try {
     // Deterministic source selection: if the synced mirror is queryable for
     // these opts, ALWAYS use the mirror result — even if it returns zero
@@ -524,35 +632,17 @@ export async function searchListings(opts: SearchOptions = {}): Promise<{
     // the route loader's Suspense boundary. Same opts → same source → same
     // result, every call. Only fall through if the mirror itself errored.
     if (opts.citySlug || opts.city || opts.stateCode) {
-      const bySynced = await searchSyncedListings(opts);
+      const bySynced = await searchListingsFromMirror(opts);
       if (bySynced) return bySynced;
       console.warn(
         `[searchListings] synced query errored for opts=${JSON.stringify(opts)} — falling back to direct Sharetribe`,
       );
     }
 
-    const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
-      page: opts.page ?? 1,
-      perPage: opts.perPage ?? 24,
-      states: "published",
-      // Explicit sort so the API doesn't rely on a default that can shift
-      // between calls. Newest-first matches the synced mirror's ordering.
-      sort: "-createdAt",
-      keywords: opts.keywords,
-      origin: opts.origin,
-      bounds: opts.bounds,
-      pub_category: opts.pub_category,
-      ...IMAGE_VARIANT_PARAMS,
-    });
-    return {
-      listings: (res.data ?? []).map((l) => summarize(l, res.included)),
-      total: res.meta?.totalItems ?? 0,
-      page: res.meta?.page ?? 1,
-      totalPages: res.meta?.totalPages ?? 1,
-    };
+    return await searchListingsFromSharetribe(opts);
   } catch (err) {
     console.error("searchListings error:", err);
-    return { listings: [], total: 0, page: 1, totalPages: 0 };
+    return { ...EMPTY_LISTING_SEARCH_RESULT };
   }
 }
 

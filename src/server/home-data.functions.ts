@@ -1,7 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { searchListings, fetchShareListing } from "@/server/sharetribe.server";
+import { fetchShareListing } from "@/server/sharetribe.server";
+// Listing search goes through the Phase 1 facade so PRNM_LISTING_READ_SOURCE
+// governs the homepage too. Default ("sharetribe") is the legacy path.
+import { readListingSearch } from "@/server/listing-read.server";
 import type { ListingSummary } from "@/server/sharetribe.functions";
 
 const JAN_LISTING_ID = "6a1a4c13-02fe-458e-89ba-e33b5fc7612b";
@@ -143,9 +146,17 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async (): P
         "categories query",
         { data: [] as HomeCategory[] } as { data: HomeCategory[] | null },
       ),
-      safe(searchListings({ perPage: 24 }), "searchListings (featured)", emptyListingResult),
+      safe(
+        readListingSearch({ perPage: 24 }).then((o) => o.result),
+        "searchListings (featured)",
+        emptyListingResult,
+      ),
       origin
-        ? safe(searchListings({ perPage: 5, origin }), "searchListings (nearby)", emptyListingResult)
+        ? safe(
+            readListingSearch({ perPage: 5, origin }).then((o) => o.result),
+            "searchListings (nearby)",
+            emptyListingResult,
+          )
         : Promise.resolve(emptyListingResult),
       safe(
         (async () => {
