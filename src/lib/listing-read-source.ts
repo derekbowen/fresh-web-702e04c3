@@ -93,3 +93,34 @@ export function mirrorUnsupportedOptsFor(
 export function mirrorCanServe(opts: Record<string, unknown> | null | undefined): boolean {
   return mirrorUnsupportedOptsFor(opts).length === 0;
 }
+
+/**
+ * Options the Sharetribe Marketplace API cannot express.
+ *
+ * These are mirror-only concepts: `synced_listings` derives city/state columns
+ * during sync, and Sharetribe has no equivalent filter. Sending them is not a
+ * degraded query, it is an ignored one — the API drops the keys and returns the
+ * newest listings marketplace-wide, so a caller asking for Texas gets Florida
+ * pools and has no way to tell. That is the `%melbourne%` failure class from the
+ * operating notes: wrong geography is worse than no results, because nobody
+ * notices it.
+ */
+export const SHARETRIBE_UNSUPPORTED_OPTS = ["citySlug", "city", "stateCode"] as const;
+
+export type SharetribeUnsupportedOpt = (typeof SHARETRIBE_UNSUPPORTED_OPTS)[number];
+
+/** Which requested options Sharetribe cannot honour. Empty means it can serve this query. */
+export function sharetribeUnsupportedOptsFor(
+  opts: Record<string, unknown> | null | undefined,
+): SharetribeUnsupportedOpt[] {
+  if (!opts) return [];
+  return SHARETRIBE_UNSUPPORTED_OPTS.filter((key) => {
+    const v = opts[key];
+    return v !== undefined && v !== null && v !== "";
+  });
+}
+
+/** True when Sharetribe can express every filter in `opts`. */
+export function sharetribeCanServe(opts: Record<string, unknown> | null | undefined): boolean {
+  return sharetribeUnsupportedOptsFor(opts).length === 0;
+}

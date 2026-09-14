@@ -25,6 +25,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { preferredImageUrl, resolveImageSource } from "@/lib/listing-images";
 // One slug formula for the whole app, ported from the marketplace.
 import { createSlug, listingPathWithSlug } from "@/lib/listing-url";
+import { sharetribeUnsupportedOptsFor } from "@/lib/listing-read-source";
 
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
 const INTEGRATION_API_BASE = "https://flex-integ-api.sharetribe.com";
@@ -520,6 +521,22 @@ export const EMPTY_LISTING_SEARCH_RESULT: ListingSearchResult = {
   totalPages: 0,
 };
 
+/** Thrown when a query names a filter the Marketplace API has no way to apply. */
+export class UnsupportedSharetribeQueryError extends Error {
+  readonly unsupportedOpts: readonly string[];
+
+  constructor(unsupportedOpts: readonly string[]) {
+    super(
+      `Sharetribe cannot filter by ${unsupportedOpts.join(", ")}. Refusing the query rather ` +
+        `than running it unfiltered: the API ignores these keys and would return ` +
+        `marketplace-wide listings that a city- or state-scoped caller cannot distinguish ` +
+        `from a real answer.`,
+    );
+    this.name = "UnsupportedSharetribeQueryError";
+    this.unsupportedOpts = unsupportedOpts;
+  }
+}
+
 /**
  * The direct Integration API listing search — no mirror involvement.
  *
@@ -531,6 +548,14 @@ export const EMPTY_LISTING_SEARCH_RESULT: ListingSearchResult = {
 export async function searchListingsFromSharetribe(
   opts: SearchOptions = {},
 ): Promise<ListingSearchResult> {
+  // Refuse rather than silently return the wrong geography. citySlug/city/
+  // stateCode are mirror-derived columns with no Marketplace API equivalent, so
+  // sending them does not narrow the query — the keys are dropped and the newest
+  // listings marketplace-wide come back. A caller asking for Texas would get
+  // Florida pools and could not tell the difference.
+  const cannotExpress = sharetribeUnsupportedOptsFor(opts as Record<string, unknown>);
+  if (cannotExpress.length > 0) throw new UnsupportedSharetribeQueryError(cannotExpress);
+
   const res = await integGet<STResponse<STListing[]>>(`/listings/query`, {
     page: opts.page ?? 1,
     perPage: opts.perPage ?? 24,
