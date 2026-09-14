@@ -43,7 +43,7 @@ Rollback: unset it and
 |---|---|
 | `supabase/migrations/20260913094500_listing_image_rehost.sql` | `listing-images` bucket, `listing_image_assets` table, `synced_listings.prnm_*` columns |
 | `src/lib/listing-images.ts` | Variant ladder, storage paths, host classification, serving preference. Pure. |
-| `src/lib/listing-images.test.ts` | 45 deterministic tests |
+| `src/lib/listing-images.test.ts` | 44 deterministic tests |
 | `src/server/listing-image-rehost.server.ts` | Discovery + byte transfer + backfill worker |
 | `scripts/rehost-listing-images.ts` | CLI |
 | `src/server/sharetribe.server.ts` | Mirror reads honour the flag (2 call sites) |

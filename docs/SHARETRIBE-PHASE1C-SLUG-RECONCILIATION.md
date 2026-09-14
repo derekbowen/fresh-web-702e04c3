@@ -80,15 +80,28 @@ live bug. Now defused: every URL it emits is the canonical.
 `poolrentalnearme-web/src/util/urlHelpers.js` exactly, transliteration table
 included.
 
-Fidelity was checked differentially rather than by eye: both implementations run
-over the same inputs and their output compared.
+Fidelity is checked differentially rather than by eye: both implementations run
+over the same inputs and their output compared. The harness is committed, so this
+is a number you can reproduce rather than one you have to take on trust:
 
 ```
-33/33 identical      hand-picked cases (accents, punctuation, CJK, emoji,
-                     whitespace, empty, very long titles)
-20000/20000 identical  random strings over an alphabet covering the whole
-                     transliteration table, seeded PRNG so failures reproduce
+$ bun scripts/slug-parity-check.ts
+marketplace source: /home/user/poolrentalnearme-web/src/util/urlHelpers.js
+hand-picked: 15, random: 20000 (seed 1)
+20015/20015 identical
+null handling — marketplace: throws, port: "no-slug" (deliberate divergence)
 ```
+
+It loads `createSlug` out of the marketplace's `src/util/urlHelpers.js` at runtime
+rather than vendoring a copy, so the two cannot drift apart without the check
+noticing. `--marketplace <path>`, `--cases N` and `--seed N` are all overridable;
+it exits non-zero on any divergence.
+
+**The one deliberate divergence:** the marketplace's `createSlug` starts with
+`str.toString()` and therefore throws on `null`/`undefined`. The port returns
+`"no-slug"`, because it is called with mirror rows whose `title` can be null and
+a thrown error there would take out a whole sitemap page. Every non-null input
+agrees exactly.
 
 The test file locks in the interesting cases. **Do not "improve" `createSlug`.**
 Its only job is to agree with the marketplace; divergence is the bug.
