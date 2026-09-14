@@ -205,12 +205,21 @@ interface ClaimedAsset {
 }
 
 /** Oldest-first so a long run makes even progress rather than churning one listing. */
-async function claimAssets(limit: number, which: "pending" | "failed"): Promise<ClaimedAsset[]> {
+async function claimAssets(
+  limit: number,
+  which: "pending" | "failed",
+  listingId?: string,
+): Promise<ClaimedAsset[]> {
   let q = supabaseAdmin
     .from("listing_image_assets")
     .select("sharetribe_image_id, listing_st_id, source_url, source_variant, attempts")
     .eq("status", which)
     .not("source_url", "is", null);
+
+  // Without this, `--listing <id>` scoped only discovery: the transfer phase
+  // then claimed whatever was pending marketplace-wide, so a run meant to touch
+  // one listing downloaded, uploaded and backfilled other people's listings.
+  if (listingId) q = q.eq("listing_st_id", listingId);
 
   if (which === "failed") q = q.lt("attempts", MAX_ATTEMPTS);
 
@@ -223,7 +232,17 @@ async function claimAssets(limit: number, which: "pending" | "failed"): Promise<
   return (data ?? []) as ClaimedAsset[];
 }
 
-async function markFailed(asset: ClaimedAsset, message: string): Promise<void> {
+async function markFailed(
+  asset: ClaimedAsset,
+  message: string,
+  dryRun = false,
+): Promise<void> {
+  // A dry run must not consume the retry budget. It used to: every failure path
+  // below wrote status=failed and attempts+1 before the dryRun early-return
+  // further down, so two dry runs against a flaky CDN could push an image past
+  // MAX_ATTEMPTS and permanently strand it, with no real transfer ever tried.
+  if (dryRun) return;
+
   await supabaseAdmin
     .from("listing_image_assets")
     .update({
@@ -247,7 +266,7 @@ async function transferOne(
 ): Promise<void> {
   const sourceUrl = asset.source_url;
   if (!sourceUrl) {
-    await markFailed(asset, "no source_url recorded");
+    await markFailed(asset, "no source_url recorded", dryRun);
     stats.failed += 1;
     return;
   }
@@ -257,25 +276,25 @@ async function transferOne(
   try {
     const res = await fetch(sourceUrl, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
     if (!res.ok) {
-      await markFailed(asset, `source fetch ${res.status}`);
+      await markFailed(asset, `source fetch ${res.status}`, dryRun);
       stats.failed += 1;
       return;
     }
     contentType = (res.headers.get("content-type") ?? "image/jpeg").split(";")[0]!.trim();
     const buf = await res.arrayBuffer();
     if (buf.byteLength === 0) {
-      await markFailed(asset, "source returned 0 bytes");
+      await markFailed(asset, "source returned 0 bytes", dryRun);
       stats.failed += 1;
       return;
     }
     if (buf.byteLength > MAX_IMAGE_BYTES) {
-      await markFailed(asset, `source too large: ${buf.byteLength} bytes`);
+      await markFailed(asset, `source too large: ${buf.byteLength} bytes`, dryRun);
       stats.failed += 1;
       return;
     }
     bytes = new Uint8Array(buf);
   } catch (e) {
-    await markFailed(asset, `source fetch threw: ${(e as Error).message}`);
+    await markFailed(asset, `source fetch threw: ${(e as Error).message}`, dryRun);
     stats.failed += 1;
     return;
   }
@@ -298,7 +317,7 @@ async function transferOne(
       cacheControl: "31536000",
     });
   if (upErr) {
-    await markFailed(asset, `storage upload: ${upErr.message}`);
+    await markFailed(asset, `storage upload: ${upErr.message}`, dryRun);
     stats.failed += 1;
     return;
   }
@@ -306,7 +325,7 @@ async function transferOne(
   const { data: pub } = supabaseAdmin.storage.from(LISTING_IMAGE_BUCKET).getPublicUrl(path);
   const publicUrl = pub?.publicUrl;
   if (!publicUrl) {
-    await markFailed(asset, "no public URL returned for uploaded object");
+    await markFailed(asset, "no public URL returned for uploaded object", dryRun);
     stats.failed += 1;
     return;
   }
@@ -329,7 +348,7 @@ async function transferOne(
   if (updErr) {
     // The object is in the bucket but we failed to record it. Mark failed so a
     // retry re-records; the upload itself is idempotent so that is harmless.
-    await markFailed(asset, `record stored: ${updErr.message}`);
+    await markFailed(asset, `record stored: ${updErr.message}`, dryRun);
     stats.failed += 1;
     return;
   }
@@ -429,7 +448,7 @@ export async function runListingImageRehost(opts: RehostOptions = {}): Promise<R
     stats.errors.push(...discovery.stats.errors);
   }
 
-  const claimed = await claimAssets(limit, opts.retryFailed ? "failed" : "pending");
+  const claimed = await claimAssets(limit, opts.retryFailed ? "failed" : "pending", opts.listingId);
   if (claimed.length === 0) return stats;
 
   await runPool(claimed, concurrency, (asset) => transferOne(asset, stats, !!opts.dryRun));

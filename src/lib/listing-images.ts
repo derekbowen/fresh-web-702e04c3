@@ -83,8 +83,13 @@ export const REHOST_VARIANT_LADDER = [
 export const REHOST_CROP_FALLBACK_LADDER = [
   "landscape-crop2x",
   "landscape-crop",
-  "square2x",
-  "square",
+  // Sharetribe's square variants are named "square-small" / "square-small2x"
+  // (see the marketplace's own Avatar.js, which has always used those). There
+  // is no "square" or "square2x"; asking for a variant that does not exist gets
+  // the whole fields.image parameter rejected, so the earlier spelling could
+  // have failed every discovery request rather than just this last-resort rung.
+  "square-small2x",
+  "square-small",
 ] as const;
 
 /** The `fields.image` value to send so the ladder is actually populated. */

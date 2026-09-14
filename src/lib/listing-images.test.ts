@@ -159,6 +159,34 @@ describe("variant selection", () => {
     const crops = new Set<string>(REHOST_CROP_FALLBACK_LADDER);
     expect(REHOST_VARIANT_LADDER.filter((v) => crops.has(v))).toEqual([]);
   });
+
+  test("every rung names a variant Sharetribe actually defines", () => {
+    // The test above only checks REHOST_IMAGE_FIELDS echoes whatever the ladders
+    // say, so it passes for invented names too -- which is how "square" and
+    // "square2x" survived. Sharetribe has no such variants; the real ones are
+    // square-small / square-small2x (see the marketplace's own Avatar.js). A
+    // fields.image naming a variant that does not exist is rejected outright,
+    // so a typo here breaks every discovery request, not just one rung.
+    const SHARETRIBE_VARIANTS = new Set([
+      "default",
+      "landscape-crop",
+      "landscape-crop2x",
+      "landscape-crop4x",
+      "landscape-crop6x",
+      "scaled-small",
+      "scaled-medium",
+      "scaled-large",
+      "scaled-xlarge",
+      "square-small",
+      "square-small2x",
+      "facebook",
+      "twitter",
+    ]);
+    const unknown = [...REHOST_VARIANT_LADDER, ...REHOST_CROP_FALLBACK_LADDER].filter(
+      (v) => !SHARETRIBE_VARIANTS.has(v),
+    );
+    expect(unknown).toEqual([]);
+  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
