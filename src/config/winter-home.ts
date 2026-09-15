@@ -97,6 +97,11 @@ export type WinterCityConfig = {
  * inside `bounds` at request time.
  */
 export const WINTER_CITY_CARDS: WinterCityConfig[] = [
+  // Added 2026-09-15 with the Albuquerque indoor pool (swimply:90391), which is
+  // also the lead featured card. Bounds are the /api/geocode-suggest bbox for
+  // "Albuquerque, NM" in this file's NE-lat,NE-lng,SW-lat,SW-lng order; the
+  // live search inside them returned 2 published listings at the time.
+  { slug: "albuquerque", name: "Albuquerque", state: "NM", bounds: "35.24525,-106.47626,34.96431,-106.81736" },
   { slug: "los-angeles", name: "Los Angeles", state: "CA", bounds: "34.24204,-118.144,33.79674,-118.67764" },
   { slug: "phoenix", name: "Phoenix", state: "AZ", bounds: "33.80584,-111.81153,33.33846,-112.36873" },
   { slug: "las-vegas-nv", name: "Las Vegas", state: "NV", bounds: "36.35575,-115.11349,36.11125,-115.41459" },
