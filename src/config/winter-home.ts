@@ -26,6 +26,11 @@ export const HERO_FROM_PRICE_REVIEW_BY = "2026-10-09";
  * Six render; extra ids are spares that fill in if one goes unpublished.
  */
 export const WINTER_FEATURED_LISTING_IDS: string[] = [
+  // Lead card. Indoor, 89° heated, sauna, hot tub, marketed year-round by the
+  // host — the closest listing in inventory to what this page's headline
+  // promises. Imported from swimply:90391, published 2026-09-15. Adding it here
+  // pushes Sherman Oaks (was 6th of 6) into spare position.
+  "6aa8ae63-0dc0-46f8-a74d-768fa8b09215", // Albuquerque's Private Indoor Pool Resort — Albuquerque, NM (indoorpools)
   "69da42df-c2c8-4d20-ac98-889e5e0af82c", // Luxury Indoor Pool — Peters Township, PA (indoorpools)
   "687891ff-95ed-432b-8e91-125fd5095786", // Tropical Paradise Heated Pool and Spa — Rancho Palos Verdes, CA (heatedpools)
   "6a713580-85d9-43eb-8f84-35a431128c2f", // The Backyard Oasis — Coeur d'Alene, ID (indoorpools)
