@@ -48,8 +48,11 @@ export const HOMEPAGE_FAQS = [
     a: "Hosts set their own hourly rates — most private pool rentals run $45–$150 per hour depending on size, amenities, and location. The all-in price is shown up front, and hosts pay 0% fees, so they keep 100% of their rate.",
   },
   {
-    q: "Is the pool host insured if a guest gets hurt?",
-    a: "Pool Rental Near Me does not provide or arrange insurance. Every booking requires a signed guest waiver, and we do not verify whether hosts carry insurance — most homeowner policies exclude paid rentals, so check with your carrier before you host.",
+    // Derek's exact words, 2026-09-15. Insurance copy is his alone: this entry
+    // is reproduced verbatim and must not be reworded, extended, or "clarified"
+    // without new words from him. The two \n\n are his paragraph breaks.
+    q: "$2M Commercial Liability Coverage",
+    a: "Pool Rental Near Me carries commercial general liability insurance with limits of $2 million per occurrence and $4 million aggregate.\n\nCoverage is subject to the policy’s terms, conditions, exclusions, and the specific circumstances of any claim.\n\nAdded protection for bookings made through Pool Rental Near Me.",
   },
   {
     q: "How do I contact a pool owner before booking?",
@@ -769,7 +772,7 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
                       {f.q}
                       <span className="text-muted-foreground transition-transform group-open:rotate-45" aria-hidden>+</span>
                     </summary>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                    <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{f.a}</p>
                   </details>
                 ))}
               </div>

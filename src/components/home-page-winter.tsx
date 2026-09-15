@@ -580,7 +580,7 @@ function FaqAndTextDerek() {
                     {f.q}
                     <span className="text-muted-foreground transition-transform group-open:rotate-45" aria-hidden>+</span>
                   </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                  <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{f.a}</p>
                 </details>
               ))}
             </div>
