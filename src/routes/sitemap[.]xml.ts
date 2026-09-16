@@ -90,6 +90,36 @@ const countRows = async (table: string, apply: (q: any) => any): Promise<CountRe
 };
 
 /**
+ * Last count that succeeded, per index entry, for the life of the process.
+ *
+ * Even with the retry, 6 of ~3,600 counts in the 28h after 2026-09-15 failed
+ * twice in a row with an empty-message error (the same query answers in
+ * 60-80ms when run by hand, so this is a transient client-side fetch failure,
+ * not a slow scan). One of those was host-acquisition, whose pages 2-4 would
+ * have vanished from the index for a refresh cycle. A count that is minutes
+ * old is far closer to the truth than "page 1 only", so a failed count now
+ * reuses the last good value and says so; the page-1 fallback remains only
+ * for a key that has never succeeded in this process (first build after boot).
+ */
+const lastGoodCount = new Map<string, number>();
+
+const countRemembered = async (
+  key: string,
+  table: string,
+  apply: (q: any) => any,
+): Promise<CountResult & { stale?: boolean }> => {
+  const r = await countRows(table, apply);
+  if (!r.error) {
+    if (r.count !== null) lastGoodCount.set(key, r.count);
+    return r;
+  }
+  const remembered = lastGoodCount.get(key);
+  if (remembered === undefined) return r;
+  console.warn(`[sitemap] count for ${key} failed twice — using last good count ${remembered}`, r.error);
+  return { count: remembered, error: null, stale: true };
+};
+
+/**
  * Sequential, on purpose. Running all eleven counts through Promise.all made
  * the index FASTER and LESS RELIABLE: concurrent `count: "exact"` scans contend,
  * some return an empty-message error, and the index then shipped without those
@@ -120,7 +150,7 @@ async function buildIndexXml(): Promise<string> {
 
   // ---- every count, one at a time (see inSeries above) ----------------
   const groupCounts = await inSeries(TEMPLATE_GROUPS, (group) =>
-    countRows("content_pages", (q: any) =>
+    countRemembered(group.basePath, "content_pages", (q: any) =>
       q
         .in("template_type", group.templateTypes)
         .eq("in_sitemap", true)
@@ -134,7 +164,7 @@ async function buildIndexXml(): Promise<string> {
   // content_pages scans did. They stay concurrent.
   const [blogCount, blogLatest, listingCount, listingLatest] =
     await Promise.all([
-      countRows("blog_posts", (q: any) => q.eq("is_published", true)),
+      countRemembered("/sitemap-pages-blog.xml", "blog_posts", (q: any) => q.eq("is_published", true)),
       (async () => {
         try {
           const { data } = await (supabaseAdmin as any)
@@ -149,7 +179,7 @@ async function buildIndexXml(): Promise<string> {
           return undefined;
         }
       })(),
-      countRows("synced_listings", (q: any) =>
+      countRemembered("/sitemap-listings.xml", "synced_listings", (q: any) =>
         q
           .eq("state", "published")
           .eq("is_deleted", false)
@@ -183,7 +213,8 @@ async function buildIndexXml(): Promise<string> {
   // happened to succeed. The logs show exactly that happening to
   // /sitemap-pages-event-guides.xml. A failed count is now a pagination
   // problem, not a visibility one: page 1 is always advertised, and only
-  // the extra pages are lost.
+  // the extra pages are lost. Since 2026-09-16 even that only happens when
+  // the process has never counted the group (see countRemembered).
   TEMPLATE_GROUPS.forEach((group, i) => {
     const { count, error } = groupCounts[i]!;
     if (error) {
