@@ -165,7 +165,7 @@ function Hero({
             <li className="flex items-center gap-1.5"><span className="text-sky-300">✓</span> Paid in {currencyLabel} via Stripe</li>
             <li className="flex items-center gap-1.5"><span className="text-sky-300">✓</span> Listing takes about ten minutes</li>
           </ul>
-          <div className="mt-6 [&_p]:text-white/75 [&_a]:text-white">
+          <div className="mt-6 [&_p]:text-white/75 [&_a]:text-white [&_span]:text-white/60">
             <AuthorByline date={page.published_at ?? page.updated_at} />
           </div>
         </div>
@@ -365,7 +365,10 @@ function CitiesSection({ market }: { market: CountryLaunchMarket | null }) {
 
 /* ──────────────────────────── Launch note ───────────────────────── */
 
-function LaunchNote({ body }: { body: string }) {
+function LaunchNote({ body: rawBody }: { body: string }) {
+  // The stored body opens with its own `# Title`; the hero already carries the
+  // page title, so drop that first heading instead of repeating it.
+  const body = rawBody.replace(/^\s*#\s[^\n]*\n+/, "");
   return (
     <section aria-label="The launch note" className="border-t border-border bg-secondary/20">
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
@@ -417,7 +420,10 @@ function GuidesSection({ market, guides }: { market: CountryLaunchMarket | null;
               href={`/p/${g.slug}`}
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
             >
-              <div className="aspect-[16/9] w-full shrink-0 overflow-hidden bg-muted">
+              {/* Gradient sits behind the cover so a missing or 404ing image
+                  (how-it-works-uk points at a path that no longer exists)
+                  degrades to a clean card, not a broken-image icon. */}
+              <div className="aspect-[16/9] w-full shrink-0 overflow-hidden bg-gradient-to-br from-sky-400 to-cyan-500">
                 {g.cover_image_url ? (
                   <img
                     src={g.cover_image_url}
@@ -426,11 +432,10 @@ function GuidesSection({ market, guides }: { market: CountryLaunchMarket | null;
                     height={450}
                     loading="lazy"
                     decoding="async"
+                    onError={(e) => { e.currentTarget.style.display = "none"; }}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sky-400 to-cyan-500" />
-                )}
+                ) : null}
               </div>
               <div className="flex flex-1 flex-col p-4">
                 <h3 className="line-clamp-2 text-base font-semibold text-foreground">{g.title}</h3>
