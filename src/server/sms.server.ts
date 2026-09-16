@@ -1,7 +1,6 @@
 // Server-only Twilio SMS sender + sequence scheduling.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/twilio";
 
 export function toE164(raw: string): string | null {
   if (!raw) return null;
@@ -41,26 +40,16 @@ export async function recordOptIn(phoneE164: string) {
   await supabaseAdmin.from("sms_opt_outs").delete().eq("phone_e164", phoneE164);
 }
 
-export async function sendSms(to: string, body: string): Promise<{ sid?: string; error?: string }> {
-  const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-  const TWILIO_API_KEY = process.env.TWILIO_API_KEY;
-  const FROM = process.env.TWILIO_SMS_FROM;
-  if (!LOVABLE_API_KEY) return { error: "LOVABLE_API_KEY missing" };
-  if (!TWILIO_API_KEY) return { error: "TWILIO_API_KEY missing" };
-  if (!FROM) return { error: "TWILIO_SMS_FROM missing" };
-
-  const res = await fetch(`${GATEWAY_URL}/Messages.json`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      "X-Connection-Api-Key": TWILIO_API_KEY,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({ To: to, From: FROM, Body: body }),
-  });
-  const data = (await res.json().catch(() => ({}))) as { sid?: string; message?: string };
-  if (!res.ok) return { error: `Twilio ${res.status}: ${data.message || JSON.stringify(data)}` };
-  return { sid: data.sid };
+/**
+ * Outbound SMS from EAST is retired (2026-09-17). It went through the Lovable
+ * connector gateway (connector-gateway.lovable.dev), whose key was never
+ * configured on EAST, so it has not worked since the move off Lovable. All
+ * production SMS runs on WEST (Twilio Messaging Service, sms_log dedupe,
+ * quiet hours) — see docs/archive/outbound-comms-legacy/README.md. This stub
+ * keeps callers type-safe and makes the refusal explicit in their logs.
+ */
+export async function sendSms(_to: string, _body: string): Promise<{ sid?: string; error?: string }> {
+  return { error: "Outbound SMS from EAST is retired; SMS runs on WEST (see docs/archive/outbound-comms-legacy)" };
 }
 
 // 5-touch cadence: 0m, 1d, 3d, 7d, 14d

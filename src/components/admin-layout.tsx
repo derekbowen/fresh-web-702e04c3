@@ -99,12 +99,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     label: "Email",
     items: [
       { to: "/admin/email-composer", label: "Email composer ✨", icon: Sparkles },
-      
-      { to: "/admin/host-drip", label: "Host drip", icon: Mail },
-      { to: "/admin/renter-drip", label: "Renter drip", icon: Mail },
-      { to: "/admin/drip-subscribers", label: "Subscribers ⏯", icon: Mail },
-      { to: "/admin/add-contacts", label: "Add contacts ➕", icon: Mail },
-      { to: "/admin/email-queue", label: "Email queue", icon: Mail },
+      { to: "/admin/host-lifecycle", label: "Host lifecycle 🏊", icon: Mail },
       { to: "/admin/email-deliverability", label: "Deliverability", icon: Activity },
       { to: "/admin/email-branding", label: "Email branding", icon: ImageIcon },
       { to: "/admin/email-verify", label: "Email verify", icon: CheckCircle2 },
@@ -115,7 +110,6 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     items: [
       { to: "/admin/ig-lead-hunter", label: "IG lead hunter", icon: Instagram },
       { to: "/admin/social-lead-hunter", label: "Social lead hunter", icon: Radar },
-      { to: "/admin/sms-blast", label: "SMS blast", icon: Bell },
     ],
   },
   {
@@ -125,7 +119,6 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
       { to: "/admin/follow-ups", label: "Follow-ups 📞", icon: Activity },
       { to: "/admin/followup-performance", label: "Follow-up performance 📊", icon: TrendingUp },
       { to: "/admin/followup-reminders", label: "Follow-up reminders 🔔", icon: Bell },
-      { to: "/admin/auto-outreach", label: "Auto-outreach 🤖", icon: Bot },
     ],
   },
   {
