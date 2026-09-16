@@ -22,6 +22,37 @@ function maskEmail(e: string): string {
   return `${u.slice(0, 2)}***@${d}`;
 }
 
+export type LifecycleJobRow = {
+  id: string;
+  user_id: string;
+  campaign_key: string;
+  status: string;
+  recipient: string;
+  subject: string | null;
+  cta_url: string | null;
+  scheduled_at: string;
+  sent_at: string | null;
+  suppressed_reason: string | null;
+  last_error: string | null;
+  provider_message_id: string | null;
+  attempt_count: number;
+  mode: string | null;
+  lifecycle_state: string;
+  eligibility_reason: string | null;
+  updated_at: string;
+};
+
+export type LifecycleRunRow = {
+  phase: string;
+  started_at: string;
+  finished_at: string | null;
+  mode: string;
+  enabled: boolean;
+  worker: string | null;
+  stats: Record<string, unknown> | null;
+  error: string | null;
+};
+
 export const getHostLifecycleOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -37,7 +68,8 @@ export const getHostLifecycleOverview = createServerFn({ method: "GET" })
     let lastSync: string | null = null;
     for (const r of statesRes.data ?? []) { byState[r.lifecycle_state] = (byState[r.lifecycle_state] ?? 0) + 1; if (!lastSync || r.last_synced_at > lastSync) lastSync = r.last_synced_at; }
     const today = new Date(); today.setUTCHours(0, 0, 0, 0);
-    const jobs = (jobsRes.data ?? []) as Array<Record<string, any>>;
+    const jobs = (jobsRes.data ?? []) as LifecycleJobRow[];
+    const runs = (runsRes.data ?? []) as LifecycleRunRow[];
     const summary: Record<string, Record<string, number>> = {};
     const todayCounts: Record<string, number> = { eligible: 0, queued: 0, dry_run: 0, sent: 0, suppressed: 0, cancelled: 0, failed: 0 };
     for (const j of jobs) {
@@ -51,8 +83,8 @@ export const getHostLifecycleOverview = createServerFn({ method: "GET" })
       campaigns: CAMPAIGNS.map((c) => ({ key: c.key, group: c.group, description: c.description, after: c.after ?? null })),
       summary,
       todayCounts,
-      jobs: jobs.slice(0, 150).map((j) => ({ ...j, recipient: maskEmail(j.recipient), user_id: j.user_id.slice(0, 8) })),
-      runs: runsRes.data ?? [],
+      jobs: jobs.slice(0, 150).map((j): LifecycleJobRow => ({ ...j, recipient: maskEmail(j.recipient), user_id: j.user_id.slice(0, 8) })),
+      runs,
       mode: process.env.HOST_EMAIL_MODE ?? "dry_run",
       enabled: (process.env.HOST_LIFECYCLE_EMAILS_ENABLED ?? "false") === "true",
       dailyCap: process.env.HOST_LIFECYCLE_DAILY_CAP ?? "25",

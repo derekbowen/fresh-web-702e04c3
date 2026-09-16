@@ -7,11 +7,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
+import { NoRealtimeTransport } from "../src/db";
 
 const enabled = process.env.LIFECYCLE_TEST_DB === "1" && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 test("two workers cannot lease the same job", { skip: !enabled }, async () => {
-  const db = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
+  const db = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false }, realtime: { transport: NoRealtimeTransport as any } });
   const key = `__test__:${Date.now()}`;
   const { error } = await db.from("communication_jobs").insert({ user_id: "__test__", campaign_key: "__test__", template_key: "__test__", lifecycle_state: "SIGNED_UP", recipient: "nobody@example.invalid", scheduled_at: new Date(Date.now() - 1000).toISOString(), idempotency_key: key });
   assert.equal(error, null);

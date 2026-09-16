@@ -3,10 +3,23 @@ import type { EngineConfig } from "./config";
 
 export type Db = SupabaseClient<any, "public", any>;
 
+/**
+ * The engine never opens a realtime channel, but supabase-js >= 2.108 resolves
+ * a WebSocket constructor when the client is built and throws on Node 20
+ * (no native WebSocket). Hand it a transport that refuses to connect instead
+ * of depending on `ws` or a runtime flag.
+ */
+export class NoRealtimeTransport {
+  constructor() {
+    throw new Error("host-lifecycle engine does not use Supabase realtime");
+  }
+}
+
 export function makeDb(cfg: EngineConfig): Db {
   if (!cfg.supabaseUrl || !cfg.supabaseServiceRoleKey) throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY missing");
   return createClient(cfg.supabaseUrl, cfg.supabaseServiceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
+    realtime: { transport: NoRealtimeTransport as any },
   });
 }
 

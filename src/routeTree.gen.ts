@@ -108,7 +108,6 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-passw
 import { Route as AdminTechDocsRouteImport } from './routes/admin.tech-docs'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSocialLeadHunterRouteImport } from './routes/admin.social-lead-hunter'
-import { Route as AdminSmsBlastRouteImport } from './routes/admin.sms-blast'
 import { Route as AdminSiteFooterRouteImport } from './routes/admin.site-footer'
 import { Route as AdminSharetribePruneRouteImport } from './routes/admin.sharetribe-prune'
 import { Route as AdminSharetribeRouteImport } from './routes/admin.sharetribe'
@@ -116,7 +115,6 @@ import { Route as AdminSeoHealthRouteImport } from './routes/admin.seo-health'
 import { Route as AdminSeoCriticRouteImport } from './routes/admin.seo-critic'
 import { Route as AdminSeoCoachRouteImport } from './routes/admin.seo-coach'
 import { Route as AdminScrapeImportRouteImport } from './routes/admin.scrape-import'
-import { Route as AdminRenterDripRouteImport } from './routes/admin.renter-drip'
 import { Route as AdminRedirectAliasesRouteImport } from './routes/admin.redirect-aliases'
 import { Route as AdminRankTrackerRouteImport } from './routes/admin.rank-tracker'
 import { Route as AdminQuickPageRouteImport } from './routes/admin.quick-page'
@@ -141,7 +139,7 @@ import { Route as AdminJobHistoryRouteImport } from './routes/admin.job-history'
 import { Route as AdminInternalLinksRouteImport } from './routes/admin.internal-links'
 import { Route as AdminIndexingRouteImport } from './routes/admin.indexing'
 import { Route as AdminIgLeadHunterRouteImport } from './routes/admin.ig-lead-hunter'
-import { Route as AdminHostDripRouteImport } from './routes/admin.host-drip'
+import { Route as AdminHostLifecycleRouteImport } from './routes/admin.host-lifecycle'
 import { Route as AdminGscImportRouteImport } from './routes/admin.gsc-import'
 import { Route as AdminGenerateContentRouteImport } from './routes/admin.generate-content'
 import { Route as AdminFounderBlastRouteImport } from './routes/admin.founder-blast'
@@ -151,11 +149,9 @@ import { Route as AdminFollowupDrilldownRouteImport } from './routes/admin.follo
 import { Route as AdminFollowUpsRouteImport } from './routes/admin.follow-ups'
 import { Route as AdminFaqGeneratorRouteImport } from './routes/admin.faq-generator'
 import { Route as AdminEmailVerifyRouteImport } from './routes/admin.email-verify'
-import { Route as AdminEmailQueueRouteImport } from './routes/admin.email-queue'
 import { Route as AdminEmailDeliverabilityRouteImport } from './routes/admin.email-deliverability'
 import { Route as AdminEmailComposerRouteImport } from './routes/admin.email-composer'
 import { Route as AdminEmailBrandingRouteImport } from './routes/admin.email-branding'
-import { Route as AdminDripSubscribersRouteImport } from './routes/admin.drip-subscribers'
 import { Route as AdminDirectoryRouteImport } from './routes/admin.directory'
 import { Route as AdminDataImportRouteImport } from './routes/admin.data-import'
 import { Route as AdminDataExportRouteImport } from './routes/admin.data-export'
@@ -171,9 +167,7 @@ import { Route as AdminCitiesHeroesReportRouteImport } from './routes/admin.citi
 import { Route as AdminCitiesHeroesRouteImport } from './routes/admin.cities-heroes'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminAutoRefreshRouteImport } from './routes/admin.auto-refresh'
-import { Route as AdminAutoOutreachRouteImport } from './routes/admin.auto-outreach'
 import { Route as AdminAffiliatesRouteImport } from './routes/admin.affiliates'
-import { Route as AdminAddContactsRouteImport } from './routes/admin.add-contacts'
 import { Route as AdminActivityCitiesRouteImport } from './routes/admin.activity-cities'
 import { Route as AccountLearningRouteImport } from './routes/account.learning'
 import { Route as PPoolProsSlugRouteImport } from './routes/p.pool-pros.$slug'
@@ -198,14 +192,9 @@ import { Route as ApiPublicHooksTwilioInboundRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksSyncSharetribeMirrorRouteImport } from './routes/api/public/hooks/sync-sharetribe-mirror'
 import { Route as ApiPublicHooksSyncListingsRouteImport } from './routes/api/public/hooks.sync-listings'
 import { Route as ApiPublicHooksSyncAffiliateCommissionsRouteImport } from './routes/api/public/hooks/sync-affiliate-commissions'
-import { Route as ApiPublicHooksSmsSenderRouteImport } from './routes/api/public/hooks/sms-sender'
 import { Route as ApiPublicHooksSeoSelfTestRouteImport } from './routes/api/public/hooks.seo-self-test'
 import { Route as ApiPublicHooksSeoFixWorkerRouteImport } from './routes/api/public/hooks/seo-fix-worker'
-import { Route as ApiPublicHooksSendRenterEmailsRouteImport } from './routes/api/public/hooks/send-renter-emails'
-import { Route as ApiPublicHooksSendHostDripEmailsRouteImport } from './routes/api/public/hooks/send-host-drip-emails'
 import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api/public/hooks/provider-ai-worker'
-import { Route as ApiPublicHooksPollSharetribeRentersRouteImport } from './routes/api/public/hooks/poll-sharetribe-renters'
-import { Route as ApiPublicHooksPollSharetribeHostsRouteImport } from './routes/api/public/hooks/poll-sharetribe-hosts'
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
 import { Route as ApiPublicHooksIntercomSyncRouteImport } from './routes/api/public/hooks/intercom-sync'
 import { Route as ApiPublicHooksIntercomRouteImport } from './routes/api/public/hooks/intercom'
@@ -214,12 +203,10 @@ import { Route as ApiPublicHooksHostCityTailFixRouteImport } from './routes/api/
 import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/hooks/gsc-sync'
 import { Route as ApiPublicHooksGenHostPagesRouteImport } from './routes/api/public/hooks/gen-host-pages'
 import { Route as ApiPublicHooksFollowupRemindersRouteImport } from './routes/api/public/hooks/followup-reminders'
-import { Route as ApiPublicHooksEnrollHostSignupsRouteImport } from './routes/api/public/hooks/enroll-host-signups'
 import { Route as ApiPublicHooksDailySeoDigestRouteImport } from './routes/api/public/hooks.daily-seo-digest'
 import { Route as ApiPublicHooksComposerScheduledRouteImport } from './routes/api/public/hooks.composer-scheduled'
 import { Route as ApiPublicHooksCompetitorRadarScanRouteImport } from './routes/api/public/hooks.competitor-radar-scan'
 import { Route as ApiPublicHooksBlogAutogenRouteImport } from './routes/api/public/hooks/blog-autogen'
-import { Route as ApiPublicHooksAutoOutreachWorkerRouteImport } from './routes/api/public/hooks/auto-outreach-worker'
 import { Route as ApiPublicHooksAliasBackfillRouteImport } from './routes/api/public/hooks/alias-backfill'
 import { Route as ApiPublicHooksAcademyHealthRouteImport } from './routes/api/public/hooks.academy-health'
 import { Route as ApiPublicHooksAbAutoWinnerRouteImport } from './routes/api/public/hooks.ab-auto-winner'
@@ -744,11 +731,6 @@ const AdminSocialLeadHunterRoute = AdminSocialLeadHunterRouteImport.update({
   path: '/social-lead-hunter',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminSmsBlastRoute = AdminSmsBlastRouteImport.update({
-  id: '/sms-blast',
-  path: '/sms-blast',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminSiteFooterRoute = AdminSiteFooterRouteImport.update({
   id: '/site-footer',
   path: '/site-footer',
@@ -782,11 +764,6 @@ const AdminSeoCoachRoute = AdminSeoCoachRouteImport.update({
 const AdminScrapeImportRoute = AdminScrapeImportRouteImport.update({
   id: '/scrape-import',
   path: '/scrape-import',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRenterDripRoute = AdminRenterDripRouteImport.update({
-  id: '/renter-drip',
-  path: '/renter-drip',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRedirectAliasesRoute = AdminRedirectAliasesRouteImport.update({
@@ -910,9 +887,9 @@ const AdminIgLeadHunterRoute = AdminIgLeadHunterRouteImport.update({
   path: '/ig-lead-hunter',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminHostDripRoute = AdminHostDripRouteImport.update({
-  id: '/host-drip',
-  path: '/host-drip',
+const AdminHostLifecycleRoute = AdminHostLifecycleRouteImport.update({
+  id: '/host-lifecycle',
+  path: '/host-lifecycle',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminGscImportRoute = AdminGscImportRouteImport.update({
@@ -961,11 +938,6 @@ const AdminEmailVerifyRoute = AdminEmailVerifyRouteImport.update({
   path: '/email-verify',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminEmailQueueRoute = AdminEmailQueueRouteImport.update({
-  id: '/email-queue',
-  path: '/email-queue',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminEmailDeliverabilityRoute =
   AdminEmailDeliverabilityRouteImport.update({
     id: '/email-deliverability',
@@ -980,11 +952,6 @@ const AdminEmailComposerRoute = AdminEmailComposerRouteImport.update({
 const AdminEmailBrandingRoute = AdminEmailBrandingRouteImport.update({
   id: '/email-branding',
   path: '/email-branding',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDripSubscribersRoute = AdminDripSubscribersRouteImport.update({
-  id: '/drip-subscribers',
-  path: '/drip-subscribers',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminDirectoryRoute = AdminDirectoryRouteImport.update({
@@ -1062,19 +1029,9 @@ const AdminAutoRefreshRoute = AdminAutoRefreshRouteImport.update({
   path: '/auto-refresh',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAutoOutreachRoute = AdminAutoOutreachRouteImport.update({
-  id: '/auto-outreach',
-  path: '/auto-outreach',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminAffiliatesRoute = AdminAffiliatesRouteImport.update({
   id: '/affiliates',
   path: '/affiliates',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAddContactsRoute = AdminAddContactsRouteImport.update({
-  id: '/add-contacts',
-  path: '/add-contacts',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminActivityCitiesRoute = AdminActivityCitiesRouteImport.update({
@@ -1206,11 +1163,6 @@ const ApiPublicHooksSyncAffiliateCommissionsRoute =
     path: '/api/public/hooks/sync-affiliate-commissions',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksSmsSenderRoute = ApiPublicHooksSmsSenderRouteImport.update({
-  id: '/api/public/hooks/sms-sender',
-  path: '/api/public/hooks/sms-sender',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicHooksSeoSelfTestRoute =
   ApiPublicHooksSeoSelfTestRouteImport.update({
     id: '/api/public/hooks/seo-self-test',
@@ -1223,34 +1175,10 @@ const ApiPublicHooksSeoFixWorkerRoute =
     path: '/api/public/hooks/seo-fix-worker',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksSendRenterEmailsRoute =
-  ApiPublicHooksSendRenterEmailsRouteImport.update({
-    id: '/api/public/hooks/send-renter-emails',
-    path: '/api/public/hooks/send-renter-emails',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSendHostDripEmailsRoute =
-  ApiPublicHooksSendHostDripEmailsRouteImport.update({
-    id: '/api/public/hooks/send-host-drip-emails',
-    path: '/api/public/hooks/send-host-drip-emails',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicHooksProviderAiWorkerRoute =
   ApiPublicHooksProviderAiWorkerRouteImport.update({
     id: '/api/public/hooks/provider-ai-worker',
     path: '/api/public/hooks/provider-ai-worker',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksPollSharetribeRentersRoute =
-  ApiPublicHooksPollSharetribeRentersRouteImport.update({
-    id: '/api/public/hooks/poll-sharetribe-renters',
-    path: '/api/public/hooks/poll-sharetribe-renters',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksPollSharetribeHostsRoute =
-  ApiPublicHooksPollSharetribeHostsRouteImport.update({
-    id: '/api/public/hooks/poll-sharetribe-hosts',
-    path: '/api/public/hooks/poll-sharetribe-hosts',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksLinkAutoFixRoute =
@@ -1299,12 +1227,6 @@ const ApiPublicHooksFollowupRemindersRoute =
     path: '/api/public/hooks/followup-reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksEnrollHostSignupsRoute =
-  ApiPublicHooksEnrollHostSignupsRouteImport.update({
-    id: '/api/public/hooks/enroll-host-signups',
-    path: '/api/public/hooks/enroll-host-signups',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicHooksDailySeoDigestRoute =
   ApiPublicHooksDailySeoDigestRouteImport.update({
     id: '/api/public/hooks/daily-seo-digest',
@@ -1327,12 +1249,6 @@ const ApiPublicHooksBlogAutogenRoute =
   ApiPublicHooksBlogAutogenRouteImport.update({
     id: '/api/public/hooks/blog-autogen',
     path: '/api/public/hooks/blog-autogen',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksAutoOutreachWorkerRoute =
-  ApiPublicHooksAutoOutreachWorkerRouteImport.update({
-    id: '/api/public/hooks/auto-outreach-worker',
-    path: '/api/public/hooks/auto-outreach-worker',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksAliasBackfillRoute =
@@ -1416,9 +1332,7 @@ export interface FileRoutesByFullPath {
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
-  '/admin/add-contacts': typeof AdminAddContactsRoute
   '/admin/affiliates': typeof AdminAffiliatesRoute
-  '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
@@ -1434,11 +1348,9 @@ export interface FileRoutesByFullPath {
   '/admin/data-export': typeof AdminDataExportRoute
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
-  '/admin/drip-subscribers': typeof AdminDripSubscribersRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
-  '/admin/email-queue': typeof AdminEmailQueueRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
@@ -1448,7 +1360,7 @@ export interface FileRoutesByFullPath {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
-  '/admin/host-drip': typeof AdminHostDripRoute
+  '/admin/host-lifecycle': typeof AdminHostLifecycleRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1473,7 +1385,6 @@ export interface FileRoutesByFullPath {
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
-  '/admin/renter-drip': typeof AdminRenterDripRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
@@ -1481,7 +1392,6 @@ export interface FileRoutesByFullPath {
   '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
-  '/admin/sms-blast': typeof AdminSmsBlastRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/tech-docs': typeof AdminTechDocsRoute
@@ -1554,12 +1464,10 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/ab-auto-winner': typeof ApiPublicHooksAbAutoWinnerRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
-  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/composer-scheduled': typeof ApiPublicHooksComposerScheduledRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
-  '/api/public/hooks/enroll-host-signups': typeof ApiPublicHooksEnrollHostSignupsRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
@@ -1568,14 +1476,9 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/intercom': typeof ApiPublicHooksIntercomRoute
   '/api/public/hooks/intercom-sync': typeof ApiPublicHooksIntercomSyncRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
-  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
-  '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
-  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
-  '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
-  '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
@@ -1635,9 +1538,7 @@ export interface FileRoutesByTo {
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
-  '/admin/add-contacts': typeof AdminAddContactsRoute
   '/admin/affiliates': typeof AdminAffiliatesRoute
-  '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
@@ -1653,11 +1554,9 @@ export interface FileRoutesByTo {
   '/admin/data-export': typeof AdminDataExportRoute
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
-  '/admin/drip-subscribers': typeof AdminDripSubscribersRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
-  '/admin/email-queue': typeof AdminEmailQueueRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
@@ -1667,7 +1566,7 @@ export interface FileRoutesByTo {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
-  '/admin/host-drip': typeof AdminHostDripRoute
+  '/admin/host-lifecycle': typeof AdminHostLifecycleRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1692,7 +1591,6 @@ export interface FileRoutesByTo {
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
-  '/admin/renter-drip': typeof AdminRenterDripRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
@@ -1700,7 +1598,6 @@ export interface FileRoutesByTo {
   '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
-  '/admin/sms-blast': typeof AdminSmsBlastRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/tech-docs': typeof AdminTechDocsRoute
@@ -1773,12 +1670,10 @@ export interface FileRoutesByTo {
   '/api/public/hooks/ab-auto-winner': typeof ApiPublicHooksAbAutoWinnerRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
-  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/composer-scheduled': typeof ApiPublicHooksComposerScheduledRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
-  '/api/public/hooks/enroll-host-signups': typeof ApiPublicHooksEnrollHostSignupsRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
@@ -1787,14 +1682,9 @@ export interface FileRoutesByTo {
   '/api/public/hooks/intercom': typeof ApiPublicHooksIntercomRoute
   '/api/public/hooks/intercom-sync': typeof ApiPublicHooksIntercomSyncRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
-  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
-  '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
-  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
-  '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
-  '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
@@ -1855,9 +1745,7 @@ export interface FileRoutesById {
   '/unsubscribe-renter': typeof UnsubscribeRenterRoute
   '/account/learning': typeof AccountLearningRoute
   '/admin/activity-cities': typeof AdminActivityCitiesRoute
-  '/admin/add-contacts': typeof AdminAddContactsRoute
   '/admin/affiliates': typeof AdminAffiliatesRoute
-  '/admin/auto-outreach': typeof AdminAutoOutreachRoute
   '/admin/auto-refresh': typeof AdminAutoRefreshRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/cities-heroes': typeof AdminCitiesHeroesRoute
@@ -1873,11 +1761,9 @@ export interface FileRoutesById {
   '/admin/data-export': typeof AdminDataExportRoute
   '/admin/data-import': typeof AdminDataImportRoute
   '/admin/directory': typeof AdminDirectoryRoute
-  '/admin/drip-subscribers': typeof AdminDripSubscribersRoute
   '/admin/email-branding': typeof AdminEmailBrandingRoute
   '/admin/email-composer': typeof AdminEmailComposerRoute
   '/admin/email-deliverability': typeof AdminEmailDeliverabilityRoute
-  '/admin/email-queue': typeof AdminEmailQueueRoute
   '/admin/email-verify': typeof AdminEmailVerifyRoute
   '/admin/faq-generator': typeof AdminFaqGeneratorRoute
   '/admin/follow-ups': typeof AdminFollowUpsRoute
@@ -1887,7 +1773,7 @@ export interface FileRoutesById {
   '/admin/founder-blast': typeof AdminFounderBlastRoute
   '/admin/generate-content': typeof AdminGenerateContentRoute
   '/admin/gsc-import': typeof AdminGscImportRoute
-  '/admin/host-drip': typeof AdminHostDripRoute
+  '/admin/host-lifecycle': typeof AdminHostLifecycleRoute
   '/admin/ig-lead-hunter': typeof AdminIgLeadHunterRoute
   '/admin/indexing': typeof AdminIndexingRoute
   '/admin/internal-links': typeof AdminInternalLinksRoute
@@ -1912,7 +1798,6 @@ export interface FileRoutesById {
   '/admin/quick-page': typeof AdminQuickPageRoute
   '/admin/rank-tracker': typeof AdminRankTrackerRoute
   '/admin/redirect-aliases': typeof AdminRedirectAliasesRoute
-  '/admin/renter-drip': typeof AdminRenterDripRoute
   '/admin/scrape-import': typeof AdminScrapeImportRoute
   '/admin/seo-coach': typeof AdminSeoCoachRoute
   '/admin/seo-critic': typeof AdminSeoCriticRoute
@@ -1920,7 +1805,6 @@ export interface FileRoutesById {
   '/admin/sharetribe': typeof AdminSharetribeRoute
   '/admin/sharetribe-prune': typeof AdminSharetribePruneRoute
   '/admin/site-footer': typeof AdminSiteFooterRoute
-  '/admin/sms-blast': typeof AdminSmsBlastRoute
   '/admin/social-lead-hunter': typeof AdminSocialLeadHunterRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/tech-docs': typeof AdminTechDocsRoute
@@ -1993,12 +1877,10 @@ export interface FileRoutesById {
   '/api/public/hooks/ab-auto-winner': typeof ApiPublicHooksAbAutoWinnerRoute
   '/api/public/hooks/academy-health': typeof ApiPublicHooksAcademyHealthRoute
   '/api/public/hooks/alias-backfill': typeof ApiPublicHooksAliasBackfillRoute
-  '/api/public/hooks/auto-outreach-worker': typeof ApiPublicHooksAutoOutreachWorkerRoute
   '/api/public/hooks/blog-autogen': typeof ApiPublicHooksBlogAutogenRoute
   '/api/public/hooks/competitor-radar-scan': typeof ApiPublicHooksCompetitorRadarScanRoute
   '/api/public/hooks/composer-scheduled': typeof ApiPublicHooksComposerScheduledRoute
   '/api/public/hooks/daily-seo-digest': typeof ApiPublicHooksDailySeoDigestRoute
-  '/api/public/hooks/enroll-host-signups': typeof ApiPublicHooksEnrollHostSignupsRoute
   '/api/public/hooks/followup-reminders': typeof ApiPublicHooksFollowupRemindersRoute
   '/api/public/hooks/gen-host-pages': typeof ApiPublicHooksGenHostPagesRoute
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
@@ -2007,14 +1889,9 @@ export interface FileRoutesById {
   '/api/public/hooks/intercom': typeof ApiPublicHooksIntercomRoute
   '/api/public/hooks/intercom-sync': typeof ApiPublicHooksIntercomSyncRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
-  '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
-  '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
   '/api/public/hooks/provider-ai-worker': typeof ApiPublicHooksProviderAiWorkerRoute
-  '/api/public/hooks/send-host-drip-emails': typeof ApiPublicHooksSendHostDripEmailsRoute
-  '/api/public/hooks/send-renter-emails': typeof ApiPublicHooksSendRenterEmailsRoute
   '/api/public/hooks/seo-fix-worker': typeof ApiPublicHooksSeoFixWorkerRoute
   '/api/public/hooks/seo-self-test': typeof ApiPublicHooksSeoSelfTestRoute
-  '/api/public/hooks/sms-sender': typeof ApiPublicHooksSmsSenderRoute
   '/api/public/hooks/sync-affiliate-commissions': typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   '/api/public/hooks/sync-listings': typeof ApiPublicHooksSyncListingsRoute
   '/api/public/hooks/sync-sharetribe-mirror': typeof ApiPublicHooksSyncSharetribeMirrorRoute
@@ -2076,9 +1953,7 @@ export interface FileRouteTypes {
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
-    | '/admin/add-contacts'
     | '/admin/affiliates'
-    | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
@@ -2094,11 +1969,9 @@ export interface FileRouteTypes {
     | '/admin/data-export'
     | '/admin/data-import'
     | '/admin/directory'
-    | '/admin/drip-subscribers'
     | '/admin/email-branding'
     | '/admin/email-composer'
     | '/admin/email-deliverability'
-    | '/admin/email-queue'
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
@@ -2108,7 +1981,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
-    | '/admin/host-drip'
+    | '/admin/host-lifecycle'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -2133,7 +2006,6 @@ export interface FileRouteTypes {
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
-    | '/admin/renter-drip'
     | '/admin/scrape-import'
     | '/admin/seo-coach'
     | '/admin/seo-critic'
@@ -2141,7 +2013,6 @@ export interface FileRouteTypes {
     | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
-    | '/admin/sms-blast'
     | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/admin/tech-docs'
@@ -2214,12 +2085,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/ab-auto-winner'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
-    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/composer-scheduled'
     | '/api/public/hooks/daily-seo-digest'
-    | '/api/public/hooks/enroll-host-signups'
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
@@ -2228,14 +2097,9 @@ export interface FileRouteTypes {
     | '/api/public/hooks/intercom'
     | '/api/public/hooks/intercom-sync'
     | '/api/public/hooks/link-auto-fix'
-    | '/api/public/hooks/poll-sharetribe-hosts'
-    | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
-    | '/api/public/hooks/send-host-drip-emails'
-    | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
-    | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/sync-sharetribe-mirror'
@@ -2295,9 +2159,7 @@ export interface FileRouteTypes {
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
-    | '/admin/add-contacts'
     | '/admin/affiliates'
-    | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
@@ -2313,11 +2175,9 @@ export interface FileRouteTypes {
     | '/admin/data-export'
     | '/admin/data-import'
     | '/admin/directory'
-    | '/admin/drip-subscribers'
     | '/admin/email-branding'
     | '/admin/email-composer'
     | '/admin/email-deliverability'
-    | '/admin/email-queue'
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
@@ -2327,7 +2187,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
-    | '/admin/host-drip'
+    | '/admin/host-lifecycle'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -2352,7 +2212,6 @@ export interface FileRouteTypes {
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
-    | '/admin/renter-drip'
     | '/admin/scrape-import'
     | '/admin/seo-coach'
     | '/admin/seo-critic'
@@ -2360,7 +2219,6 @@ export interface FileRouteTypes {
     | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
-    | '/admin/sms-blast'
     | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/admin/tech-docs'
@@ -2433,12 +2291,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/ab-auto-winner'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
-    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/composer-scheduled'
     | '/api/public/hooks/daily-seo-digest'
-    | '/api/public/hooks/enroll-host-signups'
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
@@ -2447,14 +2303,9 @@ export interface FileRouteTypes {
     | '/api/public/hooks/intercom'
     | '/api/public/hooks/intercom-sync'
     | '/api/public/hooks/link-auto-fix'
-    | '/api/public/hooks/poll-sharetribe-hosts'
-    | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
-    | '/api/public/hooks/send-host-drip-emails'
-    | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
-    | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/sync-sharetribe-mirror'
@@ -2514,9 +2365,7 @@ export interface FileRouteTypes {
     | '/unsubscribe-renter'
     | '/account/learning'
     | '/admin/activity-cities'
-    | '/admin/add-contacts'
     | '/admin/affiliates'
-    | '/admin/auto-outreach'
     | '/admin/auto-refresh'
     | '/admin/blog'
     | '/admin/cities-heroes'
@@ -2532,11 +2381,9 @@ export interface FileRouteTypes {
     | '/admin/data-export'
     | '/admin/data-import'
     | '/admin/directory'
-    | '/admin/drip-subscribers'
     | '/admin/email-branding'
     | '/admin/email-composer'
     | '/admin/email-deliverability'
-    | '/admin/email-queue'
     | '/admin/email-verify'
     | '/admin/faq-generator'
     | '/admin/follow-ups'
@@ -2546,7 +2393,7 @@ export interface FileRouteTypes {
     | '/admin/founder-blast'
     | '/admin/generate-content'
     | '/admin/gsc-import'
-    | '/admin/host-drip'
+    | '/admin/host-lifecycle'
     | '/admin/ig-lead-hunter'
     | '/admin/indexing'
     | '/admin/internal-links'
@@ -2571,7 +2418,6 @@ export interface FileRouteTypes {
     | '/admin/quick-page'
     | '/admin/rank-tracker'
     | '/admin/redirect-aliases'
-    | '/admin/renter-drip'
     | '/admin/scrape-import'
     | '/admin/seo-coach'
     | '/admin/seo-critic'
@@ -2579,7 +2425,6 @@ export interface FileRouteTypes {
     | '/admin/sharetribe'
     | '/admin/sharetribe-prune'
     | '/admin/site-footer'
-    | '/admin/sms-blast'
     | '/admin/social-lead-hunter'
     | '/admin/team'
     | '/admin/tech-docs'
@@ -2652,12 +2497,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/ab-auto-winner'
     | '/api/public/hooks/academy-health'
     | '/api/public/hooks/alias-backfill'
-    | '/api/public/hooks/auto-outreach-worker'
     | '/api/public/hooks/blog-autogen'
     | '/api/public/hooks/competitor-radar-scan'
     | '/api/public/hooks/composer-scheduled'
     | '/api/public/hooks/daily-seo-digest'
-    | '/api/public/hooks/enroll-host-signups'
     | '/api/public/hooks/followup-reminders'
     | '/api/public/hooks/gen-host-pages'
     | '/api/public/hooks/gsc-sync'
@@ -2666,14 +2509,9 @@ export interface FileRouteTypes {
     | '/api/public/hooks/intercom'
     | '/api/public/hooks/intercom-sync'
     | '/api/public/hooks/link-auto-fix'
-    | '/api/public/hooks/poll-sharetribe-hosts'
-    | '/api/public/hooks/poll-sharetribe-renters'
     | '/api/public/hooks/provider-ai-worker'
-    | '/api/public/hooks/send-host-drip-emails'
-    | '/api/public/hooks/send-renter-emails'
     | '/api/public/hooks/seo-fix-worker'
     | '/api/public/hooks/seo-self-test'
-    | '/api/public/hooks/sms-sender'
     | '/api/public/hooks/sync-affiliate-commissions'
     | '/api/public/hooks/sync-listings'
     | '/api/public/hooks/sync-sharetribe-mirror'
@@ -2798,12 +2636,10 @@ export interface RootRouteChildren {
   ApiPublicHooksAbAutoWinnerRoute: typeof ApiPublicHooksAbAutoWinnerRoute
   ApiPublicHooksAcademyHealthRoute: typeof ApiPublicHooksAcademyHealthRoute
   ApiPublicHooksAliasBackfillRoute: typeof ApiPublicHooksAliasBackfillRoute
-  ApiPublicHooksAutoOutreachWorkerRoute: typeof ApiPublicHooksAutoOutreachWorkerRoute
   ApiPublicHooksBlogAutogenRoute: typeof ApiPublicHooksBlogAutogenRoute
   ApiPublicHooksCompetitorRadarScanRoute: typeof ApiPublicHooksCompetitorRadarScanRoute
   ApiPublicHooksComposerScheduledRoute: typeof ApiPublicHooksComposerScheduledRoute
   ApiPublicHooksDailySeoDigestRoute: typeof ApiPublicHooksDailySeoDigestRoute
-  ApiPublicHooksEnrollHostSignupsRoute: typeof ApiPublicHooksEnrollHostSignupsRoute
   ApiPublicHooksFollowupRemindersRoute: typeof ApiPublicHooksFollowupRemindersRoute
   ApiPublicHooksGenHostPagesRoute: typeof ApiPublicHooksGenHostPagesRoute
   ApiPublicHooksGscSyncRoute: typeof ApiPublicHooksGscSyncRoute
@@ -2812,14 +2648,9 @@ export interface RootRouteChildren {
   ApiPublicHooksIntercomRoute: typeof ApiPublicHooksIntercomRoute
   ApiPublicHooksIntercomSyncRoute: typeof ApiPublicHooksIntercomSyncRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
-  ApiPublicHooksPollSharetribeHostsRoute: typeof ApiPublicHooksPollSharetribeHostsRoute
-  ApiPublicHooksPollSharetribeRentersRoute: typeof ApiPublicHooksPollSharetribeRentersRoute
   ApiPublicHooksProviderAiWorkerRoute: typeof ApiPublicHooksProviderAiWorkerRoute
-  ApiPublicHooksSendHostDripEmailsRoute: typeof ApiPublicHooksSendHostDripEmailsRoute
-  ApiPublicHooksSendRenterEmailsRoute: typeof ApiPublicHooksSendRenterEmailsRoute
   ApiPublicHooksSeoFixWorkerRoute: typeof ApiPublicHooksSeoFixWorkerRoute
   ApiPublicHooksSeoSelfTestRoute: typeof ApiPublicHooksSeoSelfTestRoute
-  ApiPublicHooksSmsSenderRoute: typeof ApiPublicHooksSmsSenderRoute
   ApiPublicHooksSyncAffiliateCommissionsRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRoute
   ApiPublicHooksSyncListingsRoute: typeof ApiPublicHooksSyncListingsRoute
   ApiPublicHooksSyncSharetribeMirrorRoute: typeof ApiPublicHooksSyncSharetribeMirrorRoute
@@ -3526,13 +3357,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSocialLeadHunterRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/sms-blast': {
-      id: '/admin/sms-blast'
-      path: '/sms-blast'
-      fullPath: '/admin/sms-blast'
-      preLoaderRoute: typeof AdminSmsBlastRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/site-footer': {
       id: '/admin/site-footer'
       path: '/site-footer'
@@ -3580,13 +3404,6 @@ declare module '@tanstack/react-router' {
       path: '/scrape-import'
       fullPath: '/admin/scrape-import'
       preLoaderRoute: typeof AdminScrapeImportRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/renter-drip': {
-      id: '/admin/renter-drip'
-      path: '/renter-drip'
-      fullPath: '/admin/renter-drip'
-      preLoaderRoute: typeof AdminRenterDripRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/redirect-aliases': {
@@ -3757,11 +3574,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIgLeadHunterRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/host-drip': {
-      id: '/admin/host-drip'
-      path: '/host-drip'
-      fullPath: '/admin/host-drip'
-      preLoaderRoute: typeof AdminHostDripRouteImport
+    '/admin/host-lifecycle': {
+      id: '/admin/host-lifecycle'
+      path: '/host-lifecycle'
+      fullPath: '/admin/host-lifecycle'
+      preLoaderRoute: typeof AdminHostLifecycleRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/gsc-import': {
@@ -3827,13 +3644,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEmailVerifyRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/email-queue': {
-      id: '/admin/email-queue'
-      path: '/email-queue'
-      fullPath: '/admin/email-queue'
-      preLoaderRoute: typeof AdminEmailQueueRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/email-deliverability': {
       id: '/admin/email-deliverability'
       path: '/email-deliverability'
@@ -3853,13 +3663,6 @@ declare module '@tanstack/react-router' {
       path: '/email-branding'
       fullPath: '/admin/email-branding'
       preLoaderRoute: typeof AdminEmailBrandingRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/drip-subscribers': {
-      id: '/admin/drip-subscribers'
-      path: '/drip-subscribers'
-      fullPath: '/admin/drip-subscribers'
-      preLoaderRoute: typeof AdminDripSubscribersRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/directory': {
@@ -3967,25 +3770,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAutoRefreshRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/auto-outreach': {
-      id: '/admin/auto-outreach'
-      path: '/auto-outreach'
-      fullPath: '/admin/auto-outreach'
-      preLoaderRoute: typeof AdminAutoOutreachRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/affiliates': {
       id: '/admin/affiliates'
       path: '/affiliates'
       fullPath: '/admin/affiliates'
       preLoaderRoute: typeof AdminAffiliatesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/add-contacts': {
-      id: '/admin/add-contacts'
-      path: '/add-contacts'
-      fullPath: '/admin/add-contacts'
-      preLoaderRoute: typeof AdminAddContactsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/activity-cities': {
@@ -4156,13 +3945,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncAffiliateCommissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/sms-sender': {
-      id: '/api/public/hooks/sms-sender'
-      path: '/api/public/hooks/sms-sender'
-      fullPath: '/api/public/hooks/sms-sender'
-      preLoaderRoute: typeof ApiPublicHooksSmsSenderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/seo-self-test': {
       id: '/api/public/hooks/seo-self-test'
       path: '/api/public/hooks/seo-self-test'
@@ -4177,39 +3959,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSeoFixWorkerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/send-renter-emails': {
-      id: '/api/public/hooks/send-renter-emails'
-      path: '/api/public/hooks/send-renter-emails'
-      fullPath: '/api/public/hooks/send-renter-emails'
-      preLoaderRoute: typeof ApiPublicHooksSendRenterEmailsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/send-host-drip-emails': {
-      id: '/api/public/hooks/send-host-drip-emails'
-      path: '/api/public/hooks/send-host-drip-emails'
-      fullPath: '/api/public/hooks/send-host-drip-emails'
-      preLoaderRoute: typeof ApiPublicHooksSendHostDripEmailsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/provider-ai-worker': {
       id: '/api/public/hooks/provider-ai-worker'
       path: '/api/public/hooks/provider-ai-worker'
       fullPath: '/api/public/hooks/provider-ai-worker'
       preLoaderRoute: typeof ApiPublicHooksProviderAiWorkerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/poll-sharetribe-renters': {
-      id: '/api/public/hooks/poll-sharetribe-renters'
-      path: '/api/public/hooks/poll-sharetribe-renters'
-      fullPath: '/api/public/hooks/poll-sharetribe-renters'
-      preLoaderRoute: typeof ApiPublicHooksPollSharetribeRentersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/poll-sharetribe-hosts': {
-      id: '/api/public/hooks/poll-sharetribe-hosts'
-      path: '/api/public/hooks/poll-sharetribe-hosts'
-      fullPath: '/api/public/hooks/poll-sharetribe-hosts'
-      preLoaderRoute: typeof ApiPublicHooksPollSharetribeHostsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/link-auto-fix': {
@@ -4268,13 +4022,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksFollowupRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/enroll-host-signups': {
-      id: '/api/public/hooks/enroll-host-signups'
-      path: '/api/public/hooks/enroll-host-signups'
-      fullPath: '/api/public/hooks/enroll-host-signups'
-      preLoaderRoute: typeof ApiPublicHooksEnrollHostSignupsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/daily-seo-digest': {
       id: '/api/public/hooks/daily-seo-digest'
       path: '/api/public/hooks/daily-seo-digest'
@@ -4301,13 +4048,6 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/blog-autogen'
       fullPath: '/api/public/hooks/blog-autogen'
       preLoaderRoute: typeof ApiPublicHooksBlogAutogenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/auto-outreach-worker': {
-      id: '/api/public/hooks/auto-outreach-worker'
-      path: '/api/public/hooks/auto-outreach-worker'
-      fullPath: '/api/public/hooks/auto-outreach-worker'
-      preLoaderRoute: typeof ApiPublicHooksAutoOutreachWorkerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/alias-backfill': {
@@ -4369,9 +4109,7 @@ const AdminLearningRouteWithChildren = AdminLearningRoute._addFileChildren(
 
 interface AdminRouteChildren {
   AdminActivityCitiesRoute: typeof AdminActivityCitiesRoute
-  AdminAddContactsRoute: typeof AdminAddContactsRoute
   AdminAffiliatesRoute: typeof AdminAffiliatesRoute
-  AdminAutoOutreachRoute: typeof AdminAutoOutreachRoute
   AdminAutoRefreshRoute: typeof AdminAutoRefreshRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminCitiesHeroesRoute: typeof AdminCitiesHeroesRoute
@@ -4387,11 +4125,9 @@ interface AdminRouteChildren {
   AdminDataExportRoute: typeof AdminDataExportRoute
   AdminDataImportRoute: typeof AdminDataImportRoute
   AdminDirectoryRoute: typeof AdminDirectoryRoute
-  AdminDripSubscribersRoute: typeof AdminDripSubscribersRoute
   AdminEmailBrandingRoute: typeof AdminEmailBrandingRoute
   AdminEmailComposerRoute: typeof AdminEmailComposerRoute
   AdminEmailDeliverabilityRoute: typeof AdminEmailDeliverabilityRoute
-  AdminEmailQueueRoute: typeof AdminEmailQueueRoute
   AdminEmailVerifyRoute: typeof AdminEmailVerifyRoute
   AdminFaqGeneratorRoute: typeof AdminFaqGeneratorRoute
   AdminFollowUpsRoute: typeof AdminFollowUpsRoute
@@ -4401,7 +4137,7 @@ interface AdminRouteChildren {
   AdminFounderBlastRoute: typeof AdminFounderBlastRoute
   AdminGenerateContentRoute: typeof AdminGenerateContentRoute
   AdminGscImportRoute: typeof AdminGscImportRoute
-  AdminHostDripRoute: typeof AdminHostDripRoute
+  AdminHostLifecycleRoute: typeof AdminHostLifecycleRoute
   AdminIgLeadHunterRoute: typeof AdminIgLeadHunterRoute
   AdminIndexingRoute: typeof AdminIndexingRoute
   AdminInternalLinksRoute: typeof AdminInternalLinksRoute
@@ -4426,7 +4162,6 @@ interface AdminRouteChildren {
   AdminQuickPageRoute: typeof AdminQuickPageRoute
   AdminRankTrackerRoute: typeof AdminRankTrackerRoute
   AdminRedirectAliasesRoute: typeof AdminRedirectAliasesRoute
-  AdminRenterDripRoute: typeof AdminRenterDripRoute
   AdminScrapeImportRoute: typeof AdminScrapeImportRoute
   AdminSeoCoachRoute: typeof AdminSeoCoachRoute
   AdminSeoCriticRoute: typeof AdminSeoCriticRoute
@@ -4434,7 +4169,6 @@ interface AdminRouteChildren {
   AdminSharetribeRoute: typeof AdminSharetribeRoute
   AdminSharetribePruneRoute: typeof AdminSharetribePruneRoute
   AdminSiteFooterRoute: typeof AdminSiteFooterRoute
-  AdminSmsBlastRoute: typeof AdminSmsBlastRoute
   AdminSocialLeadHunterRoute: typeof AdminSocialLeadHunterRoute
   AdminTeamRoute: typeof AdminTeamRoute
   AdminTechDocsRoute: typeof AdminTechDocsRoute
@@ -4442,9 +4176,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminActivityCitiesRoute: AdminActivityCitiesRoute,
-  AdminAddContactsRoute: AdminAddContactsRoute,
   AdminAffiliatesRoute: AdminAffiliatesRoute,
-  AdminAutoOutreachRoute: AdminAutoOutreachRoute,
   AdminAutoRefreshRoute: AdminAutoRefreshRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminCitiesHeroesRoute: AdminCitiesHeroesRoute,
@@ -4460,11 +4192,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDataExportRoute: AdminDataExportRoute,
   AdminDataImportRoute: AdminDataImportRoute,
   AdminDirectoryRoute: AdminDirectoryRoute,
-  AdminDripSubscribersRoute: AdminDripSubscribersRoute,
   AdminEmailBrandingRoute: AdminEmailBrandingRoute,
   AdminEmailComposerRoute: AdminEmailComposerRoute,
   AdminEmailDeliverabilityRoute: AdminEmailDeliverabilityRoute,
-  AdminEmailQueueRoute: AdminEmailQueueRoute,
   AdminEmailVerifyRoute: AdminEmailVerifyRoute,
   AdminFaqGeneratorRoute: AdminFaqGeneratorRoute,
   AdminFollowUpsRoute: AdminFollowUpsRoute,
@@ -4474,7 +4204,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFounderBlastRoute: AdminFounderBlastRoute,
   AdminGenerateContentRoute: AdminGenerateContentRoute,
   AdminGscImportRoute: AdminGscImportRoute,
-  AdminHostDripRoute: AdminHostDripRoute,
+  AdminHostLifecycleRoute: AdminHostLifecycleRoute,
   AdminIgLeadHunterRoute: AdminIgLeadHunterRoute,
   AdminIndexingRoute: AdminIndexingRoute,
   AdminInternalLinksRoute: AdminInternalLinksRoute,
@@ -4499,7 +4229,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminQuickPageRoute: AdminQuickPageRoute,
   AdminRankTrackerRoute: AdminRankTrackerRoute,
   AdminRedirectAliasesRoute: AdminRedirectAliasesRoute,
-  AdminRenterDripRoute: AdminRenterDripRoute,
   AdminScrapeImportRoute: AdminScrapeImportRoute,
   AdminSeoCoachRoute: AdminSeoCoachRoute,
   AdminSeoCriticRoute: AdminSeoCriticRoute,
@@ -4507,7 +4236,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSharetribeRoute: AdminSharetribeRoute,
   AdminSharetribePruneRoute: AdminSharetribePruneRoute,
   AdminSiteFooterRoute: AdminSiteFooterRoute,
-  AdminSmsBlastRoute: AdminSmsBlastRoute,
   AdminSocialLeadHunterRoute: AdminSocialLeadHunterRoute,
   AdminTeamRoute: AdminTeamRoute,
   AdminTechDocsRoute: AdminTechDocsRoute,
@@ -4688,13 +4416,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksAbAutoWinnerRoute: ApiPublicHooksAbAutoWinnerRoute,
   ApiPublicHooksAcademyHealthRoute: ApiPublicHooksAcademyHealthRoute,
   ApiPublicHooksAliasBackfillRoute: ApiPublicHooksAliasBackfillRoute,
-  ApiPublicHooksAutoOutreachWorkerRoute: ApiPublicHooksAutoOutreachWorkerRoute,
   ApiPublicHooksBlogAutogenRoute: ApiPublicHooksBlogAutogenRoute,
   ApiPublicHooksCompetitorRadarScanRoute:
     ApiPublicHooksCompetitorRadarScanRoute,
   ApiPublicHooksComposerScheduledRoute: ApiPublicHooksComposerScheduledRoute,
   ApiPublicHooksDailySeoDigestRoute: ApiPublicHooksDailySeoDigestRoute,
-  ApiPublicHooksEnrollHostSignupsRoute: ApiPublicHooksEnrollHostSignupsRoute,
   ApiPublicHooksFollowupRemindersRoute: ApiPublicHooksFollowupRemindersRoute,
   ApiPublicHooksGenHostPagesRoute: ApiPublicHooksGenHostPagesRoute,
   ApiPublicHooksGscSyncRoute: ApiPublicHooksGscSyncRoute,
@@ -4703,16 +4429,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksIntercomRoute: ApiPublicHooksIntercomRoute,
   ApiPublicHooksIntercomSyncRoute: ApiPublicHooksIntercomSyncRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
-  ApiPublicHooksPollSharetribeHostsRoute:
-    ApiPublicHooksPollSharetribeHostsRoute,
-  ApiPublicHooksPollSharetribeRentersRoute:
-    ApiPublicHooksPollSharetribeRentersRoute,
   ApiPublicHooksProviderAiWorkerRoute: ApiPublicHooksProviderAiWorkerRoute,
-  ApiPublicHooksSendHostDripEmailsRoute: ApiPublicHooksSendHostDripEmailsRoute,
-  ApiPublicHooksSendRenterEmailsRoute: ApiPublicHooksSendRenterEmailsRoute,
   ApiPublicHooksSeoFixWorkerRoute: ApiPublicHooksSeoFixWorkerRoute,
   ApiPublicHooksSeoSelfTestRoute: ApiPublicHooksSeoSelfTestRoute,
-  ApiPublicHooksSmsSenderRoute: ApiPublicHooksSmsSenderRoute,
   ApiPublicHooksSyncAffiliateCommissionsRoute:
     ApiPublicHooksSyncAffiliateCommissionsRoute,
   ApiPublicHooksSyncListingsRoute: ApiPublicHooksSyncListingsRoute,
