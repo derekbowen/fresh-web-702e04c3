@@ -59,6 +59,7 @@ export type ContentPageTemplateType =
   | "swim_instructor_hub"
   | "activity_city"
   | "account_legal"
+  | "country_launch"
   | "other";
 
 export interface ContentPage {
