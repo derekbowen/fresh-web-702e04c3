@@ -33,7 +33,10 @@ import {
   sharetribeImageIds,
   type ParityFinding,
 } from "../src/lib/listing-parity";
-import { mirrorUnsupportedOptsFor } from "../src/lib/listing-read-source";
+import {
+  mirrorUnsupportedOptsFor,
+  sharetribeUnsupportedOptsFor,
+} from "../src/lib/listing-read-source";
 
 interface Args {
   cities: string[];
@@ -91,6 +94,28 @@ async function main() {
   for (const opts of buildQueries(args)) {
     const label = `search(${JSON.stringify(opts)})`;
     const unsupported = mirrorUnsupportedOptsFor(opts as Record<string, unknown>);
+    const stUnsupported = sharetribeUnsupportedOptsFor(opts as Record<string, unknown>);
+
+    // Sharetribe has no citySlug/city/stateCode filter, so for these queries
+    // there is no Sharetribe answer to compare against — only an unfiltered,
+    // marketplace-wide one. Diffing that against a correctly filtered mirror
+    // page manufactures a blocking membership finding for nearly every row, and
+    // would fail the report over an artefact of the harness rather than a real
+    // mirror defect.
+    if (stUnsupported.length > 0) {
+      allFindings.push({
+        field: `${label} query`,
+        severity: "unsupported",
+        code: "not-comparable",
+        sharetribe: null,
+        mirror: "present",
+        detail:
+          `Sharetribe cannot filter by ${stUnsupported.join(", ")}, so this query has no ` +
+          "Sharetribe side. Skipped rather than compared against an unfiltered page.",
+      });
+      perQuery.push({ label, findings: 1, blocking: 1 });
+      continue;
+    }
 
     let sharetribeResult = null;
     try {
