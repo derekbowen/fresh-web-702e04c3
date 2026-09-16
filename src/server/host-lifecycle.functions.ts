@@ -49,7 +49,7 @@ export type LifecycleRunRow = {
   mode: string;
   enabled: boolean;
   worker: string | null;
-  stats: Record<string, unknown> | null;
+  stats: Record<string, number | string | boolean | null> | null;
   error: string | null;
 };
 
