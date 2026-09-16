@@ -52,6 +52,16 @@ createServer(async (nodeReq, nodeRes) => {
 
     if (await tryStatic(url.pathname, nodeRes)) return;
 
+    // A /fw-assets/ path that is not a built file is a stale bundle reference
+    // or a scanner. Answer 404 here instead of handing it to the SSR router,
+    // which used to render a full page (and, for non-HTML Accept headers,
+    // answer 500) and touch the database on the way.
+    if (url.pathname.startsWith("/fw-assets/")) {
+      nodeRes.writeHead(404, { "Content-Type": "text/plain", "Cache-Control": "no-store" });
+      nodeRes.end("Not found");
+      return;
+    }
+
     const headers = new Headers();
     for (const [key, value] of Object.entries(nodeReq.headers)) {
       if (value) headers.set(key, Array.isArray(value) ? value.join(", ") : value);

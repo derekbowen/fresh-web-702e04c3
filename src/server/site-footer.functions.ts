@@ -13,7 +13,24 @@ import {
 export { DEFAULT_FOOTER };
 export type { SiteFooterSettings, FooterLink, FooterMarket, FooterSocial };
 
+// The footer is read on EVERY server render (root loader). Until 2026-09-16
+// that was one Supabase round-trip per page view, which is what a crawler
+// burst turned into thousands of queries a minute. Five-minute in-process
+// cache; the admin save/reset handlers below invalidate it.
+let footerCache: { at: number; data: SiteFooterSettings } | null = null;
+const FOOTER_CACHE_MS = 5 * 60_000;
+export function invalidateSiteFooterCache(): void {
+  footerCache = null;
+}
+
 export async function loadSiteFooter(): Promise<SiteFooterSettings> {
+  if (footerCache && Date.now() - footerCache.at < FOOTER_CACHE_MS) return footerCache.data;
+  const loaded = await loadSiteFooterUncached();
+  footerCache = { at: Date.now(), data: loaded };
+  return loaded;
+}
+
+async function loadSiteFooterUncached(): Promise<SiteFooterSettings> {
   try {
     const { data } = await supabaseAdmin
       .from("site_footer_settings" as any)
@@ -96,6 +113,7 @@ export const updateSiteFooter = createServerFn({ method: "POST" })
       .from("site_footer_settings" as any)
       .upsert({ id: 1, ...data });
     if (error) throw new Error(error.message);
+    invalidateSiteFooterCache();
     return { ok: true };
   });
 
@@ -108,5 +126,6 @@ export const resetSiteFooter = createServerFn({ method: "POST" })
       .from("site_footer_settings" as any)
       .upsert({ id: 1, ...DEFAULT_FOOTER });
     if (error) throw new Error(error.message);
+    invalidateSiteFooterCache();
     return { ok: true };
   });

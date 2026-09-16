@@ -22,6 +22,29 @@ async function assertAdmin(userId: string) {
  * returns `not_found`. Runs server-side during SSR so we capture bot traffic
  * too.
  */
+/**
+ * Junk filter + throttle, added 2026-09-16 after the Supabase freeze: a scanner
+ * walking /p/wp-login.php, /p/.env, /p/*.js and friends turned every miss into
+ * two database round-trips (select + insert/update). Scanner and asset-shaped
+ * paths are never logged, and any one path is logged at most once a minute per
+ * process. The admin 404 report loses nothing worth acting on.
+ */
+const JUNK_EXT = /\.(php|asp|aspx|jsp|cgi|env|git|sql|bak|zip|tar|gz|rar|7z|js|mjs|css|map|json|xml|txt|ico|png|jpe?g|gif|svg|webp|avif|woff2?|ttf|eot|pdf)$/i;
+const JUNK_PREFIX = /^\/p\/(wp-|\.|cgi-bin|vendor\/|phpmyadmin|fw-assets|assets\/|static\/|api\/|actuator|_next\/|\.well-known)/i;
+const recentlyLogged = new Map<string, number>();
+const LOG_THROTTLE_MS = 60_000;
+export function shouldLog404(urlPath: string): boolean {
+  if (urlPath.length > 200) return false;
+  if (JUNK_EXT.test(urlPath) || JUNK_PREFIX.test(urlPath)) return false;
+  if (/%00|%2e%2e|\.\.\//i.test(urlPath)) return false;
+  const now = Date.now();
+  const last = recentlyLogged.get(urlPath);
+  if (last !== undefined && now - last < LOG_THROTTLE_MS) return false;
+  if (recentlyLogged.size > 5000) recentlyLogged.clear();
+  recentlyLogged.set(urlPath, now);
+  return true;
+}
+
 export const log404 = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z
@@ -34,6 +57,7 @@ export const log404 = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data }) => {
+    if (!shouldLog404(data.urlPath)) return { ok: true, skipped: true };
     try {
       // Capture request headers server-side if not provided by caller.
       let referrer = data.referrer ?? null;

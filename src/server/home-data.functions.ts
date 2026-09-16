@@ -393,6 +393,20 @@ async function loadCityLinks(): Promise<HomeCity[]> {
 let winterCache: { at: number; data: WinterHomeData } | null = null;
 const WINTER_CACHE_MS = 60_000;
 
+/** Bound a homepage data call. During the 2026-09-16 Supabase freeze the
+ *  homepage sat on open database calls for 60 s+ per request; a bounded call
+ *  falls back (to the last good cache below) instead of piling up. */
+function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    p.then(
+      (v) => { clearTimeout(t); resolve(v); },
+      (e) => { clearTimeout(t); reject(e); },
+    );
+  });
+}
+const HOME_CALL_TIMEOUT_MS = 5_000;
+
 export const getWinterHomeData = createServerFn({ method: "GET" }).handler(
   async (): Promise<WinterHomeData> => {
     // This used to set `cache-control: no-store` and `x-robots-tag: noindex,
@@ -413,11 +427,11 @@ export const getWinterHomeData = createServerFn({ method: "GET" }).handler(
       }
     };
     const [featured, cityCards, cities] = await Promise.all([
-      safe(fetchListingsByIds(WINTER_FEATURED_LISTING_IDS), "featured listings", [] as WinterListing[]),
+      safe(withTimeout(fetchListingsByIds(WINTER_FEATURED_LISTING_IDS), HOME_CALL_TIMEOUT_MS, "featured listings"), "featured listings", [] as WinterListing[]),
       Promise.all(
         WINTER_CITY_CARDS.map(async (c): Promise<WinterCityCard> => {
           const r = await safe(
-            searchListings({ bounds: c.bounds, perPage: 1 }),
+            withTimeout(searchListings({ bounds: c.bounds, perPage: 1 }), HOME_CALL_TIMEOUT_MS, `city card ${c.slug}`),
             `city card ${c.slug}`,
             { listings: [], total: 0, page: 1, totalPages: 0 },
           );
@@ -431,10 +445,17 @@ export const getWinterHomeData = createServerFn({ method: "GET" }).handler(
           };
         }),
       ),
-      loadCityLinks(),
+      safe(withTimeout(loadCityLinks(), HOME_CALL_TIMEOUT_MS, "city links"), "city links", [] as HomeCity[]),
     ]);
     const data: WinterHomeData = { featured, cityCards, cities };
-    if (featured.length > 0) winterCache = { at: Date.now(), data };
+    if (featured.length > 0) {
+      winterCache = { at: Date.now(), data };
+      return data;
+    }
+    // Every featured lookup failed or timed out: serve the last good homepage
+    // (however old) rather than an empty one, so a database stall degrades
+    // to stale content instead of a blank hero.
+    if (winterCache) return winterCache.data;
     return data;
   },
 );
