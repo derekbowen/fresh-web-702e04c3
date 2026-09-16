@@ -11,6 +11,7 @@
 import type { ContentPage } from "@/server/content-pages.functions";
 import { cityForContentPage } from "@/server/nearby-cities.functions";
 import { findAdvocacyState } from "@/lib/advocacy-states";
+import { countryLaunchMarket } from "@/config/country-launch";
 
 export interface FaqItem {
   question: string;
@@ -287,7 +288,41 @@ export function faqsForContentPage(page: ContentPage): FaqItem[] {
     const title = page.title || page.seo_title || "this guide";
     return genericResourceFaqs(title);
   }
+  if (t === "country_launch") {
+    const market = countryLaunchMarket(page.slug, page.locale);
+    return market ? countryLaunchFaqs(market.country.name, market.country.currency, market.country.currencyLabel) : [];
+  }
   return [];
+}
+
+/**
+ * Country launch pages (UK / Canada / Australia hubs and their city pages).
+ * Every answer restates what the page's own stored body already says — no
+ * earnings figures, no coverage or insurance language.
+ */
+function countryLaunchFaqs(countryName: string, currency: string, currencyLabel: string): FaqItem[] {
+  return [
+    {
+      question: "Do I pay anything to list my pool?",
+      answer: `No. There is no listing fee, no host commission and no subscription. Founding hosts in ${countryName} keep 100% of what they charge — 0% host fees, not introductory, forever.`,
+    },
+    {
+      question: "How and when do I get paid?",
+      answer: `Guests pay by card. You are paid in ${currencyLabel} straight to your local bank account through Stripe. Payouts are initiated after the booking is completed; bank arrival times may vary.`,
+    },
+    {
+      question: "Why do prices show in US dollars?",
+      answer: `We're a US-built platform expanding out, and we'd rather say that plainly than pretend otherwise. You set your hourly price, guests pay it plus a small service fee, and your payout — your full price — reaches you in ${currency}.`,
+    },
+    {
+      question: "Who controls bookings, rules and guest numbers?",
+      answer: "You do. Your calendar, your rules, your minimum booking length and your guest count are all yours to set, and hourly bookings mean guests come, swim, and leave.",
+    },
+    {
+      question: "How long does it take to list?",
+      answer: "About ten minutes. Our listing wizard builds your page for you — and if your pool is already on another platform, paste the link and we import your photos and description automatically.",
+    },
+  ];
 }
 
 /** Build FAQPage JSON-LD object for a list of FAQs. Includes SpeakableSpecification

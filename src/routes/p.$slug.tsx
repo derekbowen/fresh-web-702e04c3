@@ -42,6 +42,9 @@ import { SwimInstructorCityTemplate } from "@/components/templates/swim-instruct
 import { SwimInstructorHubTemplate } from "@/components/templates/swim-instructor-hub";
 import { PoolMaintenanceTemplate } from "@/components/templates/pool-maintenance";
 import { ActivityCityTemplate } from "@/components/templates/activity-city";
+import { CountryLaunchTemplate } from "@/components/templates/country-launch";
+import { countryLaunchMarket } from "@/config/country-launch";
+import { getCountryLaunchGuides, type CountryLaunchGuide } from "@/server/country-launch.functions";
 import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { heroPreloadLinks } from "@/lib/hero-image";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
@@ -167,7 +170,10 @@ export const Route = createFileRoute("/p/$slug")({
     // was its own try/catch, so one failing lookup still cannot fail the page.
     const safe = <T,>(p: Promise<T>, fallback: T): Promise<T> => p.then((v) => v ?? fallback).catch(() => fallback);
 
-    const [nearbyCities, city, citySources, academyHub, hreflangRes, relatedRes, origin] =
+    const launchMarket =
+      page.template_type === "country_launch" ? countryLaunchMarket(page.slug, page.locale) : null;
+
+    const [nearbyCities, city, citySources, academyHub, hreflangRes, relatedRes, origin, launchGuides] =
       await Promise.all([
         isCityTemplate
           ? safe(
@@ -202,6 +208,12 @@ export const Route = createFileRoute("/p/$slug")({
             })
           : Promise.resolve({ posts: [] as RelatedPostMeta[] }),
         getRouteOrigin(),
+        launchMarket
+          ? safe(
+              getCountryLaunchGuides({ data: { slugs: launchMarket.country.guideSlugs } }),
+              [] as CountryLaunchGuide[],
+            )
+          : Promise.resolve([] as CountryLaunchGuide[]),
       ]);
 
     const linkTargets = await safe(
@@ -224,6 +236,7 @@ export const Route = createFileRoute("/p/$slug")({
       hreflangSibling: hreflangRes.sibling,
       relatedPosts: relatedRes.posts,
       origin,
+      launchGuides,
     };
   },
   head: ({ loaderData, params }) => {
@@ -553,7 +566,7 @@ function buildHreflangLinks(
 
 function ContentPageDispatcher() {
   const loaderData = Route.useLoaderData();
-  const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts } =
+  const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts, launchGuides } =
     (loaderData ?? {}) as ReturnType<typeof Route.useLoaderData>;
 
 
@@ -624,6 +637,8 @@ function ContentPageDispatcher() {
       return <AdvocacyTemplate page={page} />;
     case "activity_city":
       return <ActivityCityTemplate page={page} nearbyCities={nearbyCities} linkTargets={linkTargets} />;
+    case "country_launch":
+      return <CountryLaunchTemplate page={page} guides={launchGuides ?? []} />;
     default:
       return <GenericPageTemplate page={page} linkTargets={linkTargets} />;
   }
