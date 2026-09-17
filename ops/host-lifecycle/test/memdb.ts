@@ -34,7 +34,7 @@ type Filter = (r: Row) => boolean;
 class Query implements PromiseLike<any> {
   private filters: Filter[] = [];
   private op: { kind: "select" } | { kind: "upsert"; rows: Row[]; onConflict?: string; ignoreDuplicates?: boolean } | { kind: "insert"; rows: Row[] } | { kind: "update"; patch: Row } | { kind: "delete" } = { kind: "select" };
-  private count = false; private head = false; private orderKey: string | null = null; private asc = true; private lim: number | null = null; private single = false;
+  private count = false; private head = false; private orderKey: string | null = null; private asc = true; private lim: number | null = null; private one = false;
   constructor(private db: MemDb, private name: string) {}
   select(_cols?: string, o?: { count?: string; head?: boolean }) { if (o?.count) this.count = true; if (o?.head) this.head = true; return this; }
   eq(k: string, v: any) { this.filters.push((r) => r[k] === v); return this; }
@@ -49,8 +49,8 @@ class Query implements PromiseLike<any> {
   }
   order(k: string, o?: { ascending?: boolean }) { this.orderKey = k; this.asc = o?.ascending !== false; return this; }
   limit(n: number) { this.lim = n; return this; }
-  maybeSingle() { this.single = true; return this; }
-  single() { this.single = true; return this; }
+  maybeSingle() { this.one = true; return this; }
+  single() { this.one = true; return this; }
   upsert(row: Row | Row[], o?: { onConflict?: string; ignoreDuplicates?: boolean }) { this.op = { kind: "upsert", rows: Array.isArray(row) ? row : [row], onConflict: o?.onConflict, ignoreDuplicates: o?.ignoreDuplicates }; return this; }
   insert(row: Row | Row[]) { this.op = { kind: "insert", rows: Array.isArray(row) ? row : [row] }; return this; }
   update(patch: Row) { this.op = { kind: "update", patch }; return this; }
@@ -66,7 +66,7 @@ class Query implements PromiseLike<any> {
     const op = this.op;
     if (op.kind === "select") {
       const rows = this.matches();
-      if (this.single) return { data: rows[0] ? { ...rows[0] } : null, error: null };
+      if (this.one) return { data: rows[0] ? { ...rows[0] } : null, error: null };
       return { data: this.head ? null : rows.map((r) => ({ ...r })), count: this.count ? rows.length : null, error: null };
     }
     if (op.kind === "insert" || op.kind === "upsert") {
@@ -82,7 +82,7 @@ class Query implements PromiseLike<any> {
         const full = { id: this.db.nextId(), created_at: now, updated_at: now, attempt_count: 0, ...row };
         t.push(full); out.push({ ...full });
       }
-      if (this.single) return { data: out[0] ?? null, error: null };
+      if (this.one) return { data: out[0] ?? null, error: null };
       return { data: out, error: null };
     }
     if (op.kind === "update") { const rows = this.matches(); for (const r of rows) Object.assign(r, op.patch, { updated_at: op.patch.updated_at ?? now }); return { data: rows.map((r) => ({ ...r })), error: null }; }
