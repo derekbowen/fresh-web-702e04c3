@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { decideDelivery, loadConfig } from "../src/config";
+import { canTestSend, decideDelivery, loadConfig } from "../src/config";
 import { renderTemplate, sampleVars, TEMPLATE_KEYS } from "../../../src/lib/host-lifecycle/templates";
 import { sendDue, type EmailitLike } from "../src/send";
 
@@ -19,6 +19,15 @@ test("allowlist sends only to allowlisted recipients", () => {
 });
 test("production sends when enabled", () => {
   assert.equal(decideDelivery({ enabled: true, mode: "production", allowlist: [] }, "host@example.com").kind, "send");
+});
+test("test-send only in allowlist mode, to an allowlisted reviewer, with the switch on and the phone set", () => {
+  const ok = { enabled: true, mode: "allowlist" as const, allowlist: ["derek@example.com"], supportPhone: "909-000-0000" };
+  assert.equal(canTestSend(ok, "Derek@Example.com").ok, true);
+  assert.equal(canTestSend({ ...ok, enabled: false }, "derek@example.com").ok, false);
+  assert.equal(canTestSend({ ...ok, mode: "production" }, "derek@example.com").ok, false);
+  assert.equal(canTestSend({ ...ok, mode: "dry_run" }, "derek@example.com").ok, false);
+  assert.equal(canTestSend(ok, "host@example.com").ok, false);
+  assert.equal(canTestSend({ ...ok, supportPhone: null }, "derek@example.com").ok, false);
 });
 test("config defaults are the safe ones", () => {
   const cfg = loadConfig({} as NodeJS.ProcessEnv);

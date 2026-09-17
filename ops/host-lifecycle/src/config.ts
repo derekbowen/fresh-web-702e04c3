@@ -75,6 +75,19 @@ export type SendDecision =
   | { kind: "send"; to: string }
   | { kind: "record_only"; reason: string };
 
+/**
+ * A hand-run sample send of one template to a reviewer. Allowed only in
+ * allowlist mode, only to an allowlisted address, only with the kill switch
+ * on and the support phone configured. Never in production or dry_run.
+ */
+export function canTestSend(cfg: Pick<EngineConfig, "enabled" | "mode" | "allowlist" | "supportPhone">, to: string): { ok: boolean; reason: string } {
+  if (!cfg.enabled) return { ok: false, reason: "kill switch: HOST_LIFECYCLE_EMAILS_ENABLED is not true" };
+  if (cfg.mode !== "allowlist") return { ok: false, reason: `test sends only run in allowlist mode (mode is ${cfg.mode})` };
+  if (!cfg.allowlist.includes(to.toLowerCase())) return { ok: false, reason: "recipient is not in HOST_EMAIL_ALLOWLIST" };
+  if (!cfg.supportPhone) return { ok: false, reason: "HOST_LIFECYCLE_SUPPORT_PHONE is not set" };
+  return { ok: true, reason: "allowlisted reviewer" };
+}
+
 export function decideDelivery(cfg: Pick<EngineConfig, "enabled" | "mode" | "allowlist">, recipient: string): SendDecision {
   if (!cfg.enabled) return { kind: "record_only", reason: "kill switch: HOST_LIFECYCLE_EMAILS_ENABLED is not true" };
   if (cfg.mode === "dry_run") return { kind: "record_only", reason: "mode dry_run" };

@@ -7,16 +7,19 @@
  *   node ops/host-lifecycle/dist/run.mjs report    counts by state / campaign / status (read-only)
  *   node ops/host-lifecycle/dist/run.mjs preview <template> [out.html]
  *   node ops/host-lifecycle/dist/run.mjs config    print the effective, redacted configuration
+ *   node ops/host-lifecycle/dist/run.mjs test-send <template> <to>
+ *                                                  one sample to an allowlisted reviewer (allowlist mode only)
  * Always run with `node --env-file=/home/ubuntu/fresh-web/.env`.
  */
 import { writeFileSync } from "node:fs";
 import { hostname } from "node:os";
 import { renderTemplate, sampleVars, TEMPLATE_KEYS } from "../../../src/lib/host-lifecycle/templates";
 import type { TemplateKey } from "../../../src/lib/host-lifecycle/campaigns";
-import { loadConfig } from "./config";
+import { canTestSend, loadConfig } from "./config";
 import { finishRun, makeDb, startRun, type Db } from "./db";
 import { evaluateAndEnqueue } from "./queue";
 import { EmailitClient, sendDue } from "./send";
+import { oneClickUnsubscribeUrl } from "../../../src/lib/host-lifecycle/urls";
 import { SharetribeReader } from "./sharetribe";
 import { syncState } from "./sync";
 
@@ -85,6 +88,27 @@ async function main() {
   }
   const db = makeDb(cfg);
   console.log(`[lifecycle] ${cmd} mode=${cfg.mode} enabled=${cfg.enabled} worker=${WORKER}`);
+  if (cmd === "test-send") {
+    // Hand-run sample of one template to an allowlisted reviewer, through the
+    // real Emailit path. Every call is recorded in host_lifecycle_runs.
+    const key = args[0] as TemplateKey; const to = (args[1] ?? "").trim();
+    if (!TEMPLATE_KEYS.includes(key)) throw new Error(`unknown template; one of ${TEMPLATE_KEYS.join(", ")}`);
+    const gate = canTestSend(cfg, to);
+    if (!gate.ok) { console.log(`[lifecycle] test-send REFUSED: ${gate.reason}`); process.exit(3); }
+    const r = renderTemplate(key, sampleVars({ support_phone: cfg.supportPhone, support_email: cfg.replyTo, postal_address: cfg.postalAddress }));
+    if (!r.productionReady) throw new Error(`template not production-ready: ${r.placeholders.join(",")}`);
+    if (!cfg.emailitApiKey) throw new Error("EMAILIT_API_KEY missing");
+    const runId = await startRun(db, "test-send", cfg, WORKER);
+    try {
+      const res = await new EmailitClient(cfg.emailitApiKey).send({
+        from: cfg.from, to, subject: `[TEST] ${r.subject}`, html: r.html, text: r.text, replyTo: cfg.replyTo,
+        headers: { "List-Unsubscribe": `<${oneClickUnsubscribeUrl(cfg.origin, "sample")}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click", "X-PRNM-Campaign": `test:${key}` },
+      });
+      await finishRun(db, runId, { template: key, to: to.replace(/^(..).*@/, "$1***@"), provider_message_id: res.id, subject: r.subject });
+      console.log(JSON.stringify({ template: key, to, subject: r.subject, provider_message_id: res.id }));
+    } catch (e) { await finishRun(db, runId, { template: key }, e); throw e; }
+    return;
+  }
   if (cmd === "sync") console.log(JSON.stringify(await phaseSync(db, cfg)));
   else if (cmd === "evaluate") { const r = await phaseEvaluate(db, cfg); console.log(JSON.stringify(r.stats)); }
   else if (cmd === "send") console.log(JSON.stringify(await phaseSend(db, cfg)));
@@ -94,7 +118,7 @@ async function main() {
     const d = await phaseSend(db, cfg); console.log("send", JSON.stringify(d));
   }
   else if (cmd === "report") console.log(JSON.stringify(await report(db), null, 2));
-  else { console.error("usage: run.mjs sync|evaluate|send|tick|report|preview <template> [out]|config"); process.exit(2); }
+  else { console.error("usage: run.mjs sync|evaluate|send|tick|report|preview <template> [out]|config|test-send <template> <to>"); process.exit(2); }
 }
 
 main().catch((e) => { console.error("[lifecycle] FAILED", e); process.exit(1); });
