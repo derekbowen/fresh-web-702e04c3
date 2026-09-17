@@ -189,6 +189,15 @@ Because the lock guarantees a single sender anywhere, the in-process pacing
 is the provider-wide rate. `test-send` bypasses the lock (hand-run, one
 message) — do not script it in a loop.
 
+## Marketplace URLs (verified against WEST `routeConfiguration.js`, 2026-09-17)
+
+| purpose | path | note |
+|---|---|---|
+| Stripe payout onboarding | `/account/payments` (`StripePayoutPage`) | `/account/payouts` does **not** exist; the SPA shell answers 200 for any path, so never "verify" a route by status code alone |
+| listing wizard | `/l/:slug/:id/draft\|edit/details\|location\|pricing\|availability\|photos` | `draft` until published, `edit` after |
+| incomplete_info CTA | the tab of the first missing piece: details → location → pricing | copy names exactly what is missing |
+| incomplete_photos CTA | `…/photos` | |
+
 ## Rollout gates (each needs Derek's explicit GO)
 
 1. **dry_run** (current): every eligible email is rendered and recorded as

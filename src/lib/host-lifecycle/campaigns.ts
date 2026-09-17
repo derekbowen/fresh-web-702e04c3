@@ -128,7 +128,10 @@ export function stillApplies(campaign: CampaignKey, row: HostLifecycleRow): { ok
     case "stripe_2":
       if (row.stripe_connected) return { ok: false, reason: "Stripe connected" };
       if (row.listing_state !== "published") return { ok: false, reason: "listing not published" };
-      return { ok: true, reason: "published, Stripe not connected" };
+      // A published listing missing its location/photos/price cannot be found or
+      // booked, so a payout nudge is not actionable for that host yet.
+      if (!row.listing_ready) return { ok: false, reason: `published but incomplete (${row.missing.join(", ") || "missing details"}); payout nudge not actionable` };
+      return { ok: true, reason: "published and complete, Stripe not connected" };
     case "no_booking_1":
       if (row.booking_count > 0) return { ok: false, reason: "has a booking" };
       if (!row.stripe_connected) return { ok: false, reason: "Stripe not connected" };

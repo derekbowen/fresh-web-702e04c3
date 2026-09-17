@@ -113,6 +113,7 @@ export function buildVars(cfg: EngineConfig, row: StateRow, unsubToken: string):
   return {
     first_name: safeFirstName(row.first_name),
     listing_title: row.listing_title,
+    missing_pieces: (row.missing ?? []) as TemplateVars["missing_pieces"],
     ...urls,
     stripe_url: stripeUrl(cfg.origin),
     wizard_url: wizardUrl(cfg.origin),

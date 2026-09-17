@@ -228,6 +228,63 @@ test("a suppressed outcome releases the production key, is re-checked once a day
   assert.equal(em.sent.length, 1); assert.equal(db.jobs.filter((j) => j.status === "sent").length, 1);
 });
 
+// ---- GO 4: progression stop conditions, per state, through the real queue + send code ----
+const draftHost = (o: Row = {}): Row => signedUpHost({ lifecycle_state: "ADDRESS_ADDED", listing_id: "l1", listing_title: "Backyard Pool", listing_state: "draft", listing_created_at: daysAgo(20), has_title: true, has_description: true, has_address: true, has_price: true, photo_count: 0, listing_ready: false, missing: ["photos"], state_entered_at: daysAgo(3), ...o });
+const publishedHost = (o: Row = {}): Row => signedUpHost({ lifecycle_state: "PUBLISHED", listing_id: "l1", listing_title: "Backyard Pool", listing_state: "published", listing_created_at: daysAgo(20), has_title: true, has_description: true, has_address: true, has_price: true, photo_count: 5, listing_ready: true, missing: [], state_entered_at: daysAgo(3), ...o });
+
+test("incomplete_photos: sent once with the host's own draft photos URL; host adds photos → future incomplete_photos blocked", async () => {
+  const db = new MemDb(); db.hosts.push(draftHost()); const em = new FakeEmailit();
+  const e = await evaluateAndEnqueue(db, opts(prod)); assert.equal(e.byCampaign.incomplete_photos, 1);
+  await sendDue(db, prod, em, "w", new Date(), 20, okUrl);
+  assert.equal(em.sent.length, 1); assert.match(em.sent[0].subject, /add your photos/);
+  assert.equal(db.jobs[0].cta_url, "https://example.test/l/backyard-pool/l1/draft/photos", "CTA is this host's draft photos tab");
+  // Progression: photos added, state moves on.
+  Object.assign(db.hosts[0], { photo_count: 4, listing_ready: true, missing: [], lifecycle_state: "LISTING_READY", state_entered_at: new Date().toISOString() });
+  const e2 = await evaluateAndEnqueue(db, opts(prod));
+  assert.equal(e2.eligibleByCampaign.incomplete_photos ?? 0, 0); assert.equal(e2.byCampaign.publish_1 ?? 0, 0, "publish_1 waits for its 24 h clock");
+  // Even a stale queued incomplete_photos job is cancelled at send time once photos exist.
+  db.jobs.push({ id: db.nextId(), user_id: "u1", campaign_key: "incomplete_photos", template_key: "incomplete_photos", lifecycle_state: "ADDRESS_ADDED", recipient: "host@example.com", status: "queued", idempotency_key: "sim:u1:incomplete_photos:stale", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: daysAgo(0) });
+  const s = await sendDue(db, prod, em, "w", new Date(), 20, okUrl); assert.equal(s.cancelled, 1); assert.equal(em.sent.length, 1);
+});
+
+test("incomplete_info: copy and CTA follow the missing piece; host completes the fields → future incomplete_info blocked", async () => {
+  // Real derivation: no address → LISTING_STARTED; address + photos but no price/description → PHOTOS_ADDED.
+  const cases: Array<[string[], string, number, RegExp, string]> = [
+    [["address"], "LISTING_STARTED", 0, /needs the pool's address/, "/l/backyard-pool/l1/draft/location"],
+    [["price"], "PHOTOS_ADDED", 3, /needs an hourly price/, "/l/backyard-pool/l1/draft/pricing"],
+    [["description"], "PHOTOS_ADDED", 3, /needs a short description/, "/l/backyard-pool/l1/draft/details"],
+    [["address", "price"], "LISTING_STARTED", 0, /needs the pool's address and an hourly price/, "/l/backyard-pool/l1/draft/location"],
+  ];
+  for (const [missing, state, photos, copy, path] of cases) {
+    const db = new MemDb(); const em = new FakeEmailit();
+    db.hosts.push(draftHost({ lifecycle_state: state, photo_count: photos, has_address: !missing.includes("address"), has_price: !missing.includes("price"), has_description: !missing.includes("description"), missing }));
+    await evaluateAndEnqueue(db, opts(prod)); await sendDue(db, prod, em, "w", new Date(), 20, okUrl);
+    assert.equal(em.sent.length, 1, missing.join(",")); assert.match(em.sent[0].subject, /almost done listing/); assert.match(em.sent[0].text, copy); assert.equal(db.jobs[0].cta_url, "https://example.test" + path);
+  }
+  const db = new MemDb(); db.hosts.push(draftHost({ lifecycle_state: "LISTING_STARTED", has_address: false, missing: ["address"] })); const em = new FakeEmailit();
+  await evaluateAndEnqueue(db, opts(prod)); await sendDue(db, prod, em, "w", new Date(), 20, okUrl); assert.equal(em.sent.length, 1);
+  Object.assign(db.hosts[0], { has_address: true, missing: ["photos"], lifecycle_state: "ADDRESS_ADDED", state_entered_at: new Date().toISOString() });
+  const e2 = await evaluateAndEnqueue(db, opts(prod)); assert.equal(e2.eligibleByCampaign.incomplete_info ?? 0, 0);
+  db.jobs.push({ id: db.nextId(), user_id: "u1", campaign_key: "incomplete_info", template_key: "incomplete_info", lifecycle_state: "LISTING_STARTED", recipient: "host@example.com", status: "queued", idempotency_key: "sim:u1:incomplete_info:stale", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: daysAgo(0) });
+  const s = await sendDue(db, prod, em, "w", new Date(), 20, okUrl); assert.equal(s.cancelled, 1); assert.equal(em.sent.length, 1);
+});
+
+test("stripe_1: only a published AND complete listing qualifies; CTA is /account/payments; Stripe connected → stripe_1 cancelled and stripe_2 never eligible", async () => {
+  const db = new MemDb(); db.hosts.push(publishedHost()); db.hosts.push(publishedHost({ user_id: "nogeo", email: "nogeo@example.com", has_address: false, listing_ready: false, missing: ["address"] })); const em = new FakeEmailit();
+  const e = await evaluateAndEnqueue(db, opts(prod));
+  assert.equal(e.eligibleByCampaign.stripe_1, 1, "the incomplete published listing is not a stripe_1 candidate");
+  assert.ok(e.reasons["published but incomplete (address); payout nudge not actionable"] >= 1);
+  await sendDue(db, prod, em, "w", new Date(), 20, okUrl);
+  assert.equal(em.sent.length, 1); assert.equal(em.sent[0].to, "host@example.com"); assert.equal(db.jobs[0].cta_url, "https://example.test/account/payments");
+  // Progression: Stripe connected → follow-up path stops.
+  Object.assign(db.hosts[0], { stripe_connected: true, lifecycle_state: "STRIPE_CONNECTED", state_entered_at: new Date().toISOString() });
+  db.jobs[0].sent_at = daysAgo(4); // pretend stripe_1 went 4 days ago so stripe_2's 72 h gap is satisfied
+  const e2 = await evaluateAndEnqueue(db, opts(prod));
+  assert.equal(e2.eligibleByCampaign.stripe_2 ?? 0, 0); assert.equal(e2.eligibleByCampaign.stripe_1 ?? 0, 0);
+  db.jobs.push({ id: db.nextId(), user_id: "u1", campaign_key: "stripe_2", template_key: "stripe_2", lifecycle_state: "PUBLISHED", recipient: "host@example.com", status: "queued", idempotency_key: "sim:u1:stripe_2:stale", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: daysAgo(0) });
+  const s = await sendDue(db, prod, em, "w", new Date(), 20, okUrl); assert.equal(s.cancelled, 1); assert.match(db.jobs[1].suppressed_reason, /state changed/); assert.equal(em.sent.length, 1);
+});
+
 test("simulations never count toward the per-user gap; real sends do", async () => {
   const db = new MemDb(); db.hosts.push(signedUpHost({ user_id: "u2", email: "two@example.com" })); const em = new FakeEmailit();
   db.jobs.push({ id: db.nextId(), user_id: "u2", campaign_key: "publish_1", template_key: "publish_1", lifecycle_state: "LISTING_READY", recipient: "two@example.com", status: "would_send", idempotency_key: "sim:u2:publish_1:x", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: new Date().toISOString(), sent_at: null });

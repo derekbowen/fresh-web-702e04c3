@@ -28,7 +28,11 @@ export interface TemplateVars {
   listing_title: string | null;
   listing_url: string | null;
   completion_url: string | null;
+  location_url: string | null;
+  pricing_url: string | null;
   photos_url: string | null;
+  /** What the draft still lacks (from the state detector); drives the incomplete_info copy and CTA. */
+  missing_pieces: Array<"address" | "photos" | "price" | "description" | "title">;
   publish_url: string | null;
   stripe_url: string | null;
   wizard_url: string;
@@ -110,17 +114,18 @@ function bodies(key: TemplateKey, v: TemplateVars): Body {
         ctaLabel: "Add photos",
         ctaUrl: v.photos_url ?? v.completion_url ?? v.wizard_url,
       };
-    case "incomplete_info":
+    case "incomplete_info": {
+      // Specific to what is actually missing; the CTA lands on the wizard tab
+      // that fixes the first missing piece (details → location → pricing).
+      const info = incompleteInfoCopy(title, v);
       return {
         subject: "You're almost done listing your pool",
-        preheader: "A couple of details are still missing before it can go live.",
-        paragraphs: [
-          `${title} is saved as a draft, but a few required details are still missing, so it can't be published yet.`,
-          "Open the listing and the form will show you exactly what's left.",
-        ],
-        ctaLabel: "Finish your listing",
-        ctaUrl: v.completion_url ?? v.wizard_url,
+        preheader: info.preheader,
+        paragraphs: info.paragraphs,
+        ctaLabel: info.ctaLabel,
+        ctaUrl: info.ctaUrl ?? v.completion_url ?? v.wizard_url,
       };
+    }
     case "publish_1":
       return {
         subject: "Your pool is ready — publish it",
@@ -261,15 +266,42 @@ export const TEMPLATE_KEYS: TemplateKey[] = [
 ];
 
 /** Sample variables for previews and tests. */
+/** Copy for incomplete_info driven by the detector's missing pieces (photos are handled by incomplete_photos). */
+export function incompleteInfoCopy(title: string, v: TemplateVars): { preheader: string; paragraphs: string[]; ctaLabel: string; ctaUrl: string | null } {
+  const m = (v.missing_pieces ?? []).filter((p) => p !== "photos");
+  const needsAddress = m.includes("address"); const needsPrice = m.includes("price"); const needsDetails = m.includes("title") || m.includes("description");
+  const parts: string[] = [];
+  if (needsAddress) parts.push("the pool's address");
+  if (needsPrice) parts.push("an hourly price");
+  if (needsDetails) parts.push(m.includes("title") ? "a title" : "a short description");
+  const list = parts.length <= 1 ? (parts[0] ?? "a few required details") : parts.slice(0, -1).join(", ") + " and " + parts[parts.length - 1];
+  const why = needsAddress && !needsPrice && !needsDetails
+    ? "Guests search by location, so without an address your pool can't appear in results or be booked."
+    : needsPrice && !needsAddress && !needsDetails
+      ? "Guests need to see a price before they can request a booking. You can change it any time."
+      : "Guests can't see or book a listing until these are filled in.";
+  const ctaUrl = needsDetails ? v.completion_url : needsAddress ? v.location_url : needsPrice ? v.pricing_url : v.completion_url;
+  const ctaLabel = needsDetails ? "Finish the details" : needsAddress ? "Add your address" : needsPrice ? "Set your price" : "Finish your listing";
+  return {
+    preheader: `${title} still needs ${list} before it can go live.`,
+    paragraphs: [`${title} is saved as a draft, but it still needs ${list}, so it can't be published yet.`, why],
+    ctaLabel,
+    ctaUrl: ctaUrl ?? null,
+  };
+}
+
 export function sampleVars(overrides: Partial<TemplateVars> = {}): TemplateVars {
   return {
     first_name: "Sarah",
     listing_title: "Backyard Saltwater Pool with Shade",
     listing_url: "https://www.poolrentalnearme.com/l/backyard-saltwater-pool-with-shade/00000000-0000-0000-0000-000000000000",
     completion_url: "https://www.poolrentalnearme.com/l/backyard-saltwater-pool-with-shade/00000000-0000-0000-0000-000000000000/draft/details",
+    location_url: "https://www.poolrentalnearme.com/l/backyard-saltwater-pool-with-shade/00000000-0000-0000-0000-000000000000/draft/location",
+    pricing_url: "https://www.poolrentalnearme.com/l/backyard-saltwater-pool-with-shade/00000000-0000-0000-0000-000000000000/draft/pricing",
     photos_url: "https://www.poolrentalnearme.com/l/backyard-saltwater-pool-with-shade/00000000-0000-0000-0000-000000000000/draft/photos",
+    missing_pieces: ["address"],
     publish_url: "https://www.poolrentalnearme.com/l/backyard-saltwater-pool-with-shade/00000000-0000-0000-0000-000000000000/draft/photos",
-    stripe_url: "https://www.poolrentalnearme.com/account/payouts",
+    stripe_url: "https://www.poolrentalnearme.com/account/payments",
     wizard_url: "https://www.poolrentalnearme.com/wizard/",
     support_phone: null,
     support_email: "support@poolrentalnearme.com",
