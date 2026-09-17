@@ -247,6 +247,16 @@ test("incomplete_photos: sent once with the host's own draft photos URL; host ad
   const s = await sendDue(db, prod, em, "w", new Date(), 20, okUrl); assert.equal(s.cancelled, 1); assert.equal(em.sent.length, 1);
 });
 
+test("incomplete_photos: when the price is missing too, the email says so and still lands on the photos tab", async () => {
+  const db = new MemDb(); db.hosts.push(draftHost({ has_price: false, missing: ["price", "photos"] })); const em = new FakeEmailit();
+  await evaluateAndEnqueue(db, opts(prod)); await sendDue(db, prod, em, "w", new Date(), 20, okUrl);
+  assert.equal(em.sent.length, 1); assert.match(em.sent[0].text, /still needs photos, and an hourly price/); assert.match(em.sent[0].text, /pricing tab/);
+  assert.equal(db.jobs[0].cta_url, "https://example.test/l/backyard-pool/l1/draft/photos");
+  const db2 = new MemDb(); db2.hosts.push(draftHost()); const em2 = new FakeEmailit();
+  await evaluateAndEnqueue(db2, opts(prod)); await sendDue(db2, prod, em2, "w", new Date(), 20, okUrl);
+  assert.match(em2.sent[0].text, /has its address and details\. It just needs photos/);
+});
+
 test("incomplete_info: copy and CTA follow the missing piece; host completes the fields → future incomplete_info blocked", async () => {
   // Real derivation: no address → LISTING_STARTED; address + photos but no price/description → PHOTOS_ADDED.
   const cases: Array<[string[], string, number, RegExp, string]> = [

@@ -108,8 +108,11 @@ function bodies(key: TemplateKey, v: TemplateVars): Body {
         subject: "Your pool is almost ready — add your photos",
         preheader: "Photos are the last thing guests need to see before they book.",
         paragraphs: [
-          `${title} has its address and details. It just needs photos.`,
-          "Three or four clear daylight shots are enough: the pool, the seating, anything that makes it yours.",
+          (v.missing_pieces ?? []).includes("price")
+            ? `${title} has its address. It still needs photos, and an hourly price so guests can book.`
+            : `${title} has its address and details. It just needs photos.`,
+          "Three or four clear daylight shots are enough: the pool, the seating, anything that makes it yours."
+            + ((v.missing_pieces ?? []).includes("price") ? " You'll set the price on the pricing tab in the same form." : ""),
         ],
         ctaLabel: "Add photos",
         ctaUrl: v.photos_url ?? v.completion_url ?? v.wizard_url,
