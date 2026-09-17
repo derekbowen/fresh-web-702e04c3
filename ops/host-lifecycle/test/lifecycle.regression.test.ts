@@ -142,7 +142,7 @@ test("a queued job for a host+campaign that was already genuinely sent is cancel
 });
 
 test("provider 429 → one paced inline retry, job ends sent; consecutive sends are spaced", async () => {
-  class Flaky implements EmailitLike { sent: any[] = []; calls = 0; async send(i: any) { this.calls++; if (this.calls === 1) throw new Error('Emailit 429: {"error":"Rate limit exceeded","retry_after":1}'); this.sent.push(i); return { id: `msg${this.sent.length}` }; } }
+  class Flaky implements EmailitLike { sent: any[] = []; calls = 0; async send(i: any) { this.calls++; if (this.calls === 1) throw new EmailitHttpError(429, 1000, '{"error":"Rate limit exceeded","retry_after":1}'); this.sent.push(i); return { id: `msg${this.sent.length}` }; } }
   const db = new MemDb(); db.hosts.push(signedUpHost({ user_id: "a", email: "a@example.com" }), signedUpHost({ user_id: "b", email: "b@example.com" }));
   const em = new Flaky(); const sleeps: number[] = [];
   await evaluateAndEnqueue(db, opts(prod));
