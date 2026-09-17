@@ -98,7 +98,7 @@ test("dry-run records the exact email and sends nothing", async () => {
   const db = fakeDb({ jobs: [job()], hosts: [host()] }); const em = new FakeEmailit();
   const s = await sendDue(db, baseCfg(), em, "test");
   assert.equal(em.sent.length, 0); assert.equal(s.recorded, 1);
-  const u = db.updates.find((x: Row) => x.id === "j1"); assert.equal(u.status, "dry_run"); assert.match(u.subject, /One last step/); assert.ok(u.rendered_html.includes("Set up payouts"));
+  const u = db.updates.find((x: Row) => x.id === "j1"); assert.equal(u.status, "would_send"); assert.equal(u.sent_at, null); assert.match(u.subject, /One last step/); assert.ok(u.rendered_html.includes("Set up payouts"));
 });
 test("stale state immediately before send → cancelled, nothing sent", async () => {
   const db = fakeDb({ jobs: [job()], hosts: [host({ stripe_connected: true, lifecycle_state: "STRIPE_CONNECTED" })] }); const em = new FakeEmailit();
@@ -123,7 +123,7 @@ test("per-user 24 h gap defers; daily cap defers; allowlist blocks non-allowlist
   assert.equal(em.sent.length, 0); assert.match(db.updates[0].last_error, /daily cap/);
   db = fakeDb({ jobs: [job()], hosts: [host()] }); em = new FakeEmailit();
   await sendDue(db, { ...baseCfg(), enabled: true, mode: "allowlist", allowlist: ["derek@example.com"] }, em, "test");
-  assert.equal(em.sent.length, 0); assert.equal(db.updates[0].status, "dry_run"); assert.match(db.updates[0].suppressed_reason, /not allowlisted/);
+  assert.equal(em.sent.length, 0); assert.equal(db.updates[0].status, "would_send"); assert.match(db.updates[0].suppressed_reason, /not allowlisted/);
 });
 test("placeholder support phone blocks a real send; kill switch blocks at the last moment", async () => {
   let db = fakeDb({ jobs: [job()], hosts: [host()] }); let em = new FakeEmailit();
@@ -131,5 +131,5 @@ test("placeholder support phone blocks a real send; kill switch blocks at the la
   assert.equal(em.sent.length, 0); assert.match(db.updates[0].last_error, /not production-ready/);
   db = fakeDb({ jobs: [job()], hosts: [host()] }); em = new FakeEmailit();
   await sendDue(db, { ...baseCfg(), enabled: false, mode: "production" }, em, "test");
-  assert.equal(em.sent.length, 0); assert.equal(db.updates[0].status, "dry_run");
+  assert.equal(em.sent.length, 0); assert.equal(db.updates[0].status, "would_send");
 });

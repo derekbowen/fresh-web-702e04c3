@@ -10,9 +10,11 @@ import { stillApplies, type CampaignKey } from "../../../src/lib/host-lifecycle/
 import { safeFirstName } from "../../../src/lib/host-lifecycle/state";
 import { renderTemplate, type TemplateVars } from "../../../src/lib/host-lifecycle/templates";
 import { listingUrls, oneClickUnsubscribeUrl, stripeUrl, unsubscribeUrl, wizardUrl } from "../../../src/lib/host-lifecycle/urls";
-import { decideDelivery, type EngineConfig } from "./config";
-import type { Db } from "./db";
-import type { StateRow } from "./queue";
+import { canTestSend, decideDelivery, type EngineConfig } from "./config";
+import { finishRun, startRun, type Db } from "./db";
+import { isProductionKey, type StateRow } from "./queue";
+import { sampleVars } from "../../../src/lib/host-lifecycle/templates";
+import type { TemplateKey } from "../../../src/lib/host-lifecycle/campaigns";
 
 export interface SendStats {
   leased: number; sent: number; recorded: number; suppressed: number; cancelled: number; failed: number; capped: number;
@@ -60,8 +62,9 @@ export async function sentTodayCount(db: Db, now: Date): Promise<number> {
   return count ?? 0;
 }
 
+/** Last GENUINE delivery to this host. Simulations (would_send) never count toward the per-user gap. */
 export async function lastEmailToUser(db: Db, userId: string): Promise<string | null> {
-  const { data } = await db.from("communication_jobs").select("sent_at, updated_at, status").eq("user_id", userId).in("status", ["sent", "dry_run"]).order("updated_at", { ascending: false }).limit(1);
+  const { data } = await db.from("communication_jobs").select("sent_at, updated_at, status").eq("user_id", userId).in("status", ["sent"]).order("updated_at", { ascending: false }).limit(1);
   const j = data?.[0]; if (!j) return null;
   return (j.sent_at ?? j.updated_at) as string;
 }
@@ -104,7 +107,9 @@ export function buildVars(cfg: EngineConfig, row: StateRow, unsubToken: string):
   };
 }
 
-export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | null, worker: string, now = new Date(), limit = 20): Promise<SendStats> {
+export interface SendDeps { checkUrl: (url: string) => Promise<{ ok: boolean; status: number }> }
+
+export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | null, worker: string, now = new Date(), limit = 20, deps: SendDeps = { checkUrl }): Promise<SendStats> {
   const stats: SendStats = { leased: 0, sent: 0, recorded: 0, suppressed: 0, cancelled: 0, failed: 0, capped: 0, byOutcome: {} };
   const bump = (k: string) => { stats.byOutcome[k] = (stats.byOutcome[k] ?? 0) + 1; };
   const { data: leased, error } = await db.rpc("lease_communication_jobs", { p_limit: limit, p_worker: worker });
@@ -143,13 +148,19 @@ export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | 
       const decision = decideDelivery(cfg, r.email);
       const base = { subject: rendered.subject, cta_url: rendered.ctaUrl, rendered_html: rendered.html };
       if (decision.kind === "record_only") {
-        await finish({ ...base, status: "dry_run", sent_at: null, last_error: null, suppressed_reason: decision.reason });
-        stats.recorded++; bump(`recorded:${cfg.mode}`); continue;
+        // Simulation only: audit the exact email, never touch production send
+        // state. sent_at stays null, and if this row was enqueued under the
+        // production key (switches changed between evaluate and send) the key
+        // is released so a later real send for this host+campaign is not blocked.
+        const patch: Record<string, unknown> = { ...base, status: "would_send", sent_at: null, last_error: null, suppressed_reason: decision.reason };
+        if (isProductionKey(String(job.idempotency_key ?? ""))) patch.idempotency_key = `sim:${job.user_id}:${job.campaign_key}:${job.id}`;
+        await finish(patch);
+        stats.recorded++; bump(`would_send:${cfg.mode}`); continue;
       }
       // 6. Production-readiness + cap + URL check only when a real send is about to happen.
       if (!rendered.productionReady) { await finish({ ...base, status: "queued", last_error: `not production-ready: placeholders ${rendered.placeholders.join(",")}` }); stats.failed++; bump("blocked:placeholder"); continue; }
       if (sentToday >= cfg.dailyCap) { await finish({ ...base, status: "queued", scheduled_at: new Date(now.getTime() + 6 * 3600_000).toISOString(), last_error: `daily cap ${cfg.dailyCap} reached` }); stats.capped++; bump("deferred:daily_cap"); continue; }
-      let u = urlCache.get(rendered.ctaUrl); if (!u) { u = await checkUrl(rendered.ctaUrl); urlCache.set(rendered.ctaUrl, u); }
+      let u = urlCache.get(rendered.ctaUrl); if (!u) { u = await deps.checkUrl(rendered.ctaUrl); urlCache.set(rendered.ctaUrl, u); }
       if (!u.ok) { await finish({ ...base, status: "queued", last_error: `CTA URL check failed (${u.status}) ${rendered.ctaUrl}` }); stats.failed++; bump("blocked:cta_url"); continue; }
       if (!emailit) throw new Error("Emailit client not configured");
       // 7. Final kill-switch read, immediately before the provider call.
@@ -169,4 +180,26 @@ export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | 
     }
   }
   return stats;
+}
+
+/**
+ * Hand-run sample of one template to an allowlisted reviewer (Derek). Goes
+ * through the real provider, is recorded in host_lifecycle_runs, and touches
+ * NOTHING in communication_jobs or host_lifecycle_state: the sample data is
+ * synthetic, so no real host is ever marked as contacted by a test send.
+ */
+export async function sendTestSample(db: Db, cfg: EngineConfig, emailit: EmailitLike, key: TemplateKey, to: string, worker: string): Promise<{ provider_message_id: string; subject: string }> {
+  const gate = canTestSend(cfg, to);
+  if (!gate.ok) throw new Error(`test-send refused: ${gate.reason}`);
+  const r = renderTemplate(key, sampleVars({ support_phone: cfg.supportPhone, support_email: cfg.replyTo, postal_address: cfg.postalAddress }));
+  if (!r.productionReady) throw new Error(`template not production-ready: ${r.placeholders.join(",")}`);
+  const runId = await startRun(db, "test-send", cfg, worker);
+  try {
+    const res = await emailit.send({
+      from: cfg.from, to, subject: `[TEST] ${r.subject}`, html: r.html, text: r.text, replyTo: cfg.replyTo,
+      headers: { "List-Unsubscribe": `<${oneClickUnsubscribeUrl(cfg.origin, "sample")}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click", "X-PRNM-Campaign": `test:${key}` },
+    });
+    await finishRun(db, runId, { template: key, to: to.replace(/^(..).*@/, "$1***@"), provider_message_id: res.id, subject: r.subject });
+    return { provider_message_id: res.id, subject: r.subject };
+  } catch (e) { await finishRun(db, runId, { template: key }, e); throw e; }
 }

@@ -71,7 +71,7 @@ export const getHostLifecycleOverview = createServerFn({ method: "GET" })
     const jobs = (jobsRes.data ?? []) as LifecycleJobRow[];
     const runs = (runsRes.data ?? []) as LifecycleRunRow[];
     const summary: Record<string, Record<string, number>> = {};
-    const todayCounts: Record<string, number> = { eligible: 0, queued: 0, dry_run: 0, sent: 0, suppressed: 0, cancelled: 0, failed: 0 };
+    const todayCounts: Record<string, number> = { eligible: 0, queued: 0, would_send: 0, sent: 0, suppressed: 0, cancelled: 0, failed: 0 };
     for (const j of jobs) {
       summary[j.campaign_key] ??= {}; summary[j.campaign_key][j.status] = (summary[j.campaign_key][j.status] ?? 0) + 1;
       if (Date.parse(j.updated_at) >= today.getTime()) { todayCounts[j.status] = (todayCounts[j.status] ?? 0) + 1; todayCounts.eligible++; }

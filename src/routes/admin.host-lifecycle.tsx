@@ -59,14 +59,14 @@ function HostLifecyclePage() {
           <CardHeader><CardTitle>Campaigns</CardTitle></CardHeader>
           <CardContent>
             <table className="w-full text-sm">
-              <thead><tr className="text-left text-muted-foreground"><th className="py-1">Campaign</th><th>Rule</th><th>queued</th><th>dry_run</th><th>sent</th><th>suppressed</th><th>cancelled</th><th>failed</th></tr></thead>
+              <thead><tr className="text-left text-muted-foreground"><th className="py-1">Campaign</th><th>Rule</th><th>queued</th><th>would_send (simulated)</th><th>sent (real)</th><th>suppressed</th><th>cancelled</th><th>failed</th></tr></thead>
               <tbody>
                 {d?.campaigns.map((c) => {
                   const s = d.summary[c.key] ?? {};
                   return (
                     <tr key={c.key} className="border-t border-border">
                       <td className="py-1 font-mono">{c.key}</td><td className="text-muted-foreground">{c.description}{c.after ? ` (≥ ${c.after.hours} h after ${c.after.campaign})` : ""}</td>
-                      <td>{s.queued ?? 0}</td><td>{s.dry_run ?? 0}</td><td>{s.sent ?? 0}</td><td>{s.suppressed ?? 0}</td><td>{s.cancelled ?? 0}</td><td>{s.failed ?? 0}</td>
+                      <td>{s.queued ?? 0}</td><td>{s.would_send ?? 0}</td><td>{s.sent ?? 0}</td><td>{s.suppressed ?? 0}</td><td>{s.cancelled ?? 0}</td><td>{s.failed ?? 0}</td>
                     </tr>
                   );
                 })}
@@ -89,7 +89,7 @@ function HostLifecyclePage() {
                     <td className="font-semibold">{j.status}{j.mode ? ` (${j.mode})` : ""}</td>
                     <td className="max-w-[28rem] text-muted-foreground">{j.suppressed_reason ?? j.last_error ?? j.eligibility_reason ?? ""}</td>
                     <td className="font-mono">{j.provider_message_id ?? ""}</td>
-                    <td>{(j.status === "dry_run" || j.status === "sent") && <button className="text-primary underline" onClick={async () => setJobHtml(await getJobHtml({ data: { id: j.id } }))}>view</button>}</td>
+                    <td>{(j.status === "would_send" || j.status === "sent") &&<button className="text-primary underline" onClick={async () => setJobHtml(await getJobHtml({ data: { id: j.id } }))}>view</button>}</td>
                   </tr>
                 ))}
               </tbody>

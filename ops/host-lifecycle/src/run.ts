@@ -15,11 +15,10 @@ import { writeFileSync } from "node:fs";
 import { hostname } from "node:os";
 import { renderTemplate, sampleVars, TEMPLATE_KEYS } from "../../../src/lib/host-lifecycle/templates";
 import type { TemplateKey } from "../../../src/lib/host-lifecycle/campaigns";
-import { canTestSend, loadConfig } from "./config";
+import { loadConfig } from "./config";
 import { finishRun, makeDb, startRun, type Db } from "./db";
 import { evaluateAndEnqueue } from "./queue";
-import { EmailitClient, sendDue } from "./send";
-import { oneClickUnsubscribeUrl } from "../../../src/lib/host-lifecycle/urls";
+import { EmailitClient, sendDue, sendTestSample } from "./send";
 import { SharetribeReader } from "./sharetribe";
 import { syncState } from "./sync";
 
@@ -39,7 +38,7 @@ async function phaseSync(db: Db, cfg: ReturnType<typeof loadConfig>) {
 async function phaseEvaluate(db: Db, cfg: ReturnType<typeof loadConfig>) {
   const runId = await startRun(db, "evaluate", cfg, WORKER);
   try {
-    const { explain, ...stats } = await evaluateAndEnqueue(db, cfg.campaigns);
+    const { explain, ...stats } = await evaluateAndEnqueue(db, { campaigns: cfg.campaigns, delivery: cfg });
     await finishRun(db, runId, stats);
     return { stats, explain };
   } catch (e) { await finishRun(db, runId, {}, e); throw e; }
@@ -93,20 +92,15 @@ async function main() {
     // real Emailit path. Every call is recorded in host_lifecycle_runs.
     const key = args[0] as TemplateKey; const to = (args[1] ?? "").trim();
     if (!TEMPLATE_KEYS.includes(key)) throw new Error(`unknown template; one of ${TEMPLATE_KEYS.join(", ")}`);
-    const gate = canTestSend(cfg, to);
-    if (!gate.ok) { console.log(`[lifecycle] test-send REFUSED: ${gate.reason}`); process.exit(3); }
-    const r = renderTemplate(key, sampleVars({ support_phone: cfg.supportPhone, support_email: cfg.replyTo, postal_address: cfg.postalAddress }));
-    if (!r.productionReady) throw new Error(`template not production-ready: ${r.placeholders.join(",")}`);
     if (!cfg.emailitApiKey) throw new Error("EMAILIT_API_KEY missing");
-    const runId = await startRun(db, "test-send", cfg, WORKER);
     try {
-      const res = await new EmailitClient(cfg.emailitApiKey).send({
-        from: cfg.from, to, subject: `[TEST] ${r.subject}`, html: r.html, text: r.text, replyTo: cfg.replyTo,
-        headers: { "List-Unsubscribe": `<${oneClickUnsubscribeUrl(cfg.origin, "sample")}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click", "X-PRNM-Campaign": `test:${key}` },
-      });
-      await finishRun(db, runId, { template: key, to: to.replace(/^(..).*@/, "$1***@"), provider_message_id: res.id, subject: r.subject });
-      console.log(JSON.stringify({ template: key, to, subject: r.subject, provider_message_id: res.id }));
-    } catch (e) { await finishRun(db, runId, { template: key }, e); throw e; }
+      const res = await sendTestSample(db, cfg, new EmailitClient(cfg.emailitApiKey), key, to, WORKER);
+      console.log(JSON.stringify({ template: key, to, ...res }));
+    } catch (e) {
+      const msg = String((e as Error).message ?? e);
+      if (msg.startsWith("test-send refused")) { console.log(`[lifecycle] test-send REFUSED: ${msg.replace("test-send refused: ", "")}`); process.exit(3); }
+      throw e;
+    }
     return;
   }
   if (cmd === "sync") console.log(JSON.stringify(await phaseSync(db, cfg)));

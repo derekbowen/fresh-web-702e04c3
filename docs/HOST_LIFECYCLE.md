@@ -103,7 +103,27 @@ so any such email would be guessing.
     with `List-Unsubscribe`, `List-Unsubscribe-Post` and `X-PRNM-Campaign`
     headers. Failures retry up to 3 times, then `failed`.
 
-Job statuses: `queued → leased → sent | dry_run | suppressed | cancelled | failed`.
+Job statuses: `queued → leased → sent | would_send | suppressed | cancelled | failed`.
+
+**Three histories that never mix** (`ops/host-lifecycle/src/queue.ts`):
+
+- `sent` — a genuine provider delivery. The **only** thing that makes a
+  campaign "already sent" for a host, the only thing the per-user gap and
+  the daily cap count, and the only thing that occupies the production
+  idempotency key `user:campaign`.
+- `would_send` — a simulation (dry_run, or allowlist record-only). Audit
+  only: it keeps the rendered HTML and the reason, sets no `sent_at`, and
+  lives under a `sim:user:campaign:<day>` key so it can never block a later
+  real send. At most one per host per campaign per UTC day.
+- test sends (`run.mjs test-send`) — go through Emailit to an allowlisted
+  reviewer using synthetic sample data, are logged in `host_lifecycle_runs`
+  only, and touch neither `communication_jobs` nor `host_lifecycle_state`.
+
+The evaluator decides at enqueue time whether the email would really leave
+under the current switches (`decideDelivery`) and picks the key accordingly;
+if the switches change between evaluate and send, a production-keyed job
+that ends record-only releases its key. Regression tests:
+`ops/host-lifecycle/test/lifecycle.regression.test.ts`.
 
 ## Configuration (EAST `.env`; `pm2 restart fresh-web --update-env && pm2 save` after changes)
 
