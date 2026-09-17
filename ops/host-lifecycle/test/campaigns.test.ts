@@ -56,7 +56,7 @@ test("publish stops once published; stripe stops once connected; no-booking stop
   assert.equal(stillApplies("no_booking_1", booked).ok, false);
 });
 test("never more than one campaign per group per host, and unverified emails never qualify", () => {
-  const pub = row({ listing_id: "l1", listing_state: "published", lifecycle_state: "PUBLISHED" });
+  const pub = row({ listing_id: "l1", listing_state: "published", lifecycle_state: "PUBLISHED", listing_ready: true, has_address: true, photo_count: 3 });
   const all = eligibleCampaigns(input(pub, { history: { sent: { stripe_1: "2026-09-10T00:00:00Z" }, lastEmailAt: null } }));
   assert.deepEqual(all.map((e) => e.campaign), ["stripe_2"]);
   assert.equal(eligibleCampaigns(input(row({ email_verified: false }))).length, 0);
