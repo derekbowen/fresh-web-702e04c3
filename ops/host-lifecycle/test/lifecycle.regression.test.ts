@@ -118,6 +118,28 @@ test("switches flipped between evaluate and send: a production-keyed job that en
   assert.equal(em.sent.length, 1);
 });
 
+test("hand-run cohort: only listed users and campaigns are enqueued or sent; everyone else is untouched", async () => {
+  const db = new MemDb(); db.hosts.push(signedUpHost({ user_id: "a", email: "a@example.com" }), signedUpHost({ user_id: "b", email: "b@example.com" }), signedUpHost({ user_id: "c", email: "c@example.com" }));
+  const em = new FakeEmailit();
+  const cohort = { ...prod, onlyUsers: ["a", "b"], onlyCampaigns: ["no_listing_1"] };
+  const e = await evaluateAndEnqueue(db, { ...opts(cohort), onlyUsers: cohort.onlyUsers, onlyCampaigns: cohort.onlyCampaigns });
+  assert.equal(e.eligible, 3); assert.equal(e.enqueued, 2); assert.equal(e.outsideCohort, 1);
+  assert.deepEqual(db.jobs.map((j) => j.user_id).sort(), ["a", "b"]);
+  // A stray queued job for a non-cohort host is left queued, not sent.
+  db.jobs.push({ id: db.nextId(), user_id: "c", campaign_key: "no_listing_1", template_key: "no_listing_1", lifecycle_state: "SIGNED_UP", recipient: "c@example.com", status: "queued", idempotency_key: "c:no_listing_1", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: daysAgo(0) });
+  const s = await sendDue(db, cohort, em, "w", new Date(), 20, okUrl);
+  assert.equal(s.sent, 2); assert.deepEqual(em.sent.map((m) => m.to).sort(), ["a@example.com", "b@example.com"]);
+  const stray = db.jobs.find((j) => j.user_id === "c")!; assert.equal(stray.status, "queued"); assert.match(stray.last_error, /outside hand-run cohort/);
+});
+
+test("a queued job for a host+campaign that was already genuinely sent is cancelled before the provider call", async () => {
+  const db = new MemDb(); db.hosts.push(signedUpHost()); const em = new FakeEmailit();
+  db.jobs.push({ id: db.nextId(), user_id: "u1", campaign_key: "no_listing_1", template_key: "no_listing_1", lifecycle_state: "SIGNED_UP", recipient: "host@example.com", status: "sent", sent_at: daysAgo(2), idempotency_key: "u1:no_listing_1", scheduled_at: daysAgo(2), created_at: daysAgo(2), updated_at: daysAgo(2) });
+  db.jobs.push({ id: db.nextId(), user_id: "u1", campaign_key: "no_listing_1", template_key: "no_listing_1", lifecycle_state: "SIGNED_UP", recipient: "host@example.com", status: "queued", idempotency_key: "sim:u1:no_listing_1:stray", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: daysAgo(0) });
+  const s = await sendDue(db, prod, em, "w", new Date(), 20, okUrl);
+  assert.equal(em.sent.length, 0); assert.equal(s.cancelled, 1); assert.match(db.jobs[1].suppressed_reason, /already genuinely sent/);
+});
+
 test("simulations never count toward the per-user gap; real sends do", async () => {
   const db = new MemDb(); db.hosts.push(signedUpHost({ user_id: "u2", email: "two@example.com" })); const em = new FakeEmailit();
   db.jobs.push({ id: db.nextId(), user_id: "u2", campaign_key: "publish_1", template_key: "publish_1", lifecycle_state: "LISTING_READY", recipient: "two@example.com", status: "would_send", idempotency_key: "sim:u2:publish_1:x", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: new Date().toISOString(), sent_at: null });

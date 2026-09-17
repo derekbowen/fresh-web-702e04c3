@@ -9,7 +9,7 @@ import type { Db } from "./db";
 
 export type StateRow = HostLifecycleRow & { state_entered_at: string; published_at: string | null; last_synced_at: string };
 
-export interface EvaluateStats { hosts: number; eligible: number; enqueued: number; alreadyQueued: number; byCampaign: Record<string, number>; eligibleByCampaign: Record<string, number>; reasons: Record<string, number> }
+export interface EvaluateStats { hosts: number; eligible: number; enqueued: number; alreadyQueued: number; outsideCohort: number; byCampaign: Record<string, number>; eligibleByCampaign: Record<string, number>; reasons: Record<string, number> }
 
 /**
  * Three histories, kept apart on purpose:
@@ -57,14 +57,14 @@ export async function loadHistory(db: Db): Promise<Map<string, JobHistory>> {
   return out;
 }
 
-export interface EnqueueOptions { campaigns: CampaignConfig; delivery: Pick<EngineConfig, "enabled" | "mode" | "allowlist"> }
+export interface EnqueueOptions { campaigns: CampaignConfig; delivery: Pick<EngineConfig, "enabled" | "mode" | "allowlist">; onlyUsers?: string[]; onlyCampaigns?: string[] }
 
 export async function evaluateAndEnqueue(db: Db, opts: EnqueueOptions, now = new Date()): Promise<EvaluateStats & { explain: Array<{ user_id: string; state: string; campaigns: Array<{ campaign: string; eligible: boolean; reason: string }> }> }> {
   const cfg = opts.campaigns;
   const { data: rows, error } = await db.from("host_lifecycle_state").select("*");
   if (error) throw new Error(`read host_lifecycle_state: ${error.message}`);
   const history = await loadHistory(db);
-  const stats: EvaluateStats = { hosts: 0, eligible: 0, enqueued: 0, alreadyQueued: 0, byCampaign: {}, eligibleByCampaign: {}, reasons: {} };
+  const stats: EvaluateStats = { hosts: 0, eligible: 0, enqueued: 0, alreadyQueued: 0, outsideCohort: 0, byCampaign: {}, eligibleByCampaign: {}, reasons: {} };
   const explain: Array<{ user_id: string; state: string; campaigns: Array<{ campaign: string; eligible: boolean; reason: string }> }> = [];
   for (const r of (rows ?? []) as StateRow[]) {
     stats.hosts++;
@@ -79,6 +79,9 @@ export async function evaluateAndEnqueue(db: Db, opts: EnqueueOptions, now = new
     for (const e of eligibleCampaigns(input)) {
       stats.eligible++;
       stats.eligibleByCampaign[e.campaign] = (stats.eligibleByCampaign[e.campaign] ?? 0) + 1;
+      // Hand-run restrictions: outside the cohort / campaign list nothing is enqueued at all.
+      if (opts.onlyUsers?.length && !opts.onlyUsers.includes(r.user_id)) { stats.outsideCohort++; continue; }
+      if (opts.onlyCampaigns?.length && !opts.onlyCampaigns.includes(e.campaign)) { stats.outsideCohort++; continue; }
       if (real && h.inflight[e.campaign]) { stats.alreadyQueued++; continue; }
       if (!real && h.simulatedOn[e.campaign] === now.toISOString().slice(0, 10)) { stats.alreadyQueued++; continue; }
       const { error: insErr, data } = await db

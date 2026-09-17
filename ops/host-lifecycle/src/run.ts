@@ -38,7 +38,7 @@ async function phaseSync(db: Db, cfg: ReturnType<typeof loadConfig>) {
 async function phaseEvaluate(db: Db, cfg: ReturnType<typeof loadConfig>) {
   const runId = await startRun(db, "evaluate", cfg, WORKER);
   try {
-    const { explain, ...stats } = await evaluateAndEnqueue(db, { campaigns: cfg.campaigns, delivery: cfg });
+    const { explain, ...stats } = await evaluateAndEnqueue(db, { campaigns: cfg.campaigns, delivery: cfg, onlyUsers: cfg.onlyUsers, onlyCampaigns: cfg.onlyCampaigns });
     await finishRun(db, runId, stats);
     return { stats, explain };
   } catch (e) { await finishRun(db, runId, {}, e); throw e; }
@@ -70,7 +70,7 @@ async function report(db: Db) {
 }
 
 function redacted(cfg: ReturnType<typeof loadConfig>) {
-  return { enabled: cfg.enabled, mode: cfg.mode, allowlist: cfg.allowlist.length, dailyCap: cfg.dailyCap, userGapHours: cfg.userGapHours, supportPhone: cfg.supportPhone ? "set" : "MISSING (placeholder)", from: cfg.from, replyTo: cfg.replyTo, postalAddress: cfg.postalAddress ? "set" : "unset", origin: cfg.origin, campaigns: cfg.campaigns, emailit: !!cfg.emailitApiKey, supabase: !!cfg.supabaseUrl, sharetribe: !!cfg.sharetribeClientId };
+  return { enabled: cfg.enabled, mode: cfg.mode, allowlist: cfg.allowlist.length, dailyCap: cfg.dailyCap, onlyUsers: cfg.onlyUsers.length, onlyCampaigns: cfg.onlyCampaigns, userGapHours: cfg.userGapHours, supportPhone: cfg.supportPhone ? "set" : "MISSING (placeholder)", from: cfg.from, replyTo: cfg.replyTo, postalAddress: cfg.postalAddress ? "set" : "unset", origin: cfg.origin, campaigns: cfg.campaigns, emailit: !!cfg.emailitApiKey, supabase: !!cfg.supabaseUrl, sharetribe: !!cfg.sharetribeClientId };
 }
 
 async function main() {

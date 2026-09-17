@@ -144,6 +144,17 @@ export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | 
       const token = await getOrCreateUnsubToken(db, r.email);
       const vars = buildVars(cfg, r, token);
       const rendered = renderTemplate(job.template_key, vars);
+      // 4b. Hand-run restrictions: a job outside the cohort / campaign list is
+      // left queued and untouched (it is not this run's to send).
+      if ((cfg.onlyUsers.length && !cfg.onlyUsers.includes(job.user_id)) || (cfg.onlyCampaigns.length && !cfg.onlyCampaigns.includes(job.campaign_key))) {
+        await finish({ status: "queued", last_error: "outside hand-run cohort/campaign restriction" }); bump("deferred:outside_cohort"); continue;
+      }
+      // 4c. Never a second genuine delivery of the same campaign to the same host,
+      // whatever key this job carries.
+      const { data: priorSent } = await db.from("communication_jobs").select("id, sent_at").eq("user_id", job.user_id).eq("campaign_key", job.campaign_key).eq("status", "sent").limit(1);
+      if (priorSent && priorSent.length > 0) {
+        await finish({ status: "cancelled", suppressed_at: now.toISOString(), suppressed_reason: `already genuinely sent at ${priorSent[0].sent_at}` }); stats.cancelled++; bump("cancelled:already_sent"); continue;
+      }
       // 5. Decide delivery (kill switch + mode + allowlist).
       const decision = decideDelivery(cfg, r.email);
       const base = { subject: rendered.subject, cta_url: rendered.ctaUrl, rendered_html: rendered.html };

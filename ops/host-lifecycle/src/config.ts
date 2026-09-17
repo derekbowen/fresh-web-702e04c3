@@ -13,6 +13,8 @@
  *   HOST_LIFECYCLE_REPLY_TO        default support@poolrentalnearme.com
  *   HOST_LIFECYCLE_POSTAL_ADDRESS  optional footer address
  *   HOST_LIFECYCLE_NO_LISTING_MAX_DAYS / HOST_LIFECYCLE_NO_BOOKING_MIN_DAYS  campaign knobs
+ *   HOST_LIFECYCLE_ONLY_USERS      hand-run cohort: comma-separated user ids; nothing else is enqueued or sent
+ *   HOST_LIFECYCLE_ONLY_CAMPAIGNS  hand-run restriction: comma-separated campaign keys
  *   SITE_ORIGIN                    default https://www.poolrentalnearme.com
  */
 import { DEFAULT_CAMPAIGN_CONFIG, type CampaignConfig } from "../../../src/lib/host-lifecycle/campaigns";
@@ -32,6 +34,10 @@ export interface EngineConfig {
   postalAddress: string | null;
   origin: string;
   campaigns: CampaignConfig;
+  /** Hand-run cohort restriction: when non-empty, evaluate/send only touch these Sharetribe user ids. */
+  onlyUsers: string[];
+  /** Hand-run campaign restriction: when non-empty, evaluate/send only touch these campaigns. */
+  onlyCampaigns: string[];
   emailitApiKey: string | null;
   supabaseUrl: string | null;
   supabaseServiceRoleKey: string | null;
@@ -62,6 +68,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): EngineConfig {
       noListingMaxAccountAgeDays: num(env.HOST_LIFECYCLE_NO_LISTING_MAX_DAYS, DEFAULT_CAMPAIGN_CONFIG.noListingMaxAccountAgeDays),
       noBookingMinDays: num(env.HOST_LIFECYCLE_NO_BOOKING_MIN_DAYS, DEFAULT_CAMPAIGN_CONFIG.noBookingMinDays),
     },
+    onlyUsers: (env.HOST_LIFECYCLE_ONLY_USERS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+    onlyCampaigns: (env.HOST_LIFECYCLE_ONLY_CAMPAIGNS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
     emailitApiKey: env.EMAILIT_API_KEY ?? null,
     supabaseUrl: env.SUPABASE_URL ?? null,
     supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY ?? null,
