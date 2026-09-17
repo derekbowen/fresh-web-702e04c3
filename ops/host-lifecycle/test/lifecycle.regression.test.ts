@@ -140,6 +140,18 @@ test("a queued job for a host+campaign that was already genuinely sent is cancel
   assert.equal(em.sent.length, 0); assert.equal(s.cancelled, 1); assert.match(db.jobs[1].suppressed_reason, /already genuinely sent/);
 });
 
+test("provider 429 → one paced inline retry, job ends sent; consecutive sends are spaced", async () => {
+  class Flaky implements EmailitLike { sent: any[] = []; calls = 0; async send(i: any) { this.calls++; if (this.calls === 1) throw new Error('Emailit 429: {"error":"Rate limit exceeded","retry_after":1}'); this.sent.push(i); return { id: `msg${this.sent.length}` }; } }
+  const db = new MemDb(); db.hosts.push(signedUpHost({ user_id: "a", email: "a@example.com" }), signedUpHost({ user_id: "b", email: "b@example.com" }));
+  const em = new Flaky(); const sleeps: number[] = [];
+  await evaluateAndEnqueue(db, opts(prod));
+  const s = await sendDue(db, prod, em, "w", new Date(), 20, { ...okUrl, sleep: async (ms) => { sleeps.push(ms); } });
+  assert.equal(s.sent, 2); assert.equal(s.failed, 0); assert.equal(em.calls, 3);
+  assert.equal(db.jobs.filter((j) => j.status === "sent" && j.provider_message_id).length, 2);
+  assert.ok(sleeps.includes(1000), "waited retry_after before the 429 retry"); assert.ok(sleeps.includes(600), "spaced the second send");
+  assert.ok(db.jobs.some((j) => j.last_error === "sent on retry after provider 429"));
+});
+
 test("simulations never count toward the per-user gap; real sends do", async () => {
   const db = new MemDb(); db.hosts.push(signedUpHost({ user_id: "u2", email: "two@example.com" })); const em = new FakeEmailit();
   db.jobs.push({ id: db.nextId(), user_id: "u2", campaign_key: "publish_1", template_key: "publish_1", lifecycle_state: "LISTING_READY", recipient: "two@example.com", status: "would_send", idempotency_key: "sim:u2:publish_1:x", scheduled_at: daysAgo(0), created_at: daysAgo(0), updated_at: new Date().toISOString(), sent_at: null });

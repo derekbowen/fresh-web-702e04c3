@@ -107,9 +107,27 @@ export function buildVars(cfg: EngineConfig, row: StateRow, unsubToken: string):
   };
 }
 
-export interface SendDeps { checkUrl: (url: string) => Promise<{ ok: boolean; status: number }> }
+export interface SendDeps { checkUrl: (url: string) => Promise<{ ok: boolean; status: number }>; sleep?: (ms: number) => Promise<void> }
+
+/** Emailit allows 2 messages per second; space provider calls so a cohort never trips it. */
+export const PROVIDER_SPACING_MS = 600;
+const defaultSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+/** One provider call, with a single inline retry after a 429 (rate limit), honouring retry_after when given. */
+export async function sendWithRateLimitRetry(emailit: EmailitLike, input: Parameters<EmailitLike["send"]>[0], sleep: (ms: number) => Promise<void>): Promise<{ id: string; retried: boolean }> {
+  try {
+    return { ...(await emailit.send(input)), retried: false };
+  } catch (err) {
+    const msg = String((err as Error).message ?? err);
+    if (!/\b429\b/.test(msg)) throw err;
+    const m = /"retry_after"\s*:\s*(\d+)/.exec(msg);
+    await sleep(Math.max(1000, (m ? Number(m[1]) : 1) * 1000));
+    return { ...(await emailit.send(input)), retried: true };
+  }
+}
 
 export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | null, worker: string, now = new Date(), limit = 20, deps: SendDeps = { checkUrl }): Promise<SendStats> {
+  const sleep = deps.sleep ?? defaultSleep;
   const stats: SendStats = { leased: 0, sent: 0, recorded: 0, suppressed: 0, cancelled: 0, failed: 0, capped: 0, byOutcome: {} };
   const bump = (k: string) => { stats.byOutcome[k] = (stats.byOutcome[k] ?? 0) + 1; };
   const { data: leased, error } = await db.rpc("lease_communication_jobs", { p_limit: limit, p_worker: worker });
@@ -176,13 +194,14 @@ export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | 
       if (!emailit) throw new Error("Emailit client not configured");
       // 7. Final kill-switch read, immediately before the provider call.
       if (!cfg.enabled) { await finish({ ...base, status: "dry_run", suppressed_reason: "kill switch" }); stats.recorded++; bump("recorded:kill_switch"); continue; }
-      const res = await emailit.send({
+      if (stats.sent > 0) await sleep(PROVIDER_SPACING_MS); // stay under Emailit's 2 msg/s
+      const res = await sendWithRateLimitRetry(emailit, {
         from: cfg.from, to: decision.to, subject: rendered.subject, html: rendered.html, text: rendered.text, replyTo: cfg.replyTo,
         headers: { "List-Unsubscribe": `<${oneClickUnsubscribeUrl(cfg.origin, token)}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click", "X-PRNM-Campaign": job.campaign_key },
-      });
+      }, sleep);
       sentToday++;
-      await finish({ ...base, status: "sent", sent_at: new Date().toISOString(), provider_message_id: res.id, last_error: null });
-      stats.sent++; bump("sent");
+      await finish({ ...base, status: "sent", sent_at: new Date().toISOString(), provider_message_id: res.id, last_error: res.retried ? "sent on retry after provider 429" : null });
+      stats.sent++; bump(res.retried ? "sent:after_429" : "sent");
     } catch (err) {
       const msg = String((err as Error).message ?? err).slice(0, 500);
       const retry = (job.attempt_count ?? 1) < 3;
