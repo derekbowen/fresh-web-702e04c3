@@ -57,7 +57,7 @@ export async function loadHistory(db: Db): Promise<Map<string, JobHistory>> {
   return out;
 }
 
-export interface EnqueueOptions { campaigns: CampaignConfig; delivery: Pick<EngineConfig, "enabled" | "mode" | "allowlist">; onlyUsers?: string[]; onlyCampaigns?: string[] }
+export interface EnqueueOptions { campaigns: CampaignConfig; delivery: Pick<EngineConfig, "enabled" | "mode" | "allowlist" | "productionCampaigns">; onlyUsers?: string[]; onlyCampaigns?: string[] }
 
 export async function evaluateAndEnqueue(db: Db, opts: EnqueueOptions, now = new Date()): Promise<EvaluateStats & { explain: Array<{ user_id: string; state: string; campaigns: Array<{ campaign: string; eligible: boolean; reason: string }> }> }> {
   const cfg = opts.campaigns;
@@ -73,12 +73,13 @@ export async function evaluateAndEnqueue(db: Db, opts: EnqueueOptions, now = new
     const all = explainAll(input);
     for (const e of all) if (!e.eligible) stats.reasons[e.reason.replace(/\d+/g, "N")] = (stats.reasons[e.reason.replace(/\d+/g, "N")] ?? 0) + 1;
     explain.push({ user_id: r.user_id, state: r.lifecycle_state, campaigns: all });
-    // Would this host's email actually leave under the current switches? Decided
-    // here so a record-only intent never occupies the production key.
-    const real = decideDelivery(opts.delivery, r.email).kind === "send";
     for (const e of eligibleCampaigns(input)) {
       stats.eligible++;
       stats.eligibleByCampaign[e.campaign] = (stats.eligibleByCampaign[e.campaign] ?? 0) + 1;
+      // Would this email actually leave under the current switches (kill switch,
+      // mode, recipient allowlist, campaign allowlist)? Decided per campaign so a
+      // record-only intent never occupies the production key.
+      const real = decideDelivery(opts.delivery, r.email, e.campaign).kind === "send";
       // Hand-run restrictions: outside the cohort / campaign list nothing is enqueued at all.
       if (opts.onlyUsers?.length && !opts.onlyUsers.includes(r.user_id)) { stats.outsideCohort++; continue; }
       if (opts.onlyCampaigns?.length && !opts.onlyCampaigns.includes(e.campaign)) { stats.outsideCohort++; continue; }

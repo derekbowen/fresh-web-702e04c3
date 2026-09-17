@@ -19,6 +19,8 @@ import type { TemplateKey } from "../../../src/lib/host-lifecycle/campaigns";
 export interface SendStats {
   leased: number; sent: number; recorded: number; suppressed: number; cancelled: number; failed: number; capped: number;
   byOutcome: Record<string, number>;
+  /** true when another sender held the global lock; nothing was leased or sent. */
+  lockBusy?: boolean;
 }
 
 export interface Suppression { suppressed: boolean; reason: string }
@@ -78,16 +80,30 @@ export async function checkUrl(url: string): Promise<{ ok: boolean; status: numb
 
 export interface EmailitLike { send(input: { from: string; to: string; subject: string; html: string; text: string; replyTo: string; headers: Record<string, string> }): Promise<{ id: string }> }
 
+/** Typed provider failure: the real HTTP status and the provider's own retry hint (Retry-After header, or retry_after in the body). */
+export class EmailitHttpError extends Error {
+  constructor(public status: number, public retryAfterMs: number | null, body: string) {
+    super(`Emailit ${status}: ${body.slice(0, 200)}`);
+    this.name = "EmailitHttpError";
+  }
+}
+
+export function parseRetryAfterMs(header: string | null, body: string): number | null {
+  if (header) { const s = Number(header); if (Number.isFinite(s) && s >= 0) return s * 1000; const d = Date.parse(header); if (Number.isFinite(d)) return Math.max(0, d - Date.now()); }
+  const m = /"retry_after"\s*:\s*"?(\d+(?:\.\d+)?)/.exec(body); if (m) return Number(m[1]) * 1000;
+  return null;
+}
+
 export class EmailitClient implements EmailitLike {
-  constructor(private apiKey: string) {}
+  constructor(private apiKey: string, private fetchImpl: typeof fetch = fetch) {}
   async send(input: { from: string; to: string; subject: string; html: string; text: string; replyTo: string; headers: Record<string, string> }): Promise<{ id: string }> {
-    const res = await fetch("https://api.emailit.com/v2/emails", {
+    const res = await this.fetchImpl("https://api.emailit.com/v2/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${this.apiKey}`, "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ from: input.from, to: input.to, subject: input.subject, html: input.html, text: input.text, reply_to: input.replyTo, headers: input.headers }),
     });
     const text = await res.text();
-    if (!res.ok) throw new Error(`Emailit ${res.status}: ${text.slice(0, 200)}`);
+    if (!res.ok) throw new EmailitHttpError(res.status, parseRetryAfterMs(res.headers.get("retry-after"), text), text);
     try { return { id: JSON.parse(text)?.id ?? "" }; } catch { return { id: "" }; }
   }
 }
@@ -118,18 +134,40 @@ export async function sendWithRateLimitRetry(emailit: EmailitLike, input: Parame
   try {
     return { ...(await emailit.send(input)), retried: false };
   } catch (err) {
-    const msg = String((err as Error).message ?? err);
-    if (!/\b429\b/.test(msg)) throw err;
-    const m = /"retry_after"\s*:\s*(\d+)/.exec(msg);
-    await sleep(Math.max(1000, (m ? Number(m[1]) : 1) * 1000));
+    // Only a genuine HTTP 429 is retried inline, once, after the provider's own
+    // Retry-After (minimum 1 s). Anything else (5xx, network, 4xx) propagates to
+    // the job-level bounded retry (attempt_count < 3, then status failed).
+    if (!(err instanceof EmailitHttpError) || err.status !== 429) throw err;
+    await sleep(Math.max(1000, err.retryAfterMs ?? 1000));
     return { ...(await emailit.send(input)), retried: true };
   }
+}
+
+/**
+ * Global sender lock (database-backed, TTL-guarded). Only ONE sender process
+ * anywhere may be inside the provider loop at a time, so the per-process
+ * pacing (PROVIDER_SPACING_MS) is also the provider-wide rate. A crashed
+ * holder's lock expires after the TTL. See migration
+ * 20260917020000_host_lifecycle_sender_lock.sql.
+ */
+export const SENDER_LOCK = "emailit-sender";
+export const SENDER_LOCK_TTL_S = 300;
+export async function acquireSenderLock(db: Db, holder: string): Promise<boolean> {
+  const { data, error } = await db.rpc("acquire_lifecycle_lock", { p_name: SENDER_LOCK, p_holder: holder, p_ttl_seconds: SENDER_LOCK_TTL_S });
+  if (error) throw new Error(`acquire_lifecycle_lock: ${error.message}`);
+  return data === true;
+}
+export async function releaseSenderLock(db: Db, holder: string): Promise<void> {
+  await db.rpc("release_lifecycle_lock", { p_name: SENDER_LOCK, p_holder: holder });
 }
 
 export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | null, worker: string, now = new Date(), limit = 20, deps: SendDeps = { checkUrl }): Promise<SendStats> {
   const sleep = deps.sleep ?? defaultSleep;
   const stats: SendStats = { leased: 0, sent: 0, recorded: 0, suppressed: 0, cancelled: 0, failed: 0, capped: 0, byOutcome: {} };
   const bump = (k: string) => { stats.byOutcome[k] = (stats.byOutcome[k] ?? 0) + 1; };
+  // One sender at a time, globally: nothing is leased until the lock is held.
+  if (!(await acquireSenderLock(db, worker))) { stats.lockBusy = true; bump("skipped:sender_lock_busy"); return stats; }
+  try {
   const { data: leased, error } = await db.rpc("lease_communication_jobs", { p_limit: limit, p_worker: worker });
   if (error) throw new Error(`lease: ${error.message}`);
   let sentToday = await sentTodayCount(db, now);
@@ -174,7 +212,7 @@ export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | 
         await finish({ status: "cancelled", suppressed_at: now.toISOString(), suppressed_reason: `already genuinely sent at ${priorSent[0].sent_at}` }); stats.cancelled++; bump("cancelled:already_sent"); continue;
       }
       // 5. Decide delivery (kill switch + mode + allowlist).
-      const decision = decideDelivery(cfg, r.email);
+      const decision = decideDelivery(cfg, r.email, job.campaign_key);
       const base = { subject: rendered.subject, cta_url: rendered.ctaUrl, rendered_html: rendered.html };
       if (decision.kind === "record_only") {
         // Simulation only: audit the exact email, never touch production send
@@ -208,6 +246,9 @@ export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | 
       await finish({ status: retry ? "queued" : "failed", scheduled_at: new Date(now.getTime() + 30 * 60_000).toISOString(), last_error: msg });
       stats.failed++; bump(retry ? "retry" : "failed");
     }
+  }
+  } finally {
+    await releaseSenderLock(db, worker);
   }
   return stats;
 }

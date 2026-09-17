@@ -15,6 +15,7 @@
  *   HOST_LIFECYCLE_NO_LISTING_MAX_DAYS / HOST_LIFECYCLE_NO_BOOKING_MIN_DAYS  campaign knobs
  *   HOST_LIFECYCLE_ONLY_USERS      hand-run cohort: comma-separated user ids; nothing else is enqueued or sent
  *   HOST_LIFECYCLE_ONLY_CAMPAIGNS  hand-run restriction: comma-separated campaign keys
+ *   HOST_PRODUCTION_CAMPAIGNS      campaigns allowed to actually send (allowlist/production); EMPTY = nothing sends
  *   SITE_ORIGIN                    default https://www.poolrentalnearme.com
  */
 import { DEFAULT_CAMPAIGN_CONFIG, type CampaignConfig } from "../../../src/lib/host-lifecycle/campaigns";
@@ -38,6 +39,8 @@ export interface EngineConfig {
   onlyUsers: string[];
   /** Hand-run campaign restriction: when non-empty, evaluate/send only touch these campaigns. */
   onlyCampaigns: string[];
+  /** Campaigns allowed to leave through the provider in allowlist/production mode. Empty = nothing sends (fail closed). */
+  productionCampaigns: string[];
   emailitApiKey: string | null;
   supabaseUrl: string | null;
   supabaseServiceRoleKey: string | null;
@@ -70,6 +73,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): EngineConfig {
     },
     onlyUsers: (env.HOST_LIFECYCLE_ONLY_USERS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
     onlyCampaigns: (env.HOST_LIFECYCLE_ONLY_CAMPAIGNS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+    productionCampaigns: (env.HOST_PRODUCTION_CAMPAIGNS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
     emailitApiKey: env.EMAILIT_API_KEY ?? null,
     supabaseUrl: env.SUPABASE_URL ?? null,
     supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY ?? null,
@@ -96,9 +100,15 @@ export function canTestSend(cfg: Pick<EngineConfig, "enabled" | "mode" | "allowl
   return { ok: true, reason: "allowlisted reviewer" };
 }
 
-export function decideDelivery(cfg: Pick<EngineConfig, "enabled" | "mode" | "allowlist">, recipient: string): SendDecision {
+export function decideDelivery(cfg: Pick<EngineConfig, "enabled" | "mode" | "allowlist" | "productionCampaigns">, recipient: string, campaign?: string): SendDecision {
   if (!cfg.enabled) return { kind: "record_only", reason: "kill switch: HOST_LIFECYCLE_EMAILS_ENABLED is not true" };
   if (cfg.mode === "dry_run") return { kind: "record_only", reason: "mode dry_run" };
+  // Campaign allowlist, fail closed: a campaign may only leave through the
+  // provider when it is explicitly listed in HOST_PRODUCTION_CAMPAIGNS.
+  if (campaign !== undefined) {
+    if (cfg.productionCampaigns.length === 0) return { kind: "record_only", reason: "HOST_PRODUCTION_CAMPAIGNS is empty (fail closed)" };
+    if (!cfg.productionCampaigns.includes(campaign)) return { kind: "record_only", reason: `campaign ${campaign} not in HOST_PRODUCTION_CAMPAIGNS` };
+  }
   if (cfg.mode === "allowlist") {
     if (cfg.allowlist.includes(recipient.toLowerCase())) return { kind: "send", to: recipient };
     return { kind: "record_only", reason: "mode allowlist: recipient not allowlisted" };

@@ -19,7 +19,17 @@ export class MemDb {
   nextId(): string { this.seq++; return `00000000-0000-4000-8000-${String(this.seq).padStart(12, "0")}`; }
   table(name: string): Row[] { const k = TABLES[name]; if (!k) throw new Error(`memdb: unknown table ${name}`); return (this as any)[k]; }
   from(name: string) { return new Query(this, name); }
+  locks: Record<string, { holder: string | null; expires: number }> = {};
   async rpc(fn: string, args: Row) {
+    if (fn === "acquire_lifecycle_lock") {
+      const l = this.locks[args.p_name]; const t = Date.now();
+      if (!l || l.holder === null || l.expires < t || l.holder === args.p_holder) { this.locks[args.p_name] = { holder: args.p_holder, expires: t + args.p_ttl_seconds * 1000 }; return { data: true, error: null }; }
+      return { data: false, error: null };
+    }
+    if (fn === "release_lifecycle_lock") {
+      const l = this.locks[args.p_name]; if (l && l.holder === args.p_holder) { l.holder = null; return { data: true, error: null }; }
+      return { data: false, error: null };
+    }
     if (fn !== "lease_communication_jobs") throw new Error(`memdb: unknown rpc ${fn}`);
     const now = new Date().toISOString();
     const due = this.jobs.filter((j) => j.status === "queued" && j.scheduled_at <= now).sort((a, b) => (a.scheduled_at < b.scheduled_at ? -1 : 1)).slice(0, args.p_limit);

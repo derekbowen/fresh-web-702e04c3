@@ -156,6 +156,39 @@ by nobody. Forbidden language is unit-tested: no invented people, no "90%" /
 "10% fee", no insurance, coverage or guarantee claims, no made-up
 statistics. Hosts keep 100%; the guest pays a 15% service fee.
 
+## Production campaign allowlist (fail closed)
+
+`HOST_PRODUCTION_CAMPAIGNS` (comma-separated campaign keys) is the only way
+a campaign leaves through Emailit in `allowlist` or `production` mode. Empty
+or unset means **nothing sends**, whatever the mode. Campaigns not listed are
+still evaluated and recorded as `would_send` (reason "not in
+HOST_PRODUCTION_CAMPAIGNS") under `sim:` keys, so the day they are allowed
+they go out for real with no history to undo. `run.mjs explain` prints the
+per-campaign picture (eligible / suppressed / timing not reached / already
+sent) with masked examples, without writing anything.
+
+## One sender, globally
+
+Emailit allows 2 messages per second. Two protections, both required:
+
+1. **Global sender lock** — `sendDue` first calls
+   `acquire_lifecycle_lock('emailit-sender', <worker>, 300)` (table
+   `host_lifecycle_locks`, migration `20260917020000`). If another process
+   holds it, the run leases nothing and returns `lockBusy`. The lock is
+   released in `finally`; a crashed holder's lock expires after 300 s.
+   Proven on the real database (A acquires, B refused, A re-entrant, B
+   cannot release A's lock, B acquires after A releases) and in
+   `lifecycle.regression.test.ts` (two concurrent senders → one works).
+2. **In-process pacing** — provider calls are 600 ms apart
+   (`PROVIDER_SPACING_MS`), and a genuine HTTP 429 (`EmailitHttpError`,
+   `Retry-After` header or body `retry_after`) is retried once inline after
+   that wait. Anything else goes to the job-level bounded retry: 3 attempts,
+   then `failed`. A job is marked `sent` only after the provider accepts.
+
+Because the lock guarantees a single sender anywhere, the in-process pacing
+is the provider-wide rate. `test-send` bypasses the lock (hand-run, one
+message) — do not script it in a loop.
+
 ## Rollout gates (each needs Derek's explicit GO)
 
 1. **dry_run** (current): every eligible email is rendered and recorded as

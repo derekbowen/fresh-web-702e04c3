@@ -15,10 +15,11 @@ import { writeFileSync } from "node:fs";
 import { hostname } from "node:os";
 import { renderTemplate, sampleVars, TEMPLATE_KEYS } from "../../../src/lib/host-lifecycle/templates";
 import type { TemplateKey } from "../../../src/lib/host-lifecycle/campaigns";
+import { CAMPAIGNS, explainAll } from "../../../src/lib/host-lifecycle/campaigns";
 import { loadConfig } from "./config";
 import { finishRun, makeDb, startRun, type Db } from "./db";
-import { evaluateAndEnqueue } from "./queue";
-import { EmailitClient, sendDue, sendTestSample } from "./send";
+import { evaluateAndEnqueue, loadHistory, type StateRow } from "./queue";
+import { checkSuppression, EmailitClient, sendDue, sendTestSample } from "./send";
 import { SharetribeReader } from "./sharetribe";
 import { syncState } from "./sync";
 
@@ -54,6 +55,39 @@ async function phaseSend(db: Db, cfg: ReturnType<typeof loadConfig>) {
   } catch (e) { await finishRun(db, runId, {}, e); throw e; }
 }
 
+/**
+ * Read-only per-campaign explanation over the CURRENT state table: who is
+ * eligible now, who is suppressed, who is only waiting on a clock, plus
+ * masked examples with the exact lifecycle reason. Writes nothing.
+ */
+async function explain(db: Db, cfg: ReturnType<typeof loadConfig>, examples = 5) {
+  const { data: rows } = await db.from("host_lifecycle_state").select("*");
+  const history = await loadHistory(db);
+  const now = new Date();
+  const mask = (e: string) => e.replace(/^(..).*@/, "$1***@");
+  const timing = /only \d+ h in state|only \d+ h since|waiting for|live with Stripe for/;
+  const out: Record<string, { eligible: number; suppressed: number; timing_not_reached: number; already_sent: number; not_verified: number; structural: number; would_send_eventually: number; examples: Array<Record<string, unknown>>; timing_examples: Array<Record<string, unknown>> }> = {};
+  for (const c of CAMPAIGNS) out[c.key] = { eligible: 0, suppressed: 0, timing_not_reached: 0, already_sent: 0, not_verified: 0, structural: 0, would_send_eventually: 0, examples: [], timing_examples: [] };
+  const supCache = new Map<string, { suppressed: boolean; reason: string }>();
+  for (const r of (rows ?? []) as StateRow[]) {
+    const h = history.get(r.user_id) ?? { sent: {}, lastEmailAt: null, inflight: {}, simulatedOn: {} };
+    const input = { row: r, stateEnteredAt: r.state_entered_at, history: h, now, config: cfg.campaigns };
+    for (const e of explainAll(input)) {
+      const o = out[e.campaign];
+      const facts = { user: r.user_id.slice(0, 8), email: mask(r.email), state: r.lifecycle_state, listing: r.listing_state ?? null, photos: r.photo_count, address: r.has_address, price: r.has_price, stripe: r.stripe_connected, bookings: r.booking_count, signup: r.st_created_at.slice(0, 10), in_state_since: r.state_entered_at.slice(0, 16), reason: e.reason };
+      if (e.eligible) {
+        let s = supCache.get(r.user_id); if (!s) { s = await checkSuppression(db, r.user_id, r.email); supCache.set(r.user_id, s); }
+        if (s.suppressed) { o.suppressed++; } else { o.eligible++; if (o.examples.length < examples) o.examples.push(facts); }
+      } else if (e.reason === "already sent") o.already_sent++;
+      else if (e.reason === "email not verified") o.not_verified++;
+      else if (timing.test(e.reason)) { o.timing_not_reached++; if (o.timing_examples.length < examples) o.timing_examples.push(facts); }
+      else o.structural++;
+    }
+  }
+  for (const c of CAMPAIGNS) out[c.key].would_send_eventually = out[c.key].eligible + out[c.key].timing_not_reached;
+  return out;
+}
+
 async function report(db: Db) {
   const { data: states } = await db.from("host_lifecycle_state").select("lifecycle_state");
   const byState: Record<string, number> = {};
@@ -70,7 +104,7 @@ async function report(db: Db) {
 }
 
 function redacted(cfg: ReturnType<typeof loadConfig>) {
-  return { enabled: cfg.enabled, mode: cfg.mode, allowlist: cfg.allowlist.length, dailyCap: cfg.dailyCap, onlyUsers: cfg.onlyUsers.length, onlyCampaigns: cfg.onlyCampaigns, userGapHours: cfg.userGapHours, supportPhone: cfg.supportPhone ? "set" : "MISSING (placeholder)", from: cfg.from, replyTo: cfg.replyTo, postalAddress: cfg.postalAddress ? "set" : "unset", origin: cfg.origin, campaigns: cfg.campaigns, emailit: !!cfg.emailitApiKey, supabase: !!cfg.supabaseUrl, sharetribe: !!cfg.sharetribeClientId };
+  return { enabled: cfg.enabled, mode: cfg.mode, allowlist: cfg.allowlist.length, dailyCap: cfg.dailyCap, productionCampaigns: cfg.productionCampaigns, onlyUsers: cfg.onlyUsers.length, onlyCampaigns: cfg.onlyCampaigns, userGapHours: cfg.userGapHours, supportPhone: cfg.supportPhone ? "set" : "MISSING (placeholder)", from: cfg.from, replyTo: cfg.replyTo, postalAddress: cfg.postalAddress ? "set" : "unset", origin: cfg.origin, campaigns: cfg.campaigns, emailit: !!cfg.emailitApiKey, supabase: !!cfg.supabaseUrl, sharetribe: !!cfg.sharetribeClientId };
 }
 
 async function main() {
@@ -112,7 +146,8 @@ async function main() {
     const d = await phaseSend(db, cfg); console.log("send", JSON.stringify(d));
   }
   else if (cmd === "report") console.log(JSON.stringify(await report(db), null, 2));
-  else { console.error("usage: run.mjs sync|evaluate|send|tick|report|preview <template> [out]|config|test-send <template> <to>"); process.exit(2); }
+  else if (cmd === "explain") console.log(JSON.stringify(await explain(db, cfg, Number(args[0] ?? 5)), null, 1));
+  else { console.error("usage: run.mjs sync|evaluate|send|tick|report|explain [n]|preview <template> [out]|config|test-send <template> <to>"); process.exit(2); }
 }
 
 main().catch((e) => { console.error("[lifecycle] FAILED", e); process.exit(1); });

@@ -6,7 +6,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadConfig, type EngineConfig } from "../src/config";
 import { evaluateAndEnqueue, loadHistory } from "../src/queue";
-import { sendDue, sendTestSample, type EmailitLike } from "../src/send";
+import { EmailitClient, EmailitHttpError, sendDue, sendTestSample, sendWithRateLimitRetry, type EmailitLike } from "../src/send";
 import { MemDb, type Row } from "./memdb";
 
 class FakeEmailit implements EmailitLike { sent: any[] = []; async send(i: any) { this.sent.push(i); return { id: `msg${this.sent.length}` }; } }
@@ -18,8 +18,9 @@ function signedUpHost(o: Row = {}): Row {
     stripe_connected: false, listing_id: null, listing_title: null, listing_state: null, listing_created_at: null, has_title: false, has_description: false, has_address: false, has_price: false,
     photo_count: 0, listing_ready: false, booking_count: 0, first_booking_at: null, last_booking_at: null, lifecycle_state: "SIGNED_UP", missing: [], state_entered_at: daysAgo(30), published_at: null, last_synced_at: new Date().toISOString(), ...o };
 }
+const ALL = ["no_listing_1", "no_listing_2", "incomplete_photos", "incomplete_info", "publish_1", "stripe_1", "stripe_2", "no_booking_1"];
 function cfg(o: Partial<EngineConfig>): EngineConfig {
-  return { ...loadConfig({} as NodeJS.ProcessEnv), supportPhone: "(555) 010-0000", origin: "https://example.test", ...o };
+  return { ...loadConfig({} as NodeJS.ProcessEnv), supportPhone: "(555) 010-0000", origin: "https://example.test", productionCampaigns: ALL, ...o };
 }
 const dry = cfg({ enabled: false, mode: "dry_run" });
 const prod = cfg({ enabled: true, mode: "production" });
@@ -150,6 +151,66 @@ test("provider 429 → one paced inline retry, job ends sent; consecutive sends 
   assert.equal(db.jobs.filter((j) => j.status === "sent" && j.provider_message_id).length, 2);
   assert.ok(sleeps.includes(1000), "waited retry_after before the 429 retry"); assert.ok(sleeps.includes(600), "spaced the second send");
   assert.ok(db.jobs.some((j) => j.last_error === "sent on retry after provider 429"));
+});
+
+test("global sender lock: two senders at once → exactly one leases and sends, the other does nothing; lock is released after", async () => {
+  const db = new MemDb(); for (let i = 0; i < 4; i++) db.hosts.push(signedUpHost({ user_id: `h${i}`, email: `h${i}@example.com` }));
+  const em = new FakeEmailit();
+  await evaluateAndEnqueue(db, opts(prod));
+  const [a, b] = await Promise.all([sendDue(db, prod, em, "worker-A", new Date(), 20, okUrl), sendDue(db, prod, em, "worker-B", new Date(), 20, okUrl)]);
+  const busy = [a, b].filter((s) => s.lockBusy); const worked = [a, b].filter((s) => !s.lockBusy);
+  assert.equal(busy.length, 1); assert.equal(worked.length, 1); assert.equal(busy[0].leased, 0); assert.equal(worked[0].sent, 4); assert.equal(em.sent.length, 4);
+  assert.equal(db.locks["emailit-sender"].holder, null, "lock released");
+  // Released lock: a later sender proceeds normally.
+  const c = await sendDue(db, prod, em, "worker-C", new Date(), 20, okUrl); assert.equal(c.lockBusy, undefined);
+});
+
+test("campaign allowlist: an eligible campaign outside HOST_PRODUCTION_CAMPAIGNS is simulated, never sent, and keeps its production key free", async () => {
+  const db = new MemDb();
+  db.hosts.push(signedUpHost({ user_id: "p", email: "p@example.com", lifecycle_state: "PUBLISHED", listing_id: "l1", listing_title: "Pool", listing_state: "published", has_title: true, has_description: true, has_address: true, has_price: true, photo_count: 3, listing_ready: true, state_entered_at: daysAgo(3) }));
+  db.hosts.push(signedUpHost({ user_id: "n", email: "n@example.com" }));
+  const em = new FakeEmailit(); const only = cfg({ enabled: true, mode: "production", productionCampaigns: ["no_listing_1"] });
+  const e = await evaluateAndEnqueue(db, opts(only));
+  assert.equal(e.eligibleByCampaign.stripe_1, 1); assert.equal(e.eligibleByCampaign.no_listing_1, 1);
+  const stripe = db.jobs.find((j) => j.campaign_key === "stripe_1")!; const nl = db.jobs.find((j) => j.campaign_key === "no_listing_1")!;
+  assert.match(stripe.idempotency_key, /^sim:/); assert.equal(nl.idempotency_key, "n:no_listing_1");
+  const s = await sendDue(db, only, em, "w", new Date(), 20, okUrl);
+  assert.equal(s.sent, 1); assert.equal(em.sent.length, 1); assert.equal(em.sent[0].to, "n@example.com");
+  assert.equal(stripe.status, "would_send"); assert.match(stripe.suppressed_reason, /not in HOST_PRODUCTION_CAMPAIGNS/);
+  // Later, once stripe_1 is allowed, the same host gets it for real.
+  const later = cfg({ enabled: true, mode: "production", productionCampaigns: ["no_listing_1", "stripe_1"] });
+  await evaluateAndEnqueue(db, opts(later)); await sendDue(db, later, em, "w", new Date(), 20, okUrl);
+  assert.equal(em.sent.filter((m) => m.headers["X-PRNM-Campaign"] === "stripe_1").length, 1);
+});
+
+test("EmailitClient: a real HTTP 429 becomes a typed error carrying Retry-After; other statuses are typed but not rate-limit retried", async () => {
+  const mk = (status: number, headers: Record<string, string>, body: string) => async () => ({ ok: status < 400, status, headers: { get: (k: string) => headers[k.toLowerCase()] ?? null }, text: async () => body }) as any;
+  const input = { from: "a", to: "b", subject: "s", html: "h", text: "t", replyTo: "r", headers: {} };
+  await assert.rejects(() => new EmailitClient("k", mk(429, { "retry-after": "2" }, '{"error":"Rate limit exceeded"}')).send(input), (e: any) => e instanceof EmailitHttpError && e.status === 429 && e.retryAfterMs === 2000);
+  await assert.rejects(() => new EmailitClient("k", mk(429, {}, '{"error":"Rate limit exceeded","retry_after":1}')).send(input), (e: any) => e instanceof EmailitHttpError && e.status === 429 && e.retryAfterMs === 1000);
+  await assert.rejects(() => new EmailitClient("k", mk(500, {}, "boom")).send(input), (e: any) => e instanceof EmailitHttpError && e.status === 500);
+  const ok = await new EmailitClient("k", mk(200, {}, '{"id":"em_1"}')).send(input); assert.equal(ok.id, "em_1");
+  // The inline retry only fires for 429: a 500 propagates immediately (job-level bounded retry handles it).
+  let calls = 0; const five: EmailitLike = { async send() { calls++; throw new EmailitHttpError(500, null, "boom"); } };
+  await assert.rejects(() => sendWithRateLimitRetry(five, input, async () => {}), /Emailit 500/); assert.equal(calls, 1);
+  // A 429 whose retry also 429s propagates after exactly one retry, waiting Retry-After first.
+  calls = 0; const waits: number[] = []; const always429: EmailitLike = { async send() { calls++; throw new EmailitHttpError(429, 3000, "rl"); } };
+  await assert.rejects(() => sendWithRateLimitRetry(always429, input, async (ms) => { waits.push(ms); }), /Emailit 429/); assert.equal(calls, 2); assert.deepEqual(waits, [3000]);
+});
+
+test("bounded job retries: a provider that keeps failing never yields a sent row, and the job ends failed after 3 attempts", async () => {
+  const db = new MemDb(); db.hosts.push(signedUpHost()); const sleeps = { ...okUrl, sleep: async () => {} };
+  let calls = 0; const bad: EmailitLike = { async send() { calls++; throw new EmailitHttpError(429, 1000, "rl"); } };
+  await evaluateAndEnqueue(db, opts(prod));
+  for (let pass = 1; pass <= 3; pass++) {
+    db.jobs[0].scheduled_at = new Date(Date.now() - 1000).toISOString(); // make the retry due
+    const s = await sendDue(db, prod, bad, "w", new Date(), 20, sleeps);
+    assert.equal(s.sent, 0);
+    assert.equal(db.jobs[0].status, pass < 3 ? "queued" : "failed"); assert.equal(db.jobs[0].attempt_count, pass); assert.equal(db.jobs[0].sent_at ?? null, null); assert.equal(db.jobs[0].provider_message_id ?? null, null);
+  }
+  assert.equal(calls, 6, "3 attempts × (1 call + 1 inline 429 retry)");
+  assert.equal(db.jobs[0].idempotency_key, "u1:no_listing_1", "same idempotency intent throughout");
+  const s = await sendDue(db, prod, bad, "w", new Date(), 20, sleeps); assert.equal(s.leased, 0, "a failed job is never leased again");
 });
 
 test("simulations never count toward the per-user gap; real sends do", async () => {

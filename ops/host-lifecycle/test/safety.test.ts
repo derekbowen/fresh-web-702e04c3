@@ -6,19 +6,32 @@ import { sendDue, type EmailitLike } from "../src/send";
 
 test("kill switch off → record only, in every mode", () => {
   for (const mode of ["dry_run", "allowlist", "production"] as const) {
-    assert.equal(decideDelivery({ enabled: false, mode, allowlist: ["derek@example.com"] }, "derek@example.com").kind, "record_only");
+    assert.equal(decideDelivery({ enabled: false, mode, allowlist: ["derek@example.com"], productionCampaigns: [] }, "derek@example.com").kind, "record_only");
   }
 });
 test("dry_run never sends even when enabled", () => {
-  assert.equal(decideDelivery({ enabled: true, mode: "dry_run", allowlist: [] }, "host@example.com").kind, "record_only");
+  assert.equal(decideDelivery({ enabled: true, mode: "dry_run", allowlist: [], productionCampaigns: [] }, "host@example.com").kind, "record_only");
 });
 test("allowlist sends only to allowlisted recipients", () => {
-  const cfg = { enabled: true, mode: "allowlist" as const, allowlist: ["derek@example.com"] };
+  const cfg = { enabled: true, mode: "allowlist" as const, allowlist: ["derek@example.com"], productionCampaigns: [] };
   assert.equal(decideDelivery(cfg, "Derek@Example.com").kind, "send");
   assert.equal(decideDelivery(cfg, "host@example.com").kind, "record_only");
 });
 test("production sends when enabled", () => {
-  assert.equal(decideDelivery({ enabled: true, mode: "production", allowlist: [] }, "host@example.com").kind, "send");
+  assert.equal(decideDelivery({ enabled: true, mode: "production", allowlist: [], productionCampaigns: [] }, "host@example.com").kind, "send");
+});
+test("campaign allowlist fails closed: production sends only campaigns listed in HOST_PRODUCTION_CAMPAIGNS", () => {
+  const empty = { enabled: true, mode: "production" as const, allowlist: [], productionCampaigns: [] as string[] };
+  assert.equal(decideDelivery(empty, "host@example.com", "no_listing_1").kind, "record_only");
+  assert.match((decideDelivery(empty, "host@example.com", "no_listing_1") as any).reason, /fail closed/);
+  const one = { ...empty, productionCampaigns: ["no_listing_1"] };
+  assert.equal(decideDelivery(one, "host@example.com", "no_listing_1").kind, "send");
+  for (const c of ["no_listing_2", "incomplete_photos", "incomplete_info", "publish_1", "stripe_1", "stripe_2", "no_booking_1"]) {
+    const d = decideDelivery(one, "host@example.com", c); assert.equal(d.kind, "record_only"); assert.match((d as any).reason, /not in HOST_PRODUCTION_CAMPAIGNS/);
+  }
+  // allowlist mode is gated the same way
+  assert.equal(decideDelivery({ ...one, mode: "allowlist", allowlist: ["derek@example.com"] }, "derek@example.com", "stripe_1").kind, "record_only");
+  assert.equal(loadConfig({ HOST_PRODUCTION_CAMPAIGNS: " no_listing_1 , stripe_1 " } as NodeJS.ProcessEnv).productionCampaigns.join(","), "no_listing_1,stripe_1");
 });
 test("test-send only in allowlist mode, to an allowlisted reviewer, with the switch on and the phone set", () => {
   const ok = { enabled: true, mode: "allowlist" as const, allowlist: ["derek@example.com"], supportPhone: "909-000-0000" };
@@ -86,12 +99,12 @@ function fakeDb(opts: { jobs: Row[]; hosts: Row[]; suppressed?: string[]; tokens
   return {
     updates,
     from: (name: string) => table(name),
-    rpc: async () => ({ data: opts.jobs.map((j) => ({ attempt_count: 1, ...j })) }),
+    rpc: async (fn: string) => fn === "lease_communication_jobs" ? { data: opts.jobs.map((j) => ({ attempt_count: 1, ...j })) } : { data: true },
   } as any;
 }
 const host = (o: Row = {}): Row => ({ user_id: "u1", email: "host@example.com", first_name: "Sarah", user_type: "provider", st_created_at: "2026-09-01T00:00:00Z", email_verified: true, banned: false, deleted: false, stripe_connected: false, listing_id: "l1", listing_title: "Pool", listing_state: "published", listing_created_at: "2026-09-02T00:00:00Z", has_title: true, has_description: true, has_address: true, has_price: true, photo_count: 3, listing_ready: true, booking_count: 0, first_booking_at: null, last_booking_at: null, lifecycle_state: "PUBLISHED", missing: [], state_entered_at: "2026-09-02T00:00:00Z", published_at: "2026-09-02T00:00:00Z", last_synced_at: new Date().toISOString(), ...o });
 const job = (o: Row = {}): Row => ({ id: "j1", user_id: "u1", campaign_key: "stripe_1", template_key: "stripe_1", recipient: "host@example.com", ...o });
-const baseCfg = () => ({ ...loadConfig({} as NodeJS.ProcessEnv), supportPhone: "(555) 010-0000", origin: "https://example.test" });
+const baseCfg = () => ({ ...loadConfig({} as NodeJS.ProcessEnv), supportPhone: "(555) 010-0000", origin: "https://example.test", productionCampaigns: ["stripe_1"] });
 class FakeEmailit implements EmailitLike { sent: any[] = []; async send(i: any) { this.sent.push(i); return { id: "msg1" }; } }
 
 test("dry-run records the exact email and sends nothing", async () => {
