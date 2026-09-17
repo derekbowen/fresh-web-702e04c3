@@ -50,6 +50,7 @@ class Query implements PromiseLike<any> {
   order(k: string, o?: { ascending?: boolean }) { this.orderKey = k; this.asc = o?.ascending !== false; return this; }
   limit(n: number) { this.lim = n; return this; }
   maybeSingle() { this.single = true; return this; }
+  single() { this.single = true; return this; }
   upsert(row: Row | Row[], o?: { onConflict?: string; ignoreDuplicates?: boolean }) { this.op = { kind: "upsert", rows: Array.isArray(row) ? row : [row], onConflict: o?.onConflict, ignoreDuplicates: o?.ignoreDuplicates }; return this; }
   insert(row: Row | Row[]) { this.op = { kind: "insert", rows: Array.isArray(row) ? row : [row] }; return this; }
   update(patch: Row) { this.op = { kind: "update", patch }; return this; }
@@ -76,11 +77,12 @@ class Query implements PromiseLike<any> {
         if (existing) {
           if (op.kind === "insert") return { data: null, error: { message: `duplicate key value violates unique constraint (${key})` } };
           if (op.ignoreDuplicates) continue;
-          Object.assign(existing, row, { updated_at: now }); out.push({ id: existing.id }); continue;
+          Object.assign(existing, row, { updated_at: now }); out.push({ ...existing }); continue;
         }
         const full = { id: this.db.nextId(), created_at: now, updated_at: now, attempt_count: 0, ...row };
-        t.push(full); out.push({ id: full.id });
+        t.push(full); out.push({ ...full });
       }
+      if (this.single) return { data: out[0] ?? null, error: null };
       return { data: out, error: null };
     }
     if (op.kind === "update") { const rows = this.matches(); for (const r of rows) Object.assign(r, op.patch, { updated_at: op.patch.updated_at ?? now }); return { data: rows.map((r) => ({ ...r })), error: null }; }
