@@ -70,7 +70,7 @@ async function explain(db: Db, cfg: ReturnType<typeof loadConfig>, examples = 5)
   for (const c of CAMPAIGNS) out[c.key] = { eligible: 0, suppressed: 0, timing_not_reached: 0, already_sent: 0, not_verified: 0, structural: 0, would_send_eventually: 0, examples: [], timing_examples: [] };
   const supCache = new Map<string, { suppressed: boolean; reason: string }>();
   for (const r of (rows ?? []) as StateRow[]) {
-    const h = history.get(r.user_id) ?? { sent: {}, lastEmailAt: null, inflight: {}, simulatedOn: {} };
+    const h = history.get(r.user_id) ?? { sent: {}, lastEmailAt: null, inflight: {}, simulatedOn: {}, suppressedOn: {} };
     const input = { row: r, stateEnteredAt: r.state_entered_at, history: h, now, config: cfg.campaigns };
     for (const e of explainAll(input)) {
       const o = out[e.campaign];

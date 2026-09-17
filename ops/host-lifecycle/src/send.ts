@@ -186,10 +186,13 @@ export async function sendDue(db: Db, cfg: EngineConfig, emailit: EmailitLike | 
       if (Date.now() - Date.parse(r.last_synced_at) > 3 * 3600_000) { await finish({ status: "queued", last_error: "sync older than 3 h; not sending on stale state" }); bump("deferred:stale_sync"); continue; }
       const verdict = stillApplies(job.campaign_key as CampaignKey, r);
       if (!verdict.ok) { await finish({ status: "cancelled", suppressed_at: now.toISOString(), suppressed_reason: `state changed: ${verdict.reason}` }); stats.cancelled++; bump("cancelled:state_changed"); continue; }
-      // 2. Suppression.
+      // 2. Suppression. A suppressed outcome is audit, not delivery: it releases
+      // the production key so a host who later re-subscribes / verifies can be
+      // evaluated for real again (the campaign was never delivered to them).
+      const released = isProductionKey(String(job.idempotency_key ?? "")) ? { idempotency_key: `sim:${job.user_id}:${job.campaign_key}:${job.id}` } : {};
       const sup = await checkSuppression(db, r.user_id, r.email);
-      if (sup.suppressed) { await finish({ status: "suppressed", suppressed_at: now.toISOString(), suppressed_reason: sup.reason }); stats.suppressed++; bump(`suppressed:${sup.reason.split(":")[0]}`); continue; }
-      if (!r.email_verified) { await finish({ status: "suppressed", suppressed_at: now.toISOString(), suppressed_reason: "email not verified" }); stats.suppressed++; bump("suppressed:unverified"); continue; }
+      if (sup.suppressed) { await finish({ ...released, status: "suppressed", suppressed_at: now.toISOString(), suppressed_reason: sup.reason }); stats.suppressed++; bump(`suppressed:${sup.reason.split(":")[0]}`); continue; }
+      if (!r.email_verified) { await finish({ ...released, status: "suppressed", suppressed_at: now.toISOString(), suppressed_reason: "email not verified" }); stats.suppressed++; bump("suppressed:unverified"); continue; }
       // 3. Per-user gap.
       const last = await lastEmailToUser(db, r.user_id);
       if (last && now.getTime() - Date.parse(last) < cfg.userGapHours * 3600_000) {

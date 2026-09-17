@@ -24,8 +24,9 @@ export interface EvaluateStats { hosts: number; eligible: number; enqueued: numb
 export interface JobHistory extends SentHistory {
   inflight: Partial<Record<CampaignKey, true>>;
   simulatedOn: Partial<Record<CampaignKey, string>>; // campaign → YYYY-MM-DD of the latest would_send
+  suppressedOn: Partial<Record<CampaignKey, string>>; // campaign → YYYY-MM-DD of the latest suppressed outcome (re-checked once a day, not every tick)
 }
-const emptyHistory = (): JobHistory => ({ sent: {}, lastEmailAt: null, inflight: {}, simulatedOn: {} });
+const emptyHistory = (): JobHistory => ({ sent: {}, lastEmailAt: null, inflight: {}, simulatedOn: {}, suppressedOn: {} });
 
 export function productionKey(userId: string, campaign: string): string { return `${userId}:${campaign}`; }
 /** Per-day simulation key: one would_send per host per campaign per UTC day, never colliding with the production key. */
@@ -36,7 +37,7 @@ export async function loadHistory(db: Db): Promise<Map<string, JobHistory>> {
   const { data, error } = await db
     .from("communication_jobs")
     .select("user_id, campaign_key, status, sent_at, updated_at, idempotency_key")
-    .in("status", ["sent", "would_send", "queued", "leased"]);
+    .in("status", ["sent", "would_send", "suppressed", "queued", "leased"]);
   if (error) throw new Error(`read communication_jobs: ${error.message}`);
   const out = new Map<string, JobHistory>();
   for (const j of data ?? []) {
@@ -49,6 +50,9 @@ export async function loadHistory(db: Db): Promise<Map<string, JobHistory>> {
     } else if (j.status === "would_send") {
       const day = String(j.updated_at).slice(0, 10);
       if (!h.simulatedOn[c] || day > h.simulatedOn[c]!) h.simulatedOn[c] = day;
+    } else if (j.status === "suppressed") {
+      const day = String(j.updated_at).slice(0, 10);
+      if (!h.suppressedOn[c] || day > h.suppressedOn[c]!) h.suppressedOn[c] = day;
     } else if (isProductionKey(String(j.idempotency_key ?? ""))) {
       h.inflight[c] = true;
     }
@@ -85,6 +89,8 @@ export async function evaluateAndEnqueue(db: Db, opts: EnqueueOptions, now = new
       if (opts.onlyCampaigns?.length && !opts.onlyCampaigns.includes(e.campaign)) { stats.outsideCohort++; continue; }
       if (real && h.inflight[e.campaign]) { stats.alreadyQueued++; continue; }
       if (!real && h.simulatedOn[e.campaign] === now.toISOString().slice(0, 10)) { stats.alreadyQueued++; continue; }
+      // A host suppressed today is re-checked tomorrow, not every tick (audit stays bounded).
+      if (h.suppressedOn[e.campaign] === now.toISOString().slice(0, 10)) { stats.alreadyQueued++; continue; }
       const { error: insErr, data } = await db
         .from("communication_jobs")
         .upsert(
