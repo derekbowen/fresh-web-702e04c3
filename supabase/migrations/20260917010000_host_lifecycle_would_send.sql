@@ -9,9 +9,6 @@
 -- kept for audit; 'sent' is the only status that counts as delivered.
 
 alter table public.communication_jobs drop constraint if exists communication_jobs_status_check;
-alter table public.communication_jobs
-  add constraint communication_jobs_status_check
-  check (status in ('queued','leased','sent','suppressed','cancelled','failed','would_send'));
 
 -- Reset: convert every legacy dry_run row to a would_send audit row and
 -- release its production key. sent_at was never set on these rows.
@@ -26,6 +23,11 @@ update public.communication_jobs
 update public.communication_jobs
    set idempotency_key = 'sim:' || user_id || ':' || campaign_key || ':' || id::text
  where status = 'suppressed' and mode = 'dry_run' and idempotency_key not like 'sim:%';
+
+-- Constraint goes on after the data is converted.
+alter table public.communication_jobs
+  add constraint communication_jobs_status_check
+  check (status in ('queued','leased','sent','suppressed','cancelled','failed','would_send'));
 
 comment on column public.communication_jobs.status is
   'queued|leased|sent|suppressed|cancelled|failed|would_send. Only sent = delivered. would_send = simulated (dry_run / allowlist record-only), audit only.';
