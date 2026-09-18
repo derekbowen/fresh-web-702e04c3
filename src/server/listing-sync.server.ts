@@ -48,6 +48,56 @@ export function extractStateCode(address: string | null | undefined): string | n
   return null;
 }
 
+const STATE_NAMES: Record<string, string> = {
+  alabama:"AL",alaska:"AK",arizona:"AZ",arkansas:"AR",california:"CA",colorado:"CO",
+  connecticut:"CT",delaware:"DE",florida:"FL",georgia:"GA",hawaii:"HI",idaho:"ID",
+  illinois:"IL",indiana:"IN",iowa:"IA",kansas:"KS",kentucky:"KY",louisiana:"LA",
+  maine:"ME",maryland:"MD",massachusetts:"MA",michigan:"MI",minnesota:"MN",
+  mississippi:"MS",missouri:"MO",montana:"MT",nebraska:"NE",nevada:"NV",
+  "new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY",
+  "north carolina":"NC","north dakota":"ND",ohio:"OH",oklahoma:"OK",oregon:"OR",
+  pennsylvania:"PA","rhode island":"RI","south carolina":"SC","south dakota":"SD",
+  tennessee:"TN",texas:"TX",utah:"UT",vermont:"VT",virginia:"VA",washington:"WA",
+  "west virginia":"WV",wisconsin:"WI",wyoming:"WY","district of columbia":"DC",
+};
+
+const ZIP_RE = /\b\d{5}(-\d{4})?\b/g;
+
+/** Map a spelled-out state name inside an address to its 2-letter code. */
+export function stateCodeFromFullName(address: string | null | undefined): string | null {
+  if (!address) return null;
+  for (const part of address.split(",")) {
+    const cleaned = part.replace(ZIP_RE, "").trim().toLowerCase();
+    const code = STATE_NAMES[cleaned];
+    if (code) return code;
+  }
+  return null;
+}
+
+/**
+ * Pull the city out of a formatted address by locating the state token and
+ * taking the segment before it. Handles the shapes Sharetribe actually stores:
+ *   "Albuquerque, NM" | "Dallas, GA 30157" | "Bloomfield Hills, Michigan 48301"
+ *   "Nicholas Dr, Carlisle, PA 17015, USA"
+ * Returns null rather than guessing when no state token is found.
+ */
+export function extractCityFromAddress(address: string | null | undefined): string | null {
+  if (!address) return null;
+  const parts = address.split(",").map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2) return null;
+  for (let i = parts.length - 1; i >= 1; i--) {
+    const tail = parts[i].replace(ZIP_RE, "").trim();
+    if (!tail || /^(usa|united states)$/i.test(tail)) continue;
+    const isState =
+      US_STATES.has(tail.toUpperCase()) || STATE_NAMES[tail.toLowerCase()] !== undefined;
+    if (!isState) continue;
+    const city = parts[i - 1].replace(ZIP_RE, "").trim();
+    if (city.length >= 2 && !/^\d+$/.test(city)) return city;
+    return null;
+  }
+  return null;
+}
+
 function pickImages(
   listing: STListing,
   included: STResponse<unknown>["included"],
@@ -77,17 +127,21 @@ function toRow(listing: STListing, included: STResponse<unknown>["included"]) {
   const md = (a.metadata ?? {}) as Record<string, any>;
   const { primary, all } = pickImages(listing, included);
 
-  const city: string | null =
-    pd.city ?? pd.location?.city ?? pd.address?.city ?? null;
   const rawStateCode: string | null =
     pd.state ?? pd.stateCode ?? pd.location?.state ?? pd.address?.state ?? null;
   const address: string | null =
     pd.address?.formatted ?? pd.location?.address ?? pd.fullAddress ?? null;
-  // Sharetribe public_data rarely has a discrete state field; fall back to
-  // parsing the formatted address string ("..., TX 78124, USA").
+  // Sharetribe public_data rarely carries a discrete city/state; fall back to
+  // parsing the formatted address. Measured 2026-09-18: only 56 of 124 eligible
+  // listings had publicData.city, while 123 had a parseable address — without
+  // this fallback more than half the inventory can never match a city page.
+  const city: string | null =
+    (pd.city ?? pd.location?.city ?? pd.address?.city ?? null) ||
+    extractCityFromAddress(address);
   const stateCode: string | null =
     (rawStateCode && rawStateCode.length === 2 ? rawStateCode.toUpperCase() : null) ??
-    extractStateCode(address);
+    extractStateCode(address) ??
+    stateCodeFromFullName(address);
 
   const amenities: string[] = Array.isArray(pd.amenities)
     ? pd.amenities.map(String)

@@ -8,8 +8,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { NearbyCities } from "@/components/nearby-cities";
 import { FaqBlock } from "@/components/faq-block";
-import { LiveInventory } from "@/components/live-inventory";
-import { listingsInCity } from "@/lib/live-inventory";
+import { CityInventorySection } from "@/components/live-inventory";
+import { EMPTY_INVENTORY, type CityInventory } from "@/server/city-inventory.functions";
 import { RelatedPages, type RelatedPagesItem } from "@/components/related-pages";
 import { relatedSlugsToItems } from "@/lib/related-city-anchors";
 import { ADVOCACY_STATES } from "@/lib/advocacy-states";
@@ -45,12 +45,14 @@ export function HostAcqCityTemplate({
   city = null,
   linkTargets = [],
   citySources = [],
+  cityInventory = EMPTY_INVENTORY,
 }: {
   page: ContentPage;
   nearbyCities?: NearbyCity[];
   city?: CityRow | null;
   linkTargets?: LinkTarget[];
   citySources?: CitySource[];
+  cityInventory?: CityInventory;
 }) {
   const title = page.title || page.seo_title || "Become a pool host";
   const description = page.seo_description || page.description || null;
@@ -455,6 +457,17 @@ export function HostAcqCityTemplate({
         </section>
 
         {/* LOCAL GUIDE — long-form content */}
+        {/* LIVE INVENTORY — real bookable marketplace supply, server-rendered.
+            Placed above the editorial body on purpose: a visitor arriving from
+            Google came looking for pools, not 1,500 words. Exact-city supply is
+            labelled separately from nearby supply inside the component. */}
+        <CityInventorySection
+          inventory={cityInventory}
+          cityName={cityName}
+          browseAllHref="/s"
+          becomeHostHref="/wizard/"
+        />
+
         <section className="border-b border-border py-16 sm:py-20">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             {body ? (
@@ -503,10 +516,6 @@ export function HostAcqCityTemplate({
             )}
           </div>
         </section>
-
-        {/* LIVE INVENTORY — real bookable pools in this exact city; renders nothing when empty */}
-        <LiveInventory listings={listingsInCity(cityName, stateCode)}
-          heading={`Pools you can book right now in ${cityName}`} />
 
         {/* NEARBY + FAQ */}
         <section className="border-b border-border py-16">

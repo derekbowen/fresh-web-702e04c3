@@ -16,6 +16,11 @@ import {
   type NearbyCity,
 } from "@/server/nearby-cities.functions";
 import { getCityBySlug, type CityRow } from "@/server/cities.functions";
+import {
+  getCityInventory,
+  EMPTY_INVENTORY,
+  type CityInventory,
+} from "@/server/city-inventory.functions";
 import { getCitySources, type CitySource } from "@/server/city-sources.functions";
 import { getInternalLinkTargets } from "@/server/internal-links.functions";
 import type { LinkTarget } from "@/components/auto-linked-content";
@@ -216,15 +221,42 @@ export const Route = createFileRoute("/p/$slug")({
           : Promise.resolve([] as CountryLaunchGuide[]),
       ]);
 
-    const linkTargets = await safe(
-      getInternalLinkTargets({
-        data: {
-          citySlug: citySlug ?? null,
-          nearbyCitySlugs: nearbyCities.map((c) => c.slug),
-        },
-      }),
-      [] as LinkTarget[],
-    );
+    // City identity for the inventory lookup. Mirrors how the template derives
+    // the display name: prefer the canonical cities row, fall back to parsing
+    // the page slug ("riverside-ct"), because no host_acq_city page currently
+    // carries city_id or state_code (verified 2026-09-18: 0 of 4,008).
+    const invCitySlug = citySlug ?? page.slug;
+    const parsedCity = invCitySlug ? parseCitySlug(invCitySlug) : null;
+    const invCityName = city?.name || parsedCity?.city || null;
+    const invStateCode =
+      (city?.state_code || parsedCity?.stateCode || "").toUpperCase() || null;
+    const num = (v: unknown): number | null =>
+      v == null || v === "" || Number.isNaN(Number(v)) ? null : Number(v);
+
+    const [linkTargets, cityInventory] = await Promise.all([
+      safe(
+        getInternalLinkTargets({
+          data: {
+            citySlug: citySlug ?? null,
+            nearbyCitySlugs: nearbyCities.map((c) => c.slug),
+          },
+        }),
+        [] as LinkTarget[],
+      ),
+      isCityTemplate
+        ? safe(
+            getCityInventory({
+              data: {
+                cityName: invCityName,
+                stateCode: invStateCode,
+                lat: num((city as { latitude?: unknown } | null)?.latitude),
+                lng: num((city as { longitude?: unknown } | null)?.longitude),
+              },
+            }),
+            EMPTY_INVENTORY as CityInventory,
+          )
+        : Promise.resolve(EMPTY_INVENTORY as CityInventory),
+    ]);
 
     return {
       page,
@@ -232,6 +264,7 @@ export const Route = createFileRoute("/p/$slug")({
       city,
       citySources,
       linkTargets,
+      cityInventory,
       academyHub,
       hreflangSibling: hreflangRes.sibling,
       relatedPosts: relatedRes.posts,
@@ -566,7 +599,7 @@ function buildHreflangLinks(
 
 function ContentPageDispatcher() {
   const loaderData = Route.useLoaderData();
-  const { page, nearbyCities, city, citySources, linkTargets, academyHub, relatedPosts, launchGuides } =
+  const { page, nearbyCities, city, citySources, linkTargets, cityInventory, academyHub, relatedPosts, launchGuides } =
     (loaderData ?? {}) as ReturnType<typeof Route.useLoaderData>;
 
 
@@ -620,7 +653,7 @@ function ContentPageDispatcher() {
 
   switch (page.template_type as string | null) {
     case "host_acq_city":
-      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} citySources={citySources} />;
+      return <HostAcqCityTemplate page={page} nearbyCities={nearbyCities} city={city} linkTargets={linkTargets} citySources={citySources} cityInventory={cityInventory} />;
     case "event_guide":
       return <EventGuideTemplate page={page} linkTargets={linkTargets} nearbyCities={nearbyCities} />;
     case "swim_instructor_city":
