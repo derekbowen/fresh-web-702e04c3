@@ -195,6 +195,11 @@ export interface SyncResult {
 
 export async function runListingSync(): Promise<SyncResult> {
   const startedAt = Date.now();
+  // One timestamp for the whole run. Every row we upsert gets stamped with a
+  // time >= this, so "not seen in this run" is simply "last_synced_at is older
+  // than the run". That replaces an `in.(<every id>)` filter which grew with
+  // the catalogue and would silently 414 once the URL got long enough.
+  const runStartedAt = new Date(startedAt).toISOString();
 
   const { data: logRow } = await supabaseAdmin
     .from("listing_sync_log")
@@ -264,13 +269,21 @@ export async function runListingSync(): Promise<SyncResult> {
       if (page > 500) break; // safety
     }
 
-    // Tombstone listings that no longer appear
+    // Tombstone listings that no longer appear.
+    // Guarded on seenIds so a total API outage (zero rows returned) can never
+    // wipe the catalogue; the sweep itself is by timestamp, so its cost does
+    // not grow with the number of listings.
     if (seenIds.length > 0) {
-      await supabaseAdmin
+      const { error: sweepError } = await supabaseAdmin
         .from("synced_listings")
-        .update({ is_deleted: true, last_synced_at: new Date().toISOString() })
-        .not("sharetribe_id", "in", `(${seenIds.map((i) => `"${i}"`).join(",")})`)
-        .eq("is_deleted", false);
+        .update({ is_deleted: true })
+        .eq("is_deleted", false)
+        .lt("last_synced_at", runStartedAt);
+      // A silent failure here is the dangerous one: closed or deleted listings
+      // would stay visible on city pages indefinitely. Surface it.
+      if (sweepError) {
+        throw new Error(`Tombstone sweep failed: ${sweepError.message}`);
+      }
     }
 
     if (logId) {
