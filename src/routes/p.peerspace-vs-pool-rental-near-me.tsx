@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     q: "What insurance does Peerspace provide?",
-    a: "Peerspace publishes $1,000,000 in host General Liability insurance and a $25,000 Property Damage Guarantee for qualifying US bookings. Pool Rental Near Me does not provide or arrange insurance — every booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing.",
+    a: "Peerspace publishes $1,000,000 in host General Liability insurance and a $25,000 Property Damage Guarantee for qualifying US bookings. Every Pool Rental Near Me booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing.",
   },
   {
     q: "Should I list my pool on both Peerspace and Pool Rental Near Me?",
@@ -211,7 +211,7 @@ function PeerspaceComparisonPage() {
       </p>
 
       <p>
-        Pool Rental Near Me does not provide or arrange insurance. Every
+        Pool Rental Near Me requires a signed guest waiver on every booking. Every
         booking requires a <strong>signed guest waiver</strong>, hosts approve
         each reservation individually, and hosts are responsible for their own
         cover. Most homeowner policies exclude paid rentals under a

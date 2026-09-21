@@ -92,7 +92,7 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `Is pool rental legal in ${city.state}?`,
-      a: `Pool rentals are legal in most ${city.state} jurisdictions when you carry adequate liability coverage and follow local zoning, occupancy and noise rules. Pool Rental Near Me does not provide or arrange insurance — every booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Always check ${city.name} city ordinances before listing.`,
+      a: `Pool rentals are legal in most ${city.state} jurisdictions when you carry adequate liability coverage and follow local zoning, occupancy and noise rules. Every Pool Rental Near Me booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Always check ${city.name} city ordinances before listing.`,
     },
   ];
 }

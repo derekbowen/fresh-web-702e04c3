@@ -48,13 +48,6 @@ export const HOMEPAGE_FAQS = [
     a: "Hosts set their own hourly rates — most private pool rentals run $45–$150 per hour depending on size, amenities, and location. The all-in price is shown up front, and hosts pay 0% fees, so they keep 100% of their rate.",
   },
   {
-    // Derek's exact words, 2026-09-15. Insurance copy is his alone: this entry
-    // is reproduced verbatim and must not be reworded, extended, or "clarified"
-    // without new words from him. The two \n\n are his paragraph breaks.
-    q: "$2M Commercial Liability Coverage",
-    a: "Pool Rental Near Me carries commercial general liability insurance with limits of $2 million per occurrence and $4 million aggregate.\n\nCoverage is subject to the policy’s terms, conditions, exclusions, and the specific circumstances of any claim.\n\nAdded protection for bookings made through Pool Rental Near Me.",
-  },
-  {
     q: "How do I contact a pool owner before booking?",
     a: "Once you've found a pool you like, message the host directly through the listing page. Hosts typically reply within an hour. You can ask about pool depth, parking, sound rules, and bring-your-own-food policies before you confirm.",
   },

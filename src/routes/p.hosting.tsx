@@ -77,7 +77,7 @@ const REASONS: Reason[] = [
   {
     icon: ShieldCheck,
     title: "Signed waiver on every booking",
-    body: "Every guest signs a liability waiver before access. Pool Rental Near Me does not provide insurance — we do not verify whether hosts carry insurance, and most homeowner policies exclude paid rentals.",
+    body: "Every guest signs a liability waiver before access. We do not verify whether hosts carry insurance, and most homeowner policies exclude paid rentals.",
   },
   {
     icon: FileCheck,
@@ -132,7 +132,7 @@ const FAQS = [
   },
   {
     q: "What protection do I get on every booking?",
-    a: "Every guest signs a liability waiver before they get access, and payments run through Stripe. Pool Rental Near Me does not provide insurance. Most homeowner policies don't cover paid pool rentals, so ask your carrier what a paid rental would need before you host.",
+    a: "Every guest signs a liability waiver before they get access, and payments run through Stripe. Most homeowner policies don't cover paid pool rentals, so ask your carrier what a paid rental would need before you host.",
   },
   {
     q: "Are the host classes really free?",
@@ -169,7 +169,7 @@ const FAQS = [
   },
   {
     q: "What if a guest damages my pool or property?",
-    a: "Document the damage with photos within 24 hours and file a report through our app. We'll work directly with the guest's account to resolve charges. Pool Rental Near Me does not provide insurance, so anything beyond that is between you and your own insurer, if you have one — worth confirming with your carrier what a paid rental needs before you host.",
+    a: "Document the damage with photos within 24 hours and file a report through our app. We'll work directly with the guest's account to resolve charges. Anything beyond that is between you and your own insurer, if you have one — worth confirming with your carrier what a paid rental needs before you host.",
   },
   {
     q: "How is PRNM different from Swimply?",

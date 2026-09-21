@@ -63,7 +63,7 @@ const INCLUDED = [
   {
     icon: ShieldCheck,
     title: "Signed waiver on every booking",
-    body: "Every guest signs a liability waiver before access. Pool Rental Near Me does not provide insurance — we do not verify whether hosts carry insurance, and most homeowner policies exclude paid rentals.",
+    body: "Every guest signs a liability waiver before access. We do not verify whether hosts carry insurance, and most homeowner policies exclude paid rentals.",
   },
   {
     icon: Star,
@@ -108,10 +108,6 @@ const FAQS = [
   {
     q: "How much does it cost to rent a pool?",
     a: "Hourly rates are set by each host and typically range from $40 to $150 per hour, depending on pool size, amenities (hot tub, slides, etc.), and location. The booking total includes any cleaning fee and extra-guest fees, plus a guest service fee shown at checkout. Everything is shown upfront before you confirm — no surprise charges.",
-  },
-  {
-    q: "Is the pool insured during my booking?",
-    a: "No. Pool Rental Near Me does not provide or arrange insurance. Every booking requires a signed guest waiver, and we do not verify whether the host carries insurance.",
   },
   {
     q: "How do I know the pool is clean and safe?",

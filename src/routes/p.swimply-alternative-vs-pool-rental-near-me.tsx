@@ -35,7 +35,7 @@ const faqs = [
   },
   {
     q: "What insurance does Swimply provide vs Pool Rental Near Me?",
-    a: "Swimply's published Protection Guarantee provides up to $1,000,000 USD per occurrence in liability protection plus up to $10,000 in property damage protection, secondary to the host's homeowners policy. Pool Rental Near Me does not provide or arrange insurance — every booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing on either platform.",
+    a: "Swimply's published Protection Guarantee provides up to $1,000,000 USD per occurrence in liability protection plus up to $10,000 in property damage protection, secondary to the host's homeowners policy. Every Pool Rental Near Me booking requires a signed guest waiver, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing on either platform.",
   },
   {
     q: "Can I list my pool on both Swimply and PRNM?",

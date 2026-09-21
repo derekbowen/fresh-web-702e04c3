@@ -130,7 +130,7 @@ function buildFaqs(city: CityRow) {
     },
     {
       q: `What insurance do I need to host a pool in ${city.name} on Giggster?`,
-      a: `Per Giggster's Help Center articles "As a host, do I need insurance?" and "Do I need insurance to host production?", ${city.name} hosts on Giggster must carry their own homeowner's insurance, and renters (production crews) must supply a Certificate of Insurance with at least $2 million in general liability and property damage before each shoot. Renters can purchase Giggster's optional Production/Event Insurance at checkout or use their own. Pool Rental Near Me does not provide or arrange insurance: every ${city.name} booking requires a signed guest waiver, and we do not verify whether hosts carry insurance — most homeowner policies exclude paid rentals, so check with your carrier before listing.`,
+      a: `Per Giggster's Help Center articles "As a host, do I need insurance?" and "Do I need insurance to host production?", ${city.name} hosts on Giggster must carry their own homeowner's insurance, and renters (production crews) must supply a Certificate of Insurance with at least $2 million in general liability and property damage before each shoot. Renters can purchase Giggster's optional Production/Event Insurance at checkout or use their own. Every Pool Rental Near Me booking in ${city.name} requires a signed guest waiver, and we do not verify whether hosts carry insurance — most homeowner policies exclude paid rentals, so check with your carrier before listing.`,
     },
     {
       q: `Can I list my ${city.name} pool on Giggster and Pool Rental Near Me at the same time?`,
@@ -334,7 +334,7 @@ function GiggsterCityPage() {
 
       <h3>Pool Rental Near Me's approach in {city.name}</h3>
       <p>
-        Pool Rental Near Me does not provide or arrange insurance. Instead,
+        Pool Rental Near Me requires a signed guest waiver on every booking. Instead,
         the platform is built around host control and documentation:
       </p>
       <ul>

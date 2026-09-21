@@ -312,8 +312,12 @@ export type WinterCityCard = {
   name: string;
   state: string;
   bounds: string;
-  /** Live count of published listings inside `bounds` (0 hides the count). */
-  count: number;
+  /**
+   * Published listings inside `bounds`.
+   *   number -> a real count from a successful query (0 is a truthful zero)
+   *   null   -> unknown; the query failed. MUST NOT be rendered as "0 pools".
+   */
+  count: number | null;
   /** Primary photo of one live listing inside `bounds`, or null. */
   imageUrl: string | null;
 };
@@ -407,6 +411,54 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
 }
 const HOME_CALL_TIMEOUT_MS = 5_000;
 
+/**
+ * City-card inventory straight from `synced_listings`, our own mirror of the
+ * marketplace, using the same metro bounding box as before.
+ *
+ * Why not Sharetribe: the previous implementation called searchListings({bounds})
+ * which, because it only consults the mirror when a city/state filter is present,
+ * went direct to /listings/query. That endpoint has been returning 502 and each
+ * of the six cards then timed out at 5s and fell back to `{ total: 0 }` — so
+ * every card silently claimed zero inventory (observed 2026-09-21 in pm2 logs).
+ *
+ * Returns count: null when the query fails, so "unknown" stays distinguishable
+ * from a genuine zero. Bounds are "NE-lat,NE-lng,SW-lat,SW-lng".
+ */
+async function cityCardInventory(
+  bounds: string,
+): Promise<{ count: number | null; imageUrl: string | null }> {
+  const parts = bounds.split(",").map((n) => Number(n.trim()));
+  if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) {
+    console.error(`[city card] unparseable bounds: ${bounds}`);
+    return { count: null, imageUrl: null };
+  }
+  const [aLat, aLng, bLat, bLng] = parts;
+  const latMin = Math.min(aLat, bLat), latMax = Math.max(aLat, bLat);
+  const lngMin = Math.min(aLng, bLng), lngMax = Math.max(aLng, bLng);
+  try {
+    const { data, count, error } = await supabaseAdmin
+      .from("synced_listings")
+      .select("primary_image_url", { count: "exact" })
+      .eq("state", "published")
+      .eq("is_deleted", false)
+      .not("primary_image_url", "is", null)
+      .gte("latitude", latMin)
+      .lte("latitude", latMax)
+      .gte("longitude", lngMin)
+      .lte("longitude", lngMax)
+      .limit(1);
+    if (error) throw error;
+    return {
+      count: typeof count === "number" ? count : null,
+      imageUrl: (data?.[0] as { primary_image_url?: string } | undefined)?.primary_image_url ?? null,
+    };
+  } catch (err) {
+    // Logged, never surfaced to the customer; the card just omits its count.
+    console.error(`[city card] inventory query failed for bounds ${bounds}:`, err);
+    return { count: null, imageUrl: null };
+  }
+}
+
 export const getWinterHomeData = createServerFn({ method: "GET" }).handler(
   async (): Promise<WinterHomeData> => {
     // This used to set `cache-control: no-store` and `x-robots-tag: noindex,
@@ -431,17 +483,18 @@ export const getWinterHomeData = createServerFn({ method: "GET" }).handler(
       Promise.all(
         WINTER_CITY_CARDS.map(async (c): Promise<WinterCityCard> => {
           const r = await safe(
-            withTimeout(searchListings({ bounds: c.bounds, perPage: 1 }), HOME_CALL_TIMEOUT_MS, `city card ${c.slug}`),
+            withTimeout(cityCardInventory(c.bounds), HOME_CALL_TIMEOUT_MS, `city card ${c.slug}`),
             `city card ${c.slug}`,
-            { listings: [], total: 0, page: 1, totalPages: 0 },
+            // A timeout is "unknown", not zero.
+            { count: null as number | null, imageUrl: null as string | null },
           );
           return {
             slug: c.slug,
             name: c.name,
             state: c.state,
             bounds: c.bounds,
-            count: r.total,
-            imageUrl: r.listings[0]?.imageUrl ?? null,
+            count: r.count,
+            imageUrl: r.imageUrl,
           };
         }),
       ),

@@ -38,7 +38,7 @@ const faqs = [
   },
   {
     q: "What insurance does Giggster require vs Pool Rental Near Me?",
-    a: "Per Giggster's Help Center articles \"As a host, do I need insurance?\" and \"Do I need insurance to host production?\": Giggster hosts must carry their own homeowner's insurance, and renters must provide a Certificate of Insurance (COI) with at least $2 million in general liability + property damage before each booking. Renters can buy Giggster's optional Production/Event Insurance at checkout or supply their own. Pool Rental Near Me does not provide or arrange insurance: every booking requires a signed guest waiver, hosts approve each reservation individually, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing on either platform.",
+    a: "Per Giggster's Help Center articles \"As a host, do I need insurance?\" and \"Do I need insurance to host production?\": Giggster hosts must carry their own homeowner's insurance, and renters must provide a Certificate of Insurance (COI) with at least $2 million in general liability + property damage before each booking. Renters can buy Giggster's optional Production/Event Insurance at checkout or supply their own. Every Pool Rental Near Me booking requires a signed guest waiver, hosts approve each reservation individually, and we do not verify whether hosts carry insurance. Most homeowner policies exclude paid rentals, so check with your carrier before listing on either platform.",
   },
   {
     q: "On a $400 pool booking, how much do I keep on Giggster vs PRNM?",
@@ -188,7 +188,7 @@ function GiggsterComparisonPage() {
           },
           {
             label: "Platform-provided insurance",
-            prnm: "None — PRNM does not provide or arrange insurance; every booking requires a signed guest waiver and we do not verify whether hosts carry insurance",
+            prnm: "Every booking requires a signed guest waiver; we do not verify whether hosts carry insurance",
             competitor:
               "Not included — host must carry homeowner's insurance; renter must supply $2M COI for production bookings",
           },
@@ -315,7 +315,7 @@ function GiggsterComparisonPage() {
 
       <h3>Pool Rental Near Me's approach</h3>
       <p>
-        Pool Rental Near Me does not provide or arrange insurance. Instead, the
+        Pool Rental Near Me requires a signed guest waiver on every booking. Instead, the
         platform is built around host control and documentation:
       </p>
       <ul>

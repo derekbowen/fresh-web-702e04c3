@@ -638,7 +638,7 @@ function CityCard({ card }: { card: WinterCityCard }) {
         <h3 className="text-base font-semibold text-foreground">
           {card.name}, {card.state}
         </h3>
-        {card.count > 0 && (
+        {typeof card.count === "number" && card.count > 0 && (
           <span className="text-sm text-muted-foreground">{card.count} {card.count === 1 ? "pool" : "pools"}</span>
         )}
       </div>

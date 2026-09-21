@@ -157,7 +157,7 @@ Required sections:
 1. Is short-term pool rental legal in ${cls.stateName}? (general status — most states have no statewide ban; regulation is municipal)
 2. Permits & business licenses commonly required at the city/county level
 3. HOA & deed restrictions — how to defend your right to host (link to /p/hoa-pool-rental-defense-kit)
-4. Insurance requirements — hosts must arrange their own coverage; PRNM does not provide insurance
+4. Insurance requirements — hosts must arrange their own coverage. Do NOT make any statement about Pool Rental Near Me's own insurance.
 5. Tax implications — Schedule E vs Schedule C, lodging tax, sales tax
 6. How to operate compliantly — waivers (link /p/waivers), capacity limits, neighbor relations
 7. FAQ — 5 questions specific to ${cls.stateName} hosts

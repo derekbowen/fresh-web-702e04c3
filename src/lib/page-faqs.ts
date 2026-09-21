@@ -89,7 +89,7 @@ function hostAdvocacyFaqs(stateName: string): FaqItem[] {
     },
     {
       question: `Will hosting affect my homeowner's insurance in ${stateName}?`,
-      answer: `Standard homeowner's policies contain a business-pursuits exclusion that can void coverage for guest injuries during a paid rental. Pool Rental Near Me does not provide or arrange insurance, so the cover is yours to carry: talk to your carrier in writing before you host and ask what a paid rental would need.`,
+      answer: `Standard homeowner's policies contain a business-pursuits exclusion that can void coverage for guest injuries during a paid rental. The cover is yours to carry: talk to your carrier in writing before you host and ask what a paid rental would need.`,
     },
     {
       question: `How much can I earn renting my pool in ${stateName}?`,
@@ -118,7 +118,7 @@ function hostAdvocacyHubFaqs(): FaqItem[] {
     },
     {
       question: `Does my homeowner's insurance cover pool rental income?`,
-      answer: `Standard HO-3 and HO-5 policies contain a business-pursuits exclusion that typically denies coverage for guest injuries during a paid rental. Pool Rental Near Me does not provide insurance of any kind, so notify your homeowner's carrier in writing and ask what endorsement a paid rental would require.`,
+      answer: `Standard HO-3 and HO-5 policies contain a business-pursuits exclusion that typically denies coverage for guest injuries during a paid rental. Notify your homeowner's carrier in writing and ask what endorsement a paid rental would require.`,
     },
     {
       question: `How is pool rental income taxed?`,
@@ -148,7 +148,7 @@ function swimInstructorCityFaqs(city: string, stateCode: string | null): FaqItem
     },
     {
       question: `Am I covered by insurance when teaching lessons in a rented ${where} pool?`,
-      answer: `No. Pool Rental Near Me does not provide insurance to instructors or hosts. Carry your own professional liability policy (commonly through K&K or a swim-school carrier) for the lessons, and confirm the host carries their own cover for the property.`,
+      answer: `Carry your own professional liability policy (commonly through K&K or a swim-school carrier) for the lessons, and confirm the host carries their own cover for the property.`,
     },
     {
       question: `How do I find pools in ${where} that allow swim instruction?`,
@@ -171,10 +171,6 @@ function swimInstructorHubFaqs(): FaqItem[] {
       question: `What certifications do swim instructors need?`,
       answer: `Hosts generally expect Red Cross Water Safety Instructor (WSI), ASCA Level 1+, or equivalent, plus current CPR and First Aid. Some hosts may also ask for proof of liability insurance.`,
     },
-    {
-      question: `Is there liability coverage when teaching in a rented pool?`,
-      answer: `Not from the platform. Pool Rental Near Me does not provide insurance. Carry your own professional liability insurance for the lessons, and confirm the host's own cover for the pool itself.`,
-    },
   ];
 }
 
@@ -191,10 +187,6 @@ function eventGuideFaqs(eventLabel: string, where: string): FaqItem[] {
     {
       question: `Can I host a ${eventLabel} at a private pool with food and music?`,
       answer: `Most hosts allow food, drinks, and reasonable music — many even include a grill or BBQ area. Check the listing's house rules and message the host before booking if you're planning catering or amplified sound.`,
-    },
-    {
-      question: `Is there liability coverage for a ${eventLabel} pool rental?`,
-      answer: `Pool Rental Near Me does not provide insurance. Every booking requires a signed guest waiver, and the host is responsible for their own cover. Bring your own event cover if your group needs it.`,
     },
     {
       question: `How far in advance should I book a pool for a ${eventLabel} in ${where}?`,
