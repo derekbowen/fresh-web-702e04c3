@@ -19,6 +19,7 @@
  * Default for public reads (`integGet`) uses the public-read client.
  * Use `integrationGet` / `integrationPost` for Integration API calls.
  */
+import { CUSTOMER_BOOKING_FEE_PCT } from "@/lib/pricing";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
@@ -681,7 +682,9 @@ export async function fetchAvailableTimeSlots(
  * (poolrentalnearme-web src/util/currency.js priceWithBookingFee). Keep in sync
  * with the Console customer-commission percentage.
  */
-export const CUSTOMER_BOOKING_FEE_PCT = 15;
+// Single source: @/lib/pricing. Imported for local use AND re-exported so
+// existing importers of this module keep working.
+export { CUSTOMER_BOOKING_FEE_PCT };
 
 export interface CuratedListing extends ListingSummary {
   /** All-in hourly price in cents (host price + guest booking fee), or null. */

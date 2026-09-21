@@ -16,6 +16,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { allInCents } from "@/lib/pricing";
 
 export type InventoryListing = {
   id: string;
@@ -91,7 +92,13 @@ function toListing(r: any): InventoryListing {
     title: r.title ?? "Pool rental",
     city: r.city ?? null,
     stateCode: r.state_code ?? null,
-    price: typeof r.price_amount === "number" ? r.price_amount : null,
+    // ALL-IN price, matching every other PRNM surface. `price_amount` is the
+    // host's base rate; the mandatory guest booking fee is added for display
+    // because California SB 478 requires the advertised price to include it.
+    // The marketplace does the same in src/util/currency.js::priceWithBookingFee
+    // and the homepage does it via CuratedListing.allInCents — a city card that
+    // showed the base rate advertised $45/hr for a pool that costs $51.75.
+    price: allInCents(r.price_amount),
     currency: r.price_currency ?? null,
     img: r.primary_image_url ?? null,
     capacity: typeof r.capacity === "number" ? r.capacity : null,

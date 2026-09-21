@@ -33,11 +33,13 @@ function fromLive(l: LiveListing & { mi?: number }): CardListing {
  * full-resolution images up front.
  */
 function PoolCard({ l, eager }: { l: CardListing; eager: boolean }) {
-  // price_amount is Sharetribe minor units (7900 => $79). A missing price
-  // renders nothing at all rather than a fake "$0".
+  // Minor units, already all-in (see city-inventory.functions.ts). Show the
+  // cents when there are any, so the card matches the listing page to the penny
+  // — $51.75 here and $51.75 there. A missing price renders nothing at all
+  // rather than a fake "$0".
   const price =
     typeof l.price === "number" && l.price > 0
-      ? `$${Math.round(l.price / 100)}/hr`
+      ? `$${(l.price / 100).toFixed(l.price % 100 === 0 ? 0 : 2)}/hr`
       : null;
   const where = [l.city, l.stateCode].filter(Boolean).join(", ");
   return (
