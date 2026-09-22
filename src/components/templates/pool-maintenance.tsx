@@ -447,7 +447,9 @@ function renderMarkdown(md: string) {
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
-        h2: ({ children, ...props }) => {
+        // `node` is react-markdown's AST object; spreading it rendered node="[object Object]".
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        h2: ({ children, node: _node, ...props }) => {
           const text = Array.isArray(children) ? children.join("") : String(children ?? "");
           return (
             <h2 id={slugify(text)} {...props}>

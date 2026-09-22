@@ -389,7 +389,9 @@ function LaunchNote({ body: rawBody }: { body: string }) {
             components={{
               // The hero renders the page H1; any `#` in the stored body
               // becomes an H2 so the page never carries two H1s.
-              h1: ({ children, ...props }) => <h2 {...props}>{children}</h2>,
+              // `node` is react-markdown's AST object; spreading it rendered node="[object Object]".
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              h1: ({ children, node: _node, ...props }) => <h2 {...props}>{children}</h2>,
             }}
           >
             {body}
