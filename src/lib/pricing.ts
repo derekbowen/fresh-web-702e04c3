@@ -22,5 +22,10 @@ export const CUSTOMER_BOOKING_FEE_PCT = 15;
  */
 export function allInCents(base: unknown): number | null {
   if (typeof base !== "number" || !Number.isFinite(base) || base <= 0) return null;
-  return Math.round(base * (1 + CUSTOMER_BOOKING_FEE_PCT / 100));
+  // Integer arithmetic in subunits, rounded half-up -- exactly how checkout
+  // computes the fee (Decimal ROUND_HALF_UP in the marketplace's
+  // lineItemHelpers). The float form, Math.round(base * 1.15), rounded a
+  // half-cent fee DOWN: $38.90 showed $44.73 while checkout charged $44.74.
+  const b = Math.round(base);
+  return b + Math.floor((b * CUSTOMER_BOOKING_FEE_PCT + 50) / 100);
 }

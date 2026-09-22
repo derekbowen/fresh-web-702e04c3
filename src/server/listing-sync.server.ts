@@ -143,8 +143,11 @@ function toRow(listing: STListing, included: STResponse<unknown>["included"]) {
     extractStateCode(address) ??
     stateCodeFromFullName(address);
 
-  const amenities: string[] = Array.isArray(pd.amenities)
-    ? pd.amenities.map(String)
+  // Factual amenity codes from the host's own checklist. pd.amenities is the
+  // PAID add-on list ({name, price} objects) -- String() turned every one into
+  // "[object Object]" and those rendered as chips on live city pages.
+  const amenities: string[] = Array.isArray(pd.poolAmenities)
+    ? (pd.poolAmenities as unknown[]).filter((v): v is string => typeof v === "string")
     : [];
   const capacity: number | null =
     typeof pd.capacity === "number"

@@ -23,7 +23,12 @@ type CardListing = {
 function fromLive(l: LiveListing & { mi?: number }): CardListing {
   return {
     id: l.id, slug: l.slug, title: l.title, city: l.city || null,
-    stateCode: l.state || null, price: l.price ?? null, img: l.img ?? null, mi: l.mi,
+    // No price from the build-time snapshot. Its `price` is the HOST BASE rate
+    // (no 15% renter fee) frozen at build time: /phoenix showed $45/hr for a
+    // pool that is $150 base / $172.50 all-in today. PoolCard assumes an all-in
+    // amount that matches checkout to the penny; a stale base price cannot, so
+    // the card omits it rather than state a wrong one.
+    stateCode: l.state || null, price: null, img: l.img ?? null, mi: l.mi,
   };
 }
 

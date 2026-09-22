@@ -21,7 +21,7 @@
     "check:homepage-cities": "node scripts/check-homepage-cities.mjs",
     "check:dev-hostnames": "node scripts/check-dev-hostnames.mjs",
     "check:emitted-urls": "node scripts/check-emitted-urls.mjs",
-    "verify:production": "npm run check:deployed-sha && npm run check:homepage-shape && npm run check:tools-hub && npm run check:homepage-cities && npm run check:dev-hostnames && npm run check:emitted-urls && npm run check:insurance-claims",
+    "verify:production": "npm run check:deployed-sha && npm run check:homepage-shape && npm run check:tools-hub && npm run check:homepage-cities && npm run check:dev-hostnames && npm run check:emitted-urls && npm run check:insurance-claims && npm run check:amenity-and-price-truth",
     "postbuild": "node scripts/stamp-build.mjs",
     "check:deployed-sha": "node scripts/check-deployed-sha.mjs",
     "check:production-drift": "node scripts/check-production-drift.mjs",
@@ -33,7 +33,8 @@
     "lifecycle:test": "npm run lifecycle:build && node --test ops/host-lifecycle/dist/test/",
     "lifecycle": "node --env-file=.env ops/host-lifecycle/dist/run.mjs",
     "check:homepage-shape": "node scripts/check-homepage-shape.mjs",
-    "check:insurance-claims": "node scripts/check-insurance-claims.mjs"
+    "check:insurance-claims": "node scripts/check-insurance-claims.mjs",
+    "check:amenity-and-price-truth": "node scripts/check-amenity-and-price-truth.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

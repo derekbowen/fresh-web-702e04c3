@@ -21,6 +21,7 @@
  */
 import { CUSTOMER_BOOKING_FEE_PCT } from "@/lib/pricing";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { corroboratedAdvantages } from "@/lib/amenity-claims";
 
 const MARKETPLACE_API_BASE = "https://flex-api.sharetribe.com";
 const INTEGRATION_API_BASE = "https://flex-integ-api.sharetribe.com";
@@ -485,7 +486,8 @@ export async function fetchShareListing(id: string): Promise<ShareListing | null
       images,
       heroImage: images[0] ?? null,
       amenities,
-      advantages: Array.isArray(pd.advantagesSelection) ? (pd.advantagesSelection as string[]) : [],
+      // Only highlights the host's own poolAmenities confirm exactly (lib/amenity-claims).
+      advantages: corroboratedAdvantages(pd),
       houseRules: Array.isArray(pd.houseRules) ? (pd.houseRules as string[]) : [],
       poolAmenities: Array.isArray(pd.poolAmenities) ? (pd.poolAmenities as string[]) : [],
       bookUrl: `/l/${slug}/${data.id}`,

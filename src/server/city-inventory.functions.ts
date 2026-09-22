@@ -17,6 +17,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { allInCents } from "@/lib/pricing";
+import { poolAmenityLabels } from "@/lib/amenity-claims";
 
 export type InventoryListing = {
   id: string;
@@ -102,7 +103,7 @@ function toListing(r: any): InventoryListing {
     currency: r.price_currency ?? null,
     img: r.primary_image_url ?? null,
     capacity: typeof r.capacity === "number" ? r.capacity : null,
-    amenities: Array.isArray(r.amenities) ? r.amenities.slice(0, 3).map(String) : [],
+    amenities: poolAmenityLabels(r.amenities).slice(0, 3),
   };
 }
 
