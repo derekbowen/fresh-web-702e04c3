@@ -34,8 +34,11 @@ const BANNED = [
   [/hosts are covered/i, "unsupported: hosts are not insureds"],
   [/guest protection guarantee/i, "unsupported: no such guarantee"],
   // stale blanket denial — misleading now that a policy exists
-  [/does not provide or arrange insurance/i, "stale: PRNM does carry a liability policy"],
-  [/does not provide insurance/i, "stale: PRNM does carry a liability policy"],
+  // \s+ not a literal space: these strings wrap across JSX lines in source,
+  // which is exactly how six of them survived the first pass.
+  [/does\s+not\s+provide(\s+or\s+arrange)?\s+insurance/i, "stale: PRNM does carry a liability policy"],
+  [/does\s+not\s+provide,\s+arrange\s+or\s+include\s+insurance/i, "stale: PRNM does carry a liability policy"],
+  [/(provides|offers|arranges)\s+no\s+insurance/i, "stale: PRNM does carry a liability policy"],
   // carriers that are not on the policy
   [/\bHartford\b/i, "wrong carrier"],
   [/\bLloyd'?s\b/i, "wrong carrier"],
@@ -79,6 +82,10 @@ if (process.env.SKIP_LIVE !== "1") {
     "/", "/p/about-our-company", "/p/how-it-works", "/p/hosting",
     "/p/swimply-alternative-vs-pool-rental-near-me",
     "/p/peerspace-vs-pool-rental-near-me",
+    "/p/giggster-vs-pool-rental-near-me",
+    // one generated page, because lib/page-faqs.ts fans out to ~1,140 of them
+    // and a regression there would never show on a hand-written route.
+    "/p/pool-party-rentals",
   ];
   for (const path of PAGES) {
     let body = "";

@@ -183,9 +183,7 @@ function PeerspaceCityPage() {
         Pool injuries can be catastrophic, so understand each platform's
         model before listing. Peerspace publishes a <strong>$1M host
         liability</strong> policy plus a $25K Property Damage Guarantee for
-        qualifying bookings. Pool Rental Near Me does not provide or arrange
-        insurance: every booking requires a <strong>signed guest
-        waiver</strong>, and we do not verify whether hosts carry insurance —
+        qualifying bookings. Every Pool Rental Near Me booking requires a <strong>signed guest waiver</strong>, and we do not verify whether hosts carry insurance —
         most homeowner policies exclude paid rentals, so talk to your
         carrier before hosting in {city.name}.
       </p>

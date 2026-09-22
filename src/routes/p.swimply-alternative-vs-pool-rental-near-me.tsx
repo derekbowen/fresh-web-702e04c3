@@ -182,8 +182,7 @@ function SwimplyComparisonPage() {
       </p>
 
       <p>
-        <strong>Pool Rental Near Me</strong> does not provide or arrange
-        insurance. Every booking requires a <strong>signed guest
+        <strong>Pool Rental Near Me</strong> requires a <strong>signed guest
         waiver</strong>, hosts approve each reservation individually, and
         we do not verify whether hosts carry insurance. Most homeowner policies
         exclude paid rentals under a business-pursuits exclusion, so talk to
@@ -390,8 +389,7 @@ function SwimplyComparisonPage() {
         </li>
         <li>
           <strong>PRNM waiver requirement</strong> — every Pool Rental Near Me
-          booking requires a signed guest waiver; PRNM does not provide or
-          arrange insurance. Full terms in our{" "}
+          booking requires a signed guest waiver. Full terms in our{" "}
           <a href="/p/terms-of-service">
             Terms of Service
           </a>

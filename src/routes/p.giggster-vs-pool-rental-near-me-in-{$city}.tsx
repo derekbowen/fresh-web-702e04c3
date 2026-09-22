@@ -558,8 +558,7 @@ function GiggsterCityPage() {
         </li>
         <li>
           <strong>PRNM waiver requirement</strong> — every Pool Rental Near Me
-          booking requires a signed guest waiver; PRNM does not provide or
-          arrange insurance. Full terms in the{" "}
+          booking requires a signed guest waiver. Full terms in the{" "}
           <a href="/p/terms-of-service">
             Pool Rental Near Me Terms of Service
           </a>

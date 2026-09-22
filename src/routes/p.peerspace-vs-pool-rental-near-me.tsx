@@ -355,8 +355,7 @@ function PeerspaceComparisonPage() {
         </li>
         <li>
           <strong>Pool Rental Near Me waiver requirement</strong> — every
-          booking requires a signed guest waiver; PRNM does not provide or
-          arrange insurance. Full terms in our{" "}
+          booking requires a signed guest waiver. Full terms in our{" "}
           <a href="/p/terms-of-service">Terms of Service</a>.
         </li>
         <li>

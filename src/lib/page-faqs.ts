@@ -59,10 +59,6 @@ function hostAcqFaqs(city: string, stateCode: string | null): FaqItem[] {
       answer: `Listing is free. Pool Rental Near Me charges 0% host fees on completed bookings — no monthly fees, no setup costs, no upfront payment.`,
     },
     {
-      question: `Is my pool covered by insurance when I host in ${where}?`,
-      answer: `No. Pool Rental Near Me does not provide, arrange or include insurance. Every booking requires a signed guest waiver, and hosts should carry their own cover — most homeowners policies exclude paid rentals.`,
-    },
-    {
       question: `How is Pool Rental Near Me different from Swimply?`,
       answer: `Pool Rental Near Me charges 0% host fees — significantly less than Swimply's 15%+ fees — and our team prioritizes host support, including the free Pool Host Academy with 70+ training courses.`,
     },
@@ -208,10 +204,6 @@ function genericResourceFaqs(title: string): FaqItem[] {
     {
       question: `How much can I earn renting out my pool?`,
       answer: `That depends on your hourly rate, amenities, and how many hours you host — there is no typical figure we can stand behind. Pool Rental Near Me charges 0% host fees, so you keep 100% of your listed price.`,
-    },
-    {
-      question: `Is there liability insurance included?`,
-      answer: `No. Pool Rental Near Me does not provide, arrange or include insurance. Every booking requires a signed guest waiver, and hosts should carry their own cover — most homeowners policies exclude paid rentals. (Reference: ${title}.)`,
     },
   ];
 }
