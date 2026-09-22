@@ -479,7 +479,10 @@ export function HostAcqCityTemplate({
                     // the markdown body must downgrade to H2 to avoid two H1s
                     // on the page (SEO: duplicate H1 across 3,234 host-city
                     // pages was the #4 audit finding).
-                    h1: ({ children, ...props }) => <h2 {...props}>{children}</h2>,
+                    // `node` is react-markdown's AST object; spreading it onto the
+                    // element rendered node="[object Object]" into the HTML.
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    h1: ({ children, node: _node, ...props }) => <h2 {...props}>{children}</h2>,
                   }}
                 >
                   {body}

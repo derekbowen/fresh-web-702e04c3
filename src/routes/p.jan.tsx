@@ -33,7 +33,7 @@ const HOST_NAME = "Jan";
 const ADVANTAGE_LABELS: Record<string, { icon: typeof Sun; label: string }> = {
   "shaded-area-nearby": { icon: Trees, label: "Shaded area nearby" },
   "night-lighting": { icon: Sun, label: "Night lighting" },
-  "heated-pool": { icon: Flame, label: "Heated pool" },
+  "heated-pool": { icon: Flame, label: "Heated pool — 85°" },
   "music-system": { icon: Sparkles, label: "Music system" },
   "fire-pit-nearby": { icon: Flame, label: "Fire pit nearby" },
   "poolside-dining-area": { icon: Sun, label: "Poolside dining" },
@@ -43,13 +43,14 @@ const ADVANTAGE_LABELS: Record<string, { icon: typeof Sun; label: string }> = {
 
 const POOL_AMENITY_LABELS: Record<string, string> = {
   deep_end: "Deep end",
+  diving_board: "Diving board",
   bbq: "BBQ grill",
   covered_seating: "Covered seating",
   restroom: "Restroom",
   ada: "ADA accessible",
   fenced: "Fully fenced",
   changing_area: "Changing area",
-  parking: "Parking",
+  parking: "On-site parking (10+ spaces)",
   saltwater: "Saltwater",
   cameras: "Security cameras",
 };

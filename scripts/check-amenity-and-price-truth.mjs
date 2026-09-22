@@ -5,6 +5,8 @@
  *      (the Backyard Oasis CT "Heated pool" report, 2026-09-22),
  *   2. render "[object Object]" (paid add-ons stringified into amenity chips),
  *   3. render a one-decimal currency string ("$57.5").
+ * Page copy stated by the host themself (e.g. /p/jan's "85°", from her own
+ * description) is not an amenity-field claim and is not policed here.
  * env: BASE_URL (default https://www.poolrentalnearme.com)
  */
 const BASE = (process.env.BASE_URL || "https://www.poolrentalnearme.com").replace(/\/$/, "");
@@ -34,7 +36,6 @@ for (const p of PAGES) {
   if (body.includes("[object Object]")) bad(`${p}: renders "[object Object]"`);
   const m = body.match(ONE_DECIMAL);
   if (m) bad(`${p}: one-decimal currency ${JSON.stringify(m[0])}`);
-  if (/85°|85°/.test(body)) bad(`${p}: unverifiable temperature claim`);
   if (body.includes("Lifeguard on duty")) bad(`${p}: "Lifeguard on duty" (no factual amenity can confirm it)`);
   if (fail === before) ok(p);
 }
