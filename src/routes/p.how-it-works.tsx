@@ -73,7 +73,7 @@ const INCLUDED = [
   {
     icon: Headphones,
     title: "24/7 support team",
-    body: "Real humans available 24/7 by chat, email, or phone (1-888-940-4247). Issue at the pool? Late host arrival? Weather concern? We're on it.",
+    body: "Real humans, not bots. Text or email us anytime, or call 1-888-940-4247. Issue at the pool? Late host arrival? Weather concern? We're on it.",
   },
 ];
 
@@ -135,7 +135,7 @@ const FAQS = [
   },
   {
     q: "What if I have a question about a specific pool?",
-    a: "Message the host directly through the listing page before you book. Hosts typically reply within an hour during the day. For platform questions, contact our 24/7 support: chat, email, or phone 1-888-940-4247.",
+    a: "Message the host directly through the listing page before you book. Hosts typically reply within an hour during the day. For platform questions, text or email us anytime, or call 1-888-940-4247.",
   },
 ];
 

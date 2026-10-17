@@ -304,8 +304,8 @@ function HomePageInner({ data }: { data: HomeData | undefined | null }) {
               <div className="mt-1 text-xs text-muted-foreground">From Austin to Albany</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">24/7</div>
-              <div className="mt-1 text-sm font-semibold text-foreground">Live human support</div>
+              <div className="text-2xl font-bold text-primary">Anytime</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">Text or email us</div>
               <div className="mt-1 text-xs text-muted-foreground">Before, during & after</div>
             </div>
           </div>

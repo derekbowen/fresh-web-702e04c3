@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -6,12 +6,6 @@ import appCss from "../styles.css?url";
 import { SiteHeader, SiteFooter, GlobalChromeProvider, FooterDataProvider } from "@/components/site-layout";
 import { HydrationDebug } from "@/components/hydration-debug";
 import { AffiliateRefCapture } from "@/components/affiliate-ref-capture";
-
-// Intercom ships ~350KB of JS. Lazy-load it so it never blocks first paint
-// and never lands in the entry chunk for routes that don't show the widget.
-const IntercomWidget = lazy(() =>
-  import("@/components/intercom-widget").then((m) => ({ default: m.IntercomWidget })),
-);
 import { getSiteFooter } from "@/server/site-footer.functions";
 import { getSharetribeAuthState } from "@/server/sharetribe-session.functions";
 import {
@@ -121,7 +115,6 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const data = Route.useLoaderData();
   const isAdmin = pathname.startsWith("/admin");
-  const showIntercom = !isAdmin;
   const footer = data?.footer;
   const isAuthed = !!data?.isAuthed;
   const content = (
@@ -137,11 +130,6 @@ function RootComponent() {
         </div>
         {!isAdmin && <SiteFooter />}
       </div>
-      {showIntercom && (
-        <Suspense fallback={null}>
-          <IntercomWidget />
-        </Suspense>
-      )}
     </>
   );
   const wrapped = footer ? (

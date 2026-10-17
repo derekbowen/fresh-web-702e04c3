@@ -203,8 +203,6 @@ import { Route as ApiPublicHooksProviderAiWorkerRouteImport } from './routes/api
 import { Route as ApiPublicHooksPollSharetribeRentersRouteImport } from './routes/api/public/hooks/poll-sharetribe-renters'
 import { Route as ApiPublicHooksPollSharetribeHostsRouteImport } from './routes/api/public/hooks/poll-sharetribe-hosts'
 import { Route as ApiPublicHooksLinkAutoFixRouteImport } from './routes/api/public/hooks/link-auto-fix'
-import { Route as ApiPublicHooksIntercomSyncRouteImport } from './routes/api/public/hooks/intercom-sync'
-import { Route as ApiPublicHooksIntercomRouteImport } from './routes/api/public/hooks/intercom'
 import { Route as ApiPublicHooksIgLeadHunterRouteImport } from './routes/api/public/hooks.ig-lead-hunter'
 import { Route as ApiPublicHooksHostCityTailFixRouteImport } from './routes/api/public/hooks/host-city-tail-fix'
 import { Route as ApiPublicHooksGscSyncRouteImport } from './routes/api/public/hooks/gsc-sync'
@@ -1233,17 +1231,6 @@ const ApiPublicHooksLinkAutoFixRoute =
     path: '/api/public/hooks/link-auto-fix',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksIntercomSyncRoute =
-  ApiPublicHooksIntercomSyncRouteImport.update({
-    id: '/api/public/hooks/intercom-sync',
-    path: '/api/public/hooks/intercom-sync',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksIntercomRoute = ApiPublicHooksIntercomRouteImport.update({
-  id: '/api/public/hooks/intercom',
-  path: '/api/public/hooks/intercom',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicHooksIgLeadHunterRoute =
   ApiPublicHooksIgLeadHunterRouteImport.update({
     id: '/api/public/hooks/ig-lead-hunter',
@@ -1528,8 +1515,6 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
-  '/api/public/hooks/intercom': typeof ApiPublicHooksIntercomRoute
-  '/api/public/hooks/intercom-sync': typeof ApiPublicHooksIntercomSyncRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
@@ -1742,8 +1727,6 @@ export interface FileRoutesByTo {
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
-  '/api/public/hooks/intercom': typeof ApiPublicHooksIntercomRoute
-  '/api/public/hooks/intercom-sync': typeof ApiPublicHooksIntercomSyncRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
@@ -1957,8 +1940,6 @@ export interface FileRoutesById {
   '/api/public/hooks/gsc-sync': typeof ApiPublicHooksGscSyncRoute
   '/api/public/hooks/host-city-tail-fix': typeof ApiPublicHooksHostCityTailFixRoute
   '/api/public/hooks/ig-lead-hunter': typeof ApiPublicHooksIgLeadHunterRoute
-  '/api/public/hooks/intercom': typeof ApiPublicHooksIntercomRoute
-  '/api/public/hooks/intercom-sync': typeof ApiPublicHooksIntercomSyncRoute
   '/api/public/hooks/link-auto-fix': typeof ApiPublicHooksLinkAutoFixRoute
   '/api/public/hooks/poll-sharetribe-hosts': typeof ApiPublicHooksPollSharetribeHostsRoute
   '/api/public/hooks/poll-sharetribe-renters': typeof ApiPublicHooksPollSharetribeRentersRoute
@@ -2173,8 +2154,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
-    | '/api/public/hooks/intercom'
-    | '/api/public/hooks/intercom-sync'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
@@ -2387,8 +2366,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
-    | '/api/public/hooks/intercom'
-    | '/api/public/hooks/intercom-sync'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
@@ -2601,8 +2578,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/gsc-sync'
     | '/api/public/hooks/host-city-tail-fix'
     | '/api/public/hooks/ig-lead-hunter'
-    | '/api/public/hooks/intercom'
-    | '/api/public/hooks/intercom-sync'
     | '/api/public/hooks/link-auto-fix'
     | '/api/public/hooks/poll-sharetribe-hosts'
     | '/api/public/hooks/poll-sharetribe-renters'
@@ -2742,8 +2717,6 @@ export interface RootRouteChildren {
   ApiPublicHooksGscSyncRoute: typeof ApiPublicHooksGscSyncRoute
   ApiPublicHooksHostCityTailFixRoute: typeof ApiPublicHooksHostCityTailFixRoute
   ApiPublicHooksIgLeadHunterRoute: typeof ApiPublicHooksIgLeadHunterRoute
-  ApiPublicHooksIntercomRoute: typeof ApiPublicHooksIntercomRoute
-  ApiPublicHooksIntercomSyncRoute: typeof ApiPublicHooksIntercomSyncRoute
   ApiPublicHooksLinkAutoFixRoute: typeof ApiPublicHooksLinkAutoFixRoute
   ApiPublicHooksPollSharetribeHostsRoute: typeof ApiPublicHooksPollSharetribeHostsRoute
   ApiPublicHooksPollSharetribeRentersRoute: typeof ApiPublicHooksPollSharetribeRentersRoute
@@ -4124,20 +4097,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksLinkAutoFixRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/intercom-sync': {
-      id: '/api/public/hooks/intercom-sync'
-      path: '/api/public/hooks/intercom-sync'
-      fullPath: '/api/public/hooks/intercom-sync'
-      preLoaderRoute: typeof ApiPublicHooksIntercomSyncRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/intercom': {
-      id: '/api/public/hooks/intercom'
-      path: '/api/public/hooks/intercom'
-      fullPath: '/api/public/hooks/intercom'
-      preLoaderRoute: typeof ApiPublicHooksIntercomRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/ig-lead-hunter': {
       id: '/api/public/hooks/ig-lead-hunter'
       path: '/api/public/hooks/ig-lead-hunter'
@@ -4593,8 +4552,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGscSyncRoute: ApiPublicHooksGscSyncRoute,
   ApiPublicHooksHostCityTailFixRoute: ApiPublicHooksHostCityTailFixRoute,
   ApiPublicHooksIgLeadHunterRoute: ApiPublicHooksIgLeadHunterRoute,
-  ApiPublicHooksIntercomRoute: ApiPublicHooksIntercomRoute,
-  ApiPublicHooksIntercomSyncRoute: ApiPublicHooksIntercomSyncRoute,
   ApiPublicHooksLinkAutoFixRoute: ApiPublicHooksLinkAutoFixRoute,
   ApiPublicHooksPollSharetribeHostsRoute:
     ApiPublicHooksPollSharetribeHostsRoute,
@@ -4621,3 +4578,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

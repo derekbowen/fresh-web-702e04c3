@@ -162,7 +162,7 @@ const FAQS = [
   },
   {
     q: "What if something comes up during a booking?",
-    a: "24/7 host support via chat, email, and phone. Real humans, not bots. We deal with guest complaints, late arrivals, damage claims, and disputes so you don't have to. Phone: 1-888-940-4247.",
+    a: "Text or email us anytime, or call 1-888-940-4247. Real humans, not bots. We deal with guest complaints, late arrivals, damage claims, and disputes so you don't have to.",
   },
   {
     q: "What if a guest damages my pool or property?",

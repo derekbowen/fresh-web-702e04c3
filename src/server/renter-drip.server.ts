@@ -125,7 +125,8 @@ export async function sendDueEmails(batch = 25): Promise<{
         continue;
       }
 
-      // Intercom suppression
+      // Legacy pause flag: subscribers paused while Intercom was in use stay
+      // paused. Nothing sets this column any more; clear it to resume drips.
       if ((sub as any).intercom_paused_at) {
         await supabaseAdmin
           .from("renter_emails")
@@ -133,23 +134,6 @@ export async function sendDueEmails(batch = 25): Promise<{
           .eq("id", row.id);
         skipped++;
         continue;
-      }
-      try {
-        const { hasOpenConversation } = await import("@/lib/intercom.server");
-        if (await hasOpenConversation(sub.email)) {
-          await supabaseAdmin
-            .from("renter_subscribers")
-            .update({ intercom_paused_at: new Date().toISOString() })
-            .eq("id", sub.id);
-          await supabaseAdmin
-            .from("renter_emails")
-            .update({ status: "skipped", error: "intercom open conversation" })
-            .eq("id", row.id);
-          skipped++;
-          continue;
-        }
-      } catch (e) {
-        // never block the loop on Intercom failure
       }
 
       const step = SEQUENCE.find((s) => s.kind === row.kind);

@@ -1,31 +1,24 @@
 ---
-name: Intercom integration
-description: Two-way contact sync, drip suppression on open conversation, and webhook auto-pause on user reply
+name: Intercom integration (removed)
+description: Intercom was removed in Oct 2026 (widget, identity JWT, REST client, contact sync, webhook). Do not re-add. Only legacy DB columns remain.
 type: feature
 ---
-# Intercom Integration
+# Intercom Integration — REMOVED (Oct 2026)
 
-## Secrets
-- `INTERCOM_ACCESS_TOKEN` — Bearer token for REST API (Settings → Developer Hub → Authentication)
-- `INTERCOM_IDENTITY_SECRET` — used as HMAC-SHA1 key to verify incoming webhooks (header `X-Hub-Signature`)
-- `INTERCOM_APP_ID` — for in-app messenger (existing)
+Intercom is no longer used on this site. The messenger widget, identity-verification JWT,
+REST client, 6-hourly contact sync (`/api/public/hooks/intercom-sync`) and webhook receiver
+(`/api/public/hooks/intercom`) were all deleted, along with the `@intercom/messenger-js-sdk`
+dependency. Public support copy now says "text or email us anytime" instead of promising live chat.
 
-## Files
-- `src/lib/intercom.server.ts` — REST client (`upsertContact`, `findContactByEmail`, `hasOpenConversation`). Version header `Intercom-Version: 2.11`.
-- `src/server/intercom-sync.server.ts` — `syncHostSubscribersToIntercom`, `syncRenterSubscribersToIntercom`, `syncAllToIntercom`. Pushes active subscribers with custom attrs `prnm_audience`, `prnm_status`, `prnm_city`, `prnm_state`, `prnm_sharetribe_id`. Writes back `intercom_id` + `intercom_synced_at`.
-- `src/routes/api/public/hooks/intercom-sync.ts` — POST runs full sync (called by pg_cron every 6h, job `intercom-sync-6h`).
-- `src/routes/api/public/hooks/intercom.ts` — webhook receiver. Verifies `X-Hub-Signature` via HMAC-SHA1 with `INTERCOM_IDENTITY_SECRET`. Handles `conversation.user.replied` (sets `intercom_paused_at` and cancels pending drip rows) and `conversation.admin.closed` (clears pause). Every event logged to `intercom_events_log`.
-
-## DB
+## What remains (DB only — intentionally kept, no migration)
 - `host_subscribers` / `renter_subscribers` columns: `intercom_id`, `intercom_paused_at`, `intercom_synced_at`
-- `intercom_events_log` (admin-only, RLS forced, service_role only): topic, email, intercom_contact_id, payload, received_at, processed_at, result
+- `intercom_events_log` table (historical webhook events)
 
-## Drip suppression
-Both `sendDueHostEmails` and `sendDueEmails` (renter) check before each send:
-1. If `sub.intercom_paused_at` is set → mark `skipped` reason `intercom paused`
-2. Else call `hasOpenConversation(email)` → if true, set `intercom_paused_at` and mark `skipped` reason `intercom open conversation`
-Intercom errors are swallowed (never block send loop).
+## Drip behaviour now
+`sendDueHostEmails` and `sendDueEmails` (renter) still skip a subscriber whose
+`intercom_paused_at` is set (reason `intercom paused`), so people paused while Intercom was
+live stay paused. Nothing sets or clears that column any more — clear it manually to resume
+drips for someone. There is no open-conversation check.
 
-## Webhook setup (manual in Intercom Developer Hub)
-URL: `https://www.poolrentalnearme.com/api/public/hooks/intercom`
-Topics: `conversation.user.replied`, `conversation.admin.closed`
+## Unused secrets (safe to delete from the host)
+`INTERCOM_ACCESS_TOKEN`, `INTERCOM_IDENTITY_SECRET`, `INTERCOM_APP_ID`
