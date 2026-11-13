@@ -4,6 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { Breadcrumbs } from "@/components/listing-card";
 import { buildMeta, breadcrumbJsonLd, ldJsonScript, SITE_URL } from "@/lib/seo";
 import { canonicalListingPath, canonicalListingUrl } from "@/lib/listing-url";
+import { ListingInquiryForm } from "@/components/listing-inquiry-form";
 
 // NOTE: /l/ is proxied to the marketplace in production, so this route is
 // normally shadowed by nginx. It still must canonicalise the way the
@@ -183,6 +184,10 @@ function ListingPage() {
                 <li>✓ Hourly rentals — flexible</li>
               </ul>
             </div>
+            {/* In the aside so it sits under the price box on desktop and,
+                because the aside follows the description in the single-column
+                mobile layout, after the description on phones. */}
+            <ListingInquiryForm listingId={listing.id} listingTitle={listing.title} />
           </aside>
         </div>
       </main>

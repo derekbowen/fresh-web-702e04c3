@@ -40,6 +40,7 @@ import { Route as SitemapIndexDotxmlRouteImport } from './routes/sitemap-index[.
 import { Route as SitemapHubDotxmlRouteImport } from './routes/sitemap-hub[.]xml'
 import { Route as SitemapDirectoryDotxmlRouteImport } from './routes/sitemap-directory[.]xml'
 import { Route as SitemapDefaultDotxmlRouteImport } from './routes/sitemap-default[.]xml'
+import { Route as SRouteImport } from './routes/s'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PoolsDirectorySitemapDotxmlRouteImport } from './routes/pools-directory-sitemap[.]xml'
 import { Route as LandingPageRouteImport } from './routes/landing-page'
@@ -386,6 +387,11 @@ const SitemapDirectoryDotxmlRoute = SitemapDirectoryDotxmlRouteImport.update({
 const SitemapDefaultDotxmlRoute = SitemapDefaultDotxmlRouteImport.update({
   id: '/sitemap-default.xml',
   path: '/sitemap-default.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SRoute = SRouteImport.update({
+  id: '/s',
+  path: '/s',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
@@ -1348,6 +1354,7 @@ export interface FileRoutesByFullPath {
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/s': typeof SRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -1562,6 +1569,7 @@ export interface FileRoutesByTo {
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/s': typeof SRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -1777,6 +1785,7 @@ export interface FileRoutesById {
   '/landing-page': typeof LandingPageRoute
   '/pools-directory-sitemap.xml': typeof PoolsDirectorySitemapDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/s': typeof SRoute
   '/sitemap-default.xml': typeof SitemapDefaultDotxmlRoute
   '/sitemap-directory.xml': typeof SitemapDirectoryDotxmlRoute
   '/sitemap-hub.xml': typeof SitemapHubDotxmlRoute
@@ -1993,6 +2002,7 @@ export interface FileRouteTypes {
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/robots.txt'
+    | '/s'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
@@ -2207,6 +2217,7 @@ export interface FileRouteTypes {
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/robots.txt'
+    | '/s'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
@@ -2421,6 +2432,7 @@ export interface FileRouteTypes {
     | '/landing-page'
     | '/pools-directory-sitemap.xml'
     | '/robots.txt'
+    | '/s'
     | '/sitemap-default.xml'
     | '/sitemap-directory.xml'
     | '/sitemap-hub.xml'
@@ -2636,6 +2648,7 @@ export interface RootRouteChildren {
   LandingPageRoute: typeof LandingPageRoute
   PoolsDirectorySitemapDotxmlRoute: typeof PoolsDirectorySitemapDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SRoute: typeof SRoute
   SitemapDefaultDotxmlRoute: typeof SitemapDefaultDotxmlRoute
   SitemapDirectoryDotxmlRoute: typeof SitemapDirectoryDotxmlRoute
   SitemapHubDotxmlRoute: typeof SitemapHubDotxmlRoute
@@ -2981,6 +2994,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-default.xml'
       fullPath: '/sitemap-default.xml'
       preLoaderRoute: typeof SitemapDefaultDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/s': {
+      id: '/s'
+      path: '/s'
+      fullPath: '/s'
+      preLoaderRoute: typeof SRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/robots.txt': {
@@ -4482,6 +4502,7 @@ const rootRouteChildren: RootRouteChildren = {
   LandingPageRoute: LandingPageRoute,
   PoolsDirectorySitemapDotxmlRoute: PoolsDirectorySitemapDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SRoute: SRoute,
   SitemapDefaultDotxmlRoute: SitemapDefaultDotxmlRoute,
   SitemapDirectoryDotxmlRoute: SitemapDirectoryDotxmlRoute,
   SitemapHubDotxmlRoute: SitemapHubDotxmlRoute,
