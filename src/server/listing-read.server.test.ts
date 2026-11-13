@@ -72,6 +72,7 @@ const MIRROR_RESULT = {
 
 /** Flipped per-test to simulate a broken mirror. */
 let mirrorSearchReturns: unknown = MIRROR_RESULT;
+let lastMirrorOpts: any;
 let mirrorDetailReturns: unknown = { id: "mirror-1", title: "Mirror" };
 
 mock.module("./sharetribe.server", () => ({
@@ -84,8 +85,9 @@ mock.module("./sharetribe.server", () => ({
     calls.push("direct:searchListingsFromSharetribe");
     return DIRECT_RESULT;
   },
-  searchListingsFromMirror: async () => {
+  searchListingsFromMirror: async (opts: Record<string, unknown>) => {
     calls.push("mirror:searchListingsFromMirror");
+    lastMirrorOpts = opts;
     return mirrorSearchReturns;
   },
   fetchListing: async () => {
@@ -103,6 +105,7 @@ const { readListing, readListingSearch, describeSearchOpts } =
 
 beforeEach(() => {
   calls.length = 0;
+  lastMirrorOpts = undefined;
   mirrorSearchReturns = MIRROR_RESULT;
   mirrorDetailReturns = { id: "mirror-1", title: "Mirror" };
 });
@@ -215,6 +218,63 @@ describe("mirror mode", () => {
     const out = await readListing("abc");
     expect(calls).toEqual(["mirror:fetchListingFromMirror", "legacy:fetchListing"]);
     expect(out.servedBy).toBe("sharetribe-fallback");
+  });
+});
+
+describe("mirror-only: Sharetribe is gone, there is no fallback", () => {
+  beforeEach(() => {
+    process.env.PRNM_LISTING_READ_SOURCE = "mirror-only";
+  });
+
+  test("a serveable query is answered by the mirror and never touches Sharetribe", async () => {
+    const out = await readListingSearch({ citySlug: "austin" });
+    expect(calls).toEqual(["mirror:searchListingsFromMirror"]);
+    expect(out.servedBy).toBe("mirror");
+    expect(out.result).toEqual(MIRROR_RESULT);
+    expect(out.degraded).toBeUndefined();
+  });
+
+  test("an unsupported filter is DROPPED and named, not turned into an empty grid", async () => {
+    // mirror mode would hand this to Sharetribe; with Sharetribe dead that
+    // returns nothing and the page looks like we have no pools at all.
+    const out = await readListingSearch({ citySlug: "austin", keywords: "saltwater" });
+    expect(calls).toEqual(["mirror:searchListingsFromMirror"]);
+    expect(out.result).toEqual(MIRROR_RESULT);
+    expect(out.degraded).toBeDefined();
+    expect(out.degraded!.droppedOpts).toEqual(["keywords"]);
+    expect(out.degraded!.message).toContain("keywords");
+  });
+
+  test("the dropped filter is not passed to the mirror query", async () => {
+    await readListingSearch({ citySlug: "austin", origin: "30.2,-97.7" });
+    expect(lastMirrorOpts).toBeDefined();
+    expect(lastMirrorOpts.origin).toBeUndefined();
+    expect(lastMirrorOpts.citySlug).toBe("austin");
+  });
+
+  test("Sharetribe is never called even when the mirror errors", async () => {
+    mirrorSearchReturns = null;
+    const out = await readListingSearch({ citySlug: "austin" });
+    expect(calls).toEqual(["mirror:searchListingsFromMirror"]);
+    expect(out.servedBy).toBe("unserviceable");
+    expect(out.result.listings).toEqual([]);
+  });
+
+  test("detail reads come from the mirror alone", async () => {
+    const out = await readListing("abc");
+    expect(calls).toEqual(["mirror:fetchListingFromMirror"]);
+    expect(out.servedBy).toBe("mirror");
+  });
+
+  test("a mirror detail error is unserviceable, never a silent 404", async () => {
+    // Rendering "listing not found" for a database error would quietly delist
+    // a real pool and tell its host nothing.
+    mirrorDetailReturns = undefined;
+    const out = await readListing("abc");
+    expect(calls).toEqual(["mirror:fetchListingFromMirror"]);
+    expect(out.servedBy).toBe("unserviceable");
+    expect(out.result).toBeNull();
+    expect(out.degraded).toBeDefined();
   });
 });
 

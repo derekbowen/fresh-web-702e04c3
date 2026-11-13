@@ -60,6 +60,14 @@ export interface ListingReadOutcome<T> {
   source: ListingReadSource;
   /** Present in shadow mode when both sources were compared. */
   parity?: ParityReport;
+  /**
+   * Present when the answer is real but narrower than asked for. Only
+   * mirror-only sets it: with Sharetribe gone there is no fallback, so a
+   * filter the mirror cannot express is DROPPED and named here rather than
+   * turning the page into an empty grid. The UI must surface this — an
+   * unlabelled downgrade is the bug this field exists to prevent.
+   */
+  degraded?: { droppedOpts: string[]; message: string };
 }
 
 let warnedInvalidFlag = false;
@@ -115,6 +123,40 @@ export async function readListingSearch(
   // What Sharetribe cannot express is not symmetric with what the mirror cannot
   // express, and falling back in either direction can silently drop a filter.
   const stUnsupported = sharetribeUnsupportedOptsFor(opts as Record<string, unknown>);
+
+  if (source === "mirror-only") {
+    // Sharetribe is gone, so "fall back to Sharetribe" means "return nothing".
+    // Drop what the mirror cannot express, answer the rest, and say what was
+    // dropped. A visitor searching "saltwater" in Austin gets every Austin
+    // pool with a note, instead of a blank page that looks like we have none.
+    const mirrorOpts: Record<string, unknown> = { ...(opts as Record<string, unknown>) };
+    unsupported.forEach((k) => delete mirrorOpts[k]);
+
+    const degraded =
+      unsupported.length > 0
+        ? {
+            droppedOpts: unsupported.slice(),
+            message: `Showing results without ${unsupported.join(", ")} — that filter needs the marketplace API, which is offline.`,
+          }
+        : undefined;
+
+    const fromMirror = await searchListingsFromMirror(mirrorOpts as SearchOptions);
+    if (fromMirror) return { result: fromMirror, servedBy: "mirror", source, degraded };
+
+    console.error(
+      `[listing-read] mirror-only: mirror query FAILED for ${describeSearchOpts(opts)}. ` +
+        "There is no fallback in this mode. Returning empty.",
+    );
+    return {
+      result: { ...EMPTY_LISTING_SEARCH_RESULT },
+      servedBy: "unserviceable",
+      source,
+      degraded: {
+        droppedOpts: unsupported.slice(),
+        message: "Listings are temporarily unavailable.",
+      },
+    };
+  }
 
   if (source === "mirror") {
     if (unsupported.length > 0) {
@@ -264,6 +306,23 @@ export async function readListing(id: string): Promise<ListingReadOutcome<Listin
   if (source === "sharetribe") {
     const legacy = await fetchListing(id);
     return { result: legacy?.listing ?? null, servedBy: "sharetribe", source };
+  }
+
+  if (source === "mirror-only") {
+    // No Sharetribe fallback by design. `undefined` means the mirror query
+    // itself errored; that is a 500-shaped problem, not "no such listing", so
+    // it must not render as a 404.
+    const fromMirror = await fetchListingFromMirror(id);
+    if (fromMirror !== undefined) return { result: fromMirror, servedBy: "mirror", source };
+    console.error(
+      `[listing-read] mirror-only: detail query FAILED for listing ${id}. No fallback.`,
+    );
+    return {
+      result: null,
+      servedBy: "unserviceable",
+      source,
+      degraded: { droppedOpts: [], message: "This listing is temporarily unavailable." },
+    };
   }
 
   if (source === "mirror") {

@@ -19,9 +19,20 @@
  *               get. The mirror response is computed alongside and structurally
  *               diffed so divergence is measured against real traffic at zero
  *               risk. Never let shadow change what is returned.
+ *
+ *   mirror-only Supabase answers every listing read and Sharetribe is NEVER
+ *               called, not even as a fallback. For when Sharetribe is not
+ *               merely slower but GONE -- subscription lapsed, credentials
+ *               revoked -- and "fall back to Sharetribe" means "return
+ *               nothing". A query the mirror cannot express is answered
+ *               WITHOUT that filter and flagged `degraded`, so the page can
+ *               say "showing all pools in Austin, keyword search is
+ *               temporarily unavailable" instead of showing an empty grid.
+ *               That is a labelled downgrade, not a silent one: the caller is
+ *               told, every time, which filter was dropped.
  */
 
-export const LISTING_READ_SOURCES = ["sharetribe", "mirror", "shadow"] as const;
+export const LISTING_READ_SOURCES = ["sharetribe", "mirror", "shadow", "mirror-only"] as const;
 
 export type ListingReadSource = (typeof LISTING_READ_SOURCES)[number];
 
