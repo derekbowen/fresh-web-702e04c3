@@ -15,6 +15,8 @@
     "check:key-pages": "TARGETS=/p/how-it-works,/p/hosting,/p/swimply-alternative-vs-pool-rental-near-me node scripts/check-page-links.mjs",
     "check:breadcrumbs": "bun scripts/check-breadcrumb-jsonld.mjs",
     "check:slug-parity": "bun scripts/slug-parity-check.ts",
+    "export:data": "bun scripts/export-all-data.ts",
+    "export:images": "bun scripts/download-listing-images.ts",
     "format": "prettier --write .",
     "test": "bun test",
     "parity:listings": "bun scripts/listing-parity-report.ts",
