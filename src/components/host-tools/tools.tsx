@@ -1098,7 +1098,9 @@ export function PoolRentalProfit() {
   const [maint, setMaint] = useState(400);
   const [util, setUtil] = useState(180);
   const [insurance, setInsurance] = useState(120);
-  const [platform, setPlatform] = useState(15);
+  // Hosts on Pool Rental Near Me pay 0% (guests pay the 15% booking fee). The
+  // field stays editable so a host can compare another platform's host fee.
+  const [platform, setPlatform] = useState(0);
   const platformFee = revenue * (platform / 100);
   const net = revenue - maint - util - insurance - platformFee;
   return (
@@ -1117,7 +1119,7 @@ export function PoolRentalProfit() {
       <NumberField label="Maintenance" value={maint} onChange={setMaint} suffix="$" />
       <NumberField label="Utilities (water, gas, electric)" value={util} onChange={setUtil} suffix="$" />
       <NumberField label="Insurance" value={insurance} onChange={setInsurance} suffix="$" />
-      <NumberField label="Platform fee" value={platform} onChange={setPlatform} suffix="%" />
+      <NumberField label="Host platform fee (0% on Pool Rental Near Me)" value={platform} onChange={setPlatform} suffix="%" />
     </ToolShell>
   );
 }
