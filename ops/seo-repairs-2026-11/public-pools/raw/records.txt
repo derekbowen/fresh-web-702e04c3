@@ -1,0 +1,419 @@
+1^14-06-east-poplar-recreation-center^pennsylvania^philadelphia^14/06 EAST POPLAR RECREATION CENTER^800 N 8th St, Philadelphia, PA 19123, USA^19123^1^0^0^7^4.3^164^14^2026-07-16^2026-07-16^e286cf
+2^academy-swim-club^california^santa-clarita^Academy Swim Club^23955 Calgrove Blvd, Santa Clarita, CA 91321, USA^91321^1^0^0^7^5^24^10^2026-07-17^2026-07-17^b6ecfa
+3^academy-swim-club-santa-clarita^california^santa-clarita^Academy Swim Club^28079 Smyth Dr, Valencia, CA 91355, USA^91355^1^0^0^6^4.6^67^10^2026-07-17^2026-07-17^b17e0b
+4^adventure-reef-water-park^ohio^kettering^Adventure Reef Water Park^2900 Glengarry Dr, Kettering, OH 45420, USA^45420^1^0^0^6^4.1^335^10^2026-07-30^2026-07-30^f51a7c
+5^agnes-moffitt-pool^texas^houston^Agnes Moffitt Pool^10645 Hammerly Blvd^77043^0^1^1^4^4^87^16^2026-07-16^2026-07-16^b6def4
+6^agnes-moffitt-swimming-pool^texas^houston^Agnes Moffitt Swimming Pool^10645 Hammerly Blvd, Houston, TX 77043, USA^77043^1^0^0^7^3.7^75^10^2026-07-17^2026-07-17^960ee3
+7^alexander-w-spears-ymca^north-carolina^greensboro^Alexander W Spears YMCA^3216 Horse Pen Creek Rd, Greensboro, NC 27410, USA^27410^1^0^0^6^4.6^694^10^2026-07-17^2026-07-17^a26d5a
+8^alga-norte-aquatic-center^california^carlsbad^Alga Norte Aquatic Center^6565 Alicante Rd^92009^0^1^1^2^4.5^287^16^2026-07-16^2026-07-16^6ea342
+9^alga-norte-aquatic-center-carlsbad^california^carlsbad^Alga Norte Aquatic Center^6565 Alicante Rd, Carlsbad, CA 92009, USA^92009^1^0^0^6^4.7^503^10^2026-07-30^2026-07-30^da83da
+10^anderson-munger-family-ymca^california^los-angeles^Anderson Munger Family YMCA^4301 W 3rd St, Los Angeles, CA 90020, USA^90020^1^1^1^7^4.2^468^17^2026-07-16^2026-07-16^2aea56
+11^aqua-adventure-waterpark^california^fremont^Aqua Adventure Waterpark^40500 Paseo Padre Pkwy^94538^1^1^1^4^4.2^826^19^2026-07-16^2026-07-16^c4e7b7
+12^aquatic-park^california^san-francisco^Aquatic Park^700-898 Beach St, San Francisco, CA 94109, USA^94109^1^1^1^7^4.7^584^17^2026-07-16^2026-07-16^0fdac5
+13^aquatic-park-bleachers^california^san-francisco^Aquatic Park Bleachers^890 Beach St, San Francisco, CA 94109, USA^94109^1^1^1^7^4.8^68^17^2026-07-16^2026-07-16^a98c91
+14^aquatic-team-of-mecklenburg^north-carolina^charlotte^Aquatic Team of Mecklenburg^800 E M.L.K. Jr Blvd, Charlotte, NC 28202, USA^28202^1^1^1^7^4.9^35^17^2026-07-16^2026-07-16^8df86c
+15^asser-levy-pool^new-york^new-york^Asser Levy Pool^390 Asser Levy Place, New York, NY 10010, USA^10010^1^0^0^7^4^100^10^2026-07-17^2026-07-17^32e6e3
+16^asser-levy-recreation-center^new-york^new-york^Asser Levy Recreation Center^392 Asser Levy Pl, New York, NY 10010, USA^10010^1^1^1^7^4.2^322^17^2026-07-16^2026-07-16^fe9b50
+17^athletic-pool^pennsylvania^philadelphia^Athletic Pool^1410 N 26th St, Philadelphia, PA 19121, USA^19121^1^0^0^6^4^4^15^2026-07-16^2026-07-16^02b47c
+18^athletic-recreation-center^pennsylvania^philadelphia^Athletic Recreation Center^Athletic Recreation Park, 1400 N 26th St, Philadelphia, PA 19121, USA^19121^1^1^1^7^4.4^196^17^2026-07-16^2026-07-16^6c5eee
+19^austin-aquatics-and-sports-academy^texas^austin^Austin Aquatics and Sports Academy^5513 Southwest Pkwy, Austin, TX 78735, USA^78735^1^1^1^7^4.1^49^17^2026-07-16^2026-07-16^961422
+20^austin-swim-club^texas^austin^Austin Swim Club^5513 Southwest Pkwy, Austin, TX 78735, USA^78735^1^1^1^7^4.6^43^16^2026-07-16^2026-07-16^dc9a9b
+21^avondale-aquatic-center^arizona^avondale^Avondale Aquatic Center^^^0^0^0^-1^4.1^83^12^2026-07-16^2026-07-16^f83f44
+22^avondale-aquatic-center-2^arizona^avondale^Avondale Aquatic Center^11275 W Civic Ctr Dr, Avondale, AZ 85323, USA^85323^1^1^1^7^4.2^194^17^2026-07-16^2026-07-16^c4e175
+23^bacchus-pool^nevada^north-las-vegas^Bacchus Pool^^^1^0^0^7^^^9^2026-07-16^2026-07-16^8def3c
+24^bacchus-pool-2^nevada^north-las-vegas^Bacchus Pool^^^1^0^0^7^^^9^2026-07-16^2026-07-16^4ccb23
+25^bachman-aquatic-center^texas^dallas^Bachman Aquatic Center^2750 Bachman Dr, Dallas, TX 75220, USA^75220^1^1^1^7^3.9^25^17^2026-07-16^2026-07-16^6e1412
+26^bachman-indoor-pool^texas^dallas^Bachman Indoor Pool^2750 Bachman Dr^75220^1^1^1^2^4.4^150^19^2026-07-16^2026-07-16^1b55b3
+27^bachman-indoor-pool-2^texas^dallas^Bachman Indoor Pool^2750 Bachman Dr, Dallas, TX 75220, USA^75220^1^1^1^7^4.4^149^17^2026-07-16^2026-07-16^934ab7
+28^bachman-outdoor-pool^texas^dallas^Bachman Outdoor Pool^2750 Bachman Dr, Dallas, TX 75220, USA^75220^1^0^0^5^4.4^8^15^2026-07-16^2026-07-16^d026e7
+29^bachman-recreation-center^texas^dallas^Bachman Recreation Center^2750 Bachman Dr, Dallas, TX 75220, USA^75220^1^1^1^7^4.4^135^17^2026-07-16^2026-07-16^769e66
+30^bahama-beach-swimming-pool^texas^dallas^Bahama Beach Swimming Pool^1895 Campfire Cir, Dallas, TX 75232, USA^75232^1^1^1^7^4.6^69^17^2026-07-16^2026-07-16^f07b03
+31^bahama-beach-waterpark^texas^dallas^Bahama Beach Waterpark^1895 Campfire Cir^75217^0^1^1^4^4^1234^16^2026-07-16^2026-07-16^59ff19
+32^bahama-beach-waterpark-dallas^texas^dallas^Bahama Beach Waterpark^1895 Campfire Cir, Dallas, TX 75232, USA^75232^1^0^0^6^4.4^1506^10^2026-07-17^2026-07-17^09de80
+33^baker-pool^nevada^north-las-vegas^Baker Pool^^^1^0^0^7^4.3^36^13^2026-07-16^2026-07-16^db62da
+34^baker-pool-2^nevada^las-vegas^Baker Pool^1020 E St Louis Ave, Las Vegas, NV 89104, USA^89104^1^1^1^7^4.3^36^17^2026-07-16^2026-07-16^e28331
+35^barbara-morse-wackford-community-aquatic-complex^california^elk-grove^Barbara Morse Wackford Community & Aquatic Complex^9014 Bruceville Rd, Elk Grove, CA 95758, USA^95758^1^0^0^7^4.3^194^10^2026-07-17^2026-07-17^e9cee4
+36^barton-springs-pool^texas^austin^Barton Springs Pool^2201 Barton Springs Rd^78746^1^1^1^3^4.6^10765^19^2026-07-16^2026-07-16^27196a
+37^barton-springs-pool-2^texas^austin^Barton Springs Pool^2131 William Barton Dr, Austin, TX 78746, USA^78746^1^1^1^7^4.6^10761^17^2026-07-16^2026-07-16^99c848
+38^beach-club-pool^nevada^north-las-vegas^Beach Club Pool^^^1^0^1^7^3.8^632^13^2026-07-16^2026-07-16^4e66bb
+39^beach-club-pool-2^nevada^north-las-vegas^Beach Club Pool^^^1^0^1^7^3.8^632^13^2026-07-16^2026-07-16^4d653a
+40^bellevue-aquatic-center^washington^bellevue^Bellevue Aquatic Center^^^0^0^0^-1^3.6^140^12^2026-07-16^2026-07-16^abe82d
+41^bellevue-aquatic-center-bellevue^washington^bellevue^Bellevue Aquatic Center^601 143rd Ave NE, Bellevue, WA 98007, USA^98007^1^0^0^7^4.2^443^10^2026-07-17^2026-07-17^226322
+42^bkla-swim-academy^new-york^brooklyn^BKLA Swim Academy^1561 Bedford Ave, Brooklyn, NY 11225, USA^11225^1^1^1^7^3.7^35^17^2026-07-16^2026-07-16^c850f5
+43^blu-pool^nevada^north-las-vegas^Blu Pool^^^1^0^0^7^4.2^391^13^2026-07-16^2026-07-16^706a2a
+44^blu-pool-at-horseshoe-las-vegas^nevada^las-vegas^Blu Pool at Horseshoe Las Vegas^3645 Las Vegas Blvd S, Las Vegas, NV 89109, USA^89109^1^1^1^7^4.2^387^17^2026-07-16^2026-07-16^492dbd
+45^bobby-hicks-pool^florida^tampa^Bobby Hicks Pool^4120 W Mango Ave^33616^0^1^1^2^4.3^112^16^2026-07-16^2026-07-16^82e243
+46^bobby-hicks-pool-tampa^florida^tampa^Bobby Hicks Pool^4120 W Mango Ave, Tampa, FL 33616, USA^33616^1^0^0^7^4.6^108^10^2026-07-17^2026-07-17^3a96ea
+47^boll-family-ymca^michigan^detroit^Boll Family YMCA^1401 Broadway St #3a, Detroit, MI 48226, USA^48226^1^0^0^5^4.5^424^10^2026-07-17^2026-07-17^6c6eeb
+48^briggs-park-pool^michigan^grand-rapids^Briggs Park Pool^350 Knapp St NE^49505^0^1^1^2^4.1^98^16^2026-07-16^2026-07-16^07c028
+49^briggs-park-pool-grand-rapids^michigan^grand-rapids^Briggs Park Pool^350 Knapp St NE, Grand Rapids, MI 49505, USA^49505^1^0^0^7^4.4^80^10^2026-07-17^2026-07-17^5124bb
+50^bud-kearns-memorial-swimming-pool^california^san-diego^Bud Kearns Memorial Swimming Pool^2229 Morley Field Dr, San Diego, CA 92104, USA^92104^1^1^1^7^4.5^131^17^2026-07-16^2026-07-16^6e5df0
+51^bud-kearns-municipal-pool^california^san-diego^Bud Kearns Municipal Pool^2229 Morley Field Dr^92104^0^1^1^4^4.3^678^16^2026-07-16^2026-07-16^4ac792
+52^cabrillo-pool^california^sacramento^Cabrillo Pool^1648 65th Ave^95822^0^1^1^4^4.1^76^16^2026-07-16^2026-07-16^90b888
+53^cabrillo-pool-sacramento^california^sacramento^Cabrillo Pool^1648 65th Ave, Sacramento, CA 95822, USA^95822^1^0^0^7^4.6^59^10^2026-07-17^2026-07-17^418b9c
+54^cactus-aquatic-fitness-center^arizona^scottsdale^Cactus Aquatic & Fitness Center^7202 E Cactus Rd, Scottsdale, AZ 85260, USA^85260^1^1^1^7^4.7^115^17^2026-07-16^2026-07-16^316181
+55^camelot-pool^alabama^huntsville^Camelot Pool^^^1^0^0^6^4.3^43^13^2026-07-16^2026-07-16^fe5210
+56^camelot-pool-2^alabama^huntsville^Camelot Pool^^^1^0^0^6^4.3^43^13^2026-07-16^2026-07-16^a7b8e1
+57^canale-pool^tennessee^memphis^Canale Pool^^^1^0^0^7^^^9^2026-07-16^2026-07-16^e574e9
+58^canale-pool-memphis^tennessee^memphis^Canale Pool^^^1^0^0^7^^^7^2026-07-16^2026-07-16^27bac1
+59^chapoteo-water-park^texas^el-paso^Chapoteo Water Park^8100 Cimarron Market^79911^0^1^1^1^4.3^187^16^2026-07-16^2026-07-16^e48779
+60^chapoteo-water-park-el-paso^texas^el-paso^Chapoteo Water Park^1225 Giles Rd, El Paso, TX 79915, USA^79915^1^0^0^7^4^260^10^2026-07-30^2026-07-30^48b425
+61^cheviot-hills-pool^california^los-angeles^Cheviot Hills Pool^2693 Motor Ave, Los Angeles, CA 90064, USA^90064^1^1^1^7^4.3^38^17^2026-07-16^2026-07-16^d34641
+62^cheviot-hills-recreation-center^california^los-angeles^Cheviot Hills Recreation Center^2551 Motor Ave, Los Angeles, CA 90064, USA^90064^1^1^1^6^4.5^603^17^2026-07-16^2026-07-16^93d358
+63^city-heights-recreation-center^california^san-diego^City Heights Recreation Center^4380 Landis St, San Diego, CA 92105, USA^92105^1^1^1^7^4.3^93^17^2026-07-16^2026-07-16^b598f9
+64^city-heights-swim-center^california^san-diego^City Heights Swim Center^4380 Landis St, San Diego, CA 92105, USA^92105^1^1^1^6^4.3^66^17^2026-07-16^2026-07-16^72b41f
+65^city-of-austin-ymca-north-austin-community-rec-center^texas^austin^City Of Austin/YMCA North Austin Community Rec Center^1000 W Rundberg Ln, Austin, TX 78758, USA^78758^1^1^0^3^4.5^271^16^2026-07-16^2026-07-16^4436fc
+66^city-of-pearland-parks-recreation^texas^pearland^City of Pearland Parks & Recreation^4141 Bailey Rd, Pearland, TX 77584, USA^77584^1^0^0^7^4.5^16^10^2026-07-30^2026-07-30^21c788
+67^city-park-pool^colorado^fort-collins^City Park Pool^1599 City Park Dr^80521^0^1^1^2^4.3^156^16^2026-07-16^2026-07-16^e968a5
+68^city-park-pool-fort-collins^colorado^fort-collins^City Park Pool^1597 City Park Dr, Fort Collins, CO 80521, USA^80521^1^0^0^7^4.3^381^10^2026-07-30^2026-07-30^94e46c
+69^civic-center-park-aquatic-center^california^apple-valley^Civic Center Park Aquatic Center^14999 Dale Evans Pkwy, Apple Valley, CA 92307^92307^0^1^1^4^4.3^185^16^2026-07-16^2026-07-16^2575c3
+70^civic-center-park-aquatic-center-apple-valley^california^apple-valley^Civic Center Park Aquatic Center^14999 Dale Evans Pkwy, Apple Valley, CA 92307, USA^92307^1^0^0^7^4.4^226^10^2026-07-30^2026-07-30^1b42dc
+71^clarke-memorial-swim-center^california^walnut-creek^Clarke Memorial Swim Center^1750 Heather Dr^94598^0^1^1^2^4.4^198^16^2026-07-16^2026-07-16^d5affa
+72^clarke-memorial-swim-center-walnut-creek^california^walnut-creek^Clarke Memorial Swim Center^1750 Heather Dr, Walnut Creek, CA 94598, USA^94598^1^0^0^5^4.5^185^9^2026-07-30^2026-07-30^15fb09
+73^colman-pool^washington^seattle^Colman Pool^8603 Fauntleroy Way SW^98136^0^1^1^4^4.5^891^16^2026-07-16^2026-07-16^6a7d58
+74^colman-pool-seattle^washington^seattle^Colman Pool^8603 Fauntleroy Wy SW, Seattle, WA 98136, USA^98136^1^0^0^7^4.6^276^10^2026-07-17^2026-07-17^713b75
+75^community-pool-at-clu^california^thousand-oaks^Community Pool at CLU^60 W Olsen Rd^91360^0^1^1^1^4.7^98^16^2026-07-16^2026-07-16^be1059
+76^community-pool-at-clu-thousand-oaks^california^thousand-oaks^Community Pool at CLU^100 Overton Ct, Thousand Oaks, CA 91360, USA^91360^1^0^0^7^4.7^118^10^2026-07-30^2026-07-30^b02e40
+77^comstock-aquatic-center^washington^spokane^Comstock Aquatic Center^600 W 29th Ave, Spokane, WA 99203, USA^99203^1^0^0^7^3.5^11^10^2026-07-17^2026-07-17^d8cad2
+78^comstock-public-swimming-pool^washington^spokane^Comstock Public Swimming Pool.^3012 S Howard St, Spokane, WA 99203, USA^99203^1^0^0^7^3.4^10^9^2026-07-30^2026-07-30^6e14a1
+79^concord-community-park-pool^california^concord^Concord Community Park; Pool^3501 Cowell Rd, Concord, CA 94518, USA^94518^1^0^0^7^4.6^108^10^2026-07-30^2026-07-30^05fbe4
+80^concord-community-pool^california^concord^Concord Community Pool^3501 Cowell Rd^94518^0^1^1^2^4.1^98^16^2026-07-16^2026-07-16^979aff
+81^constance-baker-motley-recreation-center^new-york^new-york^Constance Baker Motley Recreation Center^348 E 54th St, New York, NY 10022, USA^10022^1^1^1^6^4.1^245^17^2026-07-16^2026-07-16^bcd2f2
+82^copeland-park-pool^florida^tampa^Copeland Park Pool^11001 N 15th St^33612^0^1^1^2^4^78^16^2026-07-16^2026-07-16^6e5bb7
+83^copeland-pool^florida^tampa^Copeland Pool^11001 N 15th St, Tampa, FL 33612, USA^33612^1^0^0^7^4.1^36^10^2026-07-17^2026-07-17^b00367
+84^cordelia-pool-charlotte^north-carolina^charlotte^Cordelia Pool^^^1^0^0^7^4.3^349^11^2026-07-16^2026-07-16^bd9d1b
+85^cordelia-swimming-pool^north-carolina^charlotte^Cordelia Swimming Pool^2100 N Davidson St, Charlotte, NC 28205, USA^28205^1^0^1^7^4.3^336^16^2026-07-16^2026-07-16^84435c
+86^corpus-christi-natatorium^texas^corpus-christi^Corpus Christi Natatorium^3202 Cabaniss Pkwy^78415^0^1^1^1^4.2^112^16^2026-07-16^2026-07-16^c394c2
+87^corpus-christi-natatorium-corpus-christi^texas^corpus-christi^Corpus Christi Natatorium^3202 Cabaniss Pkwy, Corpus Christi, TX 78415, USA^78415^1^0^0^4^4.4^9^10^2026-07-17^2026-07-17^a72d56
+88^crotona-park-community-center-pool^new-york^bronx^Crotona Park Community Center - Pool^1700 Fulton Ave, Bronx, NY 10457, USA^10457^1^0^0^7^3.8^13^15^2026-07-16^2026-07-16^76d3e1
+89^crotona-pool^new-york^bronx^Crotona Pool^1700 Fulton Ave^10457^1^1^1^2^4.3^4194^19^2026-07-16^2026-07-16^ed2bde
+90^dallas-swim^texas^dallas^Dallas Swim^2201 N Stemmons Fwy, Dallas, TX 75207, USA^75207^1^1^1^6^4.9^114^16^2026-07-16^2026-07-16^87bb27
+91^david-d-hunting-ymca^michigan^grand-rapids^David D. Hunting YMCA^475 Lake Michigan Dr NW, Grand Rapids, MI 49504, USA^49504^1^0^0^7^4.6^399^10^2026-07-17^2026-07-17^348c47
+92^deep-eddy-municipal-pool^texas^austin^Deep Eddy Municipal Pool^401 Deep Eddy Ave, Austin, TX 78703, USA^78703^1^1^1^7^4.5^878^17^2026-07-16^2026-07-16^26f932
+93^deep-eddy-pool^texas^austin^Deep Eddy Pool^401 Deep Eddy Ave^78703^1^1^1^3^4.6^5432^19^2026-07-16^2026-07-16^0ad377
+94^desert-breeze-aquatic-center^nevada^las-vegas^Desert Breeze Aquatic Center^8275 Spring Mountain Rd, Las Vegas, NV 89117, USA^89117^1^1^1^7^4.3^341^17^2026-07-16^2026-07-16^f2ecb9
+95^desert-breeze-pool^nevada^las-vegas^Desert Breeze Pool^Kids Zone Pkwy, Las Vegas, NV 89147, USA^89147^1^1^1^7^4.5^26^17^2026-07-16^2026-07-16^2fbb1b
+96^dolores-magdaleno-memorial-recreation-center^california^san-diego^Dolores Magdaleno Memorial Recreation Center^2902 Marcy Ave, San Diego, CA 92113, USA^92113^1^1^1^7^4.5^31^17^2026-07-16^2026-07-16^aab997
+97^doolittle-pool^nevada^north-las-vegas^Doolittle Pool^^^1^0^0^7^4.5^39^13^2026-07-16^2026-07-16^ffc943
+98^doolittle-pool-2^nevada^las-vegas^Doolittle Pool^1950 N J St, Las Vegas, NV 89106, USA^89106^1^1^1^7^4.5^39^17^2026-07-16^2026-07-16^66e29c
+99^dove-springs-pool^texas^austin^Dove Springs Pool^5801 Ainez Dr, Austin, TX 78744, USA^78744^1^1^1^7^4.3^114^17^2026-07-16^2026-07-16^53fc43
+100^dowd-ymca^north-carolina^charlotte^Dowd YMCA^400 E Morehead St, Charlotte, NC 28202, USA^28202^1^1^1^7^4^456^17^2026-07-16^2026-07-16^e6b66b
+101^drytown-water-park^california^palmdale^DryTown Water Park^3850 E Ave S^93550^0^1^1^2^4.2^234^16^2026-07-16^2026-07-16^b55484
+102^earl-jackson-pool^north-carolina^wilmington^Earl Jackson Pool^750 Bess St, Wilmington, NC 28401, USA^28401^1^0^0^5^4.4^100^10^2026-07-30^2026-07-30^74755d
+103^east-54-swimming-pool^new-york^new-york^East 54 Swimming Pool^348 E 54th St, New York, NY 10022, USA^10022^1^0^0^7^4.4^19^10^2026-07-30^2026-07-30^37509f
+104^east-end-ymca^texas^houston^East End YMCA^541 S 75th St, Houston, TX 77023, USA^77023^1^1^1^5^3^2^16^2026-07-16^2026-07-16^381002
+105^east-poplar-pool^pennsylvania^philadelphia^East Poplar Pool^840 N 8th St, Philadelphia, PA 19123, USA^19123^1^1^1^6^5^3^17^2026-07-16^2026-07-16^bdbdd2
+106^echo-park-deep-pool^california^los-angeles^Echo Park Deep Pool^1419 Colton St^90026^0^1^1^4^4.2^412^16^2026-07-16^2026-07-16^8175c3
+107^echo-park-pool^california^los-angeles^Echo Park Pool^1419 Colton St, Los Angeles, CA 90026, USA^90026^1^1^1^6^4.4^531^17^2026-07-16^2026-07-16^ba951a
+108^edison-johnson-aquatic-center^north-carolina^durham^Edison Johnson Aquatic Center^500 W Murray Ave^27704^0^1^1^0^4^89^16^2026-07-16^2026-07-16^83a2fe
+109^edison-johnson-recreation-center^north-carolina^durham^Edison Johnson Recreation Center^500 W Murray Ave, Durham, NC 27704, USA^27704^1^0^0^6^4.4^19^9^2026-07-17^2026-07-17^dee273
+110^eisenhower-swimming-pool^new-mexico^albuquerque^Eisenhower Swimming Pool^11001 Camino De Miravalle NE, Albuquerque, NM 87111^87111^0^1^0^4^4.2^156^15^2026-07-16^2026-07-16^5b8e10
+111^eisenhower-swimming-pool-albuquerque^new-mexico^albuquerque^Eisenhower Swimming Pool^11001 Camero Ave NE, Albuquerque, NM 87111, USA^87111^1^0^0^7^4.1^130^10^2026-07-17^2026-07-17^a97b14
+112^eldon-elsie-ward-family-ymca-ymca-of-central-ohio^ohio^columbus^Eldon & Elsie Ward Family YMCA - YMCA of Central Ohio^130 Woodland Ave, Columbus, OH 43203, USA^43203^1^1^1^7^4.5^500^17^2026-07-16^2026-07-16^469dbf
+113^eldorado-aquatic-center^arizona^scottsdale^Eldorado Aquatic & Fitness Center^2311 N Miller Rd^85257^1^1^1^2^4.6^261^19^2026-07-16^2026-07-16^310e7f
+114^eldorado-aquatic-fitness-center^arizona^scottsdale^Eldorado Aquatic & Fitness Center^2301 N Miller Rd, Scottsdale, AZ 85257, USA^85257^1^1^1^6^4.6^259^17^2026-07-16^2026-07-16^146908
+115^embarcadero-ymca^california^san-francisco^Embarcadero YMCA^169 Steuart St, San Francisco, CA 94105, USA^94105^1^1^1^7^4.5^511^17^2026-07-16^2026-07-16^f5eb57
+116^finley-aquatic-center^california^santa-rosa^Finley Aquatic Center^2060 W College Ave^95401^0^1^1^3^4.1^78^16^2026-07-16^2026-07-16^21df05
+117^finley-aquatic-center-santa-rosa^california^santa-rosa^Finley Aquatic Center^2060 W College Ave, Santa Rosa, CA 95401, USA^95401^1^0^0^7^4.4^382^10^2026-07-30^2026-07-30^a4de42
+118^flamingo-family-pool^nevada^las-vegas^Flamingo Family Pool^3555 Las Vegas Blvd South Flamingo, Las Vegas, NV 89109, USA^89109^1^1^1^6^3.6^77^17^2026-07-16^2026-07-16^44c991
+119^flamingo-pool-at-flamingo-las-vegas^nevada^las-vegas^Flamingo Pool at Flamingo Las Vegas^3555 Las Vegas Blvd S Inside Flamingo, Hotel, Las Vegas, NV 89109, USA^89109^1^1^1^7^3.9^632^17^2026-07-16^2026-07-16^1acf52
+120^flushing-meadows-corona-park-aquatic-center^new-york^new-york^Flushing Meadows Corona Park Aquatic Center^131-04 Meridian Rd, Flushing, NY 11368, USA^11368^1^1^1^7^4.1^1274^17^2026-07-16^2026-07-16^777acf
+121^flushing-meadows-pool^new-york^queens^Flushing Meadows Pool^Avery Ave & 131st St^11355^0^1^1^2^4^156^16^2026-07-16^2026-07-16^7cf537
+122^fontana-park-aquatic-center^california^fontana^Fontana Park Aquatic Center^15556 Summit Ave^92336^0^1^1^3^4.1^89^16^2026-07-16^2026-07-16^7604af
+123^fontana-park-aquatic-center-fontana^california^fontana^Fontana Park Aquatic Center^15610 Summit Ave, Fontana, CA 92336, USA^92336^1^0^0^7^4.6^755^10^2026-07-17^2026-07-17^54921b
+124^fort-lauderdale-aquatic-center^florida^fort-lauderdale^Fort Lauderdale Aquatic Center^501 Seabreeze Blvd^33316^0^1^1^1^4.4^267^16^2026-07-16^2026-07-16^dd32e5
+125^fort-lauderdale-aquatic-center-fort-lauderdale^florida^fort-lauderdale^Fort Lauderdale Aquatic Center^501 Seabreeze Blvd, Fort Lauderdale, FL 33316, USA^33316^1^0^0^7^4.6^133^10^2026-07-30^2026-07-30^29a0eb
+126^fort-myers-aquatic-center^florida^fort-myers^Fort Myers Aquatic Center^^^0^0^0^-1^4.2^316^12^2026-07-16^2026-07-16^d80191
+127^fort-myers-aquatic-center-fort-myers^florida^fort-myers^Fort Myers Aquatic Center^1750 Matthew Dr, Fort Myers, FL 33907, USA^33907^1^0^0^7^3.9^148^10^2026-07-30^2026-07-30^a85205
+128^francisville-pool^pennsylvania^philadelphia^Francisville Pool^1737 Francis St, Philadelphia, PA 19130, USA^19130^1^1^1^7^4^13^16^2026-07-16^2026-07-16^7c7ad5
+129^francisville-recreation-center^pennsylvania^philadelphia^Francisville Recreation Center^1737 Francis St, Philadelphia, PA 19130, USA^19130^1^1^1^7^4.5^82^17^2026-07-16^2026-07-16^bf29e1
+130^frog-pond-water-park-at-farmers-branch-aquatics-center^texas^dallas^Frog Pond Water Park at Farmers Branch Aquatics Center^14032 Heartside Pl, Farmers Branch, TX 75234, USA^75234^1^1^1^7^4.5^468^17^2026-07-16^2026-07-16^d4f8c8
+131^fullerton-family-ymca^california^fullerton^Fullerton Family YMCA^2000 Youth Way, Fullerton, CA 92835, USA^92835^1^0^0^6^4.5^100^10^2026-07-30^2026-07-30^84145e
+132^gardner-aquatic-center^kansas^gardner^Gardner Aquatic Center^215 N Center St, Gardner, KS 66030, USA^66030^1^0^0^7^4.5^348^10^2026-07-17^2026-07-17^6eb480
+133^gardner-swimming-pool^kansas^gardner^Gardner Swimming Pool^215 N Center St, Gardner, KS 66030, USA^66030^1^0^0^7^4.6^79^10^2026-07-30^2026-07-30^175e9d
+134^garfield-pool^california^san-francisco^Garfield Pool^1271 Treat Ave, San Francisco, CA 94110, USA^94110^1^1^1^7^4.4^129^17^2026-07-16^2026-07-16^7ab0a7
+135^garfield-square-park-recreation-center^california^san-francisco^Garfield Square Park & Recreation Center^3100 26th St, San Francisco, CA 94110, USA^94110^1^1^1^6^4.4^550^17^2026-07-16^2026-07-16^dca676
+136^garside-pool^nevada^las-vegas^Garside Pool^^^1^0^0^7^4.3^336^13^2026-07-16^2026-07-16^e06803
+137^garside-pool-2^nevada^las-vegas^Garside Pool^250 S Torrey Pines Dr, Las Vegas, NV 89107, USA^89107^1^1^1^6^4.3^331^17^2026-07-16^2026-07-16^f69ec4
+138^george-morales-dove-springs-recreation-center^texas^austin^George Morales Dove Springs Recreation Center^5801 Ainez Dr, Austin, TX 78744, USA^78744^1^1^1^4^4.6^243^17^2026-07-16^2026-07-16^660362
+139^glen-eden-nudist-resort^california^corona^Glen Eden Nudist Resort^25999 Glen Eden Rd, Corona, CA 92883^92883^1^1^1^7^4.3^83^17^2026-07-16^2026-07-16^22d4c4
+140^glen-eden-sun-club^california^temescal-valley^Glen Eden Sun Club^25999 Glen Eden Rd, Temescal Valley, CA 92883^92883^1^1^1^6^4.3^254^17^2026-07-16^2026-07-16^89f987
+141^goodman-pool^wisconsin^madison^Goodman Pool^325 W Olin Ave, Madison, WI 53715^53715^0^1^0^4^4.5^342^15^2026-07-16^2026-07-16^4f96a1
+142^grove-city-ymca^ohio^columbus^Grove City YMCA^3899 Orders Rd, Grove City, OH 43123, USA^43123^1^1^1^7^4.6^952^17^2026-07-16^2026-07-16^f8c9ca
+143^grove-city-ymca-pool-deep-end^ohio^columbus^Grove City YMCA Pool Deep End^Grove City, OH 43123, USA^43123^1^0^0^6^5^1^12^2026-07-16^2026-07-16^26268e
+144^grove-city-ymca-ymca-of-central-ohio^ohio^columbus^Grove City YMCA - YMCA of Central Ohio^3600 Discovery Dr, Grove City, OH 43123, USA^43123^1^1^1^6^4.3^307^17^2026-07-16^2026-07-16^74b8ee
+145^groveport-aquatic-center^ohio^columbus^Groveport Aquatic Center^7370 Groveport Rd, Groveport, OH 43125, USA^43125^1^1^1^7^4.4^529^17^2026-07-16^2026-07-16^19a4c1
+146^groveport-recreation-center^ohio^columbus^Groveport Recreation Center^7370 Groveport Rd, Groveport, OH 43125, USA^43125^1^1^1^7^4.5^566^17^2026-07-16^2026-07-16^55a4aa
+147^gustafson-park-outdoor-pool^indiana^indianapolis^Gustafson Park Outdoor Pool^3110 Moller Rd, Indianapolis, IN 46224, USA^46224^1^1^1^6^4.2^83^17^2026-07-16^2026-07-16^cc7345
+148^gustafson-park-pool^indiana^indianapolis^Gustafson Park Pool^^^1^0^0^6^4.1^97^13^2026-07-16^2026-07-16^f4a4c7
+149^hamilton-aquatic-center^arizona^chandler^Hamilton Aquatic Center^2425 S Arizona Ave^85286^0^1^1^2^4.1^134^16^2026-07-16^2026-07-16^b23060
+150^hamilton-aquatic-center-chandler^arizona^chandler^Hamilton Aquatic Center^3838 S Arizona Ave, Chandler, AZ 85248, USA^85248^1^0^0^6^4.5^592^10^2026-07-17^2026-07-17^a08881
+151^hamilton-aquatic-center-indoor-pool^california^san-francisco^Hamilton Aquatic Center (Indoor Pool)^1900 Geary Blvd, San Francisco, CA 94115, USA^94115^1^1^1^7^4.4^32^17^2026-07-16^2026-07-16^3c2b03
+152^hamilton-fish-pool^new-york^new-york^Hamilton Fish Pool^128 Pitt St^10002^1^1^1^4^4.3^1205^19^2026-07-16^2026-07-16^4a54b2
+153^hamilton-fish-pool-2^new-york^new-york^Hamilton Fish Pool^Houston and Pitt Street Hamilton Fish Park, 128 Pitt St, New York, NY ^10002^1^1^1^7^4.4^193^17^2026-07-16^2026-07-16^49fb9a
+154^hamilton-fish-recreation-center^new-york^new-york^Hamilton Fish Recreation Center^128 Pitt St, New York, NY 10002, USA^10002^1^1^1^7^4.1^334^17^2026-07-16^2026-07-16^314825
+155^hamilton-recreation-center^california^san-francisco^Hamilton Recreation Center^1900 Geary Blvd, San Francisco, CA 94115, USA^94115^1^1^1^7^4.3^251^17^2026-07-16^2026-07-16^989bf0
+156^henderson-multigenerational-indoor-pool^nevada^henderson^Henderson Multigenerational Indoor Pool^250 S Green Valley Pkwy, Henderson, NV 89012, USA^89012^1^0^0^7^4.5^193^10^2026-07-17^2026-07-17^c167a6
+157^henderson-multigenerational-outdoor-competition-pool^nevada^henderson^Henderson Multigenerational Outdoor Competition Pool^Henderson, NV 89012, USA^89012^1^0^0^7^4.4^40^10^2026-07-17^2026-07-17^25d436
+158^henderson-multigenerational-pool^nevada^henderson^Henderson Multigenerational Center Pool^250 S Green Valley Pkwy^89012^0^1^1^2^4.3^198^16^2026-07-16^2026-07-16^230157
+159^highbridge-pool^new-york^new-york^Highbridge Pool^2301 Amsterdam Ave, New York, NY 10033, USA^10033^1^0^0^7^4.2^178^10^2026-07-17^2026-07-17^6ccca9
+160^highbridge-recreation-center^new-york^new-york^Highbridge Recreation Center^2301 Amsterdam Ave, New York, NY 10033, USA^10033^1^1^1^5^4.3^145^17^2026-07-16^2026-07-16^27b77d
+161^hollow-rock-pool^north-carolina^durham^Hollow Rock Pool^5100 Erwin Rd, Durham, NC 27707, USA^27707^1^0^0^6^4.6^19^10^2026-07-17^2026-07-17^e22d10
+162^hollow-rock-racquet-swim-club^north-carolina^durham^Hollow Rock Racquet & Swim Club^5100 Erwin Rd, Durham, NC 27707, USA^27707^1^0^0^6^4.5^73^10^2026-07-17^2026-07-17^cf0cdc
+163^holstein-park-pool^illinois^chicago^Holstein Park Pool^2200 N Oakley Ave^60647^1^1^1^4^4.1^389^18^2026-07-16^2026-07-16^a0b874
+164^holstein-park-public-pool-outdoor^illinois^chicago^Holstein Park Public Pool (Outdoor)^2200 N Oakley Ave, Chicago, IL 60647, USA^60647^1^1^1^6^4.6^159^17^2026-07-16^2026-07-16^69b8a2
+165^hot-tub-2^colorado^aurora^hot tub^^^0^0^0^7^^^8^2026-07-16^2026-07-16^3541c9
+166^hot-tub-co^colorado^aurora^Hot Tub^^^0^0^0^7^^^8^2026-07-16^2026-07-16^de4357
+167^imagine-swimming-crown-heights-flagship^new-york^brooklyn^Imagine Swimming Crown Heights Flagship^1561 Bedford Ave, Brooklyn, NY 11225, USA^11225^1^1^1^7^4.2^49^17^2026-07-16^2026-07-16^ac1785
+168^independence-park-pool^california^fullerton^Independence Park Pool^801 W Valencia Dr^92832^1^1^1^2^4.4^291^19^2026-07-16^2026-07-16^1c90ad
+169^irwin-a-and-robert-d-goodman-pool^wisconsin^madison^Irwin A. and Robert D. Goodman Pool^325 W Olin Ave, Madison, WI 53715, USA^53715^1^0^0^7^4.6^360^10^2026-07-17^2026-07-17^5d907a
+170^iu-natatorium-at-iu-indianapolis^indiana^indianapolis^IU Natatorium at IU Indianapolis^901 W New York St, Indianapolis, IN 46202, USA^46202^1^1^1^7^4.8^538^17^2026-07-16^2026-07-16^585724
+171^j-s-spivey-recreation-center^north-carolina^fayetteville^J S Spivey Recreation Center^500 Fisher St, Fayetteville, NC 28301, USA^28301^1^0^0^6^4.3^77^10^2026-07-17^2026-07-17^1f706a
+172^jackie-robinson-pool^new-york^new-york^Jackie Robinson Pool^85 Bradhurst Ave., New York, NY 10039, USA^10039^1^0^0^7^4.2^190^10^2026-07-17^2026-07-17^9328a3
+173^jackie-robinson-recreation-center^new-york^new-york^Jackie Robinson Recreation Center^85 Bradhurst Ave., New York, NY 10039, USA^10039^1^1^1^6^4.3^625^17^2026-07-16^2026-07-16^87123d
+174^jadewaters-resort-pool^texas^dallas^JadeWaters Resort Pool^2201 N Stemmons Fwy, Dallas, TX 75207, USA^75207^1^0^0^7^4.5^884^10^2026-07-17^2026-07-17^ddd4e4
+175^james-island-recreation-complex^south-carolina^charleston^James Island Recreation Complex^1088 Quail Dr, Charleston, SC 29412, USA^29412^1^0^0^7^4.3^138^10^2026-07-30^2026-07-30^9b69c1
+176^james-island-recreation-complex-pool^south-carolina^charleston^James Island Recreation Complex Pool^1088 Quail Dr, Charleston, SC 29412^29412^0^1^0^2^4.3^178^15^2026-07-16^2026-07-16^ede99c
+177^janet-evans-swim-complex^california^fullerton^Janet Evans Swim Complex^801 W Valencia Dr, Fullerton, CA 92832, USA^92832^1^0^0^6^4.5^96^10^2026-07-17^2026-07-17^b3495b
+178^jcc-indianapolis^indiana^indianapolis^JCC Indianapolis^6701 Hoover Rd, Indianapolis, IN 46260, USA^46260^1^1^1^7^4.3^105^17^2026-07-16^2026-07-16^14635d
+179^jim-dailey-fitness-and-aquatic-center^arkansas^little-rock^Jim Dailey Fitness & Aquatic Center^^^0^0^0^-1^3.7^172^8^2026-07-16^2026-07-16^0b2d16
+180^jim-dailey-fitness-aquatic-center^arkansas^little-rock^Jim Dailey Fitness & Aquatic Center^300 S University Ave, Little Rock, AR 72205^72205^0^1^1^4^4.4^512^16^2026-07-16^2026-07-16^f9cb33
+181^keith-family-ymca^north-carolina^charlotte^Keith Family YMCA^8100 Old Mallard Creek Rd, Charlotte, NC 28262, USA^28262^1^1^1^7^3.6^237^17^2026-07-16^2026-07-16^d5c1ce
+182^keith-family-ymca-outdoor-swimming-pools^north-carolina^charlotte^Keith Family YMCA Outdoor Swimming Pools^8022 Mallard Creek Rd, Charlotte, NC 28262, USA^28262^1^0^0^7^5^3^14^2026-07-16^2026-07-16^bc4d5c
+183^kettering-aquatics-water-park^ohio^kettering^Kettering Aquatics & Water Park^2900 Glengarry Dr, Kettering, OH 45420, USA^45420^1^0^0^5^4.1^33^10^2026-07-30^2026-07-30^a7a769
+184^king-pool^california^berkeley^King Pool^1500 Hopkins St^94707^0^1^1^2^4.2^76^16^2026-07-16^2026-07-16^37eccd
+185^king-pool-berkeley^california^berkeley^King Pool^1700 Hopkins St, Berkeley, CA 94707, USA^94707^1^0^0^7^4.3^69^10^2026-07-17^2026-07-17^a2a7d4
+186^kiwanis-recreation-center^arizona^tempe^Kiwanis Recreation Center^6111 S All America Way, Tempe, AZ 85283, USA^85283^1^1^1^6^4.6^1700^17^2026-07-16^2026-07-16^04556a
+187^kiwanis-wave-pool^arizona^tempe^Kiwanis Wave Pool^6111 S All-America Way^85283^0^1^1^2^4.2^245^16^2026-07-16^2026-07-16^6d9b07
+188^kiwanis-wave-pool-tempe^arizona^tempe^Kiwanis Wave Pool^6111 S All America Way, Tempe, AZ 85283, USA^85283^1^0^0^7^4^126^10^2026-07-30^2026-07-30^f7de3c
+189^la-mesa-municipal-pool^california^la-mesa^La Mesa Municipal Pool^5100 Memorial Dr^91942^1^1^1^2^4.1^89^19^2026-07-16^2026-07-16^4bc4ab
+190^la84-foundation-john-c-argue-swim-stadium^california^los-angeles^LA84 Foundation/John C. Argue Swim Stadium^3980 Bill Robertson Ln, Los Angeles, CA 90037, USA^90037^1^1^1^7^4.5^393^17^2026-07-16^2026-07-16^724d5f
+191^lake-highlands-aquatic-center^texas^dallas^Lake Highlands Aquatic Center^9400 Church Rd, Dallas, TX 75238, USA^75238^1^1^1^7^4.8^6^16^2026-07-16^2026-07-16^15634e
+192^lake-highlands-north-community-aquatic-center^texas^dallas^Lake Highlands North Community Aquatic Center^9400 Church Rd, Dallas, TX 75238, USA^75238^1^0^1^7^4.3^111^16^2026-07-16^2026-07-16^3f1234
+193^legacy-foundation-chris-town-ymca^arizona^phoenix^Legacy Foundation Chris-Town YMCA^5517 N 17th Ave, Phoenix, AZ 85015, USA^85015^1^1^1^7^3.7^81^17^2026-07-16^2026-07-16^d6c26a
+194^leo-cancellare-pool^texas^el-paso^Leo Cancellare Pool^650 Wallenberg Dr, El Paso, TX 79912, USA^79912^1^0^0^7^4.2^233^10^2026-07-17^2026-07-17^2e2196
+195^lincoln-pool^ohio^cleveland^Lincoln Pool^^^1^0^0^7^4.6^944^13^2026-07-16^2026-07-16^c16f5d
+196^lincoln-pool-cleveland^ohio^cleveland^Lincoln Pool^^^1^0^0^7^4.6^944^13^2026-07-16^2026-07-16^5672f3
+197^loew-pool^ohio^cleveland^Loew Pool^^^1^0^0^6^4.4^399^13^2026-07-16^2026-07-16^c25528
+198^loew-pool-cleveland^ohio^cleveland^Loew Pool^^^1^0^0^6^4.1^14^13^2026-07-16^2026-07-16^c80496
+199^loma-verde-aquatic-center^california^chula-vista^Loma Verde Aquatic Center^1420 Loma Ln, Chula Vista, CA 91911, USA^91911^1^1^1^7^4.4^161^17^2026-07-16^2026-07-16^742476
+200^loma-verde-pool^california^chula-vista^Loma Verde Pool^1420 Loma Lane^91911^0^1^1^4^4.1^94^16^2026-07-16^2026-07-16^600c7e
+201^los-angeles-swimming-stadium^california^los-angeles^Los Angeles Swimming Stadium^3980 Bill Robertson Ln, Los Angeles, CA 90037, USA^90037^1^0^1^6^4.6^8^15^2026-07-16^2026-07-16^101ac4
+202^margaret-young-natatorium-at-farmers-branch-aquatics-center^texas^dallas^Margaret Young Natatorium at Farmers Branch Aquatics Center^14032 Heartside Pl, Farmers Branch, TX 75234, USA^75234^1^1^1^7^4.7^93^17^2026-07-16^2026-07-16^b750ce
+203^marine-park-swimming-pool^texas^fort-worth^Marine Park Swimming Pool^303 NW 20th St, Fort Worth, TX 76164, USA^76164^1^1^1^7^4^263^17^2026-07-16^2026-07-16^5dd1c1
+204^mason-swimming-pool^texas^houston^Mason Swimming Pool^541 S 75th St, Houston, TX 77023, USA^77023^1^1^0^5^4.2^38^16^2026-07-16^2026-07-16^3bd5ad
+205^maxcy-gregg-pool^south-carolina^columbia^Maxcy Gregg Pool^1655 Park Circle, Columbia, SC 29201^29201^0^1^0^4^4.1^112^15^2026-07-16^2026-07-16^5ad335
+206^maxcy-gregg-pool-columbia^south-carolina^columbia^Maxcy Gregg Pool^1651 Park Cir, Columbia, SC 29201, USA^29201^1^0^0^7^4.1^133^10^2026-07-30^2026-07-30^34504f
+207^mckinney-senior-pool^texas^mckinney^McKinney Senior Pool^1400 S College St, McKinney, TX 75069, USA^75069^1^0^0^7^4.5^36^10^2026-07-17^2026-07-17^64339c
+208^mckinney-senior-recreation-center^texas^mckinney^McKinney Senior Recreation Center^1400 S College St, McKinney, TX 75069, USA^75069^1^0^0^6^4.7^210^10^2026-07-17^2026-07-17^8f75ff
+209^mcmillen-diving-pool^indiana^fort-wayne^McMillen Diving pool^^^1^0^0^6^4^8^13^2026-07-16^2026-07-16^d29c7a
+210^mcmillen-kiddie-pool^indiana^fort-wayne^McMillen Kiddie Pool^^^1^0^0^7^4^8^13^2026-07-16^2026-07-16^cdb46d
+211^mcmillen-pool^indiana^fort-wayne^McMillen Pool^^^1^0^0^6^4^8^13^2026-07-16^2026-07-16^fc25f8
+212^mcmurtrey-aquatic-center^california^bakersfield^McMurtrey Aquatic Center^1325 Q St^93301^0^1^1^4^4.4^523^16^2026-07-16^2026-07-16^369820
+213^mcmurtrey-aquatic-center-bakersfield^california^bakersfield^McMurtrey Aquatic Center^1325 Q St Ste 200, Bakersfield, CA 93301, USA^93301^1^0^0^7^4.3^476^10^2026-07-17^2026-07-17^cbc08d
+214^mecklenburg-county-aquatic-center^north-carolina^charlotte^Mecklenburg County Aquatic Center^800 E M.L.K. Jr Blvd, Charlotte, NC 28202, USA^28202^1^1^1^7^4.5^610^17^2026-07-16^2026-07-16^6d9bfe
+215^memorial-pool-2^california^san-diego^Memorial Pool^2902 Marcy Ave, San Diego, CA 92113, USA^92113^1^1^1^7^4.6^66^17^2026-07-16^2026-07-16^817ab5
+216^mgm-grand-pool-complex^nevada^las-vegas^MGM Grand Pool Complex^3799 S Las Vegas Blvd, Las Vegas, NV 89109, USA^89109^1^1^1^7^4.5^1673^17^2026-07-16^2026-07-16^8c6537
+217^miami-springs-aquatic-center^florida^miami-springs^Miami Springs Aquatic Center^1401 Westward Dr, Miami Springs, FL 33166, USA^33166^1^0^0^6^4.6^376^10^2026-07-17^2026-07-17^415f9d
+218^miami-springs-recreation-department^florida^miami-springs^Miami Springs Recreation Department^1401 Westward Dr, Miami Springs, FL 33166, USA^33166^1^0^0^7^4.6^509^10^2026-07-17^2026-07-17^291640
+219^mike-shellito-indoor-pool^california^roseville^Mike Shellito Indoor Pool^1585 Pleasant Grove Blvd^95747^0^1^1^2^4.4^167^16^2026-07-16^2026-07-16^6d85b7
+220^mike-shellito-indoor-pool-roseville^california^roseville^Mike Shellito Indoor Pool^10210 Fairway Dr #1969, Roseville, CA 95678, USA^95678^1^0^0^7^4.7^338^10^2026-07-30^2026-07-30^07dee4
+221^minisa-pool^kansas^wichita^Minisa Pool^^^0^0^0^-1^4.3^88^8^2026-07-16^2026-07-16^9ecd34
+222^minisa-pool-wichita^kansas^wichita^Minisa Pool^1350 N Jeanette Ave, Wichita, KS 67203, USA^67203^1^0^0^7^4.5^55^10^2026-07-17^2026-07-17^5e0356
+223^mission-bay-aquatic-center^california^san-diego^Mission Bay Aquatic Center^1001 Santa Clara Pl, San Diego, CA 92109, USA^92109^1^1^1^6^4.7^149^17^2026-07-16^2026-07-16^13306c
+224^moorea-beach-club^nevada^las-vegas^Moorea Beach Club^3950 S Las Vegas Blvd, E Mandalay Bay Rd, Las Vegas, NV 89119, USA^89119^1^1^1^7^4.5^1834^17^2026-07-16^2026-07-16^507218
+225^moorea-beach-club-pool^nevada^north-las-vegas^Moorea Beach Club Pool^^^1^0^0^7^4.5^1837^13^2026-07-16^2026-07-16^1dbeb6
+226^municipal-pool^california^la-mesa^Municipal Pool^5100 Memorial Dr, La Mesa, CA 91942, USA^91942^1^1^1^7^4.2^19^17^2026-07-16^2026-07-16^b45654
+227^nir-family-ymca^north-carolina^wilmington^Nir Family YMCA^2710 Market St, Wilmington, NC 28403, USA^28403^1^0^0^7^4.7^769^10^2026-07-30^2026-07-30^aac367
+228^nisd-natatorium^texas^san-antonio^NISD Natatorium^8400 N Loop 1604 W, San Antonio, TX 78249, USA^78249^1^0^0^7^4.7^129^10^2026-07-17^2026-07-17^deba3f
+229^normandy-isle-pool^florida^hialeah^Normandy Isle Pool^7030 Trouville Esplanade^33141^1^1^1^7^4.6^625^17^2026-07-16^2026-07-16^b59bb0
+230^normandy-isle-pool-miami^florida^miami^Normandy Isle Pool^7030 Trouville Esplanade^33141^1^1^1^7^4.6^625^17^2026-07-16^2026-07-16^034a21
+231^north-austin-ymca^texas^austin^North Austin YMCA^1000 W Rundberg Ln, Austin, TX 78758, USA^78758^1^1^0^7^4.5^315^16^2026-07-16^2026-07-16^126705
+232^northeast-family-ymca-louisville^kentucky^louisville^Northeast Family YMCA^9400 Mill Brook Rd, Louisville, KY 40223, USA^40223^1^0^0^6^4.7^445^10^2026-07-17^2026-07-17^d45d90
+233^northpark-ymca-ymca-of-fort-worth^texas^fort-worth^Northpark YMCA | YMCA of Fort Worth^9100 N Beach St, Fort Worth, TX 76244, USA^76244^1^1^1^7^4.4^268^17^2026-07-16^2026-07-16^6bec61
+234^northside-splash-pad^north-carolina^wilmington^Northside Splash Pad^750 Bess St, Wilmington, NC 28401, USA^28401^1^0^0^7^3^5^10^2026-07-30^2026-07-30^f01137
+235^northside-swim-center^texas^san-antonio^Northside Swim Center^8400 N Loop 1604 W, San Antonio, TX 78249, USA^78249^1^1^1^7^4.7^133^16^2026-07-16^2026-07-16^830af2
+236^oak-point-outdoor-pool^texas^plano^Oak Point Outdoor Pool^6000 Jupiter Rd, Plano, TX 75074, USA^75074^1^0^0^7^4.6^21^10^2026-07-17^2026-07-17^13ba5d
+237^oak-point-recreation-center^texas^plano^Oak Point Recreation Center^6000 Jupiter Rd, Plano, TX 75074, USA^75074^1^0^0^7^4.5^853^10^2026-07-17^2026-07-17^617ba5
+238^oasis-pool^california^fremont^Oasis Pool^40500 Paseo Padre Pkwy, Fremont, CA 94538, USA^94538^1^0^0^7^2.8^5^10^2026-07-17^2026-07-17^80c4c0
+239^oasis-pool-palmdale^california^palmdale^Oasis Pool^3850 E Avenue S, Palmdale, CA 93550, USA^93550^1^0^0^7^4.3^43^10^2026-07-30^2026-07-30^c9def8
+240^oki-pool^california^sacramento^Oki Pool^2715 Wisseman Dr^95826^0^1^1^2^4.2^89^16^2026-07-16^2026-07-16^7581c7
+241^oki-pool-sacramento^california^sacramento^Oki Pool^2715 Wissemann Dr, Sacramento, CA 95826, USA^95826^1^0^0^7^4.1^46^10^2026-07-17^2026-07-17^d89d0b
+242^p-lolo-valley-swimming-pool^hawaii^honolulu^Pālolo Valley Swimming Pool^2007 Palolo Ave, Honolulu, HI 96816, USA^96816^1^0^0^7^4.6^60^10^2026-07-17^2026-07-17^ecb95b
+243^palm-tree-beach-club^nevada^las-vegas^Palm Tree Beach Club^3799 S Las Vegas Blvd, Las Vegas, NV 89109, USA^89109^1^1^1^7^4.1^2144^17^2026-07-16^2026-07-16^371c57
+244^palmdale-oasis-park-recreation-center^california^palmdale^Palmdale Oasis Park Recreation Center^3850 E Avenue S, Palmdale, CA 93550, USA^93550^1^0^0^7^4.7^128^10^2026-07-30^2026-07-30^e02eab
+245^palolo-valley-pool^hawaii^honolulu^Palolo Valley District Park Pool^2007 Palolo Ave, Honolulu, HI 96816^96816^0^1^1^4^4.3^189^16^2026-07-16^2026-07-16^bee118
+246^parkway-aquatic-center^california^chula-vista^Parkway Aquatic Center^385 Park Way, Chula Vista, CA 91910, USA^91910^1^1^1^7^4.4^133^17^2026-07-16^2026-07-16^a29991
+247^parkway-pool^california^chula-vista^Parkway Pool^385 Park Way^91910^0^1^1^4^4.3^187^16^2026-07-16^2026-07-16^3454b0
+248^party-naked-las-vegas-sea-mountain-nude-day-club-night-club^nevada^las-vegas^Party Naked Las Vegas Sea Mountain Nude day club night club^2478 E Desert Inn Rd suite 61373 suite 61373, Las Vegas, NV 89121, USA^89121^1^1^1^7^4.3^19^17^2026-07-16^2026-07-16^97ad8b
+249^pearland-recreation-center-natatorium^texas^pearland^Pearland Recreation Center & Natatorium^4141 Bailey Rd, Pearland, TX 77584, USA^77584^1^0^0^7^4.5^631^10^2026-07-30^2026-07-30^225984
+250^pecos-park-swimming-pool^arizona^phoenix^Pecos Park Swimming Pool^17010 S 48th St, Phoenix, AZ 85048, USA^85048^1^1^1^7^4.5^229^17^2026-07-16^2026-07-16^e6c251
+251^pecos-pool^arizona^phoenix^Pecos Pool^17010 S 48th St^85048^0^1^1^3^4.4^412^16^2026-07-16^2026-07-16^515a14
+252^physical-education-natatorium^indiana^indianapolis^Physical Education & Natatorium^901 West New York Street^46202^1^0^0^7^4.8^542^15^2026-07-16^2026-07-16^7bee78
+253^plano-aquatic-center^texas^plano^Plano Aquatic Center^^^0^0^0^-1^4.5^303^12^2026-07-16^2026-07-16^16a967
+254^plano-aquatic-center-plano^texas^plano^Plano Aquatic Center^2301 Wildcat Wy, Plano, TX 75075, USA^75075^1^0^0^7^4.5^371^10^2026-07-17^2026-07-17^57bbbd
+255^pleasant-oaks-recreation-center^texas^dallas^Pleasant Oaks Recreation Center^8701 Greenmound Ave, Dallas, TX 75227, USA^75227^1^1^1^6^4.6^180^17^2026-07-16^2026-07-16^5c2eb5
+256^pleasant-oaks-swimming-pool^texas^dallas^Pleasant Oaks Swimming Pool^8701 Greenmound Ave, Dallas, TX 75227, USA^75227^1^1^1^7^4.1^79^17^2026-07-16^2026-07-16^4950de
+257^pool^colorado^aurora^Pool^^^0^0^0^7^^^8^2026-07-16^2026-07-16^489118
+258^pool-2^colorado^aurora^Pool^^^0^0^0^7^^^8^2026-07-16^2026-07-16^1dc725
+259^portage-park-indoor-pool^illinois^chicago^Portage Park Indoor Pool^4100 N Long Ave, Chicago, IL 60641, USA^60641^1^0^0^7^4.3^131^10^2026-07-17^2026-07-17^93cf59
+260^portage-park-pool-outdoor^illinois^chicago^Portage Park Pool (Outdoor)^4100 N Long Ave, Chicago, IL 60641, USA^60641^1^1^1^7^4^98^17^2026-07-16^2026-07-16^53ddcb
+261^presidio-community-ymca^california^san-francisco^Presidio Community YMCA^63 Funston Ave, San Francisco, CA 94129, USA^94129^1^1^1^7^4.2^67^17^2026-07-16^2026-07-16^b9720d
+262^presidio-community-ymca-letterman-aquatics-center^california^san-francisco^Presidio Community YMCA Letterman Aquatics Center^1151 Gorgas Ave, San Francisco, CA 94123, USA^94123^1^1^1^7^4.4^90^17^2026-07-16^2026-07-16^3c93af
+263^presidio-community-ymca-letterman-pool^california^san-francisco^Presidio Community YMCA - Letterman Pool^1151 Gorgas Ave, San Francisco, CA 94129, USA^94129^1^1^1^7^4.2^77^17^2026-07-16^2026-07-16^ea41a7
+264^presidio-ymca^california^san-francisco^Presidio YMCA^97 Arguello Blvd, San Francisco, CA 94129, USA^94129^1^1^1^7^4.5^4^17^2026-07-16^2026-07-16^4bdea6
+265^presidio-ymca-fitness-center^california^san-francisco^Presidio YMCA Fitness Center^63 Funston Ave, San Francisco, CA 94129, USA^94129^1^1^1^6^4.6^9^15^2026-07-16^2026-07-16^cc1db2
+266^princess-pool^arizona^scottsdale^Princess Pool^7575 E Princess Dr, Scottsdale, AZ 85255, USA^85255^1^0^0^7^3.4^10^10^2026-07-30^2026-07-30^41e52f
+267^rancho-simi-aquatic-center^california^simi-valley^Rancho Simi Aquatic Center^1765 Royal Ave^93065^0^1^1^2^4.3^145^16^2026-07-16^2026-07-16^e97345
+268^rancho-simi-community-pool^california^simi-valley^Rancho Simi Community Pool^1765 Royal Ave, Simi Valley, CA 93065, USA^93065^1^0^0^6^4.6^95^10^2026-07-30^2026-07-30^57c37b
+269^randol-mill-aquatic-center^texas^arlington^Randol Mill Family Aquatic Center^1901 W Randol Mill Rd^76012^0^1^1^2^4.2^134^16^2026-07-16^2026-07-16^80d3a5
+270^randol-mill-family-aquatic-center^texas^arlington^Randol Mill Family Aquatic Center^1924 Randol Mill Park Rd, Arlington, TX 76012, USA^76012^1^1^1^5^4.4^782^17^2026-07-16^2026-07-16^566e4d
+271^red-hook-pool^new-york^brooklyn^Red Hook Pool^155 Bay St, Brooklyn, NY 11231, USA^11231^1^0^0^7^4.1^304^10^2026-07-30^2026-07-30^37ed53
+272^red-hook-recreation-center^new-york^new-york^Red Hook Recreation Center^155 Bay St, Brooklyn, NY 11231, USA^11231^1^1^1^6^4.3^579^17^2026-07-16^2026-07-16^0397dc
+273^redstone-apartment-pool^colorado^aurora^Redstone Apartment Pool^^^1^0^0^7^3.8^286^13^2026-07-16^2026-07-16^a966fa
+274^redstone-ranch-apartment-homes-pool^colorado^aurora^Redstone Ranch Apartment Homes Pool^^^1^0^0^7^3.8^286^13^2026-07-16^2026-07-16^e04d7c
+275^redwood-recreation-center^utah^west-valley-city^Redwood Recreation Center^3060 Lester St, West Valley City, UT 84119, USA^84119^1^0^0^7^4.3^539^10^2026-07-30^2026-07-30^e9d629
+276^redwood-recreation-swimming-pool^utah^west-valley-city^Redwood Recreation Swimming Pool^3100 S, West Valley City, UT 84119, USA^84119^1^0^0^6^4.5^20^10^2026-07-17^2026-07-17^d04245
+277^ridgway-swim-center^california^santa-rosa^Ridgway Swim Center^455 Ridgway Ave^95401^0^1^1^2^3.8^45^16^2026-07-16^2026-07-16^f79df3
+278^ridgway-swim-center-santa-rosa^california^santa-rosa^Ridgway Swim Center^455 Ridgway Ave, Santa Rosa, CA 95401, USA^95401^1^0^0^7^4.3^201^10^2026-07-30^2026-07-30^3e24f7
+279^rinconada-pool^california^palo-alto^Rinconada Pool^777 Embarcadero Rd^94303^0^1^1^2^4.3^156^16^2026-07-16^2026-07-16^7d747c
+280^rinconada-pool-2^california^palo-alto^Rinconada Pool^777 Embarcadero Rd, Palo Alto, CA 94303, USA^94303^1^1^1^7^4.4^229^17^2026-07-16^2026-07-16^c86e22
+281^riverside-aquatic-association^california^riverside^Riverside Aquatic Association^2060 University Ave, Riverside, CA 92507, USA^92507^1^0^0^7^4.5^23^10^2026-07-17^2026-07-17^2398c7
+282^riverside-aquatic-center^indiana^indianapolis^Riverside Aquatic Center^2420 E Riverside Dr, Indianapolis, IN 46208, USA^46208^1^1^0^6^4.1^35^16^2026-07-16^2026-07-16^986247
+283^riverside-park-family-recreation-center^indiana^indianapolis^Riverside Park Family Recreation Center^2420 E Riverside Dr, Indianapolis, IN 46202, USA^46202^1^1^1^7^4.6^66^17^2026-07-16^2026-07-16^af0aef
+284^roberts-pool^california^oakland^Roberts Pool^10570 Skyline Blvd, Oakland, CA 94619, USA^94619^1^0^0^6^4.5^124^10^2026-07-17^2026-07-17^152fd4
+285^roberts-regional-recreation-area^california^oakland^Roberts Regional Recreation Area^10570 Skyline Blvd, Oakland, CA 94619, USA^94619^1^0^0^7^4.8^940^10^2026-07-17^2026-07-17^f45dbf
+286^roeland-park-aquatic-center^kansas^roeland-park^Roeland Park Aquatic Center^4843 Rosewood Dr, Roeland Park, KS 66205, USA^66205^1^0^0^7^4.3^43^10^2026-07-17^2026-07-17^43bf27
+287^roeland-park-swimming-pool^kansas^roeland-park^Roeland Park Swimming Pool^4843 Rosewood Dr, Roeland Park, KS 66205, USA^66205^1^0^0^7^4.2^88^10^2026-07-17^2026-07-17^414731
+288^roosevelt-pool^arizona^phoenix^Roosevelt Pool^6246 S 7th St^85042^0^1^1^4^4.2^523^16^2026-07-16^2026-07-16^48fa75
+289^roosevelt-pool-2^arizona^phoenix^Roosevelt Pool^6246 S 7th St, Phoenix, AZ 85042, USA^85042^1^1^1^7^4.6^90^17^2026-07-16^2026-07-16^e195b9
+290^rose-bowl-aquatics-center^california^pasadena^Rose Bowl Aquatics Center^360 N Arroyo Blvd^91103^0^1^1^3^4.5^423^16^2026-07-16^2026-07-16^f8a52c
+291^rose-bowl-aquatics-center-2^california^pasadena^Rose Bowl Aquatics Center^360 N Arroyo Blvd, Pasadena, CA 91103, USA^91103^1^1^1^6^4.3^336^17^2026-07-16^2026-07-16^bb7b25
+292^ross-snyder-pool^california^los-angeles^Ross Snyder Pool^1501 E 41st St, Los Angeles, CA 90011, USA^90011^1^1^1^7^4.3^25^17^2026-07-16^2026-07-16^9b23ee
+293^ross-snyder-recreation-center^california^los-angeles^Ross Snyder Recreation Center^1501 E 41st St, Los Angeles, CA 90011, USA^90011^1^1^1^7^4.2^792^17^2026-07-16^2026-07-16^d2c80f
+294^roy-wilkins-recreation-center^new-york^queens^Roy Wilkins Recreation Center^177-01 Baisley Blvd, Jamaica, NY 11434, USA^11434^1^1^1^7^4.4^201^17^2026-07-16^2026-07-16^455a0a
+295^roy-wilkins-recreation-center-pool^new-york^queens^Roy Wilkins Recreation Center Pool^Baisley Blvd & 177th St, Jamaica, NY 11434, USA^11434^1^1^1^7^4.2^97^17^2026-07-16^2026-07-16^69165a
+296^s-d-s-u-aquatic-center^california^san-diego^S.D.S.U. Aquatic Center^1001 Santa Clara Pl, San Diego, CA 92109, USA^92109^1^1^1^7^4.9^11^16^2026-07-16^2026-07-16^df5b52
+297^saginaw-aquatic-center^texas^fort-worth^Saginaw Aquatic Center^605 W McLeroy Blvd, Saginaw, TX 76179, USA^76179^1^1^1^7^4.2^138^17^2026-07-16^2026-07-16^a3511f
+298^saginaw-recreation-center^texas^fort-worth^Saginaw Recreation Center^633 W McLeroy Blvd, Saginaw, TX 76179, USA^76179^1^1^1^7^4.5^251^17^2026-07-16^2026-07-16^8adb82
+299^samuell-grand-pool^texas^dallas^Samuell Grand Pool^6200 E Grand Ave^75223^1^1^1^2^4.3^302^19^2026-07-16^2026-07-16^ec37f8
+300^samuell-grand-recreation-center^texas^dallas^Samuell-Grand Recreation Center^6200 E Grand Ave, Dallas, TX 75223, USA^75223^1^1^1^6^4.3^30^17^2026-07-16^2026-07-16^eea25e
+301^santa-monica-swim-center^california^santa-monica^Santa Monica Swim Center^2225 16th St^90405^1^1^1^3^4.6^374^19^2026-07-16^2026-07-16^eee9de
+302^santa-monica-swim-center-2^california^santa-monica^Santa Monica Swim Center^2225 16th St, Santa Monica, CA 90405, USA^90405^1^1^1^7^4.6^372^17^2026-07-16^2026-07-16^64378f
+303^sava-pool^california^san-francisco^Sava Pool^19th Ave & Wawona St^94116^0^1^1^4^4.2^345^16^2026-07-16^2026-07-16^d1f878
+304^sava-pool-san-francisco^california^san-francisco^Sava Pool^2695 19th Ave, San Francisco, CA 94116, USA^94116^1^0^0^7^4.2^214^10^2026-07-17^2026-07-17^37b792
+305^schertz-aquatics-center^texas^san-antonio^Schertz Aquatics Center^621 Westchester Dr, Schertz, TX 78154, USA^78154^1^1^1^7^4.6^146^17^2026-07-16^2026-07-16^07824c
+306^schertz-family-ymca^texas^san-antonio^Schertz Family YMCA^621 Westchester Dr, Schertz, TX 78154, USA^78154^1^1^1^7^4.7^1171^17^2026-07-16^2026-07-16^f2fadd
+307^scottsdale-aquatic-club^arizona^scottsdale^Scottsdale Aquatic Club^7202 E Cactus Rd, Scottsdale, AZ 85260, USA^85260^1^0^0^7^4.6^26^9^2026-07-30^2026-07-30^0dbf54
+308^sea-mountain-day-club-las-vegas^nevada^las-vegas^Sea Mountain Day Club Las Vegas^2478 E Desert Inn Rd Suite 61373, Las Vegas, NV 89121, USA^89121^1^1^1^7^4.3^40^15^2026-07-16^2026-07-16^b6b01e
+309^sea-mountain-inn-nude-resort-and-spa-adults-only^california^desert-hot-springs^Sea Mountain Inn Nude Resort and Spa - Adults Only^66540 San Marcus Rd, Desert Hot Springs, CA 92240^92240^1^1^0^6^4.2^6^13^2026-07-16^2026-07-16^863ade
+310^sea-mountain-lifestyle-resorts-and-clothing-optional-spas-and-nude-resort^california^desert-hot-springs^sea mountain lifestyle resorts and clothing optional spas and nude resort^66540 San Marcus Rd, Desert Hot Springs, CA 92240, USA^92240^1^1^1^6^4.4^322^17^2026-07-16^2026-07-16^43258d
+311^shadle-park-aquatic-center^washington^spokane^Shadle Park Aquatic Center^2005 W Wellesley Ave, Spokane, WA 99207, USA^99207^1^0^0^6^4.2^195^10^2026-07-17^2026-07-17^402f2a
+312^shadle-pool^washington^spokane^Shadle pool^2005 W Wellesley Ave, Spokane, WA 99207, USA^99207^1^0^0^6^4.2^13^10^2026-07-17^2026-07-17^c05132
+313^sharpstown-pool^texas^houston^Sharpstown Pool^6600 Harbor Town Dr^77036^0^1^1^4^3.9^68^16^2026-07-16^2026-07-16^33388d
+314^sharpstown-swimming-pool^texas^houston^Sharpstown Swimming Pool^6600 Harbor Town Dr, Houston, TX 77036, USA^77036^1^0^0^7^2.6^86^10^2026-07-17^2026-07-17^95cf18
+315^shenandoah-aquatic-facility^florida^miami^Shenandoah Aquatic Facility^1800 SW 21st Ave, Miami, FL 33145, USA^33145^1^0^0^7^4.7^23^10^2026-07-17^2026-07-17^c0ad79
+316^shenandoah-pool^florida^hialeah^Shenandoah Pool^^^1^0^0^6^4.6^121^13^2026-07-16^2026-07-16^d085b3
+317^sigma-swimming^texas^fort-worth^Sigma Swimming^1100 Collard St, Fort Worth, TX 76105, USA^76105^1^1^1^6^4.9^276^17^2026-07-16^2026-07-16^215e85
+318^sigma-swimming-fort-worth-central-marine-park^texas^fort-worth^Sigma Swimming Fort Worth - Central - Marine Park^303 NW 20th St, Fort Worth, TX 76164, USA^76164^1^1^1^7^3.7^3^17^2026-07-16^2026-07-16^e38437
+319^sigma-swimming-fort-worth-south-trc^texas^fort-worth^Sigma Swimming Fort Worth - South - TRC^2200 Circle Dr, Fort Worth, TX 76119, USA^76119^1^1^1^7^4.9^15^17^2026-07-16^2026-07-16^2dda19
+320^sippy-woodhead-pool-bobby-bonds-pool^california^riverside^Sippy Woodhead Pool/ Bobby Bonds Pool^2060 University Ave, Riverside, CA 92507, USA^92507^1^0^0^6^4.5^55^10^2026-07-17^2026-07-17^6bbb17
+321^skyline-aquatic-center^arizona^mesa^Skyline Aquatic Center^845 S Crismon Rd^85208^0^1^1^2^4.3^198^16^2026-07-16^2026-07-16^3d517c
+322^skyline-aquatic-center-mesa^arizona^mesa^Skyline Aquatic Center^845 S Crismon Rd, Mesa, AZ 85208, USA^85208^1^0^0^3^4.6^452^10^2026-07-17^2026-07-17^28a8a9
+323^sonoran-splash-pool^arizona^scottsdale^Sonoran Splash Pool^7575 E Princess Dr, Scottsdale, AZ 85255, USA^85255^1^0^0^7^4.7^92^10^2026-07-30^2026-07-30^6e1907
+324^southside-pool^california^sacramento^Southside Pool^2115 6th St^95818^0^1^1^4^4^64^16^2026-07-16^2026-07-16^df1e0a
+325^southside-pool-sacramento^california^sacramento^Southside Pool^2107 6th St, Sacramento, CA 95818, USA^95818^1^0^0^6^3.4^5^10^2026-07-17^2026-07-17^5dc771
+326^splash-pad^north-carolina^fayetteville^Splash pad^500 Fisher St, Fayetteville, NC 28301, USA^28301^1^0^0^7^3.8^44^10^2026-07-17^2026-07-17^673360
+327^springs-aquatic-center^missouri^kansas-city^Springs Aquatic Center^9400 N Congress Ave, Kansas City, MO 64153, USA^64153^1^0^0^5^4^639^10^2026-07-17^2026-07-17^fafd6a
+328^standley-recreation-center^california^san-diego^Standley Recreation Center^3585 Governor Dr, San Diego, CA 92122, USA^92122^1^1^1^7^4.4^178^17^2026-07-16^2026-07-16^75f999
+329^strawberry-canyon-pool^california^berkeley^Strawberry Canyon Pool^Centennial Dr, Berkeley, CA 94704, USA^94704^1^0^0^7^4.5^79^10^2026-07-30^2026-07-30^c978ae
+330^strawberry-canyon-recreation^california^berkeley^Strawberry Canyon Recreation^Centennial Dr, Berkeley, CA 94704, USA^94704^1^0^0^7^4.7^20^10^2026-07-30^2026-07-30^23bebe
+331^sunset-park-pool^new-york^brooklyn^Sunset Park Pool^7th Ave & 43rd St^11232^1^1^1^3^4^914^19^2026-07-16^2026-07-16^ea6d6f
+332^sunset-pool^new-york^new-york^Sunset Pool^JXWW+VX, Brooklyn, NY 11232, USA^11232^1^1^1^7^4^886^17^2026-07-16^2026-07-16^1ad10c
+333^surprise-aquatic-center^arizona^surprise^Surprise Aquatic Center^^^0^0^0^-1^4^96^12^2026-07-16^2026-07-16^e660c2
+334^surprise-aquatic-center-surprise^arizona^surprise^Surprise Aquatic Center^15831 N Bullard Ave, Surprise, AZ 85374, USA^85374^1^0^0^7^4.5^385^10^2026-07-30^2026-07-30^d224bb
+335^swanson-memorial-swimming-pool^california^san-diego^Swanson Memorial Swimming Pool^3585 Governor Dr, San Diego, CA 92122, USA^92122^1^1^1^7^4.6^41^17^2026-07-16^2026-07-16^8236c0
+336^swimming-pool-10^california^san-jose^Swimming pool^960 W Hedding St, San Jose, CA 95126, USA^95126^1^0^0^6^4^1^12^2026-07-16^2026-07-16^8060c7
+337^swimming-pool-11^california^san-jose^Swimming pool^65 N 2nd St, San Jose, CA 95113, USA^95113^1^0^0^7^^^10^2026-07-16^2026-07-16^01f501
+338^swimming-pool-12^california^san-jose^Swimming pool^351 N 3rd St, San Jose, CA 95112, USA^95112^1^0^0^7^^^10^2026-07-16^2026-07-16^5587e3
+339^swimming-pool-13^california^san-jose^Swimming pool^2001 Cottle Ave, San Jose, CA 95125, USA^95125^1^0^0^6^5^1^12^2026-07-16^2026-07-16^47ffbf
+340^swimming-pool-14^california^san-jose^Swimming pool^410 N First St, San Jose, CA 95112, USA^95112^1^0^0^7^^^10^2026-07-16^2026-07-16^ff2e80
+341^swimming-pool-15^california^san-jose^Swimming pool^2950 Story Rd #75, San Jose, CA 95127, USA^95127^1^0^0^7^5^1^12^2026-07-16^2026-07-16^9bb86a
+342^swimming-pool-16^california^san-jose^Swimming pool^515 Lincoln Ave, San Jose, CA 95126, USA^95126^1^0^0^7^^^10^2026-07-16^2026-07-16^406e2f
+343^swimming-pool-17^california^san-jose^Swimming pool^324 Page St, San Jose, CA 95126, USA^95126^1^0^0^6^^^10^2026-07-16^2026-07-16^96650d
+344^swimming-pool-18^california^san-jose^Swimming pool^190 Ryland St., San Jose, CA 95112, USA^95112^1^0^0^7^^^10^2026-07-16^2026-07-16^28b8c3
+345^swimming-pool-19^florida^jacksonville^Swimming pool^245 Water St, Jacksonville, FL 32202, USA^32202^1^0^0^6^^^10^2026-07-16^2026-07-16^0d4060
+346^swimming-pool-20^florida^jacksonville^Swimming pool^Bay St &, S Liberty St, Jacksonville, FL 32202, USA^32202^1^0^0^7^^^10^2026-07-16^2026-07-16^1429d6
+347^swimming-pool-21^florida^jacksonville^Swimming pool^1900 Olevia St, Jacksonville, FL 32207, USA^32207^1^0^0^7^^^10^2026-07-16^2026-07-16^40e382
+348^swimming-pool-22^florida^jacksonville^Swimming pool^1300 Hendricks Ave, Jacksonville, FL 32207, USA^32207^1^0^0^7^^^10^2026-07-16^2026-07-16^fcbc19
+349^swimming-pool-23^florida^jacksonville^Swimming pool^1444 Home St, Jacksonville, FL 32207, USA^32207^1^0^0^7^^^10^2026-07-16^2026-07-16^81eb36
+350^swimming-pool-24^florida^jacksonville^Swimming pool^225 E Coastline Dr, Jacksonville, FL 32202, USA^32202^1^0^0^7^^^10^2026-07-16^2026-07-16^196389
+351^swimming-pool-25^florida^jacksonville^Swimming pool^1906 Promenade Way, Jacksonville, FL 32207, USA^32207^1^0^0^7^^^10^2026-07-16^2026-07-16^2b89f4
+352^swimming-pool-26^indiana^indianapolis^Swimming pool^2420 E Riverside Dr, Indianapolis, IN 46208, USA^46208^1^0^0^7^5^1^12^2026-07-16^2026-07-16^afff71
+353^swimming-pool-27^indiana^indianapolis^Swimming pool^435 N Senate Ave, Indianapolis, IN 46204, USA^46204^1^0^0^6^^^10^2026-07-16^2026-07-16^35daa9
+354^swimming-pool-28^indiana^indianapolis^Swimming pool^1113 E 15th St, Indianapolis, IN 46202, USA^46202^1^0^0^7^^^10^2026-07-16^2026-07-16^01fcb0
+355^swimming-pool-29^north-carolina^charlotte^Swimming Pool^Charlotte, NC 28277, USA^28277^1^0^0^7^3.7^3^12^2026-07-16^2026-07-16^4f9fd2
+356^swimming-pool-3^arizona^phoenix^Swimming pool^1425 S 5th Ave, Phoenix, AZ 85003, USA^85003^1^0^0^7^4.5^22^14^2026-07-16^2026-07-16^5fa668
+357^swimming-pool-30^north-carolina^charlotte^Swimming Pool^Charlotte, NC 28217, USA^28217^1^0^0^7^5^2^12^2026-07-16^2026-07-16^f9557c
+358^swimming-pool-4^arizona^phoenix^Swimming pool^1725 E McKinley St, Phoenix, AZ 85006, USA^85006^1^0^0^6^5^1^12^2026-07-16^2026-07-16^07c3b2
+359^swimming-pool-5^new-york^bronx^Swimming pool^293 Surf Dr, Bronx, NY 10473, USA^10473^1^0^0^7^3.7^3^14^2026-07-16^2026-07-16^0e4ded
+360^swimming-pool-6^new-york^bronx^Swimming Pool^699 W 239th St, Bronx, NY 10463, USA^10463^1^0^0^7^^^12^2026-07-16^2026-07-16^43dd33
+361^swimming-pool-7^texas^san-antonio^Swimming pool^306 W Market St, San Antonio, TX 78205, USA^78205^1^0^0^7^4.7^3^12^2026-07-16^2026-07-16^f9df49
+362^swimming-pool-8^texas^san-antonio^Swimming pool^226 Dwyer Ave, San Antonio, TX 78204, USA^78204^1^0^0^7^5^1^12^2026-07-16^2026-07-16^d1a423
+363^swimming-pool-9^california^san-jose^Swimming pool^175 E Santa Clara St, San Jose, CA 95113, USA^95113^1^0^0^7^5^1^12^2026-07-16^2026-07-16^ebe91d
+364^sycamore-pool^texas^fort-worth^Sycamore Pool^2525 E Rosedale St^76105^0^1^1^1^3.9^58^16^2026-07-16^2026-07-16^f67be9
+365^sycamore-water-park^texas^fort-worth^Sycamore Water Park^2525 E Rosedale St, Fort Worth, TX 76105, USA^76105^1^0^0^7^4^152^10^2026-07-17^2026-07-17^e833a6
+366^take-me-to-the-water-swim-school^new-york^brooklyn^Take Me To The Water Swim School^300 Schermerhorn St, Brooklyn, NY 11217, USA^11217^1^1^1^7^4.6^7^17^2026-07-16^2026-07-16^a5507c
+367^take-me-to-the-water-swim-school-queens^new-york^queens^Take Me to the Water Swim School- Queens^111-20 Queens Blvd, Forest Hills, NY 11375, USA^11375^1^1^1^7^3.1^36^17^2026-07-16^2026-07-16^d25c82
+368^take-me-to-the-water-swim-school-queens-2^new-york^queens^Take Me To the Water Swim School- Queens^106-06 Queens Blvd, Forest Hills, NY 11375, USA^11375^1^1^1^7^3.1^30^17^2026-07-16^2026-07-16^2d90ce
+369^teachout-aquatic-center^iowa^des-moines^Teachout Aquatic Center^3000 Easton Blvd, Des Moines, IA 50317^50317^0^1^1^4^4.3^198^16^2026-07-16^2026-07-16^f91eb8
+370^teachout-aquatic-center-des-moines^iowa^des-moines^Teachout Aquatic Center^2601 Hubbell Ave, Des Moines, IA 50317, USA^50317^1^0^0^7^3.6^197^10^2026-07-17^2026-07-17^993a0f
+371^the-cove-aquatic-center-at-samuell-grand^texas^dallas^The Cove Aquatic Center at Samuell Grand^3201 Samuell Blvd, Dallas, TX 75223, USA^75223^1^1^1^7^4.3^290^17^2026-07-16^2026-07-16^e181f6
+372^the-sidney-and-lois-eskenazi-pool-at-the-arthur-m-glick-jcc^indiana^indianapolis^The Sidney and Lois Eskenazi Pool at the Arthur M. Glick JCC^6701 Hoover Rd, Indianapolis, IN 46260, USA^46260^1^0^0^7^4.6^70^10^2026-07-17^2026-07-17^17a800
+373^the-springs-aquatic-center^missouri^kansas-city^The Springs Aquatic Center^9400 N Congress Ave, Kansas City, MO 64153^64153^0^1^1^4^4.4^342^16^2026-07-16^2026-07-16^423f8f
+374^thomas-jefferson-pool-new-york^new-york^new-york^Thomas Jefferson Pool^2180 1st Ave #2332, New York, NY 10029, USA^10029^1^0^0^7^4.1^231^10^2026-07-17^2026-07-17^bc0a8f
+375^thomas-jefferson-recreation-center^new-york^new-york^Thomas Jefferson Recreation Center^2180 1st Ave, New York, NY 10029, USA^10029^1^1^1^7^4.4^87^17^2026-07-16^2026-07-16^253fb1
+376^thousand-oaks-family-ymca^texas^san-antonio^Thousand Oaks Family YMCA^16103 Henderson Pass, San Antonio, TX 78232, USA^78232^1^1^1^7^4.6^1016^17^2026-07-16^2026-07-16^be1271
+377^thousand-oaks-family-ymca-swimming^texas^san-antonio^Thousand Oaks Family YMCA Swimming^16103 Henderson Pass, San Antonio, TX 78232, USA^78232^1^1^1^6^4.2^9^17^2026-07-16^2026-07-16^465251
+378^trotter-family-ymca^texas^houston^Trotter Family YMCA^1331 Augusta Dr, Houston, TX 77057, USA^77057^1^1^1^6^4.5^461^17^2026-07-16^2026-07-16^3a11f0
+379^udall-center-pool^arizona^tucson^Udall Center Pool^7200 E Tanque Verde Rd^85715^0^1^1^2^4.2^112^16^2026-07-16^2026-07-16^f23caf
+380^udall-pool^arizona^tucson^Udall Pool^7200 E Tanque Verde Rd, Tucson, AZ 85715, USA^85715^1^0^0^6^4.5^42^8^2026-07-17^2026-07-17^b55881
+381^uthealth-houston-recreation-center^texas^houston^UTHealth Houston Recreation Center^1832 West Rd, Houston, TX 77054, USA^77054^1^1^1^7^4.6^326^17^2026-07-16^2026-07-16^c4af52
+382^uthealth-swimming-pool^texas^houston^UTHealth Swimming Pool^1832 West Rd, Houston, TX 77054, USA^77054^1^0^1^7^4^3^14^2026-07-16^2026-07-16^06e953
+383^venetian-pool^florida^miami^Venetian Pool^2701 De Soto Blvd, Coral Gables^33134^1^1^1^2^4.4^4087^19^2026-07-16^2026-07-16^e257b5
+384^venetian-pool-fl^florida^hialeah^Venetian Pool^2701 De Soto Boulevard^33134^1^1^1^7^4.4^4087^17^2026-07-16^2026-07-16^467c9c
+385^venus-pool^nevada^north-las-vegas^Venus Pool^^^1^0^0^7^4.5^299^13^2026-07-16^2026-07-16^829915
+386^venus-pool-lounge^nevada^las-vegas^Venus Pool + Lounge^3570 Las Vegas Blvd S, Las Vegas, NV 89109, USA^89109^1^1^1^7^4.5^297^17^2026-07-16^2026-07-16^058870
+387^wackford-aquatic-complex^california^elk-grove^Wackford Aquatic Complex^9014 Bruceville Rd^95758^0^1^1^2^4.4^198^16^2026-07-16^2026-07-16^cf50eb
+388^wading-pool^ohio^cleveland^Wading Pool^^^0^0^0^7^^^8^2026-07-16^2026-07-16^c4cfae
+389^wading-pool-cleveland^ohio^cleveland^Wading Pool^^^1^0^0^7^4.2^151^12^2026-07-16^2026-07-16^f78e58
+390^waterworks-aquatics-san-jose^california^san-jose^Waterworks Aquatics San Jose^1120 S Bascom Ave, San Jose, CA 95128, USA^95128^1^1^1^7^4.3^293^17^2026-07-16^2026-07-16^b553f7
+391^waterworks-swim-school-north-san-jose^california^san-jose^Waterworks Swim School North San Jose^1045 E Brokaw Rd, San Jose, CA 95131, USA^95131^1^1^1^7^4.2^6^17^2026-07-16^2026-07-16^60880c
+392^waterworks-swim-school-san-francisco^california^san-francisco^Waterworks Swim School San Francisco^3201 20th Ave, San Francisco, CA 94132, USA^94132^1^1^1^7^4.1^16^15^2026-07-16^2026-07-16^a686c2
+393^welles-park-pool^illinois^chicago^Welles Park Pool^2333 W Sunnyside Ave^60625^1^1^1^4^4.3^634^19^2026-07-16^2026-07-16^dc524a
+394^welles-park-pool-indoor^illinois^chicago^Welles Park Pool (Indoor)^2333 W Sunnyside Ave, Chicago, IL 60618, USA^60618^1^1^1^7^4.3^143^17^2026-07-16^2026-07-16^e130af
+395^wells-outdoor-pool^nevada^henderson^Wells Outdoor Pool^1640 Price St, Henderson, NV 89011, USA^89011^1^0^0^6^4.2^55^10^2026-07-17^2026-07-17^2743a9
+396^wells-park-and-pool^nevada^henderson^Wells Park and Pool^1640 Price St, Henderson, NV 89011, USA^89011^1^0^0^6^4.1^253^10^2026-07-17^2026-07-17^94c771
+397^westside-natatorium^texas^el-paso^Westside Natatorium^650 Wallenberg Dr, El Paso, TX 79912, USA^79912^1^0^0^7^4.2^267^10^2026-07-17^2026-07-17^bb0b3f
+398^willa-d-johnson-pool^oklahoma^oklahoma-city^Willa D Johnson Pool^909 Frederick Douglass Ave, Oklahoma City, OK 73117, USA^73117^1^0^0^7^4.7^3^10^2026-07-17^2026-07-17^0b3728
+399^willa-d-johnson-recreation-center^oklahoma^oklahoma-city^Willa D. Johnson Recreation Center^909 Frederick Douglass Ave, Oklahoma City, OK 73117, USA^73117^1^0^0^7^4.7^96^10^2026-07-17^2026-07-17^3b4ad2
+400^wilson-pool^wisconsin^milwaukee^Wilson Pool^4001 S 20th St, Milwaukee, WI 53221, USA^53221^1^0^0^7^4.3^68^10^2026-07-17^2026-07-17^619804
+401^wilson-ranch-pool^colorado^colorado-springs^Wilson Ranch Pool^4720 Whimsical Dr^80917^0^1^1^2^4^78^16^2026-07-16^2026-07-16^f58669
+402^wilson-ranch-pool-colorado-springs^colorado^colorado-springs^Wilson Ranch Pool^2335 Allegheny Dr, Colorado Springs, CO 80919, USA^80919^1^0^0^7^3.9^264^10^2026-07-17^2026-07-17^a314cc
+403^wilson-recreation-center^wisconsin^milwaukee^Wilson Recreation Center^4001 S 20th St, Milwaukee, WI 53221, USA^53221^1^0^0^6^4.5^111^9^2026-07-17^2026-07-17^d4c3e3
+404^ymca-2^texas^fort-worth^YMCA^406 Lamar St, Fort Worth, TX 76102, USA^76102^1^0^1^7^3.7^3^14^2026-07-16^2026-07-16^153b5f
+405^ymca-3^texas^fort-worth^YMCA^9100 N Beach St, Fort Worth, TX 76244, USA^76244^1^0^0^7^4.5^12^15^2026-07-16^2026-07-16^fc2e1c
+406^ymca-4^ohio^columbus^YMCA^130 Woodland Ave, Columbus, OH 43203, USA^43203^1^0^0^6^4.4^10^15^2026-07-16^2026-07-16^c4e278
+407^ymca-5^north-carolina^charlotte^YMCA^400 E Morehead St, Charlotte, NC 28202, USA^28202^1^1^1^7^4.5^531^17^2026-07-16^2026-07-16^bcd5d0
+408^ymca-calypso-cove-family-waterpark^kentucky^louisville^YMCA Calypso Cove Family Waterpark^9400 Mill Brook Rd, Louisville, KY 40223, USA^40223^1^0^0^7^4.6^122^10^2026-07-17^2026-07-17^386cf4
+409^ymca-fullerton^california^fullerton^Ymca^2000 Youth Way, Fullerton, CA 92835, USA^92835^1^0^0^5^4^17^10^2026-07-30^2026-07-30^54b60a
+410^ymca-of-greater-grand-rapids^michigan^grand-rapids^YMCA of Greater Grand Rapids^475 Lake Michigan Dr NW, Grand Rapids, MI 49504, USA^49504^1^0^0^6^3.6^210^10^2026-07-17^2026-07-17^de9dca
+411^ymca-of-greater-houston^texas^houston^YMCA of Greater Houston^1331 Augusta Dr, Houston, TX 77057, USA^77057^1^1^1^7^3.3^54^17^2026-07-16^2026-07-16^11dfbe
+412^ymca-of-greater-san-francisco-association-office^california^san-francisco^YMCA of Greater San Francisco Association Office^169 Steuart St, San Francisco, CA 94105, USA^94105^1^1^1^7^4.2^11^17^2026-07-16^2026-07-16^7cac55
+413^ymca-of-metropolitan-detroit^michigan^detroit^YMCA of Metropolitan Detroit^1401 Broadway St #3a, Detroit, MI 48226, USA^48226^1^0^0^6^4.5^122^10^2026-07-30^2026-07-30^28f945
+414^ymca-of-metropolitan-los-angeles-corporate-office^california^los-angeles^YMCA of Metropolitan Los Angeles (Corporate Office)^4301 W 3rd St, Los Angeles, CA 90020, USA^90020^1^0^1^7^4^74^16^2026-07-16^2026-07-16^2bb297
+415^ymca-of-silicon-valley-association-office^california^san-jose^YMCA of Silicon Valley - Association Office^550 S Winchester Blvd #250, San Jose, CA 95128, USA^95128^1^1^1^7^4.2^6^17^2026-07-16^2026-07-16^2f864e
+416^ymca-pool-wilmington^north-carolina^wilmington^YMCA Pool Wilmington^2710 Market St, Wilmington, NC 28403, USA^28403^1^0^0^5^4.4^61^10^2026-07-30^2026-07-30^70a39f
+417^ymca-project-cornerstone^california^san-jose^YMCA Project Cornerstone^550 S Winchester Blvd #250, San Jose, CA 95128, USA^95128^1^1^1^7^4.8^8^16^2026-07-16^2026-07-16^48f957
+418^ymca-spears-pool^north-carolina^greensboro^YMCA Spears Pool^3216 Horse Pen Creek Rd, Greensboro, NC 27410, USA^27410^1^0^0^6^4.6^116^10^2026-07-17^2026-07-17^a52cc8
+419^ymca-westside-silver-fins-at-chris-town^arizona^phoenix^YMCA Westside Silver Fins at Chris-town^5517 N 17th Ave, Phoenix, AZ 85015, USA^85015^1^1^1^7^4.9^52^17^2026-07-16^2026-07-16^037e25

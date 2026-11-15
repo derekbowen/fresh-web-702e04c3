@@ -1,0 +1,445 @@
+state_slug,city_slug,city_name,state_abbr,pool_count_column,published_pools_actual,difference_actual_minus_column,difference_bucket,issue,city_url,city_in_sitemap
+delaware,dover,Dover,DE,0,0,0,zero pools (count agrees),zero_published_pools,https://www.poolrentalnearme.com/public-pools/delaware/dover/,0
+hawaii,hilo,Hilo,HI,0,0,0,zero pools (count agrees),zero_published_pools,https://www.poolrentalnearme.com/public-pools/hawaii/hilo/,0
+hawaii,kahului,Kahului,HI,0,0,0,zero pools (count agrees),zero_published_pools,https://www.poolrentalnearme.com/public-pools/hawaii/kahului/,0
+idaho,idaho-falls,Idaho Falls,ID,0,0,0,zero pools (count agrees),zero_published_pools,https://www.poolrentalnearme.com/public-pools/idaho/idaho-falls/,0
+maryland,davidsonville,Davidsonville,MD,0,0,0,zero pools (count agrees),zero_published_pools,https://www.poolrentalnearme.com/public-pools/maryland/davidsonville/,0
+oklahoma,tulsa,Tulsa,OK,0,0,0,zero pools (count agrees),zero_published_pools,https://www.poolrentalnearme.com/public-pools/oklahoma/tulsa/,0
+texas,the-woodlands,The Woodlands,TX,0,0,0,zero pools (count agrees),zero_published_pools,https://www.poolrentalnearme.com/public-pools/texas/the-woodlands/,0
+alabama,athens,Athens,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/athens/,0
+alabama,fairhope,Fairhope,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/fairhope/,0
+alabama,homewood,Homewood,AL,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/homewood/,0
+alabama,hoover,Hoover,AL,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/hoover/,1
+alabama,jackson,Jackson,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/jackson/,0
+alabama,madison,Madison,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/madison/,0
+alabama,new-market,New Market,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/new-market/,0
+alabama,pike-road,Pike Road,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/pike-road/,0
+alabama,trussville,Trussville,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/trussville/,0
+alabama,vestavia-hills,Vestavia Hills,AL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/alabama/vestavia-hills/,0
+arizona,oro-valley,Oro Valley,AZ,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/arizona/oro-valley/,1
+arkansas,bryant,Bryant,AR,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/arkansas/bryant/,0
+arkansas,cabot,Cabot,AR,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/arkansas/cabot/,1
+arkansas,north-little-rock,North Little Rock,AR,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/arkansas/north-little-rock/,0
+california,albany,Albany,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/albany/,0
+california,antelope,Antelope,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/antelope/,1
+california,bear-valley-springs,Bear Valley Springs,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/bear-valley-springs/,0
+california,buena-park,Buena Park,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/buena-park/,0
+california,camarillo,Camarillo,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/camarillo/,0
+california,carson,Carson,CA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/carson/,0
+california,castaic,Castaic,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/castaic/,0
+california,cerritos,Cerritos,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/cerritos/,0
+california,colton,Colton,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/colton/,0
+california,cupertino,Cupertino,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/cupertino/,0
+california,el-cerrito,El Cerrito,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/el-cerrito/,1
+california,emeryville,Emeryville,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/emeryville/,0
+california,galt,Galt,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/galt/,0
+california,hawthorne,Hawthorne,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/hawthorne/,1
+california,lakewood,Lakewood,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/lakewood/,0
+california,manteca,Manteca,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/manteca/,0
+california,martinez,Martinez,CA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/martinez/,0
+california,newark,Newark,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/newark/,1
+california,piedmont,Piedmont,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/piedmont/,0
+california,pleasant-hill,Pleasant Hill,CA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/pleasant-hill/,0
+california,rialto,Rialto,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/rialto/,0
+california,san-leandro,San Leandro,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/san-leandro/,0
+california,san-marcos,San Marcos,CA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/san-marcos/,1
+california,seal-beach,Seal Beach,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/seal-beach/,0
+california,west-sacramento,West Sacramento,CA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/west-sacramento/,1
+california,westlake-village,Westlake Village,CA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/california/westlake-village/,0
+colorado,commerce-city,Commerce City,CO,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/commerce-city/,1
+colorado,fort-carson,Fort Carson,CO,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/fort-carson/,0
+colorado,golden,Golden,CO,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/golden/,1
+colorado,lone-tree,Lone Tree,CO,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/lone-tree/,0
+colorado,loveland,Loveland,CO,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/loveland/,1
+colorado,morrison,Morrison,CO,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/morrison/,0
+colorado,northglenn,Northglenn,CO,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/northglenn/,1
+colorado,wheat-ridge,Wheat Ridge,CO,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/wheat-ridge/,1
+colorado,woodland-park,Woodland Park,CO,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/colorado/woodland-park/,1
+connecticut,cheshire,Cheshire,CT,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/connecticut/cheshire/,1
+connecticut,milford,Milford,CT,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/connecticut/milford/,0
+connecticut,new-canaan,New Canaan,CT,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/connecticut/new-canaan/,0
+connecticut,north-haven,North Haven,CT,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/connecticut/north-haven/,0
+connecticut,orange,Orange,CT,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/connecticut/orange/,0
+connecticut,woodbridge,Woodbridge,CT,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/connecticut/woodbridge/,0
+florida,bokeelia,Bokeelia,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/bokeelia/,0
+florida,coral-gables,Coral Gables,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/coral-gables/,0
+florida,davie,Davie,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/davie/,1
+florida,hallandale-beach,Hallandale Beach,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/hallandale-beach/,0
+florida,lauderdale-lakes,Lauderdale Lakes,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/lauderdale-lakes/,0
+florida,lauderhill,Lauderhill,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/lauderhill/,0
+florida,margate,Margate,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/margate/,1
+florida,miami-shores,Miami Shores,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/miami-shores/,0
+florida,miami-springs,Miami Springs,FL,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/miami-springs/,1
+florida,miramar,Miramar,FL,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/miramar/,1
+florida,new-port-richey,New Port Richey,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/new-port-richey/,1
+florida,north-fort-myers,North Fort Myers,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/north-fort-myers/,0
+florida,north-lauderdale,North Lauderdale,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/north-lauderdale/,0
+florida,north-miami,North Miami,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/north-miami/,0
+florida,north-miami-beach,North Miami Beach,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/north-miami-beach/,0
+florida,pinellas-park,Pinellas Park,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/pinellas-park/,0
+florida,plantation,Plantation,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/plantation/,1
+florida,south-miami,South Miami,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/south-miami/,0
+florida,southwest-ranches,Southwest Ranches,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/southwest-ranches/,0
+florida,st-pete-beach,St. Pete Beach,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/st-pete-beach/,0
+florida,stuart,Stuart,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/stuart/,1
+florida,tamarac,Tamarac,FL,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/florida/tamarac/,1
+georgia,evans,Evans,GA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/georgia/evans/,0
+georgia,gainesville,Gainesville,GA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/georgia/gainesville/,1
+hawaii,kailua,Kailua,HI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/hawaii/kailua/,0
+hawaii,kaneohe,Kaneohe,HI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/hawaii/kaneohe/,0
+hawaii,pearl-city,Pearl City,HI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/hawaii/pearl-city/,0
+hawaii,waipahu,Waipahu,HI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/hawaii/waipahu/,0
+idaho,meridian,Meridian,ID,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/idaho/meridian/,1
+indiana,clarksville,Clarksville,IN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/indiana/clarksville/,1
+indiana,danville,Danville,IN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/indiana/danville/,0
+indiana,jeffersonville,Jeffersonville,IN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/indiana/jeffersonville/,1
+indiana,new-albany,New Albany,IN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/indiana/new-albany/,1
+indiana,new-haven,New Haven,IN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/indiana/new-haven/,1
+indiana,plainfield,Plainfield,IN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/indiana/plainfield/,1
+iowa,adel,Adel,IA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/adel/,0
+iowa,ankeny,Ankeny,IA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/ankeny/,1
+iowa,carlisle,Carlisle,IA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/carlisle/,0
+iowa,clive,Clive,IA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/clive/,1
+iowa,council-bluffs,Council Bluffs,IA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/council-bluffs/,1
+iowa,indianola,Indianola,IA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/indianola/,0
+iowa,norwalk,Norwalk,IA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/norwalk/,0
+iowa,west-des-moines,West Des Moines,IA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/iowa/west-des-moines/,1
+kansas,augusta,Augusta,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/augusta/,0
+kansas,bel-aire,Bel Aire,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/bel-aire/,0
+kansas,fairway,Fairway,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/fairway/,0
+kansas,gardner,Gardner,KS,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/gardner/,1
+kansas,goddard,Goddard,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/goddard/,0
+kansas,haysville,Haysville,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/haysville/,0
+kansas,kansas-city,Kansas City,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/kansas-city/,0
+kansas,leawood,Leawood,KS,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/leawood/,1
+kansas,lenexa,Lenexa,KS,,4,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/lenexa/,1
+kansas,mission,Mission,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/mission/,0
+kansas,prairie-village,Prairie Village,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/prairie-village/,0
+kansas,roeland-park,Roeland Park,KS,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/roeland-park/,0
+kansas,shawnee,Shawnee,KS,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/shawnee/,1
+kansas,spring-hill,Spring Hill,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/spring-hill/,0
+kansas,valley-center,Valley Center,KS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kansas/valley-center/,0
+kentucky,douglass-hills,Douglass Hills,KY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kentucky/douglass-hills/,0
+kentucky,florence,Florence,KY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kentucky/florence/,1
+kentucky,georgetown,Georgetown,KY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kentucky/georgetown/,1
+kentucky,la-grange,La Grange,KY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kentucky/la-grange/,0
+kentucky,nicholasville,Nicholasville,KY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kentucky/nicholasville/,0
+kentucky,richmond,Richmond,KY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/kentucky/richmond/,1
+louisiana,bossier-city,Bossier City,LA,,4,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/louisiana/bossier-city/,0
+maryland,arbutus,Arbutus,MD,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/maryland/arbutus/,0
+maryland,glen-burnie,Glen Burnie,MD,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/maryland/glen-burnie/,1
+maryland,lochearn,Lochearn,MD,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/maryland/lochearn/,0
+maryland,woodlawn,Woodlawn,MD,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/maryland/woodlawn/,0
+massachusetts,cambridge,Cambridge,MA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/massachusetts/cambridge/,0
+massachusetts,chelsea,Chelsea,MA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/massachusetts/chelsea/,0
+massachusetts,everett,Everett,MA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/massachusetts/everett/,0
+massachusetts,holden,Holden,MA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/massachusetts/holden/,0
+massachusetts,medford,Medford,MA,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/massachusetts/medford/,0
+massachusetts,somerville,Somerville,MA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/massachusetts/somerville/,0
+massachusetts,waltham,Waltham,MA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/massachusetts/waltham/,0
+michigan,belleville,Belleville,MI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/belleville/,1
+michigan,dearborn,Dearborn,MI,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/dearborn/,1
+michigan,fraser,Fraser,MI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/fraser/,0
+michigan,holland,Holland,MI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/holland/,0
+michigan,macomb,Macomb,MI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/macomb/,1
+michigan,madison-heights,Madison Heights,MI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/madison-heights/,1
+michigan,troy,Troy,MI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/troy/,1
+michigan,wyoming,Wyoming,MI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/wyoming/,1
+michigan,ypsilanti,Ypsilanti,MI,,3,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/michigan/ypsilanti/,1
+minnesota,anoka,Anoka,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/anoka/,1
+minnesota,bloomington,Bloomington,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/bloomington/,0
+minnesota,coon-rapids,Coon Rapids,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/coon-rapids/,1
+minnesota,crystal,Crystal,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/crystal/,0
+minnesota,eagan,Eagan,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/eagan/,1
+minnesota,new-hope,New Hope,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/new-hope/,0
+minnesota,saint-paul,Saint Paul,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/saint-paul/,1
+minnesota,st-louis-park,St. Louis Park,MN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/minnesota/st-louis-park/,1
+mississippi,brandon,Brandon,MS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/mississippi/brandon/,0
+mississippi,pearl,Pearl,MS,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/mississippi/pearl/,0
+missouri,savannah,Savannah,MO,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/missouri/savannah/,0
+nebraska,papillion,Papillion,NE,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/nebraska/papillion/,1
+nevada,sun-valley,Sun Valley,NV,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/nevada/sun-valley/,0
+new-mexico,rio-rancho,Rio Rancho,NM,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/new-mexico/rio-rancho/,1
+new-york,bedford,Bedford,NY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/new-york/bedford/,0
+new-york,stamford,Stamford,NY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/new-york/stamford/,0
+new-york,the-bronx,The Bronx,NY,,9,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/new-york/the-bronx/,1
+new-york,white-plains,White Plains,NY,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/new-york/white-plains/,1
+north-carolina,gibsonville,Gibsonville,NC,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/north-carolina/gibsonville/,1
+north-carolina,high-point,High Point,NC,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/north-carolina/high-point/,0
+north-carolina,hillsborough,Hillsborough,NC,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/north-carolina/hillsborough/,0
+north-carolina,huntersville,Huntersville,NC,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/north-carolina/huntersville/,0
+north-carolina,jamestown,Jamestown,NC,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/north-carolina/jamestown/,1
+north-carolina,raeford,Raeford,NC,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/north-carolina/raeford/,1
+ohio,beachwood,Beachwood,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/beachwood/,0
+ohio,beavercreek,Beavercreek,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/beavercreek/,0
+ohio,cuyahoga-falls,Cuyahoga Falls,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/cuyahoga-falls/,1
+ohio,eastlake,Eastlake,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/eastlake/,0
+ohio,fairfield,Fairfield,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/fairfield/,1
+ohio,grand-rapids,Grand Rapids,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/grand-rapids/,0
+ohio,grove-city,Grove City,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/grove-city/,1
+ohio,highland-heights,Highland Heights,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/highland-heights/,0
+ohio,hinckley,Hinckley,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/hinckley/,0
+ohio,independence,Independence,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/independence/,0
+ohio,kettering,Kettering,OH,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/kettering/,1
+ohio,lakewood,Lakewood,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/lakewood/,0
+ohio,montgomery,Montgomery,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/montgomery/,0
+ohio,mount-healthy,Mount Healthy,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/mount-healthy/,0
+ohio,norwood,Norwood,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/norwood/,0
+ohio,parma-heights,Parma Heights,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/parma-heights/,0
+ohio,tallmadge,Tallmadge,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/tallmadge/,0
+ohio,troy,Troy,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/troy/,1
+ohio,uniontown,Uniontown,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/uniontown/,0
+ohio,upper-arlington,Upper Arlington,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/upper-arlington/,0
+ohio,vandalia,Vandalia,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/vandalia/,0
+ohio,west-carrollton,West Carrollton,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/west-carrollton/,1
+ohio,westlake,Westlake,OH,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/ohio/westlake/,0
+oklahoma,bethany,Bethany,OK,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oklahoma/bethany/,0
+oklahoma,del-city,Del City,OK,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oklahoma/del-city/,0
+oklahoma,miami,Miami,OK,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oklahoma/miami/,0
+oklahoma,midwest-city,Midwest City,OK,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oklahoma/midwest-city/,1
+oklahoma,moore,Moore,OK,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oklahoma/moore/,1
+oklahoma,mustang,Mustang,OK,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oklahoma/mustang/,0
+oklahoma,yukon,Yukon,OK,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oklahoma/yukon/,0
+oregon,milwaukie,Milwaukie,OR,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oregon/milwaukie/,0
+oregon,oregon-city,Oregon City,OR,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/oregon/oregon-city/,1
+pennsylvania,bensalem-township,Bensalem Township,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/bensalem-township/,1
+pennsylvania,bethel-park,Bethel Park,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/bethel-park/,1
+pennsylvania,carnegie,Carnegie,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/carnegie/,1
+pennsylvania,gibsonia,Gibsonia,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/gibsonia/,1
+pennsylvania,mckees-rocks,McKees Rocks,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/mckees-rocks/,0
+pennsylvania,mount-lebanon-township,Mount Lebanon Township,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/mount-lebanon-township/,0
+pennsylvania,plum,Plum,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/plum/,1
+pennsylvania,west-homestead,West Homestead,PA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/pennsylvania/west-homestead/,1
+south-carolina,hollywood,Hollywood,SC,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/south-carolina/hollywood/,0
+south-carolina,north-charleston,North Charleston,SC,,3,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/south-carolina/north-charleston/,1
+south-carolina,summerville,Summerville,SC,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/south-carolina/summerville/,0
+tennessee,brentwood,Brentwood,TN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/tennessee/brentwood/,0
+tennessee,fayetteville,Fayetteville,TN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/tennessee/fayetteville/,0
+tennessee,goodlettsville,Goodlettsville,TN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/tennessee/goodlettsville/,0
+tennessee,red-bank,Red Bank,TN,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/tennessee/red-bank/,0
+texas,aransas-pass,Aransas Pass,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/aransas-pass/,1
+texas,canutillo,Canutillo,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/canutillo/,0
+texas,carrollton,Carrollton,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/carrollton/,1
+texas,dripping-springs,Dripping Springs,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/dripping-springs/,1
+texas,euless,Euless,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/euless/,1
+texas,friendswood,Friendswood,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/friendswood/,0
+texas,gainesville,Gainesville,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/gainesville/,0
+texas,grand-prairie,Grand Prairie,TX,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/grand-prairie/,1
+texas,la-porte,La Porte,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/la-porte/,1
+texas,meadows-place,Meadows Place,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/meadows-place/,0
+texas,port-aransas,Port Aransas,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/port-aransas/,0
+texas,portland,Portland,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/portland/,0
+texas,stafford,Stafford,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/stafford/,0
+texas,the-colony,The Colony,TX,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/texas/the-colony/,0
+utah,magna,Magna,UT,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/utah/magna/,0
+utah,taylorsville,Taylorsville,UT,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/utah/taylorsville/,1
+virginia,alexandria,Alexandria,VA,,3,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/virginia/alexandria/,0
+virginia,ashland,Ashland,VA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/virginia/ashland/,0
+virginia,falls-church,Falls Church,VA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/virginia/falls-church/,0
+virginia,poquoson,Poquoson,VA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/virginia/poquoson/,0
+virginia,suffolk,Suffolk,VA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/virginia/suffolk/,0
+virginia,yorktown,Yorktown,VA,,3,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/virginia/yorktown/,0
+washington,snohomish,Snohomish,WA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/washington/snohomish/,1
+washington,spokane-valley,Spokane Valley,WA,,3,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/washington/spokane-valley/,0
+washington,tukwila,Tukwila,WA,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/washington/tukwila/,0
+wisconsin,brookfield,Brookfield,WI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/brookfield/,0
+wisconsin,cudahy,Cudahy,WI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/cudahy/,0
+wisconsin,elm-grove,Elm Grove,WI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/elm-grove/,0
+wisconsin,middleton,Middleton,WI,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/middleton/,0
+wisconsin,oregon,Oregon,WI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/oregon/,0
+wisconsin,sun-prairie,Sun Prairie,WI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/sun-prairie/,0
+wisconsin,verona,Verona,WI,,2,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/verona/,0
+wisconsin,wauwatosa,Wauwatosa,WI,,1,,pool_count NULL,pool_count_null,https://www.poolrentalnearme.com/public-pools/wisconsin/wauwatosa/,0
+alabama,huntsville,Huntsville,AL,6,18,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/alabama/huntsville/,1
+arizona,mesa,Mesa,AZ,1,13,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/mesa/,1
+arizona,tucson,Tucson,AZ,3,23,20,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/tucson/,1
+arkansas,little-rock,Little Rock,AR,7,17,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arkansas/little-rock/,1
+california,fremont,Fremont,CA,1,12,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/fremont/,1
+california,irvine,Irvine,CA,2,16,14,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/irvine/,1
+california,sacramento,Sacramento,CA,7,22,15,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/sacramento/,1
+colorado,colorado-springs,Colorado Springs,CO,2,12,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/colorado-springs/,1
+colorado,denver,Denver,CO,1,11,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/denver/,1
+colorado,fort-collins,Fort Collins,CO,1,12,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/fort-collins/,1
+florida,miami,Miami,FL,5,16,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/miami/,1
+florida,orlando,Orlando,FL,2,14,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/orlando/,1
+florida,tallahassee,Tallahassee,FL,3,13,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/tallahassee/,1
+florida,tampa,Tampa,FL,3,14,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/tampa/,1
+georgia,savannah,Savannah,GA,1,12,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/georgia/savannah/,1
+hawaii,honolulu,Honolulu,HI,6,18,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/hawaii/honolulu/,1
+kentucky,lexington,Lexington,KY,5,18,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/kentucky/lexington/,1
+kentucky,louisville,Louisville,KY,5,17,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/kentucky/louisville/,1
+louisiana,new-orleans,New Orleans,LA,5,18,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/louisiana/new-orleans/,1
+louisiana,shreveport,Shreveport,LA,4,16,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/louisiana/shreveport/,1
+maryland,baltimore,Baltimore,MD,1,14,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/maryland/baltimore/,1
+michigan,ann-arbor,Ann Arbor,MI,1,12,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/michigan/ann-arbor/,1
+michigan,grand-rapids,Grand Rapids,MI,1,11,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/michigan/grand-rapids/,1
+nebraska,omaha,Omaha,NE,5,23,18,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/nebraska/omaha/,1
+nevada,henderson,Henderson,NV,1,13,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/nevada/henderson/,1
+new-mexico,albuquerque,Albuquerque,NM,5,17,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/new-mexico/albuquerque/,1
+new-york,staten-island,Staten Island,NY,5,16,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/new-york/staten-island/,1
+north-carolina,cary,Cary,NC,4,17,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/cary/,1
+north-carolina,durham,Durham,NC,1,12,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/durham/,1
+north-carolina,fayetteville,Fayetteville,NC,3,16,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/fayetteville/,1
+north-carolina,greensboro,Greensboro,NC,8,20,12,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/greensboro/,1
+north-carolina,raleigh,Raleigh,NC,1,16,15,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/raleigh/,1
+north-carolina,wilmington,Wilmington,NC,4,17,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/wilmington/,1
+north-carolina,winston-salem,Winston-Salem,NC,2,17,15,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/winston-salem/,1
+ohio,cincinnati,Cincinnati,OH,1,14,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/ohio/cincinnati/,1
+oregon,portland,Portland,OR,2,12,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/oregon/portland/,1
+pennsylvania,philadelphia,Philadelphia,PA,37,47,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/pennsylvania/philadelphia/,1
+pennsylvania,pittsburgh,Pittsburgh,PA,2,15,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/pennsylvania/pittsburgh/,1
+south-carolina,columbia,Columbia,SC,1,11,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/south-carolina/columbia/,1
+tennessee,knoxville,Knoxville,TN,4,20,16,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/tennessee/knoxville/,1
+texas,corpus-christi,Corpus Christi,TX,1,12,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/corpus-christi/,1
+texas,el-paso,El Paso,TX,2,20,18,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/el-paso/,1
+texas,pearland,Pearland,TX,4,15,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/pearland/,1
+texas,plano,Plano,TX,4,17,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/plano/,1
+texas,round-rock,Round Rock,TX,4,18,14,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/round-rock/,1
+texas,sugar-land,Sugar Land,TX,4,17,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/sugar-land/,1
+virginia,newport-news,Newport News,VA,3,13,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/virginia/newport-news/,1
+virginia,richmond,Richmond,VA,6,22,16,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/virginia/richmond/,1
+virginia,virginia-beach,Virginia Beach,VA,5,21,16,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/virginia/virginia-beach/,1
+washington,seattle,Seattle,WA,1,14,13,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/washington/seattle/,1
+washington,spokane,Spokane,WA,4,15,11,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/washington/spokane/,1
+wisconsin,madison,Madison,WI,4,14,10,10+,pool_count_lower,https://www.poolrentalnearme.com/public-pools/wisconsin/madison/,1
+alabama,birmingham,Birmingham,AL,4,11,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/alabama/birmingham/,1
+alabama,mobile,Mobile,AL,4,10,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/alabama/mobile/,1
+alabama,montgomery,Montgomery,AL,4,10,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/alabama/montgomery/,1
+arizona,chandler,Chandler,AZ,3,10,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/chandler/,1
+arizona,gilbert,Gilbert,AZ,1,10,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/gilbert/,1
+arizona,scottsdale,Scottsdale,AZ,3,11,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/scottsdale/,1
+arizona,surprise,Surprise,AZ,4,10,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/surprise/,1
+arizona,tempe,Tempe,AZ,2,6,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/tempe/,1
+california,anaheim,Anaheim,CA,2,7,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/anaheim/,1
+california,bakersfield,Bakersfield,CA,3,10,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/bakersfield/,1
+california,berkeley,Berkeley,CA,2,10,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/berkeley/,1
+california,concord,Concord,CA,1,6,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/concord/,1
+california,elk-grove,Elk Grove,CA,1,7,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/elk-grove/,1
+california,escondido,Escondido,CA,2,6,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/escondido/,1
+california,fullerton,Fullerton,CA,1,8,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/fullerton/,1
+california,long-beach,Long Beach,CA,3,8,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/long-beach/,1
+california,oakland,Oakland,CA,4,9,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/oakland/,1
+california,oceanside,Oceanside,CA,1,9,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/oceanside/,1
+california,palmdale,Palmdale,CA,1,6,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/palmdale/,1
+california,riverside,Riverside,CA,2,10,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/riverside/,1
+california,san-bernardino,San Bernardino,CA,1,5,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/san-bernardino/,1
+california,santa-clara,Santa Clara,CA,3,8,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/santa-clara/,1
+california,santa-clarita,Santa Clarita,CA,2,11,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/santa-clarita/,1
+california,santa-rosa,Santa Rosa,CA,2,6,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/santa-rosa/,1
+california,stockton,Stockton,CA,2,9,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/stockton/,1
+california,sunnyvale,Sunnyvale,CA,1,5,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/sunnyvale/,1
+colorado,arvada,Arvada,CO,4,11,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/arvada/,1
+colorado,aurora,Aurora,CO,36,44,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/aurora/,1
+colorado,lakewood,Lakewood,CO,4,10,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/lakewood/,1
+colorado,thornton,Thornton,CO,4,8,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/thornton/,1
+connecticut,stamford,Stamford,CT,4,11,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/connecticut/stamford/,1
+florida,cape-coral,Cape Coral,FL,4,8,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/cape-coral/,1
+florida,fort-lauderdale,Fort Lauderdale,FL,2,8,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/fort-lauderdale/,1
+florida,fort-myers,Fort Myers,FL,4,8,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/fort-myers/,1
+florida,gainesville,Gainesville,FL,3,11,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/gainesville/,1
+florida,hialeah,Hialeah,FL,8,14,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/hialeah/,1
+florida,hollywood,Hollywood,FL,4,8,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/hollywood/,1
+florida,jacksonville,Jacksonville,FL,35,39,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/jacksonville/,1
+florida,pembroke-pines,Pembroke Pines,FL,3,11,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/pembroke-pines/,1
+florida,port-st-lucie,Port St. Lucie,FL,3,7,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/port-st-lucie/,1
+florida,st-petersburg,St. Petersburg,FL,3,12,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/st-petersburg/,1
+georgia,augusta,Augusta,GA,1,8,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/georgia/augusta/,1
+illinois,chicago,Chicago,IL,51,57,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/illinois/chicago/,1
+indiana,fort-wayne,Fort Wayne,IN,4,12,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/indiana/fort-wayne/,1
+iowa,des-moines,Des Moines,IA,6,10,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/iowa/des-moines/,1
+kansas,olathe,Olathe,KS,2,7,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/kansas/olathe/,1
+kansas,overland-park,Overland Park,KS,3,7,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/kansas/overland-park/,1
+kansas,wichita,Wichita,KS,4,9,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/kansas/wichita/,1
+louisiana,baton-rouge,Baton Rouge,LA,1,5,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/louisiana/baton-rouge/,1
+massachusetts,boston,Boston,MA,1,10,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/massachusetts/boston/,1
+massachusetts,worcester,Worcester,MA,1,8,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/massachusetts/worcester/,1
+michigan,detroit,Detroit,MI,6,13,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/michigan/detroit/,1
+minnesota,minneapolis,Minneapolis,MN,5,9,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/minnesota/minneapolis/,1
+missouri,kansas-city,Kansas City,MO,5,11,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/missouri/kansas-city/,1
+nevada,reno,Reno,NV,5,13,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/nevada/reno/,1
+new-york,brooklyn,Brooklyn,NY,20,28,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/new-york/brooklyn/,1
+new-york,new-york,New York,NY,42,50,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/new-york/new-york/,1
+new-york,queens,Queens,NY,21,26,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/new-york/queens/,1
+north-carolina,charlotte,Charlotte,NC,43,48,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/charlotte/,1
+ohio,akron,Akron,OH,1,5,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/ohio/akron/,1
+ohio,cleveland,Cleveland,OH,13,19,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/ohio/cleveland/,1
+ohio,dayton,Dayton,OH,4,10,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/ohio/dayton/,1
+oklahoma,oklahoma-city,Oklahoma City,OK,6,14,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/oklahoma/oklahoma-city/,1
+south-carolina,charleston,Charleston,SC,1,10,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/south-carolina/charleston/,1
+tennessee,chattanooga,Chattanooga,TN,3,12,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/tennessee/chattanooga/,1
+tennessee,memphis,Memphis,TN,4,12,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/tennessee/memphis/,1
+tennessee,murfreesboro,Murfreesboro,TN,4,8,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/tennessee/murfreesboro/,1
+tennessee,nashville,Nashville,TN,4,12,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/tennessee/nashville/,1
+texas,arlington,Arlington,TX,5,14,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/arlington/,1
+texas,frisco,Frisco,TX,4,10,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/frisco/,1
+texas,houston,Houston,TX,49,53,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/houston/,1
+texas,irving,Irving,TX,5,9,4,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/irving/,1
+texas,laredo,Laredo,TX,3,12,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/laredo/,1
+texas,mckinney,Mckinney,TX,4,13,9,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/mckinney/,1
+virginia,chesapeake,Chesapeake,VA,4,10,6,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/virginia/chesapeake/,1
+virginia,hampton,Hampton,VA,4,11,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/virginia/hampton/,1
+virginia,norfolk,Norfolk,VA,4,12,8,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/virginia/norfolk/,1
+washington,vancouver,Vancouver,WA,4,9,5,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/washington/vancouver/,1
+wisconsin,milwaukee,Milwaukee,WI,5,12,7,4-9,pool_count_lower,https://www.poolrentalnearme.com/public-pools/wisconsin/milwaukee/,1
+arizona,peoria,Peoria,AZ,4,7,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/peoria/,1
+california,chula-vista,Chula Vista,CA,5,8,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/chula-vista/,1
+california,corona,Corona,CA,2,5,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/corona/,1
+california,fontana,Fontana,CA,1,3,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/fontana/,1
+california,fresno,Fresno,CA,4,7,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/fresno/,1
+california,hayward,Hayward,CA,1,4,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/hayward/,1
+california,huntington-beach,Huntington Beach,CA,1,3,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/huntington-beach/,1
+california,los-angeles,Los Angeles,CA,57,60,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/los-angeles/,1
+california,pomona,Pomona,CA,1,3,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/pomona/,1
+california,rancho-cucamonga,Rancho Cucamonga,CA,1,4,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/rancho-cucamonga/,1
+california,roseville,Roseville,CA,1,3,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/roseville/,1
+california,san-diego,San Diego,CA,43,46,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/san-diego/,1
+california,san-francisco,San Francisco,CA,40,42,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/san-francisco/,1
+california,simi-valley,Simi Valley,CA,1,3,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/simi-valley/,1
+california,thousand-oaks,Thousand Oaks,CA,1,3,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/thousand-oaks/,1
+california,walnut-creek,Walnut Creek,CA,1,4,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/walnut-creek/,1
+colorado,broomfield,Broomfield,CO,3,5,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/broomfield/,1
+colorado,centennial,Centennial,CO,4,6,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/centennial/,1
+colorado,littleton,Littleton,CO,4,6,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/littleton/,1
+colorado,westminster,Westminster,CO,3,5,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/westminster/,1
+connecticut,new-haven,New Haven,CT,3,6,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/connecticut/new-haven/,1
+florida,clearwater,Clearwater,FL,4,6,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/clearwater/,1
+florida,coral-springs,Coral Springs,FL,3,5,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/coral-springs/,1
+florida,fort-pierce,Fort Pierce,FL,1,3,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/fort-pierce/,1
+florida,winter-park,Winter Park,FL,3,5,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/florida/winter-park/,1
+idaho,boise,Boise,ID,9,12,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/idaho/boise/,1
+indiana,indianapolis,Indianapolis,IN,29,32,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/indiana/indianapolis/,1
+mississippi,jackson,Jackson,MS,5,7,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/mississippi/jackson/,1
+nevada,las-vegas,Las Vegas,NV,52,55,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/nevada/las-vegas/,1
+nevada,north-las-vegas,North Las Vegas,NV,30,32,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/nevada/north-las-vegas/,1
+ohio,columbus,Columbus,OH,39,41,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/ohio/columbus/,1
+oregon,beaverton,Beaverton,OR,4,6,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/oregon/beaverton/,1
+texas,austin,Austin,TX,45,47,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/austin/,1
+texas,dallas,Dallas,TX,49,51,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/dallas/,1
+texas,fort-worth,Fort Worth,TX,39,41,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/fort-worth/,1
+texas,pflugerville,Pflugerville,TX,3,5,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/pflugerville/,1
+texas,san-antonio,San Antonio,TX,41,44,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/san-antonio/,1
+utah,salt-lake-city,Salt Lake City,UT,3,5,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/utah/salt-lake-city/,1
+utah,west-valley-city,West Valley City,UT,3,6,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/utah/west-valley-city/,1
+virginia,arlington,Arlington,VA,4,7,3,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/virginia/arlington/,1
+washington,bellevue,Bellevue,WA,4,6,2,2-3,pool_count_lower,https://www.poolrentalnearme.com/public-pools/washington/bellevue/,1
+arizona,glendale,Glendale,AZ,6,7,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arizona/glendale/,1
+arkansas,fayetteville,Fayetteville,AR,0,1,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/arkansas/fayetteville/,0
+california,alameda,Alameda,CA,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/alameda/,1
+california,apple-valley,Apple Valley,CA,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/apple-valley/,1
+california,carlsbad,Carlsbad,CA,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/carlsbad/,1
+california,fountain-valley,Fountain Valley,CA,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/fountain-valley/,1
+california,ontario,Ontario,CA,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/ontario/,1
+california,pasadena,Pasadena,CA,2,3,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/pasadena/,1
+california,richmond,Richmond,CA,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/richmond/,1
+california,san-jose,San Jose,CA,34,35,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/san-jose/,1
+california,torrance,Torrance,CA,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/california/torrance/,1
+colorado,parker,Parker,CO,3,4,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/colorado/parker/,1
+indiana,carmel,Carmel,IN,4,5,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/indiana/carmel/,1
+minnesota,edina,Edina,MN,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/minnesota/edina/,1
+north-carolina,chapel-hill,Chapel Hill,NC,3,4,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/chapel-hill/,1
+north-carolina,wake-forest,Wake Forest,NC,3,4,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/north-carolina/wake-forest/,1
+ohio,parma,Parma,OH,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/ohio/parma/,1
+south-carolina,mount-pleasant,Mount Pleasant,SC,1,2,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/south-carolina/mount-pleasant/,1
+tennessee,franklin,Franklin,TN,4,5,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/tennessee/franklin/,1
+texas,allen,Allen,TX,4,5,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/texas/allen/,1
+washington,lynnwood,Lynnwood,WA,3,4,1,1,pool_count_lower,https://www.poolrentalnearme.com/public-pools/washington/lynnwood/,1

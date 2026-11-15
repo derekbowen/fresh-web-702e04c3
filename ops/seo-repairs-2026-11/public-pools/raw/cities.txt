@@ -1,0 +1,444 @@
+alabama^athens^Athens^AL^NULL^1^ee0176
+alabama^birmingham^Birmingham^AL^4^11^3c3a59
+alabama^fairhope^Fairhope^AL^NULL^1^1953c5
+alabama^homewood^Homewood^AL^NULL^2^05a745
+alabama^hoover^Hoover^AL^NULL^2^b3bb51
+alabama^huntsville^Huntsville^AL^6^18^1acbd1
+alabama^jackson^Jackson^AL^NULL^1^0852b1
+alabama^madison^Madison^AL^NULL^1^24b9a9
+alabama^mobile^Mobile^AL^4^10^d1ba34
+alabama^montgomery^Montgomery^AL^4^10^f675af
+alabama^new-market^New Market^AL^NULL^1^f8b08b
+alabama^pike-road^Pike Road^AL^NULL^1^3f06ac
+alabama^trussville^Trussville^AL^NULL^1^650ee9
+alabama^vestavia-hills^Vestavia Hills^AL^NULL^1^5fe250
+arizona^chandler^Chandler^AZ^3^10^4ffa7f
+arizona^gilbert^Gilbert^AZ^1^10^46ca17
+arizona^glendale^Glendale^AZ^6^7^71a653
+arizona^mesa^Mesa^AZ^1^13^642ba3
+arizona^oro-valley^Oro Valley^AZ^NULL^1^478621
+arizona^peoria^Peoria^AZ^4^7^b7633f
+arizona^scottsdale^Scottsdale^AZ^3^11^b146dc
+arizona^surprise^Surprise^AZ^4^10^850e11
+arizona^tempe^Tempe^AZ^2^6^dd007e
+arizona^tucson^Tucson^AZ^3^23^483559
+arkansas^bryant^Bryant^AR^NULL^1^8741b4
+arkansas^cabot^Cabot^AR^NULL^1^f0ac18
+arkansas^fayetteville^Fayetteville^AR^0^1^00f7f9
+arkansas^little-rock^Little Rock^AR^7^17^72f69a
+arkansas^north-little-rock^North Little Rock^AR^NULL^1^c1e6fe
+california^alameda^Alameda^CA^1^2^bf8869
+california^albany^Albany^CA^NULL^1^c140d9
+california^anaheim^Anaheim^CA^2^7^7bb707
+california^antelope^Antelope^CA^NULL^1^6bbd38
+california^apple-valley^Apple Valley^CA^1^2^1a3f18
+california^bakersfield^Bakersfield^CA^3^10^42ef00
+california^bear-valley-springs^Bear Valley Springs^CA^NULL^1^07e967
+california^berkeley^Berkeley^CA^2^10^2597f9
+california^buena-park^Buena Park^CA^NULL^1^ee76ce
+california^camarillo^Camarillo^CA^NULL^1^2752da
+california^carlsbad^Carlsbad^CA^1^2^2a49f5
+california^carson^Carson^CA^NULL^2^baa09a
+california^castaic^Castaic^CA^NULL^1^1825d4
+california^cerritos^Cerritos^CA^NULL^1^7df536
+california^chula-vista^Chula Vista^CA^5^8^eba5b7
+california^colton^Colton^CA^NULL^1^b5245d
+california^concord^Concord^CA^1^6^2e2973
+california^corona^Corona^CA^2^5^66d668
+california^cupertino^Cupertino^CA^NULL^1^5718fa
+california^el-cerrito^El Cerrito^CA^NULL^1^d857b5
+california^elk-grove^Elk Grove^CA^1^7^b83293
+california^emeryville^Emeryville^CA^NULL^1^dc2242
+california^escondido^Escondido^CA^2^6^971616
+california^fontana^Fontana^CA^1^3^2d42a8
+california^fountain-valley^Fountain Valley^CA^1^2^3bb4e8
+california^fremont^Fremont^CA^1^12^a22249
+california^fresno^Fresno^CA^4^7^7bb7cc
+california^fullerton^Fullerton^CA^1^8^b7466e
+california^galt^Galt^CA^NULL^1^5c680a
+california^hawthorne^Hawthorne^CA^NULL^1^168a16
+california^hayward^Hayward^CA^1^4^686b3f
+california^huntington-beach^Huntington Beach^CA^1^3^9e7d8f
+california^irvine^Irvine^CA^2^16^63f052
+california^lakewood^Lakewood^CA^NULL^1^dc7022
+california^long-beach^Long Beach^CA^3^8^6d3e03
+california^los-angeles^Los Angeles^CA^57^60^db2896
+california^manteca^Manteca^CA^NULL^1^004642
+california^martinez^Martinez^CA^NULL^2^a394fc
+california^newark^Newark^CA^NULL^1^a035bc
+california^oakland^Oakland^CA^4^9^843fca
+california^oceanside^Oceanside^CA^1^9^2560a9
+california^ontario^Ontario^CA^1^2^4d20cf
+california^palmdale^Palmdale^CA^1^6^2c49dc
+california^pasadena^Pasadena^CA^2^3^1c5cb2
+california^piedmont^Piedmont^CA^NULL^1^5586f1
+california^pleasant-hill^Pleasant Hill^CA^NULL^2^f79fb2
+california^pomona^Pomona^CA^1^3^52f97b
+california^rancho-cucamonga^Rancho Cucamonga^CA^1^4^9a2cd2
+california^rialto^Rialto^CA^NULL^1^9c914a
+california^richmond^Richmond^CA^1^2^461bb8
+california^riverside^Riverside^CA^2^10^c30e6f
+california^roseville^Roseville^CA^1^3^550dde
+california^sacramento^Sacramento^CA^7^22^fcb8c7
+california^san-bernardino^San Bernardino^CA^1^5^0d080d
+california^san-diego^San Diego^CA^43^46^12b7d8
+california^san-francisco^San Francisco^CA^40^42^dd92d3
+california^san-jose^San Jose^CA^34^35^667577
+california^san-leandro^San Leandro^CA^NULL^1^af360c
+california^san-marcos^San Marcos^CA^NULL^2^58ab28
+california^santa-clara^Santa Clara^CA^3^8^b5e948
+california^santa-clarita^Santa Clarita^CA^2^11^6f0c1d
+california^santa-rosa^Santa Rosa^CA^2^6^d75f2c
+california^seal-beach^Seal Beach^CA^NULL^1^5d31c4
+california^simi-valley^Simi Valley^CA^1^3^2e3fc9
+california^stockton^Stockton^CA^2^9^d98d3b
+california^sunnyvale^Sunnyvale^CA^1^5^714805
+california^thousand-oaks^Thousand Oaks^CA^1^3^1149f3
+california^torrance^Torrance^CA^1^2^3bc386
+california^walnut-creek^Walnut Creek^CA^1^4^6704f2
+california^west-sacramento^West Sacramento^CA^NULL^2^f9a958
+california^westlake-village^Westlake Village^CA^NULL^1^9b3374
+colorado^arvada^Arvada^CO^4^11^961b34
+colorado^aurora^Aurora^CO^36^44^c5d54b
+colorado^broomfield^Broomfield^CO^3^5^fc40ec
+colorado^centennial^Centennial^CO^4^6^7e8e4f
+colorado^colorado-springs^Colorado Springs^CO^2^12^76e5c8
+colorado^commerce-city^Commerce City^CO^NULL^1^6cc5f9
+colorado^denver^Denver^CO^1^11^51ec52
+colorado^fort-carson^Fort Carson^CO^NULL^1^e7a3ec
+colorado^fort-collins^Fort Collins^CO^1^12^f74281
+colorado^golden^Golden^CO^NULL^2^b31b5d
+colorado^lakewood^Lakewood^CO^4^10^71631d
+colorado^littleton^Littleton^CO^4^6^fd45ef
+colorado^lone-tree^Lone Tree^CO^NULL^1^487692
+colorado^loveland^Loveland^CO^NULL^1^f2ac2c
+colorado^morrison^Morrison^CO^NULL^1^a5f0f1
+colorado^northglenn^Northglenn^CO^NULL^2^a94a5f
+colorado^parker^Parker^CO^3^4^96d953
+colorado^thornton^Thornton^CO^4^8^18a115
+colorado^westminster^Westminster^CO^3^5^de6ce3
+colorado^wheat-ridge^Wheat Ridge^CO^NULL^2^4f785e
+colorado^woodland-park^Woodland Park^CO^NULL^1^63b71f
+connecticut^cheshire^Cheshire^CT^NULL^1^86b53d
+connecticut^milford^Milford^CT^NULL^1^b10d04
+connecticut^new-canaan^New Canaan^CT^NULL^1^d314f8
+connecticut^new-haven^New Haven^CT^3^6^385a70
+connecticut^north-haven^North Haven^CT^NULL^1^bc1af8
+connecticut^orange^Orange^CT^NULL^1^39e34e
+connecticut^stamford^Stamford^CT^4^11^330dc2
+connecticut^woodbridge^Woodbridge^CT^NULL^1^b9804c
+delaware^dover^Dover^DE^0^0^96f0c8
+florida^bokeelia^Bokeelia^FL^NULL^1^9249ed
+florida^cape-coral^Cape Coral^FL^4^8^959243
+florida^clearwater^Clearwater^FL^4^6^3d4a06
+florida^coral-gables^Coral Gables^FL^NULL^1^524e13
+florida^coral-springs^Coral Springs^FL^3^5^c0d2ae
+florida^davie^Davie^FL^NULL^1^af2e5c
+florida^fort-lauderdale^Fort Lauderdale^FL^2^8^0783da
+florida^fort-myers^Fort Myers^FL^4^8^11c636
+florida^fort-pierce^Fort Pierce^FL^1^3^c692c9
+florida^gainesville^Gainesville^FL^3^11^fc36fa
+florida^hallandale-beach^Hallandale Beach^FL^NULL^1^b58d80
+florida^hialeah^Hialeah^FL^8^14^821a2c
+florida^hollywood^Hollywood^FL^4^8^3fe6ef
+florida^jacksonville^Jacksonville^FL^35^39^7ba529
+florida^lauderdale-lakes^Lauderdale Lakes^FL^NULL^1^906edd
+florida^lauderhill^Lauderhill^FL^NULL^1^726104
+florida^margate^Margate^FL^NULL^1^7a5236
+florida^miami-shores^Miami Shores^FL^NULL^1^da2e29
+florida^miami-springs^Miami Springs^FL^NULL^2^8ca9ae
+florida^miami^Miami^FL^5^16^fd7e70
+florida^miramar^Miramar^FL^NULL^2^f0eab6
+florida^new-port-richey^New Port Richey^FL^NULL^1^ef4aaf
+florida^north-fort-myers^North Fort Myers^FL^NULL^1^4131cf
+florida^north-lauderdale^North Lauderdale^FL^NULL^1^3312d3
+florida^north-miami-beach^North Miami Beach^FL^NULL^1^8e7677
+florida^north-miami^North Miami^FL^NULL^1^383567
+florida^orlando^Orlando^FL^2^14^9a88d2
+florida^pembroke-pines^Pembroke Pines^FL^3^11^6cdbfc
+florida^pinellas-park^Pinellas Park^FL^NULL^1^d3ffee
+florida^plantation^Plantation^FL^NULL^1^4cbf8b
+florida^port-st-lucie^Port St. Lucie^FL^3^7^5d4e0c
+florida^south-miami^South Miami^FL^NULL^1^1dab03
+florida^southwest-ranches^Southwest Ranches^FL^NULL^1^9fe3fb
+florida^st-pete-beach^St. Pete Beach^FL^NULL^1^ae4dd4
+florida^st-petersburg^St. Petersburg^FL^3^12^b870e6
+florida^stuart^Stuart^FL^NULL^1^8dbadc
+florida^tallahassee^Tallahassee^FL^3^13^860d5e
+florida^tamarac^Tamarac^FL^NULL^1^2447c0
+florida^tampa^Tampa^FL^3^14^cb5819
+florida^winter-park^Winter Park^FL^3^5^748e23
+georgia^augusta^Augusta^GA^1^8^69d843
+georgia^evans^Evans^GA^NULL^2^e28e61
+georgia^gainesville^Gainesville^GA^NULL^1^25dd63
+georgia^savannah^Savannah^GA^1^12^bf0b80
+hawaii^hilo^Hilo^HI^0^0^5ad6b4
+hawaii^honolulu^Honolulu^HI^6^18^fd477e
+hawaii^kahului^Kahului^HI^0^0^34117c
+hawaii^kailua^Kailua^HI^NULL^1^eadf19
+hawaii^kaneohe^Kaneohe^HI^NULL^1^627a4a
+hawaii^pearl-city^Pearl City^HI^NULL^1^7e4d70
+hawaii^waipahu^Waipahu^HI^NULL^1^a6ba22
+idaho^boise^Boise^ID^9^12^6d51a9
+idaho^idaho-falls^Idaho Falls^ID^0^0^77c873
+idaho^meridian^Meridian^ID^NULL^1^523adb
+illinois^chicago^Chicago^IL^51^57^d83206
+indiana^carmel^Carmel^IN^4^5^c3c2ac
+indiana^clarksville^Clarksville^IN^NULL^1^af8185
+indiana^danville^Danville^IN^NULL^1^2291a7
+indiana^fort-wayne^Fort Wayne^IN^4^12^1d92de
+indiana^indianapolis^Indianapolis^IN^29^32^9923c0
+indiana^jeffersonville^Jeffersonville^IN^NULL^1^0ea2e2
+indiana^new-albany^New Albany^IN^NULL^1^c1449c
+indiana^new-haven^New Haven^IN^NULL^1^ee7813
+indiana^plainfield^Plainfield^IN^NULL^1^82ee37
+iowa^adel^Adel^IA^NULL^1^beddd6
+iowa^ankeny^Ankeny^IA^NULL^2^73152e
+iowa^carlisle^Carlisle^IA^NULL^1^c98794
+iowa^clive^Clive^IA^NULL^1^e0470a
+iowa^council-bluffs^Council Bluffs^IA^NULL^1^ff8de0
+iowa^des-moines^Des Moines^IA^6^10^7f8702
+iowa^indianola^Indianola^IA^NULL^1^5938ba
+iowa^norwalk^Norwalk^IA^NULL^1^5cd1de
+iowa^west-des-moines^West Des Moines^IA^NULL^2^2a8f2a
+kansas^augusta^Augusta^KS^NULL^1^c6b015
+kansas^bel-aire^Bel Aire^KS^NULL^1^f8af53
+kansas^fairway^Fairway^KS^NULL^1^fac1a5
+kansas^gardner^Gardner^KS^NULL^2^90a709
+kansas^goddard^Goddard^KS^NULL^1^f78953
+kansas^haysville^Haysville^KS^NULL^1^4b1e53
+kansas^kansas-city^Kansas City^KS^NULL^1^53c51c
+kansas^leawood^Leawood^KS^NULL^2^406524
+kansas^lenexa^Lenexa^KS^NULL^4^e30bb4
+kansas^mission^Mission^KS^NULL^1^ef6883
+kansas^olathe^Olathe^KS^2^7^d996dd
+kansas^overland-park^Overland Park^KS^3^7^8c895c
+kansas^prairie-village^Prairie Village^KS^NULL^1^329185
+kansas^roeland-park^Roeland Park^KS^NULL^2^2c91e2
+kansas^shawnee^Shawnee^KS^NULL^2^2a616a
+kansas^spring-hill^Spring Hill^KS^NULL^1^29aac2
+kansas^valley-center^Valley Center^KS^NULL^1^80b9bf
+kansas^wichita^Wichita^KS^4^9^197c28
+kentucky^douglass-hills^Douglass Hills^KY^NULL^1^51c73b
+kentucky^florence^Florence^KY^NULL^1^b0586a
+kentucky^georgetown^Georgetown^KY^NULL^1^ee519f
+kentucky^la-grange^La Grange^KY^NULL^1^47f72c
+kentucky^lexington^Lexington^KY^5^18^7700a1
+kentucky^louisville^Louisville^KY^5^17^fe0274
+kentucky^nicholasville^Nicholasville^KY^NULL^1^bc84b3
+kentucky^richmond^Richmond^KY^NULL^1^9722a4
+louisiana^baton-rouge^Baton Rouge^LA^1^5^2f2c60
+louisiana^bossier-city^Bossier City^LA^NULL^4^6b32a2
+louisiana^new-orleans^New Orleans^LA^5^18^3233fb
+louisiana^shreveport^Shreveport^LA^4^16^8f64b3
+maryland^arbutus^Arbutus^MD^NULL^1^c052f8
+maryland^baltimore^Baltimore^MD^1^14^bf3fb8
+maryland^davidsonville^Davidsonville^MD^0^0^1eea53
+maryland^glen-burnie^Glen Burnie^MD^NULL^1^aaa47e
+maryland^lochearn^Lochearn^MD^NULL^1^2e1bf9
+maryland^woodlawn^Woodlawn^MD^NULL^1^0f3fb6
+massachusetts^boston^Boston^MA^1^10^ba4fd6
+massachusetts^cambridge^Cambridge^MA^NULL^2^d35225
+massachusetts^chelsea^Chelsea^MA^NULL^1^819822
+massachusetts^everett^Everett^MA^NULL^1^f2c88f
+massachusetts^holden^Holden^MA^NULL^1^c79e3b
+massachusetts^medford^Medford^MA^NULL^2^0879d1
+massachusetts^somerville^Somerville^MA^NULL^1^0622cc
+massachusetts^waltham^Waltham^MA^NULL^1^1edb1a
+massachusetts^worcester^Worcester^MA^1^8^9d1fbd
+michigan^ann-arbor^Ann Arbor^MI^1^12^1bbab8
+michigan^belleville^Belleville^MI^NULL^1^92d77e
+michigan^dearborn^Dearborn^MI^NULL^2^a7f7b2
+michigan^detroit^Detroit^MI^6^13^cdb60e
+michigan^fraser^Fraser^MI^NULL^1^799c19
+michigan^grand-rapids^Grand Rapids^MI^1^11^2c8106
+michigan^holland^Holland^MI^NULL^1^9ceb03
+michigan^macomb^Macomb^MI^NULL^1^fef3d9
+michigan^madison-heights^Madison Heights^MI^NULL^1^969902
+michigan^troy^Troy^MI^NULL^1^01dfd1
+michigan^wyoming^Wyoming^MI^NULL^1^d3c2b3
+michigan^ypsilanti^Ypsilanti^MI^NULL^3^e30fc1
+minnesota^anoka^Anoka^MN^NULL^1^121895
+minnesota^bloomington^Bloomington^MN^NULL^1^d03c78
+minnesota^coon-rapids^Coon Rapids^MN^NULL^1^2efb6a
+minnesota^crystal^Crystal^MN^NULL^1^cc7f8c
+minnesota^eagan^Eagan^MN^NULL^1^a58ef7
+minnesota^edina^Edina^MN^1^2^1c68ae
+minnesota^minneapolis^Minneapolis^MN^5^9^a52644
+minnesota^new-hope^New Hope^MN^NULL^1^8ea309
+minnesota^saint-paul^Saint Paul^MN^NULL^1^988387
+minnesota^st-louis-park^St. Louis Park^MN^NULL^1^815945
+mississippi^brandon^Brandon^MS^NULL^1^be9468
+mississippi^jackson^Jackson^MS^5^7^0946f3
+mississippi^pearl^Pearl^MS^NULL^1^ef561c
+missouri^kansas-city^Kansas City^MO^5^11^ef8838
+missouri^savannah^Savannah^MO^NULL^1^369ff2
+nebraska^omaha^Omaha^NE^5^23^97535a
+nebraska^papillion^Papillion^NE^NULL^1^c05790
+nevada^henderson^Henderson^NV^1^13^ab5072
+nevada^las-vegas^Las Vegas^NV^52^55^495de6
+nevada^north-las-vegas^North Las Vegas^NV^30^32^2693ce
+nevada^reno^Reno^NV^5^13^40ba0c
+nevada^sun-valley^Sun Valley^NV^NULL^1^de8fda
+new-mexico^albuquerque^Albuquerque^NM^5^17^bf14fb
+new-mexico^rio-rancho^Rio Rancho^NM^NULL^1^352011
+new-york^bedford^Bedford^NY^NULL^1^337695
+new-york^brooklyn^Brooklyn^NY^20^28^296f57
+new-york^new-york^New York^NY^42^50^f3034f
+new-york^queens^Queens^NY^21^26^63a3ab
+new-york^stamford^Stamford^NY^NULL^1^2da191
+new-york^staten-island^Staten Island^NY^5^16^2a34b8
+new-york^the-bronx^The Bronx^NY^NULL^9^9fe076
+new-york^white-plains^White Plains^NY^NULL^1^11fedb
+north-carolina^cary^Cary^NC^4^17^5d5310
+north-carolina^chapel-hill^Chapel Hill^NC^3^4^acdd34
+north-carolina^charlotte^Charlotte^NC^43^48^cb1a86
+north-carolina^durham^Durham^NC^1^12^70008d
+north-carolina^fayetteville^Fayetteville^NC^3^16^ac8590
+north-carolina^gibsonville^Gibsonville^NC^NULL^1^8c3bc9
+north-carolina^greensboro^Greensboro^NC^8^20^7d8c95
+north-carolina^high-point^High Point^NC^NULL^2^a72862
+north-carolina^hillsborough^Hillsborough^NC^NULL^1^ec1e91
+north-carolina^huntersville^Huntersville^NC^NULL^1^aa2b46
+north-carolina^jamestown^Jamestown^NC^NULL^1^807679
+north-carolina^raeford^Raeford^NC^NULL^1^6450f6
+north-carolina^raleigh^Raleigh^NC^1^16^a0782a
+north-carolina^wake-forest^Wake Forest^NC^3^4^c85ead
+north-carolina^wilmington^Wilmington^NC^4^17^6b098d
+north-carolina^winston-salem^Winston-Salem^NC^2^17^a13337
+ohio^akron^Akron^OH^1^5^a77b06
+ohio^beachwood^Beachwood^OH^NULL^1^c6fc5b
+ohio^beavercreek^Beavercreek^OH^NULL^1^b1209b
+ohio^cincinnati^Cincinnati^OH^1^14^6d03e9
+ohio^cleveland^Cleveland^OH^13^19^d32fa6
+ohio^columbus^Columbus^OH^39^41^d5f192
+ohio^cuyahoga-falls^Cuyahoga Falls^OH^NULL^1^b45b3b
+ohio^dayton^Dayton^OH^4^10^33f797
+ohio^eastlake^Eastlake^OH^NULL^1^f9ca80
+ohio^fairfield^Fairfield^OH^NULL^1^0843e3
+ohio^grand-rapids^Grand Rapids^OH^NULL^1^9a3ac6
+ohio^grove-city^Grove City^OH^NULL^1^43cf60
+ohio^highland-heights^Highland Heights^OH^NULL^1^fc640d
+ohio^hinckley^Hinckley^OH^NULL^1^0f45dd
+ohio^independence^Independence^OH^NULL^1^642c7e
+ohio^kettering^Kettering^OH^NULL^2^ea4569
+ohio^lakewood^Lakewood^OH^NULL^1^38b436
+ohio^montgomery^Montgomery^OH^NULL^1^0ae64e
+ohio^mount-healthy^Mount Healthy^OH^NULL^1^e2170e
+ohio^norwood^Norwood^OH^NULL^1^504801
+ohio^parma-heights^Parma Heights^OH^NULL^1^fd6788
+ohio^parma^Parma^OH^1^2^f0d7ca
+ohio^tallmadge^Tallmadge^OH^NULL^1^a429d6
+ohio^troy^Troy^OH^NULL^1^847236
+ohio^uniontown^Uniontown^OH^NULL^1^d8b06c
+ohio^upper-arlington^Upper Arlington^OH^NULL^1^9e62a1
+ohio^vandalia^Vandalia^OH^NULL^1^c8702d
+ohio^west-carrollton^West Carrollton^OH^NULL^1^e1b0ef
+ohio^westlake^Westlake^OH^NULL^1^886c40
+oklahoma^bethany^Bethany^OK^NULL^2^6adca4
+oklahoma^del-city^Del City^OK^NULL^1^7ad0de
+oklahoma^miami^Miami^OK^NULL^1^6bdf59
+oklahoma^midwest-city^Midwest City^OK^NULL^1^0dfd7d
+oklahoma^moore^Moore^OK^NULL^1^a78d84
+oklahoma^mustang^Mustang^OK^NULL^1^da1c4f
+oklahoma^oklahoma-city^Oklahoma City^OK^6^14^9966db
+oklahoma^tulsa^Tulsa^OK^0^0^b1650d
+oklahoma^yukon^Yukon^OK^NULL^2^868647
+oregon^beaverton^Beaverton^OR^4^6^d4610d
+oregon^milwaukie^Milwaukie^OR^NULL^1^09b4eb
+oregon^oregon-city^Oregon City^OR^NULL^1^a1bee2
+oregon^portland^Portland^OR^2^12^b1bca8
+pennsylvania^bensalem-township^Bensalem Township^PA^NULL^1^d05266
+pennsylvania^bethel-park^Bethel Park^PA^NULL^1^8b9420
+pennsylvania^carnegie^Carnegie^PA^NULL^1^ef55e0
+pennsylvania^gibsonia^Gibsonia^PA^NULL^1^0bd0e3
+pennsylvania^mckees-rocks^McKees Rocks^PA^NULL^1^7f18f0
+pennsylvania^mount-lebanon-township^Mount Lebanon Township^PA^NULL^1^efed1a
+pennsylvania^philadelphia^Philadelphia^PA^37^47^b7e69d
+pennsylvania^pittsburgh^Pittsburgh^PA^2^15^008d04
+pennsylvania^plum^Plum^PA^NULL^1^74ea01
+pennsylvania^west-homestead^West Homestead^PA^NULL^1^387e6a
+south-carolina^charleston^Charleston^SC^1^10^ae5e25
+south-carolina^columbia^Columbia^SC^1^11^b5b6ad
+south-carolina^hollywood^Hollywood^SC^NULL^1^d33c8a
+south-carolina^mount-pleasant^Mount Pleasant^SC^1^2^db8e1c
+south-carolina^north-charleston^North Charleston^SC^NULL^3^20f170
+south-carolina^summerville^Summerville^SC^NULL^1^b2b1cc
+tennessee^brentwood^Brentwood^TN^NULL^1^866402
+tennessee^chattanooga^Chattanooga^TN^3^12^90fe28
+tennessee^fayetteville^Fayetteville^TN^NULL^1^0487c6
+tennessee^franklin^Franklin^TN^4^5^0f6628
+tennessee^goodlettsville^Goodlettsville^TN^NULL^1^466659
+tennessee^knoxville^Knoxville^TN^4^20^74055a
+tennessee^memphis^Memphis^TN^4^12^0b58c4
+tennessee^murfreesboro^Murfreesboro^TN^4^8^283ab3
+tennessee^nashville^Nashville^TN^4^12^f46167
+tennessee^red-bank^Red Bank^TN^NULL^1^4dada0
+texas^allen^Allen^TX^4^5^eca434
+texas^aransas-pass^Aransas Pass^TX^NULL^1^895e32
+texas^arlington^Arlington^TX^5^14^64f209
+texas^austin^Austin^TX^45^47^d92759
+texas^canutillo^Canutillo^TX^NULL^1^67a961
+texas^carrollton^Carrollton^TX^NULL^1^b47a22
+texas^corpus-christi^Corpus Christi^TX^1^12^269e5b
+texas^dallas^Dallas^TX^49^51^06578e
+texas^dripping-springs^Dripping Springs^TX^NULL^1^8d6d87
+texas^el-paso^El Paso^TX^2^20^9ba773
+texas^euless^Euless^TX^NULL^1^b13269
+texas^fort-worth^Fort Worth^TX^39^41^f8d6a9
+texas^friendswood^Friendswood^TX^NULL^1^74a53a
+texas^frisco^Frisco^TX^4^10^aba374
+texas^gainesville^Gainesville^TX^NULL^1^1de275
+texas^grand-prairie^Grand Prairie^TX^NULL^2^d0ea8b
+texas^houston^Houston^TX^49^53^f75374
+texas^irving^Irving^TX^5^9^76e2dd
+texas^la-porte^La Porte^TX^NULL^1^3c654f
+texas^laredo^Laredo^TX^3^12^78538c
+texas^mckinney^Mckinney^TX^4^13^558ab3
+texas^meadows-place^Meadows Place^TX^NULL^1^fa616c
+texas^pearland^Pearland^TX^4^15^abcf97
+texas^pflugerville^Pflugerville^TX^3^5^a74327
+texas^plano^Plano^TX^4^17^cbbc87
+texas^port-aransas^Port Aransas^TX^NULL^1^0e3081
+texas^portland^Portland^TX^NULL^1^4a628d
+texas^round-rock^Round Rock^TX^4^18^b59672
+texas^san-antonio^San Antonio^TX^41^44^24d7d5
+texas^stafford^Stafford^TX^NULL^1^2ce066
+texas^sugar-land^Sugar Land^TX^4^17^f2304e
+texas^the-colony^The Colony^TX^NULL^1^1dee1a
+texas^the-woodlands^The Woodlands^TX^0^0^fa6d08
+utah^magna^Magna^UT^NULL^1^14edc1
+utah^salt-lake-city^Salt Lake City^UT^3^5^1713ba
+utah^taylorsville^Taylorsville^UT^NULL^2^a56062
+utah^west-valley-city^West Valley City^UT^3^6^e1c459
+virginia^alexandria^Alexandria^VA^NULL^3^9721bb
+virginia^arlington^Arlington^VA^4^7^34101a
+virginia^ashland^Ashland^VA^NULL^1^02110a
+virginia^chesapeake^Chesapeake^VA^4^10^aa8192
+virginia^falls-church^Falls Church^VA^NULL^1^2591f9
+virginia^hampton^Hampton^VA^4^11^2efddb
+virginia^newport-news^Newport News^VA^3^13^43c945
+virginia^norfolk^Norfolk^VA^4^12^4803e4
+virginia^poquoson^Poquoson^VA^NULL^1^662cb1
+virginia^richmond^Richmond^VA^6^22^036b75
+virginia^suffolk^Suffolk^VA^NULL^1^239a26
+virginia^virginia-beach^Virginia Beach^VA^5^21^8c4a49
+virginia^yorktown^Yorktown^VA^NULL^3^4d879e
+washington^bellevue^Bellevue^WA^4^6^f99983
+washington^lynnwood^Lynnwood^WA^3^4^4e5969
+washington^seattle^Seattle^WA^1^14^f2cc1b
+washington^snohomish^Snohomish^WA^NULL^1^d3ae39
+washington^spokane-valley^Spokane Valley^WA^NULL^3^3ce096
+washington^spokane^Spokane^WA^4^15^a50401
+washington^tukwila^Tukwila^WA^NULL^1^953972
+washington^vancouver^Vancouver^WA^4^9^518392
+wisconsin^brookfield^Brookfield^WI^NULL^1^78df72
+wisconsin^cudahy^Cudahy^WI^NULL^1^330256
+wisconsin^elm-grove^Elm Grove^WI^NULL^1^ad6911
+wisconsin^madison^Madison^WI^4^14^4ab429
+wisconsin^middleton^Middleton^WI^NULL^2^023ed0
+wisconsin^milwaukee^Milwaukee^WI^5^12^b9c9c5
+wisconsin^oregon^Oregon^WI^NULL^1^5d4299
+wisconsin^sun-prairie^Sun Prairie^WI^NULL^1^981dd5
+wisconsin^verona^Verona^WI^NULL^2^649ed2
+wisconsin^wauwatosa^Wauwatosa^WI^NULL^1^c41753
