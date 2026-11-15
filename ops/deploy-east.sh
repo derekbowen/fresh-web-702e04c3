@@ -18,8 +18,21 @@
 #   8. only now write .deployed-sha               -> it is an attestation
 #   9. check:production-drift as the closing gate
 #
-# Any failure from step 5 onward restores the previous dist/ and restarts, so an
+# Any failure from step 2 onward restores the previous dist/ and restarts, so an
 # abort leaves production on the last verified build.
+#
+# EAST-only files. EAST carries a few files that exist only on the box and are
+# never shipped from a repo. They may be dirty only when the pin file
+# ($EAST_ONLY_SHA256, default <repo>.east-only.sha256 NEXT TO the repo, outside
+# the tree) lists them as "<sha256>  <path>" lines (sha256sum format) AND each
+# one's current sha256 equals its pin. Every pinned file must be dirty, every
+# dirty file must be pinned, and the build stamp must list exactly that set.
+# Without a pin file the rule is the old one: any dirty source file aborts.
+#
+# NODE_OPTIONS from the caller applies to the typecheck and the build only (EAST
+# needs --max-old-space-size=3072; that heap does not fit every box, so it is not
+# hard-coded). It is unset for everything else, so `pm2 restart --update-env`
+# never copies a build heap into the live process.
 #
 # Usage:  sudo -u ubuntu ops/deploy-east.sh
 #         ROLLBACK=1 ops/deploy-east.sh      # restore the previous dist and exit
@@ -32,6 +45,9 @@ PM2="sudo -u ubuntu PM2_HOME=/home/ubuntu/.pm2 pm2"
 GIT="git -c safe.directory=$REPO -C $REPO"
 STAMP="$REPO/dist/client/fw-assets/__build.json"
 PREV="$REPO/dist-prev-deploy"
+PINS="${EAST_ONLY_SHA256:-$(dirname "$REPO")/$(basename "$REPO").east-only.sha256}"
+BUILD_NODE_OPTIONS="${NODE_OPTIONS:-}"
+unset NODE_OPTIONS
 
 cd "$REPO"
 say() { printf '\n=== %s\n' "$*"; }
@@ -52,16 +68,66 @@ if [ "${ROLLBACK:-}" = "1" ]; then
   exit 0
 fi
 
+# ---- 0. EAST-only pins (optional; see the header) ----------------------------
+PINNED=""                     # "<sha256>  <path>" lines, validated
+if [ -e "$PINS" ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in ''|'#'*) continue ;; esac
+    if ! printf '%s\n' "$line" | grep -qE '^[0-9a-f]{64}  [A-Za-z0-9_][A-Za-z0-9_./@+-]*$'; then
+      die "malformed line in $PINS (want '<sha256>  <relative path>'): $line"
+    fi
+    case "/${line:66}/" in */../*|*/./*|*//*) die "path in $PINS must be plain and relative: ${line:66}" ;; esac
+    if printf '%s' "$PINNED" | cut -c67- | grep -qxF -- "${line:66}"; then die "duplicate path in $PINS: ${line:66}"; fi
+    PINNED="$PINNED$line"$'\n'
+  done < "$PINS"
+fi
+# Prints each pinned file whose sha256 is not its pin (or that is missing); fails if any.
+verify_pins() {
+  local bad=0 want p have
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    want="${line:0:64}"; p="${line:66}"
+    have=$(sha256sum -- "$REPO/$p" 2>/dev/null | cut -c1-64 || true)
+    if [ "$have" != "$want" ]; then echo "  pinned $p: sha256 ${have:-missing} != pin $want"; bad=1; fi
+  done <<< "$PINNED"
+  return $bad
+}
+
 # ---- 1. clean tree ---------------------------------------------------------
 say "1. working tree"
 DIRTY=$($GIT status --porcelain | grep -vE '(^.. (dist|node_modules|\.tanstack|dist-server-bak|dist\.bak)/|\.bak|\.v2bak|\.log$|\.deployed-sha$|\.env|dump\.pm2)' || true)
-if [ -n "$DIRTY" ]; then
-  echo "$DIRTY"
+TOLERATED=""                  # dirty paths that are pinned AND match their pin
+UNTOLERATED=""
+while IFS= read -r line; do
+  [ -n "$line" ] || continue
+  p="${line:3}"
+  pin=$(printf '%s' "$PINNED" | awk -v p="$p" 'substr($0,67)==p {print substr($0,1,64)}')
+  have=""
+  if [ -n "$pin" ] && [ -f "$REPO/$p" ]; then have=$(sha256sum -- "$REPO/$p" | cut -c1-64); fi
+  if [ -n "$pin" ] && [ "$have" = "$pin" ]; then
+    TOLERATED="$TOLERATED$p"$'\n'
+  else
+    UNTOLERATED="$UNTOLERATED$line${pin:+   (pinned, but sha256 ${have:-missing} != pin)}"$'\n'
+  fi
+done <<< "$DIRTY"
+if [ -n "$UNTOLERATED" ]; then
+  printf '%s' "$UNTOLERATED"
   die "uncommitted source changes. Commit them first — a deploy must have a SHA that describes what it ships."
+fi
+TOLERATED=$(printf '%s' "$TOLERATED" | LC_ALL=C sort)
+N_TOL=$(printf '%s' "$TOLERATED" | grep -c . || true)
+N_PIN=$(printf '%s' "$PINNED" | grep -c . || true)
+if [ "$N_TOL" != "$N_PIN" ]; then
+  printf '%s' "$PINNED" | cut -c67- | LC_ALL=C sort | LC_ALL=C comm -23 - <(printf '%s\n' "$TOLERATED") | sed 's/^/  pinned but not dirty: /'
+  die "$PINS pins $N_PIN file(s) but only $N_TOL are dirty and match — the pin file is stale"
+fi
+if [ "$N_TOL" -gt 0 ]; then
+  export TOLERATED_DIRTY_FILES=$(printf '%s' "$TOLERATED" | paste -sd, -)
+  printf '%s\n' "$TOLERATED" | sed 's/^/  tolerated (pinned EAST-only, sha256 matches): /'
 fi
 HEAD=$($GIT rev-parse HEAD)
 TREE=$($GIT rev-parse 'HEAD^{tree}')
-echo "clean at $HEAD (tree $TREE)"
+echo "clean at $HEAD (tree $TREE)${TOLERATED:+ + $N_TOL pinned EAST-only file(s)}"
 
 # ---- 1b. typecheck ---------------------------------------------------------
 # `npm run build` is `vite build`: esbuild strips types and never checks them.
@@ -69,21 +135,28 @@ echo "clean at $HEAD (tree $TREE)"
 # homepage threw ReferenceError on every render while still returning 200 — so
 # every downstream gate passed too. This runs before the build on purpose.
 say "1b. typecheck"
-npm run --silent check:types || die "typecheck failed — fix it before building"
+echo "build NODE_OPTIONS='$BUILD_NODE_OPTIONS'"
+NODE_OPTIONS="$BUILD_NODE_OPTIONS" npm run --silent check:types || die "typecheck failed — fix it before building"
 
 # ---- 2. build --------------------------------------------------------------
 say "2. build"
 [ -d "$REPO/dist" ] && { rm -rf "$PREV"; cp -a "$REPO/dist" "$PREV"; echo "previous dist/ saved to $PREV"; }
-npm run build
+NODE_OPTIONS="$BUILD_NODE_OPTIONS" npm run build || { restore_dist; die "build failed"; }
 
 # ---- 3. the stamp must be honest -------------------------------------------
 say "3. build stamp"
 [ -f "$STAMP" ] || { restore_dist; die "no $STAMP — postbuild did not run"; }
 S_SHA=$(node -e "process.stdout.write(require('$STAMP').sha)")
 S_DIRTY=$(node -e "process.stdout.write(String(require('$STAMP').dirty))")
+S_FILES=$(node -e "process.stdout.write((require('$STAMP').dirtyFiles||[]).slice().sort().join('\n'))")
 echo "stamp sha=$S_SHA dirty=$S_DIRTY"
 [ "$S_SHA" = "$HEAD" ] || { restore_dist; die "stamp $S_SHA != HEAD $HEAD"; }
-[ "$S_DIRTY" = "0" ]   || { restore_dist; die "stamp reports $S_DIRTY dirty source file(s)"; }
+# dirty must be exactly the tolerated set: 0 without a pin file, as before.
+if [ "$S_DIRTY" != "$N_TOL" ] || [ "$S_FILES" != "$TOLERATED" ]; then
+  printf '%s\n' "$S_FILES" | sed '/^$/d; s/^/  stamp dirty: /'
+  restore_dist; die "stamp reports $S_DIRTY dirty source file(s); exactly $N_TOL pinned EAST-only file(s) are allowed"
+fi
+verify_pins || { restore_dist; die "a pinned EAST-only file changed during the build"; }
 
 # ---- 4. smoke on a spare port ----------------------------------------------
 say "4. smoke on :$SMOKE_PORT"
@@ -171,11 +244,13 @@ esac
 
 # ---- 8. attest -------------------------------------------------------------
 say "8. record the verified deploy"
+verify_pins || { restore_dist; die "a pinned EAST-only file changed during the deploy"; }
 cat > "$REPO/.deployed-sha" <<JSON
 {
   "sha": "$HEAD",
   "tree": "$TREE",
   "verify": "pass",
+  "eastOnlyFiles": [$(printf '%s' "$TOLERATED" | sed 's/.*/"&"/' | paste -sd, -)],
   "deployedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "deployedBy": "$(whoami)@$(hostname)",
   "base": "$BASE"
