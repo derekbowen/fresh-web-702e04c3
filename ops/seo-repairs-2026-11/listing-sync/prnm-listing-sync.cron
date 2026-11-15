@@ -1,0 +1,3 @@
+# PRNM pSEO inventory refresh — updates public.synced_listings from Sharetribe.
+# Every 15 minutes. flock -n: a tick that finds the previous run still going exits.
+*/15 * * * * /usr/bin/flock -n /home/ubuntu/locks/prnm-listing-sync.lock /home/ubuntu/bin/prnm-listing-sync.sh >> /home/ubuntu/logs/listing-sync.log 2>&1
