@@ -95,4 +95,6 @@ if (EXPECTED) {
   console.log(`  expected   : (EXPECTED_SHA unset — identity checked, equality not asserted)`);
 }
 
-console.log("PASS — production reports a clean, traceable build SHA.");
+console.log(TOLERATED.length
+  ? "PASS — production reports a traceable build SHA; its only dirty files are the pinned EAST-only set."
+  : "PASS — production reports a clean, traceable build SHA.");
