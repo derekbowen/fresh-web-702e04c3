@@ -12,6 +12,7 @@ import {
 import { getInternalLinkTargets } from "@/server/internal-links.functions";
 import type { LinkTarget } from "@/components/auto-linked-content";
 import { log404 } from "@/server/content-404-log.functions";
+import { ReadUnavailableError } from "@/lib/failed-read";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
   buildMeta,
@@ -45,6 +46,11 @@ export const Route = createFileRoute("/p/es/$slug")({
   beforeLoad: async ({ params }) => {
     const compositeSlug = `es/${params.slug}`;
     const result = await lookupContentPage({ data: { slug: compositeSlug } });
+    if (result.kind === "unavailable") {
+      // Failed read, not a missing page: 503 on the server (src/start.ts),
+      // errorComponent with Retry on the client. No 404, no log404.
+      throw new ReadUnavailableError("content page lookup");
+    }
     if (result.kind === "redirect") {
       if (result.redirectPath?.startsWith("/")) {
         throw redirect({ href: result.redirectPath, statusCode: 301, replace: true });

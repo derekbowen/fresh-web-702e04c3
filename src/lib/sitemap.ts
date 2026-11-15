@@ -10,6 +10,8 @@
  * - No <priority>, no <changefreq> (Google ignores both)
  */
 
+import { guardedRead, unavailableResponse } from "./failed-read.ts";
+
 // Capped at 1000 to match the Supabase/PostgREST default max-rows response
 // limit. Going higher silently truncates sub-sitemaps to 1000 URLs and
 // the parent index never emits ?page=N because it thinks one page covers
@@ -129,6 +131,16 @@ export function sitemapResponse(xml: string, init?: ResponseInit): Response {
 }
 
 /**
+ * The answer for a sitemap (or sitemap index) whose database read failed:
+ * 503 + Retry-After + no-store. Never a 200 with an empty or short document —
+ * that was cacheable for five minutes at the origin's request and a day stale,
+ * and told crawlers the URLs were gone.
+ */
+export function sitemapUnavailableResponse(): Response {
+  return unavailableResponse("text");
+}
+
+/**
  * Build a `/sitemap-pages-*.xml` sub-sitemap for one or more `template_type`
  * values. Used by every per-template sub-sitemap route.
  *
@@ -164,29 +176,31 @@ export async function buildContentPagesSitemap(
     ? "slug, url_path, status, content_refreshed_at, created_at, hero_image_url, body_markdown"
     : "slug, url_path, status, content_refreshed_at, created_at, hero_image_url";
 
-  const { data, error } = await supabase
-    .from("content_pages")
-    .select(cols)
-    .in("template_type", templateTypes)
-    .eq("in_sitemap", true)
-    .eq("status", "published")
-    // Rows that 301 elsewhere must never be advertised (2026-09-01 crawl: 14).
-    .is("redirect_to", null)
-    .not("slug", "is", null)
-    // /p/pool-rentals-{state} is now served by the data-driven state-hub route
-    // (advertised in sitemap-static.xml). Exclude any legacy content_pages rows
-    // with these slugs so they aren't duplicated/mislisted here.
-    .not("slug", "like", "pool-rentals-%")
-    .order("slug")
-    .range(offset, offset + SITEMAP_PAGE_SIZE - 1);
+  const read = await guardedRead<any[]>(`sitemap content_pages ${templateTypes.join(",")}`, (signal) =>
+    supabase
+      .from("content_pages")
+      .select(cols)
+      .in("template_type", templateTypes)
+      .eq("in_sitemap", true)
+      .eq("status", "published")
+      // Rows that 301 elsewhere must never be advertised (2026-09-01 crawl: 14).
+      .is("redirect_to", null)
+      .not("slug", "is", null)
+      // /p/pool-rentals-{state} is now served by the data-driven state-hub route
+      // (advertised in sitemap-static.xml). Exclude any legacy content_pages rows
+      // with these slugs so they aren't duplicated/mislisted here.
+      .not("slug", "like", "pool-rentals-%")
+      .order("slug")
+      .range(offset, offset + SITEMAP_PAGE_SIZE - 1)
+      .abortSignal(signal),
+  );
 
-  if (error) {
-    console.error(`[sitemap] supabase error for ${templateTypes.join(",")}`, error);
-    return sitemapResponse(buildUrlsetXml([]));
-  }
+  // A failed read (returned error, thrown, timed out) used to answer 200 with
+  // an empty <urlset>. It is a 503 now; see sitemapUnavailableResponse.
+  if (!read.ok) return sitemapUnavailableResponse();
 
   const expectedPrefix = `${pathPrefix}/`;
-  const filtered = (data ?? []).filter((row: any) => {
+  const filtered = (read.data ?? []).filter((row: any) => {
     // Drop rows whose stored url_path lives outside this sitemap's prefix
     // (e.g. legacy /academy, /app rows that would 404 at /p/academy).
     if (row.url_path && !row.url_path.startsWith(expectedPrefix)) return false;

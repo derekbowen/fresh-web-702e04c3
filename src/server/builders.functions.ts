@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { stateName } from "@/lib/states";
+import { readOrFailRequest } from "@/server/request-unavailable.server";
 
 
 
@@ -32,16 +33,21 @@ export const listBuilderStates = createServerFn({ method: "GET" }).handler(
   },
 );
 
+// Loader of /p/pool-pros, which is also the parent route of every
+// /p/pool-pros/* page. Fails closed: a failed read used to be logged and
+// returned as an empty directory in a cacheable 200; now it is a 503.
 export const listAllBuilders = createServerFn({ method: "GET" }).handler(
   async () => {
-    const { data, error } = await supabaseAdmin
-      .from("providers")
-      .select("slug, name, city, city_slug, state_code, rating, rating_count, business_type, logo_url")
-      .eq("is_published", true)
-      .order("rating", { ascending: false, nullsFirst: false })
-      .order("rating_count", { ascending: false, nullsFirst: false })
-      .limit(1000);
-    if (error) console.error("listAllBuilders:", error);
+    const data = await readOrFailRequest("providers directory list", (signal) =>
+      supabaseAdmin
+        .from("providers")
+        .select("slug, name, city, city_slug, state_code, rating, rating_count, business_type, logo_url")
+        .eq("is_published", true)
+        .order("rating", { ascending: false, nullsFirst: false })
+        .order("rating_count", { ascending: false, nullsFirst: false })
+        .limit(1000)
+        .abortSignal(signal),
+    );
     return { providers: data ?? [] };
   },
 );

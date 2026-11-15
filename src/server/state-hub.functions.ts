@@ -11,6 +11,8 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { STATE_NAMES } from "@/lib/states";
 import { parseCitySlug } from "@/lib/city-slug";
+import { isReadUnavailable, readOrThrow } from "@/lib/failed-read";
+import { failRequestUnavailable } from "@/server/request-unavailable.server";
 
 const HOST_ACQ_PREFIX = "become-a-swimming-pool-host-";
 
@@ -58,25 +60,24 @@ async function fetchAllHostAcqSlugs(): Promise<string[]> {
   const PAGE = 1000;
   let from = 0;
   while (true) {
-    const { data, error } = await (supabaseAdmin as never as {
-      from: (t: string) => {
-        select: (cols: string) => {
-          like: (c: string, p: string) => {
-            range: (a: number, b: number) => Promise<{ data: Array<{ slug: string }> | null; error: unknown }>;
-          };
-        };
-      };
-    })
-      .from("content_pages")
-      .select("slug")
-      .like("slug", `${HOST_ACQ_PREFIX}%`)
-      // NO is_published filter. That column is false on ~99% of content_pages
-      // (6,334 of 6,404 sitemap rows) - status="published" is the real flag.
-      // Adding .eq("is_published", true) here on 2026-07-31 silently emptied
-      // every state hub: zero slugs -> zero cities -> the /p/pool-rentals-
-      // {state} route threw notFound() for all 50 states for 19 days.
-      .range(from, from + PAGE - 1);
-    if (error || !data || data.length === 0) break;
+    // Fails closed: a page of slugs that could not be read throws
+    // ReadUnavailableError. It used to `break`, so a failed read returned a
+    // short or empty list, and an empty list is a 404 for every state hub and
+    // a sitemap-static.xml without any of them.
+    const { data } = await readOrThrow<Array<{ slug: string }>>("host_acq slugs", (signal) =>
+      (supabaseAdmin as any)
+        .from("content_pages")
+        .select("slug")
+        .like("slug", `${HOST_ACQ_PREFIX}%`)
+        // NO is_published filter. That column is false on ~99% of content_pages
+        // (6,334 of 6,404 sitemap rows) - status="published" is the real flag.
+        // Adding .eq("is_published", true) here on 2026-07-31 silently emptied
+        // every state hub: zero slugs -> zero cities -> the /p/pool-rentals-
+        // {state} route threw notFound() for all 50 states for 19 days.
+        .range(from, from + PAGE - 1)
+        .abortSignal(signal),
+    );
+    if (!data || data.length === 0) break;
     for (const r of data) out.push(r.slug);
     if (data.length < PAGE) break;
     from += PAGE;
@@ -134,33 +135,47 @@ export const getStateHub = createServerFn({ method: "GET" })
       return { stateCode, stateName, cities };
     } catch (err) {
       console.error("getStateHub failed:", err);
+      // null means "no such state hub" and the route 404s on it; a failed
+      // read must not be reported that way.
+      if (isReadUnavailable(err)) failRequestUnavailable("host_acq slugs");
       return null;
     }
   });
 
+/**
+ * Every state that has at least one host_acq_city page. Throws
+ * ReadUnavailableError if the slugs could not be read. Server-only; used
+ * directly by sitemap-static.xml, which answers 503 on it.
+ */
+export async function loadAllStateHubs(): Promise<StateIndexEntry[]> {
+  const slugs = await fetchAllHostAcqSlugs();
+  const rows = parseRows(slugs);
+  const counts = new Map<string, number>();
+  for (const r of rows) {
+    counts.set(r.stateCode, (counts.get(r.stateCode) ?? 0) + 1);
+  }
+  const entries: StateIndexEntry[] = [];
+  for (const [code, name] of Object.entries(STATE_NAMES)) {
+    const n = counts.get(code) ?? 0;
+    if (n === 0) continue;
+    entries.push({
+      stateCode: code,
+      stateName: name,
+      citySlug: stateSlug(name),
+      cityCount: n,
+    });
+  }
+  return entries.sort((a, b) => a.stateName.localeCompare(b.stateName));
+}
+
 export const getAllStateHubs = createServerFn({ method: "GET" }).handler(
   async (): Promise<StateIndexEntry[]> => {
     try {
-      const slugs = await fetchAllHostAcqSlugs();
-      const rows = parseRows(slugs);
-      const counts = new Map<string, number>();
-      for (const r of rows) {
-        counts.set(r.stateCode, (counts.get(r.stateCode) ?? 0) + 1);
-      }
-      const entries: StateIndexEntry[] = [];
-      for (const [code, name] of Object.entries(STATE_NAMES)) {
-        const n = counts.get(code) ?? 0;
-        if (n === 0) continue;
-        entries.push({
-          stateCode: code,
-          stateName: name,
-          citySlug: stateSlug(name),
-          cityCount: n,
-        });
-      }
-      return entries.sort((a, b) => a.stateName.localeCompare(b.stateName));
+      return await loadAllStateHubs();
     } catch (err) {
       console.error("getAllStateHubs failed:", err);
+      // An empty list renders /p/pool-rentals as "no states" with a 200.
+      if (isReadUnavailable(err)) failRequestUnavailable("host_acq slugs");
       return [];
     }
   },

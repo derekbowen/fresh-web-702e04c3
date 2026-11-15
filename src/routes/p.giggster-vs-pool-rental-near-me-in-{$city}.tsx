@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, redirect, Link } from "@tanstack/react-router";
 import { getCityBySlug, type CityRow } from "@/server/cities.functions";
 import { lookupContentPage } from "@/server/content-pages.functions";
+import { ReadUnavailableError } from "@/lib/failed-read";
 import {
   ComparisonPage,
   ComparisonTable,
@@ -50,10 +51,13 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$ci
   loader: async ({ params }) => {
     const fullSlug = `giggster-vs-pool-rental-near-me-in-${params.city}`;
     const lookup = await lookupContentPage({ data: { slug: fullSlug } });
+    // A failed read is not "no redirect row" and not "no such city": answer
+    // 503 (server, src/start.ts) / the error state (client), never 404 or 200.
+    if (lookup.kind === "unavailable") throw new ReadUnavailableError("content page lookup");
     if (lookup.kind === "redirect" && lookup.redirectPath) {
       throw redirect({ href: lookup.redirectPath, statusCode: 301 });
     }
-    const city = await getCityBySlug({ data: { slug: params.city } });
+    const city = await getCityBySlug({ data: { slug: params.city, strict: true } });
     if (!city) throw notFound();
     return { city };
   },

@@ -25,6 +25,7 @@ import { getCitySources, type CitySource } from "@/server/city-sources.functions
 import { getInternalLinkTargets } from "@/server/internal-links.functions";
 import type { LinkTarget } from "@/components/auto-linked-content";
 import { log404 } from "@/server/content-404-log.functions";
+import { ReadUnavailableError } from "@/lib/failed-read";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import {
   buildMeta,
@@ -108,6 +109,14 @@ export const Route = createFileRoute("/p/$slug")({
       });
     }
     const result = await lookupContentPage({ data: { slug: params.slug } });
+    if (result.kind === "unavailable") {
+      // A read failed, so it is not known whether this page exists. That is not
+      // a missing page: no 404, no become-a-host 301, nothing written to
+      // content_404_log. On the server the request is already flagged and is
+      // answered 503 (src/start.ts); on a client-side navigation this lands in
+      // errorComponent below, which offers Retry.
+      throw new ReadUnavailableError("content page lookup");
+    }
     if (result.kind === "redirect") {
       if (result.redirectPath?.startsWith("/")) {
         throw redirect({ href: result.redirectPath, statusCode: 301, replace: true });

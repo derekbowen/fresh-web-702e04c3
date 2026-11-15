@@ -1,6 +1,8 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+import { unavailableResponse, UNAVAILABLE_RETRY_AFTER_SECONDS } from "@/lib/failed-read";
+import { watchRequestUnavailable } from "@/server/request-unavailable.server";
 
 // Baseline security headers applied to every response (HTML, server fns, server routes).
 // CSP is intentionally permissive enough to allow Supabase, Lovable assets, embedded
@@ -78,8 +80,40 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
   return result;
 });
 
+// A failed database read must be answered 503, never 404/301/200-empty: the
+// edge caches /p/* for 600 s whatever the status. Server code that cannot
+// answer because a read failed flags the request (markRequestUnavailable, see
+// src/server/request-unavailable.server.ts for why this has to be a
+// middleware). For a page request the 503 is sent the moment the flag is set,
+// without waiting for the rest of the render: the other loaders may be waiting
+// on the same database. The abandoned render's outcome is discarded.
+const failedReadMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const watch = watchRequestUnavailable();
+  const isServerFn =
+    request.headers.get("x-tsr-serverFn") === "true" ||
+    new URL(request.url).pathname.startsWith("/_serverFn/");
+  if (!watch || isServerFn) {
+    // Server-function RPC: the body is the serialized result the client needs
+    // ({ kind: "unavailable" } or the error), and TanStack has already applied
+    // the flagged 503 status. Only make sure nobody stores it.
+    const result = await next();
+    const response = (result as { response?: Response }).response;
+    if (watch?.marked && response && typeof response.headers?.set === "function") {
+      response.headers.set("Cache-Control", "no-store");
+      response.headers.set("Retry-After", String(UNAVAILABLE_RETRY_AFTER_SECONDS));
+    }
+    return result;
+  }
+  const rendering = Promise.resolve(next());
+  const result = await Promise.race([rendering, watch.signal]);
+  if (!watch.marked) return result as Awaited<typeof rendering>;
+  rendering.catch(() => {});
+  return unavailableResponse("html");
+});
+
 export const startInstance = createStart(() => ({
-  requestMiddleware: [securityHeadersMiddleware],
+  // Order matters: security headers wrap the 503 as well.
+  requestMiddleware: [securityHeadersMiddleware, failedReadMiddleware],
   functionMiddleware: [attachSupabaseAuth],
   serverFns: {
     fetch: async (url, requestInit) => {
