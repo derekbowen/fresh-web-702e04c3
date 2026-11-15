@@ -131,46 +131,76 @@ export function LiveInventory({
  * THE reusable inventory section for pSEO city pages. Exact-city supply is
  * rendered first under its own heading; nearby supply is only ever shown under
  * a separate "near" heading so a pool is never described as being in a city it
- * is not in. Renders a truthful empty state instead of a skeleton grid.
+ * is not in. Every count it prints is a count from synced_listings.
+ *
+ * `framing`:
+ *   "renter" (default) — a page for someone looking for a pool. With no pool to
+ *            show it says so plainly ("There are no pools listed in {City} yet.")
+ *            and links to browse all pools; after a failed read it says nothing
+ *            about how many pools there are.
+ *   "host"   — a page recruiting pool owners. Renders ONLY when real pools exist
+ *            ("Pools already listed near {City}"); otherwise nothing at all, so a
+ *            host page never opens on an empty-marketplace notice.
  */
 export function CityInventorySection({
   inventory,
   cityName,
   browseAllHref = "/s",
-  becomeHostHref,
+  framing = "renter",
 }: {
   inventory: CityInventory;
   cityName: string;
   browseAllHref?: string;
-  becomeHostHref?: string;
+  framing?: "renter" | "host";
 }) {
   const { exact, nearby } = inventory;
+  const exactTotal = Math.max(inventory.exactTotal ?? 0, exact.length);
+  const nearbyTotal = Math.max(inventory.nearbyTotal ?? 0, nearby.length);
   const has = exact.length > 0 || nearby.length > 0;
+  const pools = (n: number) => `${n} ${n === 1 ? "pool" : "pools"}`;
+  const radius = inventory.radiusMi;
+
+  if (framing === "host" && !has) return null;
+
+  const exactHeading =
+    framing === "host"
+      ? `${pools(exactTotal)} already listed in ${cityName}`
+      : `Private pools listed in ${cityName}`;
+  const exactLede =
+    framing === "host"
+      ? `Pools listed on Pool Rental Near Me in ${cityName}.`
+      : `${pools(exactTotal)} listed in ${cityName} on Pool Rental Near Me. Open one to see its photos and details.`;
+  const nearbyHeading =
+    exact.length > 0
+      ? `More pools near ${cityName}`
+      : framing === "host"
+        ? `Pools already listed near ${cityName}`
+        : `Pools near ${cityName}`;
+  const nearbyLede = `${
+    exact.length > 0 ? "" : `No pools are listed in ${cityName} itself yet. `
+  }${pools(nearbyTotal)} ${nearbyTotal === 1 ? "is" : "are"} listed ${
+    radius ? `within ${radius} miles` : "nearby"
+  }${nearby.length < nearbyTotal ? `; the ${nearby.length} nearest are shown` : ""}. Distance is from the center of ${cityName}.`;
 
   return (
-    <section className="border-b border-border py-10 sm:py-14" id="pools-available">
+    <section
+      className="border-b border-border py-10 sm:py-14"
+      id={framing === "host" ? "pools-listed" : "pools-available"}
+      data-inventory={framing}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {exact.length > 0 ? (
           <>
-            <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-              Pools available in {cityName}
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              Browse real pools currently listed on Pool Rental Near Me.
-            </p>
+            <h2 className="text-2xl font-bold text-foreground sm:text-3xl">{exactHeading}</h2>
+            <p className="mt-2 text-muted-foreground">{exactLede}</p>
             <Grid listings={exact as unknown as CardListing[]} />
           </>
         ) : null}
 
         {nearby.length > 0 ? (
           <div className={exact.length > 0 ? "mt-12" : ""}>
-            <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-              More pools near {cityName}
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              These are nearby pools, not inside {cityName} itself. Distance is from
-              the center of {cityName}.
-            </p>
+            <h2 className="text-2xl font-bold text-foreground sm:text-3xl">{nearbyHeading}</h2>
+            <p className="mt-2 text-muted-foreground">{nearbyLede}</p>
             <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {(nearby as unknown as CardListing[]).map((l, i) => (
                 <div key={l.id}>
@@ -188,13 +218,20 @@ export function CityInventorySection({
 
         {!has ? (
           <>
-            <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-              We're still adding pools in {cityName}
-            </h2>
-            <p className="mt-2 max-w-2xl text-muted-foreground">
-              There are no pools listed in {cityName} yet. New pools go live every
-              week — here is what you can do in the meantime.
-            </p>
+            {inventory.readFailed ? (
+              <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+                Browse private pools
+              </h2>
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+                  No pools listed in {cityName} yet
+                </h2>
+                <p className="mt-2 max-w-2xl text-muted-foreground" data-empty-inventory="">
+                  There are no pools listed in {cityName} yet.
+                </p>
+              </>
+            )}
             <div className="mt-6 flex flex-wrap gap-3">
               <a
                 href={browseAllHref}
@@ -202,14 +239,6 @@ export function CityInventorySection({
               >
                 Browse all pools
               </a>
-              {becomeHostHref ? (
-                <a
-                  href={becomeHostHref}
-                  className="rounded-lg border border-border px-5 py-2.5 font-semibold text-foreground transition hover:bg-muted"
-                >
-                  List your pool
-                </a>
-              ) : null}
             </div>
           </>
         ) : null}

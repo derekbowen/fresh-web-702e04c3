@@ -39,6 +39,19 @@ export type CityInventory = {
   /** Why these results were returned — surfaced for debugging and verification. */
   matchReason: "exact_city" | "exact_plus_nearby" | "nearby_only" | "none";
   radiusMi: number | null;
+  /**
+   * True count of eligible exact-city listings. `exact` holds at most
+   * MAX_TOTAL cards, so a page that states "N pools listed" reads this, never
+   * `exact.length`.
+   */
+  exactTotal: number;
+  /** Eligible listings within `radiusMi` of the centroid, not counting exact ones. */
+  nearbyTotal: number;
+  /**
+   * A read failed, so how many pools there are is NOT known. A page must not
+   * say "no pools are listed" on the strength of a failed read.
+   */
+  readFailed: boolean;
 };
 
 export const EMPTY_INVENTORY: CityInventory = {
@@ -46,7 +59,13 @@ export const EMPTY_INVENTORY: CityInventory = {
   nearby: [],
   matchReason: "none",
   radiusMi: null,
+  exactTotal: 0,
+  nearbyTotal: 0,
+  readFailed: false,
 };
+
+/** What a page gets when the inventory lookup itself failed. */
+export const FAILED_INVENTORY: CityInventory = { ...EMPTY_INVENTORY, readFailed: true };
 
 /** Cards shown before we top up with nearby supply. */
 const MIN_EXACT = 3;
@@ -130,12 +149,17 @@ export async function loadCityInventory(input: {
 
   // ---- tier 1: exact normalized city + state -------------------------------
   let exact: InventoryListing[] = [];
+  let exactTotal = 0;
   if (cityKey && st) {
-    const { data } = await eligible(sb.from("synced_listings").select(SELECT_COLS))
+    const { data, error, count } = await eligible(
+      sb.from("synced_listings").select(SELECT_COLS, { count: "exact" }),
+    )
       .eq("city_slug", cityKey)
       .eq("state_code", st)
       .limit(MAX_TOTAL);
+    if (error) return FAILED_INVENTORY;
     exact = (data ?? []).map(toListing);
+    exactTotal = typeof count === "number" ? Math.max(count, exact.length) : exact.length;
   }
 
   if (exact.length >= MIN_EXACT) {
@@ -144,6 +168,9 @@ export async function loadCityInventory(input: {
       nearby: [],
       matchReason: "exact_city",
       radiusMi: null,
+      exactTotal,
+      nearbyTotal: 0,
+      readFailed: false,
     };
   }
 
@@ -155,6 +182,9 @@ export async function loadCityInventory(input: {
       nearby: [],
       matchReason: exact.length ? "exact_city" : "none",
       radiusMi: null,
+      exactTotal,
+      nearbyTotal: 0,
+      readFailed: false,
     };
   }
 
@@ -162,20 +192,21 @@ export async function loadCityInventory(input: {
   const dLat = NEARBY_RADIUS_MI / 69;
   const cos = Math.cos(toRad(lat));
   const dLng = NEARBY_RADIUS_MI / (69 * (Math.abs(cos) < 0.01 ? 0.01 : Math.abs(cos)));
-  const { data: box } = await eligible(sb.from("synced_listings").select(SELECT_COLS))
+  const { data: box, error: boxError } = await eligible(sb.from("synced_listings").select(SELECT_COLS))
     .gte("latitude", lat - dLat)
     .lte("latitude", lat + dLat)
     .gte("longitude", lng - dLng)
     .lte("longitude", lng + dLng)
     .limit(200);
+  if (boxError) return FAILED_INVENTORY;
 
   const seen = new Set(exact.map((l) => l.id));
-  const nearby = (box ?? [])
+  const inRadius = (box ?? [])
     .filter((r: any) => r.latitude != null && r.longitude != null)
     .map((r: any) => ({ ...toListing(r), mi: miles(lat, lng, r.latitude, r.longitude) }))
     .filter((l: InventoryListing) => !seen.has(l.id) && (l.mi as number) <= NEARBY_RADIUS_MI)
-    .sort((a: InventoryListing, b: InventoryListing) => (a.mi as number) - (b.mi as number))
-    .slice(0, Math.max(0, MAX_TOTAL - exact.length));
+    .sort((a: InventoryListing, b: InventoryListing) => (a.mi as number) - (b.mi as number));
+  const nearby = inRadius.slice(0, Math.max(0, MAX_TOTAL - exact.length));
 
   const matchReason: CityInventory["matchReason"] =
     exact.length && nearby.length
@@ -186,7 +217,15 @@ export async function loadCityInventory(input: {
           ? "nearby_only"
           : "none";
 
-  return { exact, nearby, matchReason, radiusMi: nearby.length ? NEARBY_RADIUS_MI : null };
+  return {
+    exact,
+    nearby,
+    matchReason,
+    radiusMi: nearby.length ? NEARBY_RADIUS_MI : null,
+    exactTotal,
+    nearbyTotal: inRadius.length,
+    readFailed: false,
+  };
 }
 
 export const getCityInventory = createServerFn({ method: "GET" })
@@ -204,6 +243,6 @@ export const getCityInventory = createServerFn({ method: "GET" })
     try {
       return await loadCityInventory(data);
     } catch {
-      return EMPTY_INVENTORY;
+      return FAILED_INVENTORY;
     }
   });

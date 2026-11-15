@@ -26,6 +26,12 @@
  * (and 301s to /p/become-a-host) for live pages, plus a row in content_404_log
  * for each. See src/lib/failed-read.ts.
  *
+ * It also renders the host_acq_city intent fixtures (src/lib/city-intent.ts)
+ * against the healthy stub — HOST with and without listed pools, RENTER with
+ * exact-city pools, nearby-only pools and none — and checks headings, titles,
+ * CTAs, the empty-inventory notice and that every number in the hero intro and
+ * inventory section is a count, price, capacity or distance from the fixtures.
+ *
  * Exit code: 0 when every check passes, 1 otherwise. FAILED_READS_DIST can
  * point at another build directory (used to show the checks fail on old code).
  */
@@ -51,6 +57,46 @@ const NOW = "2026-10-01T00:00:00+00:00";
 const TITLE = "Fixture Page Title Zebra-4417";
 const BLOG_TITLE = "Fixture Blog Title Quokka-9052";
 const ES_TITLE = "Fixture Pagina Titulo Vicuna-3308";
+
+/** Eligible listings for the intent fixtures: both in Tempe, AZ. */
+const INTENT_LISTINGS = [
+  {
+    sharetribe_id: "00000000-0000-4000-8000-0000000000c2",
+    slug: "fixture-tempe-pool-one",
+    title: "Fixture Tempe Pool One",
+    city: "Tempe",
+    city_slug: "tempe",
+    state_code: "AZ",
+    price_amount: 10000,
+    price_currency: "USD",
+    primary_image_url: "https://img.example.invalid/tempe-one.jpg",
+    capacity: 12,
+    amenities: [],
+    latitude: 33.43,
+    longitude: -111.93,
+    updated_at: NOW,
+    state: "published",
+    is_deleted: false,
+  },
+  {
+    sharetribe_id: "00000000-0000-4000-8000-0000000000c3",
+    slug: "fixture-tempe-pool-two",
+    title: "Fixture Tempe Pool Two",
+    city: "Tempe",
+    city_slug: "tempe",
+    state_code: "AZ",
+    price_amount: 8000,
+    price_currency: "USD",
+    primary_image_url: "https://img.example.invalid/tempe-two.jpg",
+    capacity: 8,
+    amenities: [],
+    latitude: 33.41,
+    longitude: -111.95,
+    updated_at: NOW,
+    state: "published",
+    is_deleted: false,
+  },
+];
 
 const contentPage = (over) => ({
   id: "00000000-0000-4000-8000-000000000001",
@@ -118,6 +164,47 @@ const FIXTURES = {
       title: "Fixture host page Dayton",
       template_type: "host_acq_city",
     }),
+    // ── host_acq_city intent fixtures ────────────────────────────────────────
+    // HOST with pools listed in the city (Tempe has two eligible listings).
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000011",
+      slug: "become-a-swimming-pool-host-tempe-az",
+      url_path: "/p/become-a-swimming-pool-host-tempe-az",
+      title: "Become a Pool Host in Tempe, AZ",
+      seo_title: "Become a swimming pool host in Tempe | Earn $3k+/mo",
+      template_type: "host_acq_city",
+    }),
+    // RENTER with exact-city pools — same city as the HOST page above.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000012",
+      slug: "tempe-az",
+      url_path: "/p/tempe-az",
+      title: "Pool Rental in Tempe, AZ",
+      seo_title: "Pool Rental in Tempe, AZ | Hourly Backyard Pools",
+      seo_description: "Browse Tempe backyard pools with photos, hourly prices, and reviews.",
+      template_type: "host_acq_city",
+      body_markdown:
+        "# Pool Rental in Tempe, AZ\n\nFixture host body Tempe.\n\n[Search](/s?address=Tempe%2C+AZ)",
+    }),
+    // RENTER with only nearby pools (Mesa has none; Tempe's are a few miles away).
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000013",
+      slug: "mesa-az",
+      url_path: "/p/mesa-az",
+      title: "Pool Rental in Mesa, AZ",
+      template_type: "host_acq_city",
+      body_markdown: "## Fixture host body Mesa\n\nFixture paragraph.",
+    }),
+    // RENTER with no pools in or near the city, on a bare slug: the state comes
+    // from the title, and there is no cities row (no centroid, exact match only).
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000014",
+      slug: "chapel-hill",
+      url_path: "/p/chapel-hill",
+      title: "Pool Rental in Chapel Hill, NC",
+      template_type: "host_acq_city",
+      body_markdown: "## Fixture host body Chapel Hill\n\nFixture paragraph.",
+    }),
     contentPage({
       id: "00000000-0000-4000-8000-000000000006",
       slug: "rent-out-your-pool-uk",
@@ -127,6 +214,30 @@ const FIXTURES = {
     }),
   ],
   cities: [
+    {
+      slug: "tempe",
+      name: "Tempe",
+      state: "Arizona",
+      state_code: "AZ",
+      description: null,
+      latitude: 33.4255,
+      longitude: -111.94,
+      hero_image_url: null,
+      is_published: true,
+      updated_at: NOW,
+    },
+    {
+      slug: "mesa",
+      name: "Mesa",
+      state: "Arizona",
+      state_code: "AZ",
+      description: null,
+      latitude: 33.4152,
+      longitude: -111.8315,
+      hero_image_url: null,
+      is_published: true,
+      updated_at: NOW,
+    },
     {
       slug: "akron",
       name: "Akron",
@@ -169,6 +280,7 @@ const FIXTURES = {
       state: "published",
       is_deleted: false,
     },
+    ...INTENT_LISTINGS,
   ],
   service_categories: [
     {
@@ -1002,10 +1114,269 @@ async function healthyPhase(phase) {
   );
 }
 
+// ───────────────────────── host_acq_city intent ─────────────────────────────
+
+const decode = (s) =>
+  s
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+const h1sOf = (html) => [...html.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/g)].map((m) => decode(m[1]));
+const titleOf = (html) => decode(/<title>([\s\S]*?)<\/title>/.exec(html)?.[1] ?? "");
+const metaDescriptionOf = (html) =>
+  decode(/<meta name="description" content="([^"]*)"/.exec(html)?.[1] ?? "");
+/** The element whose opening tag carries `marker`, through its matching close. */
+function elementWith(html, marker) {
+  const at = html.indexOf(marker);
+  if (at === -1) return "";
+  const open = html.lastIndexOf("<", at);
+  const tag = /^<([a-z0-9]+)/.exec(html.slice(open))?.[1];
+  if (!tag) return "";
+  const re = new RegExp(`<${tag}[\\s>]|</${tag}>`, "g");
+  re.lastIndex = open;
+  let depth = 0;
+  for (let m; (m = re.exec(html)); ) {
+    depth += m[0].startsWith("</") ? -1 : 1;
+    if (depth === 0) return html.slice(open, m.index + m[0].length);
+  }
+  return html.slice(open);
+}
+const numbersIn = (text) => (text.match(/\d+(?:\.\d+)?/g) ?? []).map(Number);
+
+/** Independent haversine (miles) over the fixture coordinates. */
+function fixtureMiles(aLat, aLng, bLat, bLng) {
+  const r = (d) => (d * Math.PI) / 180;
+  const h =
+    Math.sin(r(bLat - aLat) / 2) ** 2 +
+    Math.cos(r(aLat)) * Math.cos(r(bLat)) * Math.sin(r(bLng - aLng) / 2) ** 2;
+  return 2 * 3958.8 * Math.asin(Math.sqrt(h));
+}
+const cityRow = (slug) => FIXTURES.cities.find((c) => c.slug === slug);
+const listingsIn = (citySlug, st) =>
+  INTENT_LISTINGS.filter((l) => l.city_slug === citySlug && l.state_code === st);
+/** Every number a fixture listing can legitimately put on a page. */
+const LISTING_NUMBERS = new Set(
+  INTENT_LISTINGS.flatMap((l) => {
+    const allIn = l.price_amount + Math.floor((l.price_amount * 15 + 50) / 100);
+    return [allIn / 100, l.capacity];
+  }),
+);
+const NEARBY_RADIUS_MI = 60;
+
+async function intentChecks(phase) {
+  stub.setMode("healthy");
+  const pages = {};
+  for (const slug of [
+    "become-a-swimming-pool-host-tempe-az",
+    "become-a-swimming-pool-host-dayton-oh",
+    "tempe-az",
+    "mesa-az",
+    "chapel-hill",
+  ]) {
+    pages[slug] = await get(`/p/${slug}`);
+    check(phase, `/p/${slug} -> 200`, pages[slug].status === 200, describe(pages[slug]));
+  }
+  const tempeHits = listingsIn("tempe", "AZ");
+  const mesa = cityRow("mesa");
+  const mesaMiles = INTENT_LISTINGS.map((l) =>
+    fixtureMiles(mesa.latitude, mesa.longitude, l.latitude, l.longitude),
+  ).sort((a, b) => a - b);
+
+  const expectOne = (_phase, name, list, want) =>
+    check(phase, name, list.length === 1 && list[0] === want, JSON.stringify(list));
+  /** Raw HTML contains `needle` (attributes, hrefs). */
+  const has = (r, needle) => r.body.includes(needle);
+  /** Visible text contains `needle` (React puts <!-- --> between text nodes). */
+  const hasText = (r, needle) => decode(r.body).includes(needle);
+  const noEmptyNotice = (r) =>
+    !hasText(r, "still adding pools") && !hasText(r, "There are no pools listed in");
+  /** Numbers in the renter intro + inventory section must all be fixture facts. */
+  const numbersOk = (r, allowed) => {
+    const text = decode(
+      elementWith(r.body, "data-renter-intro") + " " + elementWith(r.body, "data-inventory="),
+    );
+    const bad = numbersIn(text).filter((n) => !allowed.has(n));
+    return { ok: bad.length === 0, detail: bad.length ? `unexpected ${bad.join(", ")} in "${text.slice(0, 300)}"` : "" };
+  };
+
+  // HOST with pools listed in the city.
+  const hostT = pages["become-a-swimming-pool-host-tempe-az"];
+  expectOne(
+    phase,
+    "HOST Tempe: one H1, host value with the state",
+    h1sOf(hostT.body),
+    "Rent out your pool in Tempe, AZ by the hour. 0% host fees. Keep 100%.",
+  );
+  check(
+    phase,
+    "HOST Tempe: <title> from the rule (stored earnings title not used)",
+    titleOf(hostT.body) === "Become a Pool Host in Tempe, AZ | 0% Host Fees",
+    titleOf(hostT.body),
+  );
+  check(
+    phase,
+    "HOST Tempe: primary CTA is listing a pool, no renter CTA",
+    has(hostT, 'data-primary-cta="host"') && !has(hostT, 'data-primary-cta="renter"'),
+  );
+  check(
+    phase,
+    `HOST Tempe: host-framed inventory with the true count (${tempeHits.length})`,
+    has(hostT, 'data-inventory="host"') &&
+      decode(elementWith(hostT.body, 'data-inventory="host"')).includes(
+        `${tempeHits.length} pools already listed in Tempe`,
+      ),
+  );
+  check(phase, "HOST Tempe: no empty-inventory notice", noEmptyNotice(hostT));
+  const hostNums = numbersOk(hostT, new Set([tempeHits.length, ...LISTING_NUMBERS]));
+  check(phase, "HOST Tempe: every number in the inventory section is a fixture fact", hostNums.ok, hostNums.detail);
+  check(
+    phase,
+    "HOST Tempe: no earnings projection, no pool-pros?city= variant",
+    !hasText(hostT, "host earns") && !has(hostT, "/p/pool-pros?city=") && has(hostT, 'href="/p/pool-pros"'),
+  );
+
+  // HOST without pools.
+  const hostD = pages["become-a-swimming-pool-host-dayton-oh"];
+  expectOne(
+    phase,
+    "HOST Dayton: one H1 with the state",
+    h1sOf(hostD.body),
+    "Rent out your pool in Dayton, OH by the hour. 0% host fees. Keep 100%.",
+  );
+  check(
+    phase,
+    "HOST Dayton: no inventory section and no empty-inventory notice",
+    !has(hostD, "data-inventory=") && noEmptyNotice(hostD) && !has(hostD, 'id="pools-available"'),
+  );
+  check(phase, "HOST Dayton: primary CTA is listing a pool", has(hostD, 'data-primary-cta="host"'));
+
+  // RENTER with exact-city pools.
+  const rT = pages["tempe-az"];
+  expectOne(phase, "RENTER Tempe: one renter H1", h1sOf(rT.body), "Private pool rentals in Tempe, AZ");
+  check(
+    phase,
+    "RENTER Tempe: renter <title>",
+    titleOf(rT.body) === "Private Pool Rentals in Tempe, AZ | Pool Rental Near Me",
+    titleOf(rT.body),
+  );
+  check(
+    phase,
+    "RENTER Tempe: title and H1 differ from the HOST page for the same city",
+    titleOf(rT.body) !== titleOf(hostT.body) && h1sOf(rT.body)[0] !== h1sOf(hostT.body)[0],
+  );
+  check(
+    phase,
+    `RENTER Tempe: intro and meta description state the real count (${tempeHits.length})`,
+    decode(elementWith(rT.body, "data-renter-intro")).startsWith(
+      `${tempeHits.length} private pools are listed in Tempe, AZ`,
+    ) && metaDescriptionOf(rT.body).startsWith(`${tempeHits.length} private pools are listed in Tempe, AZ`),
+    metaDescriptionOf(rT.body),
+  );
+  check(
+    phase,
+    "RENTER Tempe: stored description with 'reviews' is not the meta description",
+    !metaDescriptionOf(rT.body).includes("reviews"),
+  );
+  check(
+    phase,
+    "RENTER Tempe: primary CTA searches pools, in the one /s?address form",
+    /<a[^>]*href="\/s\?address=Tempe%2C%20AZ"[^>]*data-primary-cta="renter"/.test(rT.body),
+  );
+  const invAt = rT.body.indexOf('data-inventory="renter"');
+  const hostAt = rT.body.indexOf('id="own-a-pool"');
+  const bodyAt = rT.body.indexOf("Fixture host body Tempe");
+  check(
+    phase,
+    "RENTER Tempe: inventory first, then the labelled host section, then the stored body",
+    invAt > -1 && hostAt > invAt && bodyAt > hostAt && hasText(rT, "Own a pool in Tempe?") && has(rT, "data-host-cta"),
+    `inventory@${invAt} host@${hostAt} body@${bodyAt}`,
+  );
+  check(
+    phase,
+    "RENTER Tempe: every listing card shown, no empty notice",
+    tempeHits.every((l) => has(rT, `/l/${l.slug}/${l.sharetribe_id}`)) && noEmptyNotice(rT),
+  );
+  check(
+    phase,
+    "RENTER Tempe: the body's +-spelled search link renders in the one form",
+    // (the raw markdown also travels in the dehydrated loader data; only hrefs count)
+    !/href="[^"]*Tempe%2C\+AZ/.test(rT.body) &&
+      (rT.body.match(/href="\/s\?address=Tempe%2C%20AZ"/g) ?? []).length >= 2,
+  );
+  const rTNums = numbersOk(rT, new Set([tempeHits.length, ...LISTING_NUMBERS]));
+  check(phase, "RENTER Tempe: every number in intro + inventory is a fixture fact", rTNums.ok, rTNums.detail);
+  check(
+    phase,
+    "RENTER Tempe: no host-acquisition JSON-LD, no host lead popup",
+    !has(rT, '"audienceType":"Pool Owners"') && !has(rT, '"@type":"HowTo"'),
+  );
+
+  // RENTER with only nearby pools.
+  const rM = pages["mesa-az"];
+  expectOne(phase, "RENTER Mesa: one renter H1", h1sOf(rM.body), "Private pool rentals in Mesa, AZ");
+  const nearest = Math.round(mesaMiles[0]);
+  const mesaIntro = decode(elementWith(rM.body, "data-renter-intro"));
+  check(
+    phase,
+    `RENTER Mesa: intro says none in Mesa, ${mesaMiles.length} within ${NEARBY_RADIUS_MI} miles, nearest ${nearest} miles`,
+    mesaIntro ===
+      `No pools are listed in Mesa, AZ yet. ${mesaMiles.length} private pools are listed within ${NEARBY_RADIUS_MI} miles. The nearest is ${nearest} miles from Mesa.`,
+    mesaIntro,
+  );
+  check(
+    phase,
+    "RENTER Mesa: each nearby card carries its real distance",
+    mesaMiles.every((mi) => has(rM, `${Math.round(mi)} miles</div>`) || has(rM, `${Math.round(mi)} miles<!-- --> from`)),
+  );
+  check(phase, "RENTER Mesa: 'Pools near Mesa', no empty notice", hasText(rM, "Pools near Mesa") && noEmptyNotice(rM));
+  const rMNums = numbersOk(
+    rM,
+    new Set([mesaMiles.length, NEARBY_RADIUS_MI, ...mesaMiles.map((m) => Math.round(m)), ...LISTING_NUMBERS]),
+  );
+  check(phase, "RENTER Mesa: every number in intro + inventory is a fixture fact", rMNums.ok, rMNums.detail);
+  check(
+    phase,
+    "RENTER Mesa: primary CTA searches pools near Mesa",
+    /<a[^>]*href="\/s\?address=Mesa%2C%20AZ"[^>]*data-primary-cta="renter"/.test(rM.body),
+  );
+
+  // RENTER with none.
+  const rC = pages["chapel-hill"];
+  expectOne(phase, "RENTER Chapel Hill (bare slug): H1 carries the title's state", h1sOf(rC.body), "Private pool rentals in Chapel Hill, NC");
+  check(
+    phase,
+    "RENTER Chapel Hill: plain no-pools statement + browse-all link, no 'still adding'",
+    hasText(rC, "There are no pools listed in Chapel Hill yet.") &&
+      !hasText(rC, "still adding pools") &&
+      /<a[^>]*href="\/s"[^>]*data-primary-cta="renter"/.test(rC.body),
+  );
+  const rCNums = numbersOk(rC, new Set());
+  check(phase, "RENTER Chapel Hill: no number in intro + inventory", rCNums.ok, rCNums.detail);
+  check(
+    phase,
+    "RENTER Chapel Hill: meta description says no pools are listed yet",
+    metaDescriptionOf(rC.body).startsWith("No pools are listed in Chapel Hill, NC yet."),
+    metaDescriptionOf(rC.body),
+  );
+  check(
+    phase,
+    "No two intent fixture pages share an H1 or a <title>",
+    new Set(Object.values(pages).map((r) => h1sOf(r.body)[0])).size === Object.keys(pages).length &&
+      new Set(Object.values(pages).map((r) => titleOf(r.body))).size === Object.keys(pages).length,
+  );
+}
+
 let crashed = null;
 try {
   await failurePhase("hang", { cold: true });
   await healthyPhase("healthy");
+  await intentChecks("intent (healthy)");
   await failurePhase("http-500");
   await failurePhase("connection-reset");
   await failurePhase("hang");

@@ -16,6 +16,7 @@ import {
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
+import { searchHrefForPlace } from "@/lib/search-links";
 
 /**
  * Programmatic city variant of the Peerspace pillar page.
@@ -173,7 +174,7 @@ function PeerspaceCityPage() {
       </p>
       <p>
         See live {city.name} pool-rental demand in{" "}
-        <a href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`} className="text-primary underline">
+        <a href={searchHrefForPlace(city.name, city.state_code)} className="text-primary underline">
           marketplace search
         </a>{" "}
         and review the{" "}

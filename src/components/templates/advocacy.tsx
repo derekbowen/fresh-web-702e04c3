@@ -15,6 +15,7 @@ import {
   relatedAdvocacyStates,
   type AdvocacyState,
 } from "@/lib/advocacy-states";
+import { searchHrefForState } from "@/lib/search-links";
 
 // ---------- helpers ----------
 
@@ -87,9 +88,7 @@ function StatStrip() {
 }
 
 function SidebarCTA({ stateName }: { stateName?: string | null }) {
-  const findHref = stateName
-    ? `/s?address=${encodeURIComponent(stateName)}`
-    : "/s";
+  const findHref = searchHrefForState(stateName);
   return (
     <div className="space-y-4">
       <div className="rounded-3xl bg-gradient-to-br from-primary to-primary-glow p-6 text-primary-foreground shadow-xl">
@@ -361,7 +360,7 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
                     List your pool →
                   </a>
                   <a
-                    href={state?.name ? `/s?address=${encodeURIComponent(state.name)}` : "/s"}
+                    href={searchHrefForState(state?.name)}
                     className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
                   >
                     Find pools{state?.name ? ` in ${state.name}` : ""} →

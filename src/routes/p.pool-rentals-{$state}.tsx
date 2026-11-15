@@ -6,6 +6,7 @@ import { buildMeta } from "@/lib/seo";
 import { getStateHub } from "@/server/state-hub.functions";
 import { isReadUnavailable } from "@/lib/failed-read";
 import { queryListings, type ListingSummary } from "@/server/sharetribe.functions";
+import { searchHrefForState } from "@/lib/search-links";
 
 export const Route = createFileRoute("/p/pool-rentals-{$state}")({
   loader: async ({ params }) => {
@@ -117,7 +118,7 @@ function StateHubPage() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <a
-              href={`/s?address=${encodeURIComponent(stateName)}`}
+              href={searchHrefForState(stateName)}
               className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
             >
               Find a pool in {stateName}
@@ -139,7 +140,7 @@ function StateHubPage() {
                 Available pools in {stateName}
               </h2>
               <a
-                href={`/s?address=${encodeURIComponent(stateName)}`}
+                href={searchHrefForState(stateName)}
                 className="text-sm font-semibold text-primary hover:underline"
               >
                 See all →

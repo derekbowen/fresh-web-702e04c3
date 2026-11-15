@@ -16,6 +16,7 @@ import {
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
+import { searchHrefForPlace } from "@/lib/search-links";
 
 /**
  * Programmatic city variant of the Giggster pillar comparison.
@@ -411,7 +412,7 @@ function GiggsterCityPage() {
       <p>
         See current {city.name} pool inventory on the{" "}
         <a
-          href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`}
+          href={searchHrefForPlace(city.name, city.state_code)}
           className="text-primary underline"
         >
           {city.name} pool search
