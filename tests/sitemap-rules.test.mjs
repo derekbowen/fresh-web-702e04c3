@@ -10,6 +10,7 @@ import {
   DEDICATED_P_ROUTE_SLUGS,
   isDedicatedRouteSlug,
   isServableSlug,
+  isWellFormedSlug,
   canonicalIsElsewhere,
   contentRowExclusion,
   contentRowLoc,
@@ -47,6 +48,40 @@ const ROUTES = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "route
 const ctx = (over = {}) => ({ siteUrl: SITE, redirectShadowedSlugs: new Set(), ...over });
 
 // ───────────────────────────── slugs and URLs ───────────────────────────────
+
+test("isWellFormedSlug: words of [a-z0-9] joined by single hyphens, optionally nested", () => {
+  for (const ok of [
+    "pool-rental-guarantees",
+    "learningacademy",
+    "become-a-swimming-pool-host-ofallon-mo",
+    "es/texas-leyes-alquiler-albercas",
+    "pool-rentals-2026",
+  ])
+    assert.equal(isWellFormedSlug(ok), true, ok);
+  for (const bad of [
+    "learningacademy)",
+    "become-a-swimming-pool-host--ofallon-mo",
+    "-leading",
+    "trailing-",
+    "a//b",
+    "es/",
+    "caf\u00e9",
+    "a.b",
+    "",
+    null,
+  ])
+    assert.equal(isWellFormedSlug(bad), false, String(bad));
+});
+
+test("malformed slugs are not listed: the two stray rows found on 2026-11-15", () => {
+  assert.equal(contentRowExclusion({ slug: "learningacademy)" }, ctx()), "malformed_slug");
+  assert.equal(
+    contentRowExclusion({ slug: "become-a-swimming-pool-host--ofallon-mo" }, ctx()),
+    "malformed_slug",
+  );
+  assert.equal(contentRowExclusion({ slug: "learningacademy" }, ctx()), null);
+  assert.equal(blogPostExclusion({ slug: "post--two" }, new Set()), "malformed_slug");
+});
 
 test("isServableSlug: underscore and upper case redirect at the edge / in p.$slug", () => {
   assert.equal(isServableSlug("pool-rental-guarantees"), true);
@@ -471,9 +506,25 @@ test("loadBlogEntries: drops posts served by a content row or a legacy_slugs ali
     blog_posts: () => posts,
     content_pages: (q) => {
       if (has(q, "overlaps", "legacy_slugs")) {
-        return [{ legacy_slugs: ["how-to-open-a-pool", "opening-pool-for-summer"] }];
+        return [
+          {
+            id: "c2",
+            slug: "opening-a-pool",
+            legacy_slugs: ["how-to-open-a-pool", "opening-pool-for-summer"],
+          },
+        ];
       }
-      if (has(q, "in", "slug")) return [{ slug: "above-ground-pools-the-best-choices-for-summer" }];
+      if (has(q, "in", "slug"))
+        return [
+          {
+            id: "c1",
+            slug: "above-ground-pools-the-best-choices-for-summer",
+            url_path: "/p/above-ground-pools-the-best-choices-for-summer",
+            status: "published",
+            redirect_to: null,
+            priority: 0,
+          },
+        ];
       return [];
     },
   });
@@ -491,6 +542,132 @@ test("loadBlogEntries: drops posts served by a content row or a legacy_slugs ali
   );
   const statuses = alias.calls.find((c) => c[0] === "in" && c[1] === "status")[2];
   assert.deepEqual(statuses, ["published", "redirect"]);
+});
+
+test("loadBlogEntries: a content row shadows the post exactly when the dispatcher would serve it", async () => {
+  // Each blog slug meets one content_pages situation. The dispatcher
+  // (resolveContentPageLookup) serves the blog post only when no published row,
+  // no exact redirect row, no alias and no bare-city 301 answers first.
+  const rows = [
+    // redirect row at another url_path: skipped by the dispatcher -> blog serves
+    {
+      id: "r1",
+      slug: "mismatched-redirect",
+      url_path: "/p/old/mismatched-redirect",
+      status: "redirect",
+      redirect_to: "elsewhere",
+      priority: 0,
+    },
+    // redirect row with no target: skipped -> blog serves
+    {
+      id: "r2",
+      slug: "empty-redirect",
+      url_path: "/p/empty-redirect",
+      status: "redirect",
+      redirect_to: " ",
+      priority: 0,
+    },
+    // exact redirect row: 301 -> not a blog URL
+    {
+      id: "r3",
+      slug: "exact-redirect",
+      url_path: "/p/exact-redirect",
+      status: "redirect",
+      redirect_to: "target",
+      priority: 0,
+    },
+    // published row at another url_path: still served by the dispatcher -> not a blog URL
+    {
+      id: "r4",
+      slug: "nested-published",
+      url_path: "/p/a/nested-published",
+      status: "published",
+      redirect_to: null,
+      priority: 0,
+    },
+  ];
+  const blogSlugs = [
+    "mismatched-redirect",
+    "empty-redirect",
+    "exact-redirect",
+    "nested-published",
+    "pool-rental-austin", // bare city with a state-suffixed page -> 301
+    "pool-rental-etiquette", // known prefix, no such city -> blog serves
+  ];
+  const db = fakeDb({
+    blog_posts: () => blogSlugs.map((slug) => ({ slug, updated_at: "2026-07-16T00:00:00Z" })),
+    cities: (q) => {
+      const wanted = q.calls.find((c) => c[0] === "in" && c[1] === "slug")[2];
+      return [{ id: "x", slug: "austin", state_code: "TX" }].filter((c) => wanted.includes(c.slug));
+    },
+    content_pages: (q) => {
+      if (has(q, "overlaps", "legacy_slugs")) return [];
+      const wanted = q.calls.find((c) => c[0] === "in" && c[1] === "slug")[2];
+      const all = [...rows, { id: "r5", slug: "pool-rental-austin-tx", status: "published" }];
+      return all.filter((r) => wanted.includes(r.slug));
+    },
+  });
+  const r = await loadBlogEntries(db, SITE);
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.data.map((e) => e.loc).sort(), [
+    `${SITE}/p/empty-redirect`,
+    `${SITE}/p/mismatched-redirect`,
+    `${SITE}/p/pool-rental-etiquette`,
+  ]);
+  // The city lookup is made only for slugs the bare-city fallback reaches.
+  const cityRead = db.queries.find((q) => q.table === "cities");
+  assert.deepEqual(cityRead.calls.find((c) => c[0] === "in")[2].sort(), ["austin", "etiquette"]);
+});
+
+test("loadBlogEntries: a failed city or candidate read fails the list", async () => {
+  for (const fail of [
+    (q) => q.table === "cities",
+    (q) =>
+      q.table === "content_pages" &&
+      q.calls.some((c) => c[0] === "in" && c[2]?.includes?.("pool-rental-austin-tx")),
+  ]) {
+    const db = fakeDb(
+      {
+        blog_posts: () => [{ slug: "pool-rental-austin" }],
+        cities: () => [{ id: "x", slug: "austin", state_code: "TX" }],
+        content_pages: () => [],
+      },
+      { fail },
+    );
+    assert.equal((await loadBlogEntries(db, SITE)).ok, false);
+  }
+});
+
+test("readAllRows: one retry for a returned error, none for a timeout", async () => {
+  let calls = 0;
+  const flaky = fakeDb({ t: () => [{ i: 1 }] }, { fail: () => ++calls === 1 });
+  const r = await readAllRows("t", (from, to, signal) =>
+    flaky.from("t").select("*").range(from, to).abortSignal(signal),
+  );
+  assert.equal(r.ok, true, "a single transient failure is retried");
+  assert.deepEqual(r.data, [{ i: 1 }]);
+  const always = fakeDb({ t: () => [{ i: 1 }] }, { fail: () => true });
+  const f = await readAllRows("t", (from, to, signal) =>
+    always.from("t").select("*").range(from, to).abortSignal(signal),
+  );
+  assert.equal(f.ok, false);
+  assert.equal(always.queries.length, 2, "first try + one retry, then the list fails");
+
+  const saved = process.env.SUPABASE_READ_TIMEOUT_MS;
+  process.env.SUPABASE_READ_TIMEOUT_MS = "30";
+  try {
+    let hung = 0;
+    const t = await readAllRows("t", () => {
+      hung++;
+      return new Promise(() => {});
+    });
+    assert.equal(t.ok, false);
+    assert.equal(t.reason, "timeout");
+    assert.equal(hung, 1, "a timeout is not retried");
+  } finally {
+    if (saved === undefined) delete process.env.SUPABASE_READ_TIMEOUT_MS;
+    else process.env.SUPABASE_READ_TIMEOUT_MS = saved;
+  }
 });
 
 test("loadBlogEntries: the shadow lookup failing fails the list (503), it never lists everything", async () => {

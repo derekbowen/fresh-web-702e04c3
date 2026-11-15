@@ -102,6 +102,23 @@ export function isServableSlug(slug: string | null | undefined): slug is string 
   return typeof slug === "string" && slug.length > 0 && !/[_A-Z]/.test(slug) && !/\s/.test(slug);
 }
 
+/**
+ * The shape every real slug has: lower-case letters and digits in words joined
+ * by single hyphens, optionally nested with "/" (es/<slug>). A slug outside it
+ * still answers 200 (the dispatcher serves whatever row has that slug) but it
+ * is a stray copy, not a page to advertise. Verified 2026-11-15: of the
+ * published, in_sitemap rows only three fail it, `learningacademy)` (a second
+ * "Learning Academy" row next to `learningacademy`),
+ * `become-a-swimming-pool-host--ofallon-mo` (double hyphen, twin of
+ * `become-a-swimming-pool-host-ofallon-mo`) and the underscore slug that
+ * isServableSlug already drops. No published blog post fails it.
+ */
+const WELL_FORMED_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
+
+export function isWellFormedSlug(slug: string | null | undefined): slug is string {
+  return typeof slug === "string" && WELL_FORMED_SLUG.test(slug);
+}
+
 /** Normalise an absolute URL for comparison: lower-case host, no trailing slash, no query/hash. */
 function normaliseUrl(u: string): string | null {
   try {
@@ -141,6 +158,7 @@ export interface ContentRowForSitemap {
 export type ContentExclusion =
   | "no_slug"
   | "slug_redirects"
+  | "malformed_slug"
   | "url_path_mismatch"
   | "dedicated_route"
   | "canonical_elsewhere"
@@ -172,6 +190,7 @@ export function contentRowExclusion(
 ): ContentExclusion | null {
   if (!row.slug) return "no_slug";
   if (!isServableSlug(row.slug)) return "slug_redirects";
+  if (!isWellFormedSlug(row.slug)) return "malformed_slug";
   const loc = contentRowLoc(row, ctx.siteUrl);
   if (!loc) return "url_path_mismatch";
   if (isDedicatedRouteSlug(row.slug)) return "dedicated_route";
@@ -209,14 +228,17 @@ export function redirectShadowedSlugs(
 export type BlogExclusion =
   | "no_slug"
   | "slug_redirects"
+  | "malformed_slug"
   | "dedicated_route"
   | "served_by_content_page";
 
 /**
  * Why a published blog post must not be listed in sitemap-pages-blog.xml.
- * `contentSlugs` = slugs that have a content_pages row with status published
- * or redirect, plus every legacy_slugs entry of such a row: the dispatcher
- * serves (or 301s) those before it ever looks at blog_posts.
+ * `contentSlugs` = slugs for which the /p/ dispatcher answers something other
+ * than the blog post: a content row it serves, a redirect row it 301s, a
+ * legacy_slugs alias, or the bare-city 301. sitemap-sources.ts
+ * (loadContentServedSlugs) computes it by running the dispatcher's own decision
+ * (resolveContentPageLookup) over batched reads, so the two cannot disagree.
  */
 export function blogPostExclusion(
   post: { slug: string | null },
@@ -224,6 +246,7 @@ export function blogPostExclusion(
 ): BlogExclusion | null {
   if (!post.slug) return "no_slug";
   if (!isServableSlug(post.slug)) return "slug_redirects";
+  if (!isWellFormedSlug(post.slug)) return "malformed_slug";
   if (isDedicatedRouteSlug(post.slug)) return "dedicated_route";
   if (contentSlugs.has(post.slug)) return "served_by_content_page";
   return null;

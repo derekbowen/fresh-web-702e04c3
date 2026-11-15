@@ -202,6 +202,30 @@ const FIXTURES = {
       title: "Fixture academy course",
       body_markdown: `## Fixture course\n\n${"Fixture course body sentence. ".repeat(40)}`,
     }),
+    // Malformed slugs (a stray ")" copy and a double hyphen): they answer 200
+    // but are not a page to advertise.
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000001b",
+      slug: "fixture-stray-copy)",
+      url_path: "/p/fixture-stray-copy)",
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000001c",
+      slug: "fixture--double-hyphen",
+      url_path: "/p/fixture--double-hyphen",
+      template_type: "host_acq_city",
+    }),
+    // A redirect row the dispatcher skips (url_path is not /p/<slug>): the
+    // blog post with that slug is what /p/<slug> serves, so the blog sitemap
+    // must list it.
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000001d",
+      slug: "fixture-blog-behind-redirect",
+      url_path: "/p/old/fixture-blog-behind-redirect",
+      status: "redirect",
+      redirect_to: "fixture-live-page",
+      in_sitemap: false,
+    }),
     // A comparison city page that a content row redirects.
     contentPage({
       id: "00000000-0000-4000-8000-00000000001a",
@@ -261,6 +285,8 @@ const FIXTURES = {
     { ...blogPost("00000000-0000-4000-8000-0000000000b2", "fixture-shared-slug") },
     // A legacy_slugs alias of fixture-live-page: /p/fixture-old-slug 301s.
     { ...blogPost("00000000-0000-4000-8000-0000000000b3", "fixture-old-slug") },
+    // Shares its slug with a redirect row the dispatcher skips: served as the blog post.
+    { ...blogPost("00000000-0000-4000-8000-0000000000b4", "fixture-blog-behind-redirect") },
   ],
   synced_listings: [
     {
@@ -1210,6 +1236,8 @@ async function sitemapIntegrity(phase, index) {
     "/p/fixture-shadowed": "shadowed by a redirect row",
     "/p/fixture-old-slug": "blog post on a legacy alias (301)",
     "/p/fixture-untyped-page": "unreviewed untyped page",
+    "/p/fixture-stray-copy)": "malformed slug (stray copy)",
+    "/p/fixture--double-hyphen": "malformed slug (double hyphen)",
     "/p/fixture-redirect-row": "redirect row",
     "/p/giggster-vs-pool-rental-near-me-in-fixture-city-0002": "redirected comparison page",
     "/l/config-listing-do-not-delete/6768ea36-b435-40df-b331-43be74aa882f": "configuration listing",
@@ -1223,6 +1251,7 @@ async function sitemapIntegrity(phase, index) {
     "/p/all-locations": "/sitemap-static.xml",
     "/p/elearning-academy-fixture-course": "/sitemap-pages-academy.xml",
     "/p/fixture-blog-post": "/sitemap-pages-blog.xml",
+    "/p/fixture-blog-behind-redirect": "/sitemap-pages-blog.xml",
     "/l/fixture-listing/00000000-0000-4000-8000-0000000000c1": "/sitemap-listings.xml",
   };
   for (const [path, owner] of Object.entries(owners)) {

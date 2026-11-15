@@ -45,7 +45,7 @@ export interface ContentPageLookupReads {
   blogPostBySlug(slug: string): Promise<ReadOutcome<BlogPostRow[]>>;
 }
 
-const KNOWN_PREFIXES = [
+export const KNOWN_PREFIXES = [
   "become-a-swimming-pool-host-",
   "swim-instructor-pool-rental-",
   "rent-a-swimming-pool-",

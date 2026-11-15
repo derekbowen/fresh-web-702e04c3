@@ -17,9 +17,9 @@ written to the database. No deploy.
 |---|---:|---:|---|
 | `sitemap-static.xml` | 75 | 77 | −8 content-row duplicates, +2 moved from articles, +8 new (incl. `/s`) |
 | `sitemap-pages-comparisons.xml` | 1,091 | 1,091 | reads are paged; no URL change today |
-| `sitemap-pages-host-acquisition.xml` (4 files) | 3,933 | 3,932 | −`/p/hosting` (static owns it) |
+| `sitemap-pages-host-acquisition.xml` (4 files) | 3,933 | 3,931 | −`/p/hosting` (static owns it), −`/p/become-a-swimming-pool-host--ofallon-mo` (malformed twin) |
 | `sitemap-pages-event-guides.xml` | 787 | 787 | — |
-| `sitemap-pages-articles.xml` | 443 | 383 | −63, +3 |
+| `sitemap-pages-articles.xml` | 443 | 382 | −64, +3 |
 | `sitemap-pages-academy.xml` | 207 (WEST file) / 70 (app) | 202 (app) | see `academy-sitemap.md` |
 | `sitemap-pages-advocacy.xml` | 52 | 52 | — |
 | `sitemap-pages-spanish.xml` | 446 | 446 | — |
@@ -27,10 +27,11 @@ written to the database. No deploy.
 | `sitemap-pages-blog.xml` | 143 | 51 | −92 |
 | `sitemap-listings.xml` | 126 | 125 | −config listing |
 | `public-pools.xml` (WEST pp-ssr, not this app) | 2,529 | 2,529 | — |
-| **entries** | **10,181** | **10,024** | |
-| **distinct URLs** | **10,074** | **10,024** | −61 removed, +11 added |
+| **entries** | **10,181** | **10,022** | |
+| **distinct URLs** | **10,074** | **10,022** | −63 removed, +11 added |
 | URLs listed in two sitemaps | 107 | 0 | (5 remain on www until WEST proxies the academy path) |
 | Listed URLs that redirect | 2 | 0 | |
+| Listed URLs with a malformed slug (stray copies) | 2 | 0 | |
 | Listed URLs that are noindex | 1 | 0 | |
 | Listed URLs canonical on another host | 57 | 0 | |
 | `sitemap-directory.xml` (reachable, not in the index) | 200, 1,357 noindex URLs | 410 Gone | |
@@ -51,7 +52,14 @@ A URL belongs to whatever actually serves it (`src/lib/sitemap-rules.ts`, header
   listed.
 - The dispatcher serves a `content_pages` row (or its `legacy_slugs` alias 301) before
   it looks at `blog_posts`. A blog post with such a slug therefore belongs to the
-  content row's group, never to the blog sitemap.
+  content row's group, never to the blog sitemap. The blog sitemap decides this by
+  running the dispatcher's own decision, `resolveContentPageLookup`, over batched
+  reads (`loadContentServedSlugs` / `blogPostIsServedAsBlog`): a blog post is listed
+  exactly when `/p/<slug>` would answer with that post. A `status='redirect'` row whose
+  `url_path` is not `/p/<slug>`, or that has no `redirect_to`, is skipped by the
+  dispatcher, so it does not hide the post; a published row at any `url_path` does; the
+  bare-city 301 (`pool-rental-<city>` → `pool-rental-<city>-<st>`) is checked too. On
+  2026-11-15 this gives the same 92 shadowed posts as before (0 posts change).
 - Any other content row belongs to its template group. The groups are defined once, in
   `src/lib/sitemap-groups.ts`. The index (`TEMPLATE_GROUPS`) and every sub-sitemap route
   read that single definition, so a template type can no longer be in one list and
@@ -142,7 +150,25 @@ Note: the articles copy of each of these carries the content row's lastmod
 | URL | Sitemap | Why it was emitted | Rule |
 |---|---|---|---|
 | `/p/ultimate_pool_party_music_and_sound_system_guide` | articles | A published `resource` row with an underscore slug. The edge rewrites `_` to `-` before the app sees the request: `/p/pool_rental_guarantees` → 301 `/p/pool-rental-guarantees` on `.com` and on `.co.uk`, and no app code does this. 100 published content rows have underscore slugs; this was the only one with `in_sitemap = true`. | `isServableSlug`: no `_`, no upper case (`slug_redirects`). The hyphenated URL is a blog post and stays in the blog sitemap. |
-| `/p/opening-pool-for-summer` | blog | A published blog post whose slug is a `legacy_slugs` alias of the content row `opening-a-pool`. The dispatcher 301s the alias before it looks at `blog_posts`. | `loadContentServedSlugs`: a blog slug that is a content row (published or redirect) or an alias of one is not a blog URL. |
+| `/p/opening-pool-for-summer` | blog | A published blog post whose slug is a `legacy_slugs` alias of the content row `opening-a-pool`. The dispatcher 301s the alias before it looks at `blog_posts`. | `loadContentServedSlugs`: the dispatcher's decision is run for each blog slug; a slug it serves from a content row or 301s (exact redirect row, alias, bare-city fallback) is not a blog URL. |
+
+### 2b. Malformed slugs (stray copies) → 0
+
+Not in the task's list, found while re-checking: two published, `in_sitemap` rows have
+slugs no real page has. Both answer 200 and are self-canonical, so each is a near copy
+of a listed page at a junk URL.
+
+| URL | Sitemap | Twin that stays listed |
+|---|---|---|
+| `/p/learningacademy)` | articles | `/p/learningacademy` ("Pool Host Learning Academy"; the stray row is titled "Learning Academy", created the same day) |
+| `/p/become-a-swimming-pool-host--ofallon-mo` | host-acquisition | `/p/become-a-swimming-pool-host-ofallon-mo` |
+
+Rule (`isWellFormedSlug`, exclusion `malformed_slug`): a slug must be lower-case words
+of `[a-z0-9]` joined by single hyphens, optionally nested with `/` (`es/<slug>`). Applied
+to content rows and blog posts. On 2026-11-15 only these two rows (plus the underscore
+slug above) fail it; no published blog post and no listing slug does. The rows
+themselves are unchanged (they still answer 200); whether to 301 them to their twins is
+left open.
 
 Also guarded, with 0 rows today: a published row shadowed by a `status='redirect'` row
 with the same slug and `url_path` (`shadowed_by_redirect_row`), and a `url_path` other
@@ -180,6 +206,16 @@ the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-{australia,cana
 top-pool-rental-platforms-{australia,canada,uk}, uk-cities-with-pools, why-hosts-are-leaving-swimply-{australia,canada,uk}
 
 </details>
+
+Where the 57 go after this change: 50 match a `sitemap-country.xml` pattern on their
+ccTLD (`%-uk`, `%-australia`, `%-canada`, `australian-%`, `canadian-%`), so that ccTLD
+sitemap still lists them. The other 7 match no pattern, so after deploy **neither the www
+URL nor its canonical target is in any sitemap**: `pool-rental-london`,
+`pool-rental-manchester`, `uk-cities-with-pools` (→ `poolrentalnearme.co.uk`),
+`pool-rental-melbourne`, `pool-rental-sydney` (→ `.com.au`), `pool-rental-toronto`,
+`pool-rental-vancouver` (→ `.ca`). Excluding them from www is still right (a sitemap must
+not list a URL canonicalised elsewhere); giving them a home is part of F10 (add them to
+`COUNTRY_MATCH`, or drop the override). Listed under decisions left open.
 
 The 9 `country_launch` pages have no override, are self-canonical on www and stay
 listed. Their one-home question belongs to F10.
@@ -226,8 +262,14 @@ The one typed row no group read, `resource_article`
 
 ### 8. Indexable pages in no sitemap
 
-The audit listed 29 indexable `/p/` pages and 12 static routes. Each was probed on
-2026-11-15: status, robots meta, `X-Robots-Tag`, canonical, words in `<main>`, and forms.
+The audit listed 29 indexable `/p/` pages and 12 static routes. The 12 static routes are
+the audit's "static p.* routes in NO sitemap, 200 and indexable live"
+(`notes/sitemap-code.md`, section 7): `/p/about-our-company`, `/p/affiliate`,
+`/p/affiliate-program`, `/p/author/derek-bowen`, `/p/earnings-calculator`, `/p/jan`,
+`/p/neighbors`, `/p/la-saltwater-featured`, `/p/pool-party-rentals`, `/p/pool-rental-app`,
+`/p/private-pool-rental`, `/p/privacy-request`. Each has a decision in the two tables
+below (7 added, 5 not added). Each was probed on 2026-11-15: status, robots meta,
+`X-Robots-Tag`, canonical, words in `<main>`, and forms.
 
 Added to `sitemap-static.xml` (dedicated routes; all 200, no noindex, one self canonical):
 
@@ -255,6 +297,28 @@ Not added:
 | `/p/affiliate` | states a "10% platform fee" twice (the host fee is 0%); list after F14 |
 | `/p/jan`, `/p/la-saltwater-featured` | single-host showcase pages for listings that have their own `/l/` page; open |
 | 16 `/p/become-a-swimming-pool-host-*` + `/p/new-hampton-ny`, `/p/rio-medina-tx` | typed `host_acq_city` rows with `in_sitemap = false` (65 such published rows in total). The flag is a deliberate data setting; changing it is a database decision, not a code one |
+
+Marketplace (WEST) pages in no sitemap. These are not among the audit's 12 and the audit
+recommends only bare `/s` for `sitemap-static.xml` (section 8), so none was added. They
+were listed only by WEST's own `/sitemap-default.xml`, which is not in the www index.
+Probed live on 2026-11-15:
+
+| URL | Live | Decision |
+|---|---|---|
+| `/privacy-policy` | 200, `index, follow`, self canonical, 6,199 words | open: candidate for `sitemap-static.xml` |
+| `/terms-of-service` | 200, `index, follow`, self canonical, 7,692 words (`/p/terms-of-service` 301s here) | open: candidate for `sitemap-static.xml` |
+| `/host-standards` | 200, `index, follow`, self canonical, 2,445 words | open: candidate for `sitemap-static.xml` |
+| `/amenities` | 200, no robots meta, self canonical, 1,774 words | open: candidate; note `/amenity/<anything>` answers 200 for any path (audit F9) |
+| `/signup` | 200, `index, follow`, self canonical, 121 words | not a candidate: a sign-up form |
+| `/u/<uuid>` (12 linked) | 200, indexable, 34–164 words | not a candidate: thin profiles, audit F9 says noindex them |
+
+A duplicate this change leaves listed: `/p/privacy-policy` (articles) is a scraped copy of
+the policy, titled and headed "privacy-policy | Pool Rental Near Me", self-canonical,
+while the real policy is `/privacy-policy` (above). It was in static and articles; it is
+now in articles only, because static lists dedicated routes only. It passes every rule
+(published, `in_sitemap`, no override), so removing it is a content decision: 301
+`/p/privacy-policy` to `/privacy-policy` (as `/p/terms-of-service` already is), or set
+`in_sitemap = false`. Listed under decisions left open.
 
 ### 9. `sitemap-directory.xml` (1,357 noindex URLs) → 410 Gone
 
@@ -290,29 +354,43 @@ this app. That step is not done here.
 - Cost: each content group is read in full, in 1,000-row windows plus one empty window,
   and the redirect-row lookup is added. A cold index build issues about 40 small
   sequential reads, behind the existing stale-while-revalidate memo, which is warmed at
-  boot. Each sub-sitemap request reads its whole group (host-acquisition: 5 windows) and
-  is cached 300 s.
+  boot. Each sub-sitemap request reads its whole group (host-acquisition: 1 + 1
+  redirect-lookup windows and 4 + 1 group windows, 7 reads, where the old route made 1),
+  and each `?page=N` file repeats that walk; responses are cached 300 s.
+- Reliability: because one request is now several reads, `readAllRows` retries a window
+  once, immediately, after a returned or thrown error (the index already retried its
+  counts after intermittent empty-message errors). A timeout is not retried, so a hung
+  database still answers 503 within one read timeout. A failure that persists through
+  the retry still fails the whole list: 503, never a truncated sitemap. Not done:
+  memoising each group's list in-process and sharing it between `?page=N` files and the
+  index; the retry addresses the 503 rate, and the cost is 7 small reads per uncached
+  request.
 
 ## Tests
 
-- `tests/sitemap-rules.test.mjs` (new, 20 tests). Every exclusion rule; the
+- `tests/sitemap-rules.test.mjs` (new, 25 tests). Every exclusion rule (including `malformed_slug`); the
   dedicated-route list against the `src/routes` files; `STATIC_URLS` against that list;
   group ownership (no type in two groups, untyped rows owned once); the PostgREST
   or-tree; paging with a server cap below the window; comparisons with 1,234 cities
   (more than 1,000, with no `.limit()`); a failed window or failed lookup fails the
-  list; blog shadow and alias rules with the quoted array literal; the config listing.
+  list; a window is retried once after an error but not after a timeout; blog shadow and
+  alias rules with the quoted array literal, and the dispatcher mirror (a redirect row at
+  another `url_path` or with no target does not hide a post, a published row at any
+  `url_path` does, the bare-city 301 does); the config listing.
 - `tests/sitemap.test.mjs` (updated, 15 tests). The builder reads the whole group in
   windows; `?page=N` is cut from the final list; a failure in a second window or in the
   redirect-row lookup is a 503; 410 response helper.
 - `npm run test:failed-reads`. The stub now applies PostgREST's 1,000-row cap and
   evaluates nested `and()`/`or()` trees and `ov`. Fixtures add one row per exclusion
-  rule and 1,200 extra published cities. In healthy mode the harness asserts: every index
+  rule (including two malformed slugs, and a blog post behind a redirect row the
+  dispatcher skips, which the blog sitemap must list) and 1,200 extra published cities. In healthy mode the harness asserts: every index
   child is 200 and non-empty; no unlisted child has entries; no URL appears twice across
   children; none of the excluded fixtures is listed; each owner fixture is listed exactly
   once, by its owner; comparisons lists 2,404 entries for 1,201 cities (3 pillars + 2 per city − 1 redirected); every listed URL
   this app serves answers 200, is not noindex, and is its own canonical. In every mode,
-  `sitemap-directory.xml` is 410. Result: 317 passed, 0 failed. Run against a build of
-  `b3e2ace` (this branch's base), the same harness fails 30 checks: six of the nine excluded
+  `sitemap-directory.xml` is 410. Result: 323 passed, 0 failed. Run against a build of
+  `b3e2ace` (this branch's base), before the malformed-slug and redirect-row fixtures were
+  added, the same harness failed 30 checks: six of the nine excluded
   fixtures listed, two duplicates, comparisons 2,002 entries for 1,201 cities (cut at
   1,000), the academy course missing, and directory 503 instead of 410.
 
@@ -327,8 +405,22 @@ this app. That step is not done here.
 5. `sitemap-country.xml` (ccTLDs) still has no status or `redirect_to` filter, and lists
    the `www.` ccTLD URL of pages whose canonical is the bare ccTLD host. That is part of
    F10 and was not changed here.
-6. WEST marketplace sitemaps (`/sitemap-index.xml`, `/sitemap-default.xml`,
+6. Seven pages canonicalised to a ccTLD are now in no sitemap on any host (section 4):
+   `pool-rental-london`, `pool-rental-manchester`, `uk-cities-with-pools`,
+   `pool-rental-melbourne`, `pool-rental-sydney`, `pool-rental-toronto`,
+   `pool-rental-vancouver`. F10: add them to `COUNTRY_MATCH`, or drop the override so
+   www lists them again. The audit (section 9) notes 7 canonical targets are
+   robots-blocked on their ccTLD.
+7. WEST marketplace sitemaps (`/sitemap-index.xml`, `/sitemap-default.xml`,
    `/sitemap-recent-listings.xml`, 130 `/l/<uuid>` URLs that all 301) are served by the
    marketplace container, not this app. Unchanged.
-7. Search Console: resubmit `/sitemap.xml`, and remove `/sitemap-directory.xml` if it is
+8. Marketplace pages `/privacy-policy`, `/terms-of-service`, `/host-standards` and
+   `/amenities` are indexable, self-canonical and in no www sitemap (section 8). Adding
+   them to `sitemap-static.xml` is the owner's call, as `/s` was; then decide
+   `/p/privacy-policy` (a scraped duplicate of `/privacy-policy`, still in articles):
+   301 it to `/privacy-policy` or set `in_sitemap = false`.
+9. The two malformed-slug rows (`learningacademy)`,
+   `become-a-swimming-pool-host--ofallon-mo`) are out of the sitemaps but still answer
+   200: 301 them to their twins or unpublish them (a database change).
+10. Search Console: resubmit `/sitemap.xml`, and remove `/sitemap-directory.xml` if it is
    still submitted (owner action).
