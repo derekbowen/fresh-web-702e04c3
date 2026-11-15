@@ -887,6 +887,31 @@ async function healthyPhase(phase) {
     `${logWrites(mark).length} write(s)`,
   );
 
+  // F11: /p and /p/ are not pages and must not redirect (production looped:
+  // nginx 301 /p -> /p/, router 307 /p/ -> /p). Known junk slugs are a plain
+  // 404, not a 301 to the homepage, and are not logged.
+  for (const path of ["/p", "/p/"]) {
+    const r = await get(path);
+    check(
+      phase,
+      `${path} -> 404 with no Location`,
+      r.status === 404 && !r.headers.get("location"),
+      describe(r),
+    );
+  }
+  mark = stub.requests.length;
+  for (const path of ["/p/null", "/p/details", "/p/mailto:someone"]) {
+    const r = await get(path);
+    check(
+      phase,
+      `${path} -> 404, not a redirect to the homepage`,
+      r.status === 404 && !r.headers.get("location"),
+      describe(r),
+    );
+  }
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  check(phase, "junk slugs wrote no 404-log row", logWrites(mark).length === 0, `${logWrites(mark).length} write(s)`);
+
   // A missing slug whose characters are array or filter syntax is still just
   // missing. Postgres rejects an unquoted `{city}` or `"` in an array literal
   // (22P02, HTTP 400) on every retry, so taking that for a failed read would
