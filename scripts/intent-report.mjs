@@ -51,9 +51,12 @@ import {
   placeForPage,
   cityPageCopy,
 } from "../src/lib/city-intent.ts";
-import { normalizeSearchHref, searchHrefForPlace } from "../src/lib/search-links.ts";
+import { normalizeSearchHref, searchHrefForPlace, searchHrefForState } from "../src/lib/search-links.ts";
 import { getVariantCopy, normalizeTitleVariant } from "../src/lib/host-acq-variants.ts";
 import { cityForContentPage, parseCitySlug } from "../src/lib/city-slug.ts";
+import { titlePlace, inventorySummaryOf, renterInventoryState } from "../src/lib/city-intent.ts";
+import { ADVOCACY_STATES } from "../src/lib/advocacy-states.ts";
+import { STATE_NAMES } from "../src/lib/states.ts";
 
 const file = process.argv[2];
 if (!file) {
@@ -95,6 +98,9 @@ const listings = (data.listings ?? []).map(([city_slug, state_code, latitude, lo
 }));
 
 // ── loadCityInventory (src/server/city-inventory.functions.ts), over the export ──
+// The export has no listing slug; one pool listed twice shares city, state and
+// coordinates, so that is the dedupe key here (the loader keys on slug + coordinates;
+// on 2026-11-15 both keys find the same single duplicate pair, Rocky Point NY).
 const cityKey = (c) =>
   c
     ? c
@@ -109,22 +115,39 @@ const miles = (aLat, aLng, bLat, bLng) => {
     Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(rad(bLng - aLng) / 2) ** 2;
   return 2 * 3958.8 * Math.asin(Math.sqrt(h));
 };
-function inventoryFor(place, row) {
+const lkey = (l) => `${l.city_slug}|${l.state_code}|${l.latitude}|${l.longitude}`;
+const dedupeListings = (ls) => {
+  const seen = new Set();
+  return ls.filter((l) => (seen.has(lkey(l)) ? false : (seen.add(lkey(l)), true)));
+};
+function inventoryFor(place, centre, { dedupe = true } = {}) {
+  const pool = dedupe ? dedupeListings(listings) : listings;
   const key = cityKey(place.cityName);
   const st = place.stateCode;
-  const exact = key && st ? listings.filter((l) => l.city_slug === key && l.state_code === st) : [];
-  if (exact.length >= 3 || row?.latitude == null || row?.longitude == null) {
-    return { exactTotal: exact.length, nearbyTotal: 0 };
+  const exact = key && st ? pool.filter((l) => l.city_slug === key && l.state_code === st) : [];
+  const lat = centre?.latitude == null ? null : Number(centre.latitude);
+  const lng = centre?.longitude == null ? null : Number(centre.longitude);
+  if (exact.length >= 3 || lat == null || lng == null) {
+    return { exactTotal: exact.length, nearbyTotal: 0, nearestMi: null, nearbyChecked: false };
   }
-  const near = listings.filter(
-    (l) =>
-      !exact.includes(l) &&
-      l.latitude != null &&
-      l.longitude != null &&
-      miles(Number(row.latitude), Number(row.longitude), l.latitude, l.longitude) <= 60,
-  );
-  return { exactTotal: exact.length, nearbyTotal: near.length };
+  const exactKeys = new Set(exact.map(lkey));
+  const near = pool
+    .filter((l) => !exactKeys.has(lkey(l)) && l.latitude != null && l.longitude != null)
+    .map((l) => miles(lat, lng, l.latitude, l.longitude))
+    .filter((mi) => mi <= 60)
+    .sort((a, b) => a - b);
+  return { exactTotal: exact.length, nearbyTotal: near.length, nearestMi: near[0] ?? null, nearbyChecked: true };
 }
+const stateOf = (inv) =>
+  renterInventoryState(
+    inventorySummaryOf({
+      exact: Array(inv.exactTotal).fill(0),
+      nearby: inv.nearestMi == null ? [] : [{ mi: inv.nearestMi }],
+      nearbyTotal: inv.nearbyTotal,
+      radiusMi: inv.nearbyTotal ? 60 : null,
+      nearbyChecked: inv.nearbyChecked,
+    }),
+  );
 const bySlug = new Map(cities.map((c) => [c.slug, c]));
 const US = new Set(
   "al ak az ar ca co ct de fl ga hi id il in ia ks ky la me md ma mi mn ms mo mt ne nv nh nj nm ny nc nd oh ok or pa ri sc sd tn tx ut vt va wa wv wi wy dc".split(
@@ -181,13 +204,25 @@ function before(p) {
 }
 
 // ── after (this change) ──────────────────────────────────────────────────────
+// The renter primary CTA links the map search for the city whenever the page
+// has pools in or near it, or could not check nearby (no coordinates).
 function after(p) {
   const id = slugIdentity(p);
   const row = resolveCityRow(id.lookupSlug);
   const place = placeForPage(p, row);
-  const copy = cityPageCopy(p, place);
+  const copy = cityPageCopy(p, place, row);
+  // p.$slug.tsx: the bare "<city>" row is the inventory centre when it is the
+  // same state and has coordinates.
+  const bare = id.centroidSlug ? bySlug.get(id.centroidSlug) : null;
+  const centre =
+    bare && place.stateCode && bare.state_code === place.stateCode && bare.latitude != null && bare.longitude != null
+      ? bare
+      : row;
+  const inv = inventoryFor(place, centre);
+  const state = stateOf(inv);
   const links = [...p.links.map(normalizeSearchHref), "/p/pool-pros"];
-  if (copy.intent === "renter") links.push(searchHrefForPlace(place.cityName, place.stateCode));
+  if (copy.intent === "renter" && (state === "exact" || state === "nearby" || state === "unchecked"))
+    links.push(searchHrefForPlace(place.cityName, place.stateCode));
   return {
     h1: copy.h1.text,
     title: copy.title,
@@ -195,7 +230,10 @@ function after(p) {
     place,
     copy,
     row,
-    inv: inventoryFor(place, row),
+    centre,
+    inv,
+    invState: state,
+    invOldCentre: inventoryFor(place, row, { dedupe: false }),
   };
 }
 
@@ -224,26 +262,101 @@ function dupStats(list, key) {
   };
 }
 
+/**
+ * The place a /s?address= link points at, normalised INDEPENDENTLY of
+ * search-links.ts (decode, "+" as space, lower-case, full state names to codes,
+ * "saint"/"st." to "st", punctuation and spacing dropped). Two links with the
+ * same key are the same place; if they are different URLs, that place has more
+ * than one spelling. Keying on normalizeSearchHref() itself would make that
+ * count zero by construction.
+ */
+const NAME_TO_CODE = new Map(Object.entries(STATE_NAMES).map(([c, n]) => [n.toLowerCase(), c.toLowerCase()]));
+function placeKey(href) {
+  const m = /^\/s\?(.*)$/.exec(href);
+  if (!m) return href;
+  const params = new URLSearchParams(m[1]);
+  let v = params.get("address");
+  if (v == null) return href.toLowerCase();
+  v = v.toLowerCase().replace(/\./g, " ").replace(/\bsaint\b/g, "st").replace(/\s+/g, " ").trim();
+  const parts = v.split(",").map((x) => x.trim()).filter(Boolean);
+  let st = parts.length > 1 ? parts.pop() : "";
+  if (NAME_TO_CODE.has(st)) st = NAME_TO_CODE.get(st);
+  let city = parts.join(" ");
+  if (!parts.length && NAME_TO_CODE.has(city)) {
+    city = "";
+    st = NAME_TO_CODE.get(v);
+  }
+  if (st && city.endsWith(" " + st)) city = city.slice(0, -(st.length + 1));
+  return `${city.replace(/[^a-z0-9]/g, "")}|${st}`;
+}
+
 /** Distinct link targets, and places linked under more than one spelling. */
-function linkStats(list, side) {
-  const all = list.flatMap((r) => r[side].links);
+function linkStatsOf(all) {
   const search = all.filter((h) => h.startsWith("/s?"));
   const pros = all.filter((h) => h.startsWith("/p/pool-pros"));
   const byPlace = new Map();
   for (const h of search) {
-    const k = normalizeSearchHref(h).toLowerCase();
+    const k = placeKey(h);
     if (!byPlace.has(k)) byPlace.set(k, new Set());
     byPlace.get(k).add(h);
   }
-  const multi = [...byPlace.values()].filter((s) => s.size > 1);
+  const multi = [...byPlace.values()].filter((x) => x.size > 1);
   return {
     searchLinks: search.length,
     distinctSearchTargets: new Set(search).size,
+    distinctSearchPlaces: byPlace.size,
     placesWithSeveralSpellings: multi.length,
     poolProsLinks: pros.length,
     distinctPoolProsTargets: new Set(pros).size,
-    examples: multi.slice(0, 5).map((s) => [...s]),
+    examples: multi.slice(0, 5).map((x) => [...x]),
   };
+}
+const linkStats = (list, side) => linkStatsOf(list.flatMap((r) => r[side].links));
+
+// ── the other templates the commit moved to search-links.ts ─────────────────
+// Each generates its /s link from data the export or the code holds:
+//   comparison routes  /p/{giggster,peerspace}-vs-pool-rental-near-me-in-{city}:
+//                      every published cities row, `${name}, ${state_code}`
+//   advocacy           /p/host-advocacy-{state}: ADVOCACY_STATES names (2 links/page)
+//   state hubs         /p/pool-rentals-{state}: the state name (2 links/page)
+//   activity_city      0 published rows on 2026-11-15, so no links
+function otherTemplateLinks() {
+  const enc = (v) => `/s?address=${encodeURIComponent(v)}`;
+  const comp = { before: [], after: [] };
+  for (const c of cities) {
+    for (let i = 0; i < 2; i++) {
+      comp.before.push(enc(`${c.name}, ${c.state_code}`));
+      comp.after.push(searchHrefForPlace(c.name, c.state_code));
+    }
+  }
+  const adv = { before: [], after: [] };
+  for (const st of ADVOCACY_STATES) {
+    for (let i = 0; i < 2; i++) {
+      adv.before.push(st.name ? enc(st.name) : "/s");
+      adv.after.push(searchHrefForState(st.name));
+    }
+  }
+  const hub = { before: [], after: [] };
+  for (const name of Object.values(STATE_NAMES)) {
+    for (let i = 0; i < 2; i++) {
+      hub.before.push(enc(name));
+      hub.after.push(searchHrefForState(name));
+    }
+  }
+  const out = {};
+  for (const [k, v] of Object.entries({ comparisons: comp, advocacy: adv, stateHubs: hub })) {
+    out[k] = {
+      before: linkStatsOf(v.before),
+      after: linkStatsOf(v.after),
+      changedLinks: v.before.filter((h, i) => h !== v.after[i]).length,
+    };
+  }
+  // Across all templates: one place, several spellings?
+  const all = {
+    before: linkStatsOf([...rows.flatMap((r) => r.b.links), ...comp.before, ...adv.before, ...hub.before]),
+    after: linkStatsOf([...rows.flatMap((r) => r.a.links), ...comp.after, ...adv.after, ...hub.after]),
+  };
+  return { ...out, allTemplates: all };
 }
 
 function report(list, label) {
@@ -271,20 +384,42 @@ function report(list, label) {
     },
     noState: list.filter((r) => !r.a.place.stateCode).map((r) => r.p.slug),
     inventory: {
-      renterExact: list.filter((r) => r.intent === "renter" && r.a.inv.exactTotal > 0).length,
-      renterNearbyOnly: list.filter(
-        (r) => r.intent === "renter" && !r.a.inv.exactTotal && r.a.inv.nearbyTotal > 0,
-      ).length,
-      renterNone: list.filter(
-        (r) => r.intent === "renter" && !r.a.inv.exactTotal && !r.a.inv.nearbyTotal,
-      ).length,
+      renterExact: list.filter((r) => r.intent === "renter" && r.a.invState === "exact").length,
+      renterNearbyOnly: list.filter((r) => r.intent === "renter" && r.a.invState === "nearby").length,
+      renterUnchecked: list.filter((r) => r.intent === "renter" && r.a.invState === "unchecked").length,
+      renterNone: list.filter((r) => r.intent === "renter" && r.a.invState === "none").length,
+      renterUncheckedSlugs: list.filter((r) => r.intent === "renter" && r.a.invState === "unchecked").map((r) => r.p.slug),
       hostWithSection: list.filter(
         (r) => r.intent === "host" && (r.a.inv.exactTotal > 0 || r.a.inv.nearbyTotal > 0),
       ).length,
       hostWithout: list.filter(
         (r) => r.intent === "host" && !r.a.inv.exactTotal && !r.a.inv.nearbyTotal,
       ).length,
+      centreMovedToBareRow: list.filter((r) => r.a.centre && r.a.row && r.a.centre !== r.a.row).length,
+      countsChangedByCentreOrDedupe: list.filter(
+        (r) =>
+          r.a.inv.exactTotal !== r.a.invOldCentre.exactTotal ||
+          r.a.inv.nearbyTotal !== r.a.invOldCentre.nearbyTotal,
+      ).length,
     },
+    variantRowsChanged: {
+      title: list.filter((r) => r.a.copy.variant && r.a.title !== r.b.title).map((r) => r.p.slug),
+      h1: list.filter((r) => r.a.copy.variant && r.a.h1 !== r.b.h1).map((r) => r.p.slug),
+    },
+    hostControlTitleReplaced: list.filter(
+      (r) => r.intent === "host" && !r.a.copy.variant && r.a.title !== r.b.title,
+    ).length,
+    placeDiffersFromStoredTitle: list
+      .filter((r) => {
+        const t = titlePlace(r.p.title) ?? titlePlace(r.p.seo_title);
+        return (
+          t &&
+          !r.a.place.isTopic &&
+          t.stateCode === r.a.place.stateCode &&
+          t.city.toLowerCase().replace(/[^a-z]/g, "") !== r.a.place.cityName.toLowerCase().replace(/[^a-z]/g, "")
+        );
+      })
+      .map((r) => `${r.p.slug}: page "${r.a.place.label}" vs title "${(titlePlace(r.p.title) ?? titlePlace(r.p.seo_title)).city}"`),
     h1: { before: dupStats(list, (r) => r.b.h1), after: residual },
     title: { before: dupStats(list, (r) => r.b.title), after: dupStats(list, (r) => r.a.title) },
     sameHostRenterH1: {
@@ -400,6 +535,7 @@ const out = {
   publishedRows: allRows.length,
   redirectingRows: allRows.length - rows.length,
   all: report(rows, "served host_acq_city rows (published, no redirect_to)"),
+  otherTemplates: otherTemplateLinks(),
   sitemap: report(
     rows.filter((r) => r.p.in_sitemap),
     "served rows in the sitemap",
@@ -413,6 +549,12 @@ const out = {
       "chapel-hill",
       "fresno",
       "birthday-pool-party-austin-tx",
+      "houston",
+      "queens",
+      "rocky-point-ny",
+      "chevy-chase-md",
+      "become-a-swimming-pool-host-newport-ky",
+      "become-a-swimming-pool-host-liguna-niguel-ca",
     ]
       .map((s) => rows.find((r) => r.p.slug === s))
       .filter(Boolean)
@@ -420,7 +562,7 @@ const out = {
         r.p.slug,
         {
           intent: r.intent,
-          inv: r.a.inv,
+          inv: { ...r.a.inv, state: r.a.invState, before: r.a.invOldCentre },
           before: { h1: r.b.h1, title: r.b.title },
           after: { h1: r.a.h1, title: r.a.title },
         },
@@ -442,8 +584,17 @@ if (process.argv.includes("--json")) {
     console.log(`   no state known after: ${r.noState.length} ${r.noState.slice(0, 8).join(", ")}`);
     const I = r.inventory;
     console.log(
-      `   inventory (mirror ${data.listings_synced_max ?? "?"}): RENTER exact ${I.renterExact}, nearby-only ${I.renterNearbyOnly}, none ${I.renterNone}; HOST with section ${I.hostWithSection}, without ${I.hostWithout}`,
+      `   inventory (mirror ${data.listings_synced_max ?? "?"}): RENTER exact ${I.renterExact}, nearby-only ${I.renterNearbyOnly}, nearby-unchecked (no coordinates) ${I.renterUnchecked}, none ${I.renterNone}; HOST with section ${I.hostWithSection}, without ${I.hostWithout}`,
     );
+    console.log(
+      `   inventory centre moved to the bare cities row on ${I.centreMovedToBareRow} pages; counts changed (centre + dedupe) on ${I.countsChangedByCentreOrDedupe}`,
+    );
+    console.log(
+      `   title_variant rows changed: title ${r.variantRowsChanged.title.length} ${r.variantRowsChanged.title.join(", ")}; H1 ${r.variantRowsChanged.h1.length}`,
+    );
+    console.log(`   HOST control rows whose <title> changed (stored title states a figure): ${r.hostControlTitleReplaced}`);
+    console.log(`   page place differs from the stored title's city: ${r.placeDiffersFromStoredTitle.length}`);
+    for (const x of r.placeDiffersFromStoredTitle.slice(0, 15)) console.log(`      ${x}`);
     for (const f of ["h1", "title"]) {
       console.log(
         `   duplicate ${f}: before ${r[f].before.groups} groups / ${r[f].before.pages} pages -> after ${r[f].after.groups} groups / ${r[f].after.pages} pages`,
@@ -459,13 +610,22 @@ if (process.argv.includes("--json")) {
     );
     const L = r.links;
     console.log(
-      `   /s? links: ${L.before.searchLinks} links, ${L.before.distinctSearchTargets} targets, ${L.before.placesWithSeveralSpellings} places with >1 spelling -> ${L.after.searchLinks} links, ${L.after.distinctSearchTargets} targets, ${L.after.placesWithSeveralSpellings} places with >1 spelling`,
+      `   /s? links: ${L.before.searchLinks} links, ${L.before.distinctSearchTargets} targets / ${L.before.distinctSearchPlaces} places, ${L.before.placesWithSeveralSpellings} places with >1 spelling -> ${L.after.searchLinks} links, ${L.after.distinctSearchTargets} targets / ${L.after.distinctSearchPlaces} places, ${L.after.placesWithSeveralSpellings} places with >1 spelling`,
     );
+    if (L.after.examples.length) console.log(`   e.g. after: ${JSON.stringify(L.after.examples[0])}`);
     console.log(
       `   /p/pool-pros links: ${L.before.poolProsLinks} links, ${L.before.distinctPoolProsTargets} targets -> ${L.after.poolProsLinks} links, ${L.after.distinctPoolProsTargets} target(s)`,
     );
     if (L.before.examples.length)
       console.log(`   e.g. before: ${JSON.stringify(L.before.examples[0])}`);
+  }
+  console.log("\n== /s? links in the other templates moved to search-links.ts");
+  for (const [k, v] of Object.entries(out.otherTemplates)) {
+    console.log(
+      `   ${k}: ${v.before.searchLinks} links, ${v.before.distinctSearchTargets} targets, ${v.before.placesWithSeveralSpellings} places >1 spelling -> ${v.after.searchLinks} links, ${v.after.distinctSearchTargets} targets, ${v.after.placesWithSeveralSpellings} places >1 spelling${v.changedLinks != null ? `; ${v.changedLinks} links changed` : ""}`,
+    );
+    if (v.before.examples?.length) console.log(`      e.g. before: ${JSON.stringify(v.before.examples[0])}`);
+    if (v.after.examples?.length) console.log(`      e.g. after: ${JSON.stringify(v.after.examples[0])}`);
   }
   const ap = out.afterDuplicatePlan;
   console.log(
@@ -501,6 +661,33 @@ if (process.argv.includes("--json")) {
       );
     console.log("commit;");
   }
+  if (process.argv.includes("--sql")) {
+    // Same-name cities in different states whose stored control-arm seo_title
+    // has no state ("Become a swimming pool host in Belmont" for NC and VA).
+    // The code keeps stored control titles (title_variant test), so the fix is
+    // data: add the state to exactly these rows.
+    const q = (v) => `'${v.replace(/'/g, "''")}'`;
+    const fixes = ap.title.examples.flatMap((g) =>
+      g.slugs.map((slug) => {
+        const r = afterPlan.find((x) => x.p.slug === slug);
+        return { slug, from: r.p.seo_title, to: `${r.p.seo_title}, ${r.a.place.stateCode}` };
+      }),
+    );
+    if (fixes.length) {
+      console.log(`\n-- APPLY (needs Derek's GO; changes ${fixes.length} control-arm titles): add the state to duplicate stored titles`);
+      console.log("begin;");
+      for (const f of fixes)
+        console.log(
+          `update content_pages set seo_title = ${q(f.to)} where slug = ${q(f.slug)} and template_type = 'host_acq_city' and seo_title = ${q(f.from)};`,
+        );
+      console.log("commit;\n-- ROLLBACK\nbegin;");
+      for (const f of fixes)
+        console.log(
+          `update content_pages set seo_title = ${q(f.from)} where slug = ${q(f.slug)} and template_type = 'host_acq_city' and seo_title = ${q(f.to)};`,
+        );
+      console.log("commit;");
+    }
+  }
   if (process.argv.includes("--plan"))
     for (const x of plan)
       console.log(
@@ -509,7 +696,7 @@ if (process.argv.includes("--json")) {
   console.log("\n== samples");
   for (const [slug, s] of Object.entries(out.samples)) {
     console.log(
-      `  ${slug} [${s.intent}; exact ${s.inv.exactTotal}, nearby ${s.inv.nearbyTotal}]\n    before H1:    ${s.before.h1}\n    before title: ${s.before.title}\n    after H1:     ${s.after.h1}\n    after title:  ${s.after.title}`,
+      `  ${slug} [${s.intent}; ${s.inv.state}: exact ${s.inv.exactTotal}, nearby ${s.inv.nearbyTotal}, nearest ${s.inv.nearestMi == null ? "-" : s.inv.nearestMi.toFixed(1)} mi (old centre, no dedupe: exact ${s.inv.before.exactTotal}, nearby ${s.inv.before.nearbyTotal}, nearest ${s.inv.before.nearestMi == null ? "-" : s.inv.before.nearestMi.toFixed(1)})]\n    before H1:    ${s.before.h1}\n    before title: ${s.before.title}\n    after H1:     ${s.after.h1}\n    after title:  ${s.after.title}`,
     );
   }
 }

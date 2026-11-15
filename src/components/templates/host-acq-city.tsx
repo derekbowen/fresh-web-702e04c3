@@ -23,7 +23,11 @@ import {
   cityPageCopy,
   renterIntro,
   renterInventoryState,
-  type InventorySummary,
+  renterSearchesNearby,
+  inventorySummaryOf,
+  cleanStoredDescription,
+  hostValueSentence,
+  isNonEnglishPage,
 } from "@/lib/city-intent";
 import { normalizeSearchHref, searchHrefForPlace } from "@/lib/search-links";
 import type { ContentPage } from "@/server/content-pages.functions";
@@ -67,8 +71,10 @@ export function HostAcqCityTemplate({
   citySources?: CitySource[];
   cityInventory?: CityInventory;
 }) {
-  const title = page.title || page.seo_title || "Become a pool host";
-  const description = page.seo_description || page.description || null;
+  // Stored copy that states an earnings figure ("earn $40-$150/hour … up to
+  // $10,000/month", 722 HOST rows on 2026-11-15) is not shown: no figure on
+  // these pages comes from data.
+  const description = cleanStoredDescription(page);
   const body = page.body_markdown || page.content || null;
   const faqs = faqsForContentPage(page);
   const guide = city ? buildHostCityGuide(city) : null;
@@ -78,31 +84,40 @@ export function HostAcqCityTemplate({
   // strips it so "{City}, {ST}" never doubles.
   const place = placeForPage(page, city);
   const copy = cityPageCopy(
-    page as { slug: string | null; title?: string | null; title_variant?: string | null },
+    page as { slug: string | null; title?: string | null; seo_title?: string | null; title_variant?: string | null },
     place,
+    city,
   );
   const isRenter = copy.intent === "renter";
   const cityName = place.cityName;
   const stateCode = place.stateCode ?? "";
   const placeLabel = place.label;
-  const tier = guide?.cityTier ?? "standard";
-  const hourlyRate = guide?.defaultHourlyRate ?? 75;
-  const inventorySummary: InventorySummary = {
-    exactTotal: Math.max(cityInventory.exactTotal ?? 0, cityInventory.exact.length),
-    nearbyTotal: Math.max(cityInventory.nearbyTotal ?? 0, cityInventory.nearby.length),
-    nearestMi: cityInventory.nearby[0]?.mi ?? null,
-    radiusMi: cityInventory.radiusMi,
-    readFailed: !!cityInventory.readFailed,
-  };
+  // The tier is chosen by state code alone (host-city-guide.ts), so on a RENTER
+  // page — which now resolves a cities row — "{City} is a top-tier U.S. pool
+  // rental market" would be a demand claim no data supports, sitting under the
+  // page's own inventory statement. RENTER pages use the neutral default and
+  // say nothing about the market.
+  const tier = isRenter ? "standard" : (guide?.cityTier ?? "standard");
+  const hourlyRate = isRenter ? 75 : (guide?.defaultHourlyRate ?? 75);
+  const inventorySummary = inventorySummaryOf(cityInventory);
   const renterState = renterInventoryState(inventorySummary);
+  const renterSearch = renterSearchesNearby(renterState);
   const searchHref = searchHrefForPlace(cityName, place.stateCode);
-  const LIST_POOL_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
+  // The direct listing-wizard URL. /l/draft/0000…/new/details is a 302 to it.
+  const LIST_POOL_HREF = "/wizard/";
+  // RENTER topic and non-English pages keep their stored description as the
+  // hero's first paragraph (it is about the occasion / in the page's language).
+  const renterLede =
+    isRenter && description && (place.isTopic || isNonEnglishPage(page as { locale?: string | null; language?: string | null }))
+      ? description
+      : null;
 
   // Earnings band removed 2026-09-02: a rate×hours projection presented as
   // "hosts earn" was an unsourced claim on ~3,900 pages (audit 2026-09-01).
 
-  const tierLabel =
-    tier === "premium"
+  const tierLabel = isRenter
+    ? null
+    : tier === "premium"
       ? `${cityName} is a top-tier U.S. pool rental market`
       : tier === "emerging"
         ? `${cityName} is wide open — early hosts have first-mover advantage`
@@ -111,7 +126,17 @@ export function HostAcqCityTemplate({
   // SEO: schema + bio
   const stateName = city?.state || stateCode;
   
-  const dateModified = new Date().toISOString().slice(0, 10);
+  // RENTER pages state inventory counts from a mirror that is not refreshed on
+  // a schedule yet, so they carry the page's own updated_at (and the inventory
+  // section its "Listing data as of" date), never a date that rolls forward on
+  // every request.
+  const pageUpdated =
+    typeof (page as { updated_at?: string | null }).updated_at === "string"
+      ? (page as { updated_at: string }).updated_at.slice(0, 10)
+      : null;
+  const dateModified = isRenter
+    ? (pageUpdated ?? "2026-01-01")
+    : new Date().toISOString().slice(0, 10);
   const dateFormatted = new Date(dateModified).toLocaleDateString("en-US", {
     month: "long", day: "numeric", year: "numeric",
   });
@@ -140,16 +165,9 @@ export function HostAcqCityTemplate({
           acceptedAnswer: { "@type": "Answer", text: f.answer },
         })),
       },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://www.poolrentalnearme.com/" },
-          isRenter
-            ? { "@type": "ListItem", position: 2, name: "Pool rentals", item: "https://www.poolrentalnearme.com/p/pool-rentals" }
-            : { "@type": "ListItem", position: 2, name: "Become a Host", item: "https://www.poolrentalnearme.com/p/hosting" },
-          { "@type": "ListItem", position: 3, name: placeLabel },
-        ],
-      },
+      // The BreadcrumbList is emitted once, by BreadcrumbsWithSchema below
+      // (the same trail as the visible breadcrumbs); head() adds none for
+      // host_acq_city.
       {
         "@type": "LocalBusiness",
         name: `Pool Rental Near Me — ${cityName}`,
@@ -212,7 +230,7 @@ export function HostAcqCityTemplate({
                   : [
                       { name: "Home", path: "/" },
                       { name: "Become a host", path: "/p/hosting" },
-                      { name: title, path: page.url_path },
+                      { name: placeLabel, path: page.url_path },
                     ]
               }
             />
@@ -228,15 +246,17 @@ export function HostAcqCityTemplate({
                 <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                   {copy.h1.text}
                 </h1>
-                <AuthorByline date={dateModified} />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
-                </p>
+                <AuthorByline date={pageUpdated} />
+                {renterLede ? (
+                  <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground" data-renter-lede="">
+                    {renterLede}
+                  </p>
+                ) : null}
                 <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground" data-renter-intro="">
                   {renterIntro(place, inventorySummary)}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  {renterState === "exact" || renterState === "nearby" ? (
+                  {renterSearch ? (
                     <>
                       <a
                         href={searchHref}
@@ -246,10 +266,10 @@ export function HostAcqCityTemplate({
                         Search pools near {cityName}
                       </a>
                       <a
-                        href="#pools-available"
+                        href={renterState === "unchecked" ? "/s" : "#pools-available"}
                         className="inline-flex items-center justify-center rounded-full border border-border bg-background/80 px-7 py-3.5 text-base font-semibold text-foreground backdrop-blur transition hover:bg-muted"
                       >
-                        See the pools listed
+                        {renterState === "unchecked" ? "Browse all pools" : "See the pools listed"}
                       </a>
                     </>
                   ) : (
@@ -302,17 +322,9 @@ export function HostAcqCityTemplate({
                   <p className="mt-1 text-xs text-muted-foreground">
                     <time dateTime={dateModified}>Last updated: {dateFormatted}</time>
                   </p>
-                  {description ? (
-                    <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                      {description}
-                    </p>
-                  ) : (
-                    <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                      Join the homeowners turning their backyard into income on
-                      Pool Rental Near Me — the fastest-growing hourly pool
-                      marketplace, with the lowest host fee in the industry.
-                    </p>
-                  )}
+                  <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground" data-host-lede="">
+                    {description ?? hostValueSentence(place)}
+                  </p>
                 </>
               )}
 
@@ -381,6 +393,7 @@ export function HostAcqCityTemplate({
               inventory={cityInventory}
               cityName={cityName}
               browseAllHref="/s"
+              searchHref={searchHref}
               framing="renter"
             />
             {/* HOST SECTION — the stored body was written for pool owners. */}
@@ -428,7 +441,7 @@ export function HostAcqCityTemplate({
                 investors.
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                {tierLabel}. We give you more of every booking, real liability
+                {tierLabel ? `${tierLabel}. ` : ""}We give you more of every booking, real liability
                 coverage, and payouts before your skimmer's even dry.
               </p>
             </div>
@@ -458,7 +471,8 @@ export function HostAcqCityTemplate({
           </div>
         </section>
 
-        {/* COMPARISON */}
+        {/* COMPARISON — host pages only: it compares host take-home. */}
+        {!isRenter ? (
         <section className="border-b border-border py-16 sm:py-20">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -502,7 +516,7 @@ export function HostAcqCityTemplate({
             </div>
           </div>
         </section>
-
+        ) : null}
 
         {/* CALCULATOR */}
         <section
@@ -519,7 +533,7 @@ export function HostAcqCityTemplate({
               </h2>
               <p className="mt-3 text-muted-foreground">
                 Move the sliders to see what your {cityName} pool could pull
-                in across a season. Defaults are pre-tuned to local pricing.
+                in across a season.{isRenter ? "" : " Defaults are pre-tuned to local pricing."}
               </p>
             </div>
             <div className="mt-8">
@@ -582,6 +596,7 @@ export function HostAcqCityTemplate({
             inventory={cityInventory}
             cityName={cityName}
             browseAllHref="/s"
+            searchHref={searchHref}
             framing="host"
           />
         ) : null}
@@ -794,7 +809,7 @@ export function HostAcqCityTemplate({
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
-                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                href={LIST_POOL_HREF}
                 className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
               >
                 List my pool — it's free
@@ -819,10 +834,10 @@ export function HostAcqCityTemplate({
               <div className="truncate text-sm font-bold text-foreground">{placeLabel}</div>
             </div>
             <a
-              href={renterState === "exact" || renterState === "nearby" ? searchHref : "/s"}
+              href={renterSearch ? searchHref : "/s"}
               className="shrink-0 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md"
             >
-              {renterState === "exact" || renterState === "nearby" ? "Search pools" : "Browse pools"}
+              {renterSearch ? "Search pools" : "Browse pools"}
             </a>
           </div>
         </div>

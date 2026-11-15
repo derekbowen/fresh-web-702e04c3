@@ -1,5 +1,6 @@
 import type { LiveListing } from "@/lib/live-inventory";
 import type { CityInventory, InventoryListing } from "@/server/city-inventory.functions";
+import { formatSyncDate } from "@/lib/city-intent";
 
 /**
  * Server-rendered listing cards. The markup is present in the initial HTML —
@@ -136,8 +137,10 @@ export function LiveInventory({
  * `framing`:
  *   "renter" (default) — a page for someone looking for a pool. With no pool to
  *            show it says so plainly ("There are no pools listed in {City} yet.")
- *            and links to browse all pools; after a failed read it says nothing
- *            about how many pools there are.
+ *            and links to browse all pools — but only when the radius lookup
+ *            ran. A city with no coordinates (nearby not checked) gets a search
+ *            around the city instead, with no claim that nothing is near. After
+ *            a failed read it says nothing about how many pools there are.
  *   "host"   — a page recruiting pool owners. Renders ONLY when real pools exist
  *            ("Pools already listed near {City}"); otherwise nothing at all, so a
  *            host page never opens on an empty-marketplace notice.
@@ -146,11 +149,14 @@ export function CityInventorySection({
   inventory,
   cityName,
   browseAllHref = "/s",
+  searchHref = "/s",
   framing = "renter",
 }: {
   inventory: CityInventory;
   cityName: string;
   browseAllHref?: string;
+  /** /s?address=… for this city (the map search around it). */
+  searchHref?: string;
   framing?: "renter" | "host";
 }) {
   const { exact, nearby } = inventory;
@@ -176,11 +182,13 @@ export function CityInventorySection({
       : framing === "host"
         ? `Pools already listed near ${cityName}`
         : `Pools near ${cityName}`;
-  const nearbyLede = `${
-    exact.length > 0 ? "" : `No pools are listed in ${cityName} itself yet. `
-  }${pools(nearbyTotal)} ${nearbyTotal === 1 ? "is" : "are"} listed ${
-    radius ? `within ${radius} miles` : "nearby"
-  }${nearby.length < nearbyTotal ? `; the ${nearby.length} nearest are shown` : ""}. Distance is from the center of ${cityName}.`;
+  // Count and radius only. No "none in {City} itself" clause: exact matching
+  // reads the listing's city field, and a listing filed under a neighbourhood
+  // ("Jamaica" for Queens) or with no city can sit inside the city.
+  const nearbyLede = `${pools(nearbyTotal)} ${nearbyTotal === 1 ? "is" : "are"} listed ${
+    radius ? `within ${radius} miles of ${cityName}` : `near ${cityName}`
+  }${nearby.length < nearbyTotal ? `; the ${nearby.length} nearest are shown` : ""}. Distances are approximate straight-line miles.`;
+  const asOf = formatSyncDate(inventory.syncedAt);
 
   return (
     <section
@@ -207,7 +215,7 @@ export function CityInventorySection({
                   <PoolCard l={l} eager={exact.length === 0 && i < 3} />
                   {typeof l.mi === "number" ? (
                     <div className="mt-1.5 text-xs text-muted-foreground">
-                      {l.mi < 1 ? "Under 1 mile" : `${Math.round(l.mi)} miles`} from {cityName}
+                      {l.mi < 1 ? "Under 1 mile" : `About ${Math.round(l.mi)} miles`} from {cityName}
                     </div>
                   ) : null}
                 </div>
@@ -222,6 +230,16 @@ export function CityInventorySection({
               <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
                 Browse private pools
               </h2>
+            ) : !inventory.nearbyChecked ? (
+              <>
+                <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+                  Search pools near {cityName}
+                </h2>
+                <p className="mt-2 max-w-2xl text-muted-foreground" data-nearby-unchecked="">
+                  No pools are listed with {cityName} as their city yet. Search the map to see the
+                  pools listed near {cityName}.
+                </p>
+              </>
             ) : (
               <>
                 <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
@@ -233,14 +251,32 @@ export function CityInventorySection({
               </>
             )}
             <div className="mt-6 flex flex-wrap gap-3">
+              {!inventory.readFailed && !inventory.nearbyChecked ? (
+                <a
+                  href={searchHref}
+                  className="rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition hover:opacity-90"
+                >
+                  Search pools near {cityName}
+                </a>
+              ) : null}
               <a
                 href={browseAllHref}
-                className="rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition hover:opacity-90"
+                className={
+                  !inventory.readFailed && !inventory.nearbyChecked
+                    ? "rounded-lg border border-border px-5 py-2.5 font-semibold text-foreground transition hover:bg-muted"
+                    : "rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition hover:opacity-90"
+                }
               >
                 Browse all pools
               </a>
             </div>
           </>
+        ) : null}
+
+        {has && asOf ? (
+          <p className="mt-6 text-xs text-muted-foreground" data-inventory-as-of="">
+            Listing data as of {asOf}.
+          </p>
         ) : null}
       </div>
     </section>
