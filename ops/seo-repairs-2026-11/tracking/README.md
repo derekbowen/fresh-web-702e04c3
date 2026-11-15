@@ -8,7 +8,11 @@ second. It records what the site does. It does not measure indexing.
 python3 -I ops/seo-repairs-2026-11/tracking/track_groups.py                 # every group
 python3 -I ops/seo-repairs-2026-11/tracking/track_groups.py --only F4,F10   # some groups
 BASE=http://127.0.0.1:3000 python3 -I .../track_groups.py --only F11        # a local build
+python3 -I ops/seo-repairs-2026-11/tracking/track_groups.py --selftest      # failures must not pass
 ```
+
+A page that does not load, a missing canonical, or a sitemap that cannot be fetched
+is a FAIL, never a pass: an outage must not look like a confirmed repair.
 
 Each run writes `reports/<UTC date>/track-<UTC time>.json` and `.md`.
 

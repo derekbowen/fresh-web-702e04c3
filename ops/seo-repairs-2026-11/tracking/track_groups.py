@@ -147,21 +147,30 @@ def g_F14():
 
 
 def g_F1_F7():
-    host_h1, renter_h1, host_notice = {}, {}, []
+    # A page that did not load (network error, redirect, 4xx/5xx) or has no H1 cannot
+    # confirm a repair: it is a failure of every check below, never a silent pass.
+    host_h1, renter_h1, host_notice, unusable = {}, {}, [], []
     for slug in lines("sample-host.txt"):
         st, h, body = get(BASE + "/p/" + slug)
+        if st != 200 or not h1(body):
+            unusable.append(("host", slug, st))
+            continue
         host_h1[slug] = h1(body)
         top = body[: max(1, len(body) // 3)]
         if re.search(r"We're still adding pools|There are no pools listed in", top):
             host_notice.append(slug)
     for slug in lines("sample-renter.txt"):
         st, h, body = get(BASE + "/p/" + slug)
-        renter_h1[slug] = (h1(body) or "", title(body) or "")
-    record("F1", "sampled host pages do not open with the empty-inventory notice (25)", not host_notice, "%d with notice; e.g. %s" % (len(host_notice), host_notice[:3]))
-    hostlike = [s for s, (hh, tt) in renter_h1.items() if re.search(r"(?i)rent your .* pool|become a pool host|0% host fees", hh)]
-    record("F7", "sampled renter city pages carry a renter heading, not the host heading (25)", not hostlike, "%d host-style; e.g. %s" % (len(hostlike), hostlike[:3]))
-    dupe = len(host_h1) - len(set(v for v in host_h1.values() if v)) - sum(1 for v in host_h1.values() if not v)
-    record("F7", "sampled host pages have distinct H1s", dupe <= 0, "%d duplicates among 25" % max(dupe, 0))
+        if st != 200 or not h1(body):
+            unusable.append(("renter", slug, st))
+            continue
+        renter_h1[slug] = (h1(body), title(body) or "")
+    bad_fetch = "; %d sampled page(s) did not load with an H1: %s" % (len(unusable), unusable[:3]) if unusable else ""
+    record("F1", "sampled host pages load and do not open with the empty-inventory notice (25)", not host_notice and not unusable, "%d with notice; e.g. %s%s" % (len(host_notice), host_notice[:3], bad_fetch))
+    hostlike = [s for s, (hh, tt) in renter_h1.items() if re.search(r"(?i)rent your .* pool|rent out your pool|become a pool host|0% host fees", hh)]
+    record("F7", "sampled renter city pages load and carry a renter heading, not the host heading (25)", not hostlike and not unusable, "%d host-style; e.g. %s%s" % (len(hostlike), hostlike[:3], bad_fetch))
+    dupe = len(host_h1) - len(set(host_h1.values()))
+    record("F7", "sampled host pages load and have distinct H1s", dupe <= 0 and not unusable, "%d duplicates among %d loaded%s" % (max(dupe, 0), len(host_h1), bad_fetch))
 
 
 def _locs(xml):
@@ -172,23 +181,30 @@ def g_F4():
     st, h, idx = get(BASE + "/sitemap.xml")
     # Each child once, in index order; /public-pools.xml only if the index omits it
     # (adding it twice counted all 2,529 of its URLs as duplicates on 2026-11-15).
-    children = list(dict.fromkeys(_locs(idx)))
+    children = list(dict.fromkeys(_locs(idx))) if st == 200 else []
+    if not children:
+        # Without the index there is no inventory to judge: every coverage check fails.
+        record("F4", "sitemap index answers 200 and lists its children", False, (st, "no children" if st == 200 else "index not fetched"))
+        return
     if BASE + "/public-pools.xml" not in children:
         children.append(BASE + "/public-pools.xml")
-    seen, dupes, urls = {}, [], []
+    seen, dupes, urls, missing = {}, [], [], []
     for c in children:
         cst, ch, xml = get(c)
         if cst != 200:
             record("F4", "child sitemap %s -> 200" % c.replace(BASE, ""), False, cst)
+            missing.append(c.replace(BASE, ""))
             continue
         for u in _locs(xml):
             if u in seen:
                 dupes.append(u)
             seen[u] = c
             urls.append(u)
-    record("F4", "no URL listed in two sitemaps (target 0)", not dupes, "%d; e.g. %s" % (len(dupes), dupes[:3]))
-    record("F4", "config/test listing absent", not any("config-listing" in u for u in urls), "")
-    record("F4", "noindex /p/pool-pros absent", BASE + "/p/pool-pros" not in seen, "")
+    # With a child missing, "absent" and "no duplicates" cannot be confirmed.
+    partial = "; incomplete: %d child sitemap(s) not fetched %s" % (len(missing), missing[:3]) if missing else ""
+    record("F4", "no URL listed in two sitemaps (target 0)", not dupes and not missing, "%d; e.g. %s%s" % (len(dupes), dupes[:3], partial))
+    record("F4", "config/test listing absent", not any("config-listing" in u for u in urls) and not missing, partial.lstrip("; "))
+    record("F4", "noindex /p/pool-pros absent", BASE + "/p/pool-pros" not in seen and not missing, partial.lstrip("; "))
     st, h, body = get(BASE + "/sitemap-directory.xml")
     record("F4", "/sitemap-directory.xml no longer advertises noindex URLs (410 or no <loc>)", st == 410 or not _locs(body), st)
     # A sample of listed URLs, spread across files: each must be 200, indexable, self-canonical.
@@ -197,7 +213,8 @@ def g_F4():
     for u in urls[::step]:
         sst, sh, sbody = get(u)
         can = canonical(sbody)
-        if sst != 200 or "noindex" in robots_meta(sbody, sh) or (can and can.rstrip("/") != u.rstrip("/")):
+        # A missing canonical is a failure, not a pass.
+        if sst != 200 or "noindex" in robots_meta(sbody, sh) or not can or can.rstrip("/") != u.rstrip("/"):
             bad.append((u.replace(BASE, ""), sst, can))
     record("F4", "sampled sitemap URLs are 200, indexable and self-canonical (~150 sampled of %d)" % len(urls), not bad, "%d bad; e.g. %s" % (len(bad), bad[:3]))
 
@@ -219,10 +236,65 @@ GROUPS = {"regression": g_regression, "F11": g_F11, "F6a": g_F6a, "F14": g_F14,
           "F1F7": g_F1_F7, "F4": g_F4, "F10": g_F10}
 
 
+def selftest():
+    """Failures must never read as passes: fake every request and check the verdicts."""
+    global get, RESULTS
+    real_get, ok = get, True
+
+    def run(group, fake):
+        global get, RESULTS
+        RESULTS, get = [], fake
+        GROUPS[group]()
+        return RESULTS
+
+    def expect(name, results, check_substr, want_ok):
+        nonlocal ok
+        rows = [r for r in results if check_substr in r["check"]]
+        good = bool(rows) and all(r["ok"] == want_ok for r in rows)
+        ok = ok and good
+        print("%s %s (%d row(s) matching %r, want ok=%s)" % ("PASS" if good else "FAIL", name, len(rows), check_substr, want_ok))
+
+    try:
+        down = lambda url, host=None: (0, {}, "ERR timeout")
+        r = run("F1F7", down)
+        expect("F1/F7 all fetches fail -> no pass", r, "sampled", False)
+        r = run("F4", lambda url, host=None: (503, {}, "") if url.endswith("/sitemap.xml") else
+                (200, {}, "<urlset><url><loc>%s/p/a</loc></url></urlset>" % BASE))
+        expect("F4 index 503 -> fail", r, "sitemap index", False)
+        ok = ok and not any(x["ok"] for x in r)
+        page = '<html><head><title>t</title></head><body><h1>x</h1></body></html>'
+
+        def nocanon(url, host=None):
+            if url.endswith("/sitemap.xml"):
+                return 200, {}, "<sitemapindex><sitemap><loc>%s/s1.xml</loc></sitemap><sitemap><loc>%s/public-pools.xml</loc></sitemap></sitemapindex>" % (BASE, BASE)
+            if url.endswith(".xml"):
+                return 200, {}, "<urlset><url><loc>%s/p/only-title</loc></url></urlset>" % BASE if url.endswith("/s1.xml") else "<urlset></urlset>"
+            return 200, {}, page
+        r = run("F4", nocanon)
+        expect("F4 page without canonical -> fail", r, "self-canonical", False)
+
+        def onechilddown(url, host=None):
+            if url.endswith("/sitemap.xml"):
+                return 200, {}, "<sitemapindex><sitemap><loc>%s/s1.xml</loc></sitemap></sitemapindex>" % BASE
+            if url.endswith("/s1.xml"):
+                return 0, {}, "ERR reset"
+            return 200, {}, "<urlset></urlset>"
+        r = run("F4", onechilddown)
+        expect("F4 child missing -> duplicate check fails", r, "two sitemaps", False)
+        expect("F4 child missing -> absence checks fail", r, "absent", False)
+    finally:
+        get, RESULTS = real_get, []
+    print("selftest:", "ALL PASS" if ok else "FAILED")
+    return ok
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", default="")
+    ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
+    if a.selftest:
+        sys.exit(0 if selftest() else 1)
     wanted = [g for g in (a.only.split(",") if a.only else GROUPS) if g]
     started = datetime.datetime.utcnow()
     for g in wanted:
