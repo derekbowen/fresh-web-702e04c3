@@ -22,7 +22,8 @@ const SITEMAPS = [
   "/sitemap-pages-comparisons.xml", "/sitemap-pages-academy.xml", "/sitemap-pages-money.xml",
   "/sitemap-pages-host-acquisition.xml", "/sitemap-pages-event-guides.xml",
   "/sitemap-pages-swim-instructor.xml", "/sitemap-pages-spanish.xml",
-  "/sitemap-pages-advocacy.xml", "/sitemap-directory.xml", "/sitemap-hub.xml",
+  // /sitemap-directory.xml answers 410 since 2026-11 (noindex pool-pros tree).
+  "/sitemap-pages-advocacy.xml", "/sitemap-hub.xml",
 ];
 
 function Indexing() {

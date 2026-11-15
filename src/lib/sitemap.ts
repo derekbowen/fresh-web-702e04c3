@@ -10,13 +10,16 @@
  * - No <priority>, no <changefreq> (Google ignores both)
  */
 
-import { guardedRead, unavailableResponse } from "./failed-read.ts";
+import { unavailableResponse } from "./failed-read.ts";
+import type { ContentSitemapGroup } from "./sitemap-groups.ts";
+import { pageParam, pageSlice } from "./sitemap-rules.ts";
+import { loadContentGroupEntries } from "./sitemap-sources.ts";
 
-// Capped at 1000 to match the Supabase/PostgREST default max-rows response
-// limit. Going higher silently truncates sub-sitemaps to 1000 URLs and
-// the parent index never emits ?page=N because it thinks one page covers
-// everything. Google allows up to 50k per sitemap, so 1000 is conservative
-// but safe and avoids the truncation footgun.
+// URLs per sub-sitemap file (?page=N). Google allows 50,000; 1,000 keeps each
+// file small and matches the page size the index has always advertised.
+// Reads are paged separately and are not tied to this number: see
+// READ_WINDOW / readAllRows in sitemap-sources.ts (PostgREST answers at most
+// 1,000 rows per request whatever .limit() asks for).
 export const SITEMAP_PAGE_SIZE = 1000;
 
 const XML_ESCAPE_MAP: Record<string, string> = {
@@ -141,16 +144,19 @@ export function sitemapUnavailableResponse(): Response {
 }
 
 /**
- * Build a `/sitemap-pages-*.xml` sub-sitemap for one or more `template_type`
- * values. Used by every per-template sub-sitemap route.
+ * Build a `/sitemap-pages-*.xml` sub-sitemap for one content group
+ * (src/lib/sitemap-groups.ts). Used by every per-template sub-sitemap route.
  *
- * Pagination: takes ?page=N from the request URL. Pages start at 1. Auto-paginates
- * via the parent index (`sitemap.xml`) when a single template type exceeds
- * SITEMAP_PAGE_SIZE rows.
+ * The whole group is read (paged, see sitemap-sources.ts), every exclusion rule
+ * in sitemap-rules.ts is applied, and ?page=N (1-based) is then cut from that
+ * final list in SITEMAP_PAGE_SIZE files. The index counts the same list, so
+ * the pages it advertises are exactly the pages that have entries.
+ *
+ * `group` may still be given as a bare template_type list (tests, ad hoc use).
  */
 export async function buildContentPagesSitemap(
   request: Request,
-  templateTypes: string[],
+  group: ContentSitemapGroup | string[],
   pathPrefix: string,
   supabase: import("@supabase/supabase-js").SupabaseClient,
   siteUrl: string,
@@ -162,68 +168,41 @@ export async function buildContentPagesSitemap(
     minBodyChars?: number;
   },
 ): Promise<Response> {
-  const url = new URL(request.url);
-  const page = Math.max(1, Number(url.searchParams.get("page") ?? 1));
-  const offset = (page - 1) * SITEMAP_PAGE_SIZE;
-  const minBodyChars = options?.minBodyChars ?? 0;
+  if (pathPrefix !== "/p") throw new Error(`content sitemaps live under /p, not ${pathPrefix}`);
+  const g: ContentSitemapGroup = Array.isArray(group)
+    ? { basePath: new URL(request.url).pathname, templateTypes: group }
+    : group;
+  const effective: ContentSitemapGroup =
+    options?.minBodyChars !== undefined ? { ...g, minBodyChars: options.minBodyChars } : g;
 
-  // lastmod comes from content_refreshed_at (set only when the body is
-  // actually regenerated), falling back to created_at. updated_at is bumped
-  // by any column write — the monthly related-slug refresh re-stamped 4,452
-  // rows on the 1st of every month and advertised it to Google as fresh
-  // content (audit 2026-09-01).
-  const cols = minBodyChars > 0
-    ? "slug, url_path, status, content_refreshed_at, created_at, hero_image_url, body_markdown"
-    : "slug, url_path, status, content_refreshed_at, created_at, hero_image_url";
-
-  const read = await guardedRead<any[]>(`sitemap content_pages ${templateTypes.join(",")}`, (signal) =>
-    supabase
-      .from("content_pages")
-      .select(cols)
-      .in("template_type", templateTypes)
-      .eq("in_sitemap", true)
-      .eq("status", "published")
-      // Rows that 301 elsewhere must never be advertised (2026-09-01 crawl: 14).
-      .is("redirect_to", null)
-      .not("slug", "is", null)
-      // /p/pool-rentals-{state} is now served by the data-driven state-hub route
-      // (advertised in sitemap-static.xml). Exclude any legacy content_pages rows
-      // with these slugs so they aren't duplicated/mislisted here.
-      .not("slug", "like", "pool-rentals-%")
-      .order("slug")
-      .range(offset, offset + SITEMAP_PAGE_SIZE - 1)
-      .abortSignal(signal),
-  );
-
+  const list = await loadContentGroupEntries(effective, supabase, siteUrl);
   // A failed read (returned error, thrown, timed out) used to answer 200 with
   // an empty <urlset>. It is a 503 now; see sitemapUnavailableResponse.
-  if (!read.ok) return sitemapUnavailableResponse();
+  if (!list.ok) return sitemapUnavailableResponse();
+  return pagedSitemapResponse(request, list.data);
+}
 
-  const expectedPrefix = `${pathPrefix}/`;
-  const filtered = (read.data ?? []).filter((row: any) => {
-    // Drop rows whose stored url_path lives outside this sitemap's prefix
-    // (e.g. legacy /academy, /app rows that would 404 at /p/academy).
-    if (row.url_path && !row.url_path.startsWith(expectedPrefix)) return false;
-    if (minBodyChars <= 0) return true;
-    const len = (row.body_markdown ?? "").trim().length;
-    return len >= minBodyChars;
+/** The ?page=N slice of a final entry list as a urlset response. */
+export function pagedSitemapResponse(request: Request, entries: SitemapUrl[]): Response {
+  const page = pageParam(new URL(request.url));
+  return sitemapResponse(buildUrlsetXml(pageSlice(entries, page, SITEMAP_PAGE_SIZE)));
+}
+
+/**
+ * A retired sitemap: 410 Gone, a one-line body, and a cache lifetime short
+ * enough that a crawler re-reads it (and sees it is still gone) instead of
+ * holding the old file. Not a 404 (which reads as "maybe a typo") and not an
+ * empty 200 (which keeps it a valid, submitted sitemap).
+ */
+export function sitemapGoneResponse(reason: string): Response {
+  return new Response(`Gone. ${reason}\n`, {
+    status: 410,
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+      "X-Robots-Tag": "noindex",
+    },
   });
-
-  const urls: SitemapUrl[] = filtered.map((row: any) => {
-    const loc = row.url_path
-      ? `${siteUrl}${row.url_path}`
-      : `${siteUrl}${pathPrefix}/${row.slug}`;
-    const sitemapUrl: SitemapUrl = {
-      loc,
-      lastmod: row.content_refreshed_at ?? row.created_at ?? null,
-    };
-    if (row.hero_image_url) {
-      sitemapUrl.images = [{ loc: row.hero_image_url }];
-    }
-    return sitemapUrl;
-  });
-
-  return sitemapResponse(buildUrlsetXml(urls));
 }
 
 /** Generate a 301 redirect Response to a target path. Cached for 24h. */
