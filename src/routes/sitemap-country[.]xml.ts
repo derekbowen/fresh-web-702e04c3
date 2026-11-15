@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { sitemapResponse, buildUrlsetXml } from "@/lib/sitemap";
+import { sitemapResponse, sitemapUnavailableResponse, buildUrlsetXml } from "@/lib/sitemap";
+import { guardedRead } from "@/lib/failed-read";
 
 /**
  * Country-scoped sitemap, served on the ccTLD origins only.
@@ -38,15 +39,22 @@ export const Route = createFileRoute("/sitemap-country.xml")({
         const patterns = COUNTRY_MATCH[bare];
         if (!patterns) return sitemapResponse(buildUrlsetXml([]));
 
-        const { data } = await supabaseAdmin
-          .from("content_pages")
-          .select("slug, updated_at")
-          .eq("in_sitemap", true)
-          .not("slug", "is", null)
-          .or(patterns.map((p) => `slug.ilike.${p}`).join(","))
-          .limit(5000);
+        const read = await guardedRead("sitemap country pages", (signal) =>
+          supabaseAdmin
+            .from("content_pages")
+            .select("slug, updated_at")
+            .eq("in_sitemap", true)
+            .not("slug", "is", null)
+            .or(patterns.map((p) => `slug.ilike.${p}`).join(","))
+            .limit(5000)
+            .abortSignal(signal),
+        );
+        // Failed read: 503. The error was not even looked at before, so this
+        // answered 200 with an empty <urlset> on each ccTLD.
+        if (!read.ok) return sitemapUnavailableResponse();
 
-        const urls = (data ?? []).map((row: { slug: string; updated_at: string | null }) => ({
+        const rows = (read.data ?? []) as Array<{ slug: string; updated_at: string | null }>;
+        const urls = rows.map((row) => ({
           loc: `https://${host}/p/${row.slug}`,
           lastmod: row.updated_at ? new Date(row.updated_at) : new Date(),
         }));

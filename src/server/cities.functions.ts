@@ -14,6 +14,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { guardedRead, isReadUnavailable, ReadUnavailableError } from "@/lib/failed-read";
+import { failRequestUnavailable } from "@/server/request-unavailable.server";
 
 export interface CityRow {
   slug: string;
@@ -47,19 +49,39 @@ function splitStateSuffix(slug: string): { base: string; state: string } | null 
  * Resolve a slug like "boise-id" or "arlington-va" to the canonical
  * cities row, even when the cities table only has the un-suffixed slug
  * or only matches by name. Server-only.
+ *
+ * `strict` is for callers that turn "no city" into a 404: with it, a read that
+ * FAILED throws ReadUnavailableError instead of counting as "no row". Without
+ * it (page enrichment, where a missing city only drops a section) a failed
+ * read is still treated as no row, as before.
  */
-export async function resolveCityRow(slug: string): Promise<CityRow | null> {
+export async function resolveCityRow(
+  slug: string,
+  options?: { strict?: boolean },
+): Promise<CityRow | null> {
   const sb = supabaseAdmin as any;
+  const read = async (query: (signal: AbortSignal) => any): Promise<CityRow | null> => {
+    if (!options?.strict) {
+      const { data: row } = await query(new AbortController().signal);
+      return (row as CityRow | null) ?? null;
+    }
+    const outcome = await guardedRead<CityRow>("cities row", query);
+    if (!outcome.ok) throw new ReadUnavailableError("cities row");
+    return outcome.data;
+  };
 
   // 1. exact
   {
-    const { data: row } = await sb
-      .from("cities")
-      .select(SELECT_COLS)
-      .eq("slug", slug)
-      .eq("is_published", true)
-      .maybeSingle();
-    if (row) return row as CityRow;
+    const row = await read((signal) =>
+      sb
+        .from("cities")
+        .select(SELECT_COLS)
+        .eq("slug", slug)
+        .eq("is_published", true)
+        .abortSignal(signal)
+        .maybeSingle(),
+    );
+    if (row) return row;
   }
 
   const split = splitStateSuffix(slug);
@@ -67,14 +89,17 @@ export async function resolveCityRow(slug: string): Promise<CityRow | null> {
 
   // 2. base slug + state match
   {
-    const { data: row } = await sb
-      .from("cities")
-      .select(SELECT_COLS)
-      .eq("slug", split.base)
-      .eq("state_code", split.state)
-      .eq("is_published", true)
-      .maybeSingle();
-    if (row) return row as CityRow;
+    const row = await read((signal) =>
+      sb
+        .from("cities")
+        .select(SELECT_COLS)
+        .eq("slug", split.base)
+        .eq("state_code", split.state)
+        .eq("is_published", true)
+        .abortSignal(signal)
+        .maybeSingle(),
+    );
+    if (row) return row;
   }
 
   // 3. de-slugged name (Title Case) + state match
@@ -84,14 +109,17 @@ export async function resolveCityRow(slug: string): Promise<CityRow | null> {
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join(" ");
   {
-    const { data: row } = await sb
-      .from("cities")
-      .select(SELECT_COLS)
-      .ilike("name", name)
-      .eq("state_code", split.state)
-      .eq("is_published", true)
-      .maybeSingle();
-    if (row) return row as CityRow;
+    const row = await read((signal) =>
+      sb
+        .from("cities")
+        .select(SELECT_COLS)
+        .ilike("name", name)
+        .eq("state_code", split.state)
+        .eq("is_published", true)
+        .abortSignal(signal)
+        .maybeSingle(),
+    );
+    if (row) return row;
   }
 
   return null;
@@ -99,12 +127,14 @@ export async function resolveCityRow(slug: string): Promise<CityRow | null> {
 
 export const getCityBySlug = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) =>
-    z.object({ slug: z.string().min(1) }).parse(data),
+    z.object({ slug: z.string().min(1), strict: z.boolean().optional() }).parse(data),
   )
   .handler(async ({ data }): Promise<CityRow | null> => {
     try {
-      return await resolveCityRow(data.slug);
-    } catch {
+      return await resolveCityRow(data.slug, { strict: data.strict });
+    } catch (err) {
+      // strict callers 404 on null, so a failed read must not look like null.
+      if (data.strict && isReadUnavailable(err)) failRequestUnavailable("cities row");
       return null;
     }
   });

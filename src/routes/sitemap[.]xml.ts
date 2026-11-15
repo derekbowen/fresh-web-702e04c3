@@ -4,9 +4,11 @@ import { SITE_URL } from "@/lib/seo";
 import {
   buildSitemapIndexXml,
   sitemapResponse,
+  sitemapUnavailableResponse,
   SITEMAP_PAGE_SIZE,
   type SitemapIndexEntry,
 } from "@/lib/sitemap";
+import { guardedRead, ReadUnavailableError } from "@/lib/failed-read";
 
 /**
  * Parent sitemap index. Lists Lovable-served sub-sitemaps + the Sharetribe
@@ -64,27 +66,44 @@ const INDEX_STALE_MS = 24 * 60 * 60 * 1000;
 let indexCache: { at: number; xml: string } | null = null;
 let indexInFlight: Promise<string> | null = null;
 
-type CountResult = { count: number | null; error: unknown };
+type CountResult = { count: number | null; error: unknown; timedOut?: boolean };
 
+// Bounded by the read timeout, and a count that comes back without a number
+// is a failed count, not zero rows.
 const countOnce = async (table: string, apply: (q: any) => any): Promise<CountResult> => {
-  try {
-    const { count, error } = await apply(
-      (supabaseAdmin as any).from(table).select("*", { count: "exact", head: true }),
-    );
-    return { count: count ?? null, error: error ?? null };
-  } catch (err) {
-    return { count: null, error: err };
-  }
+  const read = await guardedRead(`sitemap index count ${table}`, (signal) =>
+    apply((supabaseAdmin as any).from(table).select("*", { count: "exact", head: true })).abortSignal(
+      signal,
+    ),
+  );
+  if (!read.ok) return { count: null, error: read.error, timedOut: read.reason === "timeout" };
+  if (typeof read.count !== "number") return { count: null, error: new Error("count missing") };
+  return { count: read.count, error: null };
+};
+
+/** max(updated_at) for an index entry's lastmod. Optional: a failure only drops the lastmod. */
+const latestUpdatedAt = async (table: string, apply: (q: any) => any): Promise<string | undefined> => {
+  const read = await guardedRead<{ updated_at?: string }>(`sitemap index lastmod ${table}`, (signal) =>
+    apply((supabaseAdmin as any).from(table).select("updated_at"))
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .abortSignal(signal)
+      .maybeSingle(),
+  );
+  return read.ok ? (read.data?.updated_at ?? undefined) : undefined;
 };
 
 /**
  * One retry, because these counts fail intermittently and a failure is not
- * cosmetic: a missing count costs the index that group's ?page=N entries, and
- * before the page-1 fallback existed it cost the group entirely.
+ * cosmetic: without a count the index cannot list that group's ?page=N entries.
  */
 const countRows = async (table: string, apply: (q: any) => any): Promise<CountResult> => {
   const first = await countOnce(table, apply);
   if (!first.error) return first;
+  // A count that TIMED OUT is not the intermittent fast failure the retry is
+  // for; asking a database that is not answering a second time only doubles
+  // the wait.
+  if (first.timedOut) return first;
   console.warn(`[sitemap] count on ${table} failed, retrying once`, first.error);
   return countOnce(table, apply);
 };
@@ -98,8 +117,9 @@ const countRows = async (table: string, apply: (q: any) => any): Promise<CountRe
  * not a slow scan). One of those was host-acquisition, whose pages 2-4 would
  * have vanished from the index for a refresh cycle. A count that is minutes
  * old is far closer to the truth than "page 1 only", so a failed count now
- * reuses the last good value and says so; the page-1 fallback remains only
- * for a key that has never succeeded in this process (first build after boot).
+ * reuses the last good value and says so. A key that has never succeeded in
+ * this process (first build after boot) has nothing to reuse: that build fails
+ * and /sitemap.xml answers 503 until a count succeeds (see buildIndexXml).
  */
 const lastGoodCount = new Map<string, number>();
 
@@ -113,6 +133,9 @@ const countRemembered = async (
     if (r.count !== null) lastGoodCount.set(key, r.count);
     return r;
   }
+  // Timed out: the database is not answering. Do not paper over it per group
+  // (eleven counts in a row, each waiting out the timeout); fail the build.
+  if (r.timedOut) return r;
   const remembered = lastGoodCount.get(key);
   if (remembered === undefined) return r;
   console.warn(`[sitemap] count for ${key} failed twice — using last good count ${remembered}`, r.error);
@@ -149,14 +172,32 @@ async function buildIndexXml(): Promise<string> {
   // is noindexed (see commit b8672f38), so it must not be advertised in sitemaps.
 
   // ---- every count, one at a time (see inSeries above) ----------------
-  const groupCounts = await inSeries(TEMPLATE_GROUPS, (group) =>
-    countRemembered(group.basePath, "content_pages", (q: any) =>
-      q
-        .in("template_type", group.templateTypes)
-        .eq("in_sitemap", true)
-        .eq("status", "published")
-        .is("redirect_to", null)
-        .not("slug", "is", null),
+  //
+  // Fail closed, and fail on the first one. A count that failed and has no
+  // remembered value (see countRemembered) means the index cannot be built
+  // correctly. It used to be published anyway with "page 1 only" for that
+  // group: a 200 index missing ?page=2..N, memoised for five minutes here and
+  // cached downstream. Now the build throws, nothing is memoised, and GET
+  // answers 503 (or keeps serving the last complete index while that is
+  // younger than a day).
+  const requireCount = <T extends CountResult>(basePath: string, r: T): T => {
+    if (r.error) {
+      console.error(`[sitemap] index not built: count failed for ${basePath}`, r.error);
+      throw new ReadUnavailableError("sitemap index counts");
+    }
+    return r;
+  };
+  const groupCounts = await inSeries(TEMPLATE_GROUPS, async (group) =>
+    requireCount(
+      group.basePath,
+      await countRemembered(group.basePath, "content_pages", (q: any) =>
+        q
+          .in("template_type", group.templateTypes)
+          .eq("in_sitemap", true)
+          .eq("status", "published")
+          .is("redirect_to", null)
+          .not("slug", "is", null),
+      ),
     ),
   );
   // These four are a different shape each (two counts, two lastmod lookups) and
@@ -165,20 +206,7 @@ async function buildIndexXml(): Promise<string> {
   const [blogCount, blogLatest, listingCount, listingLatest] =
     await Promise.all([
       countRemembered("/sitemap-pages-blog.xml", "blog_posts", (q: any) => q.eq("is_published", true)),
-      (async () => {
-        try {
-          const { data } = await (supabaseAdmin as any)
-            .from("blog_posts")
-            .select("updated_at")
-            .eq("is_published", true)
-            .order("updated_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          return data?.updated_at as string | undefined;
-        } catch {
-          return undefined;
-        }
-      })(),
+      latestUpdatedAt("blog_posts", (q: any) => q.eq("is_published", true)),
       countRemembered("/sitemap-listings.xml", "synced_listings", (q: any) =>
         q
           .eq("state", "published")
@@ -186,45 +214,21 @@ async function buildIndexXml(): Promise<string> {
           .not("slug", "is", null)
           .not("sharetribe_id", "is", null),
       ),
-      (async () => {
-        try {
-          const { data } = await (supabaseAdmin as any)
-            .from("synced_listings")
-            .select("updated_at")
-            .eq("state", "published")
-            .eq("is_deleted", false)
-            .not("slug", "is", null)
-            .not("sharetribe_id", "is", null)
-            .order("updated_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          return data?.updated_at as string | undefined;
-        } catch {
-          return undefined;
-        }
-      })(),
+      latestUpdatedAt("synced_listings", (q: any) =>
+        q
+          .eq("state", "published")
+          .eq("is_deleted", false)
+          .not("slug", "is", null)
+          .not("sharetribe_id", "is", null),
+      ),
     ]);
 
+  requireCount("/sitemap-pages-blog.xml", blogCount);
+  requireCount("/sitemap-listings.xml", listingCount);
+
   // 2. Per-template-type content_pages sub-sitemaps (with auto-pagination)
-  //
-  // A count that ERRORS used to `continue`, which dropped the whole
-  // sub-sitemap from the index — so an intermittent Supabase error made a
-  // few thousand live pages invisible to Google until the next crawl that
-  // happened to succeed. The logs show exactly that happening to
-  // /sitemap-pages-event-guides.xml. A failed count is now a pagination
-  // problem, not a visibility one: page 1 is always advertised, and only
-  // the extra pages are lost. Since 2026-09-16 even that only happens when
-  // the process has never counted the group (see countRemembered).
   TEMPLATE_GROUPS.forEach((group, i) => {
-    const { count, error } = groupCounts[i]!;
-    if (error) {
-      console.error(
-        `[sitemap] count failed for ${group.basePath} — advertising page 1 only`,
-        error,
-      );
-      entries.push({ loc: `${SITE_URL}${group.basePath}` });
-      return;
-    }
+    const { count } = groupCounts[i]!;
     if (!count) return;
 
     // No index-level lastmod: max(updated_at) was re-stamped monthly by
@@ -239,10 +243,7 @@ async function buildIndexXml(): Promise<string> {
   });
 
   // 2b. Blog posts (sourced from blog_posts, served at /p/{slug})
-  if (blogCount.error) {
-    console.error("[sitemap] blog_posts count error — advertising page 1 only", blogCount.error);
-    entries.push({ loc: `${SITE_URL}/sitemap-pages-blog.xml` });
-  } else if (blogCount.count && blogCount.count > 0) {
+  if (blogCount.count && blogCount.count > 0) {
     const blogPageCount = Math.ceil(blogCount.count / SITEMAP_PAGE_SIZE);
     for (let p = 1; p <= blogPageCount; p++) {
       entries.push({
@@ -259,10 +260,7 @@ async function buildIndexXml(): Promise<string> {
   // urlset so the URL never 404s in Search Console.
 
   // 2d. Sharetribe listings (mirror in `synced_listings`, served at /l/{slug}/{id})
-  if (listingCount.error) {
-    console.error("[sitemap] synced_listings count error — advertising page 1 only", listingCount.error);
-    entries.push({ loc: `${SITE_URL}/sitemap-listings.xml` });
-  } else if (listingCount.count && listingCount.count > 0) {
+  if (listingCount.count && listingCount.count > 0) {
     const listingPageCount = Math.ceil(listingCount.count / SITEMAP_PAGE_SIZE);
     for (let p = 1; p <= listingPageCount; p++) {
       entries.push({
@@ -303,7 +301,14 @@ export const Route = createFileRoute("/sitemap.xml")({
           void rebuildIndex().catch((err) => console.error("[sitemap] background rebuild failed", err));
           return sitemapResponse(indexCache.xml);
         }
-        return sitemapResponse(await rebuildIndex());
+        // No usable index in memory: build one now. If the counts cannot be
+        // read, say so (503, no-store) rather than publish a partial index.
+        try {
+          return sitemapResponse(await rebuildIndex());
+        } catch (err) {
+          console.error("[sitemap] index unavailable", err);
+          return sitemapUnavailableResponse();
+        }
       },
     },
   },

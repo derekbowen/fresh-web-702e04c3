@@ -4,17 +4,21 @@ import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
 import { ListingCard } from "@/components/listing-card";
 import { buildMeta } from "@/lib/seo";
 import { getStateHub } from "@/server/state-hub.functions";
+import { isReadUnavailable } from "@/lib/failed-read";
 import { queryListings, type ListingSummary } from "@/server/sharetribe.functions";
 
 export const Route = createFileRoute("/p/pool-rentals-{$state}")({
   loader: async ({ params }) => {
-    // Any failure (bad slug, Zod throw, supabase outage) collapses to a
-    // clean notFound() — never the scary "Something went wrong" screen.
+    // A bad slug or a Zod throw collapses to a clean notFound() — never the
+    // scary "Something went wrong" screen. A failed database read does NOT:
+    // that is a 503 on the server (src/start.ts) and the error state on the
+    // client, because a 404 for a live state hub gets cached at the edge.
     let data: Awaited<ReturnType<typeof getStateHub>> | null = null;
     try {
       data = await getStateHub({ data: { state: params.state } });
     } catch (err) {
       console.error("[pool-rentals-$state] loader failed:", err);
+      if (isReadUnavailable(err)) throw err;
       data = null;
     }
     if (!data || !data.cities || data.cities.length === 0) throw notFound();

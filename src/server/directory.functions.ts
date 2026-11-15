@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { guardedRead, readOrThrow, type ReadData, type ReadResult } from "@/lib/failed-read";
+import { failRequestUnavailable } from "@/server/request-unavailable.server";
 
 export type ServiceCategory = {
   slug: string;
@@ -46,12 +48,39 @@ export const listServiceCategories = createServerFn({ method: "GET" }).handler(a
   return { categories: cats.map((c) => ({ ...c, provider_count: countMap.get(c.slug) ?? 0 })) };
 });
 
+/**
+ * A service category and its providers, for the /p/pool-pros/c/* pages, whose
+ * routes 404 on a null category.
+ *
+ * - The category read failed: the request is flagged unavailable (503) and
+ *   this throws, so "could not read" is never reported as "no category".
+ * - The category read succeeded with no row: `{ cat: null }`, a 404, whatever
+ *   the providers read did. The slug is URL input interpolated into the
+ *   providers `or=(...)` filter, so `/p/pool-pros/c/foo,bar` makes that filter
+ *   unparseable and PostgREST answers 400. That is not an outage: the same
+ *   URL would fail on every retry, and the page really does not exist.
+ * - A real category whose providers read failed: 503.
+ */
+async function readCategoryAndProviders<R extends ReadResult<unknown>>(
+  slug: string,
+  providers: (signal: AbortSignal) => PromiseLike<R>,
+): Promise<{ cat: ServiceCategory | null; provs: ReadData<R> | null }> {
+  const [cat, provs] = await Promise.all([
+    guardedRead("service_categories by slug", (signal) =>
+      supabaseAdmin.from("service_categories").select("*").eq("slug", slug).eq("is_published", true).abortSignal(signal).maybeSingle()),
+    guardedRead<never, R>("providers by category", providers),
+  ]);
+  if (!cat.ok) failRequestUnavailable("service_categories by slug");
+  if (!cat.data) return { cat: null, provs: null };
+  if (!provs.ok) failRequestUnavailable("providers by category");
+  return { cat: cat.data as ServiceCategory, provs: provs.data };
+}
+
 export const getCategoryWithProviders = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string().min(1) }).parse(d))
   .handler(async ({ data }) => {
-    const [{ data: cat }, { data: provs }] = await Promise.all([
-      supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
-      supabaseAdmin
+    // A null category is a 404 in the route; see readCategoryAndProviders.
+    const { cat, provs } = await readCategoryAndProviders(data.slug, (signal) => supabaseAdmin
         .from("providers")
         .select("slug, name, business_type, city, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count")
         .eq("is_published", true)
@@ -59,8 +88,8 @@ export const getCategoryWithProviders = createServerFn({ method: "GET" })
         .order("is_featured", { ascending: false })
         .order("rating", { ascending: false, nullsFirst: false })
         .order("name")
-        .limit(500),
-    ]);
+        .limit(500)
+        .abortSignal(signal));
     return {
       category: (cat as ServiceCategory | null) ?? null,
       providers: ((provs as any[]) ?? []) as DirectoryProvider[],
@@ -80,9 +109,8 @@ export const getCategoryStateProviders = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string().min(1), state: z.string().length(2) }).parse(d))
   .handler(async ({ data }) => {
     const stateCode = data.state.toUpperCase();
-    const [{ data: cat }, { data: rows }] = await Promise.all([
-      supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
-      supabaseAdmin
+    // Null category = 404 in the route; see readCategoryAndProviders.
+    const { cat, provs: rows } = await readCategoryAndProviders(data.slug, (signal) => supabaseAdmin
         .from("providers")
         .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count")
         .eq("is_published", true)
@@ -91,8 +119,8 @@ export const getCategoryStateProviders = createServerFn({ method: "GET" })
         .order("is_featured", { ascending: false })
         .order("rating", { ascending: false, nullsFirst: false })
         .order("name")
-        .limit(500),
-    ]);
+        .limit(500)
+        .abortSignal(signal));
     const provs = (rows ?? []) as any[];
     const cityMap = new Map<string, { name: string; slug: string; count: number }>();
     for (const r of provs) {
@@ -116,9 +144,8 @@ export const getCategoryCityProviders = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const stateCode = data.state.toUpperCase();
     const citySlug = data.city.toLowerCase();
-    const [{ data: cat }, { data: provs }] = await Promise.all([
-      supabaseAdmin.from("service_categories").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle(),
-      supabaseAdmin
+    // Null category = 404 in the route; see readCategoryAndProviders.
+    const { cat, provs } = await readCategoryAndProviders(data.slug, (signal) => supabaseAdmin
         .from("providers")
         .select("slug, name, business_type, city, city_slug, state_code, logo_url, hero_image_url, description, primary_category, secondary_categories, is_featured, featured_until, listing_paid_until, plan, rating, rating_count, address, phone, website_url")
         .eq("is_published", true)
@@ -127,8 +154,8 @@ export const getCategoryCityProviders = createServerFn({ method: "GET" })
         .order("is_featured", { ascending: false })
         .order("rating", { ascending: false, nullsFirst: false })
         .order("name")
-        .limit(500),
-    ]);
+        .limit(500)
+        .abortSignal(signal));
     const filtered = ((provs ?? []) as any[]).filter((p) => {
       if (p.city_slug) return p.city_slug.toLowerCase() === citySlug;
       if (p.city) return citySlugify(p.city) === citySlug;
@@ -149,12 +176,16 @@ export const getCategoryCityProviders = createServerFn({ method: "GET" })
 export const listCategoryGeoCoverage = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string().min(1) }).parse(d))
   .handler(async ({ data }) => {
-    const { data: rows } = await supabaseAdmin
+    // Throws ReadUnavailableError on a failed read: the only caller is
+    // sitemap-directory.xml, and "no coverage" there means URLs silently
+    // missing from a 200 sitemap.
+    const { data: rows } = await readOrThrow("providers geo coverage", (signal) => supabaseAdmin
       .from("providers")
       .select("city, city_slug, state_code")
       .eq("is_published", true)
       .or(`primary_category.eq.${data.slug},secondary_categories.cs.{${data.slug}}`)
-      .limit(5000);
+      .limit(5000)
+      .abortSignal(signal));
     const states = new Map<string, Map<string, { name: string; slug: string; count: number }>>();
     for (const r of rows ?? []) {
       if (!r.state_code || !r.city) continue;
