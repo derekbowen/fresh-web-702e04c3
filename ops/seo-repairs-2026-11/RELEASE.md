@@ -12,9 +12,15 @@ How to use it:
 - **Operator:** follow section 2 in order. Each step ends with a gate. If a gate fails,
   stop, roll back that step (section 4), and report. Do not skip a gate.
 - Rules from `CLAUDE.md` in poolrentalnearme-web apply throughout. In particular: rule 3
-  (no email or SMS to users; nothing here sends any), rule 4 (disclose every scheduled
-  job when it is created; step 6), rule 8 (insurance, liability, coverage, claims or
-  damage text goes to the owner and is not edited), and the WEST deploy ritual.
+  (no email or SMS to users. Nothing here is *known* to send any: the F13 sync job calls
+  an EAST-only hook nobody has read yet, so step 6.2 must confirm it sends nothing before
+  A13 is asked; and every scheduled run is reported, step 6.4), rule 4 (disclose every
+  scheduled job when it is created; step 6), rule 8 (insurance, liability, coverage,
+  claims or damage text goes to the owner and is not edited), and the WEST deploy ritual.
+- **A Yes is only possible for a change whose exact content exists.** A line marked
+  **not yet approvable** in section 3 is not asked in this round. It comes back as its
+  own line once its exact SQL or config diff, dry-run output, backup name and rollback
+  file exist and have been reviewed.
 - **Not part of this release:** any change to DNS, Cloudflare caching, redirects,
   security rules, Workers or routing. Workers Routes on founders.click are never edited.
 
@@ -29,10 +35,10 @@ How to use it:
 | Rule for those five | They exist only on EAST. They must be byte-for-byte the same after every step. No branch in this release changes them (checked with `git diff --name-only 7702845 <branch> -- <five files>`: empty for all six branches below). | step 1, check 1.3 |
 | fresh-web repo | `https://github.com/derekbowen/fresh-web-702e04c3.git` (public) | |
 | Branch tips used for the trial merge | `seo/01-failed-read-503` b3e2ace, `seo/02-redirects-fees-links` f04fb6e, `seo/03-sitemaps` d127364, `seo/05-intent` 46aa05e, `seo/06-scheduled-jobs` f9b6d9b, `seo/07-release-tracking` bba4b13 | `git ls-remote https://github.com/derekbowen/fresh-web-702e04c3.git 'refs/heads/seo/*'` |
-| On GitHub already | 01 (b3e2ace), 02 (f04fb6e), 06 at **2c2f857** (the token fix f9b6d9b is local only), 07 at **3edfbe9** (bba4b13 is local only). 03, 04 and 05 are **not on GitHub**. | same command |
-| `seo/04-dupes-canonical` (F6a + F10) | **Pending:** no local or remote branch exists. | same command |
-| EAST release tooling | **Pending:** `ops/east/seo-release-2026-11/` (`east_seo_release.py` with PLAN, GO and ROLLBACK modes, `README.md`, `test/`) in poolrentalnearme-web does not exist yet. | `ls ops/east/seo-release-2026-11` in poolrentalnearme-web |
-| EAST-only allowlist in `ops/deploy-east.sh` | **To confirm:** uncommitted in this worktree. It reads a pin file in `sha256sum` format, by default `/home/ubuntu/fresh-web.east-only.sha256` (next to the repo, outside the tree). Each pinned file must be dirty and match its pin; every dirty file must be pinned. | `git log -1 -- ops/deploy-east.sh` |
+| On GitHub already | 01 (b3e2ace), 02 (f04fb6e), 06 at **2c2f857** (the token fix f9b6d9b is local only), 07 at **3edfbe9** (bba4b13, 8229cee, 8f7c105 and c9fd110 are local only). 03, 04 and 05 are **not on GitHub**. Step 0.2 pushes them before anything else. | same command |
+| `seo/04-dupes-canonical` (F6a + F10) | **Pending:** no local or remote branch exists. Whether this release waits for it is approval line A0. | same command |
+| EAST release tooling | poolrentalnearme-web `ops/east/seo-release-2026-11/`: `east_seo_release.py` (PLAN, GO, ROLLBACK), `ship.py` (sends it to EAST in parts: it no longer fits one SSM command), `README.md`, `test/` (local simulation of EAST, 42 scenarios). Not pushed; never run on EAST. | `ls ops/east/seo-release-2026-11` in poolrentalnearme-web |
+| `ops/deploy-east.sh` on `seo/07-release-tracking` | Committed (8229cee, 8f7c105, and c9fd110, the build-copy / proven-restart commit). (1) EAST-only allowlist: a pin file in `sha256sum` format, by default `/home/ubuntu/fresh-web.east-only.sha256` (outside the tree); each pinned file must be dirty and match its pin, every dirty file must be pinned. (2) It builds in a copy (`/home/ubuntu/fresh-web.build`), so the live `dist/` is untouched until a rename right before the restart, and it carries the previous build's hashed assets over. (3) Every restart is proven through pm2 (new pid/uptime); the live stamp cannot prove it, since `serve.mjs` reads it from disk. (4) `pm2 restart fresh-web` without `--update-env`. | `git log -3 -- ops/deploy-east.sh` |
 | EAST build memory | `NODE_OPTIONS=--max-old-space-size=3072` is required. 1536 MB ran out of memory on 2026-11-04. The box is a t3.medium (3.8 GB RAM, 2 GB swap). | `docs/OPS_RECORD_2026-11-04_remove-intercom.md` (poolrentalnearme-web) |
 | Cloudflare cache rule | One rule per zone (`http_request_cache_settings`). It caches `/`, `/p/*` (except `/p/affiliate*`, `/p/privacy-request*`, `/p/waitlist-signup*`), `/public-pools/*`, `/sitemap*` and `/robots.txt` for GET requests without the `st-authinfo` cookie, with an **edge TTL override of 600 s**. A 404 and a 301 on `/p/*` go MISS, then HIT. | `docs/OPS_RECORD_2026-09-16_edge-cache-db-protection.md` §1 (poolrentalnearme-web) |
 | CI | Red on both repos for reasons outside these PRs. fresh-web: three link-audit workflows crawl a Lovable preview URL (`BASE_URL` in `.github/workflows/internal-links.yml`, `page-links-check.yml`, `all-locations-check.yml`) that answers 403. poolrentalnearme-web: "Tests and gates" fails on PR #2 and PR #3; the image audit flags bun's package cache. | GitHub checks on each PR |
@@ -63,11 +69,12 @@ WEST (poolrentalnearme-web).
 | **F9** listing status codes; **F11** `/l` loop; `/confirm` | WEST PR #2 (`seo/west-status-and-robots`, 34d12a7) | `/l/<not-a-uuid>` (the six "Error in loading the listing" pages) → **404**. A temporary listing-load failure (5xx, 429, network, timeout, unknown, a 403 without an API error) → **503**, `Retry-After: 120`, `no-store`, `noindex`. `/l` and `/l/` → **404** in the app. `/confirm` → `noindex, follow`. Healthy, closed and owner-view listings: byte-identical. Record: `docs/OPS_RECORD_2026-11-15_seo-status-codes.md` (on that branch). | `jest server` 19 suites, 322 passed; `ssrStatus` 83; `bun run test-ssr-status` 58/58. | WEST nginx upstream swap back (step 5b). |
 | **F12** robots.txt | WEST PR #2, `ops/west/robots/` | The live www `robots.txt` is versioned byte-for-byte. Proposed file applies edits E1–E6 (README §4). Every URL in today's sitemaps stays allowed. Step 5f. | `node --test ops/west/robots/*.test.mjs`: 269 tests, 268 pass, 1 skipped (opt-in live run); live run 91/91. | Swap back the backup file (step 5f). |
 | **F8 prerequisite** pp-ssr capture | WEST PR #3 (`seo/pp-ssr-preserve`, ee16493) | Captures the pp-ssr container source to an orphan branch `ops/pp-ssr-snapshot-<date>`. Changes nothing that serves traffic. Step 5a. | `--selftest` (secret scanner). Not run against WEST. | Nothing to roll back; delete the snapshot branch if wanted. |
-| Tracker | `seo/07-release-tracking`, PR #4 | Ops tooling only: `ops/seo-repairs-2026-11/tracking/track_groups.py` and this file. No application code. | `--selftest` 5/5 (commit bba4b13); baseline runs in `tracking/reports/2026-11-15/`. | Delete the directory. |
+| Tracker | `seo/07-release-tracking`, PR #4 | `ops/seo-repairs-2026-11/tracking/track_groups.py` and this file. No application code. | `--selftest` 5/5 (commit bba4b13); baseline runs in `tracking/reports/2026-11-15/`. | Delete the directory. |
+| **EAST deploy gate** | `seo/07-release-tracking`, PR #4: 8229cee, 8f7c105, c9fd110 | **Changes the gate every later EAST deploy runs through.** `ops/deploy-east.sh`, `scripts/check-deployed-sha.mjs`, `scripts/check-production-drift.mjs`. What it now allows: dirty files that are listed in the pin file AND whose sha256 equals the pin, exactly that set and no other (the stamp, the live stamp and the drift check must all list exactly it; without a pin file the old "clean tree" rule holds). What it changes in how a deploy runs: the build happens in a copy, so the live `dist/` is untouched until a rename just before the restart; the previous build's hashed assets stay servable; every restart (and every restore's restart) must be proven through pm2; the restart no longer uses `--update-env`; a restore that cannot be proven says so in its ABORT line. | The tooling harness (poolrentalnearme-web `ops/east/seo-release-2026-11/test/run_tests.py`): 42 scenarios, 310 checks, 0 failed, with the real `deploy-east.sh`, `serve.mjs`, `stamp-build.mjs` and both check scripts. Includes the old rule without a pin file, wrong/stale/malformed pins, a sixth dirty file, failed and no-op restarts. Not run on EAST. | The EAST rollback restores the previous checkout, whose `deploy-east.sh` is the old one. The pin file stays (harmless to the old script, which ignores it). |
 
 **F11 items outside EAST code** (step 5): bare `/p` gets a 301 to `/p/` from WEST nginx;
 10 of the 99 stored underscore-slug redirects take two hops (measured below); `/l` gets a
-301 to `/l/` from WEST nginx (inferred, PR #2 §1).
+301 to `/l/` from WEST nginx (inferred, PR #2 §1; step 5g, A17).
 
 **Underscore redirects, measured 2026-11-15** (read-only GETs over the 99 underscore slugs
 in `tracking/data/redirect-slugs.txt`): 10 take two hops. The other 352 stored redirects
@@ -94,7 +101,7 @@ relative `Location`, so EAST may have its own copy. Step 0.4 locates it.
                                                                                     ├── 4c public pools (data, after 5a for rendering)
                                                                                     └── 4d 24 city redirects (data)
 5a pp-ssr capture ── (independent of EAST; can run any time)
-5b WEST release (PR #2) ── 5c nginx /p 404 ── 5d underscore fix
+5b WEST release (PR #2) ── 5c nginx /p 404 ── 5d underscore fix ── 5g nginx /l
 5e academy proxy (only after step 2 has shipped seo/03)      5f robots.txt (any time after A15)
 6 F13 sync cron (after step 2; before the Sunoblack cutover it must be switched or stopped)
 7 tracking (after every step, then on the dates in 7.1)
@@ -120,8 +127,33 @@ Expect `sha` 77028454655e7b272d8c23987b54f445f9eba9f7, `dirty` 5, and exactly th
 git ls-remote https://github.com/derekbowen/fresh-web-702e04c3.git 'refs/heads/seo/*' refs/heads/ops/deploy-sha-enforcement
 ```
 
-Every branch of section 1 must be on GitHub at its final SHA. Write the SHAs into the
-release record.
+Every branch of section 1 must be on GitHub at its final SHA **before** step 1, because
+step 1 clones from GitHub. Today that means pushing (needs A2; the owner or an operator
+with push rights):
+
+- `seo/03-sitemaps` and `seo/05-intent` (not on GitHub at all);
+- `seo/06-scheduled-jobs` at **f9b6d9b or later** (GitHub has 2c2f857, whose runner always
+  sends the service-role key, so every tick would get a 401 once a hooks token is set);
+- `seo/07-release-tracking` at **c9fd110 or later** (GitHub has 3edfbe9,
+  whose `deploy-east.sh` has no allowlist: the EAST tooling refuses that release, and
+  the old gate refuses the five EAST-only files);
+- `seo/04-dupes-canonical` if A0 says the release waits for it.
+
+Write every SHA into the release record. Check after pushing:
+
+```
+git ls-remote https://github.com/derekbowen/fresh-web-702e04c3.git refs/heads/seo/06-scheduled-jobs refs/heads/seo/07-release-tracking
+git merge-base --is-ancestor f9b6d9b <recorded seo/06 SHA> && echo seo/06 has the token fix
+git show <recorded seo/07 SHA>:ops/deploy-east.sh | grep -c -e EAST_ONLY_SHA256 -e restart_proven -e BUILD_DIR   # 3 kinds of line, so >= 3
+```
+
+0.2b **Record the marketplace marker** (WEST serves `/s` and `/login`; step 3.2 compares):
+
+```
+for p in /s /login; do curl -s "https://www.poolrentalnearme.com$p" | grep -o 'assets/index-[A-Za-z0-9_-]*\.js' | head -1; done
+```
+
+Write both markers into the release record.
 
 0.3 **Cloudflare: can a 503 be cached?** (owner reads it; this release changes nothing.)
 
@@ -141,7 +173,8 @@ Where to read it, for each of the four zones (`poolrentalnearme.com`, `.co.uk`, 
 
 Via the API the same fields are `action_parameters.edge_ttl.mode` and
 `action_parameters.edge_ttl.status_code_ttl`. Record what you see in the release record.
-The decision is the owner's (approval A1). Changing the rule is outside this release.
+The decision is the owner's (approval A1, a precondition of A3). Changing the rule is
+outside this release.
 
 0.4 **WEST and EAST nginx, read-only.** This finds (a) whether nginx replaces an origin 503
 with its own error page on the proxied locations (PR #2 §7.4; it matters for F3 too,
@@ -151,7 +184,7 @@ underscore rewrite. Save this as `nginx_read.py` and run it once per box:
 ```python
 import subprocess
 cmd = ("nginx -T 2>/dev/null | grep -n -E "
-       "'proxy_intercept_errors|error_page|rewrite |return 30[1278]|location = /p|location /p|location = /l|location /l/|location ~'")
+       "'# configuration file|proxy_intercept_errors|error_page|rewrite |return 30[1278]|location = /p|location /p|location = /l|location /l/|location ~'")
 out = subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout
 print(out[-20000:])
 ```
@@ -162,8 +195,12 @@ python3 ops/runners/east_runx.py nginx_read.py    # EAST
 ```
 
 (from a poolrentalnearme-web checkout on a machine with `PRNM_AWS_*`; SSM truncates
-output past about 24 KB, hence the tail.) Gate: an `error_page` for 5xx on a location that
-proxies to `upstream web` or to EAST must be reported to the owner before step 2.
+output past about 24 KB, hence the tail.) The `# configuration file <path>:` lines in the
+output name the file each following line comes from; steps 5c and 5d back up and edit
+that file. Gate: an `error_page` (or `proxy_intercept_errors on`) that would replace a 5xx
+on a location that proxies to `upstream web` or to EAST **stops the release**: F3 and F9
+would then show nginx's page instead of the app's 503. It goes to the owner as a new
+decision, outside this approval round.
 
 0.5 **Baseline tracker run** (from a fresh-web checkout of `seo/07-release-tracking`):
 
@@ -182,10 +219,15 @@ set transaction read only;
 -- then the body of ops/seo-repairs-2026-11/listing-sync/staleness-check.sql (seo/06)
 ```
 
-0.7 **Approvals.** Section 3 is filled in and dated by the owner.
+0.7 **Approvals.** Section 3 is filled in and dated by the owner, after 0.2–0.4 are
+recorded, so that A3 names the exact branch SHAs.
 
-**Gate 0:** 0.1 and 0.2 match; 0.3 recorded; 0.4 reviewed; 0.5 baseline saved; A2 and A3
-are Yes.
+**Gate 0:** 0.1 matches; 0.2 pushed and checked (seo/06 contains f9b6d9b; seo/07's
+`deploy-east.sh` has all three markers); 0.2b recorded; 0.3 recorded; 0.4 reviewed and no
+`error_page` stop; 0.5 baseline saved; A0 answered; **A1, A2 and A3 are Yes. A1 is a
+precondition of A3:** F3 cannot be left out (seo/02, seo/03 and seo/05 are all built on
+its commit b3e2ace), so A1 = No means no EAST release until the cache question is
+settled, by a Cloudflare decision outside this release.
 
 ### Step 1. Build the integration branch and run the local checks
 
@@ -199,7 +241,7 @@ git checkout -b seo/release-2026-11 77028454655e7b272d8c23987b54f445f9eba9f7
 git merge --no-ff origin/seo/01-failed-read-503
 git merge --no-ff origin/seo/02-redirects-fees-links
 git merge --no-ff origin/seo/03-sitemaps
-git merge --no-ff origin/seo/04-dupes-canonical
+git merge --no-ff origin/seo/04-dupes-canonical    # ONLY if A0 = "wait for seo/04"; otherwise skip this line
 git merge --no-ff origin/seo/05-intent
 git merge --no-ff origin/seo/06-scheduled-jobs
 git merge --no-ff origin/seo/07-release-tracking
@@ -210,7 +252,12 @@ cleanly. **05 conflicts with 03 in `scripts/test-failed-reads.mjs`**: both add c
 the same harness. Resolve by keeping both sides' checks, then run 1.4. No other file
 conflicted. Re-do the trial when 03, 04 and 05 are final.
 
-1.2 Record the release SHA: `git rev-parse HEAD`. Call it `RELEASE_SHA`.
+1.2 Record the release SHA: `git rev-parse HEAD`. Call it `RELEASE_SHA`. Also record
+`git diff --stat 77028454655e7b272d8c23987b54f445f9eba9f7 HEAD | tail -1` and check that
+`git diff --name-only 7702845 HEAD` is exactly the union of the merged branches' own file
+lists (`git diff --name-only 7702845 <branch SHA>` for each SHA recorded in 0.2). The only
+hand edit allowed is the conflict resolution in `scripts/test-failed-reads.mjs`. That is
+what A3 approved; anything else means stop.
 
 1.3 Prove the release does not touch what it must not:
 
@@ -249,12 +296,16 @@ the largest single-branch count); tracker selftest ALL PASS;
 
 ### Step 2. EAST deploy (needs A3)
 
-Tooling: poolrentalnearme-web `ops/east/seo-release-2026-11/east_seo_release.py`, run with
-`ops/runners/east_runx.py` from a machine with `PRNM_AWS_*`. **Pending:** its
-`README.md` is the authority for how to select a mode and for its exact gates; read it
-before running. `east_runx.py` ships the script and passes it no arguments, and honours
-the script's `RUNNER_TIMEOUT = <seconds>` line (max 7200). For a long run, start it in the
-background and read the result with `python3 ops/runners/east_runx.py --result <command-id>`.
+Tooling: poolrentalnearme-web `ops/east/seo-release-2026-11/east_seo_release.py`, shipped
+with `ops/east/seo-release-2026-11/ship.py` (it is too big for one SSM command;
+`east_runx.py` would refuse it) from a machine with `PRNM_AWS_*`. Its `README.md` is the
+authority for how to select a mode and for its exact gates; read it before running. The
+script declares `RUNNER_TIMEOUT = 3600`. Start GO in the background and read the result
+with `python3 ops/runners/east_runx.py --result <command-id>` (the last command id
+`ship.py` prints is the run).
+
+Pick a low-traffic window for GO: the swap and restart cost a few seconds of EAST pages,
+and the build runs next to the live site and Chatwoot on a 3.8 GB box.
 
 2.1 **PLAN** (read-only). It must show, and change nothing:
 
@@ -266,25 +317,39 @@ background and read the result with `python3 ops/runners/east_runx.py --result <
 - the sha256 of each of the five files on EAST, matching the pin file
   (`/home/ubuntu/fresh-web.east-only.sha256` by default, see section 0);
 - free memory and disk, and that pm2 runs `fresh-web` as ubuntu with
-  `PM2_HOME=/home/ubuntu/.pm2`.
+  `PM2_HOME=/home/ubuntu/.pm2`;
+- each five file's mtime against the live build's `builtAt`: a file changed after the
+  live build is content production does not run, and GO refuses it;
+- that the build can be memory-capped (systemd-run, cgroup v2), and the cap it would use.
 
 2.2 **GO.** It must, in this order, and roll back automatically on any failure:
 
-1. back up `dist/` and the five EAST-only files;
+1. copy `dist/` to a backup and the five EAST-only files to a tar beside it (for a human;
+   the tool never restores them), and pin the five by sha256;
 2. move the checkout to `RELEASE_SHA` with the five files left byte-for-byte;
-3. typecheck and build with `NODE_OPTIONS=--max-old-space-size=3072`;
+3. inside a memory-capped systemd scope (RAM cap = MemAvailable − 512 MB, plus at most
+   1.5 GB swap), run the release's `ops/deploy-east.sh`: copy the tree to
+   `/home/ubuntu/fresh-web.build`, typecheck and build **there** with
+   `NODE_OPTIONS=--max-old-space-size=3072` (the live `dist/` is not touched);
 4. check the stamp: `sha` = `RELEASE_SHA`, and `dirtyFiles` = exactly the five pinned files;
 5. smoke the new build on `:3005` with `.env` (content, not just a 200);
-6. `sudo -u ubuntu PM2_HOME=/home/ubuntu/.pm2 pm2 restart fresh-web` (never as root);
+6. carry the previous build's hashed assets into the new one, swap `dist/` by rename, then
+   `sudo -u ubuntu PM2_HOME=/home/ubuntu/.pm2 pm2 restart fresh-web` (never as root, and
+   **without `--update-env`**, so the process keeps exactly its environment and
+   `dump.pm2` stays true), and prove the restart through pm2 (new pid/uptime);
 7. live stamp = `RELEASE_SHA`; `verify:production`; `check:price-variants` with `.env`
    (a SKIPPED result is a failure); `check:production-drift`;
-8. re-hash the five EAST-only files: unchanged.
+8. re-hash the five EAST-only files: unchanged; compare pm2's env variable names with
+   preflight (names only).
 
-These are the gates of `ops/deploy-east.sh`, adapted for the five pinned files. No
-environment variable changes in this release, so no `pm2 save` is needed.
+No environment variable changes in this release and the restart does not merge any, so
+no `pm2 save` is needed; step 3.4 checks that this held. If the build is killed inside
+its memory cap, the deploy fails before step 6 and production is untouched; the
+options are then more swap or a temporary resize for the build window (an owner decision).
 
-**Gate 2:** GO exits OK; `curl -s https://www.poolrentalnearme.com/fw-assets/__build.json`
-shows `RELEASE_SHA` and the five `dirtyFiles`.
+**Gate 2:** GO exits OK with `RESULT: RELEASED` (not `RELEASED WITH WARNINGS`);
+`curl -s https://www.poolrentalnearme.com/fw-assets/__build.json` shows `RELEASE_SHA` and
+the five `dirtyFiles`. Record the build scope's memory peak that GO printed.
 
 ### Step 3. Post-deploy checks (read-only)
 
@@ -304,7 +369,7 @@ python3 -I ops/seo-repairs-2026-11/tracking/track_groups.py
 | F14 | `/p/affiliate`: PASS. The other three pages: FAIL until step 4a (they are database text) |
 | F1, F7 | PASS |
 | F4 | PASS except "no URL in two sitemaps": 5 until step 5e |
-| F6a, F10 | PASS only if `seo/04` was merged |
+| F6a, F10 | PASS if A0 = "wait for seo/04"; otherwise still FAIL (not in this release) |
 
 3.2 Marketplace paths, which WEST serves (prove the proxied paths still answer):
 
@@ -314,8 +379,8 @@ for p in /s /login /signup /wizard/ /l/your-private-paradise-the-ultimate-backya
 ```
 
 Expect 200 for each (all five answered 200 on 2026-11-15). Also prove WEST still serves
-the marketplace: the `assets/index-<hash>.js` marker on `/s` and `/login` is the same as
-before step 2 (EAST does not change it). The listing URL is the second
+the marketplace: the `assets/index-<hash>.js` marker on `/s` and `/login` (same command as
+0.2b) equals the one recorded in 0.2b (EAST does not change it). The listing URL is the second
 `<loc>` of `/sitemap-listings.xml` on that day; if it no longer answers 200, take any
 `<loc>` from that sitemap.
 
@@ -328,12 +393,31 @@ curl -s https://www.poolrentalnearme.com/sitemap-pages-comparisons.xml | grep -c
 ```
 
 Expect: the index answers 200 with children; `sitemap-directory.xml` answers 410;
-comparisons lists 1,091 URLs (less 78 if `seo/04` shipped; to confirm).
+comparisons lists 1,091 URLs (less 78 if A0 = "wait for seo/04"; to confirm).
 
-**Gate 3:** regression group PASS; 3.2 all 200; 3.3 as expected. If the regression group
-fails, run the EAST rollback now.
+3.4 **pm2 environment still matches `dump.pm2`** (CLAUDE.md "EAST runtime env"; names
+only, never values). Run on EAST through `east_runx.py`:
+
+```python
+import json, subprocess
+j = subprocess.run("sudo -u ubuntu PM2_HOME=/home/ubuntu/.pm2 pm2 jlist", shell=True, capture_output=True, text=True).stdout
+line = [l for l in j.split("\n") if l.startswith("[{")][-1]
+live = set(next(p for p in json.loads(line) if p["name"] == "fresh-web")["pm2_env"].get("env", {}))
+dump = set(next(p for p in json.load(open("/home/ubuntu/.pm2/dump.pm2")) if p["name"] == "fresh-web").get("env", {}))
+print("live %d names, dump %d names; only live: %s; only dump: %s" % (len(live), len(dump), sorted(live - dump), sorted(dump - live)))
+```
+
+Expect the two "only" lists empty, as they are before step 2 (run it in step 0 too).
+
+**Gate 3:** regression group PASS; 3.2 all 200 and markers unchanged; 3.3 as expected;
+3.4 unchanged from step 0. If the regression group fails, run the EAST rollback now.
 
 ### Step 4. Database content repairs (each needs its own Yes)
+
+**4a, 4b and 4c are not yet approvable** (section 3): their dry-run, apply, backup and
+rollback files do not exist. They are listed so the owner sees what is coming. Each
+returns as its own approval line, with the files, once they exist and have been reviewed.
+Only 4d has its exact SQL today.
 
 Common rules for 4a–4d:
 
@@ -350,9 +434,29 @@ Common rules for 4a–4d:
 | Step | Prepared files | Dry-run | Backup | Apply | Verify | Rollback |
 |---|---|---|---|---|---|---|
 | **4a** F14 fee statements (A4) | `fees/fee-corrections.csv` (present). `dry-run.sql`, `apply.sql`, `rollback.sql`, runbook: **pending** (folder `/home/user/fresh-web-seo-data/ops/seo-repairs-2026-11/`, branch `seo/02-content-repairs`, uncommitted) | pending | pending | `FIX` rows only | tracker `--only F14`: 4/4 PASS | pending (restore from backup) |
-| **4b** F5 internal links (A5) | `links/link-mapping.csv`, `links/code-handoff.md` (present). SQL and runbook: **pending**. The `src/**` link changes are in no branch | pending | pending | `REWRITE` and `UNLINK` rows only | re-crawl the linking pages: 0 internal links to a 301 or 404 for the mapped targets | pending |
+| **4b** F5 internal links (A5) | `links/link-mapping.csv`, `links/code-handoff.md` (present). SQL and runbook: **pending**. The `src/**` link changes are in no branch (see below) | pending | pending | `REWRITE` and `UNLINK` rows only, **excluding** every row inside an insurance, liability, coverage, claims or damage sentence | re-crawl the pages whose links come from the **database**: 0 database-sourced links to a 301 or 404 for the mapped targets. Links that come from code are out of scope (below) | pending |
 | **4c** F8 public-pools data (A6) | `public-pools/duplicate-mapping.sql`, `count-consistency.sql`, CSVs (present, read-only SELECTs). Apply and rollback SQL: **pending** (`/home/user/fresh-web-seo-pp/ops/seo-repairs-2026-11/public-pools/`) | the two read-only SQL files | pending | pending | re-run `count-consistency.sql`: 0 cities where `pool_count` differs | pending |
 | **4d** 24 duplicate city pages (A7) | `docs/seo-repairs-2026-11/intent.md` §6 (seo/05): APPLY and ROLLBACK SQL (present) | re-run the export and `node scripts/intent-report.mjs export.json --sql`; the 24 pairs must be unchanged | `create table <backup schema>.content_pages_city_dupes_<date> as select * from public.content_pages where template_type = 'host_acq_city' and slug in (<the 24 dup slugs of §6>);` must hold 24 rows | §6 APPLY | each dup URL 301s once to its keeper; the keeper answers 200; tracker F1/F7 PASS | §6 ROLLBACK |
+
+**4b, what it cannot fix and what must change first** (measured from `link-mapping.csv`):
+
+- The two biggest sources of old links are **code**, not database text:
+  `/p/free-host-tools` (2,323 linking pages; `src/components/related-pages.tsx`,
+  `src/components/templates/*`, `src/server/internal-links.functions.ts`) and the
+  `/l/draft/00000000-…/new/details` CTA (4,182 linking pages; `src/components/templates/*`).
+  Those `src/**` changes are in no branch, so they are not in `RELEASE_SHA`. They need
+  their own fresh-web branch and a later EAST release; 4b's verify counts database links
+  only.
+- **9 `REWRITE` targets have rows inside insurance sentences** (`/faq`,
+  `/guest_pool_safety_guidelines`, `/pool_safety_for_hosts`, `/community_guidelines`,
+  `/make_money_renting_out_your_pool` (2 rows), `/p/trust-safety`,
+  `/blog/pool-safety-guide`, `/guides/pool-safety-for-hosts`, and the
+  `/p/why_pool_owners_are_such_fans_…` slug). Those rows are not edited by 4b; they go to
+  the owner under D-h (CLAUDE.md rule 8).
+- **2 `REWRITE` rows point at a redirect:** `https://poolrentalnearme.com/location/florida-fl`
+  and `…/location/united-states/florida` → `/p/pool-rentals-florida`, which is itself a
+  stored redirect (`tracking/data/redirect-slugs.txt`). The mapping's owner must point
+  them at the final target before the file is final.
 
 Before 4d: in Search Console, check which URL of each pair gets the impressions. Where
 the bare URL is the one Google ranks, swap keeper and dup for that pair (intent.md §6).
@@ -388,37 +492,55 @@ file count matched, the secret scan passed. Nothing serving traffic changed.
 1. In the repo: `yarn test-server` and `yarn test-ssr-status` pass, and
    `node --test ops/west/robots/*.test.mjs` passes. If not green, do not build.
 2. Step 0.4 showed no `error_page` that would replace a 503 on the marketplace locations.
-3. Patch the build tree with the PR #2 files (exact-anchor edits, md5-gated as in
-   c207). Build image `cNNN-seo-status` (next free number; check `docker ps` for the
-   current MAIN name first).
-4. Gate on `:4000`: every prior release's markers, promo math and payment endpoints, plus
+3. Read, do not assume, where MAIN and the rollback container are:
+   `docker ps --format '{{.Names}} {{.Image}} {{.Ports}}'` and
+   `grep -n 127.0.0.1 /etc/nginx/conf.d/main-web.conf /home/ubuntu/main-web.conf /home/ubuntu/fallback-web.conf`.
+   CLAUDE.md's ":4000 gate" is generic: in the latest record (poolrentalnearme-web
+   `ops/west/c208/README.md`) **MAIN serves on :4000** and the rollback container is on
+   :3000, so the gate ran on :3000. The gate always runs on the port MAIN is **not** on.
+   Patch the build tree with the PR #2 files (exact-anchor edits, md5-gated as in c207 and
+   c208). Build image `cNNN-seo-status` (next free number).
+4. Gate on the port read in 3 (not MAIN's): every prior release's markers, promo math and payment endpoints, plus
    the PR #2 probes (`docs/OPS_RECORD_2026-11-15_seo-status-codes.md` §4):
    `/l/fargo-nd` → 404; `/l/some-pool/abc` → 404 "Page not found";
    `/l/some-pool/00000000-0000-0000-0000-000000000000` → 404; `/l` and `/l/` → 404, no
    `Location`; `/l/new` → 200; `/confirm` → 200 with `noindex, follow`; `/signup` → 200
    `index, follow`; `/login` → 200 `noindex, follow`; a live listing → 200, no
    `Retry-After`, no `X-Robots-Tag`; the same listing by `/l/<id>` → one 301.
-5. Swap the upstream file, `nginx -t`, reload. Rename containers. Mirror into the repo
-   and push.
+5. Flip with a generated flip script on the pattern of the last one
+   (`ops/west/c208/`: `flip_c208_block.sh`, `gate_c208_block.sh`, its precondition md5
+   check, the restart policy on the gate, the automatic swap-back on abort and the index
+   marker check after each move), regenerated for this release and tested the same way
+   (`test_c208.py` runs the whole flip under `sh` against a simulated nginx, docker and
+   curl). Not a hand-typed swap. Then mirror into the repo and push.
 
-Rollback: copy `/home/ubuntu/main-web.conf` back over `/etc/nginx/conf.d/main-web.conf`
-(or the file that pointed at the old MAIN), `nginx -t`, reload, rename containers back.
+Rollback: copy back the upstream file that pointed at the port the previous MAIN (or the
+rollback container) is on, as recorded in 3, over `/etc/nginx/conf.d/main-web.conf`;
+`nginx -t`; reload; rename containers back.
 
 **5c. nginx: `location = /p { return 404; }` (A10).** Removes the WEST 301 of bare `/p`
-to `/p/`. EAST already answers both with 404 after step 2. Back up the config file that
-step 0.4 shows, add the exact-match block, `sudo nginx -t && sudo systemctl reload nginx`.
+to `/p/`. EAST already answers both with 404 after step 2. Back up the config file named
+by the `# configuration file` line above the `/p` match in step 0.4's output, add the
+exact-match block, `sudo nginx -t && sudo systemctl reload nginx`.
 Verify: `curl -s -o /dev/null -w '%{http_code}\n' https://www.poolrentalnearme.com/p` →
 404, and tracker `--only F11` "`/p` answers 404 directly" → PASS. Rollback: restore the
 backup, `nginx -t`, reload.
 
-**5d. Underscore rewrite (A11).** First locate it with step 0.4 (look for a `rewrite`
-that matches `_`). If it is not in nginx on either box, the remaining places are a
-Cloudflare redirect rule (owner reads Rules → Redirect Rules; not changed by this
-release) or EAST app code (`grep -rn -E "replace\(/_/g|replaceAll\(['\"]_" /home/ubuntu/fresh-web/src`
-on EAST, read-only). The fix, once located, must give one hop per URL: either rewrite all
-underscores in one external redirect, or stop rewriting slugs that have their own stored
-redirect. The exact edit is decided after it is located. Verify with the tracker
-`--only F11`: multi-hop stored redirects falls to 0. Rollback: restore the backup.
+**5d. Underscore rewrite (A11, not yet approvable).** First locate it with step 0.4 (look
+for a `rewrite` that matches `_`). What happens next depends on where it is:
+
+- **nginx on WEST or EAST:** write the exact edit (the changed `location` block before and
+  after, and the file from the `# configuration file` line) into the release record. That
+  edit is what A11 is then asked for. It must give one hop per URL: either rewrite all
+  underscores in one external redirect, or stop rewriting slugs that have their own stored
+  redirect. Verify with the tracker `--only F11`: multi-hop stored redirects falls to 0.
+  Rollback: restore the config backup.
+- **Cloudflare** (owner reads Rules → Redirect Rules): the step ends here. A Cloudflare
+  redirect change is outside this release (the owner's rule); it goes back to the owner
+  as a separate decision.
+- **EAST app code** (`grep -rn -E "replace\(/_/g|replaceAll\(['\"]_" /home/ubuntu/fresh-web/src`
+  on EAST, read-only): the fix is a new fresh-web branch and a new EAST release with its
+  own gate and approval, not A11.
 
 **5e. Academy sitemap proxy (A12). Only after step 2 shipped seo/03.** Before that, the
 EAST route emits 70 URLs and proxying would drop 137 healthy pages. Steps, from
@@ -430,6 +552,15 @@ existing sitemap regex block that proxies to EAST; `nginx -t`; reload. Verify:
 `curl -s https://www.poolrentalnearme.com/sitemap-pages-academy.xml | grep -c '<loc>'`
 prints 202. Keep `/var/www/prnm-tools/sitemap-academy-full.xml` on disk. Rollback: restore
 the location.
+
+**5g. nginx: bare `/l` (A17, not yet approvable).** WEST PR #2's record
+(`docs/OPS_RECORD_2026-11-15_seo-status-codes.md` §7.1, on that branch) proposes an exact
+`location = /l` that hands `/l` to the marketplace with the same proxy settings as the
+existing `/l/` block, so `/l` answers the app's 404 directly instead of 301 → `/l/` → 404.
+Its exact text depends on the `/l/` block on WEST (its `proxy_set_header` lines), which
+step 0.4 shows. Once that block is written into the release record, A17 is asked. Verify:
+`curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' https://www.poolrentalnearme.com/l`
+→ `404` with no redirect. Rollback: restore the config backup.
 
 **5f. robots.txt install (A15).** Follow `ops/west/robots/README.md` §7 (PR #2) exactly:
 tests pass; the live file still hashes to `3fa2699d…773cca`; find the served file with
@@ -452,16 +583,25 @@ Disclosure (CLAUDE.md rule 4), to repeat in the message that installs it:
 
 Before installing:
 
-1. Push the token fix: GitHub's `seo/06-scheduled-jobs` is at 2c2f857; the runner that
-   sends the token the hook accepts is f9b6d9b. Install the f9b6d9b version.
+1. Confirm `RELEASE_SHA` contains the token fix (it was pushed in step 0.2):
+   `git merge-base --is-ancestor f9b6d9b <RELEASE_SHA> && echo ok`. EAST's checkout of
+   `RELEASE_SHA` is what step 6 installs from.
 2. The hook's implementation is the EAST-only `src/server/listing-sync.server.ts`, which
    differs from the repo. Read it on EAST (read-only) and confirm it only writes
-   `synced_listings` and `listing_sync_log`, and sends no email or SMS.
+   `synced_listings` and `listing_sync_log`, and sends no email or SMS. **A13 is asked only
+   after this has been confirmed and written into the release record.**
 3. Confirm fresh-web listens on port 3000 on EAST (`sudo ss -ltnp | grep node`).
 
 Install and verify: the commands in `ops/seo-repairs-2026-11/README.md` (seo/06), "Install
 on EAST". After one tick: a new `listing_sync_log` row with `status='success'`, and
 `staleness-check.sql` shows `last_ok` within 15 minutes.
+
+4. **Reporting, every run** (CLAUDE.md rule 3: silence is how a runaway goes unnoticed).
+   For as long as the job is installed, the operator sends the owner a daily summary of
+   the previous 24 hours from `listing_sync_log` (read-only): runs, successes, failures,
+   `skip` ticks (STOP file), and the latest `last_ok` from `staleness-check.sql`.
+   96 runs a day are expected; fewer is reported as a fault. Clean days are reported too.
+   Who sends it, and where, is named in the A13 line before it is asked.
 
 Sunoblack: the marketplace leaves Sharetribe in December. Before the cutover the hook must
 read from Sunoblack, or the job is stopped with the STOP file.
@@ -510,26 +650,30 @@ D+28 and D+42. Compare them with the tracker runs of the same dates.
 
 ## 3. Approvals
 
-One line, one decision. Nothing outside a Yes line is done.
+One line, one decision. Nothing outside a Yes line is done. Lines marked **not yet
+approvable** are not asked in this round (see the rule at the top): their exact content
+does not exist yet. Each comes back as its own line, with its files, when it does.
 
 | # | Decision | Yes / No | What it changes | Risk | Rollback |
 |---|---|---|---|---|---|
-| A1 | Cloudflare 5xx: having read step 0.3, accept that a 503 may be edge-cached for up to 600 s on cached paths, and go ahead with F3 anyway. (A Cloudflare change is a separate, later decision.) | | Nothing | A short database blip shows a cached 503 page for up to 10 minutes on the URLs hit during it | n/a |
-| A2 | Build `seo/release-2026-11` from the branches in section 1 and push it to GitHub | | GitHub only | none on production | delete the branch |
-| A3 | Deploy `RELEASE_SHA` to EAST with the tooling (step 2) | | Every EAST page: F3, F11, F14 code, F4, F1/F7, F6a, F10 | Medium: the largest change (79 files across branches 01–07 without 04, 50 of them under `src/`). Mitigated by the gates and the automatic dist rollback | Tooling ROLLBACK |
-| A4 | Apply the `FIX` rows of the fee corrections (step 4a), when its files are final | | `content_pages` bodies | Low to medium (bulk text edit) | restore from the backup table |
-| A5 | Apply the `REWRITE` and `UNLINK` rows of the link mapping (step 4b), when final | | `content_pages` bodies | Low to medium | restore from the backup table |
-| A6 | Apply the public-pools data fixes (step 4c), when final | | `pp_pools`, `pp_cities` | Medium (merges records) | restore from the backup table |
+| A0 | Scope: release **without** `seo/04-dupes-canonical` (F6a and F10 move to a later release), rather than wait for it. Yes = skip its merge line in 1.1. No = step 1 does not start until seo/04 exists, has been reviewed and is pushed (0.2), and A3 then includes it. | | What A3 deploys | Yes: the 78 duplicate comparisons and the ccTLD canonicals stay as they are for now | n/a |
+| A1 | Cloudflare 5xx: having read step 0.3, accept that a 503 may be edge-cached for up to 600 s on cached paths, and go ahead with F3. **A precondition of A3:** F3 cannot be dropped (seo/02, 03 and 05 are built on it), so No = no EAST release until a separate Cloudflare decision. | | Nothing | A short database blip shows a cached 503 page for up to 10 minutes on the URLs hit during it | n/a |
+| A2 | Push the branches of step 0.2 (seo/03, seo/05, seo/06 at f9b6d9b or later, seo/07 at c9fd110 or later, seo/04 if A0 = No), build `seo/release-2026-11` from the SHAs recorded in 0.2 and push it to GitHub | | GitHub only | none on production | delete the branch |
+| A3 | Deploy `RELEASE_SHA` to EAST with the tooling (step 2). `RELEASE_SHA` is the merge of exactly the branch SHAs recorded in 0.2, with only the `scripts/test-failed-reads.mjs` conflict resolved by hand (step 1.2 checks this) | | Every EAST page: F3, F11, F14 code, F4, F1/F7 (and F6a, F10 if A0 = No). **Also the EAST deploy gate itself** (section 1, "EAST deploy gate"): pinned EAST-only files allowed, build in a copy, proven restarts, no `--update-env` | Medium: the largest change (79 files across branches 01–07 without 04, 50 of them under `src/`; recounted at step 1.2). During GO: (1) the build runs next to the live site and Chatwoot on a 3.8 GB box. It runs in a memory-capped scope (MemAvailable − 512 MB, plus up to 1.5 GB swap), so if it needs more it is killed inside the cap and production is untouched; it has never been run on this t3.medium, so it may fail that way, and the next step is then more swap or a temporary resize (owner). The box may still swap, slowing EAST pages and Chatwoot while it builds. (2) The live `dist/` is not touched by the build; the swap and restart cost a few seconds of EAST pages. Choose a low-traffic window. Every gate failure restores the previous build and proves the restart | Tooling ROLLBACK |
+| A4 | **Not yet approvable.** Apply the `FIX` rows of the fee corrections (step 4a). Needs `dry-run.sql` + its output, `apply.sql`, the backup table name and `rollback.sql`, reviewed | | `content_pages` bodies | Low to medium (bulk text edit, 1,385 rows) | restore from the backup table |
+| A5 | **Not yet approvable.** Apply the `REWRITE` and `UNLINK` rows of the link mapping (step 4b), without the 9 insurance-sentence targets, after the 2 redirect destinations are corrected. Needs the same files as A4 | | `content_pages` bodies | Low to medium | restore from the backup table |
+| A6 | **Not yet approvable.** Apply the public-pools data fixes (step 4c). Needs apply and rollback SQL, dry-run output, backup table name | | `pp_pools`, `pp_cities` | Medium (merges records) | restore from the backup table |
 | A7 | Redirect the 24 duplicate city pages to their keepers (step 4d) | | 24 rows: `status`, `redirect_to`, `in_sitemap` | Low; each is a 301 to a page already in the sitemap | §6 ROLLBACK SQL |
 | A8 | Run the pp-ssr capture on WEST (step 5a) | | A new orphan branch in the public repo; two temporary files on WEST | Low; read-only on WEST; secret scan before push | delete the branch |
 | A9 | Release WEST PR #2 by the gated flip (step 5b) | | Marketplace status codes for `/l/*`, `/l`, `/confirm` | Medium: marketplace routing | upstream file swap back |
 | A10 | WEST nginx `location = /p { return 404; }` (step 5c) | | bare `/p` | Low | restore the config backup |
-| A11 | Fix the underscore rewrite once located (step 5d) | | about 100 underscore URLs | Low to medium; depends on where it lives | restore the config backup |
+| A11 | **Not yet approvable.** Fix the underscore rewrite (step 5d), limited to **an nginx rewrite on WEST or EAST**, with the exact edit shown in the release record. If it is in Cloudflare, the step ends and it goes back to the owner outside this release; if it is in EAST code, it becomes a new branch and a new EAST release | | about 100 underscore URLs | Low to medium | restore the config backup |
 | A12 | Proxy `/sitemap-pages-academy.xml` to EAST (step 5e), after A3 shipped seo/03 | | the academy sitemap on www | Low | restore the location |
-| A13 | Install the F13 sync cron on EAST (step 6) | | a new scheduled job every 15 min | Low; data only; STOP file | STOP file, then remove the line |
+| A13 | Install the F13 sync cron on EAST (step 6). **Asked only after step 6.2 has confirmed the hook writes only `synced_listings` and `listing_sync_log` and sends no email or SMS.** Includes the daily run report of step 6.4 (sender and channel named here) | | a new scheduled job every 15 min | Low; data only; STOP file | STOP file, then remove the line |
 | A14 | Merge the fresh-web PRs (and branches 03–05) into `ops/deploy-sha-enforcement` after step 3 passes, so GitHub matches EAST | | GitHub only | none | revert |
 | A15 | Install the proposed `robots.txt` on WEST (step 5f) | | crawl rules for every crawler on www | Low to medium (E5 changes rules for twelve crawlers) | swap back the backup |
 | A16 | robots decisions D1–D4 (`ops/west/robots/README.md` §4): keep `Disallow: /s?*&page=`; welcome crawlers share the main group; keep `Crawl-Delay: 5`; do not block `/u/` | | what A15 installs | see README | n/a |
+| A17 | **Not yet approvable.** WEST nginx `location = /l` (step 5g), with the exact block (copied from the box's `/l/` block) in the release record | | bare `/l` | Low | restore the config backup |
 
 **Open decisions already known** (no step depends on them unless noted):
 
@@ -542,7 +686,8 @@ One line, one decision. Nothing outside a Yes line is done.
 | D-e | WEST PR #2 choices | A 403 `forbidden` on a listing → 404 (not observed live); an invalid listing → 404; `Retry-After: 120`; the six `/p/` pages that link `/l/<city-slug>` (record §6). |
 | D-f | Sitemap choices (sitemaps.md, "Decisions left open") | list `/p/affiliate` after F14; `/p/jan` and `/p/la-saltwater-featured`; the 65 published `host_acq_city` rows with `in_sitemap = false`. |
 | D-g | Search Console | resubmit `/sitemap.xml`; remove `/sitemap-directory.xml` if submitted (owner action, step 7). |
-| D-h | Insurance text | The `NEEDS_DEREK` rows of 4a and 4b, and three academy courses on insurance and claims already listed on www (untyped-pages.md). Owner only (rule 8). |
+| D-h | Insurance text | The `NEEDS_DEREK` rows of 4a and 4b, the rows of the 9 `REWRITE` targets of 4b that sit inside insurance sentences, and three academy courses on insurance and claims already listed on www (untyped-pages.md). Owner only (rule 8). |
+| D-i | F5 link fixes in code | `/p/free-host-tools` (2,323 pages) and the `/l/draft/…` CTA (4,182 pages) are linked from `src/**` (`links/code-handoff.md`). Needs its own fresh-web branch and a later EAST release; not in this one. |
 
 ---
 
@@ -551,21 +696,23 @@ One line, one decision. Nothing outside a Yes line is done.
 | Step | Rollback | Time | Leaves |
 |---|---|---|---|
 | 1 | delete `seo/release-2026-11` | seconds | nothing on production |
-| 2 EAST | tooling ROLLBACK: restore the previous `dist/` and the 7702845 checkout with the five EAST-only files unchanged, restart as ubuntu, check the live stamp is 7702845. (`ROLLBACK=1 ops/deploy-east.sh` restores `dist/` only.) Confirm in the tooling README that both are restored. | about 1 min | production on 7702845 |
+| 2 EAST | tooling ROLLBACK (shipped with `ship.py`): restore the previous `dist/` (from `dist-prev-deploy` if it is that build, else the backup) and the 7702845 checkout with the five EAST-only files unchanged, restart as ubuntu **with proof** (pm2: new pid/uptime; the live stamp alone cannot prove it), then check the live stamp is 7702845. A restart that fails or does not happen is `ROLLBACK INCOMPLETE`. (`ROLLBACK=1 ops/deploy-east.sh` restores `dist/` only, also with a proven restart.) | about 1 min | production on 7702845 |
 | 4a–4c | restore the touched rows from the backup table, in one transaction; verify row counts | minutes | the data as it was |
 | 4d | intent.md §6 ROLLBACK SQL | seconds | 24 pages published again |
 | F15 (applied) | `related-links-job/rollback.sql` (seo/06) | seconds | old functions; links already written stay |
 | 5a | none needed; delete the snapshot branch if wanted | seconds | |
 | 5b | upstream file swap back, `nginx -t`, reload; rename containers back | seconds | previous MAIN |
-| 5c, 5d, 5e | restore the nginx config backup, `nginx -t`, reload | seconds | |
+| 5c, 5d (nginx only), 5e, 5g | restore the nginx config backup, `nginx -t`, reload | seconds | |
 | 5f | swap back the robots backup (README §7); the edge holds it up to 600 s; Google caches robots.txt up to 24 h | seconds (edge 10 min) | |
 | 6 | `touch /home/ubuntu/locks/LISTING_SYNC_STOP`, then remove the cron line | seconds | mirror keeps its last state |
 
 ## What to watch in the first 24 hours
 
 - **EAST health:** `pm2 status` (restarts, memory) and the error log; the live stamp still
-  shows `RELEASE_SHA`. The build heap needs 3 GB on a 3.8 GB box: watch for an
-  out-of-memory kill during and right after step 2.
+  shows `RELEASE_SHA`. The build is memory-capped, but the box can still swap while it
+  runs: check that Chatwoot's four containers are up and the live fresh-web did not
+  restart unexpectedly during step 2 (`docker ps`, pm2 restart count), and compare the
+  build peak GO printed with the cap.
 - **503 rate:** each 503 now means a failed database read. A steady stream means Supabase
   is unhealthy, not that the fix is wrong. Check `cf-cache-status` on any 503 seen (step 0.3).
 - **`content_404_log`:** new rows per hour should not rise; live pages must not appear in it.
