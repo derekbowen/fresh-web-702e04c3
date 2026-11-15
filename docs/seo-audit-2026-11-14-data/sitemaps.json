@@ -1,0 +1,130 @@
+{
+ "https://www.poolrentalnearme.com/sitemap.xml": {
+  "status": "200",
+  "is_index": true,
+  "count": 15,
+  "bytes": 1744,
+  "lastmod_min": "2026-09-25T05:05:03.564Z",
+  "lastmod_max": "2026-10-17T15:39:27.465Z"
+ },
+ "https://www.poolrentalnearme.com/public-pools.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 2529,
+  "bytes": 273257,
+  "lastmod_min": null,
+  "lastmod_max": null
+ },
+ "https://www.poolrentalnearme.com/sitemap-static.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 75,
+  "bytes": 6699,
+  "lastmod_min": null,
+  "lastmod_max": null
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-comparisons.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 1091,
+  "bytes": 177535,
+  "lastmod_min": "2026-07-06T19:02:17.431Z",
+  "lastmod_max": "2026-11-14T05:09:02.049Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-host-acquisition.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 1000,
+  "bytes": 157024,
+  "lastmod_min": "2026-05-03T05:05:41.805Z",
+  "lastmod_max": "2026-07-09T18:22:52.008Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-host-acquisition.xml?page=2": {
+  "status": "200",
+  "is_index": false,
+  "count": 1000,
+  "bytes": 157154,
+  "lastmod_min": "2026-05-03T05:05:42.293Z",
+  "lastmod_max": "2026-05-25T23:10:41.146Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-host-acquisition.xml?page=3": {
+  "status": "200",
+  "is_index": false,
+  "count": 1000,
+  "bytes": 157126,
+  "lastmod_min": "2026-05-03T05:05:42.293Z",
+  "lastmod_max": "2026-07-09T18:22:51.844Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-host-acquisition.xml?page=4": {
+  "status": "200",
+  "is_index": false,
+  "count": 933,
+  "bytes": 138809,
+  "lastmod_min": "2026-05-03T05:05:42.975Z",
+  "lastmod_max": "2026-07-09T22:20:42.258Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-event-guides.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 787,
+  "bytes": 127431,
+  "lastmod_min": "2026-05-03T05:05:42.975Z",
+  "lastmod_max": "2026-06-06T15:51:48.478Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-articles.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 443,
+  "bytes": 67967,
+  "lastmod_min": "2026-05-03T05:05:41.135Z",
+  "lastmod_max": "2026-08-06T08:32:45.177Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-academy.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 207,
+  "bytes": 30690,
+  "lastmod_min": "2026-05-09",
+  "lastmod_max": "2026-07-18"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-advocacy.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 52,
+  "bytes": 7315,
+  "lastmod_min": "2026-05-03T05:05:44.157Z",
+  "lastmod_max": "2026-08-04T00:47:14.812Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-spanish.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 446,
+  "bytes": 73272,
+  "lastmod_min": "2026-05-03T05:05:41.805Z",
+  "lastmod_max": "2026-05-14T03:46:53.585Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-swim-instructor.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 349,
+  "bytes": 55008,
+  "lastmod_min": "2026-05-05T02:34:23.671Z",
+  "lastmod_max": "2026-05-05T02:34:24.673Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-pages-blog.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 143,
+  "bytes": 73420,
+  "lastmod_min": "2026-07-06T19:32:14.257Z",
+  "lastmod_max": "2026-10-17T15:39:27.465Z"
+ },
+ "https://www.poolrentalnearme.com/sitemap-listings.xml": {
+  "status": "200",
+  "is_index": false,
+  "count": 126,
+  "bytes": 65166,
+  "lastmod_min": "2026-09-25T05:05:01.754Z",
+  "lastmod_max": "2026-09-25T05:05:03.564Z"
+ }
+}

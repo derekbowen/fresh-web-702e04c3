@@ -1,0 +1,73 @@
+{
+ "state_pages": 52,
+ "state_city_rows": 659,
+ "state_city_rows_zero": 7,
+ "states_listing_zero_city": 6,
+ "city_pages": 476,
+ "city_no_header_count": 0,
+ "city_header_vs_allN_mismatch": 0,
+ "city_header_vs_links_mismatch": 0,
+ "city_prose_with_count": 334,
+ "city_prose_count_contradicts_header": 9,
+ "city_examples": [
+  [
+   "/public-pools/texas/austin/",
+   47,
+   [
+    5
+   ]
+  ],
+  [
+   "/public-pools/nebraska/omaha/",
+   23,
+   [
+    5
+   ]
+  ],
+  [
+   "/public-pools/wisconsin/milwaukee/",
+   12,
+   [
+    5
+   ]
+  ],
+  [
+   "/public-pools/florida/clearwater/",
+   6,
+   [
+    4
+   ]
+  ],
+  [
+   "/public-pools/colorado/lakewood/",
+   10,
+   [
+    4
+   ]
+  ],
+  [
+   "/public-pools/tennessee/murfreesboro/",
+   8,
+   [
+    4
+   ]
+  ]
+ ],
+ "city_size": {
+  "2": 32,
+  "5+": 177,
+  "3-4": 98,
+  "1": 169
+ },
+ "city_no_private": 246,
+ "pool_pages": 2000,
+ "pool_raw_json_array": 1679,
+ "pool_no_hours": 700,
+ "pool_first_person_voice": 829,
+ "pool_no_rating": 156,
+ "pool_verify_rates": 696,
+ "pool_same_slug_other_city": 0,
+ "pool_same_slug_urls": 0,
+ "pool_same_slug_examples": [],
+ "city_first_person_voice": 148
+}
