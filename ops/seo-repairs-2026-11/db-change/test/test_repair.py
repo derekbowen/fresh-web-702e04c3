@@ -12,8 +12,12 @@ Fixtures:
     backslash-escaped quotes, www / non-www / upper-case host, trailing slash, ?query, #fragment), longer URLs and other
     domains that must not match, plain prose, the same link several times in one field, a field with no match, UNLINK in
     markdown and HTML, an image link UNLINK must leave alone, a link inside an insurance sentence, a blog post;
-  * a fee field edited after its md5 pin was read (must be skipped), a fee anchor that occurs twice (must be skipped),
-  * a field edited by a human after apply (rollback must leave it alone).
+  * a fee field and a link field edited after the md5 pins were read, and a link field created after it (all must be
+    skipped and logged), a fee anchor that occurs twice (must be skipped);
+  * insurance guard cases: a link separated from "Liability coverage" only by "e.g." / "vs." (must be left alone) and an
+    HTML list whose neighbouring <li> mentions liability (the link in its own <li> must be rewritten);
+  * rollback on a database where apply never ran, rollback of one named run, a field edited by a human after apply
+    (rollback must leave it alone).
 """
 import base64
 import csv
@@ -31,7 +35,20 @@ GEN = os.path.join(PKG, "generate.py")
 WORK = os.environ.get("SEO_TEST_WORK", "/tmp/seo_repair_test_work")
 DB = "seo_repair_test"
 FEES_CSV = os.path.join(PKG, "..", "fees", "fee-corrections.csv")
-INS = re.compile(r"insur|liabil|coverage|claim|damage", re.I)
+INS = re.compile(r"insur|liabil|coverage|\bcovered\b|claim|damage|waiver|injur|indemn|\bseguros?\b|responsabilidad|"
+                 r"cobertura|reclam|\bdaños?\b|lesi[oó]n", re.I)
+LINK_LINE = re.compile(r"^\s*F5-[0-9a-f]{10}\s*\|")
+
+
+def fee_rule_id(r):
+    return "F14-" + hashlib.md5("|".join((r["table"], r["row_id"], r["column"], r["old_text"])).encode()).hexdigest()[:10]
+
+
+def section(text, title):
+    """lines of one '=== title ... ===' section of a psql output"""
+    i = text.index("=== " + title)
+    j = text.find("\n===", i + 4)
+    return text[i:j if j > 0 else len(text)]
 
 TEXT_COLS = {"content_pages": ["content", "body_markdown", "description", "seo_title", "seo_description",
                                "og_description", "raw_html"],
@@ -130,7 +147,7 @@ def build_fixtures(rules):
         for i, r in enumerate(csv.DictReader(f), 1):
             if r["action"] == "FIX":
                 fees.setdefault((r["table"], r["row_id"], r["column"]), []).append(
-                    (int(r["line"] or 0), "F14-%04d" % i, r))
+                    (int(r["line"] or 0), fee_rule_id(r), r))
     fee_fields = {}
     for (t, rid, col), lst in sorted(fees.items()):
         lst.sort(key=lambda x: (x[0], x[1]))
@@ -148,15 +165,13 @@ def build_fixtures(rules):
         rid = str(uuid.uuid5(uuid.NAMESPACE_URL, "bulk:" + r["rule_id"]))
         url = r["target_or_slug"]
         before = "Bulk fixture %s.\n\nSee [Anchor %s](%s) for details.\n" % (r["rule_id"], r["rule_id"], url)
+        counts = {r["rule_id"]: 1}             # fields holding the target (the count guard's measure)
         if INS.search(url):
-            after = before                      # the sentence mentions an insurance word (via the URL): left alone
-            counts = {}
+            after = before                      # the block mentions an insurance word (via the URL): left alone
         elif r["action_or_category"] == "REWRITE":
             after = before.replace("](%s)" % url, "](%s)" % r["destination_or_new"])
-            counts = {r["rule_id"]: 1}
         else:
             after = before.replace("[Anchor %s](%s)" % (r["rule_id"], url), "Anchor %s" % r["rule_id"])
-            counts = {r["rule_id"]: 1}
         put("content_pages", rid, "fixture-bulk-" + r["rule_id"].lower(), "body_markdown", before, after, counts)
 
     # 3. hand-written cases with hand-written expectations
@@ -239,7 +254,7 @@ def build_fixtures(rules):
 
     h5 = ("Hosts should review their insurance before listing, see [our tools](/p/free-host-tools). "
           "That sentence is left for Derek.\n")
-    put("content_pages", hid("h5"), "fixture-h5-insurance-sentence", "body_markdown", h5, h5)
+    put("content_pages", hid("h5"), "fixture-h5-insurance-sentence", "body_markdown", h5, h5, {T: 1})
 
     h6 = "No old link here: [Pool tools](/p/pool-host-tools), [hosting](/p/hosting), poolrentalnearme.com in prose.\n"
     put("content_pages", hid("h6"), "fixture-h6-no-match", "content", h6, h6)
@@ -248,6 +263,20 @@ def build_fixtures(rules):
         "Blog: [tools](https://www.poolrentalnearme.com/p/free-host-tools).\n",
         "Blog: [tools](/p/pool-host-tools).\n", {T: 1})
     handcrafted["h7"] = ("blog_posts", hid("h7"), "content", {T: 1})
+
+    F = by_target["/faq"]["rule_id"]
+    assert by_target["/faq"]["destination_or_new"] == "/p/faq"
+    # h8: a link field that a person edits after the pins were read (edited in main()): must be skipped and logged
+    h8 = "Questions? Read the [FAQ](/faq) first.\n"
+    put("content_pages", hid("h8"), "fixture-h8-link-edited-after-pin", "body_markdown", h8, h8, {F: 1})
+    # h10: "e.g." and "vs." used to split the sentence away from "Liability coverage": the link must be left alone
+    h10 = "Liability coverage rules differ by state (e.g. Texas vs. Florida), so read [our FAQ](/faq) first.\n"
+    put("content_pages", hid("h10"), "fixture-h10-insurance-abbreviation", "body_markdown", h10, h10, {F: 1})
+    # h11: an HTML list item about liability next to a list item with the link: the link's own item is rewritten
+    h11_before = '<ul><li>Get liability coverage.</li><li>See the <a href="/faq">FAQ</a></li></ul>\n'
+    h11_after = '<ul><li>Get liability coverage.</li><li>See the <a href="/p/faq">FAQ</a></li></ul>\n'
+    put("content_pages", hid("h11"), "fixture-h11-html-list-neighbour", "content", h11_before, h11_after, {F: 1})
+    handcrafted["h11"] = ("content_pages", hid("h11"), "content", {F: 1})
 
     # 4. fee edge cases: an anchor that occurs twice (skip that rule only) and a field edited after the pin (skip all)
     dup_key = next(k for k, v in sorted(fee_fields.items()) if len(v) >= 3 and k[2] == "body_markdown")
@@ -265,7 +294,7 @@ def build_fixtures(rules):
     pin_key = next(k for k, v in sorted(fee_fields.items())
                    if fee_by_rule[v[0]]["slug"] == "become-a-swimming-pool-host-saratoga-springs-ny" and k[2] == "content")
 
-    return rows, expect, expected_rows, handcrafted, fee_fields, dup_key, dup_rule, pin_key, fee_by_rule
+    return rows, expect, expected_rows, handcrafted, fee_fields, dup_key, dup_rule, pin_key, fee_by_rule, hid
 
 
 def fixture_sql(rows):
@@ -291,7 +320,7 @@ def main():
     log("== 0. reproducibility: the checked-in SQL is exactly what generate.py produces from the CSVs")
     g0 = os.path.join(WORK, "gen-checkin")
     log("   " + gen(g0))
-    files = ["apply.sql", "dry-run.sql", "rollback.sql", "rules-manifest.csv", "excluded-pending-derek.csv"] + \
+    files = ["apply.sql", "dry-run.sql", "rollback.sql", "verify.sql", "rules-manifest.csv", "excluded-pending-derek.csv"] + \
         ["pending/" + x for x in sorted(os.listdir(os.path.join(g0, "pending")))]
     for fn in files:
         a = open(os.path.join(g0, fn), "rb").read()
@@ -299,7 +328,7 @@ def main():
         check(a == b, "checked-in %s is byte-identical to a fresh generation" % fn)
 
     rules = manifest(os.path.join(g0, "rules-manifest.csv"))
-    rows, expect, expected_rows, hand, fee_fields, dup_key, dup_rule, pin_key, fee_by_rule = build_fixtures(rules)
+    rows, expect, expected_rows, hand, fee_fields, dup_key, dup_rule, pin_key, fee_by_rule, hid = build_fixtures(rules)
     log("   fixtures: %d rows, %d fields (%d fee fields with %d fee rules, %d link rules)" % (
         len(rows), len(expect), len(fee_fields), sum(len(v) for v in fee_fields.values()),
         sum(1 for r in rules if r["kind"] == "link")))
@@ -313,19 +342,42 @@ def main():
     psql(["-q"], file=fx)
     check(int(q("select count(*) from content_pages")) + int(q("select count(*) from blog_posts")) == len(rows),
           "all %d fixture rows loaded" % len(rows))
+    s_fresh = state()
+    p = psql([], file=os.path.join(PKG, "rollback.sql"))
+    check("nothing to roll back" in p.stderr and "no change log table" in p.stdout,
+          "rollback.sql on a database where apply never ran exits 0 and says there is nothing to roll back")
+    check(state() == s_fresh and q("select to_regclass('public.seo_repair_change_log') is null") == "t",
+          "that rollback changed no field and created no change log")
+    p = psql(["-1"], file=os.path.join(PKG, "verify.sql"))
+    check("apply never committed" in p.stdout, "verify.sql on a database where apply never ran says so and exits 0")
 
-    log("== 2. PENDING-READS P1 on the fixture: read the field md5 pins, then edit one fee field (changed after the pin)")
+    log("== 2. PENDING-READS P1 on the fixture: read the field md5 pins (fee and link fields), then change three fields")
     pins_dir = os.path.join(WORK, "pins")
     os.makedirs(pins_dir)
     for fn in sorted(os.listdir(os.path.join(g0, "pending"))):
         p = psql(["-q", "-A", "-t", "-F", "\t", "-1"], file=os.path.join(g0, "pending", fn))
         open(os.path.join(pins_dir, fn.replace("p1_fee_field_pins", "field-pins").replace(".sql", ".tsv")), "w").write(p.stdout)
-    npins = sum(1 for fn in os.listdir(pins_dir) for l in open(os.path.join(pins_dir, fn)) if l.count("\t") == 3)
-    check(npins == len(fee_fields), "P1 returned one md5 pin per fee field (%d)" % npins)
+    pin_lines = [l.rstrip("\n").split("\t") for fn in sorted(os.listdir(pins_dir))
+                 for l in open(os.path.join(pins_dir, fn)) if l.count("\t") == 3]
+    pinned = {(a, b, c): m for a, b, c, m in pin_lines}
+    check(all(k in pinned for k in fee_fields), "P1 returned a pin for every fee field (%d)" % len(fee_fields))
+    link_fields = {k for k in expect if k[0:3] not in fee_fields and k[1] not in (hid("h6"),)}
+    check(link_fields <= set(pinned), "P1 returned a pin for every field holding a link-rule target (%d)" % len(link_fields))
+    check(all(pinned[k] == md5(rows[(k[0], k[1])]["cols"][k[2]]) for k in pinned),
+          "every pin is the md5 of the field value at the pin read (%d pins)" % len(pinned))
     t, rid, col = pin_key
     psql(["-q"], sql="update public.%s set %s = %s || ' Edited after the pin was read.' where id = '%s'" % (t, col, col, rid))
-    pre_pin_edit = expect[pin_key]
     expect[pin_key] = rows[(t, rid)]["cols"][col] + " Edited after the pin was read."
+    h8key = ("content_pages", hid("h8"), "body_markdown")
+    psql(["-q"], sql="update public.content_pages set body_markdown = body_markdown || 'Edited after the pin.' where id = '%s'" % hid("h8"))
+    expect[h8key] = rows[("content_pages", hid("h8"))]["cols"]["body_markdown"] + "Edited after the pin."
+    h9key = ("content_pages", hid("h9"), "body_markdown")
+    h9 = "Created after the pin read: [FAQ](/faq).\n"
+    psql(["-q"], sql="insert into public.content_pages (id, slug, title, body_markdown) values ('%s', 'fixture-h9-new-after-pin', 'h9', %s)"
+         % (hid("h9"), dq(h9)))
+    expect[h9key] = h9
+    upd0 = dict(tuple(l.split("\t")[:2]) for l in q("select id, updated_at::text from content_pages union all "
+                                                    "select id, updated_at::text from blog_posts").split("\n"))
     s0 = state()
 
     # expected link counts by construction
@@ -334,7 +386,7 @@ def main():
         for k, v in sorted(expected_rows.items()):
             f.write("%s\t%d\n" % (k, v))
     g1 = os.path.join(WORK, "gen-test")
-    log("   " + gen(g1, "--fee-pins", pins_dir, "--expected", exp_file))
+    log("   " + gen(g1, "--pins", pins_dir, "--expected", exp_file))
 
     log("== 3. the checked-in (unpinned) apply.sql refuses to run")
     p = psql([], file=os.path.join(PKG, "apply.sql"), expect_fail=True)
@@ -352,7 +404,7 @@ def main():
             for k, v in sorted(expected_rows.items()):
                 f.write("%s\t%d\n" % (k, v + (delta if k == rule else 0)))
         g2 = os.path.join(WORK, "gen-bad")
-        gen(g2, "--fee-pins", pins_dir, "--expected", bad)
+        gen(g2, "--pins", pins_dir, "--expected", bad)
         p = psql([], file=os.path.join(g2, "apply.sql"), expect_fail=True)
         check("aborted by the count guard" in p.stderr and rule in p.stderr,
               "count guard aborted when %s expected %+d" % (rule, delta))
@@ -378,16 +430,31 @@ def main():
         "dry-run.sql (generated with the fixture pins and fixture expected counts) run on the local fixture database, "
         "%s\n\n" % "see test-output.txt" + dry)
     check(state() == s0, "dry-run changed nothing")
+    p0 = psql(["-1"], file=os.path.join(PKG, "dry-run.sql"))
+    check("UNPINNED: field guard not evaluated" in p0.stdout and state() == s0,
+          "the checked-in (unpinned) dry-run.sql runs read-only and says the field guard was not evaluated")
     p2 = psql(["-1"], sql="set transaction read only; create table public.should_fail (x int);", expect_fail=True)
     check("read-only transaction" in p2.stderr, "'set transaction read only' under psql -1 blocks writes")
-    link_lines = [l for l in dry.split("\n") if re.match(r"^\s*F5-\d{4}\s*\|", l)]
+    sec = section(dry, "link rules: fields per rule today")
+    link_lines = [l for l in sec.split("\n") if LINK_LINE.match(l)]
     check(len(link_lines) == sum(1 for r in rules if r["kind"] == "link"), "dry-run reports every link rule")
     check(all(l.rstrip().endswith("ok") for l in link_lines), "dry-run verdict ok for every link rule")
     lt = {l.split("|")[0].strip(): [c.strip() for c in l.split("|")] for l in link_lines}
-    # columns: rule_id action old dest exp_present present_now expected_change would_change already ins unsupported occ verdict
-    check(lt[T][7] == str(expected_rows[T]) and lt[T][9] == "1",
-          "dry-run: %s would change %d fields, 1 skipped for an insurance sentence" % (T, expected_rows[T]))
+    # columns: rule_id action old dest exp present_now would field_guard_skip insurance_skip already unsupported occ verdict
+    check(lt[T][6] == str(expected_rows[T] - 1) and lt[T][8] == "1",
+          "dry-run: %s would change %d fields, 1 skipped for an insurance paragraph" % (T, expected_rows[T] - 1))
     check(lt[U][10] == "1", "dry-run: %s reports 1 row with an image link it does not unlink" % U)
+    F = next(r["rule_id"] for r in rules if r["target_or_slug"] == "/faq")
+    check(lt[F][6] == "2" and lt[F][7] == "2" and lt[F][8] == "1",
+          "dry-run: /faq would change 2 fields; field guard skips 2 (edited / created after the pins); insurance 1")
+    ins_sec = section(dry, "link fields left alone for Derek")
+    check("fixture-h10-insurance-abbreviation" in ins_sec and "fixture-h5-insurance-sentence" in ins_sec
+          and "fixture-h11-html-list-neighbour" not in ins_sec,
+          "dry-run lists the insurance-guarded fields for Derek (abbreviation case in, HTML list neighbour out)")
+    fg_sec = section(dry, "link fields the field guard will skip")
+    check(re.search(r"fixture-h8-link-edited-after-pin.*changed since pin read", fg_sec) and
+          re.search(r"fixture-h9-new-after-pin.*not in pin read", fg_sec),
+          "dry-run lists the link fields the field guard will skip, with the reason")
     nfee = sum(len(v) for v in fee_fields.values())
     skipped_fee = len(fee_fields[pin_key]) + 1
     m = re.search(r"^\s*ok\s*\|\s*(\d+)\s*\|", dry, re.M)
@@ -429,9 +496,18 @@ def main():
                      where a.new_md5 <> b.old_md5""")
     check(chain_bad == "0", "change_log old/new md5 form an unbroken chain per field")
     skips = q("select rule_id, row_id, reason from seo_repair_skip_log order by id")
-    check(("field changed since the md5 pin was read" in skips) and
+    check(("field changed since the reviewed pin read" in skips) and
           sum(1 for l in skips.split("\n") if pin_key[1] in l) == len(fee_fields[pin_key]),
           "fee field edited after the pin: all %d of its rules skipped and logged" % len(fee_fields[pin_key]))
+    check(any(l.startswith(F + "\t" + hid("h8")) and "changed since the reviewed pin read" in l for l in skips.split("\n")),
+          "link field edited after the pin: skipped and logged")
+    check(any(l.startswith(F + "\t" + hid("h9")) and "not in the reviewed pin read" in l for l in skips.split("\n")),
+          "link field created after the pin read: skipped and logged")
+    check(any(l.startswith(F + "\t" + hid("h10")) and "insurance" in l for l in skips.split("\n")),
+          "link separated from 'Liability coverage' only by 'e.g.'/'vs.': left alone and logged")
+    bad_upd = [b for b in q("select table_name, row_id, coalesce(old_updated_at::text, '') from seo_repair_backup_20261115").split("\n")
+               if b and upd0.get(b.split("\t")[1]) != b.split("\t")[2]]
+    check(not bad_upd, "every backup row keeps the row's updated_at from before the change")
     check(any(l.startswith(dup_rule + "\t") and "occurs 2 times" in l for l in skips.split("\n")),
           "fee anchor present twice: %s skipped and logged" % dup_rule)
     check("insurance" in skips and any(l.startswith(T + "\t") and "insurance" in l for l in skips.split("\n")),
@@ -439,8 +515,8 @@ def main():
     check(any(l.startswith(U + "\t") and "does not rewrite" in l for l in skips.split("\n")),
           "image link UNLINK cannot handle: left and logged")
     check("=== apply: fields changed per rule (this run) ===" in p.stdout and re.search(
-        r"^\s*%s\s*\|.*\|\s*%d\s*\|\s*\d+\s*\|\s*\d+\s*$" % (T, expected_rows[T]), p.stdout, re.M),
-        "apply printed the per-rule summary (%s: %d fields)" % (T, expected_rows[T]))
+        r"^\s*%s\s*\|.*\|\s*%d\s*\|\s*%d\s*\|\s*\d+\s*\|\s*1\s*$" % (T, expected_rows[T], expected_rows[T] - 1), p.stdout, re.M),
+        "apply printed the per-rule summary (%s: %d fields hold it, %d changed, 1 skipped)" % (T, expected_rows[T], expected_rows[T] - 1))
     sar = [k for k in fee_fields if fee_by_rule[fee_fields[k][0]]["slug"] == "become-a-swimming-pool-host-saratoga-springs-ny"
            and k[2] == "body_markdown"][0]
     check("a Saratoga host keeps the full $10,800." in s1[sar] and "walk away with nearly" not in s1[sar],
@@ -450,6 +526,11 @@ def main():
         ks = [k for k in fee_fields if fee_by_rule[fee_fields[k][0]]["slug"] == slug]
         check(ks and all(needle in s1[k] and "10%" not in s1[k] for k in ks if k != dup_key),
               "seed: %s corrected in %d field(s)" % (slug, len(ks)))
+    p = psql(["-1"], file=os.path.join(PKG, "verify.sql"))
+    vt = section(p.stdout, "repaired fields: total")
+    check(re.search(r"^\s*%d\s*\|\s*%d\s*$" % (len(want), len(want)), vt, re.M) is not None and
+          "value changed after the repair" not in p.stdout,
+          "verify.sql right after apply: all %d repaired fields still hold what the repair wrote" % len(want))
     anon = q("select has_table_privilege('anon', 'public.seo_repair_backup_20261115', 'select')")
     rls = q("select relrowsecurity from pg_class where oid = 'public.seo_repair_backup_20261115'::regclass")
     check(anon == "f" and rls == "t", "backup table: row level security on, no anon access")
@@ -466,11 +547,25 @@ def main():
             "order by table_name, row_id, column_name, old_md5)) from seo_repair_backup_20261115") == bak_md5,
           "second apply: backup table byte-identical")
     check(re.search(r"\|\s*0\s*\|\s*0\s*\|\s*0\s*\|", p.stdout) is not None, "second apply summary: 0 changes, 0 fields, 0 backups")
+    run2 = q("select run_id from seo_repair_skip_log order by id desc limit 1")
+    r2 = q("select distinct reason from seo_repair_skip_log where run_id = '%s'" % run2).split("\n")
+    check(not any("already" in x for x in r2) and all(("insurance" in x) or ("pin read" in x) for x in r2 if x),
+          "second apply logs no 'already applied' skips, only real ones (insurance, field guard): %d reason(s)" % len(r2))
+    tot = section(p.stdout, "apply: totals").split("\n")
+    check(any(re.search(r"\|\s*0\s*\|\s*0\s*\|\s*0\s*\|\s*\d+\s*\|\s*[1-9]\d*\s*\|\s*\d+\s*$", l) for l in tot),
+          "second apply totals report the fields an earlier run already changed (not logged as skips)")
 
     log("== 8. a human edits one repaired field, then rollback")
     t, rid, col, _ = hand["h1"]
     psql(["-q"], sql="update public.%s set %s = %s || 'Edited by a person after the repair.' where id = '%s'" % (t, col, col, rid))
     edited = state()[(t, rid, col)]
+    p = psql(["-1"], file=os.path.join(PKG, "verify.sql"))
+    check(p.stdout.count("value changed after the repair") == 1 and "fixture-h1-markdown-forms" in p.stdout,
+          "verify.sql reports the one repaired field a person changed afterwards")
+    s_before_rb = state()
+    p = psql(["-v", "only_run=apply-20000101T000000Z-1"], file=os.path.join(PKG, "rollback.sql"))
+    check(state() == s_before_rb and "has no logged changes" in p.stderr,
+          "rollback limited to a run that does not exist restores nothing")
     p = psql([], file=os.path.join(PKG, "rollback.sql"))
     open(os.path.join(WORK, "rollback-1.out"), "w").write(p.stdout + p.stderr)
     s2 = state()

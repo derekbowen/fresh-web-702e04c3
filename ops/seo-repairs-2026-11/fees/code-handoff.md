@@ -9,6 +9,24 @@ Result: the code states the policy correctly almost everywhere (`0% host fees`, 
 
 ---
 
+## 0. Host city pages: "You take home on $200: $180" (fix; added by the review of 2026-11-16)
+
+File: `src/components/templates/host-acq-city.tsx`, line 367 (the comparison table every `/p/<city>` host-acquisition page renders, e.g. `/p/austin-tx`, `/p/dover`, `/p/madison`).
+
+| Line | Current text | Problem |
+|---|---|---|
+| 366 | `["Host service fee", "0%", "15%+"],` | correct for PRNM (the Swimply cell is the separate competitor question in §6) |
+| 367 | `["You take home on $200", "$180", "≈ $170 or less"],` | with a 0% host fee the host keeps the full $200; `$180` is the old 10% arithmetic and contradicts the row above |
+
+Reach: 3,932 page texts in the 2026-11-14 crawl (`scratchpad/seo/texts.jsonl`) carry "You take home on $200 $180"; live GETs of `/p/dover` and `/p/madison` on 2026-11-16 still show `$180`.
+
+Proposed edit (only the PRNM cell changes; the row label and the Swimply cell stay as they are):
+- line 367: `["You take home on $200", "$200", "≈ $170 or less"],`
+
+This is a code change, so it is not in the database package. F14 is not complete until it ships. A grep of `src/**` (without `.bak` files) on 2026-11-16 for `$180`, `take home on`, `$90 of every` found no other PRNM net figure computed at 90%.
+
+---
+
 ## 1. `/p/affiliate`: offer to "waive your 10% platform fee" (NEEDS_DEREK)
 
 File: `src/routes/p.affiliate.tsx`. Live: HTTP 200 on 2026-11-16, and the page still shows "waive your 10% platform fee" twice.
@@ -89,7 +107,7 @@ Proposal: delete them from the repo. Git history keeps them, and grepping for th
 
 ## 5. Correct in code, wrong in the database snapshot (no code change)
 
-`src/lib/host-city-guide.ts:114-116` now renders `How PRNM's 0% host fee compares to alternatives` / `Pool Rental Near Me charges hosts 0% host fees`. The `raw_html` column of two `content_pages` rows (become-a-swimming-pool-host-indianapolis-in, -honolulu-hi) holds a frozen render of an older version of that template, with `How PRNM's 10% fee compares`, `charges hosts a flat 10% fee on each booking` and `10% flat fee`. The live Indianapolis page still shows "10% fee" (GET 2026-11-16). Those rows are fixed in `fee-corrections.csv` (column `raw_html`). Run 1's sweep did not include `raw_html`; PENDING-READS Q3 sweeps it for every row.
+`src/lib/host-city-guide.ts:114-116` now renders `How PRNM's 0% host fee compares to alternatives` / `Pool Rental Near Me charges hosts 0% host fees`. The `raw_html` column of two `content_pages` rows (become-a-swimming-pool-host-indianapolis-in, -honolulu-hi) holds a frozen render of an older version of that template, with `How PRNM's 10% fee compares`, `charges hosts a flat 10% fee on each booking` and `10% flat fee`. The live Indianapolis page still shows "10% fee" (GET 2026-11-16). Those rows were FIX rows in `fee-corrections.csv` (column `raw_html`); the review of 2026-11-16 held them for Derek (category `INS_ADJ`), because the same frozen render holds a held insurance sentence and "$2M coverage" copy next to the fee text. Run 1's sweep did not include `raw_html`; PENDING-READS Q3 sweeps it for every row.
 
 ## 6. Competitor statements in code (counted, not changed)
 

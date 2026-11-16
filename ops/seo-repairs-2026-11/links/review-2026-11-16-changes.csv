@@ -1,0 +1,64 @@
+csv_row,old_target,change,destination_now
+87,/b/chesapeake-va,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/chesapeake itself; a rewrite would make it link to itself)
+147,/ca/north-hollywood,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/north-hollywood-ca itself; a rewrite would make it link to itself)
+149,/ca/rossmoor,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/rossmoor-ca itself; a rewrite would make it link to itself)
+150,/chattanooga-tn,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/chattanooga itself; a rewrite would make it link to itself)
+151,/cheyenne-wy,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/cheyenne itself; a rewrite would make it link to itself)
+152,/city/franklin-lakes-nj,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/franklin-lakes-nj itself; a rewrite would make it link to itself)
+154,/city/newport-news-va,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/newport-news itself; a rewrite would make it link to itself)
+155,/city/richmond-va,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/richmond-va itself; a rewrite would make it link to itself)
+167,/grasonville-md,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/grasonville-md itself; a rewrite would make it link to itself)
+168,/green-bay-wi,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/green-bay itself; a rewrite would make it link to itself)
+169,/green-valley-md,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/green-valley-md itself; a rewrite would make it link to itself)
+206,/huntsville-alabama-al,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/huntsville itself; a rewrite would make it link to itself)
+207,/iowa-city-ia,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/iowa-city itself; a rewrite would make it link to itself)
+208,/key-west-fl,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/key-west itself; a rewrite would make it link to itself)
+209,/laredo-tx,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/laredo itself; a rewrite would make it link to itself)
+210,/loc/us/wi/madison,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/madison itself; a rewrite would make it link to itself)
+211,/lp/cincinnati-oh,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/cincinnati-oh itself; a rewrite would make it link to itself)
+212,/lp/highland-park-il,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/highland-park-il itself; a rewrite would make it link to itself)
+213,/lp/huntingtown-md,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/huntingtown-md itself; a rewrite would make it link to itself)
+214,/lp/lake-havasu-city-az,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/lake-havasu-city-az itself; a rewrite would make it link to itself)
+215,/lp/manchester-new-hampshire-nh,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/manchester itself; a rewrite would make it link to itself)
+216,/lp/pool-rental-cresson-tx,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/cresson-tx itself; a rewrite would make it link to itself)
+217,/lp/pool-rental-washington-dc-dc,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/washington-dc itself; a rewrite would make it link to itself)
+218,/lp/round-mountain-tx,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/round-mountain-tx itself; a rewrite would make it link to itself)
+219,/milton-ma,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/milton-ma itself; a rewrite would make it link to itself)
+220,/moscow-pa,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/moscow-pa itself; a rewrite would make it link to itself)
+221,/nv/incline,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/incline-nv itself; a rewrite would make it link to itself)
+402,/p/il-chicago,REWRITE -> NEEDS_DEREK,PROPOSED /p/chicago (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+403,/p/il-joliet,REWRITE -> NEEDS_DEREK,PROPOSED /p/joliet (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+404,/p/il-naperville,REWRITE -> NEEDS_DEREK,PROPOSED /p/naperville (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+411,/p/pennsylvania/montgomeryville,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/montgomeryville-pa itself; a rewrite would make it link to itself)
+443,/raleigh-nc,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/raleigh itself; a rewrite would make it link to itself)
+444,/rolesville-nc,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/rolesville-nc itself; a rewrite would make it link to itself)
+445,/rose-hill-va,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/rose-hill-va itself; a rewrite would make it link to itself)
+446,/s/de/dover,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/dover itself; a rewrite would make it link to itself)
+447,/s/ny/salisbury-mills,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/salisbury-mills-ny itself; a rewrite would make it link to itself)
+448,/sc/charleston,REWRITE -> NEEDS_DEREK,PROPOSED /p/charleston (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+449,/university-park-tx,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/university-park-tx itself; a rewrite would make it link to itself)
+450,/warr-acres-ok,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/warr-acres-ok itself; a rewrite would make it link to itself)
+456,https://poolrentalnearme.com/c/indianapolis-in,REWRITE -> NEEDS_DEREK,PROPOSED /p/indianapolis (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+518,https://poolrentalnearme.com/location/crestwood-ky,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/crestwood-ky itself; a rewrite would make it link to itself)
+522,https://poolrentalnearme.com/locations/ca/eastvale,REWRITE -> NEEDS_DEREK,PROPOSED unlink / none (the only linking page found is /p/eastvale-ca itself; a rewrite would make it link to itself)
+529,https://poolrentalnearme.com/s/nc/charlotte,REWRITE -> NEEDS_DEREK,PROPOSED /p/charlotte (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+552,/fairfax-virginia-va,REWRITE -> NEEDS_DEREK,PROPOSED /p/fairfax (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+575,/location/new-york-new-york-ny,REWRITE -> NEEDS_DEREK,PROPOSED /p/new-york-ny (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+577,/p/fort-lauderdale-fl,REWRITE -> NEEDS_DEREK,PROPOSED /p/fort-lauderdale (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+585,/round-rock-tx,REWRITE -> NEEDS_DEREK,PROPOSED /p/round-rock (renders the host-recruitment template) or /s?address= search (noindex) or unlink
+401,/p/il-aurora,REWRITE -> NEEDS_DEREK,PROPOSED /p/become-a-swimming-pool-host-aurora-il (host-recruitment page)
+704,/host-tools/pool-listing-ai-writer,UNLINK -> REWRITE,/p/ai-listing-generator
+696,/host-tools/pool-cleaning-schedule,UNLINK -> REWRITE,/p/weekly-pool-cleaning-schedule
+682,/host-tools/backyard-income-calculator,UNLINK -> REWRITE,/p/earnings-calculator
+701,/host-tools/pool-host-academy,UNLINK -> REWRITE,/p/learningacademy
+691,/host-tools/new-host-courses,UNLINK -> REWRITE,/p/learningacademy
+715,/host-tools/pool-water-chemistry,UNLINK -> REWRITE,/p/water-chemistry-basics
+689,/host-tools/host-marketing-engine,UNLINK -> REWRITE,/p/host-marketing-playbook
+672,/blog/stain-removal-tips,UNLINK -> REWRITE,/p/pool-stains-removal
+731,https://poolrentalnearme.com/guides/how-to-get-rid-of-pool-foam,UNLINK -> REWRITE,/p/foamy-pool-water-causes-and-fixes
+634,/guides/backyard-pool-lighting-ideas,UNLINK -> REWRITE,/p/the-latest-trends-in-pool-lighting-illuminate-your-oasis-in-style
+660,https://poolrentalnearme.com/guides/pool-lighting-ideas,UNLINK -> REWRITE,/p/the-latest-trends-in-pool-lighting-illuminate-your-oasis-in-style
+730,https://poolrentalnearme.com/guides/guide-to-pool-sand-filters,UNLINK -> REWRITE,/p/pool-filter-types
+640,/guides/how-to-clean-a-pool-filter,UNLINK -> REWRITE,/p/pool-filter-types
+574,/host-tools/pool-wifi-qr,REWRITE destination /p/qr-code-generator -> /p/pool-wifi-guide,/p/pool-wifi-guide
+568,/host-tools/pool-guest-agreement,REWRITE destination /p/waiver-generator -> /p/pool-rental-agreement-template,/p/pool-rental-agreement-template

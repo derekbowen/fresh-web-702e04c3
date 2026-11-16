@@ -4,9 +4,10 @@ Audit fix F14 (`docs/seo-audit-2026-11-14.md` on `origin/claude/seo-audit-2026-1
 
 | File | What it is |
 |---|---|
-| `fee-corrections.csv` | 3,460 rows, one per wrong statement in a `content_pages` field: exact old text, exact new text (or empty for NEEDS_DEREK), reasoning, snapshot, verification status |
+| `fee-corrections.csv` | 3,491 rows (after the review of 2026-11-16, §7), one per wrong statement in a `content_pages` field: exact old text, exact new text (or empty for NEEDS_DEREK), reasoning, snapshot, verification status |
+| `review-2026-11-16-changes.csv` | Every row the review of 2026-11-16 changed, held or added, with the reason (464 entries) |
 | `code-handoff.md` | Fee statements in application code (`src/**`): `/p/affiliate` "waive your 10% platform fee", a 15% default in a host tool, "forever for founding hosts", stale `.bak` files |
-| `crawl-gap-candidates.csv` | 215 sentences on 165 live pages (crawl 2026-11-14) that look wrong but have no saved database text yet. PENDING-READS Q3 returns their exact text |
+| `crawl-gap-candidates.csv` | 223 sentences on 173 live pages (8 added by the review) (crawl 2026-11-14) that look wrong but have no saved database text yet. PENDING-READS Q3 returns their exact text |
 | `PENDING-READS.md` + `pending/` | Read-only queries still to run (the database tool was down on 2026-11-16): uniqueness check of 1,228 rows, column list, broad re-sweep, two context reads. Also the guard any later write must use |
 
 ## 1. The policy and how it was verified
@@ -67,7 +68,7 @@ That gave 8,493 sentences on 3,606 rows (8,704 classified hits). Each sentence w
 
 **Crawl-only candidates** (2026-11-14 crawl; no database text saved): 215 sentences on 165 pages. Likely classes: stale net 26, wording 35, check number 3, swim-instructor model 139, insurance-adjacent 11, testimonial + insurance 1.
 
-**`fee-corrections.csv`**: 3,460 rows on 1,881 `content_pages` rows. FIX 2,843 rows on 1,578 pages; NEEDS_DEREK 617 rows on 394 pages. blog_posts: 0. 2,232 rows verified unique; 1,228 pending Q1.
+**`fee-corrections.csv` before the review of 2026-11-16** (current totals in §7): 3,460 rows on 1,881 `content_pages` rows. FIX 2,843 rows on 1,578 pages; NEEDS_DEREK 617 rows on 394 pages. blog_posts: 0. 2,232 rows verified unique; 1,228 pending Q1.
 
 | action | category | rows | meaning |
 |---|---|---|---|
@@ -135,3 +136,26 @@ Columns: `table, row_id, slug, column, line, action, category, old_text, new_tex
 - Several rows exist per page because `content` and `body_markdown` usually hold the same text twice. Both are listed.
 - Rows never overlap within one field. No row contains a secret, an email address or a customer name.
 - Apply only `FIX` rows marked `verified = YES`, using the guarded update in PENDING-READS.md.
+
+## 7. Review of 2026-11-16
+
+Reviewers checked the CSV against saved database lines, the 2026-11-14 crawl and live pages. Each finding below was
+confirmed from those files (or a live GET on 2026-11-16) before the CSV was changed; `review-2026-11-16-changes.csv`
+lists every row touched, and each changed row's `reasoning` starts with `[review 2026-11-16: ...]`.
+
+| Finding | What was wrong | What changed |
+|---|---|---|
+| F9 | Spanish new texts said "nuestra tarifa (de servicio) del 0%", "solo retenemos el 0%", "tarifa plana del 0%" without saying it is the **host** fee; guests pay a 15% service fee, so these read as "PRNM charges nothing". Two English texts did the same ("Fees (0%)", "the 0% Flat Fee"). | 264 FIX rows now say "… 0% para anfitriones" / "Host fees (0%)" / "0% Host Fee". 22 rows where the 0% is set against the booking total, against host-plus-guest charges, or "you keep 100% of what guests pay" are NEEDS_DEREK `TOTAL`: no true 0% wording follows from the page plus the policy. |
+| F10 | A FIX sentence was the antecedent of an untouched insurance sentence (Seguin: "We take 10% … This covers … the insurance") or sat beside a held INS/COVERS row (Las Vegas, Sunriver, Mendota Heights, Millcreek, the two `raw_html` renders). | 14 rows NEEDS_DEREK `INS_ADJ` (twin body columns included). Checked against the saved full lines (2026-11-15) for every FIX row that has one, and against the next sentence in the 2026-11-14 crawl for the 479 of the remaining 491 rows found there (12 not found); no other case found. |
+| F11 | Page bodies would have said 0% next to a held sentence still saying 10% / ten percent / 90% / ninety. | Every FIX row in a body (`content`, `body_markdown`) of a page whose body keeps such a held sentence is NEEDS_DEREK `PARTIAL` (103 rows), so no page body is half corrected. Metadata fields are independent. |
+| F12 | New texts promised the 0% is permanent ("locked-in", "inamovible … jamás", "inalterable", "Jamás cambiaremos"). Whether 0% is permanent is undecided (§5.2). | 8 rows NEEDS_DEREK `FUTURE`. Present-tense "garantizamos que te quedes con el 100%" was left as is. |
+| F13 | Stale "$90 of every $100" / "$54 on $60" figures, "after the fee", "small fee covers" were missed. | 28 FIX rows added from saved database lines (Byhalia, Cameron Park, Elk City, Freehold, Gold Canyon, Grand Prairie, Grosse Pointe Farms and Park, Liberty, Manchester MO, Olean, Titusville, Watauga, Allentown, Hoover, Kennewick, Reynoldsburg, plus "we keep our fee at a 0%" qualified on three pages); 2 NEEDS_DEREK added (Owensboro COVERS, Northbrook SWIM). 8 pages with no saved database text went to `crawl-gap-candidates.csv`; their exact text is db-change/PENDING-READS P3. |
+| F18 | Swimply comparison: the per-booking difference (+$40) and season totals ($1,200 / $2,400) still used the old $360 payout; the same table states a 5% PRNM guest fee "(covers card processing)". | +$80, $2,400 and $4,800 added as FIX rows; the 5% guest-fee cell is NEEDS_DEREK `COVERS`. Saratoga's "Profit: $1,500+" is still true and its exact text is not saved: P3. |
+| F19 | `pool-rental-near-me-the-airbnb-of-pools` description ended "with a 0% "; Montgomery's title read "0% host Fee". | "… with a 0% host fee." and "Host for a 0% Host Fee". |
+| F8 | `host-acq-city.tsx:367` shows "You take home on $200: $180" on about 3,900 city pages. | Code: `code-handoff.md` §0. |
+
+**Totals after the review**: 3,491 rows. FIX 2,724 rows on 1,547 pages (2,334 fields); 1,729 verified, 995 pending Q1
+(28 of them added by the review). NEEDS_DEREK 767 rows on 418 pages: DIFF 272, SWIM 175, PARTIAL 103, INS 78, COVERS 42,
+ARITH 31, TOTAL 22, FUTURE 17, INS_ADJ 14, AMBIG 12, LEGAL 1. Every FIX row still passes the run-3 invariants (no FIX
+text mentions insurance, liability, coverage, claims or damage; anchors in one field never overlap).
+

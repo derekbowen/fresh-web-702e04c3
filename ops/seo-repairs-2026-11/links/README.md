@@ -703,3 +703,21 @@ Actions:
 | `/p/why_pool_owners_are_such_fans_of_pool_rental_services_testimonials_and_real_life_cases` | `/p/why-pool-owners-are-such-fans-of-pool-rental-services-testimonials-and-real-life-cases` | 6 | 6 |
 | `https://poolrentalnearme.com/pool-rental-near-me-the-airbnb-of-pools` | `/p/pool-rental-near-me-the-airbnb-of-pools` | 6 | 6 |
 
+## Review of 2026-11-16
+
+Every change below was confirmed from the CSV, the saved crawl, and live GETs (2026-11-16, at most 2 per second)
+before it was made. `review-2026-11-16-changes.csv` lists the 63 changed rows; each changed row's `reason` ends with
+`[review 2026-11-16: ...]`.
+
+| Finding | What was wrong | What changed |
+|---|---|---|
+| F14 | 47 REWRITE rows "chain ends 404; guest city page for X exists" sent renter-intent links (`/s/de/dover`, `/lp/pool-rental-washington-dc-dc`, `/p/il-chicago` …) to `/p/<city>`, but those pages render the host-acq-city template: "Become a host" breadcrumb, H1 "Rent your <City> pool by the hour. 0% host fees. Keep 100%." (live: `/p/dover`, `/p/chesapeake`, `/p/madison`, `/p/new-york-ny`). `/p/il-aurora` went straight to a become-a-host page while its 16 `/p/il-*` siblings were held. | All 48 are NEEDS_DEREK in the renter-intent group. For the 37 whose only linking page is the destination itself, the proposal is unlink (a rewrite would be a self-link). They can also be applied unchanged once the F1/F7 work makes `/p/<city>` a guest page. `/ca/riverside` and `/p/riverside-ca` -> `/p/riverside` stay REWRITE: that page is a guest page. |
+| F15 | 13 UNLINK rows although a same-subject page answers 200. | REWRITE to `/p/ai-listing-generator`, `/p/weekly-pool-cleaning-schedule`, `/p/earnings-calculator`, `/p/learningacademy` (2), `/p/water-chemistry-basics`, `/p/host-marketing-playbook`, `/p/pool-stains-removal`, `/p/foamy-pool-water-causes-and-fixes`, `/p/the-latest-trends-in-pool-lighting-illuminate-your-oasis-in-style` (2), `/p/pool-filter-types` (2). Each destination: 200, self-canonical, no robots meta. Anchor text was read live on the three pages that link from the crawl (Ridgewood NJ, Hudson Oaks TX, Crosby TX); the ten database-only links are matched by URL subject, like their sibling `/host-tools/*` REWRITEs. |
+| F16 | `/host-tools/pool-wifi-qr` -> `/p/qr-code-generator` (never mentions wifi); `/host-tools/pool-guest-agreement` -> `/p/waiver-generator` (a liability-waiver tool). | -> `/p/pool-wifi-guide` and -> `/p/pool-rental-agreement-template`. |
+| F17 | Self-links from the guest-city rows. | Covered by F14 (unlink proposed). |
+
+After the review: REWRITE 565, UNLINK 122, NEEDS_DEREK 482 (1,169 targets). The database package applies 514 of the
+REWRITE/UNLINK targets (the others are code or render only, see `code-handoff.md`). The insurance rule (§How it was
+built, point 4) is applied more strictly by the database package: a link whose paragraph or list item mentions an
+insurance word is not changed at all, href included (db-change/RUNBOOK §1).
+
