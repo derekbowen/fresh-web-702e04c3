@@ -308,3 +308,62 @@ with live(slug, live_md5) as (values
 select l.slug, md5(p.ai_best_for) db_md5, l.live_md5, md5(p.ai_best_for) = l.live_md5 same
 from live l left join pp_pools p on p.slug = l.slug order by 1;
 ```
+
+## PR-6. The production dry run of the cleaner (read-only; added 2026-11-16 with the cleaner)
+
+Confirms, on the whole production tables (published rows), what the surrogate dry run of 2026-11-16
+(`dry-run-SURROGATE-live-2026-11-16.txt`, built from the 2,476 live pages only) can only estimate: the fields each
+rule would change (surrogate: 2,746 fields), every skipped field with its PRODUCTION row id and reason (surrogate:
+576), a random server-side sample of 15 fields per rule with exact old and new text, and the
+`expected_changes` / `manifest_md5` that apply.sql requires. It also writes `approved-manifest.csv` (one line per
+field change: table, row id, column, old md5, new md5, rules). Nothing here applies anything.
+
+`dry-run.sql` starts with `set transaction read only;`, contains SELECT statements only (plus psql display
+commands), and aborts before reading anything if the transaction is not read-only. It needs psql (it uses `\g`,
+`\x`, `\if`), so it cannot be pasted whole into the MCP SQL tool; there, section 1 alone (one statement) can be
+copied out of the file to get the counts. Output size: about 3,500 short lines in section 3, about 90 full-text
+records in section 4, a manifest of about 2,800-3,000 lines. Expected run time: about 100 s on the surrogate
+(6 statements, ~16 s each); production has about 1.5-2x the text.
+
+```sh
+cd ops/seo-repairs-2026-11/public-pools
+psql "$DATABASE_URL" -X --single-transaction -v ON_ERROR_STOP=1 -v seed=2026-11-15 -f dry-run.sql \
+  > dry-run-$(date -u +%F).txt
+```
+
+Keep `dry-run-<date>.txt` and `approved-manifest.csv` together; the owner approves exactly that pair
+(RUNBOOK.md section 5).
+
+## PR-7. Preconditions for the cleaner (tiny)
+
+Confirms the assumptions the local test could not: the server version (the SQL needs PostgreSQL 16+ for
+`pg_input_is_valid`; 15+ for `regexp_substr` / `regexp_instr`; the 2026-11-15 extract already used
+`pg_input_is_valid`, so 16+ is likely), the collation/ctype (the local test ran on C.UTF-8), any trigger on the
+two tables (one that touches `updated_at` or copies rows elsewhere changes what apply/rollback do), the
+column types the cleaner reads, that the backup / change-log tables do not exist yet, that the splitter's mark
+character `§` is still absent (A4), and that no field has a non-ASCII space after sentence punctuation (Python
+`\s` and PostgreSQL `\s` may differ there; the local equivalence test found no such case on the 2,476 live pages).
+
+```sql
+set transaction read only;
+select current_setting('server_version') server_version,
+  (select datcollate || ' / ' || datctype from pg_database where datname = current_database()) collate_ctype,
+  (select coalesce(string_agg(c.relname || ': ' || pg_get_triggerdef(t.oid), E'\n'), 'none') from pg_trigger t
+     join pg_class c on c.oid = t.tgrelid join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public' and c.relname in ('pp_pools', 'pp_cities') and not t.tgisinternal) triggers,
+  (select string_agg(table_name || '.' || column_name || ':' || data_type, ', ' order by table_name, column_name)
+     from information_schema.columns where table_schema = 'public'
+      and ((table_name = 'pp_pools' and column_name in ('id', 'slug', 'name', 'city', 'city_id', 'ai_best_for',
+            'ai_description', 'ai_faqs', 'is_published'))
+        or (table_name = 'pp_cities' and column_name in ('id', 'city_name', 'city_slug', 'state_slug', 'ai_intro',
+            'ai_faqs', 'is_published')))) cols,
+  to_regclass('public.seo_repair_pp_backup_20261115') is not null backup_table_exists,
+  to_regclass('public.seo_repair_pp_change_log') is not null change_log_exists,
+  (select count(*) from public.pp_pools where concat_ws(' ', ai_best_for, ai_description, ai_faqs::text) like '%§%') pools_with_mark,
+  (select count(*) from public.pp_cities where concat_ws(' ', ai_intro, ai_faqs::text) like '%§%') cities_with_mark,
+  (select count(*) from public.pp_pools where concat_ws(' ', ai_description, ai_faqs::text) ~ '[.!?][\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\u0085]') pools_unicode_space_after_stop,
+  (select count(*) from public.pp_cities where concat_ws(' ', ai_intro, ai_faqs::text) ~ '[.!?][\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\u0085]') cities_unicode_space_after_stop;
+```
+
+Expected: server 16+, `triggers` = none (or understood), the column types of `cleaner/schema.sql`, both tables
+absent, 0 marks, 0 Unicode spaces after a full stop. Anything else: stop and update the cleaner first.

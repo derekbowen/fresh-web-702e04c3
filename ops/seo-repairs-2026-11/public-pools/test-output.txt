@@ -1,0 +1,169 @@
+Public-pools text cleaner: local test
+run at 2026-11-16T21:33:01Z
+fixtures: 97 real rows (live pages of 2026-11-16, seed fixtures-2026-11-16), 27 synthetic pool rows, 3 synthetic city rows, 589 pool rows / 86 city rows in total (incl. text-less placeholders), 1753 must-keep sentences
+
+== 0. generated files
+[PASS] dry-run.sql: every embedded core is byte-identical to cleaner/core.sql (md5 88e17e31d9d9842a9975f666fd1f02bc) -- 6 copies
+[PASS] apply.sql: every embedded core is byte-identical to cleaner/core.sql (md5 88e17e31d9d9842a9975f666fd1f02bc) -- 1 copies
+[PASS] dry-run.sql: first statement is 'set transaction read only;'
+[PASS] dry-run.sql: no write statement outside SELECT -- []
+[PASS] core: no procedural language, function or extension needed
+local cluster: PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1), collate/ctype C.UTF-8/C.UTF-8, data dir under /tmp/pp-cleaner-pg-p_syc9ks, port 55441, run as user 'postgres'
+
+== 1. load fixtures
+loaded; 1939 text fields
+[PASS] PENDING-READS PR-7 runs read-only on the fixture database -- -[ RECORD 1 ]-------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+== 2. dry run
+[PASS] dry-run without --single-transaction aborts at the read-only check -- ql:30: ERROR:  invalid input syntax for type integer: "ABORT: this transaction is not read-only (transaction_read_only=off); run with psql --single-transaction"
+[PASS] dry-run (read-only, single transaction) exits 0
+[PASS] dry-run prints expected_changes and manifest_md5 -- 97 0e737bc172affe9af90fc7376a4d0253 (9.7s)
+[PASS] dry-run wrote approved-manifest.csv
+[PASS] manifest rows = expected_changes -- 97
+[PASS] dry-run changed nothing
+[PASS] dry-run created no table
+
+== 3. SQL plan versus the Python reference and the hand-derived expectations
+[PASS] SQL plan equals reference.py on every fixture field (new text, rules, skip reasons) -- 175 planned/skipped fields; 0 differences
+[PASS] plan changes = expected_changes of the dry run -- 97
+       45  R1
+        7  R2
+       16  R3
+       19  R4
+        8  R5
+        8  R6
+        1  skip ALL:contains_mark
+        7  skip ALL:insurance
+       12  skip ALL:insurance_anywhere
+        4  skip R1:element_not_plain_text
+        4  skip R1:empty_list
+        1  skip R1:insurance
+        1  skip R1:not_a_list
+        2  skip R1:not_json
+        1  skip R2:below_min_length
+        4  skip R2:deleted_sentence_names_an_entity
+        7  skip R2:next_sentence_refers_back
+        2  skip R2:next_sentence_refers_back_a5
+        1  skip R2:paragraph_break
+        4  skip R3:below_min_length
+        3  skip R3:deleted_sentence_names_an_entity
+        1  skip R3:field_would_be_empty
+        3  skip R3:next_sentence_refers_back
+        6  skip R4:deleted_sentence_names_an_entity
+        1  skip R4:field_would_be_empty
+        9  skip R4:next_sentence_refers_back
+        1  skip R5:array_would_be_empty
+        1  skip R5:insurance
+        5  skip R6:next_sentence_refers_back
+        3  skip R6:next_sentence_refers_back_a5
+[PASS] all 32 hand-derived synthetic expectations hold (SQL and reference)
+
+== 4. apply
+[PASS] apply exits 0 -- 1.7s
+    run_id | expected_changes |           manifest_md5           | max_drift 
+   --------+------------------+----------------------------------+-----------
+    test-1 | 97               | 0e737bc172affe9af90fc7376a4d0253 | 0
+   (1 row)
+   == decisions for the manifest rows
+    action |    tbl    |      col       | count 
+   --------+-----------+----------------+-------
+    apply  | pp_cities | ai_faqs        |     6
+    apply  | pp_cities | ai_intro       |    19
+    apply  | pp_pools  | ai_best_for    |    45
+    apply  | pp_pools  | ai_description |     7
+    apply  | pp_pools  | ai_faqs        |    20
+   (5 rows)
+   == changes the plan would make now that the manifest does not hold (same field AND same old value): logged, NOT applied
+    tbl | col | rules | count 
+   -----+-----+-------+-------
+   (0 rows)
+   == change log of this run
+    action  | rule_id |    tbl    |      col       | count 
+   ---------+---------+-----------+----------------+-------
+    applied | R1      | pp_pools  | ai_best_for    |    45
+    applied | R2      | pp_pools  | ai_description |     7
+    applied | R3      | pp_pools  | ai_faqs        |    12
+    applied | R4      | pp_cities | ai_faqs        |     4
+    applied | R4      | pp_cities | ai_intro       |    13
+    applied | R5      | pp_pools  | ai_faqs        |     4
+    applied | R5+R3   | pp_pools  | ai_faqs        |     4
+    applied | R6      | pp_cities | ai_faqs        |     2
+    applied | R6      | pp_cities | ai_intro       |     4
+    applied | R6+R4   | pp_cities | ai_intro       |     2
+   (10 rows)
+[PASS] apply changed exactly the planned fields (and no other column of any row) -- changed 97, planned 97; unexpected [], missing []
+[PASS] every changed field holds exactly the planned new value -- []
+[PASS] no output field is empty (text non-blank; FAQ arrays non-empty, no blank answer) -- []
+[PASS] all 1753 must-keep sentences are still present
+[PASS] backup holds the full old value of every changed field -- 97 backup rows
+   change log test-1: [['applied', '97']]
+[PASS] change log has one 'applied' row per changed field
+
+== 5. second apply (same manifest, new run id)
+[PASS] second apply exits 0 -- psql:/tmp/pp-cleaner-pg-p_syc9ks/work/apply.sql:68: NOTICE:  relation "seo_repair_pp_backup_20261115" already exists, skipping
+psql:/tmp/pp-cleaner-pg-p_syc9ks/work/apply.sql:79: NOTICE:  relation "seo_repair_pp_change_log" already exists, skipping
+[PASS] second apply changed no field
+[PASS] second apply left the backup byte-identical
+[PASS] second apply logged 0 applied, every manifest row already_applied -- {'already_applied': 97, 'planned_not_in_manifest': 1}
+[PASS] second apply logged every change the plan would make again as planned_not_in_manifest (not applied) -- 1
+   would change again: pp_cities.ai_faqs R5 row 1ff46e4a-0370-e039-1e1c-7d3641971594
+[PASS] apply refuses a reused run_id -- OR:  ABORT: run_id test-1 was already used; pick a new one
+CONTEXT:  PL/pgSQL function inline_code_block line 3 at RAISE
+
+== 6. rollback (one field edited by hand after apply)
+[PASS] rollback exits 0
+    run_id |   rollback_id   
+   --------+-----------------
+    test-1 | test-1/rollback
+   (1 row)
+   == rollback decisions
+            action          |    tbl    |      col       | count 
+   -------------------------+-----------+----------------+-------
+    restore                 | pp_cities | ai_faqs        |     6
+    restore                 | pp_cities | ai_intro       |    19
+    restore                 | pp_pools  | ai_best_for    |    45
+    restore                 | pp_pools  | ai_description |     6
+    restore                 | pp_pools  | ai_faqs        |    20
+    skip_edited_after_apply | pp_pools  | ai_description |     1
+   (6 rows)
+   == rollback log of this run
+                 action              |    tbl    |      col       | count 
+   ----------------------------------+-----------+----------------+-------
+    restored                         | pp_cities | ai_faqs        |     6
+    restored                         | pp_cities | ai_intro       |    19
+    restored                         | pp_pools  | ai_best_for    |    45
+    restored                         | pp_pools  | ai_description |     6
+    restored                         | pp_pools  | ai_faqs        |    20
+    rollback_skip_edited_after_apply | pp_pools  | ai_description |     1
+   (6 rows)
+[PASS] rollback restored every other field byte-identical to the original -- []
+[PASS] rollback skipped the field edited after apply (edit kept)
+[PASS] rollback logged the edited field as skipped and the rest as restored -- {'restored': 96, 'rollback_skip_edited_after_apply': 1}
+[PASS] a second rollback changes nothing
+
+== 7. guards (fresh copy of the fixtures)
+[PASS] apply aborts when expected_changes does not match the manifest -- c9ks/work/apply.sql:105: ERROR:  ABORT (count guard): manifest has 97 rows, expected_changes is 98
+CONTEXT:  PL/pgSQL function inline_code_block line 8 at RAISE
+[PASS] apply aborts when the manifest md5 differs -- t md5 0e737bc172affe9af90fc7376a4d0253 differs from the approved 00000000000000000000000000000000
+CONTEXT:  PL/pgSQL function inline_code_block line 11 at RAISE
+[PASS] count guard: apply aborts when a planned field changed after the dry run (max_drift=0) -- :  ABORT (count guard): 1 manifest row(s) drifted since the dry run (max_drift=0); nothing was changed. Re-run the dry run and re-approve.
+CONTEXT:  PL/pgSQL function inline_code_block line 4 at RAISE
+[PASS] aborted apply changed nothing and left no backup/log table
+[PASS] with max_drift=1 apply proceeds
+[PASS] the drifted field was NOT overwritten
+[PASS] the drifted field is logged skip_changed_since_dry_run (and its new plan as planned_not_in_manifest), never 'applied' -- [['skip_changed_since_dry_run'], ['planned_not_in_manifest']]
+[PASS] every other planned field was applied -- 96
+
+== 8. the whole live-page extract (2,000 pool + 476 city pages, 2026-11-16) as a surrogate table
+[PASS] SQL plan equals reference.py on every field of the 2,476 live pages -- 3315 planned/skipped fields, 2746 changes, 15s; 0 differences
+[PASS] surrogate dry run exits 0 -- 2746 changes, 94s
+[PASS] surrogate apply exits 0 -- 17s 
+[PASS] surrogate apply changed exactly the planned fields -- 2746
+   after apply the plan would change 0 field(s) again (idempotency gap; each needs a new dry run and approval):
+[PASS] verify-live.sql (read-only) lists every applied field
+[PASS] verify_live.py rates every changed field of the pages fetched BEFORE apply (2026-11-16) as OLD (checks the URL building and the page-to-column mapping offline) -- summary: {"OLD": 2746} of 2746 fields
+[PASS] surrogate rollback restores every field byte-identical -- 64s
+
+local cluster stopped and /tmp/pp-cleaner-pg-p_syc9ks removed: True
+
+RESULT: PASS (0 failed check(s))

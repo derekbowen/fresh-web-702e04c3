@@ -1,0 +1,65 @@
+-- Local test schema for pp_pools / pp_cities. Column names, order and types are copied from the read-only
+-- information_schema.columns extract of production taken 2026-11-15T20:32Z
+-- (text-defects/s1-extract-2026-11-15/q01.sql -> r01.json). Constraints other than NOT NULL were not
+-- extracted; the primary keys on id are an assumption of this local test only.
+
+create table public.pp_cities (
+  id uuid not null primary key,
+  city_name text,
+  city_slug text,
+  state_abbr text,
+  state_slug text,
+  state_id uuid,
+  latitude double precision,
+  longitude double precision,
+  population integer,
+  pool_count integer,
+  ai_intro text,
+  ai_faqs jsonb,
+  meta_title text,
+  meta_description text,
+  priority_tier text,
+  prnm_exclusive boolean,
+  prnm_url text,
+  swimply_has_page boolean,
+  is_published boolean,
+  created_at timestamp with time zone,
+  updated_at timestamp with time zone
+);
+
+create table public.pp_pools (
+  id uuid not null primary key,
+  slug text not null,
+  name text,
+  address text,
+  city text,
+  city_id uuid,
+  state text,
+  zip text,
+  phone text,
+  website text,
+  latitude double precision,
+  longitude double precision,
+  rating real,
+  review_count integer,
+  price_adult numeric,
+  price_child numeric,
+  price_notes text,
+  pool_type text,
+  hours_json jsonb,
+  amenities jsonb,
+  ai_description text,
+  ai_faqs jsonb,
+  ai_tips jsonb,
+  ai_best_for text,
+  google_place_id text,
+  google_maps_url text,
+  image_url text,
+  image_urls jsonb,
+  hero_image_url text,
+  image_source text,
+  is_active boolean,
+  is_published boolean,
+  created_at timestamp with time zone,
+  updated_at timestamp with time zone
+);
