@@ -1,0 +1,378 @@
+{
+ "about": "Hand-made before/after examples. before = real field text; after = written by hand (whole sentences removed by plain string surgery, independent of the cleaner). Checked by: python3 -I text_defect_rules.py test",
+ "examples": [
+  {
+   "rule": "R2",
+   "ref": "pp_pools 4792a27a (Roxborough YMCA)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r21 21:30Z)",
+   "names": [
+    "Roxborough YMCA",
+    "Philadelphia",
+    "Pennsylvania"
+   ],
+   "before": "With a 4.5 star rating from over 450 reviews, the Roxborough YMCA seems like a solid choice for a swim in Philly. It's a public pool up on Ridge Ave, and it's open pretty early during the week, 5 AM, which is great if you like to get your laps in before work. They stay open until 9 PM most nights too. Weekends are a bit shorter, 7 AM to 6 PM, but that's still a good chunk of time. In a city the size of Philadelphia, with well over a million people, having reliable public options like this is really important. My guess is it gets pretty busy sometimes, considering the population. If you're looking for a place to swim, I'd definitely check out their website or give them a call first, just to make sure it fits what you're looking for.",
+   "after": "With a 4.5 star rating from over 450 reviews, the Roxborough YMCA seems like a solid choice for a swim in Philly. It's a public pool up on Ridge Ave, and it's open pretty early during the week, 5 AM, which is great if you like to get your laps in before work. They stay open until 9 PM most nights too. Weekends are a bit shorter, 7 AM to 6 PM, but that's still a good chunk of time. In a city the size of Philadelphia, with well over a million people, having reliable public options like this is really important. If you're looking for a place to swim, I'd definitely check out their website or give them a call first, just to make sure it fits what you're looking for.",
+   "note": "Narrator guess with no fact. The last sentence (advice + ', just to make sure') is kept: second clause."
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools e993db93 (Milam Pool)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r21)",
+   "names": [
+    "Milam Pool",
+    "Atlanta",
+    "Georgia"
+   ],
+   "before": "It's always nice to find an outdoor pool, especially in a city like Atlanta where the summers get pretty hot. Milam Pool is a good spot for when you just need to cool off or get some laps in outside. I've seen a lot of these community pools over the years, and they usually offer a decent setup for everyday swimming. What I like about outdoor spots is that natural sunlight. It just feels different than being indoors, you know? For Atlanta, having an outdoor option like Milam Pool is a real plus for the warmer months. It's the kind of place you can probably count on for a straightforward swim without too much fuss. Just a solid community pool. That's my read on it, anyway.",
+   "after": "It's always nice to find an outdoor pool, especially in a city like Atlanta where the summers get pretty hot. Milam Pool is a good spot for when you just need to cool off or get some laps in outside. I've seen a lot of these community pools over the years, and they usually offer a decent setup for everyday swimming. What I like about outdoor spots is that natural sunlight. It just feels different than being indoors, you know? For Atlanta, having an outdoor option like Milam Pool is a real plus for the warmer months. It's the kind of place you can probably count on for a straightforward swim without too much fuss. Just a solid community pool.",
+   "note": "Closing narrator aside deleted. 'I've seen a lot of these community pools ...' (second clause) and 'What I like about outdoor spots ...' (fact word 'outdoor') are kept."
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools fa9953f4 (San Pedro Springs Pool)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r21)",
+   "names": [
+    "San Pedro Springs Pool",
+    "San Antonio",
+    "Texas"
+   ],
+   "before": "San Pedro Springs Pool in San Antonio is one of those spots that just draws people in. It's not every day you find a spring-fed pool, especially one with free admission right in the city. The fact that it's historical adds to it, makes you feel like you're swimming in a place with some real roots. With a 4.5-star rating from over 1800 reviews, you know a lot of folks like it there. They've got lifeguards, which is always good, and plenty of shade trees around. Parking is usually available too, from what I've heard. It's a nice option for cooling off when you're in San Antonio and don't want to spend a lot. I always appreciate a pool that keeps things simple and focuses on the swimming.",
+   "after": "San Pedro Springs Pool in San Antonio is one of those spots that just draws people in. It's not every day you find a spring-fed pool, especially one with free admission right in the city. The fact that it's historical adds to it, makes you feel like you're swimming in a place with some real roots. With a 4.5-star rating from over 1800 reviews, you know a lot of folks like it there. They've got lifeguards, which is always good, and plenty of shade trees around. Parking is usually available too, from what I've heard. It's a nice option for cooling off when you're in San Antonio and don't want to spend a lot.",
+   "note": "Narrator preference deleted; 'Parking is usually available too, from what I've heard.' is kept (fact word 'parking')."
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools b2398c (Goodman Pool)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r34)",
+   "names": [
+    "Goodman Pool",
+    "Madison",
+    "Wisconsin"
+   ],
+   "before": "Honestly, 342 reviews averaging 4.5 out of 5, that's pretty solid for a public pool. I've seen bigger cities struggle to get those numbers. Goodman pool in Madison, WI looks like a good spot. They've got the zero-depth entry, which is great for little kids or anyone who just wants to ease in. Plus, water slides and a diving board adds some fun for older kids, or, well, adults like me. The fact that they offer swim lessons and free sunscreen also tells me they're thinking about the community. And according to my notes, the daily rates are really affordable, which is always a bonus when you're just looking for a cool-down on a hot day.",
+   "after": "Honestly, 342 reviews averaging 4.5 out of 5, that's pretty solid for a public pool. Goodman pool in Madison, WI looks like a good spot. They've got the zero-depth entry, which is great for little kids or anyone who just wants to ease in. Plus, water slides and a diving board adds some fun for older kids, or, well, adults like me. The fact that they offer swim lessons and free sunscreen also tells me they're thinking about the community. And according to my notes, the daily rates are really affordable, which is always a bonus when you're just looking for a cool-down on a hot day.",
+   "note": "Only the pure narrator aside goes. 'adults like me', 'tells me ... swim lessons', 'according to my notes, the daily rates' all carry facts and stay."
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools 03e38d (Hidden River)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r35)",
+   "names": [
+    "Hidden River",
+    "Old Miakka",
+    "Florida"
+   ],
+   "before": "It's interesting how many clothing-optional spots have sprung up. Hidden River there in Old Miakka is one of them. For some people, that's exactly what they're looking for, a place to really relax. For others, it's a non-starter. I get that. Honestly, it's good to know upfront what kind of vibe a place has, especially when it's a private club or less traditional spot. This one's definitely in Florida, that much I can tell you. If you're into the clothing-optional scene and you're in the Old Miakka area, it's probably one of your local options. Always good to call ahead, though, no matter what kind of pool you're checking out. You never want to drive all the way there and find out it's closed or has unexpected rules.",
+   "after": "It's interesting how many clothing-optional spots have sprung up. Hidden River there in Old Miakka is one of them. For some people, that's exactly what they're looking for, a place to really relax. For others, it's a non-starter. I get that. Honestly, it's good to know upfront what kind of vibe a place has, especially when it's a private club or less traditional spot. This one's definitely in Florida, that much I can tell you. If you're into the clothing-optional scene and you're in the Old Miakka area, it's probably one of your local options. Always good to call ahead, though, no matter what kind of pool you're checking out. You never want to drive all the way there and find out it's closed or has unexpected rules.",
+   "note": "By hand 'I get that.' is pure filler, but the next kept sentence 'Honestly, it's good to know ...' matches the '<Word>, it's' back-reference form, so the rule skips the row (a deliberate over-skip: the opener pattern errs toward keeping text). Reported, unchanged.",
+   "expect_skip": "next_sentence_refers_back"
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools 77672b (Robert Livermore Community Center)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r35)",
+   "names": [
+    "Robert Livermore Community Center",
+    "Livermore",
+    "California"
+   ],
+   "before": "If you're looking for an outdoor pool in Livermore, the Robert Livermore Community Center often comes up. They've got a competition pool, which is good if you're serious about your laps. My stats show they also have water slides and a kids pool, so it's not just for training. With a 4.2 out of 5 stars from over a hundred Google reviews, most people seem to like it. Day passes are pretty reasonable too, five bucks for adults and three for youth. They even offer swim lessons. I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in. They've got locker rooms, making it convenient.",
+   "after": "If you're looking for an outdoor pool in Livermore, the Robert Livermore Community Center often comes up. They've got a competition pool, which is good if you're serious about your laps. My stats show they also have water slides and a kids pool, so it's not just for training. With a 4.2 out of 5 stars from over a hundred Google reviews, most people seem to like it. Day passes are pretty reasonable too, five bucks for adults and three for youth. They even offer swim lessons. I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in. They've got locker rooms, making it convenient.",
+   "note": "By hand the opinion could go, but the next kept sentence starts with 'They've' (points back), so the rule must SKIP the row and report it.",
+   "expect_skip": "next_sentence_refers_back"
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools d80140 (Conroe Family Aquatic Center)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r35)",
+   "names": [
+    "Family Aquatic Center",
+    "Conroe",
+    "Texas"
+   ],
+   "before": "You know, finding a good public pool that doesn't cost an arm and a leg is getting harder these days, especially with some of the prices I see. But I gotta say, Conroe's got it right with their Family Aquatic Center. Two hundred eighty-one reviews on Google, and it's still pulling a 4.6 out of 5. That tells me a lot. It’s an outdoor spot, which is perfect for those hot Texas days. And what really stands out to me? It’s completely free for both adults and kids. You don't see that very often anymore. They've got shade structures, which is smart, a diving board, and even lap lanes if you're trying to get some swimming in. Plus, a picnic area is always a nice touch for families. For a city of almost 100,000, having a free community spot like this is a big deal, and honestly, it’s probably a lifesaver in the summer.",
+   "after": "You know, finding a good public pool that doesn't cost an arm and a leg is getting harder these days, especially with some of the prices I see. But I gotta say, Conroe's got it right with their Family Aquatic Center. Two hundred eighty-one reviews on Google, and it's still pulling a 4.6 out of 5. That tells me a lot. It’s an outdoor spot, which is perfect for those hot Texas days. And what really stands out to me? It’s completely free for both adults and kids. You don't see that very often anymore. They've got shade structures, which is smart, a diving board, and even lap lanes if you're trying to get some swimming in. Plus, a picnic area is always a nice touch for families. For a city of almost 100,000, having a free community spot like this is a big deal, and honestly, it’s probably a lifesaver in the summer.",
+   "note": "'That tells me a lot.' is filler, but the next sentence 'It's an outdoor spot ...' opens with It's: row skipped and reported.",
+   "expect_skip": "next_sentence_refers_back"
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools 1cda4e (Piccadilly Swimming Pool)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r34)",
+   "names": [
+    "Piccadilly Swimming Pool",
+    "Nashville",
+    "Tennessee"
+   ],
+   "before": "It's an outdoor pool, which honestly, is what most people are looking for when the weather warms up. Nashville's a big city, over 600,000 people, so a place like Piccadilly Swimming Pool definitely helps out when you're trying to cool off. I've been in this business a long time, connecting people with swim spots, and outdoor pools are always a hit in a city that size. It's not a heated indoor place for year-round laps, it's more for those hot summer days when you just need to get wet. You know, that classic summer pool feeling.",
+   "after": "It's an outdoor pool, which honestly, is what most people are looking for when the weather warms up. Nashville's a big city, over 600,000 people, so a place like Piccadilly Swimming Pool definitely helps out when you're trying to cool off. I've been in this business a long time, connecting people with swim spots, and outdoor pools are always a hit in a city that size. It's not a heated indoor place for year-round laps, it's more for those hot summer days when you just need to get wet. You know, that classic summer pool feeling.",
+   "note": "OUT OF SCOPE shape: invented founder voice mixed with a claim ('I've been in this business a long time, connecting people with swim spots, and outdoor pools are always a hit ...'). Fact vocabulary present, so never automatic; listed for the owner."
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools 020331 (Rancho Family YMCA)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r34)",
+   "names": [
+    "Rancho Family YMCA",
+    "San Diego",
+    "California"
+   ],
+   "before": "Eight and a half on weekdays, eight on Saturdays, and then just four hours on Sunday. That's a pretty strong set of hours for a public pool, especially out here in San Diego with a city population of over a million. It's the Rancho Family YMCA, and like most YMCAs, it's open to the public for swimming, usually with a day pass. Google reviews put it at 3.8 stars from 109 people, which is decent. I always tell people, if you're looking for a reliably good spot for laps or just to cool off, a Y is a safe bet. They usually have good facilities, and this one runs pretty late during the week, which is a plus.",
+   "after": "Eight and a half on weekdays, eight on Saturdays, and then just four hours on Sunday. That's a pretty strong set of hours for a public pool, especially out here in San Diego with a city population of over a million. It's the Rancho Family YMCA, and like most YMCAs, it's open to the public for swimming, usually with a day pass. Google reviews put it at 3.8 stars from 109 people, which is decent. I always tell people, if you're looking for a reliably good spot for laps or just to cool off, a Y is a safe bet. They usually have good facilities, and this one runs pretty late during the week, which is a plus.",
+   "note": "OUT OF SCOPE shape: 'I always tell people, if you're looking for a reliably good spot for laps ..., a Y is a safe bet.' mixes narrator advice with a fact word (laps); the next sentence's 'They' depends on it. No change."
+  },
+  {
+   "rule": "R2",
+   "ref": "pp_pools 0106c0 (Selena Swimming Pool)",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r34)",
+   "names": [
+    "Selena Swimming Pool",
+    "Houston",
+    "Texas"
+   ],
+   "before": "Honestly, 35 reviews and a 3.9 out of 5, that tells you something. It's not the biggest pool, but it gets the job done for a public spot in Houston. Selena Swimming Pool is part of the city parks system. So it's probably pretty basic, no frills, but usually well-maintained. They're only open a few days a week, mostly afternoons, so you need to plan ahead. Wednesdays, Fridays, and Sundays are your only options there. Call (713) 673-7140 before you head out, especially since the hours are so limited. It's at 1020 Gazin St. with a population of over two million in Houston, a public pool like this is definitely an option for people to cool off.",
+   "after": "Honestly, 35 reviews and a 3.9 out of 5, that tells you something. It's not the biggest pool, but it gets the job done for a public spot in Houston. Selena Swimming Pool is part of the city parks system. So it's probably pretty basic, no frills, but usually well-maintained. They're only open a few days a week, mostly afternoons, so you need to plan ahead. Wednesdays, Fridays, and Sundays are your only options there. Call (713) 673-7140 before you head out, especially since the hours are so limited. It's at 1020 Gazin St. with a population of over two million in Houston, a public pool like this is definitely an option for people to cool off.",
+   "note": "Control: 'Honestly, ...' alone is not a narrator marker; no first-person sentence, nothing changes."
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools jamaica-ymca ai_faqs[2].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Jamaica YMCA",
+    "Queens",
+    "New York"
+   ],
+   "before": "My data doesn't include specific pricing for pool access. Membership often includes pool use, or there might be day passes. Your best bet is to call the Jamaica YMCA directly at (718) 739-6600 for current rates.",
+   "after": "Membership often includes pool use, or there might be day passes. Your best bet is to call the Jamaica YMCA directly at (718) 739-6600 for current rates.",
+   "note": "Data-gap sentence deleted; the referral with the phone number stays (contact fact).",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools santa-clara-swim-center ai_faqs[2].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Santa Clara Swim Center",
+    "Santa Clara",
+    "California"
+   ],
+   "before": "They do offer swim lessons, which is great for kids. Since it's a competition pool, it's designed more for serious swimmers, but the warm-up pool might be good for general family use. I'd call them to ask about family swim times.",
+   "after": "They do offer swim lessons, which is great for kids. Since it's a competition pool, it's designed more for serious swimmers, but the warm-up pool might be good for general family use.",
+   "note": "Trailing narrator referral deleted; lessons/competition-pool facts stay.",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools evergreen-and-elaine-wood-therapy-pool-complex ai_faqs[2].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Evergreen and Elaine Wood Therapy Pool Complex",
+    "Seattle",
+    "Washington"
+   ],
+   "before": "Given it's a 'therapy pool complex,' it might not be ideal for general family recreation or splashing around. I'd lean towards calling them to ask about specific kid-friendly features or if there are dedicated family swim times before you make the trip.",
+   "after": "Given it's a 'therapy pool complex,' it might not be ideal for general family recreation or splashing around.",
+   "note": "Narrator referral deleted; the first sentence (the actual answer) stays.",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools miami-beach-aquatic-center ai_faqs[3].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Miami Beach Aquatic Center",
+    "Miami Beach",
+    "Florida"
+   ],
+   "before": "Yes, it's a city of almost 83,000 residents in a warm climate, so it's likely they have other public swimming facilities. I'd check the City of Miami Beach's Parks and Recreation website for a full list.",
+   "after": "Yes, it's a city of almost 83,000 residents in a warm climate, so it's likely they have other public swimming facilities.",
+   "note": "Last-sentence referral deleted.",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools gardena-carson-family-ymca ai_faqs[2].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Gardena-Carson Family YMCA",
+    "Gardena",
+    "California"
+   ],
+   "before": "Yes, as a Family YMCA, it's generally designed to be family-friendly and usually offers programs for kids. For specific classes or family swim times, I'd suggest calling them directly.",
+   "after": "Yes, as a Family YMCA, it's generally designed to be family-friendly and usually offers programs for kids.",
+   "note": "Lead-in + narrator referral is one deletable sentence (SPLICE_OK).",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools sterling-aquatic-center ai_faqs[2].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Sterling Aquatic Center",
+    "Sterling",
+    "Virginia"
+   ],
+   "before": "Parking can sometimes be tough at popular outdoor pools, especially on busy summer days. I'd plan to arrive early or go during off-peak times if you're worried about finding a spot.",
+   "after": "Parking can sometimes be tough at popular outdoor pools, especially on busy summer days.",
+   "note": "Narrator advice deleted; the general parking sentence (no narrator) stays.",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools los-banos-del-mar-pool ai_faqs[4].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Los Banos del Mar Pool",
+    "Santa Barbara",
+    "California"
+   ],
+   "before": "Santa Barbara has a population of around 88,000, so it's likely there are other options. I'd check the Santa Barbara recreation department's website or give them a call to see what else is available in the area.",
+   "after": "Santa Barbara has a population of around 88,000, so it's likely there are other options.",
+   "note": "Referral deleted; population sentence stays.",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools east-pool ai_faqs[1].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "East Pool",
+    "Laredo",
+    "Texas"
+   ],
+   "before": "Admission fees aren't something I have on hand. Public pools usually have a daily rate or a pass option. You should contact the City of Laredo Parks Department for pricing details.",
+   "after": "Public pools usually have a daily rate or a pass option. You should contact the City of Laredo Parks Department for pricing details.",
+   "note": "Gap sentence deleted; the remaining two sentences stand alone (answer is NOT R5: 'Public pools usually have a daily rate ...' is a general statement).",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools downers-grove-aquatic-center ai_faqs[3].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Downers Grove Aquatic Center",
+    "Downers Grove",
+    "Illinois"
+   ],
+   "before": "Downers Grove is a decent-sized town, almost 50,000 people. I'd imagine the Downers Grove Park District likely operates other aquatic facilities. A quick search on their website should give you a full list of local options.",
+   "after": "Downers Grove is a decent-sized town, almost 50,000 people. I'd imagine the Downers Grove Park District likely operates other aquatic facilities. A quick search on their website should give you a full list of local options.",
+   "note": "The deleted sentence names 'Park District' and the next sentence's 'their website' refers to it: row skipped and reported.",
+   "expect_skip": "deleted_sentence_names_an_entity",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "pp_pools sava-pool ai_faqs[2].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r12)",
+   "names": [
+    "Sava Pool",
+    "San Francisco",
+    "California"
+   ],
+   "before": "San Francisco is a big city with a good number of public facilities. If Sava Pool doesn't fit your needs or schedule, I'd suggest checking the overall San Francisco Recreation & Park Department website. They usually list all their aquatic facilities there.",
+   "after": "San Francisco is a big city with a good number of public facilities. If Sava Pool doesn't fit your needs or schedule, I'd suggest checking the overall San Francisco Recreation & Park Department website. They usually list all their aquatic facilities there.",
+   "note": "Next sentence 'They usually list all their aquatic facilities there.' points back: row skipped and reported.",
+   "expect_skip": "next_sentence_refers_back",
+   "pool_page": true
+  },
+  {
+   "rule": "R4",
+   "ref": "pp_cities d93877 (Murray) ai_intro",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r32)",
+   "names": [
+    null,
+    "Murray",
+    null
+   ],
+   "before": "Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends. We've got a decent selection for a town this size, so you'll definitely find somewhere to take a dip.",
+   "after": "Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends.",
+   "note": "Narrator inventory claim with no number deleted (last sentence).",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "pp_cities 0a8ffa (Omaha) ai_intro",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r33)",
+   "names": [
+    null,
+    "Omaha",
+    "Nebraska"
+   ],
+   "before": "Summer in this part of Nebraska gets hot, real hot. When the sun bakes down, people here are looking for water, and pools are a big part of that. Our pool season runs pretty standard, usually Memorial Day to Labor Day for most outdoor spots. We see a lot of families at the public pools. Folks bring their kids to cool off and splash around. For someone new to Omaha, finding a pool is pretty straightforward. The city runs several good ones. If you're looking for something more private, or just a different vibe than a crowded public spot, that's where PoolRentalNearMe.com comes in. We've got options for booking backyard pools by the hour, which can be a game changer.",
+   "after": "Summer in this part of Nebraska gets hot, real hot. Our pool season runs pretty standard, usually Memorial Day to Labor Day for most outdoor spots. Folks bring their kids to cool off and splash around. For someone new to Omaha, finding a pool is pretty straightforward. The city runs several good ones. If you're looking for something more private, or just a different vibe than a crowded public spot, that's where PoolRentalNearMe.com comes in. We've got options for booking backyard pools by the hour, which can be a game changer.",
+   "note": "Two local-voice opinions deleted. 'Our pool season runs ... Memorial Day to Labor Day' stays (schedule fact); 'We've got options for booking backyard pools ..., which ...' stays (second clause; listed as out of scope).",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "pp_cities 38ac20 (Richmond) ai_intro",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r33)",
+   "names": [
+    null,
+    "Richmond",
+    null
+   ],
+   "before": "When the summer sun hits in Richmond, people are definitely looking for a place to cool off. The heat can really stick around here, sometimes into October, so our pool season feels pretty long. We've got a mixed swim scene, a bit of everything. You'll see serious lap swimmers getting their workouts in early, but by midday, it usually shifts to more families and open swim. Kids love splashing around, and it's a popular way for everyone to beat the heat. If you're new to the area and just trying to find a good spot to swim, the Richmond Plunge is usually the first place folks think of. It's an indoor pool, so it's a solid option year-round, which is great to have. It's one of the main go-to options for public swimming here.",
+   "after": "When the summer sun hits in Richmond, people are definitely looking for a place to cool off. The heat can really stick around here, sometimes into October, so our pool season feels pretty long. You'll see serious lap swimmers getting their workouts in early, but by midday, it usually shifts to more families and open swim. Kids love splashing around, and it's a popular way for everyone to beat the heat. If you're new to the area and just trying to find a good spot to swim, the Richmond Plunge is usually the first place folks think of. It's an indoor pool, so it's a solid option year-round, which is great to have. It's one of the main go-to options for public swimming here.",
+   "note": "Narrator generality deleted; 'The heat can really stick around here, sometimes into October, so our pool season ...' stays (schedule word + clause).",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "pp_cities 66fe02 (Calistoga) ai_intro",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r33)",
+   "names": [
+    null,
+    "Calistoga",
+    "California"
+   ],
+   "before": "Calistoga summers? They get hot, real hot. When the valley heats up, everyone around here thinks about a good soak to cool down. We're talking late spring through early fall for prime pool time, usually May to October. The swim scene here is pretty laid back, mostly focused on families and folks just wanting to relax, not a lot of competitive lap swimmers. If you're new to the area and looking for a place to swim, your options are a bit limited to public access at resorts or private rentals. There aren't many standalone public pools like you might find in bigger cities. Just find a spot to jump in and enjoy the Calistoga sunshine.",
+   "after": "Calistoga summers? They get hot, real hot. We're talking late spring through early fall for prime pool time, usually May to October. The swim scene here is pretty laid back, mostly focused on families and folks just wanting to relax, not a lot of competitive lap swimmers. If you're new to the area and looking for a place to swim, your options are a bit limited to public access at resorts or private rentals. There aren't many standalone public pools like you might find in bigger cities. Just find a spot to jump in and enjoy the Calistoga sunshine.",
+   "note": "Local-voice filler deleted; the next sentence ('We're talking ... May to October') is kept because it carries a schedule.",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "pp_cities d5a0cd47 (Fort Myers) ai_intro",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r21)",
+   "names": [
+    null,
+    "Fort Myers",
+    "Florida"
+   ],
+   "before": "Down here in Florida, especially in Fort Myers, swimming's pretty much a year round thing. We don't really have an \"off season\" for pools like they do up north. Most folks are looking for a good outdoor pool to cool off in. It gets hot, so you'll see a lot of families just trying to beat the heat, and plenty of people getting their laps in early before the sun really bakes everything. If you're new to the area, the main thing to remember is that most public pools are set up for both. You'll find lap lanes and open swim areas. Sometimes it just comes down to checking their schedules online to see when it's freest up for what you want to do. It's not usually hard to find a spot to swim.",
+   "after": "Down here in Florida, especially in Fort Myers, swimming's pretty much a year round thing. Most folks are looking for a good outdoor pool to cool off in. It gets hot, so you'll see a lot of families just trying to beat the heat, and plenty of people getting their laps in early before the sun really bakes everything. If you're new to the area, the main thing to remember is that most public pools are set up for both. You'll find lap lanes and open swim areas. Sometimes it just comes down to checking their schedules online to see when it's freest up for what you want to do. It's not usually hard to find a spot to swim.",
+   "note": "Narrator 'we' claim deleted. The opening 'Down here in Florida, especially in Fort Myers, swimming's pretty much a year round thing.' is local voice too, but carries 'year round' (schedule) and is kept.",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "pp_cities da4afae5 (Denver) ai_intro",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r21)",
+   "names": [
+    null,
+    "Denver",
+    "Colorado"
+   ],
+   "before": "Look, summers here in Denver can get pretty hot and dry. When the sun's really beating down, there's nothing better than cooling off with a swim. Our pool season typically kicks off in late May, usually around Memorial Day, and runs through Labor Day in early September. You'll see a mix of swimmers. Lots of families hitting the public pools, especially on weekends, but you also have your lap swimmers getting their workouts in during cooler morning hours. Anyone new to town, or even if you've been here a while, should know that public pool access can vary. Some spots get crowded fast, so timing your visit is key if you want some dedicated swim time. Sometimes private rentals are an easier way to go.",
+   "after": "When the sun's really beating down, there's nothing better than cooling off with a swim. Our pool season typically kicks off in late May, usually around Memorial Day, and runs through Labor Day in early September. You'll see a mix of swimmers. Lots of families hitting the public pools, especially on weekends, but you also have your lap swimmers getting their workouts in during cooler morning hours. Anyone new to town, or even if you've been here a while, should know that public pool access can vary. Some spots get crowded fast, so timing your visit is key if you want some dedicated swim time. Sometimes private rentals are an easier way to go.",
+   "note": "Opening local-voice weather remark deleted; 'Our pool season typically kicks off in late May ...' stays (schedule).",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "pp_cities b41809e4 ai_faqs[1].a",
+   "source": "pp_pools / pp_cities read-only extract 2026-11-15 (r21)",
+   "names": [
+    null,
+    null,
+    null
+   ],
+   "before": "You can swim year-round here if the pool is heated. Most public and private pools keep their water warm enough for comfortable swimming even in cooler months. Summer is when you'll see the most activity, but dedicated swimmers are in the water all year. We don't really shut down for winter.",
+   "after": "You can swim year-round here if the pool is heated. Most public and private pools keep their water warm enough for comfortable swimming even in cooler months. Summer is when you'll see the most activity, but dedicated swimmers are in the water all year.",
+   "note": "Narrator closing line of a city FAQ answer deleted; the three factual-sounding sentences stay.",
+   "pool_page": false
+  }
+ ]
+}
