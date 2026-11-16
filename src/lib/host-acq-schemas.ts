@@ -15,6 +15,7 @@ import type { ContentPage } from "@/server/content-pages.functions";
 import type { CityRow } from "@/server/cities.functions";
 import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
 import { SITE_NAME, SITE_URL, structuredDataUrl } from "@/lib/seo";
+import { contentPagePath } from "@/lib/country-sites";
 
 const HOST_ACQ_TEMPLATES = new Set(["host_acq_city", "spanish_host_acq"]);
 
@@ -36,7 +37,7 @@ export function hostAcqSchemasForPage(
 
   const language =
     page.language || (page.template_type === "spanish_host_acq" ? "es" : "en");
-  const pageUrl = structuredDataUrl(page.url_path || `/p/${page.slug ?? ""}`);
+  const pageUrl = structuredDataUrl(contentPagePath(page));
 
   const geoArea: Record<string, unknown> = {
     "@type": "City",

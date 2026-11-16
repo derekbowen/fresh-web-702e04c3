@@ -39,6 +39,7 @@ import {
 import { getRouteOrigin } from "@/lib/route-origin";
 import {
   canonicalUrlForPath,
+  contentPagePath,
   countryForSlug,
   countryHreflangAlternates,
   resolveCanonicalUrl,
@@ -299,7 +300,9 @@ export const Route = createFileRoute("/p/$slug")({
     // Canonical always points at the page's stored url_path (which uses the
     // canonical slug), so legacy/case/duplicate slug variants all collapse to
     // a single canonical URL — even before the 301 redirect fires.
-    const canonicalPath = p.url_path || `/p/${p.slug ?? params.slug}`;
+    // contentPagePath: url_path, else /p/<slug> (url_path is NULL on most
+    // country pages in production).
+    const canonicalPath = contentPagePath(p) || `/p/${params.slug}`;
     const titleBase = p.title || p.seo_title || params.slug;
     let title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
     let description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
@@ -601,7 +604,7 @@ function buildHreflangLinks(
   const href = (path: string) => canonicalUrlForPath(path);
 
 
-  const pagePath = p.url_path || `/p/${p.slug ?? ""}`;
+  const pagePath = contentPagePath(p);
   const siblingPath = `/p/${sibling.slug}`;
   const pageLang = p.locale || p.language || "en";
 

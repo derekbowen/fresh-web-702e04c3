@@ -6,11 +6,9 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  COMPARISON_DUPLICATE_REDIRECTS,
-  comparisonDuplicateTarget,
-  isComparisonDuplicatePath,
-} from "../src/lib/comparison-duplicates.ts";
+import * as dupes from "../src/lib/comparison-duplicates.ts";
+
+const { COMPARISON_DUPLICATE_REDIRECTS, comparisonDuplicateTarget, isComparisonDuplicatePath } = dupes;
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DIR = join(ROOT, "ops/seo-repairs-2026-11/comparison-duplicates");
@@ -79,5 +77,49 @@ test("exact path match only: no general strip/append-state rule", () => {
     "/p/__proto__",
   ]) {
     assert.equal(comparisonDuplicateTarget(p), null, p);
+  }
+});
+
+// Integration trial 2026-11-16, defect 2: a comparison head() must never emit
+// a canonical whose path is a 301 source on the list.
+test("comparisonCanonicalPath: a listed bare URL names its twin, every other path itself", () => {
+  assert.equal(typeof dupes.comparisonCanonicalPath, "function", "comparisonCanonicalPath is exported");
+  for (const [from, to] of entries) {
+    assert.equal(dupes.comparisonCanonicalPath(from), to, from);
+    assert.equal(dupes.comparisonCanonicalPath(to), to, to);
+    assert.equal(isComparisonDuplicatePath(dupes.comparisonCanonicalPath(from)), false, from);
+  }
+  for (const p of [
+    "/p/peerspace-vs-pool-rental-near-me-in-akron",
+    "/p/giggster-vs-pool-rental-near-me-in-los-angeles",
+    "/p/giggster-vs-pool-rental-near-me",
+  ]) {
+    assert.equal(dupes.comparisonCanonicalPath(p), p, p);
+  }
+});
+
+// Defect 3: /p/<bare>/ reaches the twin in ONE 301 (src/start.ts), and no
+// other URL's trailing-slash handling changes.
+test("comparisonDuplicateSlashRedirect: only a listed bare URL plus trailing slash(es)", () => {
+  assert.equal(typeof dupes.comparisonDuplicateSlashRedirect, "function", "comparisonDuplicateSlashRedirect is exported");
+  for (const [from, to] of entries) {
+    assert.equal(dupes.comparisonDuplicateSlashRedirect(`${from}/`), to, `${from}/`);
+    assert.equal(dupes.comparisonDuplicateSlashRedirect(`${from}//`), to, `${from}//`);
+    // Without a slash the route's own beforeLoad 301 answers it.
+    assert.equal(dupes.comparisonDuplicateSlashRedirect(from), null, from);
+    // The twin keeps the router's 307 strip.
+    assert.equal(dupes.comparisonDuplicateSlashRedirect(`${to}/`), null, `${to}/`);
+  }
+  for (const p of [
+    "/",
+    "//",
+    "/p/",
+    "/p/fixture-live-page/",
+    "/p/peerspace-vs-pool-rental-near-me-in-akron/",
+    "/p/giggster-vs-pool-rental-near-me-in-Boston/",
+    "/p/giggster-vs-pool-rental-near-me/",
+    "/p/__proto__/",
+  ]) {
+    assert.equal(dupes.comparisonDuplicateSlashRedirect(p), null, p);
   }
 });

@@ -33,6 +33,12 @@ import http from "node:http";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+// The checked-in duplicate list itself (pure .ts; Node strips the types), so
+// the harness derives its expectations from the list instead of copying it.
+import {
+  comparisonDuplicateTarget,
+  isComparisonDuplicatePath,
+} from "../src/lib/comparison-duplicates.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = resolve(ROOT, process.env.FAILED_READS_DIST || "dist");
@@ -324,6 +330,43 @@ const FIXTURES = {
       slug: "fixture-host-little-canada",
       title: "Fixture Little Canada MN page",
     }),
+    // ── url_path NULL (integration trial 2026-11-16) ──
+    // Production has url_path NULL on 50 of the 59 pages in the three ccTLD
+    // sitemap-country.xml files. Each row below has url_path NULL on purpose
+    // (contentPage's default), one per market and one US page, each through a
+    // template that puts page.url_path into a breadcrumb. It must render its
+    // H1 and body, and every URL naming it is built from /p/<slug>.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000031",
+      slug: "fixture-null-path-uk",
+      title: "Fixture null path UK page",
+      template_type: "generic",
+      locale: "en-GB",
+      in_sitemap: false,
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000032",
+      slug: "fixture-null-path-canada",
+      title: "Fixture null path Canada page",
+      template_type: "resource",
+      locale: "en-CA",
+      in_sitemap: false,
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000033",
+      slug: "fixture-null-path-australia",
+      title: "Fixture null path Australia page",
+      template_type: "event_guide",
+      locale: "en-AU",
+      in_sitemap: false,
+    }),
+    // In the articles sitemap, so the sitemap's "every listed URL" pass renders it too.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000034",
+      slug: "fixture-null-path-us",
+      title: "Fixture null path US page",
+      template_type: "resource",
+    }),
     // A comparison city page that a content row redirects.
     contentPage({
       id: "00000000-0000-4000-8000-00000000001a",
@@ -363,6 +406,23 @@ const FIXTURES = {
       is_published: true,
       updated_at: NOW,
     })),
+    // A listed duplicate whose state-suffixed row is MISSING: only the bare
+    // "charlotte" row exists. /p/<competitor>-vs-pool-rental-near-me-in-charlotte
+    // still 301s to ...-charlotte-nc, and the resolver serves ...-charlotte-nc
+    // from the bare row, so its canonical must not be the bare URL (a 301
+    // source pointing back at the page: a loop).
+    {
+      slug: "charlotte",
+      name: "Charlotte",
+      state: "North Carolina",
+      state_code: "NC",
+      description: null,
+      latitude: 35.2271,
+      longitude: -80.8431,
+      hero_image_url: null,
+      is_published: true,
+      updated_at: NOW,
+    },
     // More published cities than one PostgREST answer holds (max-rows 1,000),
     // so a sitemap that reads `cities` without paging is caught.
     ...Array.from({ length: FIXTURE_EXTRA_CITIES }, (_, i) => ({
@@ -930,6 +990,37 @@ const describe = (r) =>
     ? `no response within ${REQUEST_DEADLINE_MS} ms`
     : `${r.status}${r.headers.get("location") ? ` -> ${r.headers.get("location")}` : ""} in ${r.ms} ms`;
 
+/** Visible text of an HTML fragment (scripts, styles and tags removed). */
+const textOf = (html) =>
+  html
+    .replace(/<script\b[\s\S]*?<\/script>/g, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&[a-z0-9#]+;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+/**
+ * A rendered page is a page, not chrome around an empty <main>: it has a
+ * <main> with a non-empty H1 and body text beyond the H1 and the breadcrumb
+ * trail, and no URL anywhere in it (markup or JSON-LD) ends in "null" or
+ * "undefined" (as "https://www.poolrentalnearme.comnull" did). A render that
+ * throws (url_path NULL, integration trial 2026-11-16) still answers 200 with
+ * header and footer, so the status alone does not show it.
+ */
+function renderedPageProblems(body) {
+  const main = body.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
+  if (main == null) return ["no <main>"];
+  const problems = [];
+  const h1 = main.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1];
+  if (!h1 || !textOf(h1)) problems.push("no H1 text");
+  const rest = textOf(main.replace(/<h1\b[\s\S]*?<\/h1>/, " ").replace(/<nav\b[\s\S]*?<\/nav>/g, " "));
+  if (rest.length < 20) problems.push(`body text ${rest.length} chars`);
+  const nullUrl = body.match(/poolrentalnearme\.(?:com\.au|co\.uk|com|ca)(?:null|undefined)/);
+  if (nullUrl) problems.push(`URL "${nullUrl[0]}"`);
+  return problems;
+}
+
 const PAGES = {
   live: "/p/fixture-live-page",
   blog: "/p/fixture-blog-post",
@@ -1432,6 +1523,8 @@ async function sitemapIntegrity(phase, index) {
     "/p/fixture-us-cross-override": "/sitemap-pages-articles.xml",
     // Little Canada, MN: a US page, though its slug ends in "-canada".
     "/p/fixture-host-little-canada": "/sitemap-pages-articles.xml",
+    // url_path NULL: listed at /p/<slug> like any other page.
+    "/p/fixture-null-path-us": "/sitemap-pages-articles.xml",
   };
   for (const [path, owner] of Object.entries(owners)) {
     const listedIn = where.get(`${SITE}${path}`) ?? [];
@@ -1445,17 +1538,55 @@ async function sitemapIntegrity(phase, index) {
 
   const comparisons = byChild.get("/sitemap-pages-comparisons.xml") ?? [];
   const cities = FIXTURES.cities.filter((c) => c.is_published).length;
+  // The expected list, derived from the fixtures: the three pillars, plus two
+  // city pages per published city, minus each city page a content row
+  // redirects and minus each one the checked-in duplicate list 301s
+  // (isComparisonDuplicatePath — every such fixture, not a hard-coded few).
+  const redirectedSlugs = new Set(
+    FIXTURES.content_pages.filter((r) => r.redirect_to && /-vs-pool-rental-near-me-in-/.test(r.slug)).map((r) => r.slug),
+  );
+  const expectedComparisons = new Set([
+    `${SITE}/p/giggster-vs-pool-rental-near-me`,
+    `${SITE}/p/peerspace-vs-pool-rental-near-me`,
+    `${SITE}/p/swimply-alternative-vs-pool-rental-near-me`,
+  ]);
+  let duplicateFixturePaths = 0;
+  for (const c of FIXTURES.cities.filter((x) => x.is_published)) {
+    for (const prefix of ["giggster-vs-pool-rental-near-me-in-", "peerspace-vs-pool-rental-near-me-in-"]) {
+      const slug = `${prefix}${c.slug}`;
+      if (redirectedSlugs.has(slug)) continue;
+      if (isComparisonDuplicatePath(`/p/${slug}`)) {
+        duplicateFixturePaths++;
+        continue;
+      }
+      expectedComparisons.add(`${SITE}/p/${slug}`);
+    }
+  }
+  const comparisonListProblems = (list) => {
+    const listed = new Set(list);
+    const missing = [...expectedComparisons].filter((u) => !listed.has(u));
+    const extra = [...listed].filter((u) => !expectedComparisons.has(u));
+    const problems = [];
+    if (list.length <= 1000) problems.push(`${list.length} entries (not past the 1,000-row cap)`);
+    if (list.length !== listed.size) problems.push(`${list.length - listed.size} repeated`);
+    if (missing.length) problems.push(`missing ${missing.length}: ${missing.slice(0, 3).join(" ")}`);
+    if (extra.length) problems.push(`unexpected ${extra.length}: ${extra.slice(0, 3).join(" ")}`);
+    return problems;
+  };
+  const comparisonProblems = comparisonListProblems(comparisons);
   check(
     phase,
-    `comparisons paging: ${cities} published cities (> 1,000) -> more than 1,000 entries, every city`,
-    comparisons.length > 1000 &&
-      // minus the fixture comparison page a content row redirects, minus the
-      // two bare-Boston pages that 301 to their -boston-ma twins
-      comparisons.length === 3 + 2 * cities - 1 - 2 &&
-      comparisons.includes(`${SITE}/p/giggster-vs-pool-rental-near-me-in-boston-ma`) &&
-      comparisons.includes(`${SITE}/p/peerspace-vs-pool-rental-near-me-in-boston-ma`) &&
-      comparisons.includes(`${SITE}/p/peerspace-vs-pool-rental-near-me-in-fixture-city-1199`),
-    `${comparisons.length} entries for ${cities} cities`,
+    `comparisons paging: ${cities} published cities (> 1,000) -> exactly the expected ${expectedComparisons.size} entries (3 pillars + 2 per city - ${redirectedSlugs.size} redirected - ${duplicateFixturePaths} on the duplicate list)`,
+    duplicateFixturePaths >= 4 && comparisonProblems.length === 0,
+    `${comparisons.length} entries for ${cities} cities; ${comparisonProblems.join("; ")}`,
+  );
+  // The check itself must notice one genuinely missing city page.
+  const dropped = `${SITE}/p/peerspace-vs-pool-rental-near-me-in-fixture-city-1199`;
+  check(
+    phase,
+    "comparisons paging check detects a missing entry (self-test: one city page removed)",
+    comparisonListProblems(comparisons.filter((u) => u !== dropped)).some((p) => p.includes(dropped)),
+    `${dropped} removed, check reported: ${comparisonListProblems(comparisons.filter((u) => u !== dropped)).join("; ") || "nothing"}`,
   );
 
   // Each listed URL this app serves: 200, not noindex, its own canonical.
@@ -1473,13 +1604,16 @@ async function sitemapIntegrity(phase, index) {
     const noindex =
       /noindex/.test(r.headers.get("x-robots-tag") || "") ||
       /<meta[^>]+name="robots"[^>]+content="[^"]*noindex/.test(r.body);
-    if (r.status !== 200 || noindex || canon !== u) {
-      bad.push(`${localPath(u)}: ${r.status}${noindex ? " noindex" : ""}${canon !== u ? ` canonical ${canon ?? "missing"}` : ""}`);
+    const rendered = renderedPageProblems(r.body);
+    if (r.status !== 200 || noindex || canon !== u || rendered.length) {
+      bad.push(
+        `${localPath(u)}: ${r.status}${noindex ? " noindex" : ""}${canon !== u ? ` canonical ${canon ?? "missing"}` : ""}${rendered.length ? ` ${rendered.join(", ")}` : ""}`,
+      );
     }
   }
   check(
     phase,
-    `every listed URL served here (${served.length}) -> 200, indexable, self-canonical`,
+    `every listed URL served here (${served.length}) -> 200, indexable, self-canonical, a non-empty H1 and body`,
     bad.length === 0,
     bad.slice(0, 6).join("; "),
   );
@@ -1488,27 +1622,68 @@ async function sitemapIntegrity(phase, index) {
 /**
  * Audit F6(a): each confirmed exact duplicate answers ONE 301 to its
  * state-suffixed twin, which answers 200 and is its own canonical; a city
- * comparison that is not on the list is untouched.
+ * comparison that is not on the list is untouched. Integration trial
+ * 2026-11-16: the twin's canonical is never a 301 source even when only the
+ * bare cities row exists (Charlotte), and the trailing-slash form of a listed
+ * bare URL reaches the twin in one 301, not a 307 strip then the 301.
  */
 async function comparisonDuplicates(phase) {
   const SITE = "https://www.poolrentalnearme.com";
-  for (const competitor of ["giggster", "peerspace"]) {
-    const bare = `/p/${competitor}-vs-pool-rental-near-me-in-boston`;
-    const twin = `${bare}-ma`;
-    const r = await get(bare);
-    const loc = r.headers.get("location") || "";
-    check(phase, `${bare} -> 301 ${twin}`, r.status === 301 && loc.endsWith(twin), describe(r));
-    const t = await get(twin);
-    const canon = t.body.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/)?.[1];
-    check(
-      phase,
-      `${twin} -> 200, canonical itself (one hop, no chain)`,
-      t.status === 200 && canon === `${SITE}${twin}`,
-      `${describe(t)} canonical ${canon}`,
+  const canonicalOf = (body) => [...body.matchAll(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/g)].map((m) => m[1]);
+  // Every absolute URL in the page's JSON-LD that names a comparison city page.
+  const comparisonUrlsInJsonLd = (body) =>
+    [...body.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].flatMap((m) =>
+      [...m[1].matchAll(/https:\/\/[^"\\]+-vs-pool-rental-near-me-in-[a-z0-9-]+/g)].map((u) => u[0]),
     );
+  for (const competitor of ["giggster", "peerspace"]) {
+    // boston + boston-ma both have a cities row; charlotte has only the bare row.
+    for (const city of ["boston", "charlotte"]) {
+      const bare = `/p/${competitor}-vs-pool-rental-near-me-in-${city}`;
+      const twin = comparisonDuplicateTarget(bare);
+      if (!twin) {
+        check(phase, `${bare} is on the duplicate list`, false, "not listed: fixture out of date");
+        continue;
+      }
+      const r = await get(bare);
+      const loc = r.headers.get("location") || "";
+      check(phase, `${bare} -> 301 ${twin}`, r.status === 301 && loc.endsWith(twin), describe(r));
+      const slash = await get(`${bare}/`);
+      const slashLoc = slash.headers.get("location") || "";
+      check(
+        phase,
+        `${bare}/ -> ONE 301 straight to ${twin} (no 307 trailing-slash hop first)`,
+        slash.status === 301 && new URL(slashLoc, "http://localhost").pathname === twin,
+        describe(slash),
+      );
+      const t = await get(twin);
+      const canons = canonicalOf(t.body);
+      const ogUrl = t.body.match(/<meta[^>]+property="og:url"[^>]+content="([^"]+)"/)?.[1];
+      const ld = comparisonUrlsInJsonLd(t.body);
+      const loops = [...canons, ogUrl ?? "", ...ld].filter((u) => u && isComparisonDuplicatePath(new URL(u).pathname));
+      check(
+        phase,
+        `${twin} -> 200, canonical itself, no canonical/og:url/JSON-LD URL that 301s (one hop, no loop)`,
+        t.status === 200 && canons.length === 1 && canons[0] === `${SITE}${twin}` && ogUrl === `${SITE}${twin}` && loops.length === 0,
+        `${describe(t)} canonical ${canons.join(" + ") || "missing"}, og:url ${ogUrl}${loops.length ? `, 301 sources: ${loops.join(" ")}` : ""}`,
+      );
+    }
   }
   const other = await get("/p/peerspace-vs-pool-rental-near-me-in-akron");
   check(phase, "a comparison not on the list is unchanged (200)", other.status === 200, describe(other));
+  // Trailing-slash handling of every other URL is unchanged: the router's 307 strip.
+  for (const p of [
+    "/p/peerspace-vs-pool-rental-near-me-in-akron/",
+    "/p/giggster-vs-pool-rental-near-me-in-boston-ma/",
+    "/p/fixture-live-page/",
+  ]) {
+    const r = await get(p);
+    check(
+      phase,
+      `${p} (not a listed duplicate) -> unchanged 307 to ${p.slice(0, -1)}`,
+      r.status === 307 && (r.headers.get("location") || "").endsWith(p.slice(0, -1)),
+      describe(r),
+    );
+  }
 }
 
 /**
@@ -1543,6 +1718,11 @@ async function canonicalHosts(phase) {
     "/p/fixture-us-cross-override": WWW,
     "/p/fixture-host-little-canada": WWW,
     "/p/fixture-blog-uk": "https://poolrentalnearme.co.uk",
+    // url_path NULL: one per market and a US page.
+    "/p/fixture-null-path-uk": "https://poolrentalnearme.co.uk",
+    "/p/fixture-null-path-canada": "https://poolrentalnearme.ca",
+    "/p/fixture-null-path-australia": "https://poolrentalnearme.com.au",
+    "/p/fixture-null-path-us": WWW,
   };
   // Pages whose own markup must carry no hreflang: no defined equivalent.
   const NO_HREFLANG = new Set([
@@ -1553,6 +1733,10 @@ async function canonicalHosts(phase) {
     "/p/fixture-us-cross-override",
     "/p/fixture-host-little-canada",
     "/p/fixture-blog-uk",
+    "/p/fixture-null-path-uk",
+    "/p/fixture-null-path-canada",
+    "/p/fixture-null-path-australia",
+    "/p/fixture-null-path-us",
   ]);
   const OUR_HOSTS = new Set(Object.keys(HOSTS).concat(["poolrentalnearme.com", "localhost"]));
   /** Every absolute URL in the page's JSON-LD that names the page itself (same path, any of our hosts). */
@@ -1645,6 +1829,10 @@ async function canonicalHosts(phase) {
       if (!/vs-pool-rental/.test(path) && (selfUrls.length === 0 || strayLd.length)) {
         wrong.push(`${path}: JSON-LD self URL ${strayLd.join(" + ") || "missing"}`);
       }
+      // Every page renders: a non-empty H1 and body (a render that throws is
+      // a 200 with an empty <main>), and no ".../null" URL anywhere.
+      const rendered = renderedPageProblems(r.body);
+      if (rendered.length) wrong.push(`${path}: ${rendered.join(", ")}`);
       const alts = hreflangOf(r.body);
       if (/fixture-maintenance-/.test(path)) {
         if (JSON.stringify(alts) !== JSON.stringify(MAINTENANCE_SET)) wrong.push(`${path}: hreflang ${alts.join(", ")}`);
@@ -1661,9 +1849,9 @@ async function canonicalHosts(phase) {
     }
     check(
       phase,
-      `[${host}] canonical + og:url + JSON-LD self URL: country pages on their ccTLD, every other page on www; hreflang only between equivalents`,
+      `[${host}] every page renders (H1 + body); canonical + og:url + JSON-LD self URL: country pages on their ccTLD, every other page on www; hreflang only between equivalents`,
       wrong.length === 0,
-      wrong.slice(0, 4).join("; "),
+      wrong.slice(0, 8).join("; "),
     );
 
     const robots = await get("/robots.txt", opts);

@@ -16,7 +16,7 @@ import {
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
-import { comparisonDuplicateTarget } from "@/lib/comparison-duplicates";
+import { comparisonCanonicalPath, comparisonDuplicateTarget } from "@/lib/comparison-duplicates";
 
 /**
  * Programmatic city variant of the Giggster pillar comparison.
@@ -73,7 +73,11 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$ci
   head: ({ loaderData }) => {
     const city = loaderData?.city;
     if (!city) return { meta: [{ title: "City not found" }] };
-    const slug = `giggster-vs-pool-rental-near-me-in-${city.slug}`;
+    // The resolved row's slug, unless that URL is a listed duplicate (it 301s
+    // to the state-suffixed twin): then the twin. With the twin's own row
+    // missing the resolver serves the twin from the bare row, and a canonical
+    // built from that row would point at the 301 back to this page (a loop).
+    const slug = comparisonCanonicalPath(`/p/giggster-vs-pool-rental-near-me-in-${city.slug}`).slice("/p/".length);
     const title = `Giggster vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026): Fees, Insurance & Best Use`;
     const description = `${city.name}, ${city.state} pool hosts: Giggster vs Pool Rental Near Me compared with verified 2026 facts — 19% vs 0% host commission, renter COI requirements vs waiver-based hosting, production vs recreational buyers, and the smart play for a ${city.name} pool.`;
     return {

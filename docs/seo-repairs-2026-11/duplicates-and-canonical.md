@@ -358,6 +358,56 @@ lists the real groups this touches.
 
 ---
 
+## Fixed after the integration trial (2026-11-16)
+
+The integration trial of all SEO branches found four defects in this branch.
+Each was reproduced first (a failing harness or unit check on a115fd5), then
+fixed; the same checks now pass.
+
+1. **Blank page when `url_path` is NULL (blocker).** Templates pass
+   `page.url_path` as the page's own breadcrumb, and this branch had changed
+   the breadcrumb JSON-LD to `structuredDataUrl(path)`, whose country lookup
+   called `null.split`. Every such page rendered a 200 with header, footer and
+   no `<main>`. Production has `url_path` NULL on 50 of the 59 pages in the
+   three ccTLD `sitemap-country.xml` files (7702845 renders them, with a
+   breadcrumb item of `https://www.poolrentalnearme.comnull`).
+   Fix: every path-taking function in `country-sites.ts` and `seo.ts`
+   accepts null, undefined and "" (`canonicalUrlForPath` of a missing path is
+   the www origin with `/`, never `...null`); a crumb without a path gets no
+   JSON-LD `item`; and every template, `p.$slug.tsx` and the JSON-LD helpers
+   name the page by `contentPagePath(page)` (`url_path`, else `/p/<slug>`).
+   A NULL-`url_path` page's `<main>` is byte-identical to 7702845's (checked
+   for each fixture on www and co.uk) except the breadcrumb self item, which
+   is now the page's canonical on its mapped host, e.g.
+   `https://poolrentalnearme.co.uk/p/pool-rental-london`.
+   Harness: four new NULL-`url_path` fixtures (UK generic, Canada resource,
+   Australia event guide, US resource in the articles sitemap); every page
+   rendered on all seven hosts and every listed URL must have a non-empty H1,
+   body text and no URL ending in `null`/`undefined`. 28 checks failed on
+   a115fd5; `tests/null-url-path.test.mjs` failed 3 of 3.
+2. **Canonical pointing at a 301 (loop).** The comparison `head()` built its
+   canonical from the resolved `cities` row. With the state-suffixed row
+   missing, the resolver serves `...-in-charlotte-nc` from the bare
+   `charlotte` row, and the canonical named `...-in-charlotte`, which 301s
+   back. Fix: `comparisonCanonicalPath()` (generated into
+   `comparison-duplicates.ts`) maps a listed 301 source to its target for the
+   canonical, og:url and JSON-LD. Harness fixture: a bare `charlotte` row
+   with no `charlotte-nc` row.
+3. **Trailing slash took two hops.** `/p/<bare>/` got the router's 307
+   strip, then the 301. Fix: a request middleware in `src/start.ts` answers
+   a listed bare URL plus trailing slash(es) with one 301 to the twin
+   (`comparisonDuplicateSlashRedirect`); every other URL, the twins included,
+   keeps the 307. Harness and unit checks cover both.
+4. **Harness arithmetic.** The comparisons paging check hard-coded the two
+   Boston duplicates. It now derives the expected set from the fixtures
+   (every path `isComparisonDuplicatePath` matches is subtracted), compares
+   the sets exactly, and self-tests that one removed city page is reported.
+
+Not changed: a twin whose own `cities` row is missing (the Charlotte case) is
+served and self-canonical but is not listed by the comparisons sitemap, which
+lists city pages from `cities` rows only. On 2026-11-15 all 78 twins had their
+own row (the generator rejects a pair with a missing row).
+
 ## Files
 
 - `src/lib/country-sites.ts` (new): the mapping, canonical rules, robots body, PostgREST filter, hreflang.

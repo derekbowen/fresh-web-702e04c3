@@ -2,7 +2,7 @@
  * SEO helpers for building meta tags and JSON-LD structured data.
  */
 import ogDefaultImage from "@/assets/og-default.jpg";
-import { canonicalOriginForPath, resolveCanonicalUrl } from "@/lib/country-sites";
+import { canonicalOriginForPath, resolveCanonicalUrl, sitePath } from "@/lib/country-sites";
 
 export const SITE_URL = "https://www.poolrentalnearme.com";
 export const SITE_NAME = "Pool Rental Near Me";
@@ -99,7 +99,8 @@ export function buildMeta({
   // One canonical per page, on the host the country mapping assigns
   // (src/lib/country-sites.ts): a country page on its ccTLD, everything else
   // on www. The request host does not matter.
-  const canonicalUrl = resolveCanonicalUrl(canonicalPath ?? path, canonicalUrlOverride);
+  // An empty canonicalPath (a row with no url_path) falls back to `path`.
+  const canonicalUrl = resolveCanonicalUrl(canonicalPath || path, canonicalUrlOverride);
   const siteOrigin = new URL(canonicalUrl).origin;
   // og:url and twitter URLs should reflect the canonical location, not the
   // (potentially legacy) request path. This keeps social shares deduplicated
@@ -150,29 +151,40 @@ export function buildMeta({
 
 export interface BreadcrumbItem {
   name: string;
-  path: string;
+  /** May be null/empty at runtime (a row's url_path); pass contentPagePath(page) for a page's own crumb. */
+  path: string | null | undefined;
 }
 
 /**
  * Absolute URL of a site path in structured data: on the host the country
  * mapping assigns to that path (a country page's ccTLD, else www), so JSON-LD
  * names the same URL the page's canonical does. The path's query, if any, is
- * kept (e.g. the blog topic crumb /p/blog?topic=...).
+ * kept (e.g. the blog topic crumb /p/blog?topic=...). A missing path (null,
+ * undefined, "") never throws and never yields ".../null": it gives the www
+ * origin with "/". Callers naming a content page pass contentPagePath(page).
  */
-export function structuredDataUrl(path: string): string {
-  return `${canonicalOriginForPath(path)}${path}`;
+export function structuredDataUrl(path: string | null | undefined): string {
+  return `${canonicalOriginForPath(path)}${sitePath(path) || "/"}`;
+}
+
+/**
+ * A BreadcrumbList ListItem. A crumb without a path gets no `item` (Google
+ * allows that for the last crumb) instead of a URL that names another page.
+ */
+export function breadcrumbListItem(name: string, path: string | null | undefined, position: number) {
+  return {
+    "@type": "ListItem",
+    position,
+    name,
+    ...(sitePath(path) ? { item: structuredDataUrl(path) } : {}),
+  };
 }
 
 export function breadcrumbJsonLd(items: BreadcrumbItem[]) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: item.name,
-      item: structuredDataUrl(item.path),
-    })),
+    itemListElement: items.map((item, i) => breadcrumbListItem(item.name, item.path, i + 1)),
   };
 }
 

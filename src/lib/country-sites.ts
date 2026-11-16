@@ -200,28 +200,69 @@ export function countryForSlug(slug: string | null | undefined): CountrySite | n
   return null;
 }
 
+/**
+ * A path argument as given, or "" when there is none. Every function below
+ * that takes a path accepts null, undefined and "" (content_pages.url_path is
+ * NULL on most country pages in production: 50 of the 59 pages in the three
+ * ccTLD sitemaps on 2026-11-16), so a missing path can never throw inside a
+ * render. Callers that build a page's own URL pass contentPagePath(page),
+ * which falls back to /p/<slug>.
+ */
+function pathText(path: string | null | undefined): string {
+  return typeof path === "string" ? path.trim() : "";
+}
+
+/**
+ * The path a content_pages row is served at: its url_path when set, else
+ * /p/<slug> (the dispatcher serves every row at /p/<slug>). "" only when the
+ * row has neither. Use it wherever a template or head() names the page's own
+ * URL (breadcrumb self crumb, JSON-LD url, canonical): url_path is NULL on
+ * most country pages in production.
+ */
+export function contentPagePath(
+  page: { url_path?: string | null; slug?: string | null } | null | undefined,
+): string {
+  const stored = pathText(page?.url_path);
+  if (stored) return stored;
+  const slug = pathText(page?.slug).replace(/^\/+|\/+$/g, "");
+  return slug ? `/p/${slug}` : "";
+}
+
 /** The single path segment of /p/<slug> (query and hash ignored), else null. */
-function contentSlugOfPath(path: string): string | null {
-  const bare = path.split(/[?#]/)[0]!;
+function contentSlugOfPath(path: string | null | undefined): string | null {
+  const bare = pathText(path).split(/[?#]/)[0]!;
   const m = bare.match(/^\/p\/([^/]+)$/);
   return m ? m[1]! : null;
 }
 
-export function countryForPath(path: string): CountrySite | null {
+export function countryForPath(path: string | null | undefined): CountrySite | null {
   const slug = contentSlugOfPath(path);
   return slug ? countryForSlug(slug) : null;
 }
 
-/** https://<host> a page at `path` is canonical on. */
-export function canonicalOriginForPath(path: string): string {
+/** https://<host> a page at `path` is canonical on (www for a missing path). */
+export function canonicalOriginForPath(path: string | null | undefined): string {
   const site = countryForPath(path);
   return site ? `https://${site.canonicalHost}` : WWW_ORIGIN;
 }
 
-/** The canonical URL of the page at `path` (query and hash dropped). */
-export function canonicalUrlForPath(path: string): string {
-  const p = path.startsWith("/") ? path : `/${path}`;
-  const bare = p.split(/[?#]/)[0]!;
+/**
+ * `path` as an absolute site path: leading "/" added, "" for a missing path.
+ * Query and hash are kept.
+ */
+export function sitePath(path: string | null | undefined): string {
+  const p = pathText(path);
+  if (!p) return "";
+  return p.startsWith("/") ? p : `/${p}`;
+}
+
+/**
+ * The canonical URL of the page at `path` (query and hash dropped). A missing
+ * path (null, undefined, "") gives the www origin with "/", never a string
+ * ending in "null".
+ */
+export function canonicalUrlForPath(path: string | null | undefined): string {
+  const bare = (sitePath(path) || "/").split(/[?#]/)[0]!;
   return `${canonicalOriginForPath(bare)}${bare}`;
 }
 
@@ -240,7 +281,10 @@ export function canonicalUrlForPath(path: string): string {
  * changes no stored override's effect; it stops a future one (the admin tool
  * can write canonical_override) from moving a page to another market's host.
  */
-export function resolveCanonicalUrl(pagePath: string, override?: string | null): string {
+export function resolveCanonicalUrl(
+  pagePath: string | null | undefined,
+  override?: string | null,
+): string {
   const own = canonicalUrlForPath(pagePath);
   const raw = (override ?? "").trim();
   if (!raw) return own;

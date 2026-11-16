@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { FaqBlock } from "@/components/faq-block";
 import { RelatedPages, type RelatedPagesItem } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
@@ -206,7 +207,7 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
     : [
         { name: "Home", path: "/" },
         { name: "Host advocacy", path: ADVOCACY_HUB_PATH },
-        { name: state?.name || title, path: page.url_path || `/p/${page.slug}` },
+        { name: state?.name || title, path: contentPagePath(page) },
       ];
 
   // Custom heading components: stable ids for TOC, accent rule on h2.

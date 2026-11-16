@@ -143,6 +143,32 @@ export function comparisonDuplicateTarget(path: string): string | null {
 export function isComparisonDuplicatePath(path: string): boolean {
   return comparisonDuplicateTarget(path) !== null;
 }
+
+/**
+ * The path a comparison page's canonical, og:url and JSON-LD self URL must
+ * name: the twin when \`path\` is a listed duplicate (that URL 301s), else
+ * \`path\` itself. The cities resolver serves a state-suffixed URL from the
+ * bare row when the suffixed row is missing, so a head() that built its URL
+ * from the resolved row's slug pointed its canonical at the bare URL, which
+ * 301s back to the page (a loop; integration trial 2026-11-16).
+ */
+export function comparisonCanonicalPath(path: string): string {
+  return comparisonDuplicateTarget(path) ?? path;
+}
+
+/**
+ * The 301 target for a request path that is a listed bare URL followed by one
+ * or more trailing slashes ("/p/...-in-boston/"), or null for every other
+ * path, a listed URL without a slash included (its route answers that 301).
+ * The router strips a trailing slash with a 307 before any route runs, so the
+ * slash form took two hops (307, then the 301); src/start.ts answers it with
+ * one. Every other URL keeps the router's trailing-slash handling.
+ */
+export function comparisonDuplicateSlashRedirect(pathname: string): string | null {
+  if (!pathname.endsWith("/")) return null;
+  const bare = pathname.replace(/\\/+$/, "");
+  return bare ? comparisonDuplicateTarget(bare) : null;
+}
 `;
 const decisions = JSON.stringify(
   { generated_from: { refetch_fetched_at: fetchedAt, max_km: MAX_KM }, confirmed, rejected },
