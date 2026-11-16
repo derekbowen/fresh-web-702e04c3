@@ -95,7 +95,7 @@ def one_pass(text, names, pool_page, rule, actual=None, distinct=None, field="de
             return text, dels, "next_sentence_refers_back"
         if addendum and nxt is not None and re.search(A5_BACKREF, nxt):
             return text, dels, "next_sentence_refers_back_a5"
-        if nxt is not None and T.has_entity(s, names):
+        if T.has_entity(s, names, last=nxt is None):   # the last sentence too (rules revision 2026-11-16)
             return text, dels, "deleted_sentence_names_an_entity"
     new = T.rebuild(text, sents, marks)
     if addendum:

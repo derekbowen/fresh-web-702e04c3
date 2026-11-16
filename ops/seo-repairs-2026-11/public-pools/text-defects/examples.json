@@ -1,5 +1,5 @@
 {
- "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test",
+ "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test 2026-11-16 review: 5 R6 examples revised (rules narrowed) and 10 regression examples added from the content review (live page text of 2026-11-16); for those, 'after' is the text a person keeps (in each case the whole field), decided from the review finding, not from the cleaner's output.",
  "examples": [
   {
    "rule": "R1",
@@ -629,8 +629,8 @@
    ],
    "actual": 22,
    "before": "Summer in Sacramento can be a real oven, so pools aren't just for fun, they're essential. You'll find a pretty laid-back swimming culture here, mostly families and folks just trying to cool off. When the temperatures start climbing in May, that's when everyone really starts thinking about getting in the water. Most public pools openMemorial Day weekend and stay open through Labor Day. It's not a big lap swimming town from what I've seen at the public spots. You come to Sacramento to beat the heat, splash around, and let the kids burn off some energy. Finding a good spot is usually pretty easy. We've got five public pools on our site for Sacramento, so there are options across the city.",
-   "after": "Summer in Sacramento can be a real oven, so pools aren't just for fun, they're essential. You'll find a pretty laid-back swimming culture here, mostly families and folks just trying to cool off. When the temperatures start climbing in May, that's when everyone really starts thinking about getting in the water. Most public pools openMemorial Day weekend and stay open through Labor Day. It's not a big lap swimming town from what I've seen at the public spots. You come to Sacramento to beat the heat, splash around, and let the kids burn off some energy. Finding a good spot is usually pretty easy.",
-   "note": "Page header: 22 pools; prose says five. Count sentence deleted (R6, last sentence). The narrator sentence 'It's not a big lap swimming town from what I've seen ...' stays (fact word 'lap'). The data typo 'openMemorial' is NOT corrected: no rule may edit inside a sentence.",
+   "after": "Summer in Sacramento can be a real oven, so pools aren't just for fun, they're essential. You'll find a pretty laid-back swimming culture here, mostly families and folks just trying to cool off. When the temperatures start climbing in May, that's when everyone really starts thinking about getting in the water. Most public pools openMemorial Day weekend and stay open through Labor Day. It's not a big lap swimming town from what I've seen at the public spots. You come to Sacramento to beat the heat, splash around, and let the kids burn off some energy. Finding a good spot is usually pretty easy. We've got five public pools on our site for Sacramento, so there are options across the city.",
+   "note": "Revised 2026-11-16 after the content review: the count sentence carries a second clause (', so there are options', ', but there are always private options', ', so there's usually an option'); R6 now treats a CLAUSE match as a claim beyond the count, so the sentence is review_mixed (listed for the owner) and nothing is deleted automatically. Earlier note: Page header: 22 pools; prose says five. Count sentence deleted (R6, last sentence). The narrator sentence 'It's not a big lap swimming town from what I've seen ...' stays (fact word 'lap'). The data typo 'openMemorial' is NOT corrected: no rule may edit inside a sentence.",
    "pool_page": false
   },
   {
@@ -675,9 +675,8 @@
    "actual": 17,
    "before": "Summer in this part of Kentucky means it gets hot, and a lot of folks head for the water. The pool season generally kicks off Memorial Day weekend and runs through Labor Day. It's pretty family focused here, so you'll see a lot of splash pads and shallow ends. If you're new to Louisville and looking to swim, the public pools are a good starting point. They're usually well-maintained and offer a good mix of lap lanes and open swim areas. We've got five public pools listed for Louisville, so there's usually an option not too far from wherever you are. Just keep in mind that on really hot days, they can get busy, especially the ones with extra features.",
    "after": "Summer in this part of Kentucky means it gets hot, and a lot of folks head for the water. The pool season generally kicks off Memorial Day weekend and runs through Labor Day. It's pretty family focused here, so you'll see a lot of splash pads and shallow ends. If you're new to Louisville and looking to swim, the public pools are a good starting point. They're usually well-maintained and offer a good mix of lap lanes and open swim areas. We've got five public pools listed for Louisville, so there's usually an option not too far from wherever you are. Just keep in mind that on really hot days, they can get busy, especially the ones with extra features.",
-   "note": "Header 17; prose five. By hand the count sentence should go, but the next sentence 'Just keep in mind that on really hot days, they can get busy ...' matches the '<words>, they' back-reference form, so the R6 pass is skipped and the row is REPORTED with a delete recommendation (deliberate over-skip).",
-   "pool_page": false,
-   "expect_skip": "next_sentence_refers_back"
+   "note": "Revised 2026-11-16 after the content review: the count sentence carries a second clause (', so there are options', ', but there are always private options', ', so there's usually an option'); R6 now treats a CLAUSE match as a claim beyond the count, so the sentence is review_mixed (listed for the owner) and nothing is deleted automatically. Earlier note: Header 17; prose five. By hand the count sentence should go, but the next sentence 'Just keep in mind that on really hot days, they can get busy ...' matches the '<words>, they' back-reference form, so the R6 pass is skipped and the row is REPORTED with a delete recommendation (deliberate over-skip).",
+   "pool_page": false
   },
   {
    "rule": "R6",
@@ -705,8 +704,8 @@
    ],
    "actual": 28,
    "before": "Back when I was first swimming in Brooklyn, a lot of pools were shutting down for the winter right after Labor Day. These days, that's not always the case anymore. Sure, many of the outdoor spots still close up, but you'll find more indoor options stretching the swim season. It's not just about lap swimming here. You'll see plenty of families, especially at the bigger outdoor pools when the weather's good. If you're new to finding a pool, just remember that some places have specific hours for different age groups or types of swimming, so it's always good to check that out before you go. We've got five public pools listed in our directory, so there are options, even if it feels like a big city to navigate.",
-   "after": "Back when I was first swimming in Brooklyn, a lot of pools were shutting down for the winter right after Labor Day. These days, that's not always the case anymore. Sure, many of the outdoor spots still close up, but you'll find more indoor options stretching the swim season. It's not just about lap swimming here. You'll see plenty of families, especially at the bigger outdoor pools when the weather's good. If you're new to finding a pool, just remember that some places have specific hours for different age groups or types of swimming, so it's always good to check that out before you go.",
-   "note": "Header 28; prose five. Count sentence (last) deleted. The invented memoir opener 'Back when I was first swimming in Brooklyn, ...' stays: it carries 'Labor Day' (schedule) and a second clause; listed as an out-of-scope shape.",
+   "after": "Back when I was first swimming in Brooklyn, a lot of pools were shutting down for the winter right after Labor Day. These days, that's not always the case anymore. Sure, many of the outdoor spots still close up, but you'll find more indoor options stretching the swim season. It's not just about lap swimming here. You'll see plenty of families, especially at the bigger outdoor pools when the weather's good. If you're new to finding a pool, just remember that some places have specific hours for different age groups or types of swimming, so it's always good to check that out before you go. We've got five public pools listed in our directory, so there are options, even if it feels like a big city to navigate.",
+   "note": "Revised 2026-11-16 after the content review: the count sentence carries a second clause (', so there are options', ', but there are always private options', ', so there's usually an option'); R6 now treats a CLAUSE match as a claim beyond the count, so the sentence is review_mixed (listed for the owner) and nothing is deleted automatically. Earlier note: Header 28; prose five. Count sentence (last) deleted. The invented memoir opener 'Back when I was first swimming in Brooklyn, ...' stays: it carries 'Labor Day' (schedule) and a second clause; listed as an out-of-scope shape.",
    "pool_page": false
   },
   {
@@ -720,10 +719,11 @@
    ],
    "actual": 13,
    "before": "When the summer sun really kicks in here, we're talking triple digits for months on end. That means pools aren't just for cooling off, they're how you live. People around here hit the water to survive the heat, not just for a leisurely swim. You'll find a mix of serious lap swimmers and families looking to escape the heat. It's a pool culture built around beating the Arizona summer. If you're new to the area or just visiting, finding a good pool is key to enjoying your time outside. We've got just one public spot listed for Mesa so far (Skyline Aquatic Center).",
-   "after": "When the summer sun really kicks in here, we're talking triple digits for months on end. That means pools aren't just for cooling off, they're how you live. People around here hit the water to survive the heat, not just for a leisurely swim. You'll find a mix of serious lap swimmers and families looking to escape the heat. It's a pool culture built around beating the Arizona summer. If you're new to the area or just visiting, finding a good pool is key to enjoying your time outside.",
-   "note": "Header 13 (12 distinct after one mapped duplicate pair); prose one. R6 deletes the last sentence. The R4 pass is skipped: deleting 'When the summer sun really kicks in here, we're talking triple digits ...' would leave 'That means pools ...' pointing back.",
+   "after": "When the summer sun really kicks in here, we're talking triple digits for months on end. That means pools aren't just for cooling off, they're how you live. People around here hit the water to survive the heat, not just for a leisurely swim. You'll find a mix of serious lap swimmers and families looking to escape the heat. It's a pool culture built around beating the Arizona summer. If you're new to the area or just visiting, finding a good pool is key to enjoying your time outside. We've got just one public spot listed for Mesa so far (Skyline Aquatic Center).",
+   "note": "Revised 2026-11-16 after the content review: the count sentence is the last sentence and names a facility ('(Skyline Aquatic Center)'); the entity guard now applies to the last sentence too, so R6 skips and reports. Earlier note: Header 13 (12 distinct after one mapped duplicate pair); prose one. R6 deletes the last sentence. The R4 pass is skipped: deleting 'When the summer sun really kicks in here, we're talking triple digits ...' would leave 'That means pools ...' pointing back.",
    "pool_page": false,
-   "distinct": 12
+   "distinct": 12,
+   "expect_skip": "deleted_sentence_names_an_entity"
   },
   {
    "rule": "R6",
@@ -737,9 +737,8 @@
    "actual": 7,
    "before": "Summer in Wilmington usually means July and August are hot. We get a good three months of solid outdoor pool weather, sometimes more into September if we're lucky. People here definitely use their pools. It's a mix, honestly. You'll see families with young kids cooling off, older folks swimming laps for exercise, and teens just hanging out. Our public pools tend to be community hubs. If you're new to the area, the best way to find a pool is just to check out the city's parks and rec sites or look at local YMCA branches. Our site lists five public pools in Wilmington, but there are always private options too if you want something different. It's not a huge swim scene like some coastal towns, but people definitely appreciate having a place to cool off when the heat hits.",
    "after": "Summer in Wilmington usually means July and August are hot. We get a good three months of solid outdoor pool weather, sometimes more into September if we're lucky. People here definitely use their pools. It's a mix, honestly. You'll see families with young kids cooling off, older folks swimming laps for exercise, and teens just hanging out. Our public pools tend to be community hubs. If you're new to the area, the best way to find a pool is just to check out the city's parks and rec sites or look at local YMCA branches. Our site lists five public pools in Wilmington, but there are always private options too if you want something different. It's not a huge swim scene like some coastal towns, but people definitely appreciate having a place to cool off when the heat hits.",
-   "note": "Header 7; prose 'Our site lists five public pools'. By hand the sentence should go, but the next sentence starts 'It's not a huge swim scene ...', so the R6 pass is skipped and the row is REPORTED for the owner (and the R4 pass is skipped for the same reason after 'People here definitely use their pools.').",
-   "pool_page": false,
-   "expect_skip": "next_sentence_refers_back"
+   "note": "Revised 2026-11-16 after the content review: the count sentence carries a second clause (', so there are options', ', but there are always private options', ', so there's usually an option'); R6 now treats a CLAUSE match as a claim beyond the count, so the sentence is review_mixed (listed for the owner) and nothing is deleted automatically. Earlier note: Header 7; prose 'Our site lists five public pools'. By hand the sentence should go, but the next sentence starts 'It's not a huge swim scene ...', so the R6 pass is skipped and the row is REPORTED for the owner (and the R4 pass is skipped for the same reason after 'People here definitely use their pools.').",
+   "pool_page": false
   },
   {
    "rule": "R6",
@@ -771,6 +770,151 @@
    "after": "When the heat hits hard in Austin, usually around May and keeps going strong into September, knowing where to find a good pool is key. Public pools here are really popular, and they're usually outdoor, so they're only open for that summer season. A lot of folks use them to cool off, to get some exercise with lap swimming, or for a family outing. You'll see a mix of all that. If you're new to the area, it's pretty easy to find a spot to swim. We've got a total of five public pools listed in our directory, and there are some specific places that are pretty well-known for swimming. It just depends on what you're looking for, whether it's a natural spring or a city pool.",
    "note": "Header 47; prose 'a total of five public pools listed in our directory, and there are some specific places that are pretty well-known for swimming'. The sentence carries a second claim ('well-known'), so it is review_mixed: listed for the owner with a delete recommendation, never automatic. No narrator sentence qualifies; unchanged.",
    "pool_page": false
+  },
+  {
+   "rule": "R2",
+   "ref": "live pool page /minnesota/minnetonka/minnetonka-municipal-pool/ (ai_description)",
+   "source": "live page fetched 2026-11-16T19:58:21Z (2026-11-16 review regression case)",
+   "names": [
+    "Minnetonka Municipal Pool",
+    "Minnetonka",
+    "Minnesota"
+   ],
+   "before": "It’s not every day you find a straight-up competition pool open to the public, but that's what Minnetonka offers. With a 4.1 rating from over 300 reviews, people generally like it. This isn't really a splash-pad kind of place. They've got Olympic lanes you can really stretch out in and separate lap lanes, plus a diving well. If you're serious about swimming, or just want to get some good laps in, this place is set up for it. I see they even have a timing system. For eight bucks an adult and three for a kid, it's a solid deal, especially if you're training or just looking for some serious water time. It’s definitely more for focused swimmers than folks just looking to cool off.",
+   "after": "It’s not every day you find a straight-up competition pool open to the public, but that's what Minnetonka offers. With a 4.1 rating from over 300 reviews, people generally like it. This isn't really a splash-pad kind of place. They've got Olympic lanes you can really stretch out in and separate lap lanes, plus a diving well. If you're serious about swimming, or just want to get some good laps in, this place is set up for it. I see they even have a timing system. For eight bucks an adult and three for a kid, it's a solid deal, especially if you're training or just looking for some serious water time. It’s definitely more for focused swimmers than folks just looking to cool off.",
+   "note": "Added 2026-11-16 (content review). 'I see they even have a timing system.' carries an amenity fact found nowhere else in the field: kept (timing + 'they even have' are fact vocabulary).",
+   "pool_page": true
+  },
+  {
+   "rule": "R2",
+   "ref": "live pool page /texas/fort-worth/marine-park-pool/ (ai_description)",
+   "source": "live page fetched 2026-11-16T19:47:04Z (2026-11-16 review regression case)",
+   "names": [
+    "Marine Park Pool",
+    "Fort Worth",
+    "Texas"
+   ],
+   "before": "If you're in Fort Worth looking for a good outdoor spot, Marine Park Pool has some nice things going for it. They've got water slides and a lazy river which is always a hit, especially for kids. It's got a 4/5 rating on Google, based on 72 reviews, so most folks seem to like it. Plus, they offer swim lessons, which is great for parents. The pricing is pretty clear too, just remember it's $3 for residents and $5 if you're not from Fort Worth. It's an outdoor spot, so you'll want good weather. Seems like a solid option if you're in the area and want to cool off or get some recreation. I always appreciate when a pool has a dedicated kids' area, like this one does. Just makes it easier for everyone.",
+   "after": "If you're in Fort Worth looking for a good outdoor spot, Marine Park Pool has some nice things going for it. They've got water slides and a lazy river which is always a hit, especially for kids. It's got a 4/5 rating on Google, based on 72 reviews, so most folks seem to like it. Plus, they offer swim lessons, which is great for parents. The pricing is pretty clear too, just remember it's $3 for residents and $5 if you're not from Fort Worth. It's an outdoor spot, so you'll want good weather. Seems like a solid option if you're in the area and want to cool off or get some recreation. I always appreciate when a pool has a dedicated kids' area, like this one does. Just makes it easier for everyone.",
+   "note": "Added 2026-11-16 (content review). 'I always appreciate when a pool has a dedicated kids' area, like this one does.' asserts a kids' area: kept; the fragment 'Just makes it easier for everyone.' would otherwise dangle.",
+   "pool_page": true
+  },
+  {
+   "rule": "R2",
+   "ref": "live pool page /massachusetts/framingham/framingham-community-pool/ (ai_description)",
+   "source": "live page fetched 2026-11-16T19:56:14Z (2026-11-16 review regression case)",
+   "names": [
+    "Framingham Community Pool",
+    "Framingham",
+    "Massachusetts"
+   ],
+   "before": "Honestly, 3.7 stars from over 200 reviews, that's not too shabby for a community pool. Especially when you consider that it's free to get in, for both adults and kids, which is a major plus these days. I've seen a lot of pools, and free admission often means you compromise on amenities, but that's not really the case here. You've got lap lanes, which is key for anyone serious about swimming. Plus, a timing system and spectator seating tell me this place is set up for events, maybe high school swim meets or local competitions. For a town the size of Framingham, with 72,032 people, having a competition-style pool that's free to use is a big deal for keeping people active. I'd imagine it gets pretty popular, especially during peak seasons given the price point and what it offers.",
+   "after": "Honestly, 3.7 stars from over 200 reviews, that's not too shabby for a community pool. Especially when you consider that it's free to get in, for both adults and kids, which is a major plus these days. I've seen a lot of pools, and free admission often means you compromise on amenities, but that's not really the case here. You've got lap lanes, which is key for anyone serious about swimming. Plus, a timing system and spectator seating tell me this place is set up for events, maybe high school swim meets or local competitions. For a town the size of Framingham, with 72,032 people, having a competition-style pool that's free to use is a big deal for keeping people active. I'd imagine it gets pretty popular, especially during peak seasons given the price point and what it offers.",
+   "note": "Added 2026-11-16 (content review). 'Plus, a timing system and spectator seating tell me ...' names two amenities: kept.",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "live pool page /oregon/eugene/glass-bar-nude-beach/ (ai_faqs[1].a)",
+   "source": "live page fetched 2026-11-16T20:03:00Z (2026-11-16 review regression case)",
+   "names": [
+    "Glass Bar Nude Beach",
+    "Eugene",
+    "Oregon"
+   ],
+   "before": "Clothing-optional spots aren't super common everywhere, and Glass Bar Nude Beach is the only one I show in my system for the immediate Eugene area. If you're looking for more options, you might have to expand your search to other parts of Oregon or neighboring states.",
+   "after": "Clothing-optional spots aren't super common everywhere, and Glass Bar Nude Beach is the only one I show in my system for the immediate Eugene area. If you're looking for more options, you might have to expand your search to other parts of Oregon or neighboring states.",
+   "note": "Added 2026-11-16 (content review). The only sentence that answers the question ('... is the only one I show in my system ...') is an inventory claim: 'the only one' is no longer masked as a non-number, so it is kept.",
+   "pool_page": true
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /virginia/arlington/arlington-family-aquatic-center/ (ai_faqs[2].a)",
+   "source": "live page fetched 2026-11-16T19:55:48Z (2026-11-16 review regression case)",
+   "before": {
+    "q": "Are there other free swimming options in Arlington?",
+    "a": "I only have data on this specific facility being free. To find other options, I'd suggest looking at the Arlington Parks and Recreation department's website."
+   },
+   "after": "keep_entry",
+   "note": "Added 2026-11-16 (content review). 'I only have data on this specific facility being free.' is a limiter-only gap that carries a price fact: the entry is not wholly non-informative.",
+   "pool_page": true
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /washington/vancouver/ (ai_faqs[3].a)",
+   "source": "live page fetched 2026-11-16T19:39:29Z (2026-11-16 review regression case)",
+   "names": [
+    null,
+    "Vancouver",
+    "Washington"
+   ],
+   "before": "Vancouver has more indoor pools compared to outdoor pools, probably because of the climate. The consistent rain and cooler temperatures for much of the year make indoor facilities a more practical choice for year-round swimming. We have good options like the Vancouver Aquatic Center and the Vancouver Community Pool that are fully enclosed.",
+   "after": "Vancouver has more indoor pools compared to outdoor pools, probably because of the climate. The consistent rain and cooler temperatures for much of the year make indoor facilities a more practical choice for year-round swimming. We have good options like the Vancouver Aquatic Center and the Vancouver Community Pool that are fully enclosed.",
+   "note": "Added 2026-11-16 (content review). Last sentence 'We have good options like the Vancouver Aquatic Center and the Vancouver Community Pool that are fully enclosed.' names two facilities and 'enclosed': kept (entity guard on the last sentence, and 'enclosed' is fact vocabulary).",
+   "pool_page": false,
+   "actual": 9
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /washington/bremerton/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:36:58Z (2026-11-16 review regression case)",
+   "names": [
+    null,
+    "Bremerton",
+    "Washington"
+   ],
+   "before": "Around here, you're looking at a pretty solid indoor swim season. For outdoor pools, if you're lucky, maybe late May through Labor Day. It just depends on the year and how much sun we get. We've got a decent mix of pools in Bremerton. Some are more about getting your laps in, while others are definitely set up for families and younger swimmers. If you're new in town and trying to find a regular spot, I'd say check out what's available and see what fits your routine. We've got three public spots listed for Bremerton, so chances are one of them will work for whatever kind of swimming you're into. Some folks love the community vibe, others just want a quiet lane.",
+   "after": "Around here, you're looking at a pretty solid indoor swim season. For outdoor pools, if you're lucky, maybe late May through Labor Day. It just depends on the year and how much sun we get. We've got a decent mix of pools in Bremerton. Some are more about getting your laps in, while others are definitely set up for families and younger swimmers. If you're new in town and trying to find a regular spot, I'd say check out what's available and see what fits your routine. We've got three public spots listed for Bremerton, so chances are one of them will work for whatever kind of swimming you're into. Some folks love the community vibe, others just want a quiet lane.",
+   "note": "Added 2026-11-16 (content review). Deleting 'We've got a decent mix of pools in Bremerton.' would leave 'Some are more about getting your laps in ...' without its subject: skipped (quantifier-pronoun opener).",
+   "pool_page": false,
+   "expect_skip": "next_sentence_refers_back",
+   "actual": 3
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /illinois/downers-grove/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:38:01Z (2026-11-16 review regression case)",
+   "names": [
+    null,
+    "Downers Grove",
+    "Illinois"
+   ],
+   "before": "Summer in this part of Illinois, it hits hard. You'll definitely want a pool. Our season usually kicks off Memorial Day weekend and wraps up right after Labor Day. It's a pretty family-focused swim scene out here. Lots of kids splashing around, swim lessons, that kind of thing. You'll see some lap swimmers early in the morning or later in the evening, but daytime is all about the families. If you're new in Downers Grove, just know that the public pools here are solid options. Finding a spot where you can just show up and swim isn't too tough, but if you want something more private, there are other ways to get in the water.",
+   "after": "Summer in this part of Illinois, it hits hard. You'll definitely want a pool. Our season usually kicks off Memorial Day weekend and wraps up right after Labor Day. It's a pretty family-focused swim scene out here. Lots of kids splashing around, swim lessons, that kind of thing. You'll see some lap swimmers early in the morning or later in the evening, but daytime is all about the families. If you're new in Downers Grove, just know that the public pools here are solid options. Finding a spot where you can just show up and swim isn't too tough, but if you want something more private, there are other ways to get in the water.",
+   "note": "Added 2026-11-16 (content review). Deleting the 'swim scene' sentence would leave the verbless fragment 'Lots of kids splashing around, ...': skipped.",
+   "pool_page": false,
+   "expect_skip": "next_sentence_refers_back",
+   "actual": 3
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /colorado/centennial/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:39:29Z (2026-11-16 review regression case)",
+   "names": [
+    null,
+    "Centennial",
+    "Colorado"
+   ],
+   "before": "Around here, when the sun really starts to bake the pavement, usually sometime in May, that's when everyone gets serious about finding a pool. Our swimming season is pretty much straight through Memorial Day to Labor Day. If you're new to the area, it's good to know that a lot of the swimming here is family focused. You'll find plenty of spots for kids to splash around, and a lot of lessons going on. Less of the serious lap-swimming vibe, though you can still find it. We've got a decent number of public pools, four listed in our directory, covering everything from basic swim to full-blown aquatic centers. Finding a pool in Centennial for the summer isn't too hard, but if you're looking for something beyond the public options, there are other ways to go.",
+   "after": "Around here, when the sun really starts to bake the pavement, usually sometime in May, that's when everyone gets serious about finding a pool. Our swimming season is pretty much straight through Memorial Day to Labor Day. If you're new to the area, it's good to know that a lot of the swimming here is family focused. You'll find plenty of spots for kids to splash around, and a lot of lessons going on. Less of the serious lap-swimming vibe, though you can still find it. We've got a decent number of public pools, four listed in our directory, covering everything from basic swim to full-blown aquatic centers. Finding a pool in Centennial for the summer isn't too hard, but if you're looking for something beyond the public options, there are other ways to go.",
+   "note": "Added 2026-11-16 (content review). '..., four listed in our directory, covering everything from basic swim to full-blown aquatic centers.' carries a claim beyond the count: review_mixed, not deleted. Page header: 6 pools.",
+   "pool_page": false,
+   "actual": 6
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /texas/houston/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:42:55Z (2026-11-16 review regression case)",
+   "names": [
+    null,
+    "Houston",
+    "Texas"
+   ],
+   "before": "Houston's summers are long and hot, that's just a fact. People here look for any excuse to get in the water, sometimes as early as April, and often all the way through October. The public pools get a lot of use. It's a pretty diverse swim scene. You'll see serious lap swimmers getting their workouts in early, but by midday, especially on weekends, it's mostly families and folks just trying to cool off. If you're new to the area, don't worry too much about finding a pool. There are options out there, from city-run spots to private clubs. We've got a decent number of places listed for Houston, five public pools right in our directory, plus lots of backyard pools available by the hour.",
+   "after": "Houston's summers are long and hot, that's just a fact. People here look for any excuse to get in the water, sometimes as early as April, and often all the way through October. The public pools get a lot of use. It's a pretty diverse swim scene. You'll see serious lap swimmers getting their workouts in early, but by midday, especially on weekends, it's mostly families and folks just trying to cool off. If you're new to the area, don't worry too much about finding a pool. There are options out there, from city-run spots to private clubs. We've got a decent number of places listed for Houston, five public pools right in our directory, plus lots of backyard pools available by the hour.",
+   "note": "Added 2026-11-16 (content review). '..., five public pools right in our directory, plus lots of backyard pools available by the hour.' carries a second claim: review_mixed, not deleted. Page header: 53 pools.",
+   "pool_page": false,
+   "actual": 53
   }
  ]
 }

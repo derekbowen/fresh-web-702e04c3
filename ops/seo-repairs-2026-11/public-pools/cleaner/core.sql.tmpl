@@ -7,15 +7,17 @@
 --   n_del_entries, old_md5, new_md5
 -- Rules (rules.json, text-defects/text_defect_rules.py): R1 reformat ai_best_for; R5 delete wholly
 -- non-informative FAQ entries; R6 delete contradicted pool-count sentences (cities); R2/R3/R4 delete
--- deletable narrator sentences. Plus the apply addendum A1-A4 (RUNBOOK.md section 3). Scope: published rows.
+-- deletable narrator sentences. Plus the apply addendum A1-A5 (RUNBOOK.md section 3). Scope: published rows.
+-- No pattern uses \s: whitespace is the explicit class WS (= Python's \s), so the plan does not depend on the server's ctype.
 -- ======================================================================================================
 rx as (
   select {SING}::text sing, {PLUR}::text plur, {LOCAL}::text loc, {SITE}::text site, {ROMAN_I}::text roman,
-    {GAP}::text gap, {GAP_NEG}::text gapneg, {FOUNDER}::text founder, {ADVICE}::text advice,
+    {GAP}::text gap, {GAP_NEG}::text gapneg, {GAP_HARD}::text gaphard, {FOUNDER}::text founder, {ADVICE}::text advice,
     {GENERIC_ADVICE}::text gadv, {GENERIC_GAP}::text ggap, {NUM_MASK}::text nmask, {NUMERIC}::text num,
     {URL}::text url, {CLAUSE}::text clause, {COMMA_SPLICE}::text splice, {SPLICE_OK}::text splice_ok,
     {POLARITY}::text polar, {LEXICON}::text lex, {LEX_PRICE_SCHEDULE}::text lexps, {INSURANCE}::text ins,
     {DANGLING_OPENER}::text dangle, {ABBREV}::text abbrev, {SPLIT}::text split, {CAPWORD}::text cap,
+    {ENTITY_EXEMPT_LAST}::text ent_exempt, {NOT_WS}::text not_ws,
     {MARK}::text mark,
     {COUNT_V0}::text cnt0, {COUNT_V1}::text cnt1, {COUNT_V2}::text cnt2, {COUNT_V3}::text cnt3,
     {COUNT2}::text cntl, {COUNT_ZERO}::text cntz, {COUNT_THE_ONE}::text cnt_one, {COUNT_THE_ONLY}::text cnt_only,
@@ -85,10 +87,14 @@ f2 as (    -- per-sentence features (text_defect_rules.is_narrator / classify)
     regexp_replace(s, rx.nmask, 'X', 'g') ~ rx.num has_num,
     s ~ rx.url has_url, s ~ rx.clause has_clause, (s ~ rx.splice and s !~ rx.splice_ok) has_splice,
     s ~ rx.polar is_polar, s ~ rx.lex has_lex, s ~ rx.lexps has_lexps, s ~ rx.ins has_ins,
-    (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.advice is_adv, s ~ rx.founder is_founder,
+    (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.gaphard is_gaphard, s ~ rx.advice is_adv, s ~ rx.founder is_founder,
     (s ~ rx.gadv or s ~ rx.ggap) is_generic,
     regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, ''), ' '),
       coalesce(n2, ''), ' '), coalesce(n3, ''), ' '), rx.sing, ' ', 'g') ~ rx.cap has_entity,
+    -- the same test for a deleted sentence that is the last kept context: the site's name and generic agency words
+    -- ("City of X Parks and Recreation") do not count (text_defect_rules.has_entity(last=True))
+    regexp_replace(regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, ''), ' '),
+      coalesce(n2, ''), ' '), coalesce(n3, ''), ' '), rx.sing, ' ', 'g'), rx.ent_exempt, ' ', 'g') ~ rx.cap has_entity_last,
     s ~ rx.dangle dangles, s ~ rx.a5 dangles5
   from f1 cross join rx),
 f3 as (
@@ -100,6 +106,7 @@ f3 as (
          when has_num or has_url or has_clause or has_splice or is_polar then false
          when not is_gap and has_lex then false
          when not is_gap and not is_adv and has_lexps then false
+         when is_gap and not is_gaphard and (has_lex or has_lexps) then false   -- "I only have data on X being free"
          else true end narr_del,
     (kind is null and is_generic and not has_num and not has_url and not has_clause) gen_ok
   from f2),
@@ -153,7 +160,8 @@ r6 as (
          when g.between_ ~ rx.subtype then 'review_subtype'
          when replace(g.s, g.phrase, ' ') ~ rx.lex or replace(g.s, g.phrase, ' ') ~ rx.lexps
               or replace(g.s, g.phrase, ' ') ~ rx.url or replace(g.s, g.phrase, ' ') ~ rx.claim
-              or regexp_replace(replace(g.s, g.phrase, ' '), rx.nmask, 'X', 'g') ~ rx.num then 'review_mixed'
+              or regexp_replace(replace(g.s, g.phrase, ' '), rx.nmask, 'X', 'g') ~ rx.num
+              or replace(g.s, g.phrase, ' ') ~ rx.clause then 'review_mixed'
          else 'auto' end r6cat,
     g.stated, g.phrase
   from r6g g cross join rx),
@@ -184,7 +192,8 @@ grp as (   -- freeze checks per column (insurance; addendum A3 insurance anywher
   where not coalesce(r5.del5, false)
   group by 1, 2, 3),
 g0 as (
-  select f3.tbl, f3.rid, f3.col, f3.ent, f3.k, f3.s, f3.kind, f3.narr_del, f3.has_ins, f3.has_entity, f3.dangles, f3.dangles5,
+  select f3.tbl, f3.rid, f3.col, f3.ent, f3.k, f3.s, f3.kind, f3.narr_del, f3.has_ins, f3.has_entity, f3.has_entity_last,
+    f3.dangles, f3.dangles5,
     not coalesce(r5.del5, false) present0,
     r6.r6cat, coalesce(sep.sep_before, '') sep_before,
     case when f3.col = 'ai_faqs' then rx.min_answer else rx.min_prose end minlen
@@ -219,7 +228,8 @@ p1w as (  -- nk: next kept sentence, np: next present sentence (arrays are index
          nxt as (partition by tbl, rid, col, ent order by k rows between 1 following and unbounded following)),
 p1x as (
   select p1w.*,
-    (m1 and dang_arr[nk]) bad_next, (m1 and dang5_arr[nk]) bad_next5, (m1 and nk is not null and has_entity) bad_ent,
+    (m1 and dang_arr[nk]) bad_next, (m1 and dang5_arr[nk]) bad_next5,
+    (m1 and ((nk is not null and has_entity) or (nk is null and has_entity_last))) bad_ent,
     (m1 and ((k <> fp and strpos(sep_before, chr(10)) > 0) or coalesce(strpos(sep_arr[np], chr(10)) > 0, false))) bad_para
   from p1w),
 u1 as (
@@ -242,7 +252,8 @@ c1 as (
   from u1r group by 1, 2, 3),
 -- ---------------------------------------------------------------- pass 2: narrator (R2 descriptions, R3 pool FAQ, R4 cities)
 p2 as (
-  select p1.tbl, p1.rid, p1.col, p1.ent, p1.k, p1.s, p1.narr_del, p1.has_entity, p1.dangles, p1.dangles5, p1.sep_before,
+  select p1.tbl, p1.rid, p1.col, p1.ent, p1.k, p1.s, p1.narr_del, p1.has_entity, p1.has_entity_last, p1.dangles, p1.dangles5,
+    p1.sep_before,
     p1.minlen, p1.frozen, p1.m1, p1.present0,
     (p1.present0 and not (p1.m1 and c1.any_m1 and c1.why1 is null)) present1
   from p1 join c1 using (tbl, rid, col)),
@@ -262,7 +273,8 @@ p2w as (  -- nk: next kept sentence, np: next present sentence (arrays are index
          nxt as (partition by tbl, rid, col, ent order by k rows between 1 following and unbounded following)),
 p2x as (
   select p2w.*,
-    (m2 and dang_arr[nk]) bad_next, (m2 and dang5_arr[nk]) bad_next5, (m2 and nk is not null and has_entity) bad_ent,
+    (m2 and dang_arr[nk]) bad_next, (m2 and dang5_arr[nk]) bad_next5,
+    (m2 and ((nk is not null and has_entity) or (nk is null and has_entity_last))) bad_ent,
     (m2 and ((k <> fp and strpos(sep_before, chr(10)) > 0) or coalesce(strpos(sep_arr[np], chr(10)) > 0, false))) bad_para
   from p2w),
 u2 as (
@@ -320,7 +332,7 @@ bf as (
          when jsonb_typeof(j) <> 'array' then 'not_a_list'
          when jsonb_array_length(j) = 0 then 'empty_list'
          when exists (select 1 from jsonb_array_elements(j) e
-                       where jsonb_typeof(e) <> 'string' or (e #>> '{}') !~ '\S' or (e #>> '{}') ~ rx.bf_bad)
+                       where jsonb_typeof(e) <> 'string' or (e #>> '{}') !~ rx.not_ws or (e #>> '{}') ~ rx.bf_bad)
               then 'element_not_plain_text'
          when raw ~ rx.ins then 'insurance' end why
   from bf0 cross join rx),

@@ -1,42 +1,42 @@
 # Public-pools text cleaner: before / after sample
 
-> **Data source: SURROGATE, NOT PRODUCTION.** The production dry run could not be run on 2026-11-16 (database tool unavailable; PR-6 in [PENDING-READS.md](PENDING-READS.md)). The rows below are real text: the fields of the live pages fetched read-only on **2026-11-16** (2,000 pool and 476 city pages of the saved sitemap), which equalled the production extract of 2026-11-15 byte for byte wherever compared. They were loaded into a throwaway local PostgreSQL 16 table and run through the SAME SQL as dry-run.sql (core md5 `88e17e31d9d9842a9975f666fd1f02bc`). The 15 fields per rule were chosen in the database with the dry run's own seeded selection (`order by md5(row_id || col || '2026-11-15')`, row ids being local md5s of the page URL). The production dry run prints the same section (section 4) on production rows; **that** is the sample to approve. Whether pp-ssr reads this database live is **UNVERIFIED**.
+> **Data source: SURROGATE, NOT PRODUCTION.** The production dry run could not be run on 2026-11-16 (database tool unavailable; PR-6 in [PENDING-READS.md](PENDING-READS.md)). The rows below are real text: the fields of the live pages fetched read-only on **2026-11-16** (2,000 pool and 476 city pages of the saved sitemap), which equalled the production extract of 2026-11-15 byte for byte wherever compared. They were loaded into a throwaway local PostgreSQL 16 table and run through the SAME SQL as dry-run.sql (core md5 `cc451c2e7b21197a101760f428f6f1f0`). The 15 fields per rule were chosen in the database with the dry run's own seeded selection (`order by md5(row_id || col || '2026-11-15')`, row ids being local md5s of the page URL). The production dry run prints the same section (section 4) on production rows; **that** is the sample to approve. Whether pp-ssr reads this database live is **UNVERIFIED**.
 
-Every change below either deletes whole sentences, deletes whole FAQ entries, or re-joins an existing list (R1). No word is added or reworded. Rules: [rules.json](rules.json), [TEXT-DEFECTS.md](TEXT-DEFECTS.md); field-level additions A1-A4: [RUNBOOK.md](RUNBOOK.md) section 3.
+Every change below either deletes whole sentences, deletes whole FAQ entries, or re-joins an existing list (R1). No word is added or reworded. Rules: [rules.json](rules.json), [TEXT-DEFECTS.md](TEXT-DEFECTS.md); field-level additions A1-A5: [RUNBOOK.md](RUNBOOK.md) section 3. Regenerated 2026-11-16 after the content review narrowed the rules (RUNBOOK.md section 3a); invented founder-voice sentences that stay are listed in [FOUNDER-VOICE-REMAINING.md](FOUNDER-VOICE-REMAINING.md).
 
 ## Totals on the surrogate (2,476 live pages, 2026-11-16)
 
 | Table | Column | Rules | Fields changed |
 |---|---|---|---|
-| pp_cities | ai_faqs | R4 | 31 |
-| pp_cities | ai_faqs | R6 | 1 |
-| pp_cities | ai_intro | R4 | 136 |
-| pp_cities | ai_intro | R6 | 9 |
+| pp_cities | ai_faqs | R4 | 28 |
+| pp_cities | ai_intro | R4 | 121 |
+| pp_cities | ai_intro | R6 | 2 |
 | pp_cities | ai_intro | R6+R4 | 1 |
 | pp_pools | ai_best_for | R1 | 1,678 |
-| pp_pools | ai_description | R2 | 210 |
-| pp_pools | ai_faqs | R3 | 622 |
-| pp_pools | ai_faqs | R5 | 40 |
+| pp_pools | ai_description | R2 | 195 |
+| pp_pools | ai_faqs | R3 | 579 |
+| pp_pools | ai_faqs | R5 | 39 |
 | pp_pools | ai_faqs | R5+R3 | 18 |
-| | | **total** | **2,746** |
+| | | **total** | **2,661** |
 
 Fields skipped (a rule would have changed them, a skip condition stopped it), by reason:
 
 | Skip | Fields |
 |---|---|
-| `R3:next_sentence_refers_back` | 212 |
-| `R2:next_sentence_refers_back` | 182 |
-| `R4:next_sentence_refers_back` | 61 |
-| `ALL:insurance_anywhere` | 39 |
-| `R3:deleted_sentence_names_an_entity` | 26 |
-| `R4:deleted_sentence_names_an_entity` | 14 |
+| `R3:next_sentence_refers_back` | 214 |
+| `R2:next_sentence_refers_back` | 186 |
+| `R4:next_sentence_refers_back` | 77 |
+| `R3:deleted_sentence_names_an_entity` | 64 |
+| `ALL:insurance_anywhere` | 38 |
+| `R4:deleted_sentence_names_an_entity` | 15 |
+| `R2:deleted_sentence_names_an_entity` | 10 |
 | `ALL:insurance` | 9 |
-| `R3:below_min_length` | 9 |
-| `R2:deleted_sentence_names_an_entity` | 8 |
+| `R3:below_min_length` | 8 |
 | `R1:empty_list` | 7 |
-| `R6:next_sentence_refers_back` | 5 |
 | `R2:next_sentence_refers_back_a5` | 2 |
-| `R6:next_sentence_refers_back_a5` | 2 |
+| `R6:deleted_sentence_names_an_entity` | 2 |
+| `R6:next_sentence_refers_back` | 2 |
+| `R6:next_sentence_refers_back_a5` | 1 |
 
 ## R1: Best-for JSON array becomes a plain list
 
@@ -194,23 +194,9 @@ After:
 
 ## R2: narrator sentences in pool descriptions
 
-15 of 210 fields carrying R2.
+15 of 195 fields carrying R2.
 
-### R2.1 `pp_pools.ai_description` /public-pools/indiana/indianapolis/gustafson-park-outdoor-pool/ (rules applied to this field: R2)
-
-Before:
-
-> Gustafson Park pool sounds like a decent public option in Indianapolis. They've got solid hours, opening at 11 AM most days and staying open until 8 PM on Tuesdays and Fridays, which is nice if you want an evening swim. Sundays are a bit later, 12 PM to 6 PM. It's got a 4.2-star rating from over eighty people, so that tells me it's generally well-liked. With Indianapolis being a big city (almost 900,000 folks), having spots like this matters. It's on Moller Road, pretty straightforward to find. I'd say it's probably standard public pool stuff, good for a casual dip or taking the kids to cool off. Just make sure to check their website or give them a call, especially since Mondays are a no-go.
-
-After:
-
-> Gustafson Park pool sounds like a decent public option in Indianapolis. They've got solid hours, opening at 11 AM most days and staying open until 8 PM on Tuesdays and Fridays, which is nice if you want an evening swim. Sundays are a bit later, 12 PM to 6 PM. It's got a 4.2-star rating from over eighty people, so that tells me it's generally well-liked. With Indianapolis being a big city (almost 900,000 folks), having spots like this matters. It's on Moller Road, pretty straightforward to find. Just make sure to check their website or give them a call, especially since Mondays are a no-go.
-
-Deleted sentence(s):
-
-- “I'd say it's probably standard public pool stuff, good for a casual dip or taking the kids to cool off.”
-
-### R2.2 `pp_pools.ai_description` /public-pools/georgia/decatur/decatur-aquatic-center/ (rules applied to this field: R2)
+### R2.1 `pp_pools.ai_description` /public-pools/georgia/decatur/decatur-aquatic-center/ (rules applied to this field: R2)
 
 Before:
 
@@ -224,7 +210,7 @@ Deleted sentence(s):
 
 - “I'd definitely consider it for a casual swim day.”
 
-### R2.3 `pp_pools.ai_description` /public-pools/texas/austin/greater-austin-ymca-central-offices/ (rules applied to this field: R2)
+### R2.2 `pp_pools.ai_description` /public-pools/texas/austin/greater-austin-ymca-central-offices/ (rules applied to this field: R2)
 
 Before:
 
@@ -238,21 +224,7 @@ Deleted sentence(s):
 
 - “Honestly, I'm a bit stumped with this one.”
 
-### R2.4 `pp_pools.ai_description` /public-pools/texas/fort-worth/marine-park-pool/ (rules applied to this field: R2)
-
-Before:
-
-> If you're in Fort Worth looking for a good outdoor spot, Marine Park Pool has some nice things going for it. They've got water slides and a lazy river which is always a hit, especially for kids. It's got a 4/5 rating on Google, based on 72 reviews, so most folks seem to like it. Plus, they offer swim lessons, which is great for parents. The pricing is pretty clear too, just remember it's $3 for residents and $5 if you're not from Fort Worth. It's an outdoor spot, so you'll want good weather. Seems like a solid option if you're in the area and want to cool off or get some recreation. I always appreciate when a pool has a dedicated kids' area, like this one does. Just makes it easier for everyone.
-
-After:
-
-> If you're in Fort Worth looking for a good outdoor spot, Marine Park Pool has some nice things going for it. They've got water slides and a lazy river which is always a hit, especially for kids. It's got a 4/5 rating on Google, based on 72 reviews, so most folks seem to like it. Plus, they offer swim lessons, which is great for parents. The pricing is pretty clear too, just remember it's $3 for residents and $5 if you're not from Fort Worth. It's an outdoor spot, so you'll want good weather. Seems like a solid option if you're in the area and want to cool off or get some recreation. Just makes it easier for everyone.
-
-Deleted sentence(s):
-
-- “I always appreciate when a pool has a dedicated kids' area, like this one does.”
-
-### R2.5 `pp_pools.ai_description` /public-pools/florida/hialeah/west-end-park-pool/ (rules applied to this field: R2)
+### R2.3 `pp_pools.ai_description` /public-pools/florida/hialeah/west-end-park-pool/ (rules applied to this field: R2)
 
 Before:
 
@@ -266,7 +238,7 @@ Deleted sentence(s):
 
 - “When I scout these places, I always try to imagine who'd use it most.”
 
-### R2.6 `pp_pools.ai_description` /public-pools/nevada/las-vegas/citrus-grand-pool-deck/ (rules applied to this field: R2)
+### R2.4 `pp_pools.ai_description` /public-pools/nevada/las-vegas/citrus-grand-pool-deck/ (rules applied to this field: R2)
 
 Before:
 
@@ -280,7 +252,7 @@ Deleted sentence(s):
 
 - “When I look at pool spots in Las Vegas, a lot of them are tucked into big resorts.”
 
-### R2.7 `pp_pools.ai_description` /public-pools/arizona/glendale/glendale-municipal-pool/ (rules applied to this field: R2)
+### R2.5 `pp_pools.ai_description` /public-pools/arizona/glendale/glendale-municipal-pool/ (rules applied to this field: R2)
 
 Before:
 
@@ -294,7 +266,7 @@ Deleted sentence(s):
 
 - “It tells me most people who go to the Glendale Municipal Pool in Glendale, AZ, have a pretty good time.”
 
-### R2.8 `pp_pools.ai_description` /public-pools/texas/flower-mound/flower-mound-community-pool/ (rules applied to this field: R2)
+### R2.6 `pp_pools.ai_description` /public-pools/texas/flower-mound/flower-mound-community-pool/ (rules applied to this field: R2)
 
 Before:
 
@@ -308,7 +280,7 @@ Deleted sentence(s):
 
 - “I definitely like the range of options here.”
 
-### R2.9 `pp_pools.ai_description` /public-pools/delaware/wilmington/chichester-high-school-swimming-pool-wilmington/ (rules applied to this field: R2)
+### R2.7 `pp_pools.ai_description` /public-pools/delaware/wilmington/chichester-high-school-swimming-pool-wilmington/ (rules applied to this field: R2)
 
 Before:
 
@@ -322,7 +294,7 @@ Deleted sentence(s):
 
 - “I always appreciate when a facility is clear about what's available.”
 
-### R2.10 `pp_pools.ai_description` /public-pools/ohio/dublin/dublin-community-pool-south/ (rules applied to this field: R2)
+### R2.8 `pp_pools.ai_description` /public-pools/ohio/dublin/dublin-community-pool-south/ (rules applied to this field: R2)
 
 Before:
 
@@ -336,7 +308,7 @@ Deleted sentence(s):
 
 - “My read is it's a reliable, no-frills place to swim.”
 
-### R2.11 `pp_pools.ai_description` /public-pools/minnesota/lakeville/lakeville-community-pool/ (rules applied to this field: R2)
+### R2.9 `pp_pools.ai_description` /public-pools/minnesota/lakeville/lakeville-community-pool/ (rules applied to this field: R2)
 
 Before:
 
@@ -351,7 +323,7 @@ Deleted sentence(s):
 - “I appreciate a pool that offers more than just the basics.”
 - “I think it holds its own.”
 
-### R2.12 `pp_pools.ai_description` /public-pools/nevada/las-vegas/best-pool-party-las-vegas-vip-reservations/ (rules applied to this field: R2)
+### R2.10 `pp_pools.ai_description` /public-pools/nevada/las-vegas/best-pool-party-las-vegas-vip-reservations/ (rules applied to this field: R2)
 
 Before:
 
@@ -365,7 +337,7 @@ Deleted sentence(s):
 
 - “My guess is it's more of a curated experience.”
 
-### R2.13 `pp_pools.ai_description` /public-pools/wisconsin/madison/warner-park-pool/ (rules applied to this field: R2)
+### R2.11 `pp_pools.ai_description` /public-pools/wisconsin/madison/warner-park-pool/ (rules applied to this field: R2)
 
 Before:
 
@@ -379,7 +351,7 @@ Deleted sentence(s):
 
 - “It tells me people generally love it at Warner Park Pool in Madison.”
 
-### R2.14 `pp_pools.ai_description` /public-pools/nevada/las-vegas/garside-pool-2/ (rules applied to this field: R2)
+### R2.12 `pp_pools.ai_description` /public-pools/nevada/las-vegas/garside-pool-2/ (rules applied to this field: R2)
 
 Before:
 
@@ -393,7 +365,7 @@ Deleted sentence(s):
 
 - “My honest take is it's probably a decent setup for locals who know the schedule.”
 
-### R2.15 `pp_pools.ai_description` /public-pools/ohio/columbus/windsor-swimming-pool/ (rules applied to this field: R2)
+### R2.13 `pp_pools.ai_description` /public-pools/ohio/columbus/windsor-swimming-pool/ (rules applied to this field: R2)
 
 Before:
 
@@ -407,9 +379,37 @@ Deleted sentence(s):
 
 - “My take is it's a straightforward spot for a swim.”
 
+### R2.14 `pp_pools.ai_description` /public-pools/nevada/las-vegas/the-pool-at-harrah-s-las-vegas/ (rules applied to this field: R2)
+
+Before:
+
+> Alright, so if you're thinking about a pool in Vegas, I've got one for you to consider: The Pool at Harrah's. It's an outdoor spot, a casino pool, what you'd expect in Vegas. From the reviews I've seen, it's got a 3.1 out of 5 from 31 people. That's not terrible for a casino pool, but it's clearly not blowing anyone away either. Most days it's open from 9 AM to 6 PM, but they do stay open later on weekends, until 8 PM on Saturday and Sunday. You'll find it right there inside the Harrah's Las Vegas Hotel, on Las Vegas Boulevard. If you need to call them, their number is (702) 421-2495. I'd do that before heading over, just to double check any specifics.
+
+After:
+
+> Alright, so if you're thinking about a pool in Vegas, I've got one for you to consider: The Pool at Harrah's. It's an outdoor spot, a casino pool, what you'd expect in Vegas. From the reviews I've seen, it's got a 3.1 out of 5 from 31 people. That's not terrible for a casino pool, but it's clearly not blowing anyone away either. Most days it's open from 9 AM to 6 PM, but they do stay open later on weekends, until 8 PM on Saturday and Sunday. You'll find it right there inside the Harrah's Las Vegas Hotel, on Las Vegas Boulevard. If you need to call them, their number is (702) 421-2495.
+
+Deleted sentence(s):
+
+- “I'd do that before heading over, just to double check any specifics.”
+
+### R2.15 `pp_pools.ai_description` /public-pools/colorado/aurora/cook-park-pool-co/ (rules applied to this field: R2)
+
+Before:
+
+> It's always a good sign when a city of Aurora's size (about 386,000 people, last I checked) has a solid outdoor pool. Cook Park Pool is exactly that. It's a seasonal spot, so you're looking at summer fun mostly. From what I've seen, places like this really become community hubs when the weather warms up. Folks are always looking for a good, clean outdoor pool to cool off in. I always tell people, an outdoor city pool can be just what you need without all the fuss of the bigger water parks.
+
+After:
+
+> It's always a good sign when a city of Aurora's size (about 386,000 people, last I checked) has a solid outdoor pool. Cook Park Pool is exactly that. It's a seasonal spot, so you're looking at summer fun mostly. Folks are always looking for a good, clean outdoor pool to cool off in. I always tell people, an outdoor city pool can be just what you need without all the fuss of the bigger water parks.
+
+Deleted sentence(s):
+
+- “From what I've seen, places like this really become community hubs when the weather warms up.”
+
 ## R3: narrator sentences in pool FAQ answers
 
-15 of 640 fields carrying R3.
+15 of 597 fields carrying R3.
 
 ### R3.1 `pp_pools.ai_faqs` /public-pools/texas/austin/austin-swim-club/ (rules applied to this field: R3)
 
@@ -429,11 +429,7 @@ Deleted sentence(s):
 - **Q:** How much does it cost to swim at the Louisville Family Aquatic Center?
   - answer unchanged
 - **Q:** Is the Louisville Family Aquatic Center good for families with kids?
-  - old answer:
-    > It's called the 'Family Aquatic Center,' and children's admission is only $3, which points to it being family-friendly. However, with Olympic lanes and a diving well, it's also set up for more serious swimming. I'd check if they have dedicated play areas if you have very young kids.
-  - new answer:
-    > It's called the 'Family Aquatic Center,' and children's admission is only $3, which points to it being family-friendly. However, with Olympic lanes and a diving well, it's also set up for more serious swimming.
-  - deleted: “I'd check if they have dedicated play areas if you have very young kids.”
+  - answer unchanged
 - **Q:** Is there parking available at the Louisville Family Aquatic Center?
   - old answer:
     > The information I have doesn't specify parking. For a facility in a city the size of Louisville (pop. 633,045), I'd expect some parking. Best to check their site or call for details on parking availability and cost.
@@ -557,28 +553,7 @@ Deleted sentence(s):
     > Houston is a very large city with over 2.3 million people. Checking the Houston Parks and Recreation Department website or a local search should help.
   - deleted: “I'm sure there are many other public and private pool options around.”
 
-### R3.11 `pp_pools.ai_faqs` /public-pools/north-carolina/charlotte/bette-rae-thomas-recreation-center/ (rules applied to this field: R3)
-
-- **Q:** What are the Bette Rae Thomas Recreation Center pool hours?
-  - answer unchanged
-- **Q:** How much does it cost to use the pool at Bette Rae Thomas Recreation Center?
-  - old answer:
-    > The information I have doesn't list specific admission prices. For current rates or membership options, your best bet is to call the center directly at (980) 314-1111 or check their Mecklenburg County Park and Recreation website.
-  - new answer:
-    > For current rates or membership options, your best bet is to call the center directly at (980) 314-1111 or check their Mecklenburg County Park and Recreation website.
-  - deleted: “The information I have doesn't list specific admission prices.”
-- **Q:** Is the Bette Rae Thomas pool good for kids and families?
-  - answer unchanged
-- **Q:** Is there parking or accessibility for people with disabilities?
-  - answer unchanged
-- **Q:** Are there other public pools in Charlotte if this one isn't a good fit?
-  - old answer:
-    > Charlotte is a large city, so there are other public pools and recreation centers. I'd suggest checking the Mecklenburg County Park and Recreation website or calling them to find other options that might be closer or have different amenities.
-  - new answer:
-    > Charlotte is a large city, so there are other public pools and recreation centers.
-  - deleted: “I'd suggest checking the Mecklenburg County Park and Recreation website or calling them to find other options that might be closer or have different amenities.”
-
-### R3.12 `pp_pools.ai_faqs` /public-pools/colorado/aurora/connect-at-first-creek-pool/ (rules applied to this field: R3)
+### R3.11 `pp_pools.ai_faqs` /public-pools/colorado/aurora/connect-at-first-creek-pool/ (rules applied to this field: R3)
 
 - **Q:** Is this pool good for families with kids?
   - old answer:
@@ -589,7 +564,7 @@ Deleted sentence(s):
 - **Q:** Are there other outdoor pools in Aurora, CO?
   - answer unchanged
 
-### R3.13 `pp_pools.ai_faqs` /public-pools/nevada/las-vegas/pavilion-center-pool/ (rules applied to this field: R3)
+### R3.12 `pp_pools.ai_faqs` /public-pools/nevada/las-vegas/pavilion-center-pool/ (rules applied to this field: R3)
 
 - **Q:** What are the operating hours for the Pavilion Center Pool?
   - answer unchanged
@@ -604,7 +579,7 @@ Deleted sentence(s):
     > Las Vegas is a big city with many parks and rec options. If Pavilion Center Pool doesn't fit your needs, the city likely has other public pools.
   - deleted: “I'd suggest checking the City of Las Vegas site or calling their parks department for a list of other facilities.”
 
-### R3.14 `pp_pools.ai_faqs` /public-pools/nevada/north-las-vegas/silver-mesa-activity-pool/ (rules applied to this field: R3)
+### R3.13 `pp_pools.ai_faqs` /public-pools/nevada/north-las-vegas/silver-mesa-activity-pool/ (rules applied to this field: R3)
 
 - **Q:** What are the hours of the Silver Mesa Activity Pool?
   - answer unchanged
@@ -619,7 +594,7 @@ Deleted sentence(s):
 - **Q:** Are there other public pools in North Las Vegas?
   - answer unchanged
 
-### R3.15 `pp_pools.ai_faqs` /public-pools/new-york/queens/astoria-pool/ (rules applied to this field: R3)
+### R3.14 `pp_pools.ai_faqs` /public-pools/new-york/queens/astoria-pool/ (rules applied to this field: R3)
 
 - **Q:** How much does it cost to get into Astoria Pool?
   - answer unchanged
@@ -634,9 +609,24 @@ Deleted sentence(s):
     > Queens has a few other public pools operated by NYC Parks, though not all are Olympic-sized or have diving boards.
   - deleted: “For a full list and details on facilities, I'd suggest checking the NYC Parks website or calling their hotline.”
 
+### R3.15 `pp_pools.ai_faqs` /public-pools/new-york/new-york/gottesman-pool/ (rules applied to this field: R3)
+
+- **Q:** What are the operating hours for Gottesman Pool?
+  - answer unchanged
+- **Q:** Is Gottesman Pool suitable for families with kids?
+  - old answer:
+    > It's a public pool in a big city park, so it's generally fine for families. I'd definitely recommend checking their website for any specific age restrictions or family-friendly amenities.
+  - new answer:
+    > It's a public pool in a big city park, so it's generally fine for families.
+  - deleted: “I'd definitely recommend checking their website for any specific age restrictions or family-friendly amenities.”
+- **Q:** What are the parking options near Gottesman Pool?
+  - answer unchanged
+- **Q:** Are there other public pools nearby in Central Park or New York City?
+  - answer unchanged
+
 ## R4: narrator sentences in city intros / FAQ answers
 
-15 of 168 fields carrying R4.
+15 of 150 fields carrying R4.
 
 ### R4.1 `pp_cities.ai_intro` /public-pools/louisiana/slidell/ (rules applied to this field: R4)
 
@@ -868,7 +858,7 @@ Deleted sentence(s):
 
 ## R5: wholly non-informative FAQ entries
 
-15 of 58 fields carrying R5.
+15 of 57 fields carrying R5.
 
 ### R5.1 `pp_pools.ai_faqs` /public-pools/texas/pleasanton/freedom-rv-resort/ (rules applied to this field: R5)
 
@@ -1058,7 +1048,7 @@ Deleted sentence(s):
 
 ## R6: pool-count sentences contradicted by the page count
 
-11 of 11 fields carrying R6 (all of them: fewer than 15 exist on the surrogate).
+3 of 3 fields carrying R6 (all of them: fewer than 15 exist on the surrogate).
 
 ### R6.1 `pp_cities.ai_intro` /public-pools/south-carolina/mount-pleasant/ (rules applied to this field: R6+R4)
 
@@ -1075,77 +1065,7 @@ Deleted sentence(s):
 - “Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off.”
 - “We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.”
 
-### R6.2 `pp_cities.ai_intro` /public-pools/colorado/centennial/ (rules applied to this field: R6)
-
-Before:
-
-> Around here, when the sun really starts to bake the pavement, usually sometime in May, that's when everyone gets serious about finding a pool. Our swimming season is pretty much straight through Memorial Day to Labor Day. If you're new to the area, it's good to know that a lot of the swimming here is family focused. You'll find plenty of spots for kids to splash around, and a lot of lessons going on. Less of the serious lap-swimming vibe, though you can still find it. We've got a decent number of public pools, four listed in our directory, covering everything from basic swim to full-blown aquatic centers. Finding a pool in Centennial for the summer isn't too hard, but if you're looking for something beyond the public options, there are other ways to go.
-
-After:
-
-> Around here, when the sun really starts to bake the pavement, usually sometime in May, that's when everyone gets serious about finding a pool. Our swimming season is pretty much straight through Memorial Day to Labor Day. If you're new to the area, it's good to know that a lot of the swimming here is family focused. You'll find plenty of spots for kids to splash around, and a lot of lessons going on. Less of the serious lap-swimming vibe, though you can still find it. Finding a pool in Centennial for the summer isn't too hard, but if you're looking for something beyond the public options, there are other ways to go.
-
-Deleted sentence(s):
-
-- “We've got a decent number of public pools, four listed in our directory, covering everything from basic swim to full-blown aquatic centers.”
-
-### R6.3 `pp_cities.ai_intro` /public-pools/wisconsin/milwaukee/ (rules applied to this field: R6)
-
-Before:
-
-> When summer finally hits Milwaukee, people are ready to jump in a pool. It's not a year-round thing here, so when the weather's good, everyone makes the most of it. We've got a decent mix, I'd say. You'll find families cooling off, but there are also dedicated lap swimmers. It's pretty common for folks to hit the public pools as soon as they open, usually late May or early June. Finding a spot is pretty straightforward. Most of the public pools are run by the county or the city, and they're usually open until late August. If you're new in town and looking to swim, just keep in mind that the outdoor season is short but sweet. Even with five pools like Pulaski and Schulz in our directory, a lot of people also look for other options.
-
-After:
-
-> When summer finally hits Milwaukee, people are ready to jump in a pool. It's not a year-round thing here, so when the weather's good, everyone makes the most of it. We've got a decent mix, I'd say. You'll find families cooling off, but there are also dedicated lap swimmers. It's pretty common for folks to hit the public pools as soon as they open, usually late May or early June. Finding a spot is pretty straightforward. Most of the public pools are run by the county or the city, and they're usually open until late August. If you're new in town and looking to swim, just keep in mind that the outdoor season is short but sweet.
-
-Deleted sentence(s):
-
-- “Even with five pools like Pulaski and Schulz in our directory, a lot of people also look for other options.”
-
-### R6.4 `pp_cities.ai_intro` /public-pools/arizona/mesa/ (rules applied to this field: R6)
-
-Before:
-
-> When the summer sun really kicks in here, we're talking triple digits for months on end. That means pools aren't just for cooling off, they're how you live. People around here hit the water to survive the heat, not just for a leisurely swim. You'll find a mix of serious lap swimmers and families looking to escape the heat. It's a pool culture built around beating the Arizona summer. If you're new to the area or just visiting, finding a good pool is key to enjoying your time outside. We've got just one public spot listed for Mesa so far (Skyline Aquatic Center).
-
-After:
-
-> When the summer sun really kicks in here, we're talking triple digits for months on end. That means pools aren't just for cooling off, they're how you live. People around here hit the water to survive the heat, not just for a leisurely swim. You'll find a mix of serious lap swimmers and families looking to escape the heat. It's a pool culture built around beating the Arizona summer. If you're new to the area or just visiting, finding a good pool is key to enjoying your time outside.
-
-Deleted sentence(s):
-
-- “We've got just one public spot listed for Mesa so far (Skyline Aquatic Center).”
-
-### R6.5 `pp_cities.ai_intro` /public-pools/texas/houston/ (rules applied to this field: R6)
-
-Before:
-
-> Houston's summers are long and hot, that's just a fact. People here look for any excuse to get in the water, sometimes as early as April, and often all the way through October. The public pools get a lot of use. It's a pretty diverse swim scene. You'll see serious lap swimmers getting their workouts in early, but by midday, especially on weekends, it's mostly families and folks just trying to cool off. If you're new to the area, don't worry too much about finding a pool. There are options out there, from city-run spots to private clubs. We've got a decent number of places listed for Houston, five public pools right in our directory, plus lots of backyard pools available by the hour.
-
-After:
-
-> Houston's summers are long and hot, that's just a fact. People here look for any excuse to get in the water, sometimes as early as April, and often all the way through October. The public pools get a lot of use. It's a pretty diverse swim scene. You'll see serious lap swimmers getting their workouts in early, but by midday, especially on weekends, it's mostly families and folks just trying to cool off. If you're new to the area, don't worry too much about finding a pool. There are options out there, from city-run spots to private clubs.
-
-Deleted sentence(s):
-
-- “We've got a decent number of places listed for Houston, five public pools right in our directory, plus lots of backyard pools available by the hour.”
-
-### R6.6 `pp_cities.ai_intro` /public-pools/california/sacramento/ (rules applied to this field: R6)
-
-Before:
-
-> Summer in Sacramento can be a real oven, so pools aren't just for fun, they're essential. You'll find a pretty laid-back swimming culture here, mostly families and folks just trying to cool off. When the temperatures start climbing in May, that's when everyone really starts thinking about getting in the water. Most public pools openMemorial Day weekend and stay open through Labor Day. It's not a big lap swimming town from what I've seen at the public spots. You come to Sacramento to beat the heat, splash around, and let the kids burn off some energy. Finding a good spot is usually pretty easy. We've got five public pools on our site for Sacramento, so there are options across the city.
-
-After:
-
-> Summer in Sacramento can be a real oven, so pools aren't just for fun, they're essential. You'll find a pretty laid-back swimming culture here, mostly families and folks just trying to cool off. When the temperatures start climbing in May, that's when everyone really starts thinking about getting in the water. Most public pools openMemorial Day weekend and stay open through Labor Day. It's not a big lap swimming town from what I've seen at the public spots. You come to Sacramento to beat the heat, splash around, and let the kids burn off some energy. Finding a good spot is usually pretty easy.
-
-Deleted sentence(s):
-
-- “We've got five public pools on our site for Sacramento, so there are options across the city.”
-
-### R6.7 `pp_cities.ai_intro` /public-pools/colorado/aurora/ (rules applied to this field: R6)
+### R6.2 `pp_cities.ai_intro` /public-pools/colorado/aurora/ (rules applied to this field: R6)
 
 Before:
 
@@ -1159,52 +1079,7 @@ Deleted sentence(s):
 
 - “We've got five public pools listed in our directory, so you've got options.”
 
-### R6.8 `pp_cities.ai_faqs` /public-pools/alabama/montgomery/ (rules applied to this field: R6)
-
-- **Q:** What's the typical pool season in Montgomery?
-  - answer unchanged
-- **Q:** Are there any free or low-cost swimming options in Montgomery?
-  - old answer:
-    > The Montgomery public pools usually have a small daily entry fee, which keeps them pretty affordable. We've got four listed in our directory: Montgomery Community Pool, Montgomery Municipal Pool, Montgomery Family Aquatic Center, and Montgomery Aquatic Center.
-  - new answer:
-    > The Montgomery public pools usually have a small daily entry fee, which keeps them pretty affordable.
-  - deleted: “We've got four listed in our directory: Montgomery Community Pool, Montgomery Municipal Pool, Montgomery Family Aquatic Center, and Montgomery Aquatic Center.”
-- **Q:** What are the best pools for kids and families?
-  - answer unchanged
-- **Q:** Does Montgomery have indoor pools?
-  - answer unchanged
-- **Q:** Can I rent a private pool by the hour in Montgomery?
-  - answer unchanged
-
-### R6.9 `pp_cities.ai_intro` /public-pools/new-york/brooklyn/ (rules applied to this field: R6)
-
-Before:
-
-> Back when I was first swimming in Brooklyn, a lot of pools were shutting down for the winter right after Labor Day. These days, that's not always the case anymore. Sure, many of the outdoor spots still close up, but you'll find more indoor options stretching the swim season. It's not just about lap swimming here. You'll see plenty of families, especially at the bigger outdoor pools when the weather's good. If you're new to finding a pool, just remember that some places have specific hours for different age groups or types of swimming, so it's always good to check that out before you go. We've got five public pools listed in our directory, so there are options, even if it feels like a big city to navigate.
-
-After:
-
-> Back when I was first swimming in Brooklyn, a lot of pools were shutting down for the winter right after Labor Day. These days, that's not always the case anymore. Sure, many of the outdoor spots still close up, but you'll find more indoor options stretching the swim season. It's not just about lap swimming here. You'll see plenty of families, especially at the bigger outdoor pools when the weather's good. If you're new to finding a pool, just remember that some places have specific hours for different age groups or types of swimming, so it's always good to check that out before you go.
-
-Deleted sentence(s):
-
-- “We've got five public pools listed in our directory, so there are options, even if it feels like a big city to navigate.”
-
-### R6.10 `pp_cities.ai_intro` /public-pools/north-carolina/greensboro/ (rules applied to this field: R6)
-
-Before:
-
-> When it heats up here in Greensboro, and it really does from May through September, folks are looking to cool off. Our swim scene leans pretty heavy into family fun, especially with places like the wave pool and Shipwreck Cove. It's not so much a lap-swim-every-morning kind of town, though you can find that if you look. A lot of people have their spots, but if you're new or just visiting, you might not know where to start. We've got five public pools listed, which is a good baseline, but there are always more options if you want something a bit different than the usual public spot. Knowing the season is key though, because come October, most of the outdoor pools are emptying out for the year.
-
-After:
-
-> When it heats up here in Greensboro, and it really does from May through September, folks are looking to cool off. Our swim scene leans pretty heavy into family fun, especially with places like the wave pool and Shipwreck Cove. It's not so much a lap-swim-every-morning kind of town, though you can find that if you look. A lot of people have their spots, but if you're new or just visiting, you might not know where to start. Knowing the season is key though, because come October, most of the outdoor pools are emptying out for the year.
-
-Deleted sentence(s):
-
-- “We've got five public pools listed, which is a good baseline, but there are always more options if you want something a bit different than the usual public spot.”
-
-### R6.11 `pp_cities.ai_intro` /public-pools/illinois/chicago/ (rules applied to this field: R6)
+### R6.3 `pp_cities.ai_intro` /public-pools/illinois/chicago/ (rules applied to this field: R6)
 
 Before:
 
@@ -1260,7 +1135,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `ALL:insurance_anywhere` | /public-pools/oklahoma/oklahoma-city/pelican-bay-aquatic-center/ | pp_pools.ai_description |  |
 | `ALL:insurance_anywhere` | /public-pools/oregon/beaverton/beaverton-community-pool/ | pp_pools.ai_description |  |
 | `ALL:insurance_anywhere` | /public-pools/texas/el-paso/chapoteo-water-park/ | pp_pools.ai_description |  |
-| `ALL:insurance_anywhere` | /public-pools/texas/irving/irving-municipal-pool/ | pp_pools.ai_faqs |  |
 | `ALL:insurance_anywhere` | /public-pools/texas/katy/katy-municipal-pool/ | pp_pools.ai_description |  |
 | `ALL:insurance_anywhere` | /public-pools/texas/mansfield/mansfield-community-pool/ | pp_pools.ai_description |  |
 | `ALL:insurance_anywhere` | /public-pools/texas/pflugerville/pflugerville-municipal-pool/ | pp_pools.ai_faqs |  |
@@ -1279,14 +1153,16 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R1:empty_list` | /public-pools/florida/kissimmee/american-association-for-nude-recreation/ | pp_pools.ai_best_for |  |
 | `R1:empty_list` | /public-pools/ohio/parma/great-lakes-boats-brokerage-llc/ | pp_pools.ai_best_for |  |
 | `R1:empty_list` | /public-pools/texas/austin/greater-austin-ymca-central-offices/ | pp_pools.ai_best_for |  |
+| `R2:deleted_sentence_names_an_entity` | /public-pools/arizona/phoenix/watts-family-maryvale-ymca/ | pp_pools.ai_description |  |
 | `R2:deleted_sentence_names_an_entity` | /public-pools/arkansas/little-rock/champagnolle-pool-little-rock/ | pp_pools.ai_description |  |
+| `R2:deleted_sentence_names_an_entity` | /public-pools/california/san-jose/queensborough-pool/ | pp_pools.ai_description |  |
 | `R2:deleted_sentence_names_an_entity` | /public-pools/colorado/broomfield/broomfield-community-pool/ | pp_pools.ai_description |  |
 | `R2:deleted_sentence_names_an_entity` | /public-pools/florida/miami/normandy-isle-pool-miami/ | pp_pools.ai_description |  |
 | `R2:deleted_sentence_names_an_entity` | /public-pools/illinois/chicago/chase-park-pool-outdoor/ | pp_pools.ai_description |  |
 | `R2:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/prosperity-park-pool/ | pp_pools.ai_description |  |
-| `R2:deleted_sentence_names_an_entity` | /public-pools/north-carolina/ocean-isle-beach/whispering-pines-nudist-resort/ | pp_pools.ai_description |  |
 | `R2:deleted_sentence_names_an_entity` | /public-pools/ohio/columbus/cherry-creek-ymca-headstart/ | pp_pools.ai_description |  |
 | `R2:deleted_sentence_names_an_entity` | /public-pools/pennsylvania/philadelphia/francisville-recreation-center/ | pp_pools.ai_description |  |
+| `R2:deleted_sentence_names_an_entity` | /public-pools/virginia/richmond/swim-rva-church-hill/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/arizona/avondale/avondale-aquatic-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/arizona/buckeye/buckeye-family-aquatic-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/arizona/goodyear/goodyear-aquatic-center/ | pp_pools.ai_description |  |
@@ -1314,6 +1190,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/california/san-diego/tierrasanta-community-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/california/san-francisco/aquatic-park/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/california/san-francisco/bayview-hunter-s-point-ymca/ | pp_pools.ai_description |  |
+| `R2:next_sentence_refers_back` | /public-pools/california/san-francisco/george-r-moscone-recreation-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/california/san-francisco/glen-park-recreation-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/california/san-francisco/mission-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/california/san-francisco/presidio-community-ymca/ | pp_pools.ai_description |  |
@@ -1329,6 +1206,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/colorado/aurora/connect-at-first-creek-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/colorado/aurora/eisenhower-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/colorado/aurora/green-valley-ranch-east-pool/ | pp_pools.ai_description |  |
+| `R2:next_sentence_refers_back` | /public-pools/colorado/aurora/hills-west-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/colorado/aurora/redstone-apartment-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/colorado/broomfield/broomfield-municipal-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/colorado/lakewood/lakewood-municipal-pool/ | pp_pools.ai_description |  |
@@ -1341,7 +1219,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/florida/jacksonville/paxon-swim-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/florida/miami-beach/haulover-nude-beach/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/florida/miami/splash-miami/ | pp_pools.ai_description |  |
-| `R2:next_sentence_refers_back` | /public-pools/florida/miami/venetian-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/florida/naples/naples-community-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/florida/naples/naples-municipal-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/florida/ocala/ocala-community-pool/ | pp_pools.ai_description |  |
@@ -1369,6 +1246,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/indiana/fishers/fishers-municipal-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/ellenberger-public-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/garfield-park-aquatic-center/ | pp_pools.ai_description |  |
+| `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/gustafson-park-outdoor-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/riverside-park-family-recreation-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/iowa/des-moines/lions-park-seasonal-wading-pool-des-moines/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/kentucky/lexington/belmond-run-swimming-pool/ | pp_pools.ai_description |  |
@@ -1381,14 +1259,16 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/nevada/las-vegas/red-rock-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/las-vegas/rio-ipanema-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/las-vegas/stadium-swim/ | pp_pools.ai_description |  |
-| `R2:next_sentence_refers_back` | /public-pools/nevada/las-vegas/temple-nude-spa/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/las-vegas/wynn-xs-night-swim/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/beach-club-pool-2/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/beach-club-pool/ | pp_pools.ai_description |  |
+| `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/blu-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/boulevard-pool/ | pp_pools.ai_description |  |
+| `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/doolittle-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/moorea-beach-club-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/silver-mesa-activity-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/nevada/north-las-vegas/wave-pool/ | pp_pools.ai_description |  |
+| `R2:next_sentence_refers_back` | /public-pools/nevada/sparks/sparks-aquatic-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/new-jersey/hardyston/rock-lodge-club/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/new-york/bronx/crotona-park-community-center-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/new-york/brooklyn/bkla-swim-academy/ | pp_pools.ai_description |  |
@@ -1398,7 +1278,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/new-york/queens/city-snooker-pool-house/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/new-york/queens/goldfish-swim-school-glendale/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/new-york/queens/rockaway-ymca/ | pp_pools.ai_description |  |
-| `R2:next_sentence_refers_back` | /public-pools/new-york/staten-island/staten-island-family-aquatic-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/north-carolina/apex/apex-municipal-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/north-carolina/cary/cary-community-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/north-carolina/charlotte/aquatic-team-of-mecklenburg/ | pp_pools.ai_description |  |
@@ -1407,6 +1286,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/north-carolina/greensboro/crowne-lake-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/north-carolina/greensboro/oakwood-forest-swimming-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/north-carolina/mooresville/mooresville-aquatic-center/ | pp_pools.ai_description |  |
+| `R2:next_sentence_refers_back` | /public-pools/north-carolina/ocean-isle-beach/whispering-pines-nudist-resort/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/ohio/cleveland/halloran-swimming-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/ohio/cleveland/loew-pool-cleveland/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/ohio/columbus/grandview-heights-municipal-pool/ | pp_pools.ai_description |  |
@@ -1473,39 +1353,76 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back_a5` | /public-pools/indiana/indianapolis/physical-education-natatorium/ | pp_pools.ai_description |  |
 | `R3:below_min_length` | /public-pools/california/fresno/ted-c-wills-community-pool/ | pp_pools.ai_faqs |  |
 | `R3:below_min_length` | /public-pools/california/los-angeles/ketchum-downtown-ymca/ | pp_pools.ai_faqs |  |
-| `R3:below_min_length` | /public-pools/california/sacramento/clunie-pool/ | pp_pools.ai_faqs |  |
 | `R3:below_min_length` | /public-pools/california/san-diego/mcgrath-family-ymca/ | pp_pools.ai_faqs |  |
 | `R3:below_min_length` | /public-pools/florida/palm-coast/palm-coast-family-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:below_min_length` | /public-pools/indiana/fort-wayne/mcmillen-pool/ | pp_pools.ai_faqs |  |
 | `R3:below_min_length` | /public-pools/new-york/brooklyn/ridgewood-ymca/ | pp_pools.ai_faqs |  |
 | `R3:below_min_length` | /public-pools/ohio/columbus/worthington-pools/ | pp_pools.ai_faqs |  |
 | `R3:below_min_length` | /public-pools/texas/fort-worth/chisholm-aquatics-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/arkansas/little-rock/oakbrooke-pool-little-rock/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/california/hesperia/hesperia-civic-plaza-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/california/mountain-view/eagle-park-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/california/sacramento/clunie-pool/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/california/san-diego/allied-gardens-recreation-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/california/san-diego/city-heights-swim-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/california/san-jose/san-jose-municipal-rose-garden-pool/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/california/watsonville/watsonville-city-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/colorado/arvada/arvada-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/colorado/aurora/beck-rec-center-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/colorado/highlands-ranch/highlands-ranch-community-pool/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/delaware/wilmington/cool-spring-reservoir-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/florida/clearwater/clearwater-family-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/florida/jacksonville/highlands-middle-swimming-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/florida/jacksonville/ribault-swim-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/florida/jacksonville/ymca-at-baptist-north/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/florida/miami-beach/haulover-beach-clothing-optional-section/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/florida/port-st-lucie/port-st-lucie-municipal-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/florida/sarasota/sarasota-community-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/florida/st-petersburg/st-petersburg-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/idaho/boise/west-ymca-boise-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/illinois/chicago/cermak-family-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/illinois/chicago/chase-park-pool-outdoor/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/illinois/chicago/crown-family-ymca-center/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/illinois/chicago/ellis-park-pool-indoor/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/illinois/chicago/sheridan-park-pool-indoor/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/illinois/downers-grove/downers-grove-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/illinois/northbrook/northbrook-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/indiana/indianapolis/hyatt-place-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/indiana/indianapolis/iu-natatorium-at-iu-indianapolis/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/indiana/indianapolis/krannert-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/indiana/indianapolis/mooresville-family-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/iowa/des-moines/birdland-pool/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/michigan/detroit/rouge-park-pool/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/missouri/ava/cactus-canyon-campground-and-resort-llc-rated-1-best-nude-men-only-campground/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/missouri/kansas-city/line-creek-community-center-pool/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/nebraska/omaha/lee-valley-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/nevada/las-vegas/bill-and-lillie-heinrich-ymca/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/nevada/las-vegas/the-pool-at-green-valley-ranch/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/nevada/las-vegas/the-pool-at-harrah-s-las-vegas/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/new-jersey/princeton/princeton-community-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/new-york/garden-city/garden-city-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/new-york/new-york/flatbush-ymca/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/new-york/new-york/flushing-meadows-corona-park-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/new-york/queens/hempstead-parks-recreation-averill-boulevard-park-and-swimming-pool-complex/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/new-york/staten-island/staten-island-municipal-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/bette-rae-thomas-recreation-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/eastway-regional-recreation-center/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/mccrorey-ymca/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/mecklenburg-county-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/morrison-family-ymca/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/tidal-wave-bay-charlotte/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/north-carolina/charlotte/west-charlotte-recreation-center/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/ohio/columbus/hilliard-family-aquatic-center/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/ohio/columbus/hunters-ridge-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/ohio/columbus/pickerington-community-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/oregon/portland/sellwood-pool/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/tennessee/franklin/franklin-municipal-pool/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/texas/austin/barton-springs-pool-2/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/texas/austin/barton-springs-pool-south-gate/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/texas/austin/southwest-family-ymca/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/texas/fort-worth/ridglea-swimming-pool-association/ | pp_pools.ai_faqs |  |
 | `R3:deleted_sentence_names_an_entity` | /public-pools/texas/washington/pine-lake-clothing-optional-rv-camping/ | pp_pools.ai_faqs |  |
+| `R3:deleted_sentence_names_an_entity` | /public-pools/virginia/mclean/mclean-community-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/alabama/birmingham/birmingham-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/alabama/huntsville/camelot-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/alabama/montgomery/montgomery-municipal-pool/ | pp_pools.ai_faqs |  |
@@ -1574,6 +1491,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R3:next_sentence_refers_back` | /public-pools/florida/boca-raton/boca-raton-community-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/florida/clearwater/clearwater-municipal-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/florida/daytona-beach/daytona-beach-community-pool/ | pp_pools.ai_faqs |  |
+| `R3:next_sentence_refers_back` | /public-pools/florida/hollywood/hollywood-family-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/florida/jacksonville/blue-cypress-park-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/florida/jacksonville/brooks-family-ymca/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/florida/jacksonville/johnson-family-ymca/ | pp_pools.ai_faqs |  |
@@ -1604,6 +1522,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R3:next_sentence_refers_back` | /public-pools/illinois/chicago/wrightwood-park-pool-outdoor/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/illinois/downers-grove/downers-grove-community-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/illinois/evanston/evanston-community-pool/ | pp_pools.ai_faqs |  |
+| `R3:next_sentence_refers_back` | /public-pools/indiana/bloomington/fern-hills-club-inc/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/indiana/indianapolis/douglass-park-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/indiana/indianapolis/jcc-indianapolis/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/indiana/indianapolis/orthoindy-foundation-ymca/ | pp_pools.ai_faqs |  |
@@ -1619,7 +1538,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R3:next_sentence_refers_back` | /public-pools/michigan/grand-rapids/briggs-park-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/michigan/novi/novi-community-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/missouri/kansas-city/the-bay-aquatic-center/ | pp_pools.ai_faqs |  |
-| `R3:next_sentence_refers_back` | /public-pools/nevada/las-vegas/flamingo-family-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/nevada/las-vegas/garside-pool-2/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/nevada/las-vegas/party-naked-las-vegas-sea-mountain-nude-day-club-night-club/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/nevada/las-vegas/rio-ipanema-pool/ | pp_pools.ai_faqs |  |
@@ -1667,7 +1585,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R3:next_sentence_refers_back` | /public-pools/pennsylvania/philadelphia/drexel-university-recreation-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/pennsylvania/philadelphia/francisville-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/south-carolina/charleston/james-island-recreation-complex-pool/ | pp_pools.ai_faqs |  |
-| `R3:next_sentence_refers_back` | /public-pools/south-carolina/greenville/greenville-county-aquatic-complex/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/south-carolina/myrtle-beach/myrtle-beach-indoor-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/tennessee/knoxville/knoxville-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/tennessee/knoxville/knoxville-municipal-pool/ | pp_pools.ai_faqs |  |
@@ -1693,11 +1610,13 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R3:next_sentence_refers_back` | /public-pools/texas/dallas/ymca-of-metropolitan-dallas/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/decatur/wildwood-naturist-s-resort/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/fort-worth/recreation-center/ | pp_pools.ai_faqs |  |
+| `R3:next_sentence_refers_back` | /public-pools/texas/fort-worth/ryan-family-ymca-ymca-of-fort-worth/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/houston/independence-heights-swimming/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/houston/mac-gregor-swimming-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/houston/university-of-houston-natatorium/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/houston/west-gray-recreation-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/katy/katy-municipal-pool/ | pp_pools.ai_faqs |  |
+| `R3:next_sentence_refers_back` | /public-pools/texas/kyle/kyle-municipal-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/new-braunfels/new-braunfels-municipal-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/pearland/pearland-family-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/pearland/pearland-municipal-pool/ | pp_pools.ai_faqs |  |
@@ -1728,6 +1647,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R4:deleted_sentence_names_an_entity` | /public-pools/georgia/marietta/ | pp_cities.ai_faqs |  |
 | `R4:deleted_sentence_names_an_entity` | /public-pools/illinois/chicago/ | pp_cities.ai_intro | changed by another rule |
 | `R4:deleted_sentence_names_an_entity` | /public-pools/michigan/union-city/ | pp_cities.ai_faqs |  |
+| `R4:deleted_sentence_names_an_entity` | /public-pools/new-jersey/bernards/ | pp_cities.ai_intro |  |
 | `R4:deleted_sentence_names_an_entity` | /public-pools/oregon/bridal-veil/ | pp_cities.ai_intro |  |
 | `R4:deleted_sentence_names_an_entity` | /public-pools/oregon/north-plains/ | pp_cities.ai_faqs |  |
 | `R4:deleted_sentence_names_an_entity` | /public-pools/texas/allen/ | pp_cities.ai_intro |  |
@@ -1736,7 +1656,7 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R4:next_sentence_refers_back` | /public-pools/alabama/mobile/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/arizona/buckeye/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/arizona/buckeye/ | pp_cities.ai_intro |  |
-| `R4:next_sentence_refers_back` | /public-pools/arizona/mesa/ | pp_cities.ai_intro | changed by another rule |
+| `R4:next_sentence_refers_back` | /public-pools/arizona/mesa/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/arizona/peoria/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/arizona/surprise/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/beaumont/ | pp_cities.ai_intro |  |
@@ -1745,10 +1665,13 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R4:next_sentence_refers_back` | /public-pools/california/eastvale/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/elk-grove/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/fremont/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/california/fullerton/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/california/la-verne/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/los-angeles/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/menifee/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/mission-viejo/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/newport-beach/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/california/pasadena/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/pomona/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/riverside/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/california/san-diego/ | pp_cities.ai_faqs |  |
@@ -1760,19 +1683,28 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R4:next_sentence_refers_back` | /public-pools/florida/hialeah/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/florida/land-o-lakes/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/florida/miami/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/florida/sarasota/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/florida/wesley-chapel/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/florida/winter-park/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/georgia/alpharetta/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/georgia/atlanta/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/georgia/decatur/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/georgia/peachtree-city/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/georgia/woodstock/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/hawaii/honolulu/ | pp_cities.ai_faqs |  |
+| `R4:next_sentence_refers_back` | /public-pools/illinois/downers-grove/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/illinois/elmhurst/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/illinois/schaumburg/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/indiana/bennington/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/kansas/olathe/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/kentucky/lexington/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/louisiana/baton-rouge/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/louisiana/new-orleans/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/maryland/gaithersburg/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/maryland/rockville/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/michigan/ann-arbor/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/michigan/grand-rapids/ | pp_cities.ai_faqs |  |
+| `R4:next_sentence_refers_back` | /public-pools/michigan/novi/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/michigan/oxford/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/nevada/carson-city/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/new-jersey/clifton/ | pp_cities.ai_intro |  |
@@ -1785,18 +1717,20 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R4:next_sentence_refers_back` | /public-pools/texas/decatur/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/texas/el-paso/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/texas/frisco/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/texas/georgetown/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/texas/league-city/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/texas/plano/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/texas/pleasanton/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/texas/richardson/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/texas/san-antonio/ | pp_cities.ai_faqs |  |
+| `R4:next_sentence_refers_back` | /public-pools/texas/washington/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/virginia/hampton/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/virginia/mclean/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/virginia/sterling/ | pp_cities.ai_intro |  |
+| `R4:next_sentence_refers_back` | /public-pools/washington/bremerton/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/washington/mercer-island/ | pp_cities.ai_intro |  |
+| `R6:deleted_sentence_names_an_entity` | /public-pools/arizona/mesa/ | pp_cities.ai_intro |  |
+| `R6:deleted_sentence_names_an_entity` | /public-pools/wisconsin/milwaukee/ | pp_cities.ai_intro |  |
 | `R6:next_sentence_refers_back` | /public-pools/california/torrance/ | pp_cities.ai_faqs |  |
-| `R6:next_sentence_refers_back` | /public-pools/delaware/wilmington/ | pp_cities.ai_intro |  |
-| `R6:next_sentence_refers_back` | /public-pools/florida/clearwater/ | pp_cities.ai_faqs |  |
-| `R6:next_sentence_refers_back` | /public-pools/kentucky/louisville/ | pp_cities.ai_intro |  |
-| `R6:next_sentence_refers_back` | /public-pools/washington/bellevue/ | pp_cities.ai_intro |  |
-| `R6:next_sentence_refers_back_a5` | /public-pools/colorado/lakewood/ | pp_cities.ai_faqs |  |
+| `R6:next_sentence_refers_back` | /public-pools/colorado/lakewood/ | pp_cities.ai_faqs |  |
 | `R6:next_sentence_refers_back_a5` | /public-pools/illinois/chicago/ | pp_cities.ai_faqs |  |

@@ -130,6 +130,12 @@ def main():
              "from s where n <= 15 order by rule, n;")
         sample = cl.rows("sur", q)
         plan = compare.sql_plan(cl, "sur")
+        fq = ("set jit = off;\nset enable_nestloop = off;\nwith " + core + """
+select f.tbl, f.rid::text, f.col, f.ent, f.k, f3.s, coalesce(p.new_text is not null, false) field_changed, coalesce(p.skips, '')
+  from fin f join f3 on f3.tbl = f.tbl and f3.rid = f.rid and f3.col = f.col and f3.ent = f.ent and f3.k = f.k
+  left join plan p on p.tbl = f.tbl and p.row_id = f.rid and p.col = f.col
+ where f.keep and f3.kind = 'singular' and f3.is_founder order by 1, 2, 3, 4, 5;""")
+        founder = cl.rows("sur", fq)
     finally:
         cl.stop()
 
@@ -158,7 +164,9 @@ def main():
               "**that** is the sample to approve. Whether pp-ssr reads this database live is **UNVERIFIED**.\n")
     md.append("Every change below either deletes whole sentences, deletes whole FAQ entries, or re-joins an existing "
               "list (R1). No word is added or reworded. Rules: [rules.json](rules.json), "
-              "[TEXT-DEFECTS.md](TEXT-DEFECTS.md); field-level additions A1-A4: [RUNBOOK.md](RUNBOOK.md) section 3.\n")
+              "[TEXT-DEFECTS.md](TEXT-DEFECTS.md); field-level additions A1-A5: [RUNBOOK.md](RUNBOOK.md) section 3. "
+              "Regenerated 2026-11-16 after the content review narrowed the rules (RUNBOOK.md section 3a); invented "
+              "founder-voice sentences that stay are listed in [FOUNDER-VOICE-REMAINING.md](FOUNDER-VOICE-REMAINING.md).\n")
     md.append("## Totals on the surrogate (2,476 live pages, 2026-11-16)\n")
     md.append("| Table | Column | Rules | Fields changed |\n|---|---|---|---|")
     for (tbl, col, rules), n in sorted(changed.items()):
@@ -205,6 +213,31 @@ def main():
     md.append("")
     with open(os.path.join(OUT, "before-after-sample.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(md))
+    fm = ["# Invented founder / company voice left in place: owner decides by hand\n",
+          "> **Data source: SURROGATE, NOT PRODUCTION** (the 2,476 live pages fetched read-only on 2026-11-16, run "
+          "through the same SQL as dry-run.sql, core md5 `" + md5 + "`). Production has more rows (3,381 pools, 647 "
+          "cities): **dry-run.sql section 7 prints this list for production**, with row ids; that list is the one to "
+          "decide on. Whether pp-ssr reads this database live is **UNVERIFIED**.\n",
+          "Each sentence below is a singular narrator speaking as the founder or the company (\"I started "
+          "PoolRentalNearMe.com\", \"My company, PoolRentalNearMe.com, ...\", \"my team dug into it\", \"I've sent a lot "
+          "of people ...\"). Nobody real said these words: CLAUDE.md hard rule 1 allows Derek Bowen or Brandon Elias as "
+          "company voices, or nobody. The cleaner leaves them because deleting would break the field (the next sentence "
+          "refers back, the sentence names an entity) or because the sentence also carries fact vocabulary. **apply.sql "
+          "changes none of them.** For each, the owner decides: delete the sentence together with the sentence that "
+          "depends on it (by hand, with the same backup/log discipline), or have it rewritten in Derek's or Brandon's "
+          "name with their approval. This file composes nothing.\n",
+          f"{len(founder)} sentences in {len({(r[0], r[1], r[2]) for r in founder})} fields "
+          f"({sum(1 for r in founder if r[6] == 't')} of them in a field the plan changes elsewhere).\n",
+          "| # | Page | Field | Why the cleaner kept it | Sentence |", "|---|---|---|---|---|"]
+    for i, (tbl, rid, col, ent, k, sent, ch, sk) in enumerate(founder, 1):
+        kind, cls, ok, why = T.classify(sent, tbl == "pp_pools")
+        reason = ("field skip: " + sk) if ok and sk else ("sentence kept: " + (why or "")) if not ok else \
+            "field unchanged by the narrator pass"
+        where = col + (f"[{int(ent) - 1}].a" if col == "ai_faqs" else "")
+        fm.append(f"| {i} | {urls.get((tbl, rid), rid)} | {tbl}.{where} | {reason} | {sent.replace('|', '/')} |")
+    with open(os.path.join(OUT, "FOUNDER-VOICE-REMAINING.md"), "w", encoding="utf-8") as f:
+        f.write("\n".join(fm) + "\n")
+    print("wrote FOUNDER-VOICE-REMAINING.md:", len(founder), "sentences")
     print("wrote before-after-sample.md:", {k: len(v) for k, v in by_rule.items()}, "skips", sum(len(v) for v in skips.values()))
 
 

@@ -9,8 +9,11 @@
 >
 > Machine-readable rules: [`rules.json`](rules.json) (generated from
 > [`text-defects/text_defect_rules.py`](text-defects/text_defect_rules.py), the single source of truth).
-> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (60, all passing
-> `python3 -I text_defect_rules.py test`). Reads still owed to production: [`PENDING-READS.md`](PENDING-READS.md).
+> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (70 since the 2026-11-16
+> revision, all passing `python3 -I text_defect_rules.py test`).
+>
+> **Revised 2026-11-16 after a content review** (section 9). The rules were narrowed; sections 2-4 keep the
+> figures measured before that revision, section 9 gives the revised ones. Reads still owed to production: [`PENDING-READS.md`](PENDING-READS.md).
 
 ## 0. Sources and their dates
 
@@ -1029,3 +1032,63 @@ Header 47; prose 'a total of five public pools listed in our directory, and ther
 - No apply script is part of this task. When one is written, it must guard each update with the old value or md5
   of every field it changes, back up the old values, log skipped rows, and be reversible.
 
+## 9. Revision of 2026-11-16 (content review)
+
+A review of the planned deletions on the live pages of 2026-11-16 found sentences that carried a fact (timing
+system, spectator seating, a kids' area, "fully enclosed", the only answering sentence of a FAQ), deletions that
+left a sentence without its subject ("Some are ...", "Lots of kids splashing around ...", "Things can change."),
+and R6 deletions of count sentences that also made another claim. Every change narrows the rules (the cleaner
+deletes less); the list of changes and the case behind each is RUNBOOK.md section 3a. The patterns live in
+`text-defects/text_defect_rules.py`, so rules.json, text-defects-measure.sql, the cleaner SQL and the reference
+all follow. Section 8's line "No apply script is part of this task" is superseded: the guarded, logged and
+reversible apply is `apply.sql` / `rollback.sql` (RUNBOOK.md); nothing has been applied.
+
+**Revised counts (S2, the 2,476 live pages of 2026-11-16, rules module alone**, i.e. without the apply's field
+checks A1-A5; `live-2026-11-16/live-summary.json`; the cleaner's own figures, with A1-A5, are in RUNBOOK.md
+section 4):
+
+| Field | Fields changed | Sentences deleted | Before the revision |
+|---|---|---|---|
+| Pool descriptions (R2) | 213 | 225 | 229 / 243 |
+| Pool FAQ answers (R3) | 610 | 754 | 655 / 810 |
+| City intros (R4) | 125 | 149 | 140 / 168 |
+| City FAQ answers (R4) | 29 | 34 | 32 / 38 |
+| Wholly non-informative pool FAQ entries (R5) | 57 rows | 58 entries | 58 / 59 |
+| Contradicted count sentences deleted (R6) | 4 | 4 | 13 |
+
+**R6 categories** (65 count statements on the 476 city pages, `live-2026-11-16/count-statements.csv`): auto 8
+(18 before), review_mixed 22 (12 before), review_scope 9, review_subtype 2, hold_duplicate 1, vague 23. The hand
+verdicts of section 3 are unchanged; only the automatic category narrowed. These 10 statements moved from `auto`
+to `review_mixed` and now need the owner's decision (city page, page count, sentence as printed):
+
+| City page | Pool count on the page | Statement (field) |
+|---|---|---|
+| alabama/montgomery | 10 | "We've got four listed in our directory: Montgomery Community Pool, ..." (FAQ; a list of named pools after a colon) |
+| california/sacramento | 22 | "We've got five public pools on our site for Sacramento, so there are options across the city." (intro) |
+| colorado/centennial | 6 | "We've got a decent number of public pools, four listed in our directory, covering everything from basic swim to full-blown aquatic centers." (intro) |
+| delaware/wilmington | 7 | "Our site lists five public pools in Wilmington, but there are always private options too if you want something different." (intro) |
+| florida/clearwater | 6 | "Our directory lists four public pools: Clearwater Family Aquatic Center, ..." (FAQ; a list after a colon) |
+| kentucky/louisville | 17 | "We've got five public pools listed for Louisville, so there's usually an option not too far from wherever you are." (intro) |
+| new-york/brooklyn | 28 | "We've got five public pools listed in our directory, so there are options, even if it feels like a big city to navigate." (intro) |
+| north-carolina/greensboro | 20 | "We've got five public pools listed, which is a good baseline, but there are always more options ..." (intro) |
+| texas/houston | 53 | "We've got a decent number of places listed for Houston, five public pools right in our directory, plus lots of backyard pools available by the hour." (intro) |
+| washington/bellevue | 6 | "We list four public pools ourselves, which is pretty good for a city this size." (intro) |
+
+The 8 statements still `auto`, and what the cleaner does with them on the same pages: deleted in Aurora CO
+(intro), Chicago (intro) and Mount Pleasant SC (intro); skipped and reported in Milwaukee and Mesa (the sentence
+names a pool: "Pulaski and Schulz", "(Skyline Aquatic Center)"), Lakewood CO and Torrance (the next sentence
+refers back) and Chicago's FAQ (A5, "Three of those ..."). The rules module alone (table above) also deletes the
+Chicago FAQ sentence; only the cleaner's A5 check stops it.
+
+**Examples.** 70 (R1 10, R2 13, R3 11, R4 13, R5 11, R6 12): the 60 of section 7, 5 R6 examples revised to
+the narrower rule, and 10 regression examples taken from the review cases (each fails on the old rules and
+passes on the new). All pass.
+
+**Founder voice left in place.** The cleaner never rewrites, so sentences in which an invented "I" speaks as
+the founder or the company stay wherever a field guard stops the deletion or the sentence carries fact
+vocabulary: 28 on the surrogate, each listed with its page and reason in
+[`FOUNDER-VOICE-REMAINING.md`](FOUNDER-VOICE-REMAINING.md); dry-run.sql section 7 prints the production list.
+They need the owner's decision (CLAUDE.md hard rule 1).
+
+Still not verified: the revised patterns have run in Python on S2 and in PostgreSQL 16.15 locally (test-output.txt),
+not yet on production (PR-6, PR-3, PR-4).

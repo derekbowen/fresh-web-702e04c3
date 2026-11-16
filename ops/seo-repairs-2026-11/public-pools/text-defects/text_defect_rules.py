@@ -34,7 +34,14 @@ PARENT = os.path.dirname(HERE)
 ABBREV = (r"(?<![A-Za-z])(St|Dr|Mt|Ft|Ave|Blvd|Rd|Jr|Sr|Mr|Mrs|Ms|No|vs|approx|Hwy|Pkwy|Ln|Ct|Co|Inc|"
           r"Dept|Univ|U\.S|a\.m|p\.m|A\.M|P\.M|e\.g|i\.e|[A-HJ-Z])\.")
 ABBREV_MARK = "§"  # section sign; measured absent from every text column (see TEXT-DEFECTS.md)
-SPLIT = r"(?<=[.!?])\s+(?=[A-Z0-9\"“‘'$(])"
+# Whitespace, spelled out (revised 2026-11-16, review finding "regex flavours differ on non-ASCII spaces"):
+# exactly the 29 code points Python's \s matches in a str pattern. PostgreSQL's \s depends on the server's
+# ctype (under C.UTF-8 it misses U+001C-U+001F, U+0085, U+00A0, U+2007 and U+202F), so no pattern below uses
+# \s; they use WS. Python results are unchanged (WS == \s, checked by cleaner/test_cleaner.py), and the SQL
+# now splits and guards exactly like Python on any server.
+WS = r"[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]"
+NOT_WS = "[^" + WS[1:]
+SPLIT = r"(?<=[.!?])" + WS + r"+(?=[A-Z0-9\"“‘'$(])"
 
 # --------------------------------------------------------------------------- narrator detection
 # (1) first-person singular. Roman-numeral uses ("Phase I", "Pool I") are masked first; "I-35" is excluded.
@@ -78,14 +85,17 @@ GAP = (r"(?i)((my|our) (information|info|data|records|details|sources|system|not
 # A GAP sentence must also say that something is missing or limited ("My notes say they have passes" is a
 # fact report, not a gap). Added 2026-11-16 after the second live validation sample.
 GAP_NEG = (r"(?i)(n't|n’t|(?<![a-z])(not|no|only|limited|unable|never|nothing|without|none)(?![a-z]))")
+# A gap whose only "missing" word is a limiter (only / limited) says what IS known ("I only have data on this
+# facility being free"). Such a sentence is kept when it carries fact vocabulary. Added 2026-11-16 (review).
+GAP_HARD = (r"(?i)(n't|n’t|(?<![a-z])(not|no|unable|never|nothing|without|none)(?![a-z]))")
 # ADVICE: the narrator tells the reader to call / check / go early. Anchored at the sentence start,
 # allowing a short non-assertive lead-in ("For parking details, ...", "If you're unsure, ...").
 LEAD_IN = (r"((yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|"
            r"that said|for (details|specifics|more|the most|current|up-to-date|accurate|exact|other|specific|"
-           r"anything)[^,.]{0,80}|(if|when|before|to)[^,.]{0,100}),?\s+)?")
+           r"anything)[^,.]{0,80}|(if|when|before|to)[^,.]{0,100}),?" + WS + r"+)?")
 ADVICE = (r"(?i)^" + LEAD_IN +
           r"(i('d|’d| would)( definitely| still| probably| also| personally| always| really| strongly|"
-          r" just| highly| first)?\s+(suggest|recommend|call|check|give|reach|contact|look|lean|ask|confirm|"
+          r" just| highly| first)?" + WS + r"+(suggest|recommend|call|check|give|reach|contact|look|lean|ask|confirm|"
           r"verify|double-check|visit|plan|try|head|arrive|go|bring|pack|start|scout|stick|search|email|phone|"
           r"stop by|swing by|get in touch|say give|say call|say check)|"
           r"i (always |usually |generally |strongly |personally |highly |would |also |just )?"
@@ -106,8 +116,9 @@ GENERIC_GAP = (r"(?i)^(the |their )?(listing|information|info|data|details|websi
 
 # --------------------------------------------------------------------------- fact guards
 # A deletable sentence must assert nothing that could be a real fact about the pool.
+# "the only one" is NOT masked (revised 2026-11-16): "X is the only one I show in my system" is an inventory claim.
 NUM_MASK = (r"(?i)((this|that|the|which|each|any|no|every|some|another|other|a good|a great|a solid|a nice|"
-            r"the only|a popular|a fun|a decent) one(?![a-z])|(?<![a-z])one of|someone|anyone|everyone|"
+            r"a popular|a fun|a decent) one(?![a-z])|(?<![a-z])one of|someone|anyone|everyone|"
             r"no one|one-stop)")
 NUMERIC = (r"(?i)[0-9$%]|(?<![a-z])(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|"
            r"fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|"
@@ -120,10 +131,10 @@ CLAUSE = (r"(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|
           r"they’re|their|the pool|there|this|that)(?![a-z])")
 # A narrator clause spliced onto another clause with a comma ("It's not too far from Decatur, I'd say ...")
 # hides an assertion. Allowed only when everything before the comma is a non-assertive lead-in.
-COMMA_SPLICE = (r",\s+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|"
+COMMA_SPLICE = (r"," + WS + r"+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|"
                 r"[Ww]e've|[Ww]e’ve)(?![A-Za-z])")
 SPLICE_OK = (r"(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|"
-             r"that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),\s+(i|i'd|i’d|i'm|i’m|"
+             r"that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100})," + WS + r"+(i|i'd|i’d|i'm|i’m|"
              r"i've|i’ve|i'll|my|we)(?![a-z])[^,]*$")
 # A sentence that opens with the answer's polarity carries the answer itself ("Yes, I think so.").
 POLARITY = r"(?i)^(yes|no|nope|yep|yeah|absolutely|definitely|unfortunately|sadly|sure|certainly)(?![a-z])"
@@ -141,7 +152,15 @@ LEXICON = (r"(?i)(?<![a-z])(ratings?|rated|stars?|reviews?|reviewers?|reviewed|s
            r"locker rooms?|showers?|changing rooms?|restrooms?|concessions?|snack bar|picnic|shade|shaded|"
            r"cabanas?|lifeguards?|parking|accessible|accessibility|ada|wheelchair|lift|lessons?|aerobics|"
            r"water polo|fountains?|playground|zero-entry|zero-depth|beach entry|wave pool|grills?|bbq|"
-           r"diving well|water ?park|fitness|gym|tennis)(?![a-z])")
+           r"diving well|water ?park|fitness|gym|tennis|"
+           # added 2026-11-16 (review: deleted sentences carried these facts)
+           r"timing( system)?|touchpads?|scoreboards?|seating|seats?|spectators?|bleachers|grandstands?|"
+           r"enclosed|warm-up|warmup|therapy|therapeutic|whirlpool|steam room|climbing wall|rope swing|"
+           r"deck|sun ?deck|splash ?pads?|spray ?grounds?|water features?|play structures?|"
+           r"(kids|kids'|kids’|kid|children's|children’s|toddler|play|baby|family|shallow) (area|section|zone|pool)s?|"
+           # fact markers: the sentence says the pool HAS something
+           r"(like|as|which|that) this one (does|has|offers|is)|(they|it) even (has|have|offer|offers|got)|"
+           r"(they|they've|they’ve) (even )?got)(?![a-z])")
 INSURANCE = (r"(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|"
              r"damag[a-z]*)(?![a-z])")
 # Sentence openers that point back to the previous sentence. If the sentence that would follow a
@@ -150,11 +169,26 @@ DANGLING_OPENER = (r"^((So|Plus|Also|But|And|Or|Still|However|Though|Although|Ot
                    r"That's|That’s|This|These|Those|Which|It|It's|It’s|Its|They|They're|They’re|"
                    r"They've|They’ve|They'll|They’ll|Their|Them|There|There's|There’s|He|She|Both|"
                    r"Either|Neither|Anyway|Besides|Again|Instead|Thus|Hence|Therefore|Because|Since|Too|Such|Same|"
-                   r"Other|Another|Others)(?![A-Za-z'’])|[a-z]|[A-Z][^,.]{0,40}, (that|this|these|those|it|"
+                   r"Other|Another|Others|"
+                   # added 2026-11-16 (review: these follow a deleted subject sentence and read as fragments)
+                   r"Lots|Plenty|Think|Just|Things|Not|Nothing|Mostly|Mainly|Usually|"
+                   r"Especially|Whether|Like|Kind|Sort|Great|Good|Perfect|Tons|Loads)(?![A-Za-z'’])|"
+                   # quantifier used as a pronoun ("Some are more about laps"): its noun was in the sentence before
+                   r"(Some|Many|Most|Few|All|Each|Several|A few|A lot) (are|is|have|has|of|offer|offers|seem|tend|"
+                   r"will|can|do|does|lean|focus|cater|get|come|run|stay|open|close)(?![A-Za-z'’])|[a-z]|[A-Z][^,.]{0,40}, (that|this|these|those|it|"
                    r"it's|it’s|they|they're|they’re|there|so|then)(?![A-Za-z'’]))")
 # A capitalised word that is not the first word, not "I", and not part of the row's own pool name,
 # city name or state name, names an entity the following sentence may refer back to.
 CAPWORD = r"[A-Z][a-z]"
+# For a deleted sentence that is the LAST kept context of its field (added 2026-11-16, review finding "entity
+# guard only runs when another sentence follows"): it is skipped when it names an entity, except that the
+# site's own name and the words of a generic agency referral ("the City of Dayton Parks and Recreation
+# website") do not count. A named facility ("the Vancouver Aquatic Center", "Skyline Aquatic Center",
+# "Pulaski and Schulz") still does.
+ENTITY_EXEMPT_LAST = (r"(PoolRentalNearMe|Pool ?Rental ?Near ?Me|(?<![A-Za-z])(City|County|Town|Village|Township|"
+                      r"Borough|Parks?|Recreation|Rec|Department|Dept|Services|Cultural|Arts|Resources|Community|"
+                      r"Leisure|Boys|Girls|Clubs?|Google|Maps|Yelp|Facebook|Website|Office|Aquatics|Division|"
+                      r"District|Authority|Government|Official)(?![A-Za-z]))")
 
 # --------------------------------------------------------------------------- pool counts (R6)
 NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
@@ -196,7 +230,9 @@ COUNT_SUBTYPE = (r"(?i)(?<![a-z])(indoor|outdoor|free|kids?|family|big|main|good
                  r"competition|lap|heated|year-round|nude|clothing-optional|waterpark)(?![a-z])")
 # A count sentence that also says what a facility offers or is like carries a claim beyond the count.
 COUNT_CLAIM = (r"(?i)(?<![a-z])(offers?|offering|features?|includes?|including|requires?|known|designed|"
-               r"family-friendly|kid-friendly|caters?|geared|specializ[a-z]*|famous)(?![a-z])")
+               r"family-friendly|kid-friendly|caters?|geared|specializ[a-z]*|famous|"
+               # added 2026-11-16 (review): "covering everything from ...", "plus lots of backyard pools"
+               r"plus|covering|ranging|ranges?|everything|variety|mix|types?|kinds?|sizes?|across)(?![a-z])")
 COUNT_LOOSE_SCOPE = r"(?i)(?<![a-z])(public|only|just|city-run|municipal|all)(?![a-z])"
 
 
@@ -239,9 +275,11 @@ def strip_names(s, names):
     return s
 
 
-def has_entity(s, names):
+def has_entity(s, names, last=False):
     rest = s.split(" ", 1)[1] if " " in s else ""
     rest = re.sub(SING, " ", strip_names(rest, names))
+    if last:
+        rest = re.sub(ENTITY_EXEMPT_LAST, " ", rest)
     return re.search(CAPWORD, rest) is not None
 
 
@@ -280,6 +318,8 @@ def classify(s, pool_page=False):
         return kind, cls, False, "fact_vocabulary"
     if cls == "opinion" and re.search(LEX_PRICE_SCHEDULE, s):
         return kind, cls, False, "fact_vocabulary"
+    if cls == "gap" and not re.search(GAP_HARD, s) and (re.search(LEXICON, s) or re.search(LEX_PRICE_SCHEDULE, s)):
+        return kind, cls, False, "fact_vocabulary"   # "I only have data on this facility being free"
     return kind, cls, True, None
 
 
@@ -344,7 +384,7 @@ def r6_classify(s, actual, distinct_after_duplicates=None):
         return "review_subtype", h
     rest = s.replace(h["phrase"], " ")
     if (re.search(LEXICON, rest) or re.search(LEX_PRICE_SCHEDULE, rest) or re.search(URL, rest)
-            or re.search(COUNT_CLAIM, rest) or has_number(rest)):
+            or re.search(COUNT_CLAIM, rest) or has_number(rest) or re.search(CLAUSE, rest)):
         return "review_mixed", h
     return "auto", h
 
@@ -386,8 +426,8 @@ def _pass(text, names, pool_page, rule, actual=None, distinct=None):
         nxt = next((sents[j] for j in range(i + 1, len(sents)) if not marks[j]), None)
         if nxt is not None and re.search(DANGLING_OPENER, nxt):
             return text, dels, "next_sentence_refers_back"
-        if nxt is not None and has_entity(s, names):
-            return text, dels, "deleted_sentence_names_an_entity"
+        if has_entity(s, names, last=nxt is None):   # revised 2026-11-16: the last sentence too (it may be the
+            return text, dels, "deleted_sentence_names_an_entity"   # only mention of a named facility)
     return rebuild(text, sents, marks), dels, None
 
 
@@ -885,7 +925,7 @@ def write_sql():
     print("wrote", out)
 SQL_CORE = r"""
 rx as (select {SING} sing, {PLUR} plur, {LOCAL} loc, {SITE} site, {ROMAN_I} roman, {GAP} gap, {FOUNDER} founder,
-  {ADVICE} advice, {GAP_NEG} gapneg, {GENERIC_ADVICE} gadv, {GENERIC_GAP} ggap, {NUM_MASK} nmask, {NUMERIC} num, {URL} url,
+  {ADVICE} advice, {GAP_NEG} gapneg, {GAP_HARD} gaphard, {ENTITY_EXEMPT_LAST} ent_exempt, {GENERIC_ADVICE} gadv, {GENERIC_GAP} ggap, {NUM_MASK} nmask, {NUMERIC} num, {URL} url,
   {CLAUSE} clause, {COMMA_SPLICE} splice, {SPLICE_OK} splice_ok, {POLARITY} polar, {LEXICON} lex, {LEX_PRICE_SCHEDULE} lexps, {INSURANCE} ins, {DANGLING_OPENER} dangle, {ABBREV} abbrev, {SPLIT} split,
   {CAPWORD} cap),
 src as (
@@ -919,9 +959,11 @@ k as (
          when ms ~ rx.plur then 'plural' when ms ~ rx.loc then 'local' end kind,
     regexp_replace(s, rx.nmask, 'X', 'g') ~ rx.num has_num,
     s ~ rx.url has_url, (s ~ rx.clause or (s ~ rx.splice and s !~ rx.splice_ok)) has_clause, s ~ rx.polar is_polar, s ~ rx.lex has_lex, s ~ rx.lexps has_lexps, s ~ rx.ins has_ins,
-    (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.advice is_adv, s ~ rx.founder is_founder, (s ~ rx.gadv or s ~ rx.ggap) is_generic,
+    (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.gaphard is_gaphard, s ~ rx.advice is_adv, s ~ rx.founder is_founder, (s ~ rx.gadv or s ~ rx.ggap) is_generic,
     regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, '\u0001'), ' '),
       coalesce(n2, '\u0001'), ' '), coalesce(n3, '\u0001'), ' '), rx.sing, ' ', 'g') ~ rx.cap has_entity,
+    regexp_replace(regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, '\u0001'), ' '),
+      coalesce(n2, '\u0001'), ' '), coalesce(n3, '\u0001'), ' '), rx.sing, ' ', 'g'), rx.ent_exempt, ' ', 'g') ~ rx.cap has_entity_last,
     s ~ rx.dangle dangles
   from m, rx),
 c as (
@@ -937,7 +979,8 @@ c as (
          when has_url then 'url_or_contact' when has_clause then 'second_clause'
          when is_polar then 'answer_polarity'
          when not is_gap and has_lex then 'fact_vocabulary'
-         when not is_gap and not is_adv and has_lexps then 'fact_vocabulary' end why
+         when not is_gap and not is_adv and has_lexps then 'fact_vocabulary'
+         when is_gap and not is_gaphard and (has_lex or has_lexps) then 'fact_vocabulary' end why
   from k),
 d as (
   select c.*, (kind is not null and why is null) del,
@@ -957,7 +1000,7 @@ ux as (  -- one row per field unit (a description, an intro, one FAQ answer, one
     bool_and(del or gen_ok) and bool_or(kind is not null) answer_noninf,
     bool_and(del) all_del,
     coalesce(bool_or(del and next_dangles), false) bad_next,
-    coalesce(bool_or(del and has_entity and next_kept is not null), false) bad_entity
+    coalesce(bool_or(del and ((has_entity and next_kept is not null) or (has_entity_last and next_kept is null))), false) bad_entity
   from nx2 group by 1,2,3)
 """
 

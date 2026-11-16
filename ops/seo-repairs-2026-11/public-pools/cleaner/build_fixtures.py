@@ -128,11 +128,21 @@ def synthetic():
                        "Some of these are outdoor pools that open in June when school lets out."),
           "ai_faqs": None}
     expect[("pp_cities", rf["id"], "ai_intro")] = {
-        "new": None, "rules": "", "skip": "R6:next_sentence_refers_back_a5",
+        "new": None, "rules": "", "skip": "R6:next_sentence_refers_back",
         "why": "the wrong count (4 vs 2) is followed by 'Some of these ...': deleting it would leave a dangling "
-               "back-reference (A5)"}
-    cities += [tv, sm, rf]
-    for c in (tv, sm, rf):
+               "back-reference (caught by A5 before 2026-11-16; since the review revision the rules' own opener "
+               "list catches the quantifier pronoun 'Some of')"}
+    cv = {"id": S.uid("synthetic:claimville"), "url": None, "state_slug": SYN_STATE, "city_slug": "claimville",
+          "city_name": "Claimville", "is_published": True, "header_count": 3, "synthetic": True,
+          "ai_intro": ("Claimville summers are hot and long, and the pools fill up fast in July. "
+                       "We've got five public pools listed in our directory, so there are options across town. "
+                       "The lake beach opens on Memorial Day weekend."),
+          "ai_faqs": None}
+    expect[("pp_cities", cv["id"], "ai_intro")] = {
+        "new": None, "rules": "", "why": "2026-11-16 review: the wrong count (5 vs 3) carries a second clause "
+                                        "(', so there are options ...'): review_mixed, never automatic"}
+    cities += [tv, sm, rf, cv]
+    for c in (tv, sm, rf, cv):
         for i in range(c["header_count"]):
             pools.append({"id": S.uid(f"synthetic:placeholder:{c['city_slug']}:{i}"), "url": None,
                           "slug": f"synthetic-placeholder-{c['city_slug']}-{i}", "name": None, "city": c["city_name"],
@@ -225,6 +235,38 @@ def synthetic():
           "I think so too. Parking is free in the lot behind the bathhouse, and the snack bar sells cold drinks.")
     p = pool("desc-quotes", "Riverside Aquatic Center", ai_description=d3)
     exp(p, "ai_description", d3.replace("I think so too. ", ""), "R2", "curly quotes at a sentence start")
+    # 2026-11-16 review cases
+    p = pool("desc-last-entity", "Entity Two Pool",
+             ai_description="The pool has six lap lanes and a diving board that families use all summer long. "
+                            "I always recommend the Riverside Aquatic Center too.")
+    exp(p, "ai_description", None, "", "the LAST deleted sentence names a facility: skipped (entity guard on the last "
+        "sentence too)", "R2:deleted_sentence_names_an_entity")
+    d4 = ("The pool has six lap lanes, a diving board and a shaded lawn that families from all over town use from "
+          "Memorial Day through the end of August. "
+          "I'd check the City of Textburg Parks and Recreation website for hours.")
+    p = pool("desc-last-agency", "Agency Pool", ai_description=d4)
+    exp(p, "ai_description", d4.split(" I'd check")[0], "R2",
+        "a last-sentence referral naming only a generic agency (City of <city> Parks and Recreation) is still deleted")
+    p = pool("desc-fact-marker", "Timing Pool",
+             ai_description="It is a city pool with long lap lanes and a deep end for strong swimmers in Textburg. "
+                            "I see they even have a timing system.")
+    exp(p, "ai_description", None, "", "'they even have a timing system' states an amenity: kept")
+    p = pool("desc-nbsp", "Nbsp Pool",
+             ai_description="Great vibe overall,\u00a0I really liked it. The pool has six lanes and a slide for kids in summer.")
+    exp(p, "ai_description", None, "", "comma + NO-BREAK SPACE + I: a spliced second clause, kept (Python and SQL "
+        "now treat U+00A0 as whitespace alike)")
+    p = pool("faq-limiter-gap", "Limiter Pool",
+             ai_faqs=[{"q": "Are there other free pools?", "a": "I only have data on this facility being free. "
+                                                                 "The city website lists other parks with pools."},
+                      {"q": "Price?", "a": "Admission is free for everyone."}])
+    exp(p, "ai_faqs", None, "", "'I only have data on this facility being free' only LIMITS and carries a price word: "
+        "kept, so the entry is not wholly non-informative")
+    p = pool("faq-only-one", "Only One Beach",
+             ai_faqs=[{"q": "Other clothing-optional spots nearby?",
+                       "a": "Clothing-optional spots are rare, and this beach is the only one I show in my system for "
+                            "the area. You may need to look further afield in the state."},
+                      {"q": "Price?", "a": "Entry is free."}])
+    exp(p, "ai_faqs", None, "", "'the only one I show in my system' is an inventory claim: kept")
     p = pool("desc-control", "Control Pool",
              ai_description="Honestly, 35 reviews and a 3.9 out of 5 is decent for a city pool. It is open Wednesdays "
                             "and Fridays from noon to 6 p.m. and costs $2 for adults.")

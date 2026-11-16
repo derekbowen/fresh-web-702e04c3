@@ -11,8 +11,7 @@ set transaction read only;
 \set ON_ERROR_STOP on
 \if :{?run_id}
 \else
-\echo 'ABORT: pass -v run_id=<the apply run to verify>'
-\quit
+select 'ABORT: pass -v run_id=<the apply run to verify>'::int;   -- fails on purpose: psql exits 3, never 0
 \endif
 select case when current_setting('transaction_read_only') = 'on' then 'read-only transaction: OK'
             else ('ABORT: this transaction is not read-only (transaction_read_only=' ||

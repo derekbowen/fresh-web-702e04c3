@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -98,6 +99,66 @@ def answers_text(v):
     return "\n".join(e["a"] for e in arr if isinstance(e, dict) and isinstance(e.get("a"), str))
 
 
+API_ROLES = ("anon", "authenticated", "service_role")
+ROLES_SQL = """do $$ begin
+  if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon nologin; end if;
+  if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated nologin; end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role nologin bypassrls; end if;
+end $$;"""
+# what Supabase does in schema public: every new table/sequence is granted to the API roles
+DEFAULT_PRIVS_SQL = ("alter default privileges in schema public grant all on tables to anon, authenticated, service_role;\n"
+                     "alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;")
+TRIGGER_SQL = """create function public.test_touch() returns trigger language plpgsql as $f$
+begin new.updated_at := now(); return new; end $f$;
+create trigger pp_pools_touch before update on public.pp_pools for each row execute function public.test_touch();
+create trigger pp_cities_touch before update on public.pp_cities for each row execute function public.test_touch();"""
+
+
+def api_privileges(cl, db):
+    """[(role, table, privilege)] that an API role still holds on the backup / log tables."""
+    q = ("select r.rolname, t.tbl, p.priv from pg_roles r cross join (values ('public.seo_repair_pp_backup_20261115'), "
+         "('public.seo_repair_pp_change_log')) t(tbl) cross join (values ('SELECT'), ('INSERT'), ('UPDATE'), ('DELETE'), "
+         "('TRUNCATE')) p(priv) where r.rolname in ('anon', 'authenticated', 'service_role') "
+         "and has_table_privilege(r.oid, t.tbl, p.priv) order by 1, 2, 3;")
+    return cl.rows(db, q)
+
+
+def founder_sql(cl, db):
+    q = ("set jit = off;\nset enable_nestloop = off;\nwith " + compare.core_text() + """
+select f.tbl, f.rid::text, f.col, f3.s from fin f
+  join f3 on f3.tbl = f.tbl and f3.rid = f.rid and f3.col = f.col and f3.ent = f.ent and f3.k = f.k
+ where f.keep and f3.kind = 'singular' and f3.is_founder;""")
+    return sorted(tuple(r) for r in cl.rows(db, q))
+
+
+def founder_reference(cities, pools, merges):
+    """The same list from reference.py: founder-class sentences in the text each field has AFTER the plan."""
+    plan = compare.reference_plan(cities, pools, merges)
+    out = []
+
+    def scan(tbl, rid, col, val):
+        new = plan.get((tbl, rid, col), {}).get("new")
+        val = new if new is not None else val
+        if val is None:
+            return
+        texts = ([e["a"] for e in val if T._plain_entry(e)] if col == "ai_faqs" else [val])
+        for t in texts:
+            for x in T.split_sentences(t):
+                if T.is_narrator(x) == "singular" and re.search(T.FOUNDER, x):
+                    out.append((tbl, rid, col, x))
+    for p in pools:
+        if p.get("is_published"):
+            scan("pp_pools", p["id"], "ai_description", p.get("ai_description"))
+            if isinstance(p.get("ai_faqs"), list):
+                scan("pp_pools", p["id"], "ai_faqs", p["ai_faqs"])
+    for c in cities:
+        if c.get("is_published"):
+            scan("pp_cities", c["id"], "ai_intro", c.get("ai_intro"))
+            if isinstance(c.get("ai_faqs"), list):
+                scan("pp_cities", c["id"], "ai_faqs", c["ai_faqs"])
+    return sorted(out)
+
+
 def main():
     fx = json.load(open(os.path.join(HERE, "fixtures.json"), encoding="utf-8"))
     cities, pools = fx["cities"], fx["pools"]
@@ -134,10 +195,30 @@ def main():
         ver = cl.rows("postgres", "select current_setting('server_version'), (select datcollate||'/'||datctype from pg_database where datname='postgres');")[0]
         log(f"local cluster: PostgreSQL {ver[0]}, collate/ctype {ver[1]}, data dir under {cl.root}, port {cl.port}, "
             f"run as user '{pglocal.RUN_AS}'")
+        cl.sql("postgres", ROLES_SQL)
+
+        # ---------------------------------------------------------------- 0b. whitespace class
+        log("\n== 0b. whitespace: the explicit class WS (used instead of \\s) matches the same code points in Python and SQL")
+        py_ws = [c for c in range(0x110000) if not 0xD800 <= c <= 0xDFFF and re.match(r"\s", chr(c))]
+        py_ws2 = [c for c in range(0x110000) if not 0xD800 <= c <= 0xDFFF and re.match(T.WS, chr(c))]
+        check("Python: WS matches exactly the code points of \\s", py_ws == py_ws2, f"{len(py_ws)} code points")
+        cands = sorted(set(py_ws + [0x200B, 0x2060, 0xFEFF, 0x180E, 0x41, 0x2E, 0x5F]))
+        vals = ", ".join(f"({c})" for c in cands)
+        got = cl.rows("postgres", f"select c, chr(c) ~ {T.pg(T.WS)}, chr(c) ~ {T.pg(T.NOT_WS)}, chr(c) ~ '\\s' "
+                                  f"from (values {vals}) v(c) order by c;")
+        bad = [r[0] for r in got if (r[1] == "t") != (int(r[0]) in py_ws) or (r[2] == "t") == (int(r[0]) in py_ws)]
+        pg_s = [hex(int(r[0])) for r in got if (r[3] == "t") != (int(r[0]) in py_ws)]
+        check("PostgreSQL: WS / NOT_WS agree with Python on all 29 whitespace and 7 non-whitespace code points", not bad,
+              f"(for the record, PostgreSQL's own \\s differs from Python's here at {', '.join(pg_s) or 'none'})")
+        bad_pat = [k for k, v in vars(T).items() if k.isupper() and isinstance(v, str) and re.search(r"\\[sS]", v)]
+        check("no rule pattern uses \\s or \\S (they use WS)", not bad_pat, str(bad_pat))
 
         # ---------------------------------------------------------------- 1. load fixtures
         log("\n== 1. load fixtures")
-        load(cl, "fx", cities, pools)
+        cl.createdb("fx")
+        cl.sql("fx", DEFAULT_PRIVS_SQL)    # as on Supabase: new public tables are granted to the API roles
+        cl.sql("fx", open(os.path.join(HERE, "schema.sql"), encoding="utf-8").read())
+        cl.sql("fx", S.insert_sql(cities, pools))
         before = snapshot(cl, "fx")
         log(f"loaded; {sum(1 for k in before if k[2] != '_rest')} text fields")
         pr = open(os.path.join(OUT, "PENDING-READS.md"), encoding="utf-8").read()
@@ -145,6 +226,18 @@ def main():
         r = cl.psql("fx", ["-v", "ON_ERROR_STOP=1", "--single-transaction", "-x"], stdin=pr7)
         check("PENDING-READS PR-7 runs read-only on the fixture database", r.returncode == 0,
               " ".join(r.stdout.split())[:400] if r.returncode == 0 else r.stderr.strip()[-300:])
+
+        # ---------------------------------------------------------------- 1b. missing variables
+        log("\n== 1b. a missing required variable fails with a non-zero exit (never exit 0)")
+        for f, args, want in (("apply.sql", [], "ABORT: pass -v run_id"),
+                              ("apply.sql", ["-v", "run_id=x"], "ABORT: pass -v expected_changes"),
+                              ("apply.sql", ["-v", "run_id=x", "-v", "expected_changes=1"], "ABORT: pass -v manifest_md5"),
+                              ("rollback.sql", [], "ABORT: pass -v run_id"),
+                              ("verify-live.sql", [], "ABORT: pass -v run_id")):
+            r, _ = run_file(cl, "fx", f, args, single=f == "verify-live.sql")
+            check(f"{f} {' '.join(args) or '(no variables)'}: exit {r.returncode} with '{want}'",
+                  r.returncode == 3 and want in r.stderr, r.stderr.strip()[-160:])
+        check("those runs changed nothing", snapshot(cl, "fx") == before)
 
         # ---------------------------------------------------------------- 2. dry run
         log("\n== 2. dry run")
@@ -162,6 +255,13 @@ def main():
         check("dry-run changed nothing", snapshot(cl, "fx") == before)
         check("dry-run created no table", table_md5(cl, "fx", "public.seo_repair_pp_change_log") is None
               and table_md5(cl, "fx", "public.seo_repair_pp_backup_20261115") is None)
+        # the read-only measurement SQL of PENDING-READS (text-defects/text-defects-measure.sql) parses and runs
+        mtext = open(os.path.join(OUT, "text-defects", "text-defects-measure.sql"), encoding="utf-8").read()
+        stmts = [blk.split("\n", 1)[1].strip() for blk in re.split(r"(?m)^-- \[", mtext)[1:]]
+        mres = [cl.psql("fx", ["-v", "ON_ERROR_STOP=1", "--single-transaction"], stdin=st) for st in stmts]
+        check("text-defects-measure.sql: every statement runs read-only on the fixtures", len(stmts) == 2
+              and all(m.returncode == 0 for m in mres) and snapshot(cl, "fx") == before,
+              "; ".join(m.stderr.strip()[-160:] for m in mres if m.returncode != 0) or f"{len(stmts)} statements")
 
         # ---------------------------------------------------------------- 3. SQL plan = reference, = hand expectations
         log("\n== 3. SQL plan versus the Python reference and the hand-derived expectations")
@@ -239,6 +339,9 @@ def main():
         check("change log has one 'applied' row per changed field",
               dict((a, int(n)) for a, n in lg).get("applied") == len(planned))
         backup_md5 = table_md5(cl, "fx", "public.seo_repair_pp_backup_20261115")
+        privs = api_privileges(cl, "fx")
+        check("backup and change log: anon / authenticated / service_role hold no privilege (default privileges "
+              "granted ALL; apply revoked them)", not privs, str(privs[:6]))
 
         # ---------------------------------------------------------------- 5. second apply
         log("\n== 5. second apply (same manifest, new run id)")
@@ -265,8 +368,9 @@ def main():
         cl.sql("fx", f"update public.pp_pools set ai_description = ai_description || ' Edited by hand after apply.' "
                      f"where id = '{edit_key[1]}';")
         edited_val = snapshot(cl, "fx")[edit_key]
-        r, _ = run_file(cl, "fx", "rollback.sql", ["-v", "run_id=test-1"])
-        check("rollback exits 0", r.returncode == 0, r.stderr.strip()[-600:])
+        r, secs = run_file(cl, "fx", "rollback.sql", ["-v", "run_id=test-1"])
+        check("rollback with one field left unrestored commits the restores and then exits 3 with 'ROLLBACK INCOMPLETE'",
+              r.returncode == 3 and "ROLLBACK INCOMPLETE" in r.stderr, r.stderr.strip()[-300:])
         log("   " + "\n   ".join(ln for ln in r.stdout.splitlines() if ln.strip())[:1500])
         rb = snapshot(cl, "fx")
         not_restored = [k for k in before if k != edit_key and rb.get(k) != before[k]]
@@ -277,7 +381,8 @@ def main():
         check("rollback logged the edited field as skipped and the rest as restored",
               lg3.get("rollback_skip_edited_after_apply") == 1 and lg3.get("restored") == len(planned) - 1, str(lg3))
         r, _ = run_file(cl, "fx", "rollback.sql", ["-v", "run_id=test-1"])
-        check("a second rollback changes nothing", r.returncode == 0 and snapshot(cl, "fx") == rb, r.stderr.strip()[-300:])
+        check("a second rollback changes nothing (and still reports the unrestored field: exit 3)",
+              r.returncode == 3 and "ROLLBACK INCOMPLETE" in r.stderr and snapshot(cl, "fx") == rb, r.stderr.strip()[-300:])
 
         # ---------------------------------------------------------------- 7. guards
         log("\n== 7. guards (fresh copy of the fixtures)")
@@ -310,6 +415,107 @@ def main():
         check("every other planned field was applied", others == planned - {drift_key}, f"{len(others)}")
         cl.dropdb("fx2")
 
+        # ---------------------------------------------------------------- 7b. triggers
+        log("\n== 7b. a trigger on pp_pools / pp_cities stops apply and rollback unless named exactly")
+        load(cl, "fx3", cities, pools)
+        cl.sql("fx3", TRIGGER_SQL)
+        r, _ = run_file(cl, "fx3", "dry-run.sql", single=True)
+        n3, md53 = parse_guard(r.stdout)
+        b3 = snapshot(cl, "fx3")
+        ga = ["-v", f"expected_changes={n3}", "-v", f"manifest_md5={md53}"]
+        r, _ = run_file(cl, "fx3", "apply.sql", ["-v", "run_id=t-1"] + ga)
+        check("apply aborts when a trigger exists (nothing changed, no backup/log table)",
+              r.returncode != 0 and "trigger(s) on pp_pools/pp_cities" in r.stderr and snapshot(cl, "fx3") == b3
+              and table_md5(cl, "fx3", "public.seo_repair_pp_change_log") is None, r.stderr.strip()[-220:])
+        r, _ = run_file(cl, "fx3", "apply.sql", ["-v", "run_id=t-2", "-v", "allow_triggers=public.pp_pools.pp_pools_touch"] + ga)
+        check("apply aborts when allow_triggers names only some of them", r.returncode != 0 and "trigger(s)" in r.stderr
+              and snapshot(cl, "fx3") == b3, r.stderr.strip()[-160:])
+        allow = "pp_cities.pp_cities_touch,pp_pools.pp_pools_touch"
+        r, _ = run_file(cl, "fx3", "apply.sql", ["-v", "run_id=t-3", "-v", f"allow_triggers={allow}"] + ga)
+        check("apply proceeds when allow_triggers names every trigger exactly", r.returncode == 0, r.stderr.strip()[-300:])
+        r, _ = run_file(cl, "fx3", "rollback.sql", ["-v", "run_id=t-3"])
+        check("rollback aborts on the trigger too unless it is named", r.returncode != 0 and "trigger(s)" in r.stderr,
+              r.stderr.strip()[-160:])
+        r, _ = run_file(cl, "fx3", "rollback.sql", ["-v", "run_id=t-3", "-v", f"allow_triggers={allow}"])
+        rb3 = snapshot(cl, "fx3")
+        check("with the triggers named, rollback restores every text field (updated_at is NOT restored: documented)",
+              r.returncode == 0 and all(rb3[k] == b3[k] for k in b3 if k[2] != "_rest"), r.stderr.strip()[-300:])
+        cl.dropdb("fx3")
+
+        # ---------------------------------------------------------------- 7d. canary, then full run, then undo both
+        log("\n== 7d. canary (RUNBOOK section 6 step 2, its shell lines run literally), full run, undo both runs")
+        load(cl, "fx4", cities, pools)
+        r, _ = run_file(cl, "fx4", "dry-run.sql", single=True)
+        n4, md54 = parse_guard(r.stdout)
+        b4 = snapshot(cl, "fx4")
+        rb_lines = open(os.path.join(OUT, "RUNBOOK.md"), encoding="utf-8").read().splitlines()
+        i0 = next(i for i, ln in enumerate(rb_lines) if ln.strip().startswith("mkdir -p canary"))
+        shell = [ln.strip() for ln in rb_lines[i0:i0 + 3]]
+        man4 = open(os.path.join(cl.work, "approved-manifest.csv"), encoding="utf-8").read().splitlines()
+        can_row = next(ln.split(",")[1] for ln in man4[1:] if ln.split(",")[2] == "ai_best_for")
+        script = "\n".join(shell).replace("<chosen row id>", can_row) + "\nprintf '%s' \"$md5\"\n"
+        sh = subprocess.run(["bash", "-euc", script], cwd=cl.work, capture_output=True, text=True)
+        can_md5 = sh.stdout.strip()
+        cdir = os.path.join(cl.work, "canary")
+        if os.geteuid() == 0 and os.path.isdir(cdir):
+            for p in (cdir, os.path.join(cdir, "approved-manifest.csv")):
+                shutil.chown(p, pglocal.RUN_AS, pglocal.RUN_AS)
+        check("the RUNBOOK canary lines build a one-line manifest and its md5",
+              sh.returncode == 0 and re.fullmatch(r"[0-9a-f]{32}", can_md5 or "") is not None
+              and len(open(os.path.join(cdir, "approved-manifest.csv")).read().splitlines()) == 2,
+              (sh.stderr.strip() or can_md5)[-200:])
+        run_file(cl, "fx4", "apply.sql")   # only copies apply.sql into the work dir (exits 3: no variables)
+        r = cl.psql("fx4", ["-v", "ON_ERROR_STOP=1", "-v", "run_id=c-canary", "-v", "expected_changes=1",
+                            "-v", f"manifest_md5={can_md5}", "-f", "../apply.sql"], cwd=cdir)
+        a4c = snapshot(cl, "fx4")
+        ch4 = {k for k in b4 if b4[k] != a4c.get(k)}
+        check("canary apply (run from canary/, md5 as the RUNBOOK computes it) exits 0 and changes exactly one field",
+              r.returncode == 0 and ch4 == {("pp_pools", can_row, "ai_best_for")}, r.stderr.strip()[-300:] or str(ch4))
+        r, _ = run_file(cl, "fx4", "apply.sql", ["-v", "run_id=c-full", "-v", f"expected_changes={n4}",
+                                                  "-v", f"manifest_md5={md54}"])
+        lg5 = dict((a, int(n)) for a, n in cl.rows("fx4", "select action, count(*) from public.seo_repair_pp_change_log "
+                                                         "where run_id='c-full' group by 1;"))
+        check("full run after the canary exits 0; the canary field is already_applied, not drift",
+              r.returncode == 0 and lg5.get("already_applied") == 1 and lg5.get("applied") == n4 - 1, str(lg5))
+        r, _ = run_file(cl, "fx4", "rollback.sql", ["-v", "run_id=c-full"])
+        r4 = snapshot(cl, "fx4")
+        left = {k for k in b4 if b4[k] != r4.get(k)}
+        check("rolling back the full run alone leaves only the canary field changed, and its output names the canary run",
+              r.returncode == 0 and left == {("pp_pools", can_row, "ai_best_for")}
+              and re.search(r"c-canary\s*\|\s*1", r.stdout) is not None, r.stderr.strip()[-200:] or str(left))
+        r, _ = run_file(cl, "fx4", "rollback.sql", ["-v", "run_id=c-canary"])
+        check("then rolling back the canary run restores every field byte-identical (exit 0)",
+              r.returncode == 0 and snapshot(cl, "fx4") == b4, r.stderr.strip()[-200:])
+        cl.dropdb("fx4")
+
+        # ---------------------------------------------------------------- 7c. non-ASCII whitespace
+        log("\n== 7c. non-ASCII whitespace (NBSP, U+202F, U+0085, U+2007, U+001F) in the text: SQL = reference")
+        wc = [{"id": S.uid("ws-city"), "url": None, "state_slug": "ws-state", "city_slug": "ws-city",
+               "city_name": "Wsville", "ai_intro": None, "ai_faqs": None, "is_published": True, "header_count": 1}]
+        wp, n = [], 0
+        bodies = ["It was a fine time,{w}we loved the vibe. The pool has six lanes and a slide.",
+                  "Great vibe overall,{w}I really liked it. The pool has six lanes and a slide.",
+                  "Open daily from 9 to 5.{w}I'd definitely recommend it for a casual swim.{w}It has a slide.",
+                  "Open daily from 9 to 5.{w}I'd definitely recommend it for a casual swim. Lifeguards are on duty.",
+                  "The pool has six lanes.{w}Honestly,{w}I'd say it's a nice spot. Lifeguards are on duty every day."]
+        for w in ("\u00a0", "\u202f", "\u0085", "\u2007", "\u001f", " "):
+            for b in bodies:
+                n += 1
+                wp.append({"id": S.uid(f"ws-pool-{n}"), "url": None, "slug": f"ws-pool-{n}", "name": "Ws Pool",
+                           "city": "Wsville", "city_id": wc[0]["id"], "state_slug": "ws-state", "ai_best_for": None,
+                           "ai_description": b.format(w=w) + " It is a public pool run by the city of Wsville.",
+                           "ai_faqs": [{"q": "Is it good?", "a": b.format(w=w)}], "is_published": True,
+                           "is_placeholder": False})
+        wc[0]["header_count"] = len(wp)
+        load(cl, "ws", wc, wp)
+        sq_ws = compare.sql_plan(cl, "ws")
+        ref_ws = compare.reference_plan(wc, wp, {})
+        d = compare.diff(sq_ws, ref_ws)
+        check(f"SQL plan equals reference.py on {len(wp)} rows with non-ASCII whitespace", not d,
+              f"{sum(1 for v in sq_ws.values() if v['new'] is not None)} changes; {len(d)} differences"
+              + ("\n   " + "\n   ".join(d[:6]) if d else ""))
+        cl.dropdb("ws")
+
         # ---------------------------------------------------------------- 8. whole live extract
         log("\n== 8. the whole live-page extract (2,000 pool + 476 city pages, 2026-11-16) as a surrogate table")
         recs = S.load_live(os.path.join(OUT, "text-defects", "live-2026-11-16", "live-fields.jsonl.gz"))
@@ -327,6 +533,15 @@ def main():
         r, secs = run_file(cl, "sur", "dry-run.sql", single=True)
         ns, mds = parse_guard(r.stdout)
         check("surrogate dry run exits 0", r.returncode == 0, f"{ns} changes, {secs:.0f}s")
+        fs, fr = founder_sql(cl, "sur"), founder_reference(sc, sp, merges)
+        sec7 = r.stdout[r.stdout.index("== 7. MUST DECIDE"):r.stdout.index("== 8.")]
+        n7 = re.search(r"\((\d+) rows?\)", sec7)
+        check("dry run section 7 (founder voice left in place) = the reference list, sentence by sentence",
+              fs == fr and n7 is not None and int(n7.group(1)) == len(fr), f"{len(fs)} sentences (reference {len(fr)})")
+        v = subprocess.run([sys.executable, "-I", os.path.join(HERE, "check_dry_run.py"), cl.work],
+                           capture_output=True, text=True)
+        check("check_dry_run.py on the dry run's own JSONL files (section 8): reference plans exactly the same",
+              v.returncode == 0, (v.stdout.strip().splitlines() or [v.stderr[-300:]])[0])
         r, secs = run_file(cl, "sur", "apply.sql", ["-v", "run_id=sur-1", "-v", f"expected_changes={ns}",
                                                     "-v", f"manifest_md5={mds}"])
         check("surrogate apply exits 0", r.returncode == 0, f"{secs:.0f}s " + r.stderr.strip()[-300:])
@@ -356,8 +571,9 @@ def main():
               "(checks the URL building and the page-to-column mapping offline)",
               f'"OLD": {len(planned_s)}' in summary and v.returncode == 1, summary)
         r, secs = run_file(cl, "sur", "rollback.sql", ["-v", "run_id=sur-1"])
-        check("surrogate rollback restores every field byte-identical", r.returncode == 0 and snapshot(cl, "sur") == bs,
-              f"{secs:.0f}s")
+        check("surrogate rollback restores every field byte-identical and exits 0 ('rollback complete')",
+              r.returncode == 0 and "rollback complete" in r.stdout and snapshot(cl, "sur") == bs, f"{secs:.0f}s")
+        check("surrogate rollback takes under 30 s (planner settings + analyze; it was 67 s)", secs < 30, f"{secs:.1f}s")
         cl.dropdb("sur")
     finally:
         cl.stop(remove=True)

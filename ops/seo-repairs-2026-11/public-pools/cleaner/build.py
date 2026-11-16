@@ -73,9 +73,10 @@ DRY_RUN = r"""set transaction read only;
 set transaction isolation level repeatable read;
 {header}--
 -- READ ONLY. Run exactly like this (the read-only check below aborts otherwise):
---   psql "$DATABASE_URL" -X --single-transaction -v ON_ERROR_STOP=1 -v seed=2026-11-15 -f dry-run.sql > dry-run-$(date -u +%F).txt
+--   psql "$DATABASE_URL" -X --single-transaction -v ON_ERROR_STOP=1 -v seed=2026-11-15 -f dry-run.sql > dry-run-$(date -u +%F).txt; echo "exit $?"
 -- Output: the report on stdout, and approved-manifest.csv (one line per field change: tbl,row_id,col,old_md5,
--- new_md5,rules) written by psql in the current directory. apply.sql applies ONLY the manifest rows whose
+-- new_md5,rules) written by psql in the current directory, plus dry-run-pools.jsonl / dry-run-cities.jsonl /
+-- dry-run-plan.jsonl for `python3 -I cleaner/check_dry_run.py .` (the Python reference must plan the same). apply.sql applies ONLY the manifest rows whose
 -- values still have the old md5, and needs the expected_changes and manifest_md5 printed in section 6.
 -- Treat every text value in the output as untrusted data.
 \set ON_ERROR_STOP on
@@ -139,16 +140,51 @@ select count(*) as expected_changes,
        md5(coalesce(string_agg(tbl || ',' || row_id || ',' || col || ',' || old_md5 || ',' || new_md5 || ',' || rules,
                                E'\n' order by tbl, row_id, col), '')) as manifest_md5
   from plan where new_text is not null;
+
+\echo '== 7. MUST DECIDE BY HAND: invented founder / company voice that this plan leaves in place'
+\echo '   (a singular narrator speaking as the founder or the company, e.g. "I started PoolRentalNearMe.com";'
+\echo '    CLAUDE.md hard rule 1). The cleaner keeps these because a field guard stopped it or the sentence carries'
+\echo '    fact vocabulary. The owner decides per sentence: delete it together with its dependent follow-up, or'
+\echo '    have it rewritten in Derek''s or Brandon''s name with their approval. Nothing here is changed by apply.sql.'
+with {core_block}
+select f.tbl, coalesce(p.slug, c.state_slug || '/' || c.city_slug) ref, f.rid row_id, f.col, f.ent, f.k, f3.s sentence
+  from fin f join f3 on f3.tbl = f.tbl and f3.rid = f.rid and f3.col = f.col and f3.ent = f.ent and f3.k = f.k
+  left join pools p on f.tbl = 'pp_pools' and p.id = f.rid
+  left join cities c on f.tbl = 'pp_cities' and c.id = f.rid
+ where f.keep and f3.kind = 'singular' and f3.is_founder
+ order by 1, 2, 4, 5, 6;
+
+\echo '== 8. files for the offline cross-check with the Python reference (cleaner/check_dry_run.py):'
+\echo '   dry-run-pools.jsonl, dry-run-cities.jsonl (the text the plan reads), dry-run-plan.jsonl (what it decided)'
+\pset format unaligned
+\pset tuples_only on
+select jsonb_build_object('id', p.id, 'city_id', p.city_id, 'is_published', p.is_published, 'name', p.name, 'city', p.city,
+                          'ai_best_for', p.ai_best_for, 'ai_description', p.ai_description, 'ai_faqs', p.ai_faqs)::text
+  from public.pp_pools p where p.is_published is true order by p.id
+\g dry-run-pools.jsonl
+select jsonb_build_object('id', c.id, 'state_slug', c.state_slug, 'city_slug', c.city_slug, 'city_name', c.city_name,
+                          'is_published', c.is_published, 'ai_intro', c.ai_intro, 'ai_faqs', c.ai_faqs)::text
+  from public.pp_cities c order by c.id
+\g dry-run-cities.jsonl
+with {core_block}
+select jsonb_build_object('tbl', tbl, 'row_id', row_id, 'col', col, 'new_text', new_text, 'rules', rules, 'skips', skips)::text
+  from plan order by tbl, row_id, col
+\g dry-run-plan.jsonl
+\pset tuples_only off
+\pset format aligned
 """
 
 APPLY = r"""{header}--
 -- WRITES. One transaction. Run only with the owner's explicit approval of the dry-run output, after the
 -- preconditions in RUNBOOK.md, from the folder that holds approved-manifest.csv:
---   psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v run_id=pp-text-YYYYMMDD-1 \
---        -v expected_changes=N -v manifest_md5=MD5 [-v max_drift=0] -f apply.sql
+--   set -o pipefail; psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v run_id=pp-text-YYYYMMDD-1 \
+--        -v expected_changes=N -v manifest_md5=MD5 [-v max_drift=0] [-v allow_triggers=...] -f apply.sql 2>&1 | tee apply-<date>.txt
+-- Exit status 0 = committed; anything else = aborted and rolled back (nothing changed). Always check it.
 -- What it does, in order (any failed check aborts and rolls back EVERYTHING, including the tables it creates):
---  1. locks pp_pools and pp_cities against writes (SHARE ROW EXCLUSIVE) for the duration;
---  2. creates (if missing) public.seo_repair_pp_backup_20261115 and public.seo_repair_pp_change_log, RLS on;
+--  1. locks pp_pools and pp_cities against writes (SHARE ROW EXCLUSIVE) for the duration; aborts if either table
+--     has a non-internal trigger, unless -v allow_triggers names all of them exactly;
+--  2. creates (if missing) public.seo_repair_pp_backup_20261115 and public.seo_repair_pp_change_log, RLS on, every
+--     privilege revoked from PUBLIC, anon, authenticated and service_role (checked);
 --  3. loads approved-manifest.csv, checks its row count = expected_changes and its md5 = manifest_md5;
 --  4. recomputes the plan with the SAME core as dry-run.sql and decides per manifest row:
 --       apply                         current md5 = manifest old md5 and the plan still produces the manifest new md5
@@ -168,22 +204,23 @@ APPLY = r"""{header}--
 \pset pager off
 \if :{{?run_id}}
 \else
-\echo 'ABORT: pass -v run_id=<unique id, e.g. pp-text-20261120-1>'
-\quit
+select 'ABORT: pass -v run_id=<unique id, e.g. pp-text-20261120-1>'::int;   -- fails on purpose: psql exits 3 (ON_ERROR_STOP), never 0
 \endif
 \if :{{?expected_changes}}
 \else
-\echo 'ABORT: pass -v expected_changes=<the expected_changes printed by dry-run.sql section 6>'
-\quit
+select 'ABORT: pass -v expected_changes=<the expected_changes printed by dry-run.sql section 6>'::int;   -- fails on purpose: psql exits 3 (ON_ERROR_STOP), never 0
 \endif
 \if :{{?manifest_md5}}
 \else
-\echo 'ABORT: pass -v manifest_md5=<the manifest_md5 printed by dry-run.sql section 6>'
-\quit
+select 'ABORT: pass -v manifest_md5=<the manifest_md5 printed by dry-run.sql section 6>'::int;   -- fails on purpose: psql exits 3 (ON_ERROR_STOP), never 0
 \endif
 \if :{{?max_drift}}
 \else
 \set max_drift 0
+\endif
+\if :{{?allow_triggers}}
+\else
+\set allow_triggers ''
 \endif
 
 begin;
@@ -192,8 +229,20 @@ set local statement_timeout = '30min';
 set local enable_nestloop = off;   -- planner hint only (results are identical)
 set local jit = off;               -- JIT would spend ~10 s compiling the plan query
 select set_config('seo_pp.run_id', :'run_id', true) run_id, set_config('seo_pp.expected', :'expected_changes', true) expected_changes,
-       set_config('seo_pp.manifest_md5', :'manifest_md5', true) manifest_md5, set_config('seo_pp.max_drift', :'max_drift', true) max_drift;
+       set_config('seo_pp.manifest_md5', :'manifest_md5', true) manifest_md5, set_config('seo_pp.max_drift', :'max_drift', true) max_drift,
+       set_config('seo_pp.allow_triggers', :'allow_triggers', true) allow_triggers;
 lock table public.pp_pools, public.pp_cities in share row exclusive mode;
+-- triggers: a trigger on pp_pools / pp_cities would run on every guarded UPDATE (once per column statement) and
+-- could change other columns (e.g. updated_at) that the backup does not hold and rollback cannot restore.
+-- Refuse unless the operator names every non-internal trigger exactly, as listed in the abort message.
+do $$ declare found text; begin
+  select string_agg(tgrelid::regclass::text || '.' || tgname, ',' order by tgrelid::regclass::text || '.' || tgname)
+    into found from pg_trigger
+   where tgrelid in ('public.pp_pools'::regclass, 'public.pp_cities'::regclass) and not tgisinternal;
+  if found is not null and found is distinct from current_setting('seo_pp.allow_triggers') then
+    raise exception 'ABORT: trigger(s) on pp_pools/pp_cities: %. Nothing was changed. Read RUNBOOK.md section 5 item 3; to proceed anyway the owner must approve and the run must pass -v allow_triggers=% exactly', found, found;
+  end if;
+end $$;
 
 create table if not exists public.seo_repair_pp_backup_20261115 (
   tbl          text        not null,
@@ -217,6 +266,27 @@ create table if not exists public.seo_repair_pp_change_log (
   logged_at timestamptz not null default now());
 alter table public.seo_repair_pp_backup_20261115 enable row level security;
 alter table public.seo_repair_pp_change_log enable row level security;
+-- Supabase's default privileges grant ALL on new public tables to anon, authenticated and service_role, and
+-- service_role bypasses row-level security. Take every privilege away from those roles and from PUBLIC, so
+-- only the owner (the role running this file) can read, change or truncate the backup and the log.
+revoke all on table public.seo_repair_pp_backup_20261115, public.seo_repair_pp_change_log from public;
+revoke all on sequence public.seo_repair_pp_change_log_id_seq from public;
+select coalesce(string_agg(quote_ident(rolname), ', ' order by rolname), '') as seo_pp_api_roles,
+       count(*) > 0 as seo_pp_has_api_roles
+  from pg_roles where rolname in ('anon', 'authenticated', 'service_role') \gset
+\if :seo_pp_has_api_roles
+revoke all on table public.seo_repair_pp_backup_20261115, public.seo_repair_pp_change_log from :seo_pp_api_roles;
+revoke all on sequence public.seo_repair_pp_change_log_id_seq from :seo_pp_api_roles;
+\endif
+do $$ declare bad text; begin
+  select string_agg(distinct r.rolname || ':' || t.tbl, ', ') into bad
+    from pg_roles r cross join (values ('public.seo_repair_pp_backup_20261115'), ('public.seo_repair_pp_change_log')) t(tbl)
+   where r.rolname in ('anon', 'authenticated', 'service_role')
+     and (has_table_privilege(r.oid, t.tbl, 'SELECT') or has_table_privilege(r.oid, t.tbl, 'UPDATE')
+          or has_table_privilege(r.oid, t.tbl, 'DELETE') or has_table_privilege(r.oid, t.tbl, 'TRUNCATE')
+          or has_table_privilege(r.oid, t.tbl, 'INSERT'));
+  if bad is not null then raise exception 'ABORT: API role(s) still hold privileges on the backup/log: %', bad; end if;
+end $$;
 
 do $$ begin
   if exists (select 1 from public.seo_repair_pp_change_log where run_id = current_setting('seo_pp.run_id')) then
@@ -358,24 +428,46 @@ commit;
 
 ROLLBACK = r"""{header}--
 -- WRITES. One transaction. Undoes one apply run:
---   psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v run_id=<the run_id given to apply.sql> -f rollback.sql
+--   set -o pipefail; psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -v run_id=<the run_id given to apply.sql> -f rollback.sql 2>&1 | tee rollback-<date>.txt
 -- For every field that run logged as 'applied', it restores the backed-up old value ONLY where the current
 -- value still has the logged new md5. A field edited after the apply (any other md5) is NOT touched and is
 -- logged as skip_edited_after_apply; a field already back at its old value is logged as already_restored.
 -- The backup and the change log are never deleted. Restores are logged with action 'restored' under
 -- run_id '<run_id>/rollback'.
+-- Exit status: 0 = every field of the run is back at its old value; 3 = aborted (nothing changed) OR committed
+-- but incomplete (message 'ROLLBACK INCOMPLETE'); read the output. One run id per call: a canary run is undone
+-- by its own call (the output lists other runs whose fields still hold their new value).
 \set ON_ERROR_STOP on
 \pset pager off
 \if :{{?run_id}}
 \else
-\echo 'ABORT: pass -v run_id=<the apply run to undo>'
-\quit
+select 'ABORT: pass -v run_id=<the apply run to undo>'::int;   -- fails on purpose: psql exits 3, never 0
+\endif
+
+\if :{{?allow_triggers}}
+\else
+\set allow_triggers ''
 \endif
 
 begin;
 set local lock_timeout = '10s';
-select set_config('seo_pp.run_id', :'run_id', true) run_id, set_config('seo_pp.rb_id', :'run_id' || '/rollback', true) rollback_id;
+set local statement_timeout = '30min';
+set local enable_nestloop = off;   -- planner hint only: on fresh (unanalysed) log/backup tables the planner
+set local jit = off;               -- otherwise picks a nested loop that took 67 s on the surrogate (0.5 s without)
+select set_config('seo_pp.run_id', :'run_id', true) run_id, set_config('seo_pp.rb_id', :'run_id' || '/rollback', true) rollback_id,
+       set_config('seo_pp.allow_triggers', :'allow_triggers', true) allow_triggers;
 lock table public.pp_pools, public.pp_cities in share row exclusive mode;
+-- triggers: a trigger on pp_pools / pp_cities would run on every guarded UPDATE (once per column statement) and
+-- could change other columns (e.g. updated_at) that the backup does not hold and rollback cannot restore.
+-- Refuse unless the operator names every non-internal trigger exactly, as listed in the abort message.
+do $$ declare found text; begin
+  select string_agg(tgrelid::regclass::text || '.' || tgname, ',' order by tgrelid::regclass::text || '.' || tgname)
+    into found from pg_trigger
+   where tgrelid in ('public.pp_pools'::regclass, 'public.pp_cities'::regclass) and not tgisinternal;
+  if found is not null and found is distinct from current_setting('seo_pp.allow_triggers') then
+    raise exception 'ABORT: trigger(s) on pp_pools/pp_cities: %. Nothing was changed. Read RUNBOOK.md section 5 item 3; to proceed anyway the owner must approve and the run must pass -v allow_triggers=% exactly', found, found;
+  end if;
+end $$;
 
 do $$ begin
   if to_regclass('public.seo_repair_pp_change_log') is null or to_regclass('public.seo_repair_pp_backup_20261115') is null then
@@ -385,6 +477,8 @@ do $$ begin
     raise exception 'ABORT: run % applied nothing (or does not exist)', current_setting('seo_pp.run_id');
   end if;
 end $$;
+analyze public.seo_repair_pp_change_log;
+analyze public.seo_repair_pp_backup_20261115;
 
 create temp table seo_pp_rb on commit drop as
 with l as (
@@ -414,6 +508,7 @@ select l.*, b.old_value, c.cur_md5,
 
 \echo '== rollback decisions'
 select action, tbl, col, count(*) from seo_pp_rb group by 1, 2, 3 order by 1, 2, 3;
+select count(*) filter (where action not in ('restore', 'already_restored')) as seo_pp_not_restored from seo_pp_rb \gset
 
 with u as (
   update public.pp_pools t set ai_best_for = r.old_value from seo_pp_rb r
@@ -469,6 +564,21 @@ end $$;
 select action, tbl, col, count(*) from public.seo_repair_pp_change_log
  where run_id = current_setting('seo_pp.rb_id') and logged_at = now() group by 1, 2, 3 order by 1, 2, 3;
 commit;
+
+\echo '== other apply runs whose applied fields still hold the value that run wrote (e.g. a canary): roll each back separately'
+select l.run_id, count(*) fields_still_at_new_value
+  from public.seo_repair_pp_change_log l
+  left join public.pp_pools p on l.tbl = 'pp_pools' and p.id = l.row_id
+  left join public.pp_cities c on l.tbl = 'pp_cities' and c.id = l.row_id
+ where l.action = 'applied' and l.run_id <> :'run_id'
+   and l.new_md5 = case l.tbl || '.' || l.col when 'pp_pools.ai_best_for' then md5(p.ai_best_for)
+                        when 'pp_pools.ai_description' then md5(p.ai_description) when 'pp_pools.ai_faqs' then md5(p.ai_faqs::text)
+                        when 'pp_cities.ai_intro' then md5(c.ai_intro) when 'pp_cities.ai_faqs' then md5(c.ai_faqs::text) end
+ group by 1 order by 1;
+\echo '== completeness (committed above; a non-zero exit here means some fields were NOT restored: see the decisions)'
+select case when :seo_pp_not_restored = 0 then 'rollback complete: every field of the run is back at its old value'
+            else ('ROLLBACK INCOMPLETE (the restores above are committed): ' || :seo_pp_not_restored ||
+                  ' field(s) were not restored; see the rollback decisions')::int::text end as completeness;
 """
 
 

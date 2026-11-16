@@ -148,6 +148,38 @@ def qualifiers(name):
     return {t for t in re.split(r"[^a-z]+", name.lower()) if t in QUALIFIERS}
 
 
+REVIEW_DIFF = 0.20  # review counts of one Google listing scraped on one day agree within a few percent
+
+
+def review_counts_differ(A, B):
+    """(differ, text). True when both records carry a review count, were created on the same day, and the
+    counts differ by more than REVIEW_DIFF of the larger one: the two records were filled from two DIFFERENT
+    Google listings, whatever their place_id says (added 2026-11-16 after the content review: Welles Park
+    634 vs 143, Holstein Park 389 vs 159, Hamilton Fish 1205 vs 193; a listing really shared by two records
+    gives e.g. 4087/4087, 10765/10761, 944/944)."""
+    try:
+        a, b = int(A["review_count"]), int(B["review_count"])
+    except (TypeError, ValueError):
+        return False, ""
+    if a <= 0 or b <= 0 or A["created"] != B["created"]:
+        return False, ""
+    return abs(a - b) / max(a, b) > REVIEW_DIFF, "%d vs %d reviews" % (a, b)
+
+
+def same_street_name(a, b):
+    """Same street name (ignoring the house number), e.g. '2425 S Arizona Ave' and '3838 S Arizona Ave'."""
+    na, sa = street_parts(a)
+    nb, sb = street_parts(b)
+    return bool(sa) and sa == sb
+
+
+def street_name_conflict(a, b):
+    """Both records have a street address and the street NAMES differ (affirmative evidence of two places)."""
+    na, sa = street_parts(a)
+    nb, sb = street_parts(b)
+    return bool(sa) and bool(sb) and sa != sb and not street_near(a, b)
+
+
 def coord_error_m(dec):
     """Worst-case rounding error of a lat/lon pair given with `dec` decimals (approx. metres)."""
     return 78500 * 10 ** (-dec)
@@ -219,7 +251,31 @@ def classify(p, A, B):
                  f"{dist} m apart, one record has only {mindec} coordinate decimals" if low_prec else
                  f"{dist} m apart")
 
-    if p["e_pid"] == "a":
+    rc_differ, rc_txt = review_counts_differ(A, B)
+    qual_diff = qual_conflict or bool(qa) != bool(qb)
+    if p["e_pid"] == "a" and (rc_differ or qual_diff):
+        # Revised 2026-11-16 (content review): a shared place id does NOT make one facility when the names
+        # point to different pools or the review counts show two different Google listings.
+        if rc_differ and qual_diff:
+            cls = "DIFFERENT"
+            notes.append("different pools at one site: identical place id, but the names carry different "
+                         "qualifiers (%s vs %s) and the review counts differ (%s, same scrape date), so the two "
+                         "records were filled from two different Google listings; the shared place id is wrong, "
+                         "not proof of one facility"
+                         % ("/".join(sorted(qa)) or "none", "/".join(sorted(qb)) or "none", rc_txt))
+        elif rc_differ:
+            cls = "UNDETERMINED"
+            notes.append("identical place id, but the review counts differ (%s, same scrape date): the records "
+                         "were filled from two different Google listings, so the shared place id does not prove "
+                         "one facility; needs a human look" % rc_txt)
+        else:
+            cls = "UNDETERMINED"
+            notes.append("identical place id and matching review counts (one Google listing reused), but the "
+                         "names point to different pools (%s vs %s): not shown to be duplicates of one listing"
+                         % ("/".join(sorted(qa)) or "none", "/".join(sorted(qb)) or "none"))
+        if dist is not None and dist > CLOSE_M:
+            notes.append("coordinates " + coord_txt)
+    elif p["e_pid"] == "a":
         cls = "SAME_FACILITY"
         if dist is not None and dist > CLOSE_M:
             notes.append("identical place id but coordinates " + coord_txt
@@ -255,6 +311,29 @@ def classify(p, A, B):
         if not addr_match:
             miss.append("address to compare" if p["e_street"] == "m" else "address agreement")
         notes.append("coordinates within 75 m and names match; missing: " + "; ".join(miss))
+    elif low_prec and p["e_pid"] != "d" and far(2000) and p["e_zip"] != "a" and not addr_match \
+            and not street_name_conflict(A["address"], B["address"]):
+        # Revised 2026-11-16 (content review, G084): when one record has low-precision coordinates and the
+        # place ids do not disagree, distance alone is not evidence of two sites. Narrowed on resume: precise
+        # coordinates (G091 'hot tub' 21 km, G134 'Pool' 4.4 km apart) still count as evidence.
+        if p["name_eq"] and p["same_city"] and same_street_name(A["address"], B["address"]):
+            cls = "LIKELY_SAME"
+            notes.append("missing: place id on one record" if p["e_pid"] == "m" else "missing: usable coordinates")
+            notes.append("same name, same city and same street (house numbers differ); the distance (" + coord_txt
+                         + ") rests on " + ("low-precision coordinates" if low_prec else "the coordinates")
+                         + (" and a record without a place id" if p["e_pid"] == "m" else "")
+                         + ", so it is not taken as evidence of two sites")
+        else:
+            cls = "UNDETERMINED"
+            notes.append("far apart (" + coord_txt + "), but the coordinates are low precision"
+                         + (" and one record has no place id" if p["e_pid"] == "m" else "")
+                         + ": distance alone is not taken as evidence of two sites; needs a human look")
+    elif p["e_pid"] == "d" and not close and p["name_eq"] and p["e_phone"] == "a" and p["same_city"] \
+            and dist is not None and dist <= 2000:
+        # Revised 2026-11-16 (content review, G177): same name and phone in the same city, under 2 km apart.
+        cls = "UNDETERMINED"
+        notes.append("same name and phone in the same city, " + coord_txt + ", different place ids: one listing "
+                     "that moved (old and new address) or two branches; needs a human look")
     elif (p["e_pid"] == "d" and not close and (street_differs or far(FAR_M))) \
             or (far(2000) and p["e_zip"] != "a" and not addr_match):
         cls = "DIFFERENT"
@@ -299,6 +378,21 @@ def classify(p, A, B):
     if not p["same_city"]:
         notes.append(f"filed under different city pages ({A['city_slug']} vs {B['city_slug']})")
     return cls, literal_same, dist, low_prec, near_st, agree, disagree, missing, notes
+
+
+# Observations read by hand from the saved live page text (text-defects/live-2026-11-16/live-fields.jsonl.gz,
+# fetched read-only 2026-11-16). They are appended to the generated note; they never change a class.
+HAND_NOTES = {
+    ("welles-park-pool", "welles-park-pool-indoor"):
+        "live pages 2026-11-16: welles-park-pool describes 'an outdoor pool' (free, zero-depth entry), "
+        "welles-park-pool-indoor describes an indoor pool with weekday hours from 7:30 AM",
+    ("holstein-park-pool", "holstein-park-public-pool-outdoor"):
+        "live pages 2026-11-16: BOTH texts call Holstein an outdoor pool, but the '(Outdoor)' record carries "
+        "weekday hours until 9 PM and is closed on Sunday; two Google listings, and one record's data is "
+        "probably attached to the wrong pool: check which pool each page describes (content fix, not a merge)",
+    ("hamilton-fish-pool", "hamilton-fish-pool-2"):
+        "1205 vs 193 reviews and different phones: two Google listings",
+}
 
 
 def keeper(A, B, in_sm, indexable):
@@ -406,6 +500,9 @@ def main():
                 if not (p["name_eq"] or p["name_sim"]):
                     kreason += "; names differ, so confirm it is one listing first"
         g, gs = gid[p["ia"]]
+        hand = HAND_NOTES.get((A["slug"], B["slug"])) or HAND_NOTES.get((B["slug"], A["slug"]))
+        if hand:
+            notes.append(hand)
         rows.append({
             "group_id": g, "group_size": gs, "classification": cls, "literal_rule_same_facility": int(lit),
             "proposed_keeper": kslug, "keeper_reason": kreason,
