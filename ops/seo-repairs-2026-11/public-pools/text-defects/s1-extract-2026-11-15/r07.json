@@ -1,0 +1,67 @@
+[
+{
+"col": "pools.ai_description",
+"hit_rows": 1699,
+"nonnull": 3315
+},
+{
+"col": "pools.ai_faqs.a",
+"hit_rows": 1508,
+"nonnull": 1821
+},
+{
+"col": "pools.ai_faqs.q",
+"hit_rows": 188,
+"nonnull": 1821
+},
+{
+"col": "pools.ai_tips",
+"hit_rows": 54,
+"nonnull": 1821
+},
+{
+"col": "pools.price_notes",
+"hit_rows": 0,
+"nonnull": 314
+},
+{
+"col": "pools.hours_json",
+"hit_rows": 0,
+"nonnull": 2914
+},
+{
+"col": "pools.amenities",
+"hit_rows": 0,
+"nonnull": 788
+},
+{
+"col": "pools.any",
+"hit_rows": 1807,
+"nonnull": 3381
+},
+{
+"col": "cities.ai_intro",
+"hit_rows": 378,
+"nonnull": 639
+},
+{
+"col": "cities.ai_faqs.a",
+"hit_rows": 287,
+"nonnull": 403
+},
+{
+"col": "cities.ai_faqs.q",
+"hit_rows": 396,
+"nonnull": 403
+},
+{
+"col": "cities.meta",
+"hit_rows": 0,
+"nonnull": 647
+},
+{
+"col": "cities.any",
+"hit_rows": 402,
+"nonnull": 647
+}
+]

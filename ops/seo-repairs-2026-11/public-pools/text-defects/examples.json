@@ -1,6 +1,87 @@
 {
- "about": "Hand-made before/after examples. before = real field text; after = written by hand (whole sentences removed by plain string surgery, independent of the cleaner). Checked by: python3 -I text_defect_rules.py test",
+ "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test",
  "examples": [
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/north-carolina/apex/apex-aquatic-center/",
+   "source": "live page fetched 2026-11-16T19:45:32Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"families\", \"lap swimmers\", \"fitness swimmers\", \"year-round swimming\"]",
+   "after": "families, lap swimmers, fitness swimmers, year-round swimming",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/new-york/bronx/kwame-ture-recreation-center/",
+   "source": "live page fetched 2026-11-16T19:45:45Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"families\", \"casual recreation\", \"lap swimmers\", \"year-round swimming\"]",
+   "after": "families, casual recreation, lap swimmers, year-round swimming",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/california/san-diego/north-park-recreation-center/",
+   "source": "live page fetched 2026-11-16T19:52:57Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"families\", \"casual recreation\", \"lap swimmers\", \"fitness swimmers\"]",
+   "after": "families, casual recreation, lap swimmers, fitness swimmers",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/california/san-diego/city-heights-swim-center/",
+   "source": "live page fetched 2026-11-16T19:52:59Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"families\", \"lap swimmers\", \"casual recreation\", \"summer cooldown\"]",
+   "after": "families, lap swimmers, casual recreation, summer cooldown",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/california/san-diego/ymca-childcare-resource-service/",
+   "source": "live page fetched 2026-11-16T19:52:33Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"families\"]",
+   "after": "families",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/texas/austin/garrison-municipal-pool/",
+   "source": "live page fetched 2026-11-16T19:44:18Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"families\", \"casual recreation\", \"summer cooldown\"]",
+   "after": "families, casual recreation, summer cooldown",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/illinois/chicago/chicago-park-district-whitney-young-pool-indoor/",
+   "source": "live page fetched 2026-11-16T19:52:55Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"lap swimmers\", \"fitness swimmers\", \"year-round swimming\"]",
+   "after": "lap swimmers, fitness swimmers, year-round swimming",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/texas/dallas/bryan-place-swimming-pool-association/",
+   "source": "live page fetched 2026-11-16T19:47:36Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"casual recreation\", \"lap swimmers\", \"fitness swimmers\", \"summer cooldown\"]",
+   "after": "casual recreation, lap swimmers, fitness swimmers, summer cooldown",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/virginia/hampton/hampton-community-pool/",
+   "source": "live page fetched 2026-11-16T19:48:40Z (rendered pp_pools.ai_best_for, printed verbatim after 'Best for:')",
+   "before": "[\"families\", \"lap swimmers\", \"toddlers\", \"casual recreation\", \"summer cooldown\"]",
+   "after": "families, lap swimmers, toddlers, casual recreation, summer cooldown",
+   "note": "Elements joined with ', ' in original order and spelling."
+  },
+  {
+   "rule": "R1",
+   "ref": "live pool page /public-pools/california/los-angeles/ymca-of-metropolitan-los-angeles-corporate-office/",
+   "source": "live page fetched 2026-11-16T19:44:16Z",
+   "before": "[]",
+   "after": "[]",
+   "expect_skip": "empty_list",
+   "note": "Empty array: joining would print an empty 'Best for:' line, so the row is skipped and reported (renderer should hide the line)."
+  },
   {
    "rule": "R2",
    "ref": "pp_pools 4792a27a (Roxborough YMCA)",
@@ -372,6 +453,323 @@
    "before": "You can swim year-round here if the pool is heated. Most public and private pools keep their water warm enough for comfortable swimming even in cooler months. Summer is when you'll see the most activity, but dedicated swimmers are in the water all year. We don't really shut down for winter.",
    "after": "You can swim year-round here if the pool is heated. Most public and private pools keep their water warm enough for comfortable swimming even in cooler months. Summer is when you'll see the most activity, but dedicated swimmers are in the water all year.",
    "note": "Narrator closing line of a city FAQ answer deleted; the three factual-sounding sentences stay.",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/california/coronado/ (ai_faqs[] indoor question)",
+   "source": "live page fetched 2026-11-16T19:36:35Z",
+   "names": [
+    null,
+    "Coronado",
+    "California"
+   ],
+   "before": "Most of the pools here are outdoors, taking advantage of the great weather. I'm not aware of any dedicated indoor municipal swimming pools. The mild climate makes outdoor swimming comfortable almost any day of the year.",
+   "after": "Most of the pools here are outdoors, taking advantage of the great weather. The mild climate makes outdoor swimming comfortable almost any day of the year.",
+   "note": "Narrator data-gap sentence deleted; the two general sentences stay.",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/indiana/fishers/ (ai_faqs[] indoor/outdoor question)",
+   "source": "live page fetched 2026-11-16T19:36:13Z",
+   "names": [
+    null,
+    "Fishers",
+    "Indiana"
+   ],
+   "before": "We have a good mix. During the summer, most people want outdoor pools to enjoy the sun. But there are several indoor aquatic centers that operate year-round. These are key for swim teams, lessons, and those who want to swim regardless of the weather outside.",
+   "after": "During the summer, most people want outdoor pools to enjoy the sun. But there are several indoor aquatic centers that operate year-round. These are key for swim teams, lessons, and those who want to swim regardless of the weather outside.",
+   "note": "Narrator 'we' opener deleted; the answer continues with its own content.",
+   "pool_page": false
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/florida/miami/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:39:45Z",
+   "names": [
+    null,
+    "Miami",
+    "Florida"
+   ],
+   "before": "Miami. Even in January, you can pretty much count on being able to get in the water. We locals spend a lot of time by the water, and pools are a big part of that. It's year-round pool weather here. Our public pools are usually outdoors, so you get that sunny, open-air swim whenever you want. You'll find a mix of serious lap swimmers, families, and people just cooling off. If you're new to the area, the best way to find a pool is to check out our online directory. You can filter by what you need, like specific facilities or hours. It makes it easy to see what's close and open.",
+   "after": "Miami. Even in January, you can pretty much count on being able to get in the water. We locals spend a lot of time by the water, and pools are a big part of that. It's year-round pool weather here. Our public pools are usually outdoors, so you get that sunny, open-air swim whenever you want. You'll find a mix of serious lap swimmers, families, and people just cooling off. If you're new to the area, the best way to find a pool is to check out our online directory. You can filter by what you need, like specific facilities or hours. It makes it easy to see what's close and open.",
+   "note": "By hand 'We locals spend a lot of time by the water, and pools are a big part of that.' is filler, but the next sentence 'It's year-round pool weather here.' starts with It's: row skipped and reported.",
+   "pool_page": false,
+   "expect_skip": "next_sentence_refers_back"
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/tennessee/knoxville/knoxville-community-pool/",
+   "source": "live page fetched 2026-11-16T19:44:02Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)",
+   "before": {
+    "q": "What are the hours of the Knoxville Community Pool?",
+    "a": "Their operating hours aren't something I have on hand. Your best bet is to check the Knoxville Parks and Recreation website or just give the pool a call directly before you plan your visit."
+   },
+   "after": "delete_entry",
+   "pool_page": true,
+   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/nevada/sparks/sparks-community-pool/",
+   "source": "live page fetched 2026-11-16T19:46:46Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)",
+   "before": {
+    "q": "Is Sparks Community Pool accessible for people with disabilities?",
+    "a": "The information I have doesn't specify accessibility features. I'd recommend contacting the pool directly or checking the City of Sparks Parks and Recreation website for details on ramps, lifts, or other accommodations."
+   },
+   "after": "delete_entry",
+   "pool_page": true,
+   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/minnesota/lakeville/lakeville-municipal-pool/",
+   "source": "live page fetched 2026-11-16T19:47:01Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)",
+   "before": {
+    "q": "Are there any other public pools in Lakeville I could consider?",
+    "a": "I only have information on the Lakeville Municipal Pool right now. For other options, I'd check the Lakeville city website or do a quick search for \"public pools Lakeville MN\" to see if there are others."
+   },
+   "after": "delete_entry",
+   "pool_page": true,
+   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/california/san-mateo/san-mateo-swim-center/",
+   "source": "live page fetched 2026-11-16T19:49:04Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)",
+   "before": {
+    "q": "Are there other public pools in San Mateo?",
+    "a": "I only have data for the San Mateo Swim Center right now. I'd suggest checking the City of San Mateo parks and recreation website for information on other public swimming facilities in the area."
+   },
+   "after": "delete_entry",
+   "pool_page": true,
+   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/california/diamond-bar/pantera-park-pool/",
+   "source": "live page fetched 2026-11-16T19:50:20Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)",
+   "before": {
+    "q": "Are there other pools in Diamond Bar, CA, if this one doesn't work out?",
+    "a": "I only have information for Pantera Park Pool right now. For other options in Diamond Bar, I'd suggest checking the city's parks and recreation website or calling the general information line."
+   },
+   "after": "delete_entry",
+   "pool_page": true,
+   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/california/mountain-view/rengstorff-pool/",
+   "source": "live page fetched 2026-11-16T19:50:29Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)",
+   "before": {
+    "q": "Are there other public pools in Mountain View CA?",
+    "a": "The data I have is specifically for Rengstorff Pool. For other options in Mountain View, your best bet is probably to check the City of Mountain View's parks and recreation website or call their community services department."
+   },
+   "after": "delete_entry",
+   "pool_page": true,
+   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/texas/sugar-land/sugar-land-community-pool/",
+   "source": "live page fetched 2026-11-16T19:51:09Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)",
+   "before": {
+    "q": "Are there other indoor pools in Sugar Land besides this one?",
+    "a": "I only have information on the Sugar Land Community Pool for this search. You might find other options if you look at local gyms or other community centers in the area."
+   },
+   "after": "delete_entry",
+   "pool_page": true,
+   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+  },
+  {
+   "rule": "R5",
+   "ref": "pp_pools east-pool ai_faqs[1]",
+   "source": "pp_pools read-only extract 2026-11-15 (r12)",
+   "before": {
+    "q": "How much does it cost to get into East Pool?",
+    "a": "Admission fees aren't something I have on hand. Public pools usually have a daily rate or a pass option. You should contact the City of Laredo Parks Department for pricing details."
+   },
+   "after": "keep_entry",
+   "pool_page": true,
+   "note": "Near miss: 'Public pools usually have a daily rate or a pass option.' is a general statement, not a referral or data gap, so the entry stays (R3 deletes only the gap sentence)."
+  },
+  {
+   "rule": "R5",
+   "ref": "pp_pools freedom-aquatics ai_faqs[2]",
+   "source": "pp_pools read-only extract 2026-11-15 (r12)",
+   "before": {
+    "q": "How much does it cost to swim at Freedom Aquatics?",
+    "a": "The information I have doesn't include specific pricing for Freedom Aquatics. Since it's a public pool, it's best to call them directly at (917) 979-5559 to ask about daily rates or membership options."
+   },
+   "after": "keep_entry",
+   "pool_page": true,
+   "note": "Near miss: the referral carries a phone number, which is a fact; the entry stays."
+  },
+  {
+   "rule": "R5",
+   "ref": "live city page /public-pools/delaware/wilmington/ ai_faqs[5]",
+   "source": "live page fetched 2026-11-16T19:38:55Z",
+   "before": {
+    "q": "What if I want a private pool experience without a club membership?",
+    "a": "That's exactly what we help with at PoolRentalNearMe.com. You can rent private backyard pools by the hour in and around Wilmington. It's a great option if you want a more private setting, no crowds, or just a different vibe for your swim."
+   },
+   "after": "keep_entry",
+   "pool_page": false,
+   "note": "Site voice ('That's exactly what we help with at PoolRentalNearMe.com') is not an invented narrator: kept."
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/california/sacramento/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:39:38Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Sacramento",
+    "California"
+   ],
+   "actual": 22,
+   "before": "Summer in Sacramento can be a real oven, so pools aren't just for fun, they're essential. You'll find a pretty laid-back swimming culture here, mostly families and folks just trying to cool off. When the temperatures start climbing in May, that's when everyone really starts thinking about getting in the water. Most public pools openMemorial Day weekend and stay open through Labor Day. It's not a big lap swimming town from what I've seen at the public spots. You come to Sacramento to beat the heat, splash around, and let the kids burn off some energy. Finding a good spot is usually pretty easy. We've got five public pools on our site for Sacramento, so there are options across the city.",
+   "after": "Summer in Sacramento can be a real oven, so pools aren't just for fun, they're essential. You'll find a pretty laid-back swimming culture here, mostly families and folks just trying to cool off. When the temperatures start climbing in May, that's when everyone really starts thinking about getting in the water. Most public pools openMemorial Day weekend and stay open through Labor Day. It's not a big lap swimming town from what I've seen at the public spots. You come to Sacramento to beat the heat, splash around, and let the kids burn off some energy. Finding a good spot is usually pretty easy.",
+   "note": "Page header: 22 pools; prose says five. Count sentence deleted (R6, last sentence). The narrator sentence 'It's not a big lap swimming town from what I've seen ...' stays (fact word 'lap'). The data typo 'openMemorial' is NOT corrected: no rule may edit inside a sentence.",
+   "pool_page": false
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/colorado/aurora/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:37:39Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Aurora",
+    "Colorado"
+   ],
+   "actual": 44,
+   "before": "Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees. We've got five public pools listed in our directory, so you've got options.",
+   "after": "Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees.",
+   "note": "Header 44; prose five. Deleted. 'We've got things like wave pools and lazy rivers ...' stays (amenity words).",
+   "pool_page": false
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/illinois/chicago/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:38:01Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Chicago",
+    "Illinois"
+   ],
+   "actual": 57,
+   "before": "When it finally heats up in the Midwest, people here are ready for the water. Chicago summers mean getting outside, and for a lot of folks, that means finding a pool. Our public pools open up around mid-June and usually stay open through Labor Day. It's mostly a family scene at the outdoor pools. You'll see a mix of serious lap swimmers and families just trying to cool off. Public pools are a big deal for communities here, and they can get pretty busy on hot days. If you're new to the area or just visiting, knowing a few spots can make a summer day. Even with five public pools in our system, finding your perfect swim can sometimes mean looking beyond the city parks.",
+   "after": "When it finally heats up in the Midwest, people here are ready for the water. Chicago summers mean getting outside, and for a lot of folks, that means finding a pool. Our public pools open up around mid-June and usually stay open through Labor Day. It's mostly a family scene at the outdoor pools. You'll see a mix of serious lap swimmers and families just trying to cool off. Public pools are a big deal for communities here, and they can get pretty busy on hot days. If you're new to the area or just visiting, knowing a few spots can make a summer day.",
+   "note": "Header 57; prose five. R6 deletes it. The R4 pass would delete 'When it finally heats up in the Midwest, people here are ready for the water.' but it names 'Midwest' and is followed by more text, so the R4 pass is skipped (reported) without blocking R6.",
+   "pool_page": false
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/kentucky/louisville/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:36:33Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Louisville",
+    "Kentucky"
+   ],
+   "actual": 17,
+   "before": "Summer in this part of Kentucky means it gets hot, and a lot of folks head for the water. The pool season generally kicks off Memorial Day weekend and runs through Labor Day. It's pretty family focused here, so you'll see a lot of splash pads and shallow ends. If you're new to Louisville and looking to swim, the public pools are a good starting point. They're usually well-maintained and offer a good mix of lap lanes and open swim areas. We've got five public pools listed for Louisville, so there's usually an option not too far from wherever you are. Just keep in mind that on really hot days, they can get busy, especially the ones with extra features.",
+   "after": "Summer in this part of Kentucky means it gets hot, and a lot of folks head for the water. The pool season generally kicks off Memorial Day weekend and runs through Labor Day. It's pretty family focused here, so you'll see a lot of splash pads and shallow ends. If you're new to Louisville and looking to swim, the public pools are a good starting point. They're usually well-maintained and offer a good mix of lap lanes and open swim areas. We've got five public pools listed for Louisville, so there's usually an option not too far from wherever you are. Just keep in mind that on really hot days, they can get busy, especially the ones with extra features.",
+   "note": "Header 17; prose five. By hand the count sentence should go, but the next sentence 'Just keep in mind that on really hot days, they can get busy ...' matches the '<words>, they' back-reference form, so the R6 pass is skipped and the row is REPORTED with a delete recommendation (deliberate over-skip).",
+   "pool_page": false,
+   "expect_skip": "next_sentence_refers_back"
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/south-carolina/mount-pleasant/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:39:26Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Mount Pleasant",
+    "South Carolina"
+   ],
+   "actual": 2,
+   "before": "Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off. The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs. We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.",
+   "after": "The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs.",
+   "note": "Header 2; prose one: R6 deletes the count sentence. The R4 pass then deletes the opening local-voice sentence ('folks here'); the new first sentence 'The heat usually sticks around from May ...' stands alone.",
+   "pool_page": false
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/new-york/brooklyn/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:42:56Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Brooklyn",
+    "New York"
+   ],
+   "actual": 28,
+   "before": "Back when I was first swimming in Brooklyn, a lot of pools were shutting down for the winter right after Labor Day. These days, that's not always the case anymore. Sure, many of the outdoor spots still close up, but you'll find more indoor options stretching the swim season. It's not just about lap swimming here. You'll see plenty of families, especially at the bigger outdoor pools when the weather's good. If you're new to finding a pool, just remember that some places have specific hours for different age groups or types of swimming, so it's always good to check that out before you go. We've got five public pools listed in our directory, so there are options, even if it feels like a big city to navigate.",
+   "after": "Back when I was first swimming in Brooklyn, a lot of pools were shutting down for the winter right after Labor Day. These days, that's not always the case anymore. Sure, many of the outdoor spots still close up, but you'll find more indoor options stretching the swim season. It's not just about lap swimming here. You'll see plenty of families, especially at the bigger outdoor pools when the weather's good. If you're new to finding a pool, just remember that some places have specific hours for different age groups or types of swimming, so it's always good to check that out before you go.",
+   "note": "Header 28; prose five. Count sentence (last) deleted. The invented memoir opener 'Back when I was first swimming in Brooklyn, ...' stays: it carries 'Labor Day' (schedule) and a second clause; listed as an out-of-scope shape.",
+   "pool_page": false
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/arizona/mesa/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:37:50Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Mesa",
+    "Arizona"
+   ],
+   "actual": 13,
+   "before": "When the summer sun really kicks in here, we're talking triple digits for months on end. That means pools aren't just for cooling off, they're how you live. People around here hit the water to survive the heat, not just for a leisurely swim. You'll find a mix of serious lap swimmers and families looking to escape the heat. It's a pool culture built around beating the Arizona summer. If you're new to the area or just visiting, finding a good pool is key to enjoying your time outside. We've got just one public spot listed for Mesa so far (Skyline Aquatic Center).",
+   "after": "When the summer sun really kicks in here, we're talking triple digits for months on end. That means pools aren't just for cooling off, they're how you live. People around here hit the water to survive the heat, not just for a leisurely swim. You'll find a mix of serious lap swimmers and families looking to escape the heat. It's a pool culture built around beating the Arizona summer. If you're new to the area or just visiting, finding a good pool is key to enjoying your time outside.",
+   "note": "Header 13 (12 distinct after one mapped duplicate pair); prose one. R6 deletes the last sentence. The R4 pass is skipped: deleting 'When the summer sun really kicks in here, we're talking triple digits ...' would leave 'That means pools ...' pointing back.",
+   "pool_page": false,
+   "distinct": 12
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/delaware/wilmington/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:38:55Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Wilmington",
+    "Delaware"
+   ],
+   "actual": 7,
+   "before": "Summer in Wilmington usually means July and August are hot. We get a good three months of solid outdoor pool weather, sometimes more into September if we're lucky. People here definitely use their pools. It's a mix, honestly. You'll see families with young kids cooling off, older folks swimming laps for exercise, and teens just hanging out. Our public pools tend to be community hubs. If you're new to the area, the best way to find a pool is just to check out the city's parks and rec sites or look at local YMCA branches. Our site lists five public pools in Wilmington, but there are always private options too if you want something different. It's not a huge swim scene like some coastal towns, but people definitely appreciate having a place to cool off when the heat hits.",
+   "after": "Summer in Wilmington usually means July and August are hot. We get a good three months of solid outdoor pool weather, sometimes more into September if we're lucky. People here definitely use their pools. It's a mix, honestly. You'll see families with young kids cooling off, older folks swimming laps for exercise, and teens just hanging out. Our public pools tend to be community hubs. If you're new to the area, the best way to find a pool is just to check out the city's parks and rec sites or look at local YMCA branches. Our site lists five public pools in Wilmington, but there are always private options too if you want something different. It's not a huge swim scene like some coastal towns, but people definitely appreciate having a place to cool off when the heat hits.",
+   "note": "Header 7; prose 'Our site lists five public pools'. By hand the sentence should go, but the next sentence starts 'It's not a huge swim scene ...', so the R6 pass is skipped and the row is REPORTED for the owner (and the R4 pass is skipped for the same reason after 'People here definitely use their pools.').",
+   "pool_page": false,
+   "expect_skip": "next_sentence_refers_back"
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/california/apple-valley/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:38:28Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Apple Valley",
+    "California"
+   ],
+   "actual": 2,
+   "before": "Summer gets long and hot here, sitting out in the high desert. You're looking at daytime temps over 90 for a good chunk of the year, so finding a spot to cool off isn't just about fun, it's pretty much essential. We've got just one public pool we track in Apple Valley, the Civic Center Park Aquatic Center. It's a solid option for families and lap swimmers. Most folks are going to be outdoors from pretty early spring right through October, sometimes even November if we get a mild fall. It's a good place to meet locals and definitely where people head when they need to beat the heat. If you're new in town, that's your starting point for a public swim.",
+   "after": "Summer gets long and hot here, sitting out in the high desert. You're looking at daytime temps over 90 for a good chunk of the year, so finding a spot to cool off isn't just about fun, it's pretty much essential. We've got just one public pool we track in Apple Valley, the Civic Center Park Aquatic Center. It's a solid option for families and lap swimmers. Most folks are going to be outdoors from pretty early spring right through October, sometimes even November if we get a mild fall. It's a good place to meet locals and definitely where people head when they need to beat the heat. If you're new in town, that's your starting point for a public swim.",
+   "note": "Header 2, but the two records are mapped duplicate pair G039 (Civic Center Park Aquatic Center twice). The prose 'just one public pool' matches the facility count, so R6 HOLDS it until the duplicate decision; nothing changes.",
+   "pool_page": false,
+   "distinct": 1
+  },
+  {
+   "rule": "R6",
+   "ref": "live city page /public-pools/texas/austin/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:36:13Z (rendered pp_cities.ai_intro)",
+   "names": [
+    null,
+    "Austin",
+    "Texas"
+   ],
+   "actual": 47,
+   "before": "When the heat hits hard in Austin, usually around May and keeps going strong into September, knowing where to find a good pool is key. Public pools here are really popular, and they're usually outdoor, so they're only open for that summer season. A lot of folks use them to cool off, to get some exercise with lap swimming, or for a family outing. You'll see a mix of all that. If you're new to the area, it's pretty easy to find a spot to swim. We've got a total of five public pools listed in our directory, and there are some specific places that are pretty well-known for swimming. It just depends on what you're looking for, whether it's a natural spring or a city pool.",
+   "after": "When the heat hits hard in Austin, usually around May and keeps going strong into September, knowing where to find a good pool is key. Public pools here are really popular, and they're usually outdoor, so they're only open for that summer season. A lot of folks use them to cool off, to get some exercise with lap swimming, or for a family outing. You'll see a mix of all that. If you're new to the area, it's pretty easy to find a spot to swim. We've got a total of five public pools listed in our directory, and there are some specific places that are pretty well-known for swimming. It just depends on what you're looking for, whether it's a natural spring or a city pool.",
+   "note": "Header 47; prose 'a total of five public pools listed in our directory, and there are some specific places that are pretty well-known for swimming'. The sentence carries a second claim ('well-known'), so it is review_mixed: listed for the owner with a delete recommendation, never automatic. No narrator sentence qualifies; unchanged.",
    "pool_page": false
   }
  ]

@@ -1,0 +1,962 @@
+[
+{
+"pre": "the information i",
+"n": 258,
+"d": 0,
+"pf": 258,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd check the",
+"n": 212,
+"d": 1,
+"pf": 211,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "from what i",
+"n": 149,
+"d": 124,
+"pf": 24,
+"ci": 0,
+"cf": 1
+},
+{
+"pre": "i always tell",
+"n": 124,
+"d": 124,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd suggest checking",
+"n": 85,
+"d": 0,
+"pf": 85,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "it's got a",
+"n": 82,
+"d": 82,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "we've got a",
+"n": 63,
+"d": 0,
+"pf": 0,
+"ci": 60,
+"cf": 3
+},
+{
+"pre": "i'd definitely call",
+"n": 60,
+"d": 48,
+"pf": 12,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i only have",
+"n": 58,
+"d": 0,
+"pf": 58,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i've seen a",
+"n": 55,
+"d": 55,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd say it's",
+"n": 55,
+"d": 43,
+"pf": 12,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i like that",
+"n": 52,
+"d": 52,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "it's a public",
+"n": 51,
+"d": 46,
+"pf": 5,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "from what i've",
+"n": 51,
+"d": 37,
+"pf": 10,
+"ci": 3,
+"cf": 1
+},
+{
+"pre": "i'd call them",
+"n": 51,
+"d": 5,
+"pf": 46,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd recommend calling",
+"n": 50,
+"d": 1,
+"pf": 49,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i always recommend",
+"n": 48,
+"d": 36,
+"pf": 12,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i always appreciate",
+"n": 48,
+"d": 48,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "my data doesn't",
+"n": 44,
+"d": 0,
+"pf": 44,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "my guess is",
+"n": 43,
+"d": 42,
+"pf": 1,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd expect it",
+"n": 43,
+"d": 17,
+"pf": 26,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd call ahead",
+"n": 43,
+"d": 9,
+"pf": 33,
+"ci": 0,
+"cf": 1
+},
+{
+"pre": "i recommend checking",
+"n": 42,
+"d": 0,
+"pf": 41,
+"ci": 0,
+"cf": 1
+},
+{
+"pre": "while i can't",
+"n": 41,
+"d": 0,
+"pf": 41,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "if you're looking",
+"n": 40,
+"d": 19,
+"pf": 15,
+"ci": 2,
+"cf": 4
+},
+{
+"pre": "i don't know",
+"n": 37,
+"d": 4,
+"pf": 11,
+"ci": 0,
+"cf": 22
+},
+{
+"pre": "i'd recommend looking",
+"n": 36,
+"d": 0,
+"pf": 36,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "that tells me",
+"n": 35,
+"d": 34,
+"pf": 1,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i've heard good",
+"n": 35,
+"d": 35,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "for a city",
+"n": 34,
+"d": 34,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i see it's",
+"n": 33,
+"d": 33,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "they've got a",
+"n": 31,
+"d": 31,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "our pool season",
+"n": 31,
+"d": 0,
+"pf": 0,
+"ci": 29,
+"cf": 2
+},
+{
+"pre": "i've seen it",
+"n": 31,
+"d": 29,
+"pf": 1,
+"ci": 1,
+"cf": 0
+},
+{
+"pre": "i'd call to",
+"n": 30,
+"d": 0,
+"pf": 30,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd definitely check",
+"n": 30,
+"d": 24,
+"pf": 6,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd suggest looking",
+"n": 30,
+"d": 0,
+"pf": 30,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd still call",
+"n": 30,
+"d": 1,
+"pf": 29,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "the google rating",
+"n": 29,
+"d": 29,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "we see a",
+"n": 29,
+"d": 4,
+"pf": 0,
+"ci": 25,
+"cf": 0
+},
+{
+"pre": "i'd suggest calling",
+"n": 28,
+"d": 0,
+"pf": 28,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "we don't have",
+"n": 27,
+"d": 3,
+"pf": 2,
+"ci": 12,
+"cf": 10
+},
+{
+"pre": "i haven't been",
+"n": 26,
+"d": 26,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "that's actually what",
+"n": 25,
+"d": 0,
+"pf": 0,
+"ci": 0,
+"cf": 25
+},
+{
+"pre": "we get a",
+"n": 25,
+"d": 0,
+"pf": 0,
+"ci": 25,
+"cf": 0
+},
+{
+"pre": "for specific accessibility",
+"n": 25,
+"d": 0,
+"pf": 25,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "given it's a",
+"n": 24,
+"d": 9,
+"pf": 15,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd still recommend",
+"n": 24,
+"d": 1,
+"pf": 23,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "if you're new",
+"n": 24,
+"d": 1,
+"pf": 0,
+"ci": 23,
+"cf": 0
+},
+{
+"pre": "i'd recommend contacting",
+"n": 23,
+"d": 0,
+"pf": 23,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "the data i",
+"n": 23,
+"d": 0,
+"pf": 23,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "that's exactly what",
+"n": 23,
+"d": 0,
+"pf": 0,
+"ci": 0,
+"cf": 23
+},
+{
+"pre": "i can't confirm",
+"n": 22,
+"d": 0,
+"pf": 22,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "it tells me",
+"n": 22,
+"d": 22,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd check their",
+"n": 22,
+"d": 0,
+"pf": 21,
+"ci": 0,
+"cf": 1
+},
+{
+"pre": "i'd give them",
+"n": 20,
+"d": 11,
+"pf": 9,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i know a",
+"n": 20,
+"d": 20,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "with a city",
+"n": 20,
+"d": 20,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "however i can't",
+"n": 20,
+"d": 0,
+"pf": 20,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "we list backyard",
+"n": 19,
+"d": 0,
+"pf": 0,
+"ci": 0,
+"cf": 19
+},
+{
+"pre": "for other public",
+"n": 19,
+"d": 0,
+"pf": 19,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "when i look",
+"n": 18,
+"d": 18,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "it's an outdoor",
+"n": 18,
+"d": 15,
+"pf": 2,
+"ci": 1,
+"cf": 0
+},
+{
+"pre": "i'd expect there",
+"n": 18,
+"d": 0,
+"pf": 18,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i see they",
+"n": 18,
+"d": 18,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "since it's a",
+"n": 18,
+"d": 1,
+"pf": 17,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "yes i'd say",
+"n": 18,
+"d": 0,
+"pf": 18,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "my information doesn't",
+"n": 17,
+"d": 0,
+"pf": 17,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "for other options",
+"n": 17,
+"d": 0,
+"pf": 17,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd imagine it",
+"n": 17,
+"d": 10,
+"pf": 7,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i couldn't pin",
+"n": 16,
+"d": 0,
+"pf": 16,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "that's what we",
+"n": 16,
+"d": 0,
+"pf": 0,
+"ci": 0,
+"cf": 16
+},
+{
+"pre": "you'll find a",
+"n": 16,
+"d": 0,
+"pf": 0,
+"ci": 16,
+"cf": 0
+},
+{
+"pre": "i'd definitely recommend",
+"n": 16,
+"d": 1,
+"pf": 15,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i always say",
+"n": 16,
+"d": 16,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd definitely give",
+"n": 16,
+"d": 15,
+"pf": 1,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "when i'm looking",
+"n": 16,
+"d": 16,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i couldn't tell",
+"n": 16,
+"d": 2,
+"pf": 14,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "if you're in",
+"n": 16,
+"d": 16,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "my experience with",
+"n": 15,
+"d": 15,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i mean it's",
+"n": 15,
+"d": 15,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "this is based",
+"n": 15,
+"d": 0,
+"pf": 15,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i see they've",
+"n": 15,
+"d": 15,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i can't tell",
+"n": 15,
+"d": 0,
+"pf": 15,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "these are the",
+"n": 15,
+"d": 0,
+"pf": 15,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i can't say",
+"n": 15,
+"d": 0,
+"pf": 15,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "in my experience",
+"n": 15,
+"d": 8,
+"pf": 7,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "given our climate",
+"n": 14,
+"d": 0,
+"pf": 0,
+"ci": 0,
+"cf": 14
+},
+{
+"pre": "when i see",
+"n": 14,
+"d": 14,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "most of the",
+"n": 14,
+"d": 2,
+"pf": 0,
+"ci": 5,
+"cf": 7
+},
+{
+"pre": "that's a pretty",
+"n": 14,
+"d": 6,
+"pf": 8,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "most folks are",
+"n": 14,
+"d": 1,
+"pf": 0,
+"ci": 13,
+"cf": 0
+},
+{
+"pre": "i'm sure there",
+"n": 14,
+"d": 0,
+"pf": 14,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "it's a pretty",
+"n": 14,
+"d": 5,
+"pf": 3,
+"ci": 5,
+"cf": 1
+},
+{
+"pre": "for specifics on",
+"n": 13,
+"d": 0,
+"pf": 13,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "for details on",
+"n": 13,
+"d": 0,
+"pf": 13,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "the rating from",
+"n": 13,
+"d": 13,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "folks around here",
+"n": 13,
+"d": 0,
+"pf": 0,
+"ci": 13,
+"cf": 0
+},
+{
+"pre": "i always suggest",
+"n": 13,
+"d": 8,
+"pf": 5,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "a lot of",
+"n": 13,
+"d": 2,
+"pf": 0,
+"ci": 11,
+"cf": 0
+},
+{
+"pre": "they've got lap",
+"n": 13,
+"d": 13,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "what i like",
+"n": 12,
+"d": 12,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "with a star",
+"n": 12,
+"d": 11,
+"pf": 1,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i recommend calling",
+"n": 12,
+"d": 0,
+"pf": 12,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd say give",
+"n": 12,
+"d": 12,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "with a population",
+"n": 12,
+"d": 10,
+"pf": 0,
+"ci": 2,
+"cf": 0
+},
+{
+"pre": "i'd imagine it's",
+"n": 11,
+"d": 6,
+"pf": 5,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "with a rating",
+"n": 11,
+"d": 11,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "from what i’ve",
+"n": 10,
+"d": 10,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "from the reviews",
+"n": 10,
+"d": 10,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i've seen that",
+"n": 10,
+"d": 10,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'd lean towards",
+"n": 10,
+"d": 5,
+"pf": 5,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i've seen their",
+"n": 10,
+"d": 10,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "for specific parking",
+"n": 10,
+"d": 0,
+"pf": 10,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i think it's",
+"n": 10,
+"d": 9,
+"pf": 1,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i think that's",
+"n": 10,
+"d": 1,
+"pf": 9,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "i'm not aware",
+"n": 10,
+"d": 0,
+"pf": 0,
+"ci": 0,
+"cf": 10
+},
+{
+"pre": "based on the",
+"n": 10,
+"d": 3,
+"pf": 7,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "folks seem to",
+"n": 10,
+"d": 10,
+"pf": 0,
+"ci": 0,
+"cf": 0
+},
+{
+"pre": "parking details aren't",
+"n": 10,
+"d": 0,
+"pf": 10,
+"ci": 0,
+"cf": 0
+}
+]

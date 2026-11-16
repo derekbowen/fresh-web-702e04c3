@@ -1,0 +1,268 @@
+[
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "f0e803",
+"s": "Right now, the most reliable public option we have listed is the San Jacinto High School Aquatics Center.",
+"nxt": "Costs for public swim sessions there are typically low, but you'd need to check their curr"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "00a59d",
+"s": "Our swim scene leans toward families and a relaxed vibe.",
+"nxt": "You'll find a lot of people just cooling off, not doing serious lap work, though you can d"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "311ad7",
+"s": "We see a lot of families at the pools, especially during those long summer breaks.",
+"nxt": "It's not so much a lap swimming scene as it is a place for the kids to splash around and f"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "311ad7",
+"s": "Our pool season pretty much runs from late spring right through early fall.",
+"nxt": "If you're new to the area and looking for a swim, expect more splashes than serious lanes,"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "b936f3",
+"s": "Around here, our pool season stretches a good long time.",
+"nxt": "From about April to October, you'll find folks cooling off in the water."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "cbf8f9",
+"s": "Our swim scene here is mostly family-focused.",
+"nxt": "Lots of dedicated swim lessons for kids, and during the daytime, you'll see plenty of pare"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "d2991e",
+"s": "We locals spend a lot of time by the water, and pools are a big part of that.",
+"nxt": "It's year-round pool weather here."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "d2991e",
+"s": "If you're new to the area, the best way to find a pool is to check out our online directory.",
+"nxt": "You can filter by what you need, like specific facilities or hours."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "d721a7",
+"s": "People here like to stay active.",
+"nxt": "You'll find a lot of folks doing laps at the public pools."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "f0e803",
+"s": "It gets hot here in San Jacinto, so a good pool is a must for a lot of folks.",
+"nxt": "Pretty much everyone is looking for relief once summer hits, and that means lots of splash"
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "3a6c44",
+"s": "My company, PoolRentalNearMe.com, works with places like this because sometimes folks want a different kind of swimming experience.",
+"nxt": "Just keep in mind the nudist part."
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "7589d4",
+"s": "It tells me people generally really like swimming there.",
+"nxt": "Des Moines is a decent sized city, over 200,000 people, so having a good public pool is a "
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "7589d4",
+"s": "I always appreciate when places think about keeping people out of the sun.",
+"nxt": "From the sound of it, this looks like a solid community pool."
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "e666f4",
+"s": "I'd say it's a solid option if you're in that general area and want to cool off.",
+"nxt": "It's often tough to find a decent public spot with good availability, so these hours are a"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "434392",
+"s": "I'd imagine it's pretty straightforward to find a spot there.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "434392",
+"s": "I only have information for Pantera Park Pool right now.",
+"nxt": "For other options in Diamond Bar, I'd suggest checking the city's parks and recreation web"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "434392",
+"s": "For other options in Diamond Bar, I'd suggest checking the city's parks and recreation website or calling the general information line.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "6eb3d0",
+"s": "The information I have doesn't include specific admission fees for this public pool.",
+"nxt": "Your best bet is to call them directly at (718) 776-6960, or check the New York City Parks"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "9941ea",
+"s": "If the Crown Family YMCA doesn't fit your needs, I'd suggest checking the Park District's website for other locations and schedules across the city.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "9941ea",
+"s": "The exact cost for pool use isn't something I have on hand.",
+"nxt": "Your best bet is to call the Crown Family YMCA Center directly at (312) 932-1200 or check "
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "be0c51",
+"s": "If Apollo Pool doesn't fit the bill, I suggest checking the full list of facilities on the City of North Las Vegas parks and recreation department's website.",
+"nxt": "They should have a complete guide."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "bff924",
+"s": "The information I have doesn't list specific operating hours.",
+"nxt": "Waterparks generally have seasonal hours, so it's always best to call the aquatic center d"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "bff924",
+"s": "The information I have doesn't include details on parking.",
+"nxt": "Most city aquatic centers have some dedicated parking, but it's a good idea to check with "
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "fcd88f",
+"s": "If Paradise Lakes isn't what you're looking for, I'd suggest checking the Hillsborough County Parks & Recreation website or calling their main office.",
+"nxt": "They usually list all the public pool options in the area."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "ffd645",
+"s": "I can't confirm details on parking or specific accessibility features.",
+"nxt": "I'd recommend calling the center at (718) 430-4298 to ask about those things before you he"
+},
+{
+"t": "STATS",
+"col": null,
+"r": null,
+"s": "587 sentences; 68 narrator; 25 deletable",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "00a59d",
+"s": "Glen Eden Sun Club, listed in our directory, is known for being a family spot, offering a safe and fun environment for kids.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "1fa4e2",
+"s": "Owners in Naples list their backyard pools on our site, so you can book one by the hour for just yourself, your family, or a small group.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "8cac97",
+"s": "That's actually what we do at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "8cac97",
+"s": "You might need a resident ID for a discounted rate, or a day pass will usually be a few dollars.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "cbf8f9",
+"s": "We connect folks with private backyard pools that they can rent by the hour.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "d2991e",
+"s": "We list backyard pools in Miami that you can rent by the hour.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "d721a7",
+"s": "On PoolRentalNearMe.com, we list private backyard pools that people rent out by the hour.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "f0e803",
+"s": "That's what we do at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "1ae429",
+"s": "But if you want something more private, or just a backyard feel without the commitment, that's where we come in.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "35bcf2",
+"s": "We've got one listed in our directory, the Martin Luther King Jr. Swim Center.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "8cac97",
+"s": "If you're new to town and want to find a spot, your best bet is usually the city rec centers or, of course, checking out what's available through services like ours for a more private experience.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "f0e803",
+"s": "We don't have a ton of public pools listed yet, just the one at the high school, so that's where most people start if they're not looking for something private.",
+"nxt": null
+}
+]

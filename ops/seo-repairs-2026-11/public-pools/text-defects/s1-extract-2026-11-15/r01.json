@@ -1,0 +1,387 @@
+[
+{
+"table_name": "pp_cities",
+"column_name": "id",
+"data_type": "uuid",
+"udt_name": "uuid",
+"is_nullable": "NO"
+},
+{
+"table_name": "pp_cities",
+"column_name": "city_name",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "city_slug",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "state_abbr",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "state_slug",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "state_id",
+"data_type": "uuid",
+"udt_name": "uuid",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "latitude",
+"data_type": "double precision",
+"udt_name": "float8",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "longitude",
+"data_type": "double precision",
+"udt_name": "float8",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "population",
+"data_type": "integer",
+"udt_name": "int4",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "pool_count",
+"data_type": "integer",
+"udt_name": "int4",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "ai_intro",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "ai_faqs",
+"data_type": "jsonb",
+"udt_name": "jsonb",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "meta_title",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "meta_description",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "priority_tier",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "prnm_exclusive",
+"data_type": "boolean",
+"udt_name": "bool",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "prnm_url",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "swimply_has_page",
+"data_type": "boolean",
+"udt_name": "bool",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "is_published",
+"data_type": "boolean",
+"udt_name": "bool",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "created_at",
+"data_type": "timestamp with time zone",
+"udt_name": "timestamptz",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_cities",
+"column_name": "updated_at",
+"data_type": "timestamp with time zone",
+"udt_name": "timestamptz",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "id",
+"data_type": "uuid",
+"udt_name": "uuid",
+"is_nullable": "NO"
+},
+{
+"table_name": "pp_pools",
+"column_name": "slug",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "NO"
+},
+{
+"table_name": "pp_pools",
+"column_name": "name",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "address",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "city",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "city_id",
+"data_type": "uuid",
+"udt_name": "uuid",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "state",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "zip",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "phone",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "website",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "latitude",
+"data_type": "double precision",
+"udt_name": "float8",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "longitude",
+"data_type": "double precision",
+"udt_name": "float8",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "rating",
+"data_type": "real",
+"udt_name": "float4",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "review_count",
+"data_type": "integer",
+"udt_name": "int4",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "price_adult",
+"data_type": "numeric",
+"udt_name": "numeric",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "price_child",
+"data_type": "numeric",
+"udt_name": "numeric",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "price_notes",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "pool_type",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "hours_json",
+"data_type": "jsonb",
+"udt_name": "jsonb",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "amenities",
+"data_type": "jsonb",
+"udt_name": "jsonb",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "ai_description",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "ai_faqs",
+"data_type": "jsonb",
+"udt_name": "jsonb",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "ai_tips",
+"data_type": "jsonb",
+"udt_name": "jsonb",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "ai_best_for",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "google_place_id",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "google_maps_url",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "image_url",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "image_urls",
+"data_type": "jsonb",
+"udt_name": "jsonb",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "hero_image_url",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "image_source",
+"data_type": "text",
+"udt_name": "text",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "is_active",
+"data_type": "boolean",
+"udt_name": "bool",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "is_published",
+"data_type": "boolean",
+"udt_name": "bool",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "created_at",
+"data_type": "timestamp with time zone",
+"udt_name": "timestamptz",
+"is_nullable": "YES"
+},
+{
+"table_name": "pp_pools",
+"column_name": "updated_at",
+"data_type": "timestamp with time zone",
+"udt_name": "timestamptz",
+"is_nullable": "YES"
+}
+]

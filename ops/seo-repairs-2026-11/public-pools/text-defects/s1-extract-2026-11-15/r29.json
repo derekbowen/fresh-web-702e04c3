@@ -1,0 +1,240 @@
+[
+{
+"city": "alabama/montgomery",
+"pool_count_col": 4,
+"actual": 10,
+"distinct_names": 10,
+"distinct_place_or_null": 10
+},
+{
+"city": "arizona/mesa",
+"pool_count_col": 1,
+"actual": 13,
+"distinct_names": 12,
+"distinct_place_or_null": 13
+},
+{
+"city": "california/apple-valley",
+"pool_count_col": 1,
+"actual": 2,
+"distinct_names": 1,
+"distinct_place_or_null": 2
+},
+{
+"city": "california/fremont",
+"pool_count_col": 1,
+"actual": 12,
+"distinct_names": 12,
+"distinct_place_or_null": 12
+},
+{
+"city": "california/huntington-beach",
+"pool_count_col": 1,
+"actual": 3,
+"distinct_names": 3,
+"distinct_place_or_null": 3
+},
+{
+"city": "california/oceanside",
+"pool_count_col": 1,
+"actual": 9,
+"distinct_names": 9,
+"distinct_place_or_null": 9
+},
+{
+"city": "california/sacramento",
+"pool_count_col": 7,
+"actual": 22,
+"distinct_names": 19,
+"distinct_place_or_null": 22
+},
+{
+"city": "california/torrance",
+"pool_count_col": 1,
+"actual": 2,
+"distinct_names": 2,
+"distinct_place_or_null": 2
+},
+{
+"city": "california/walnut-creek",
+"pool_count_col": 1,
+"actual": 4,
+"distinct_names": 3,
+"distinct_place_or_null": 4
+},
+{
+"city": "colorado/aurora",
+"pool_count_col": 36,
+"actual": 44,
+"distinct_names": 42,
+"distinct_place_or_null": 43
+},
+{
+"city": "colorado/centennial",
+"pool_count_col": 4,
+"actual": 6,
+"distinct_names": 6,
+"distinct_place_or_null": 6
+},
+{
+"city": "colorado/fort-collins",
+"pool_count_col": 1,
+"actual": 12,
+"distinct_names": 11,
+"distinct_place_or_null": 12
+},
+{
+"city": "colorado/lakewood",
+"pool_count_col": 4,
+"actual": 10,
+"distinct_names": 10,
+"distinct_place_or_null": 10
+},
+{
+"city": "delaware/wilmington",
+"pool_count_col": 7,
+"actual": 7,
+"distinct_names": 7,
+"distinct_place_or_null": 7
+},
+{
+"city": "florida/clearwater",
+"pool_count_col": 4,
+"actual": 6,
+"distinct_names": 6,
+"distinct_place_or_null": 6
+},
+{
+"city": "florida/port-st-lucie",
+"pool_count_col": 3,
+"actual": 7,
+"distinct_names": 7,
+"distinct_place_or_null": 7
+},
+{
+"city": "georgia/savannah",
+"pool_count_col": 1,
+"actual": 12,
+"distinct_names": 12,
+"distinct_place_or_null": 12
+},
+{
+"city": "illinois/chicago",
+"pool_count_col": 51,
+"actual": 57,
+"distinct_names": 57,
+"distinct_place_or_null": 55
+},
+{
+"city": "kentucky/louisville",
+"pool_count_col": 5,
+"actual": 17,
+"distinct_names": 17,
+"distinct_place_or_null": 17
+},
+{
+"city": "minnesota/edina",
+"pool_count_col": 1,
+"actual": 2,
+"distinct_names": 2,
+"distinct_place_or_null": 2
+},
+{
+"city": "nebraska/omaha",
+"pool_count_col": 5,
+"actual": 23,
+"distinct_names": 23,
+"distinct_place_or_null": 23
+},
+{
+"city": "new-york/brooklyn",
+"pool_count_col": 20,
+"actual": 28,
+"distinct_names": 28,
+"distinct_place_or_null": 28
+},
+{
+"city": "north-carolina/charlotte",
+"pool_count_col": 43,
+"actual": 48,
+"distinct_names": 47,
+"distinct_place_or_null": 47
+},
+{
+"city": "north-carolina/greensboro",
+"pool_count_col": 8,
+"actual": 20,
+"distinct_names": 20,
+"distinct_place_or_null": 20
+},
+{
+"city": "north-carolina/wake-forest",
+"pool_count_col": 3,
+"actual": 4,
+"distinct_names": 4,
+"distinct_place_or_null": 4
+},
+{
+"city": "ohio/cleveland",
+"pool_count_col": 13,
+"actual": 19,
+"distinct_names": 16,
+"distinct_place_or_null": 18
+},
+{
+"city": "south-carolina/mount-pleasant",
+"pool_count_col": 1,
+"actual": 2,
+"distinct_names": 2,
+"distinct_place_or_null": 2
+},
+{
+"city": "tennessee/franklin",
+"pool_count_col": 4,
+"actual": 5,
+"distinct_names": 5,
+"distinct_place_or_null": 5
+},
+{
+"city": "tennessee/murfreesboro",
+"pool_count_col": 4,
+"actual": 8,
+"distinct_names": 8,
+"distinct_place_or_null": 8
+},
+{
+"city": "texas/austin",
+"pool_count_col": 45,
+"actual": 47,
+"distinct_names": 46,
+"distinct_place_or_null": 45
+},
+{
+"city": "texas/houston",
+"pool_count_col": 49,
+"actual": 53,
+"distinct_names": 53,
+"distinct_place_or_null": 53
+},
+{
+"city": "texas/plano",
+"pool_count_col": 4,
+"actual": 17,
+"distinct_names": 16,
+"distinct_place_or_null": 17
+},
+{
+"city": "washington/bellevue",
+"pool_count_col": 4,
+"actual": 6,
+"distinct_names": 5,
+"distinct_place_or_null": 6
+},
+{
+"city": "wisconsin/milwaukee",
+"pool_count_col": 5,
+"actual": 12,
+"distinct_names": 12,
+"distinct_place_or_null": 12
+}
+]

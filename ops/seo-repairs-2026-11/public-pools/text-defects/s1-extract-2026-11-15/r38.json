@@ -1,0 +1,261 @@
+[
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "550ad3",
+"s": "I don't know of any completely free swimming options that are supervised.",
+"nxt": "Your best bet for low-cost swimming is usually a daily pass at one of the commun"
+},
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "69ea3b",
+"s": "I'm not aware of any completely free public swimming spots.",
+"nxt": "DANGLES: However, some pools offer discounted rates for residents or during certain hours"
+},
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "9744ee",
+"s": "Most other pools around here are outdoors.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "52dfc7",
+"s": "We've got plenty of those in the area.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "550ad3",
+"s": "They're definitely the go-to for most people around here when the heat hits.",
+"nxt": "You'll see a lot of people hanging out all day."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "69ea3b",
+"s": "A lot of folks here have their own backyard pools and some of them make those available to rent.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "79da77",
+"s": "My advice for anyone new in El Paso is to not just rely on the public spots.",
+"nxt": "DANGLES: They get busy, especially with only a couple listed there."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "9744ee",
+"s": "Folks around here make good use of their pools.",
+"nxt": "The weather in Los Gatos generally gives us a pretty long season, usually kickin"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "a2cb18",
+"s": "Swimming up here in Minnesota means you actually get a real change of seasons for your pool time.",
+"nxt": "You know, we might have a long winter, but spring always gets people thinking ab"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "f2a02c",
+"s": "It's a pretty family-focused swim scene out here.",
+"nxt": "You'll see plenty of lessons, swim teams, and open swim for all ages."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "f2a02c",
+"s": "It's not just about the big municipal pools around here anymore.",
+"nxt": "People are finding all kinds of ways to get in the water."
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "4e3757",
+"s": "I always tell people to do that, just in case something changes.",
+"nxt": "DANGLES: It looks like a good spot for a swim."
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "b64523",
+"s": "I hear it gets a good mix of people.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "13b4d3",
+"s": "My data doesn't specify parking information for the Novi Municipal Pool.",
+"nxt": "Public pools usually have parking, but I'd suggest checking the city's parks dep"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "13b4d3",
+"s": "I'd check out the Novi Parks and Recreation department's official site for other options.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "19ba43",
+"s": "I'd suggest checking the New Haven parks and recreation website for more listings.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "1c4dd6",
+"s": "The information I have doesn't specify if there's dedicated parking at Wrightwood Park Pool.",
+"nxt": "DANGLES: Since it's in Chicago, street parking is common, but it can be hit or miss."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "1c4dd6",
+"s": "If Wrightwood Park Pool's hours or location don't work, I'd suggest checking the Chicago Park District's website.",
+"nxt": "DANGLES: They list all their pools, and you can usually filter by location or type to fin"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "3d6e8f",
+"s": "For other swimming options in Richardson, I'd suggest checking the official City of Richardson Parks and Recreation website.",
+"nxt": "DANGLES: They usually list all their public facilities."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "4e3757",
+"s": "The information I have doesn't list admission prices.",
+"nxt": "I recommend checking the Farmers Branch Aquatics Center's official website or ca"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "5b285a",
+"s": "I only have detailed information on this one specific pool right now.",
+"nxt": "Your best bet for finding other options would be to look at the Palm Beach Garde"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "79db5d",
+"s": "I'd expect it to be fairly straightforward to find a spot.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "8d94d2",
+"s": "I'd say it's a solid option for families looking to swim.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "bdfa40",
+"s": "I can't tell you the exact admission price.",
+"nxt": "Community pools often have different rates for residents versus non-residents, a"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "c8c205",
+"s": "I'd check the Richmond Parks & Rec site for other public pools or look at local community centers and YMCAs in the area.",
+"nxt": "(end)"
+},
+{
+"t": "STATS",
+"col": null,
+"r": null,
+"s": "587 sentences; 73 narrator; 25 deletable; pool rows 30, city rows 20",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "11b669",
+"s": "Sometimes community centers offer slightly lower rates if you have a local ID, but truly free options are rare for public swimming.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "550ad3",
+"s": "That's actually what we help with at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "69ea3b",
+"s": "That's actually what we do at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "79da77",
+"s": "That’s what we do at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "a2cb18",
+"s": "That's actually what we do at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "bba6aa",
+"s": "We help connect people with private backyard pools available to rent by the hour.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "bba6aa",
+"s": "For public, low-cost options, the Empire Haven Nudist Park is listed in our directory.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "014159",
+"s": "We're working on expanding our listings in the area, but right now, private rentals are a good way to go if you want a reliable spot.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "11b669",
+"s": "Right now, we don't have any public pools listed in our directory for Idaho Falls, but that can change.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "69ea3b",
+"s": "We've got three public spots in our directory, but sometimes those get crowded.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "e0c335",
+"s": "We list four public pools ourselves, which is pretty good for a city this size.",
+"nxt": null
+}
+]

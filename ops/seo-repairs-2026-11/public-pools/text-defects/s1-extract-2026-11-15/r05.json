@@ -1,0 +1,121 @@
+[
+{
+"col": "cities.ai_faqs",
+"et": "object",
+"keys": "a,q",
+"n": 1939,
+"rows_": 397
+},
+{
+"col": "cities.ai_faqs",
+"et": "object",
+"keys": "a,c,q",
+"n": 10,
+"rows_": 2
+},
+{
+"col": "cities.ai_faqs",
+"et": "object",
+"keys": "a,b,q",
+"n": 5,
+"rows_": 1
+},
+{
+"col": "cities.ai_faqs",
+"et": "object",
+"keys": "a,keywords,q",
+"n": 5,
+"rows_": 1
+},
+{
+"col": "cities.ai_faqs",
+"et": "object",
+"keys": "a,q,q2,q3,q4,q5",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "cities.ai_faqs",
+"et": "object",
+"keys": "a,a2,a3,a4,a5,q,q2,q3,q4,q5",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "pools.ai_faqs",
+"et": "object",
+"keys": "a,q",
+"n": 5652,
+"rows_": 1813
+},
+{
+"col": "pools.ai_faqs",
+"et": "object",
+"keys": "a,b,q",
+"n": 5,
+"rows_": 1
+},
+{
+"col": "pools.ai_faqs",
+"et": "object",
+"keys": "a,keyword,q",
+"n": 4,
+"rows_": 1
+},
+{
+"col": "pools.ai_faqs",
+"et": "object",
+"keys": "a,keywords,q",
+"n": 3,
+"rows_": 1
+},
+{
+"col": "pools.ai_faqs",
+"et": "object",
+"keys": "a,q,q_raw",
+"n": 3,
+"rows_": 1
+},
+{
+"col": "pools.ai_faqs",
+"et": "object",
+"keys": "a,alternative_options_available,q",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "pools.ai_tips",
+"et": "string",
+"keys": null,
+"n": 7247,
+"rows_": 1821
+},
+{
+"col": "pools.amenities",
+"et": "string",
+"keys": null,
+"n": 3574,
+"rows_": 779
+},
+{
+"col": "pools.hours_json[]",
+"et": "string",
+"keys": null,
+"n": 17164,
+"rows_": 2452
+},
+{
+"col": "pools.hours_json{}",
+"et": "keys",
+"keys": "Mon-Fri,Note,Sat-Sun",
+"n": 346,
+"rows_": 346
+},
+{
+"col": "pools.hours_json{}",
+"et": "keys",
+"keys": "Mon-Fri,Sat-Sun",
+"n": 116,
+"rows_": 116
+}
+]

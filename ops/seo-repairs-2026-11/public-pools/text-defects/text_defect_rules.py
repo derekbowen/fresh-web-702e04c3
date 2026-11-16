@@ -58,7 +58,7 @@ SITE = (r"(PoolRentalNearMe|Pool Rental Near Me|(?<![A-Za-z])[Oo]ur (one |only |
         r"(?<![A-Za-z])[Ww]e( have|'ve|’ve)( got)?( [a-z]+){0,4} listed(?![A-Za-z])|"
         r"(?<![A-Za-z])[Ww]e (try|aim|work|want) to (list|track|include|show|cover)(?![A-Za-z])|(?<![A-Za-z])like ours(?![A-Za-z])|(?<![A-Za-z])[Ww]e (currently |only |also |do |just )?"
         r"(list|track|show|feature|include|cover|help|connect|offer|built|started|let|make)(?![A-Za-z])|"
-        r"[Ww]e('|’)ve listed|where we come in|[Ww]e (don't|don’t|do not) (currently )?(have|list|show|track)"
+        r"[Ww]e('|’)ve listed|where we come in|(?<![A-Za-z])(through|with|from|via) us(?![A-Za-z])|[Ww]e (don't|don’t|do not) (currently )?(have|list|show|track)"
         r"[^.]{0,60}(listed|directory|site|track)|[Ww]e('|’)re (working|adding|building|growing|still adding))")
 
 # --------------------------------------------------------------------------- narrator sentence classes
@@ -75,6 +75,9 @@ GAP = (r"(?i)((my|our) (information|info|data|records|details|sources|system|not
        r"could not|did not)(?![a-z])|i('m|’m) (not (sure|aware|certain|able)|unable)|"
        r"the (information|info|data|details) i (have|found|see|could find)|"
        r"(isn't|isn’t|aren't|aren’t|is not|are not|not) something i|not in my)")
+# A GAP sentence must also say that something is missing or limited ("My notes say they have passes" is a
+# fact report, not a gap). Added 2026-11-16 after the second live validation sample.
+GAP_NEG = (r"(?i)(n't|n’t|(?<![a-z])(not|no|only|limited|unable|never|nothing|without|none)(?![a-z]))")
 # ADVICE: the narrator tells the reader to call / check / go early. Anchored at the sentence start,
 # allowing a short non-assertive lead-in ("For parking details, ...", "If you're unsure, ...").
 LEAD_IN = (r"((yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|"
@@ -126,7 +129,7 @@ SPLICE_OK = (r"(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|ei
 POLARITY = r"(?i)^(yes|no|nope|yep|yeah|absolutely|definitely|unfortunately|sadly|sure|certainly)(?![a-z])"
 # Vocabulary of real pool facts: price, rating, amenities, pool type, hours/schedule.
 LEX_PRICE_SCHEDULE = (r"(?i)(?<![a-z])(free|no charge|no cost|cheap|inexpensive|affordable|pricey|expensive|"
-           r"bucks?|dollars?|admission|fees?|prices?|pricing|costs?|open|opens|opened|closed|closes|closing|hours|"
+           r"bucks?|dollars?|admission|fees?|prices?|pricing|costs?|rates?|open|opens|opened|closed|closes|closing|hours|"
            r"daily|weekdays?|weekends?|mondays?|tuesdays?|wednesdays?|thursdays?|fridays?|saturdays?|sundays?|"
            r"year-round|year round|all year|seasonal|memorial day|labor day|january|february|march|april|june|"
            r"july|august|september|october|november|december|mornings?|evenings?|night|noon|midnight|residents?|"
@@ -261,7 +264,8 @@ def classify(s, pool_page=False):
         return kind, "founder", True, None
     if kind == "local" and pool_page:
         return kind, "opinion", False, "local_marker_on_pool_page"
-    cls = "gap" if re.search(GAP, s) else "advice" if re.search(ADVICE, s) else "opinion"
+    cls = ("gap" if re.search(GAP, s) and re.search(GAP_NEG, s) else "advice" if re.search(ADVICE, s)
+           else "opinion")
     if has_number(s):
         return kind, cls, False, "number"
     if re.search(URL, s):
@@ -346,56 +350,88 @@ def r6_classify(s, actual, distinct_after_duplicates=None):
 
 
 # --------------------------------------------------------------------------- field planner (R2/R3/R4/R6)
-def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_rule=None):
-    """Decide which whole sentences of ONE prose field (a description, an intro, one FAQ answer) to delete.
+def field_has_insurance(text, pool_page=False, actual=None, distinct=None):
+    """True if any narrator sentence or any count statement of the field mentions insurance/liability/
+    coverage/claims/damage. Such a field is never touched by any rule (reported)."""
+    for s in split_sentences(text):
+        if is_narrator(s) is not None and re.search(INSURANCE, s):
+            return True
+        if actual is not None and r6_classify(s, actual, distinct)[0] == "skip_insurance":
+            return True
+    return False
 
-    Returns dict: after (text or None when unchanged/skipped), deleted [(rule, sentence)], skip (reason or
-    None), r6 [(category, hit, sentence)] for every count statement found (for the listing)."""
+
+def _pass(text, names, pool_page, rule, actual=None, distinct=None):
+    """One rule pass over one field: (new_text, [(rule, deleted_sentence)], skip_reason).
+    rule == "R6" deletes 'auto' count sentences; any other rule label deletes deletable narrator
+    sentences. On a skip the text is returned unchanged."""
     sents = split_sentences(text)
     marks = [None] * len(sents)
-    r6 = []
-    narr_rule = narr_rule or ("R2" if pool_page else "R4")
     for i, s in enumerate(sents):
-        if actual is not None:
-            cat, h = r6_classify(s, actual, distinct)
-            if cat not in (None, "consistent", "not_inventory"):
-                r6.append((cat, h, s))
-            if cat == "skip_insurance":
-                return {"after": None, "deleted": [], "skip": "insurance", "r6": r6}
-            if cat == "auto":
-                marks[i] = "R6"
-                continue
-        kind, cls, ok, why = classify(s, pool_page)
-        if kind is not None and cls == "insurance":
-            return {"after": None, "deleted": [], "skip": "insurance", "r6": r6}
-        if kind is not None and ok:
-            marks[i] = narr_rule
-    res = {"after": None, "deleted": [(m, s) for m, s in zip(marks, sents) if m], "skip": None, "r6": r6}
-    if not res["deleted"]:
-        return res
+        if rule == "R6":
+            if r6_classify(s, actual, distinct)[0] == "auto":
+                marks[i] = rule
+        else:
+            kind, cls, ok, why = classify(s, pool_page)
+            if kind is not None and ok:
+                marks[i] = rule
+    dels = [(m, s) for m, s in zip(marks, sents) if m]
+    if not dels:
+        return text, [], None
     if all(marks):
-        res["skip"] = "field_would_be_empty"
-        return res
+        return text, dels, "field_would_be_empty"
     for i, (s, d) in enumerate(zip(sents, marks)):
         if not d:
             continue
         nxt = next((sents[j] for j in range(i + 1, len(sents)) if not marks[j]), None)
         if nxt is not None and re.search(DANGLING_OPENER, nxt):
-            res["skip"] = "next_sentence_refers_back"
-            return res
+            return text, dels, "next_sentence_refers_back"
         if nxt is not None and has_entity(s, names):
-            res["skip"] = "deleted_sentence_names_an_entity"
-            return res
-    res["after"] = rebuild(text, sents, marks)
+            return text, dels, "deleted_sentence_names_an_entity"
+    return rebuild(text, sents, marks), dels, None
+
+
+def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_rule=None):
+    """Plan the deletions for ONE prose field (a description, an intro, one FAQ answer).
+
+    Passes run in order: R6 (only when the page's published count `actual` is given), then the narrator
+    rule (R2 on pool pages, R4 on city pages, R3 when called for pool FAQ answers). Each pass is checked
+    on the text the previous pass left; a pass that would empty the field or leave a sentence pointing at
+    a deleted one is skipped as a whole and reported, without blocking the other pass.
+
+    Returns dict: after (text, or None when nothing changes), deleted [(rule, sentence)],
+    skips {rule: reason}, r6 [(category, hit, sentence)] for every count statement found."""
+    narr_rule = narr_rule or ("R2" if pool_page else "R4")
+    r6 = []
+    if actual is not None:
+        for s in split_sentences(text):
+            cat, h = r6_classify(s, actual, distinct)
+            if cat not in (None, "consistent", "not_inventory"):
+                r6.append((cat, h, s))
+    res = {"after": None, "deleted": [], "skips": {}, "r6": r6}
+    if field_has_insurance(text, pool_page, actual, distinct):
+        res["skips"]["ALL"] = "insurance"
+        return res
+    cur = text
+    for rule in (["R6"] if actual is not None else []) + [narr_rule]:
+        new, dels, why = _pass(cur, names, pool_page, rule, actual, distinct)
+        if why:
+            res["skips"][rule] = why
+        elif dels:
+            cur = new
+            res["deleted"] += dels
+    if res["deleted"]:
+        res["after"] = cur
     return res
 
 
 def clean_text(text, names, pool_page=False):
-    """Back-compatible wrapper (narrator rules only): (new_text, deleted_sentences, skip_reason)."""
+    """Back-compatible wrapper (narrator rule only): (new_text, deleted_sentences, skip_reason)."""
     p = plan_field(text, names, pool_page)
-    if p["skip"] or p["after"] is None:
-        return text, [], p["skip"]
-    return p["after"], [s for _, s in p["deleted"]], None
+    why = next(iter(p["skips"].values()), None)
+    if p["after"] is None:
+        return text, [], why
+    return p["after"], [s for _, s in p["deleted"]], why
 
 
 def rebuild(text, sents, marks):
@@ -430,54 +466,60 @@ def answer_is_noninformative(a, pool_page=False):
     return narr > 0
 
 
+def _plain_entry(e):
+    return isinstance(e, dict) and isinstance(e.get("a"), str) and not (set(e) & {"a2", "a3", "a4", "a5"})
+
+
 def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None):
-    """R5 then R3/R4/R6 over one ai_faqs array (list of dicts). Only the 'a' value of an entry is ever
-    changed; every other key of an entry is kept unchanged. Returns dict with new list (or None), report."""
-    rep = {"r5_deleted": [], "r5_skip": None, "sent_deleted": [], "sent_skip": None, "r6": []}
+    """R5, then R6, then R3 (pool) / R4 (city) over one ai_faqs array (list of dicts).
+
+    Only the 'a' value of an entry is ever changed; every other key of an entry is kept unchanged; entries
+    whose 'a' is not a string or that carry a2..a5 keys are never touched. The unit of a sentence pass is
+    the whole array: if any answer fails a pass's checks, that pass changes no answer of this row.
+    Returns (new_list or None, report)."""
+    rep = {"r5_deleted": [], "r5_skip": None, "sent_deleted": [], "skips": {}, "r6": []}
     if not isinstance(faqs, list) or not faqs:
         return None, rep
     keep = []
     for e in faqs:
-        a = e.get("a") if isinstance(e, dict) else None
-        q = e.get("q") if isinstance(e, dict) else None
-        if not isinstance(a, str) or set(e) & {"a2", "a3", "a4", "a5"}:
-            keep.append(e)  # malformed or multi-answer entry: never touched
+        if not _plain_entry(e):
+            keep.append(e)
             continue
-        if answer_is_noninformative(a, pool_page):
-            if re.search(INSURANCE, a) or (isinstance(q, str) and re.search(INSURANCE, q)):
+        if answer_is_noninformative(e["a"], pool_page):
+            q = e.get("q")
+            if re.search(INSURANCE, e["a"]) or (isinstance(q, str) and re.search(INSURANCE, q)):
                 rep["r5_skip"] = "insurance"
                 keep.append(e)
             else:
                 rep["r5_deleted"].append(e)
             continue
         keep.append(e)
-    if rep["r5_deleted"] and len(rep["r5_deleted"]) == len([e for e in faqs if isinstance(e, dict)]):
+    if rep["r5_deleted"] and not any(_plain_entry(e) for e in keep):
         rep["r5_skip"], rep["r5_deleted"], keep = "array_would_be_empty", [], list(faqs)
-    out = []
-    plans = []
-    for e in keep:
-        a = e.get("a") if isinstance(e, dict) else None
-        if not isinstance(a, str) or set(e) & {"a2", "a3", "a4", "a5"}:
-            plans.append((e, None))
-            continue
-        plans.append((e, plan_field(a, names, pool_page, actual, distinct, "R3" if pool_page else "R4")))
-    for _, p in plans:
-        if p:
-            rep["r6"] += p["r6"]
-            if p["deleted"] and p["skip"] and not rep["sent_skip"]:
-                rep["sent_skip"] = p["skip"]
-            if p["skip"] == "insurance" and not rep["sent_skip"]:
-                rep["sent_skip"] = "insurance"
-    for e, p in plans:
-        if p and p["after"] is not None and not rep["sent_skip"]:
-            ne = dict(e)
-            ne["a"] = p["after"]
-            rep["sent_deleted"] += p["deleted"]
-            out.append(ne)
-        else:
-            out.append(e)
+    cur = [dict(e) if isinstance(e, dict) else e for e in keep]
+    for e in cur:
+        if _plain_entry(e) and actual is not None:
+            for s in split_sentences(e["a"]):
+                cat, h = r6_classify(s, actual, distinct)
+                if cat not in (None, "consistent", "not_inventory"):
+                    rep["r6"].append((cat, h, s))
+    if any(_plain_entry(e) and field_has_insurance(e["a"], pool_page, actual, distinct) for e in cur):
+        rep["skips"]["ALL"] = "insurance"
+    else:
+        narr = "R3" if pool_page else "R4"
+        for rule in (["R6"] if actual is not None else []) + [narr]:
+            results = [(_pass(e["a"], names, pool_page, rule, actual, distinct) if _plain_entry(e) else None)
+                       for e in cur]
+            why = next((r[2] for r in results if r and r[2]), None)
+            if why:
+                rep["skips"][rule] = why
+                continue
+            for e, r in zip(cur, results):
+                if r and r[1]:
+                    e["a"] = r[0]
+                    rep["sent_deleted"] += r[1]
     changed = bool(rep["r5_deleted"]) or bool(rep["sent_deleted"])
-    return (out if changed else None), rep
+    return (cur if changed else None), rep
 
 
 # --------------------------------------------------------------------------- R1
@@ -531,7 +573,7 @@ def rules():
     narrator = {"split": {"protect_abbrev": ABBREV, "mark": ABBREV_MARK, "split": SPLIT},
                 "roman_numeral_mask": ROMAN_I, "singular": SING, "plural": PLUR, "local_insider": LOCAL,
                 "site_voice_exempt_if_no_singular": SITE,
-                "classes": {"founder": FOUNDER, "gap": GAP, "advice": ADVICE,
+                "classes": {"founder": FOUNDER, "gap": GAP, "gap_requires": GAP_NEG, "advice": ADVICE,
                             "opinion": "any other narrator sentence"},
                 "founder_note": "an invented founder/company sentence is deletable even with a second clause, "
                                 "number or URL; it is still kept if it carries fact vocabulary or answer polarity"}
@@ -631,8 +673,9 @@ def run_tests(path=None):
             got = "delete_entry" if answer_is_noninformative(before["a"], e.get("pool_page", False)) else "keep_entry"
         else:
             p = plan_field(before, names, e.get("pool_page", rid in ("R2", "R3")), e.get("actual"),
-                           e.get("distinct"))
-            got, why = (p["after"] if p["after"] is not None else before), p["skip"]
+                           e.get("distinct"), rid if rid in ("R2", "R3", "R4") else None)
+            got = p["after"] if p["after"] is not None else before
+            why = p["skips"].get(rid) or p["skips"].get("ALL")
         if got != after or (e.get("expect_skip") and e["expect_skip"] != why):
             fails += 1
             print("FAIL", rid, e.get("ref"), "\n  want:", after, "\n  got: ", got, "\n  skip:", why)
@@ -681,12 +724,25 @@ def live(paths, outdir):
         for line in open(p, encoding="utf-8"):
             recs.append(json.loads(line))
     merges = _dup_merges(os.path.join(PARENT, "duplicate-mapping.csv"))
-    S = {"pages": {}, "R1": {}, "R2": {}, "R3": {}, "R4": {}, "R5": {}, "R6": {}, "kept_narrator": {},
-         "narrator_pages": {"pool": 0, "city": 0}, "fetched_utc": [None, None]}
+    S = {"ALL": {}, "pages": {}, "R1": {}, "R2": {}, "R3": {}, "R4": {}, "R5": {}, "R6": {}, "kept_narrator": {},
+         "narrator_pages": {"pool": 0, "city": 0}, "fetched_utc": [None, None], "faq_entries": {},
+         "kept_examples": {}}
     plan_out, count_rows, ex_pool = [], [], []
 
     def inc(d, k, n=1):
         d[k] = d.get(k, 0) + n
+
+    def record(field, deleted, skips, page):
+        for rule, _ in deleted:
+            inc(S[rule], field + "_sentences_deleted")
+        for rule in sorted({rule for rule, _ in deleted}):
+            inc(S[rule], field + "_rows_changed")
+        if deleted:
+            page["changes"].append([field, [[ru, d] for ru, d in deleted]])
+        for rule, why in skips.items():
+            inc(S["ALL" if rule == "ALL" else rule], field + "_rows_skipped_" + why)
+        if skips:
+            page["changes"].append([field + "_skipped", skips])
     for r in recs:
         kind = r["kind"]
         inc(S["pages"], kind + "_" + r["status"])
@@ -712,17 +768,11 @@ def live(paths, outdir):
             fields = []
             if r.get("about"):
                 fields.append(("R2", "\n\n".join(r["about"])))
-            for k, s in [(f, x) for f, x in fields]:
+            for k, s in fields:
                 p = plan_field(s, names, True)
-                if p["deleted"] and not p["skip"]:
-                    inc(S["R2"], "rows_changed")
-                    inc(S["R2"], "sentences_deleted", len(p["deleted"]))
-                    page["changes"].append(["R2", [d for _, d in p["deleted"]]])
-                elif p["skip"]:
-                    inc(S["R2"], "rows_skipped_" + p["skip"])
+                record("desc", p["deleted"], p["skips"], page)
             faqs = r.get("faqs") or []
             new, rep = plan_faqs(faqs, names, True)
-            colkey = "R3"
         else:
             m = re.match(r"Public Pools in (.*), ([^,]+)$", r.get("h1") or "")
             names = [None, m.group(1) if m else _title(seg[5]), m.group(2) if m else state]
@@ -737,22 +787,12 @@ def live(paths, outdir):
                 for cat, h, s in p["r6"]:
                     count_rows.append([r["url"], actual, distinct if distinct is not None else "", "intro", cat,
                                        h["stated"] if h else "", h["form"] if h else "", h["phrase"] if h else "", s])
-                if p["deleted"] and not p["skip"]:
-                    for rule, d in p["deleted"]:
-                        inc(S[rule], "sentences_deleted")
-                    for rule in sorted({rule for rule, _ in p["deleted"]}):
-                        inc(S[rule], "intro_rows_changed")
-                    page["changes"].append(["intro", [[ru, d] for ru, d in p["deleted"]]])
-                elif p["skip"]:
-                    for rule in sorted({rule for rule, _ in p["deleted"]}) or ["R4"]:
-                        inc(S[rule], "intro_rows_skipped_" + p["skip"])
-                    page["changes"].append(["intro_skipped", p["skip"], [[ru, d] for ru, d in p["deleted"]]])
+                record("intro", p["deleted"], p["skips"], page)
             faqs = r.get("faqs") or []
             new, rep = plan_faqs(faqs, names, False, actual, distinct)
             for k, (cat, h, s) in enumerate(rep["r6"]):
                 count_rows.append([r["url"], actual, distinct if distinct is not None else "", "faq", cat,
                                    h["stated"] if h else "", h["form"] if h else "", h["phrase"] if h else "", s])
-            colkey = "R4"
         # FAQ column report (both kinds)
         if rep["r5_deleted"]:
             inc(S["R5"], kind + "_rows")
@@ -760,14 +800,7 @@ def live(paths, outdir):
             page["changes"].append(["R5", [[e.get("q"), e.get("a")] for e in rep["r5_deleted"]]])
         if rep["r5_skip"]:
             inc(S["R5"], kind + "_skip_" + rep["r5_skip"])
-        if rep["sent_deleted"]:
-            for rule, d in rep["sent_deleted"]:
-                inc(S[rule], "faq_sentences_deleted")
-            for rule in sorted({rule for rule, _ in rep["sent_deleted"]}):
-                inc(S[rule], "faq_rows_changed")
-            page["changes"].append(["faq", [[ru, d] for ru, d in rep["sent_deleted"]]])
-        elif rep["sent_skip"]:
-            inc(S[colkey], "faq_rows_skipped_" + rep["sent_skip"])
+        record("faq", rep["sent_deleted"], rep["skips"], page)
         # narrator presence and the out-of-scope (kept) narrator sentences
         texts = []
         if kind == "pool" and r.get("about"):
@@ -777,12 +810,23 @@ def live(paths, outdir):
         for e in faqs:
             if isinstance(e.get("a"), str):
                 texts += [("faq", s) for s in split_sentences(e["a"])]
+                narr_e = any(classify(s, kind == "pool")[0] is not None for s in split_sentences(e["a"]))
+                inc(S["faq_entries"], kind + "_total")
+                if narr_e:
+                    inc(S["faq_entries"], kind + "_with_narrator")
+                    if answer_is_noninformative(e["a"], kind == "pool"):
+                        inc(S["faq_entries"], kind + "_noninformative")
+                    else:
+                        inc(S["faq_entries"], kind + "_narrator_plus_fact")
         for where, s in texts:
             k2, cls, ok, why = classify(s, kind == "pool")
             if k2 is not None:
                 narr_any = True
                 if not ok:
-                    inc(S["kept_narrator"], f"{kind}.{where}:{cls}:{why}")
+                    key = f"{kind}.{where}:{cls}:{why}"
+                    inc(S["kept_narrator"], key)
+                    if len(S["kept_examples"].setdefault(key, [])) < 2 and len(s) < 220:
+                        S["kept_examples"][key].append(s)
         if narr_any:
             inc(S["narrator_pages"], kind)
         if page["changes"]:
@@ -841,7 +885,7 @@ def write_sql():
     print("wrote", out)
 SQL_CORE = r"""
 rx as (select {SING} sing, {PLUR} plur, {LOCAL} loc, {SITE} site, {ROMAN_I} roman, {GAP} gap, {FOUNDER} founder,
-  {ADVICE} advice, {GENERIC_ADVICE} gadv, {GENERIC_GAP} ggap, {NUM_MASK} nmask, {NUMERIC} num, {URL} url,
+  {ADVICE} advice, {GAP_NEG} gapneg, {GENERIC_ADVICE} gadv, {GENERIC_GAP} ggap, {NUM_MASK} nmask, {NUMERIC} num, {URL} url,
   {CLAUSE} clause, {COMMA_SPLICE} splice, {SPLICE_OK} splice_ok, {POLARITY} polar, {LEXICON} lex, {LEX_PRICE_SCHEDULE} lexps, {INSURANCE} ins, {DANGLING_OPENER} dangle, {ABBREV} abbrev, {SPLIT} split,
   {CAPWORD} cap),
 src as (
@@ -875,7 +919,7 @@ k as (
          when ms ~ rx.plur then 'plural' when ms ~ rx.loc then 'local' end kind,
     regexp_replace(s, rx.nmask, 'X', 'g') ~ rx.num has_num,
     s ~ rx.url has_url, (s ~ rx.clause or (s ~ rx.splice and s !~ rx.splice_ok)) has_clause, s ~ rx.polar is_polar, s ~ rx.lex has_lex, s ~ rx.lexps has_lexps, s ~ rx.ins has_ins,
-    s ~ rx.gap is_gap, s ~ rx.advice is_adv, s ~ rx.founder is_founder, (s ~ rx.gadv or s ~ rx.ggap) is_generic,
+    (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.advice is_adv, s ~ rx.founder is_founder, (s ~ rx.gadv or s ~ rx.ggap) is_generic,
     regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, '\u0001'), ' '),
       coalesce(n2, '\u0001'), ' '), coalesce(n3, '\u0001'), ' '), rx.sing, ' ', 'g') ~ rx.cap has_entity,
     s ~ rx.dangle dangles

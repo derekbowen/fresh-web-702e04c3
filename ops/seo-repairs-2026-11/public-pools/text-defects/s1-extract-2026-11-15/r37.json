@@ -1,0 +1,289 @@
+[
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "06fd16",
+"s": "We have a good mix.",
+"nxt": "During the summer, most people want outdoor pools to enjoy the sun."
+},
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "3dfd15",
+"s": "I'd recommend checking the city's parks and rec website for details on specific amenities.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "9f5f5e",
+"s": "I don't know of any completely free public pools.",
+"nxt": "Some community centers or parks might offer discounted rates for residents."
+},
+{
+"t": "DEL",
+"col": "c.faq",
+"r": "9f5f5e",
+"s": "I'm not aware of any public indoor pools in our directory for this specific area.",
+"nxt": "If you're looking for year-round swimming, you might need to check facilities in"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "06fd16",
+"s": "Around here, when late spring hits, people start thinking about getting in the water.",
+"nxt": "We get good, hot summers, so a pool is a real relief."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "06fd16",
+"s": "We get good, hot summers, so a pool is a real relief.",
+"nxt": "You'll find a mix of public spots."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "528918",
+"s": "We've got a good mix of serious swimmers and families just looking to cool off or let the kids play.",
+"nxt": "The public facilities are solid."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "821148",
+"s": "We also see a lot of people looking for quieter spots, or places where they can host their own get-togethers without tons of crowds.",
+"nxt": "That's where some of the private rental options come in handy."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "9f5f5e",
+"s": "It gets good and hot out here in Washington, Texas.",
+"nxt": "When the temperature climbs, you'll see folks looking for a cool-down."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "9f5f5e",
+"s": "Most of the swim culture around here is pretty relaxed.",
+"nxt": "Think family swim, cooling off after work, or just lounging by the water."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "a6cf02",
+"s": "Folks around here usually kick off their pool season in May, right when the marine layer starts to burn off a bit earlier in the day.",
+"nxt": "It runs pretty strong through September, sometimes even into October if we get a"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "ee6837",
+"s": "When the sun's out here in the Pacific Northwest, people want to be in the water.",
+"nxt": "We don't get unlimited sunny days, so when we do, pools are a big deal."
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "ee6837",
+"s": "We don't get unlimited sunny days, so when we do, pools are a big deal.",
+"nxt": "Around Mercer Island, that really means Memorial Day through Labor Day for outdo"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "ff9030",
+"s": "Around here, pretty much every day is a pool day, even in winter if you don't mind a chill.",
+"nxt": "Santa Barbara has that mild weather most of the year, so finding a heated pool i"
+},
+{
+"t": "DEL",
+"col": "c.intro",
+"r": "ff9030",
+"s": "We try to list everything we can find.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "5e654d",
+"s": "It's always interesting to me to see how casino pools handle things.",
+"nxt": "This one, at the Red Rock Casino, has pretty consistent hours."
+},
+{
+"t": "DEL",
+"col": "p.desc",
+"r": "dfdad6",
+"s": "They've got a decent setup from what I can tell.",
+"nxt": "For five bucks you get in as an adult, kids are three."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "365337",
+"s": "My records only show Bare Fun In The Sun in Bacliff itself.",
+"nxt": "For other options, I'd suggest checking nearby cities or looking at the city of "
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "5e654d",
+"s": "The information I have doesn't list an entrance fee.",
+"nxt": "Typically, casino pools like this are for hotel guests."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "5efac5",
+"s": "I'd expect it to be a good spot for kids.",
+"nxt": "Calling them is the best way to ask about specific kid-friendly features."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "80104b",
+"s": "I'd check the Worcester Parks and Recreation website for a full list of options.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "852ad6",
+"s": "I suggest checking the City of Hialeah's parks and recreation department website for a full list of their public pools.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "9941ea",
+"s": "The exact cost for pool use isn't something I have on hand.",
+"nxt": "Your best bet is to call the Crown Family YMCA Center directly at (312) 932-1200"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "9941ea",
+"s": "If the Crown Family YMCA doesn't fit your needs, I'd suggest checking the Park District's website for other locations and schedules across the city.",
+"nxt": "(end)"
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "cc39df",
+"s": "I'd check the City of Boca Raton's parks and recreation website.",
+"nxt": "They usually list all their public facilities there."
+},
+{
+"t": "DEL",
+"col": "p.faq",
+"r": "dfdad6",
+"s": "If this specific pool doesn't work out, I'd check the City of Evanston's parks and recreation department website.",
+"nxt": "They usually list all their public swimming options."
+},
+{
+"t": "STATS",
+"col": null,
+"r": null,
+"s": "551 sentences; 64 narrator; 26 deletable; overlap_with_earlier_samples=0",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "3dfd15",
+"s": "That's actually what we do at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "526eaf",
+"s": "As of now, we don't have any free swimming spots in our directory for Ava.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "526eaf",
+"s": "Your best bet for kid friendly options would be private pool rentals through us at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "526eaf",
+"s": "As far as public access goes, we don't currently have any indoor pools listed in Ava.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "526eaf",
+"s": "There's usually a small entry fee for the public pools we list.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "528918",
+"s": "We list backyard pools in Oceanside that you can rent by the hour.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "528918",
+"s": "Our one listed public pool, El Corazon Aquatic Center, has multiple pools, including an indoor competition pool and outdoor recreational pools.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "9b1273",
+"s": "We list backyard pools by the hour, which is a good way to get a pool day without a membership.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "9f5f5e",
+"s": "The single public pool we list, Pine Lake, offers an RV camping experience.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "a6cf02",
+"s": "We've got a bunch of listings on PoolRentalNearMe.com that let you book private pools, no membership required.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "ff9030",
+"s": "We help people find private backyard pools they can rent by the hour.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.faq",
+"r": "ff9030",
+"s": "That's actually what we do at PoolRentalNearMe.com.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "c.intro",
+"r": "1c3f3a",
+"s": "We've got five public pools listed for Louisville, so there's usually an option not too far from wherever you are.",
+"nxt": null
+},
+{
+"t": "UNFLAGGED_FP_TOKEN",
+"col": "p.faq",
+"r": "5efac5",
+"s": "We don't have specific parking details listed.",
+"nxt": null
+}
+]

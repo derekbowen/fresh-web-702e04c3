@@ -1,0 +1,4 @@
+-- run at 2026-11-15T22:00:40.844Z
+set transaction read only;
+with p as (select ai_best_for b, is_published pub, case when ai_best_for is null then 'null' when btrim(ai_best_for)='' then 'empty' when btrim(ai_best_for) ~ '^\[' then (case when pg_input_is_valid(ai_best_for,'jsonb') then (case when jsonb_typeof(ai_best_for::jsonb)='array' then 'json_array' else 'json_other' end) else 'malformed_bracket' end) when btrim(ai_best_for) ~ '^[{"]' then 'json_like_other' else 'plain_text' end shape from pp_pools)
+select shape, count(*) n, count(*) filter (where pub) n_pub from p group by 1 order by 2 desc;

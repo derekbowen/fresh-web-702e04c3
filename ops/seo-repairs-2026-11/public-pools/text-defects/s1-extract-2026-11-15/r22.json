@@ -1,0 +1,10 @@
+[
+{
+"sents": 199,
+"cities": 187,
+"mismatch_sents": 50,
+"mismatch_cities": 45,
+"match_sents": 149,
+"special": 1
+}
+]

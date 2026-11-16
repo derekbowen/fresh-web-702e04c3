@@ -1,0 +1,271 @@
+{
+ "ALL": {
+  "desc_rows_skipped_insurance": 15,
+  "faq_rows_skipped_insurance": 14,
+  "intro_rows_skipped_insurance": 2
+ },
+ "R1": {
+  "no_best_for_line": 315,
+  "reformat": 1678,
+  "skip_empty_list": 7
+ },
+ "R2": {
+  "desc_rows_changed": 229,
+  "desc_rows_skipped_deleted_sentence_names_an_entity": 9,
+  "desc_rows_skipped_next_sentence_refers_back": 192,
+  "desc_sentences_deleted": 243
+ },
+ "R3": {
+  "faq_rows_changed": 655,
+  "faq_rows_skipped_deleted_sentence_names_an_entity": 26,
+  "faq_rows_skipped_next_sentence_refers_back": 213,
+  "faq_sentences_deleted": 810
+ },
+ "R4": {
+  "faq_rows_changed": 32,
+  "faq_rows_skipped_deleted_sentence_names_an_entity": 7,
+  "faq_rows_skipped_next_sentence_refers_back": 17,
+  "faq_sentences_deleted": 38,
+  "intro_rows_changed": 140,
+  "intro_rows_skipped_deleted_sentence_names_an_entity": 7,
+  "intro_rows_skipped_next_sentence_refers_back": 44,
+  "intro_sentences_deleted": 168
+ },
+ "R5": {
+  "pool_entries": 59,
+  "pool_rows": 58
+ },
+ "R6": {
+  "faq_rows_changed": 3,
+  "faq_rows_skipped_next_sentence_refers_back": 2,
+  "faq_sentences_deleted": 3,
+  "intro_rows_changed": 10,
+  "intro_rows_skipped_next_sentence_refers_back": 3,
+  "intro_sentences_deleted": 10
+ },
+ "faq_entries": {
+  "city_narrator_plus_fact": 228,
+  "city_total": 1900,
+  "city_with_narrator": 228,
+  "pool_narrator_plus_fact": 2319,
+  "pool_noninformative": 59,
+  "pool_total": 5322,
+  "pool_with_narrator": 2378
+ },
+ "fetched_utc": [
+  "2026-11-16T19:36:12Z",
+  "2026-11-16T20:05:37Z"
+ ],
+ "kept_examples": {
+  "city.faq:founder:fact_vocabulary": [
+   "My site, PoolRentalNearMe.com, isn't free, but it lets you rent private backyard pools by the hour, which can be a good option for groups or if you want privacy without a membership.",
+   "My company, PoolRentalNearMe.com, helps people in Johns Creek find and book private pools for a few hours, without needing a membership."
+  ],
+  "city.faq:gap:number": [
+   "I don't know of any completely free options, but daily passes are usually available at a reasonable cost if you're just looking for a one-off swim."
+  ],
+  "city.faq:gap:second_clause": [
+   "I don't know of any completely free public swimming, but daily passes or punch cards make it pretty affordable for most people.",
+   "As far as public access goes, I don't know of any indoor pools in Glendora."
+  ],
+  "city.faq:insurance:mentions insurance/liability/coverage/claims/damage": [
+   "If you're looking for something more private than a public pool, we've got you covered."
+  ],
+  "city.faq:opinion:answer_polarity": [
+   "Yes, we have both.",
+   "Yes, we do."
+  ],
+  "city.faq:opinion:fact_vocabulary": [
+   "There aren't any publicly accessible indoor pools that I'm aware of.",
+   "We don't have free public pools here."
+  ],
+  "city.faq:opinion:number": [
+   "A few might push into early October if we have a late heat wave, but generally, plan for those four to five months.",
+   "The Savannah Aquatic Center, our one public pool listing, requires an entry fee, but it's pretty affordable."
+  ],
+  "city.faq:opinion:second_clause": [
+   "But we also have strong indoor options, like parts of the Richardson Aquatic Center and the Richardson Family YMCA, which offer swimming year-round regardless of the weather.",
+   "If we have a warm fall, some places might stay open a little longer, but that's the general window."
+  ],
+  "city.intro:advice:number": [
+   "If you're new to town and trying to find a regular swim spot, I'd say check out the schedules for the public pools first.",
+   "If you're new to the area and looking for a place to swim, I recommend checking out the Gaithersburg Aquatic Center first."
+  ],
+  "city.intro:founder:fact_vocabulary": [
+   "I started PoolRentalNearMe.com because I saw a real need for people to find pools by the hour, without needing to buy a house or get a membership."
+  ],
+  "city.intro:insurance:mentions insurance/liability/coverage/claims/damage": [
+   "We've got you covered for that kind of info too.",
+   "We've got a decent number of public pools listed for Wake Forest, and they cover the basics for most swimmers looking for a public spot."
+  ],
+  "city.intro:opinion:fact_vocabulary": [
+   "It's not uncommon for folks to be looking for a place to swim from May all the way through September, sometimes even into October if we get a late warm spell.",
+   "We get a long swim season, usually kicking off in May and lasting well into September, sometimes October if it stays warm."
+  ],
+  "city.intro:opinion:number": [
+   "If you're new around here and looking to swim, definitely check that out first, or consider a private rental if you want something quieter or more consistent.",
+   "We're talking late spring through early fall, sometimes even later if it's a mild one."
+  ],
+  "city.intro:opinion:second_clause": [
+   "Around here, when the temps hit triple digits in summer, a pool isn't just a luxury, it's a necessity.",
+   "Don't expect a huge number of public pools, but the ones we do have are well-maintained and used a lot by the community."
+  ],
+  "pool.desc:advice:fact_vocabulary": [
+   "I always tell people to check those reviews.",
+   "I'd definitely call ahead if you're planning a trip, especially with those kinds of ratings."
+  ],
+  "pool.desc:advice:number": [
+   "I'd call ahead (210) 433-6391 if you have specific questions about what's available.",
+   "I'd give them a call if you have specific questions about membership or pool availability, their number is (614) 389-4566."
+  ],
+  "pool.desc:advice:second_clause": [
+   "I'd say give them a call if you have specific questions, especially since it's a particular kind of pool experience.",
+   "I'd say give them a call if you have specific questions, but the hours posted online seem pretty straightforward for planning your visit."
+  ],
+  "pool.desc:advice:url_or_contact": [
+   "I'd definitely check out their website too (ymcasf.org/location/chinatown-ymca/) for any updates before you head over.",
+   "I always tell folks to call ahead, especially for a place like this, but their website is http://gleneden.com/ if you want to check it out firsthand."
+  ],
+  "pool.desc:founder:fact_vocabulary": [
+   "My team dug into it and from what we gathered, the 3.8 average rating from over 400 reviews on Google suggests folks generally like it.",
+   "This spot in Farmers Branch has pretty solid hours, which is always one of the first things I look at when putting together PoolRentalNearMe.com."
+  ],
+  "pool.desc:gap:number": [
+   "You'll find it at 12345 Inwood Rd. I haven't been myself, but the 'Family Aquatic Center' part of the name makes me think it's probably set up well for more than just lap swimming.",
+   "I don't know the exact hours, but for $6 for adults and $3 for kids, it's pretty affordable."
+  ],
+  "pool.desc:gap:second_clause": [
+   "I don't usually talk about clothing-optional spots because our focus is more on traditional pools, but this one's on the list so here we are.",
+   "I haven't been there myself, but the reviews suggest people usually have a good time."
+  ],
+  "pool.desc:insurance:mentions insurance/liability/coverage/claims/damage": [
+   "They've got the basics covered, like restrooms and parking, which are non-negotiables for me.",
+   "I see they offer lap swim and water aerobics, and even swim lessons, so it's got a lot of bases covered."
+  ],
+  "pool.desc:opinion:fact_vocabulary": [
+   "I think it's a good spot if you're looking for year-round swimming.",
+   "My guess is it gets busy, most outdoor pools do when the weather's nice."
+  ],
+  "pool.desc:opinion:local_marker_on_pool_page": [
+   "They've got an outdoor setup, which is pretty standard for public pools around here during the summer.",
+   "It's always nice to find a heated outdoor pool, especially here in Tampa."
+  ],
+  "pool.desc:opinion:number": [
+   "Dallas is a big city, over a million people, so I always recommend calling first to check for any schedule changes, especially with public pools.",
+   "Honestly, when I first saw the name City Snooker Pool House, I thought it was a billing error."
+  ],
+  "pool.desc:opinion:second_clause": [
+   "I mean, that's a solid average, so most people leaving reviews are happy with the place.",
+   "This one's an outdoor spot in Shreveport, Louisiana, where summers get seriously hot, so I bet it gets some heavy use."
+  ],
+  "pool.desc:opinion:url_or_contact": [
+   "I mean, they even have their own project site on the Philly.gov website, that's a good sign that it's important to the area.",
+   "I've seen its website listed as northwoods-hoa.org, which makes me wonder if it's more for residents than the general public."
+  ],
+  "pool.faq:advice:fact_vocabulary": [
+   "If this pool doesn't work out, I'd check the Shreveport Parks and Recreation department for other public pools or splash pads.",
+   "I'd check if they have dedicated shallow areas."
+  ],
+  "pool.faq:advice:number": [
+   "I'd recommend calling (210) 433-6391 to confirm anything specific.",
+   "I'd call ahead to (214) 670-1926 to be sure."
+  ],
+  "pool.faq:advice:second_clause": [
+   "For other pool options, I'd suggest checking out the City of Santa Monica's recreational department website, they might list other facilities or private clubs in the area.",
+   "I'd check the Greensboro Parks and Recreation department's website; they'll list all their facilities."
+  ],
+  "pool.faq:advice:url_or_contact": [
+   "I'd suggest looking at the full list on the main phoenix.gov/parks website.",
+   "If Upper Noe doesn't fit your schedule, I'd check the sfrecpark.org website or call the department directly."
+  ],
+  "pool.faq:founder:fact_vocabulary": [
+   "If Mason Swimming Pool's limited hours don't work for you, I'd suggest checking the Houston Parks and Recreation Department site or looking on PoolRentalNearMe.com for more options in your area."
+  ],
+  "pool.faq:gap:number": [
+   "The address is 3100 Hiawatha St. Most public parks like this have some parking, but I couldn't confirm the exact parking situation.",
+   "The exact prices aren't something I have on hand, so I'd recommend calling (651) 714-3583 or visiting the city's parks website for current rates."
+  ],
+  "pool.faq:gap:second_clause": [
+   "Most municipal pools have dedicated parking lots, but I couldn't confirm the details for this specific location.",
+   "However, I can't confirm specific kid-friendly amenities like a separate wading area."
+  ],
+  "pool.faq:gap:url_or_contact": [
+   "Since it's a public pool run by the city of Jacksonville, it's likely very affordable, but I can't confirm without looking it up on coj.net or calling them.",
+   "I couldn't list them all here, but you can find more information on the sandiego.gov park and recreation website."
+  ],
+  "pool.faq:insurance:mentions insurance/liability/coverage/claims/damage": [
+   "The information I have doesn't cover parking specifics.",
+   "The information I have doesn't cover parking."
+  ],
+  "pool.faq:opinion:answer_polarity": [
+   "Yes, I think so.",
+   "Yes, I'd say it's designed with families in mind."
+  ],
+  "pool.faq:opinion:fact_vocabulary": [
+   "I think that pricing is pretty fair, especially with the competition-style amenities they have available.",
+   "For weekday options, I'd suggest checking the City of San Antonio Parks and Recreation website for a full list of their public pools and operating schedules."
+  ],
+  "pool.faq:opinion:number": [
+   "It's best to call them directly at (386) 749-2233 if you have specific questions about their policies regarding minors, though I wouldn't expect it.",
+   "Based on my experience with public facilities in cities the size of Santa Monica (around 93,000 people), parking can sometimes be a challenge."
+  ],
+  "pool.faq:opinion:second_clause": [
+   "It's called the 'Westside Family YMCA,' so yeah, I'd say it's designed with families in mind.",
+   "These are the prices I have on file; it's always smart to double-check their site for any updates or special rates."
+  ],
+  "pool.faq:opinion:url_or_contact": [
+   "Since Citywide Aquatics is run by the city's parks department, I'd check the LAParks.org aquatics website."
+  ]
+ },
+ "kept_narrator": {
+  "city.faq:founder:fact_vocabulary": 4,
+  "city.faq:gap:number": 1,
+  "city.faq:gap:second_clause": 11,
+  "city.faq:insurance:mentions insurance/liability/coverage/claims/damage": 1,
+  "city.faq:opinion:answer_polarity": 4,
+  "city.faq:opinion:fact_vocabulary": 49,
+  "city.faq:opinion:number": 2,
+  "city.faq:opinion:second_clause": 94,
+  "city.intro:advice:number": 6,
+  "city.intro:founder:fact_vocabulary": 2,
+  "city.intro:insurance:mentions insurance/liability/coverage/claims/damage": 2,
+  "city.intro:opinion:fact_vocabulary": 223,
+  "city.intro:opinion:number": 48,
+  "city.intro:opinion:second_clause": 177,
+  "pool.desc:advice:fact_vocabulary": 12,
+  "pool.desc:advice:number": 132,
+  "pool.desc:advice:second_clause": 40,
+  "pool.desc:advice:url_or_contact": 12,
+  "pool.desc:founder:fact_vocabulary": 4,
+  "pool.desc:gap:number": 8,
+  "pool.desc:gap:second_clause": 26,
+  "pool.desc:insurance:mentions insurance/liability/coverage/claims/damage": 15,
+  "pool.desc:opinion:fact_vocabulary": 259,
+  "pool.desc:opinion:local_marker_on_pool_page": 10,
+  "pool.desc:opinion:number": 916,
+  "pool.desc:opinion:second_clause": 611,
+  "pool.desc:opinion:url_or_contact": 4,
+  "pool.faq:advice:fact_vocabulary": 131,
+  "pool.faq:advice:number": 340,
+  "pool.faq:advice:second_clause": 40,
+  "pool.faq:advice:url_or_contact": 23,
+  "pool.faq:founder:fact_vocabulary": 1,
+  "pool.faq:gap:number": 25,
+  "pool.faq:gap:second_clause": 224,
+  "pool.faq:gap:url_or_contact": 2,
+  "pool.faq:insurance:mentions insurance/liability/coverage/claims/damage": 13,
+  "pool.faq:opinion:answer_polarity": 34,
+  "pool.faq:opinion:fact_vocabulary": 140,
+  "pool.faq:opinion:number": 178,
+  "pool.faq:opinion:second_clause": 334,
+  "pool.faq:opinion:url_or_contact": 1
+ },
+ "narrator_pages": {
+  "city": 372,
+  "pool": 1653
+ },
+ "pages": {
+  "city_200": 476,
+  "pool_200": 2000
+ }
+}

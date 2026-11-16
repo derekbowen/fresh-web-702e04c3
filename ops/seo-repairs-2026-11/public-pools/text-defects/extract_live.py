@@ -23,7 +23,7 @@ import time
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
       "Chrome/130.0 Safari/537.36")
-DELAY_S = 1.7  # per process; three shards together stay below 2 requests per second
+DELAY_S = 0.62  # one process: below 2 requests per second
 
 
 def text(fragment):

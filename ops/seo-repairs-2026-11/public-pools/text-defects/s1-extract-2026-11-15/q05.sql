@@ -1,0 +1,9 @@
+-- run at 2026-11-15T22:01:33.414Z
+set transaction read only;
+select 'pools.ai_faqs' col, jsonb_typeof(e) et, case when jsonb_typeof(e)='object' then (select string_agg(k,',' order by k) from jsonb_object_keys(e) k) end keys, count(*) n, count(distinct p.id) rows_ from pp_pools p, jsonb_array_elements(p.ai_faqs) e where jsonb_typeof(p.ai_faqs)='array' group by 1,2,3
+union all select 'cities.ai_faqs', jsonb_typeof(e), case when jsonb_typeof(e)='object' then (select string_agg(k,',' order by k) from jsonb_object_keys(e) k) end, count(*), count(distinct c.id) from pp_cities c, jsonb_array_elements(c.ai_faqs) e where jsonb_typeof(c.ai_faqs)='array' group by 1,2,3
+union all select 'pools.ai_tips', jsonb_typeof(e), case when jsonb_typeof(e)='object' then (select string_agg(k,',' order by k) from jsonb_object_keys(e) k) end, count(*), count(distinct p.id) from pp_pools p, jsonb_array_elements(p.ai_tips) e where jsonb_typeof(p.ai_tips)='array' group by 1,2,3
+union all select 'pools.hours_json[]', jsonb_typeof(e), case when jsonb_typeof(e)='object' then (select string_agg(k,',' order by k) from jsonb_object_keys(e) k) end, count(*), count(distinct p.id) from pp_pools p, jsonb_array_elements(p.hours_json) e where jsonb_typeof(p.hours_json)='array' group by 1,2,3
+union all select 'pools.hours_json{}', 'keys', (select string_agg(k,',' order by k) from jsonb_object_keys(p.hours_json) k), count(*), count(*) from pp_pools p where jsonb_typeof(p.hours_json)='object' group by 1,2,3
+union all select 'pools.amenities', jsonb_typeof(e), null, count(*), count(distinct p.id) from pp_pools p, jsonb_array_elements(p.amenities) e where jsonb_typeof(p.amenities)='array' group by 1,2,3
+order by 1, 4 desc;

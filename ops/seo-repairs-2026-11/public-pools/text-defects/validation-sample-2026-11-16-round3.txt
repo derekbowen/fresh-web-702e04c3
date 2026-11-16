@@ -1,0 +1,295 @@
+ROUND 3 (seed 52, excluding round-1 and round-2 pages), FINAL patterns: no false positive, no missed narrator sentence.
+Fresh validation sample, live pages fetched 2026-11-16 (30 pool pages + 20 city pages, random seed 52, none used in examples.json or in the 2026-11-15 samples).
+DEL = sentence the rules delete; KEEP = narrator sentence kept (reason); 'hint, not narrator' = sentence with a narrator-like word that the rules do not treat as narrator. Sentences without any of these are not listed.
+Totals: {"sentences": 738, "narrator": 110, "deleted": 20, "hint_unflagged": 72}
+
+### pool arizona/scottsdale/eldorado-aquatic-fitness-center  (fetched 2026-11-16T20:01:38Z, page count None)
+  [desc] hint, not narrator: It's at 2301 N Miller Rd, right in Scottsdale, which has a population of over 240,000, so you know there are people looking for a place to swim.
+  [desc] hint, not narrator: Honestly, for a city-run facility, it seems like they do a good job.
+  [faq2] KEEP opinion/second_clause: However, for specific kid-friendly features like splash pads or shallow entry, I'd suggest calling ahead.
+
+### pool florida/stuart/sailfish-splash-waterpark  (fetched 2026-11-16T19:46:39Z, page count None)
+
+### pool new-york/new-york/imagine-swimming-tribeca-flagship  (fetched 2026-11-16T20:02:18Z, page count None)
+  [desc] hint, not narrator: Imagine Swimming TriBeCa feels like a solid choice for a city pool, especially with that 4.4 out of 5 stars from 88 Google reviews.
+  [faq2] KEEP advice/number: I'd call them at (212) 253-9650 to see if they have specific family-friendly sessions or amenities.
+  [faq3] KEEP opinion/number: The address is 40 Harrison St. I recommend looking into nearby public transportation or parking garages ahead of time.
+  [faq4] hint, not narrator: If this location or its hours don't fit, you could explore other options on the NYC Parks website or call 311 for information on local pools.
+
+### pool colorado/denver/central-park-recreation-center-denver  (fetched 2026-11-16T19:50:25Z, page count None)
+
+### pool florida/bradenton/bradenton-aquatic-center  (fetched 2026-11-16T19:57:16Z, page count None)
+  [desc] KEEP opinion/number: It's an outdoor pool, which is pretty standard for Florida, and with a city population over 59,000, I'm sure they see a fair number of visitors.
+  [desc] KEEP opinion/second_clause: From what I can tell, they've got some good amenities too, like a kiddie pool, a picnic area, and concessions.
+  [desc] KEEP opinion/second_clause: I always appreciate a place that has food on site, especially if you're planning on staying a while.
+  [desc] DEL R2: I'd say give it a shot if you're in the area.
+  [faq2] hint, not narrator: Yes, it seems like a solid choice for younger kids.
+
+### pool illinois/chicago/green-lake-family-aquatic-center  (fetched 2026-11-16T19:55:28Z, page count None)
+  [desc] hint, not narrator: Honestly, with a population close to 2.7 million in Chicago, a lot of folks are probably looking for weekend relief.
+  [faq2] KEEP opinion/second_clause: Yes, it's called the 'Family Aquatic Center,' so I'd expect it to be designed with kids and families in mind.
+
+### pool arizona/goodyear/goodyear-family-aquatic-center  (fetched 2026-11-16T20:00:48Z, page count None)
+  [desc] hint, not narrator: Honestly, 3.7 stars from almost 200 reviews, for a city pool, ain't too bad.
+  [desc] KEEP opinion/second_clause: You've got your basics: lap lanes if you want to get some exercise in, a diving board for the kids (or adults, I guess), and a separate kiddie pool.
+  [desc] KEEP opinion/number: Goodyear's gotten bigger, with a population pushing 95,000 these days, so I imagine this place gets its fair share of visitors.
+  [faq3] DEL R3: The information I have doesn't specifically mention parking.
+  [faq3] KEEP opinion/second_clause: However, I'd suggest checking the City of Goodyear's official page or calling them if you're concerned about parking availability.
+  [faq4] KEEP gap/pass skipped: R3=next_sentence_refers_back: I only have detailed information on specific pools.
+  [faq4] KEEP advice/pass skipped: R3=next_sentence_refers_back: To find other public pools in Goodyear, I'd recommend looking at the City of Goodyear's Parks and Recreation department website.
+  [faq4] skips: {'R3': 'next_sentence_refers_back'}
+
+### pool colorado/aurora/f-15-pool  (fetched 2026-11-16T19:47:30Z, page count None)
+  [desc] KEEP opinion/number: "F-15 Pool" makes me think it might be near an air base or have some kind of military theme, but that's just a guess based on the name.
+  [desc] DEL R2: I'd expect it to be a pretty standard community pool, probably good for families and general swimming.
+  [faq2] KEEP gap/second_clause: I'd expect there to be a parking lot since it's a standalone outdoor pool, but I can't confirm specifics.
+
+### pool texas/kyle/kyle-community-pool  (fetched 2026-11-16T19:49:50Z, page count None)
+  [desc] KEEP opinion/number: From what I've seen, it's a solid option for folks in and around Kyle, Texas, which has a population of over 60,000 people.
+  [desc] KEEP opinion/number: It's got a 4.2-star rating on Google from 88 reviews, which tells me most people who go there leave happy.
+  [desc] KEEP opinion/pass skipped: R2=next_sentence_refers_back: My take is that it's a good spot if you're looking for an all-weather swimming option without breaking the bank.
+  [desc] skips: {'R2': 'next_sentence_refers_back'}
+  [faq2] KEEP opinion/answer_polarity: Yes, I'd say so.
+
+### pool texas/houston/agnes-moffitt-pool  (fetched 2026-11-16T19:45:22Z, page count None)
+  [desc] KEEP opinion/number: I've seen it rated pretty well online, around 4 out of 5 stars from 87 reviews, which is solid, you know?
+  [desc] hint, not narrator: For a free outdoor spot, it sounds like it covers the basics pretty well.
+  [faq2] hint, not narrator: With a diving board and swim lessons available, it sounds like a good spot for families.
+  [faq3] DEL R3: The information I have doesn't specifically mention parking.
+  [faq3] KEEP opinion/second_clause: Given it's a public facility, there's usually some parking, but I recommend checking maps or calling ahead if you're concerned about it.
+  [faq4] KEEP opinion/second_clause: Yes, Houston operates several public pools, and as far as I know, they all offer free admission.
+
+### pool texas/houston/yellowstone-swimming-pool  (fetched 2026-11-16T19:52:07Z, page count None)
+  [desc] hint, not narrator: It's a public pool, so you know what you're getting.
+  [desc] hint, not narrator: Honestly, with a 3.8 out of 5 stars from 18 reviews, it's pretty middle-of-the-road.
+  [desc] hint, not narrator: That seems like a stretch for a public pool, but that's what the info says, so maybe it's something special, or maybe it's an error.
+  [desc] KEEP advice/number: I'd call ahead to (713) 748-0449 before planning a very late or early trip just to be sure.
+  [faq1] KEEP opinion/number: Weekends show as open 24 hours, but I'd call (713) 748-0449 to double-check that part.
+  [faq2] KEEP gap/second_clause: Most city-run pools usually have some parking, but I can't confirm how much or if it's free.
+  [faq3] DEL R3: I'm sure there are many other public and private pool options around.
+  [faq3] hint, not narrator: Checking the Houston Parks and Recreation Department website or a local search should help.
+
+### pool texas/austin/south-austin-recreation-center  (fetched 2026-11-16T19:53:13Z, page count None)
+  [desc] hint, not narrator: With a 4.4 rating from 245 reviews, the South Austin Recreation Center pool seems like it's doing a lot of things right.
+  [desc] KEEP opinion/pass skipped: R2=next_sentence_refers_back: I've heard good things about how city pools get handled there.
+  [desc] KEEP advice/number: I always tell people to look at their city's rec centers first for a pool.
+  [desc] skips: {'R2': 'next_sentence_refers_back'}
+  [faq1] KEEP advice/number: I'd call (512) 978-2440 for any last-minute changes.
+  [faq2] KEEP advice/fact_vocabulary: I'd check the City of Austin's website for specific amenities like shallow entries or splash pads.
+  [faq4] DEL R3: I'd check the official City of Austin Parks and Recreation website for a complete list of their other facilities.
+
+### pool nebraska/papillion/papio-bay-aquatic-center  (fetched 2026-11-16T19:56:10Z, page count None)
+
+### pool michigan/detroit/vollmer-complex-splash-pad-detroit  (fetched 2026-11-16T19:50:12Z, page count None)
+  [desc] KEEP opinion/number: When I'm checking out spots in Detroit, Michigan, one that pops up a lot for families is the Vollmer Complex Splash Pad.
+  [desc] hint, not narrator: Honestly, if you're in the Detroit area and have kids, it's worth checking out.
+  [faq2] hint, not narrator: You can search for local public pools or community centers on PoolRentalNearMe.com, or check the Detroit Parks and Recreation department's website for a full list of water facilities.
+
+### pool new-york/brooklyn/sunset-park-pool  (fetched 2026-11-16T19:59:09Z, page count None)
+  [desc] KEEP opinion/number: Over 170 people gave it a 4.2 out of 5, which tells me most folks are happy with it.
+  [faq3] KEEP advice/pass skipped: R3=next_sentence_refers_back: If Sunset Park Pool doesn't quite fit or you want to explore, I'd suggest checking out the NYC Department of Parks & Recreation website.
+  [faq3] skips: {'R3': 'next_sentence_refers_back'}
+
+### pool arizona/mesa/kino-aquatic-center  (fetched 2026-11-16T19:55:09Z, page count None)
+
+### pool texas/san-antonio/kirby-city-pool  (fetched 2026-11-16T19:45:58Z, page count None)
+  [desc] hint, not narrator: It's a public pool, so that usually means it's pretty accessible for most folks.
+  [desc] KEEP opinion/number: I saw it's got a 4 out of 5 stars from a good number of reviews, 182 reviews actually.
+  [faq2] hint, not narrator: With a 4-star Google rating from 182 reviews, it seems like a well-regarded public pool, which often means it's a good fit for families.
+  [faq3] DEL R3: I'd check the San Antonio Parks and Recreation website for a full list and their operating schedules, as they might offer more options.
+
+### pool florida/jacksonville/cecil-aquatics-center  (fetched 2026-11-16T19:51:49Z, page count None)
+  [desc] KEEP opinion/number: I always tell folks, reviews are one thing, but that many people taking the time to rate it means they're doing something right.
+  [desc] hint, not narrator: Seems like a good choice if you're in the Jacksonville area and looking for a public pool option.
+  [faq2] KEEP gap/second_clause: I couldn't tell you about specific kid-friendly features though, you'd want to call them.
+
+### pool michigan/ann-arbor/goldfish-swim-school-ann-arbor  (fetched 2026-11-16T19:44:27Z, page count None)
+
+### pool virginia/mclean/mclean-aquatic-center  (fetched 2026-11-16T19:43:12Z, page count None)
+  [desc] KEEP opinion/second_clause: I also saw they have a warm-up pool and locker rooms, so it sounds like a complete setup.
+  [desc] KEEP opinion/fact_vocabulary: I think it's a good spot if you're looking for year-round swimming.
+  [faq1] KEEP opinion/second_clause: These are the prices I have on file; it's always smart to double-check their site for any updates or special rates.
+  [faq2] DEL R3: I couldn't tell you if they have a dedicated shallow area or specific family programs, so you might want to call and ask about that.
+  [faq3] KEEP advice/pass skipped: R3=next_sentence_refers_back: I'd check the local recreation department's website or look for other community centers or gyms with pools nearby.
+  [faq3] skips: {'R3': 'next_sentence_refers_back'}
+
+### pool california/carlsbad/alga-norte-aquatic-center  (fetched 2026-11-16T19:45:24Z, page count None)
+  [desc] KEEP opinion/number: It's got a pretty impressive 4.5 star rating from almost 300 Google reviews, which tells me most people like what they find.
+  [desc] KEEP opinion/second_clause: I like that they've got dedicated lap lanes too; sometimes those get swallowed up by general recreation, but not here.
+  [faq2] hint, not narrator: Absolutely, it sounds like it.
+  [faq3] KEEP opinion/number: I'd expect plenty of parking, but if you're worried, call them first.
+  [faq4] KEEP opinion/second_clause: Carlsbad is a good-sized city, so I'd imagine there are other public pools or community centers with aquatic facilities.
+
+### pool iowa/west-des-moines/valley-view-aquatic-center  (fetched 2026-11-16T19:59:57Z, page count None)
+
+### pool north-carolina/raeford/james-a-leach-aquatic-recreation-center  (fetched 2026-11-16T19:48:33Z, page count None)
+
+### pool texas/aransas-pass/aransas-pass-aquatic-center  (fetched 2026-11-16T19:51:41Z, page count None)
+
+### pool north-carolina/charlotte/davis-lake-pool  (fetched 2026-11-16T19:43:51Z, page count None)
+  [desc] KEEP opinion/second_clause: From what I've seen, that kind of consistent feedback for a public pool is pretty solid.
+  [desc] KEEP opinion/number: It's located at 9000 Davis Lake Pkwy, and I like that they have their own website, davislake.org, for anyone who wants to dig deeper.
+  [desc] KEEP opinion/fact_vocabulary: My experience tells me well-rated public pools often have good lifeguard setups and are kept pretty clean.
+  [desc] hint, not narrator: If you're in the area and looking for a swim, this one seems like a good bet.
+  [desc] KEEP opinion/number: It's the kind of place I'd send a friend to check out first.
+  [faq1] KEEP gap/pass skipped: R3=next_sentence_refers_back: My records do not show specific pricing for the Davis Lake Pool.
+  [faq1] skips: {'R3': 'next_sentence_refers_back'}
+  [faq2] DEL R3: I'd definitely consider it a strong option for family recreation in Charlotte.
+  [faq3] KEEP advice/pass skipped: R3=next_sentence_refers_back: To find them, I'd suggest checking the City of Charlotte Parks and Recreation website.
+  [faq3] skips: {'R3': 'next_sentence_refers_back'}
+
+### pool texas/plano/liberty-recreation-center  (fetched 2026-11-16T19:59:24Z, page count None)
+
+### pool arizona/surprise/surprise-aquatic-center-surprise  (fetched 2026-11-16T19:47:37Z, page count None)
+
+### pool virginia/chesapeake/chesapeake-family-aquatic-center  (fetched 2026-11-16T19:53:58Z, page count None)
+  [desc] hint, not narrator: This outdoor pool has a pretty good Google rating, 4.3 out of 5 stars from 51 reviews, so most folks seem to like it.
+  [desc] hint, not narrator: They've got a diving board, which is always a hit, and it sounds like a good spot to spend the day based on the picnic area and shade structures.
+  [desc] KEEP opinion/fact_vocabulary: I honestly think any pool that offers free admission for adults and kids deserves a look.
+  [desc] KEEP opinion/second_clause: It means getting in the water isn't a budget item, and that's something I appreciate seeing for families.
+  [faq3] KEEP gap/second_clause: The information I have doesn't specify parking, but most public aquatic centers have some kind of lot.
+
+### pool california/san-diego/allied-gardens-pool  (fetched 2026-11-16T19:55:20Z, page count None)
+  [desc] KEEP opinion/number: Given the low traffic on a Google Maps search (only 89 reviews), and the 4.2 out of 5 stars, I'd say it's probably pretty well-maintained for a city pool.
+  [desc] KEEP opinion/fact_vocabulary: My guess is it's used a lot for swim lessons, maybe clubs too.
+  [desc] KEEP opinion/number: It's in a city of over a million people, so I bet a lot of folks use it.
+  [faq2] DEL R3: I couldn't say for sure about specific features like a shallow end or play area.
+
+### pool california/oakland/temescal-pool  (fetched 2026-11-16T19:58:57Z, page count None)
+  [desc] KEEP opinion/number: I've seen it rated 4.3 out of 5 stars from 245 reviews, which is decent.
+  [faq1] DEL R3: My information didn't specify the exact prices, as those can change.
+  [faq1] KEEP advice/number: I'd recommend calling the pool directly at (510) 597-5013 to get current pricing details.
+  [faq2] hint, not narrator: It's an outdoor pool in a park setting with swim lessons and lifeguards, so it sounds like it could be a good fit for families.
+  [faq2] KEEP opinion/fact_vocabulary: I'd say it's worth checking out if you're looking for a family-friendly outdoor swim experience.
+  [faq3] DEL R3: My data doesn't specify parking availability or detailed accessibility features.
+
+### city california/anaheim  (fetched 2026-11-16T19:43:00Z, page count 7)
+  [intro] hint, not narrator: It's a mix here.
+  [intro] hint, not narrator: You'll find folks committed to their lap swimming, but with all the families in the area, there's a big focus on splash pads and rec swimming too.
+  [faq5] hint, not narrator: That's exactly what we do at PoolRentalNearMe.com.
+
+### city florida/ocala  (fetched 2026-11-16T19:37:55Z, page count 3)
+  [intro] DEL R4: Around here, pretty much any time of year is pool time.
+  [intro] hint, not narrator: There's a solid mix of folks who just want to cool off and families looking for a spot to let the kids splash.
+  [intro] hint, not narrator: If you're new to Ocala and trying to find a convenient place to swim, start by checking out our site.
+  [intro] hint, not narrator: We've got listings for the public pools, and we also show you private spots you can rent.
+
+### city california/san-bernardino  (fetched 2026-11-16T19:38:42Z, page count 5)
+  [intro] KEEP opinion/second_clause: Being an inland city, we don't get the ocean breezes, so a lot of folks turn to pools from late May right through September, sometimes even into October.
+  [intro] hint, not narrator: Because of the heat, you'll find a pretty family-focused swim scene here.
+  [faq1] KEEP opinion/second_clause: Some might extend their season into October if the weather stays warm enough, which it often does here in San Bernardino.
+  [faq1] KEEP opinion/second_clause: It's a pretty long swim season because of our consistent heat.
+  [faq4] KEEP opinion/second_clause: With our climate, there isn't a high demand for indoor public pools to extend the season through winter.
+
+### city michigan/wyoming  (fetched 2026-11-16T19:42:50Z, page count 1)
+  [intro] hint, not narrator: Those seeking pool access in Wyoming should consider this local option.
+
+### city florida/daytona-beach  (fetched 2026-11-16T19:38:50Z, page count 3)
+  [intro] hint, not narrator: Even in the cooler months, you'll still find folks in the water, especially if it's heated.
+  [intro] hint, not narrator: Swimming here is a mix.
+  [intro] hint, not narrator: We list a few public options on PoolRentalNearMe.com, but sometimes a private spot can be better.
+  [faq5] KEEP opinion/pass skipped: R4=next_sentence_refers_back: We have listings for private backyard pools that you can book by the hour.
+  [faq5] skips: {'R4': 'next_sentence_refers_back'}
+
+### city california/whittier  (fetched 2026-11-16T19:40:28Z, page count 1)
+  [intro] DEL R4: Around here, you're looking at a pretty solid pool season.
+  [intro] KEEP opinion/fact_vocabulary: We get a lot of sun in Southern California, so outdoor swimming is a big deal from about April right through October, sometimes even longer depending on the weather.
+  [intro] hint, not narrator: It's a mix of everything, honestly.
+  [intro] hint, not narrator: Most folks end up going a little out of their way or looking for other options.
+  [faq2] hint, not narrator: La Mirada Aquatics Center is currently the main one listed in our directory serving the area, and they have admission fees.
+  [faq2] KEEP opinion/second_clause: Free swimming is not common for public pools around here, but some community centers might offer specific programs.
+  [faq4] hint, not narrator: Given the climate here, the majority of pools, especially public and recreational ones, are outdoors.
+
+### city kansas/leawood  (fetched 2026-11-16T19:36:59Z, page count 2)
+
+### city washington/seattle  (fetched 2026-11-16T19:36:26Z, page count 14)
+  [intro] KEEP opinion/second_clause: When people think of Seattle, they often think rain, but our summers can get hot, and a good cool-down is welcome.
+  [intro] hint, not narrator: The swimming season here is shorter than a lot of places because of the weather.
+  [intro] KEEP opinion/fact_vocabulary: We have a mix of serious lap swimmers and families looking to escape the heat.
+  [intro] hint, not narrator: Don't expect a ton of outdoor options outside of those summer months; most swimming here happens indoors.
+  [faq4] KEEP opinion/second_clause: Given Seattle's climate, a significant number of our pools are indoors, providing year-round swimming opportunities.
+  [faq5] hint, not narrator: We let you rent backyard pools by the hour directly from owners.
+
+### city ohio/west-carrollton  (fetched 2026-11-16T20:05:28Z, page count 1)
+  [intro] hint, not narrator: With a rating of 4.4 stars based on 596 reviews, the pool has earned solid approval from local visitors.
+
+### city california/watsonville  (fetched 2026-11-16T19:39:35Z, page count 1)
+  [intro] KEEP opinion/second_clause: I grew up around pools in California, and I can tell you Watsonville has that classic long swim season.
+  [intro] KEEP opinion/fact_vocabulary: We see a good mix here, families cooling off, folks getting their laps in, and plenty of people just enjoying the sun.
+  [intro] KEEP opinion/second_clause: If you’re like me and prefer a bit more privacy or a guaranteed slot, that's where other options come in.
+  [faq1] hint, not narrator: It's a pretty long stretch for swimming outside, which is nice for locals and visitors alike.
+  [faq2] hint, not narrator: The main public pool here, the Watsonville City Pool, is usually pretty affordable.
+  [faq5] hint, not narrator: If you're looking for something beyond the public scene, you can often find local backyard pools available for rent by the hour.
+
+### city texas/dallas  (fetched 2026-11-16T19:36:47Z, page count 51)
+  [intro] KEEP opinion/fact_vocabulary: We see people in Dallas looking for relief pretty much from May right through September.
+  [intro] DEL R4: It's a long pool season, and folks here use it for everything.
+  [faq5] hint, not narrator: That's exactly what we help with at PoolRentalNearMe.com.
+
+### city florida/fort-pierce  (fetched 2026-11-16T20:05:24Z, page count 3)
+  [intro] hint, not narrator: Folks in Fort Pierce pretty much swim year-round.
+  [intro] DEL R4: We've got a good mix of swim cultures down here.
+  [intro] hint, not narrator: If you're new to Fort Pierce and looking for a place to cool off, your best bet is usually to check out the local community centers or see if your neighborhood has a homeowners association pool.
+  [intro] hint, not narrator: Our directory also lists private and unique options.
+  [faq2] hint, not narrator: Keep an eye out for special community days at local aquatic centers too.
+  [faq3] KEEP opinion/second_clause: We've got Sunnier Palms Nudist Park and Campground listed, which is a unique option that also caters to families.
+  [faq4] KEEP opinion/second_clause: Indoor pools in Fort Pierce are less common because of our long outdoor swim season.
+  [faq4] hint, not narrator: Most of the swimming here happens under the sun.
+  [faq5] hint, not narrator: That's what we do at PoolRentalNearMe.com.
+
+### city florida/cape-coral  (fetched 2026-11-16T19:39:52Z, page count 8)
+  [intro] KEEP opinion/fact_vocabulary: Down here in Southwest Florida, the swimming season is basically year-round.
+  [intro] KEEP opinion/fact_vocabulary: We see a lot of families at the pools, especially during school breaks and on weekends.
+  [intro] hint, not narrator: Just know that during peak times, like summer afternoons, they can get pretty busy with local families trying to beat the heat.
+  [faq4] hint, not narrator: All the public pools we list in Cape Coral are outdoor.
+  [faq4] hint, not narrator: With the climate here, indoor pools aren't as common for public use.
+  [faq4] KEEP opinion/fact_vocabulary: You'll find plenty of sunshine and warm water at our outdoor facilities.
+  [faq5] hint, not narrator: On PoolRentalNearMe.com, we list pools around Cape Coral that you can book for just your group, no membership needed.
+
+### city minnesota/edina  (fetched 2026-11-16T19:38:57Z, page count 2)
+  [intro] DEL R4: Swimming up here in Minnesota means you actually get a real change of seasons for your pool time.
+  [intro] KEEP opinion/second_clause: You know, we might have a long winter, but spring always gets people thinking about getting back in the water.
+  [intro] KEEP opinion/fact_vocabulary: We see folks eager for lap swimming and family fun as soon as it's warm enough.
+  [intro] KEEP advice/number: If you're new to the area or just visiting, my advice would be to check out the indoor facilities first, especially if you're here before June or after August.
+  [faq5] hint, not narrator: That's actually what we do at PoolRentalNearMe.com.
+
+### city indiana/carmel  (fetched 2026-11-16T19:39:24Z, page count 5)
+  [intro] KEEP opinion/number: Around here in Carmel, when July and August hit, those 90-degree days with humidity can really sneak up on you.
+  [intro] KEEP opinion/fact_vocabulary: Our public pools open up around Memorial Day and usually close right after Labor Day.
+  [intro] hint, not narrator: The swim culture here leans pretty heavy on family fun and kids' activities, though you'll find serious lap swimmers too.
+  [faq5] hint, not narrator: That's what we do at PoolRentalNearMe.com.
+
+### city oklahoma/oklahoma-city  (fetched 2026-11-16T19:39:33Z, page count 14)
+  [intro] hint, not narrator: In Oklahoma City, summers get seriously hot, so pools aren't just for fun, they're how most folks cool down.
+  [intro] KEEP opinion/second_clause: Our pool season really kicks off around Memorial Day, but some places open a bit earlier depending on the weather.
+  [intro] DEL R4: We see a lot of family swimming here.
+  [faq4] KEEP opinion/answer_polarity: Yes, we do.
+  [faq5] hint, not narrator: Yes, that's what we do at PoolRentalNearMe.com.
+
+### city florida/pierson  (fetched 2026-11-16T19:37:02Z, page count 1)
+  [intro] KEEP opinion/fact_vocabulary: Folks around here start to really think about the pool when the humidity kicks in, usually around late April or May.
+  [faq2] hint, not narrator: Our directory lists Sunny Sands as the main public option here.
+  [faq3] hint, not narrator: For specific splash pads, you'd need to check with the local parks and rec department, as those aren't always at every pool.
+  [faq5] hint, not narrator: If you're looking for something more private than a public pool, you can rent backyard pools by the hour directly from local owners.
+
+### city california/newport-beach  (fetched 2026-11-16T19:37:05Z, page count 1)
+  [intro] KEEP opinion/second_clause: When summers hit here in Newport Beach, it gets warm.
+  [intro] hint, not narrator: That's why locals and visitors alike look for a good pool to cool off.
+  [intro] KEEP opinion/pass skipped: R4=next_sentence_refers_back: Our pool season typically runs from late spring right through early fall.
+  [intro] KEEP opinion/second_clause: But we also have plenty of families looking for a swim day.
+  [intro] KEEP opinion/pass skipped: R4=next_sentence_refers_back: If you're new around here and looking for a place to get wet, the public pools are a good starting point.
+  [intro] skips: {'R4': 'next_sentence_refers_back'}
+  [faq4] KEEP opinion/second_clause: Given our climate, outdoor pools are really all you need for the majority of the year.
+  [faq5] hint, not narrator: That's what we do at PoolRentalNearMe.com.
+
+### city california/santa-clara  (fetched 2026-11-16T19:39:53Z, page count 8)
+  [intro] hint, not narrator: You'll see a lot of folks training, not just splashing around, and some real competitive swimming goes on here.
+
+### city texas/pleasanton  (fetched 2026-11-16T19:39:11Z, page count 1)
+  [intro] DEL R4: Around here, you get a good long pool season.
+  [intro] KEEP opinion/fact_vocabulary: Most folks are swimming in Pleasanton from May right through September, sometimes even into October if we get a warm fall.
+  [intro] hint, not narrator: When you're looking for a place to swim, it usually boils down to the local public spot or if you know someone with a backyard pool.
+  [faq1] hint, not narrator: Pool season here typically runs from early May through September.
+  [faq2] hint, not narrator: For free options, your best bet is usually a friend's backyard if you know someone local.
+  [faq3] hint, not narrator: The one public pool we have listed, Freedom RV Resort, is generally family-friendly.
+  [faq4] DEL R4: I'm not aware of any dedicated public indoor swimming pools directly within Pleasanton.

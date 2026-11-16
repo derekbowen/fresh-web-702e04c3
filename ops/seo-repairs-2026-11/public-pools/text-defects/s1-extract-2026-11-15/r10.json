@@ -1,0 +1,50 @@
+[
+{
+"col": "c.faq.a",
+"sents": 5730,
+"sing": 65,
+"plur_only": 425,
+"narr_with_num": 38,
+"rows_any": 287
+},
+{
+"col": "c.intro",
+"sents": 3619,
+"sing": 55,
+"plur_only": 716,
+"narr_with_num": 70,
+"rows_any": 378
+},
+{
+"col": "p.desc",
+"sents": 17813,
+"sing": 2763,
+"plur_only": 397,
+"narr_with_num": 1313,
+"rows_any": 1699
+},
+{
+"col": "p.faq.a",
+"sents": 15218,
+"sing": 2969,
+"plur_only": 27,
+"narr_with_num": 568,
+"rows_any": 1508
+},
+{
+"col": "p.tips",
+"sents": 7438,
+"sing": 52,
+"plur_only": 3,
+"narr_with_num": 2,
+"rows_any": 54
+},
+{
+"col": null,
+"sents": 49818,
+"sing": 5904,
+"plur_only": 1568,
+"narr_with_num": 1991,
+"rows_any": 2201
+}
+]

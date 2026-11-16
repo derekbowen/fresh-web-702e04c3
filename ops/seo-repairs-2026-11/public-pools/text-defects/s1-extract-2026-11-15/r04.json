@@ -1,0 +1,97 @@
+[
+{
+"col": "cities.ai_faqs",
+"t": "array",
+"count": 403
+},
+{
+"col": "cities.ai_faqs",
+"t": "sql_null",
+"count": 244
+},
+{
+"col": "cities.ai_intro",
+"t": "sql_null",
+"count": 8
+},
+{
+"col": "cities.ai_intro",
+"t": "text",
+"count": 639
+},
+{
+"col": "pools.ai_description",
+"t": "sql_null",
+"count": 66
+},
+{
+"col": "pools.ai_description",
+"t": "text",
+"count": 3315
+},
+{
+"col": "pools.ai_faqs",
+"t": "array",
+"count": 1821
+},
+{
+"col": "pools.ai_faqs",
+"t": "sql_null",
+"count": 1560
+},
+{
+"col": "pools.ai_tips",
+"t": "array",
+"count": 1821
+},
+{
+"col": "pools.ai_tips",
+"t": "sql_null",
+"count": 1560
+},
+{
+"col": "pools.amenities",
+"t": "array",
+"count": 788
+},
+{
+"col": "pools.amenities",
+"t": "sql_null",
+"count": 2593
+},
+{
+"col": "pools.hours_json",
+"t": "array",
+"count": 2452
+},
+{
+"col": "pools.hours_json",
+"t": "object",
+"count": 462
+},
+{
+"col": "pools.hours_json",
+"t": "sql_null",
+"count": 467
+},
+{
+"col": "pools.image_urls",
+"t": "array",
+"count": 932
+},
+{
+"col": "pools.image_urls",
+"t": "sql_null",
+"count": 2449
+},
+{
+"col": "pools.price_notes",
+"t": "sql_null",
+"count": 3067
+},
+{
+"col": "pools.price_notes",
+"t": "text",
+"count": 314
+}
+]
