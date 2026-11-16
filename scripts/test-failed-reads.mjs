@@ -226,6 +226,79 @@ const FIXTURES = {
       redirect_to: "fixture-live-page",
       in_sitemap: false,
     }),
+    // ── country mapping fixtures (src/lib/country-sites.ts) ──
+    // An exact-slug country page whose override target used to be robots-blocked.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000021",
+      slug: "pool-rental-london",
+      title: "Fixture London page",
+      locale: "en-GB",
+      canonical_override: "https://poolrentalnearme.co.uk/p/pool-rental-london",
+      hreflang_group: "new-york-ny",
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000022",
+      slug: "pool-rental-toronto",
+      title: "Fixture Toronto page",
+      locale: "en-CA",
+      canonical_override: "https://poolrentalnearme.ca/p/pool-rental-toronto",
+      hreflang_group: "new-york-ny",
+    }),
+    // One article localised for the three markets: true equivalents.
+    ...[
+      ["uk", "en-GB", "poolrentalnearme.co.uk", "23"],
+      ["canada", "en-CA", "poolrentalnearme.ca", "24"],
+      ["australia", "en-AU", "poolrentalnearme.com.au", "25"],
+    ].map(([suffix, locale, host, n]) =>
+      contentPage({
+        id: `00000000-0000-4000-8000-0000000000${n}`,
+        slug: `fixture-maintenance-${suffix}`,
+        title: `Fixture maintenance ${suffix}`,
+        locale,
+        canonical_override: `https://${host}/p/fixture-maintenance-${suffix}`,
+        hreflang_group: "fixture-maintenance",
+      }),
+    ),
+    // A country page that is not in_sitemap (as the 3 insurance pages): mapped, not listed.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000026",
+      slug: "fixture-unlisted-canada",
+      locale: "en-CA",
+      in_sitemap: false,
+    }),
+    // A US page whose hreflang_group also holds a country page (as production's
+    // "new-york-ny" does): its EN<->ES twin must still be found, and the
+    // country page must not be offered as its equivalent. The country row
+    // comes first, as the old `.limit(1)` sibling read could pick it.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000028",
+      slug: "fixture-twin-uk",
+      locale: "en-GB",
+      in_sitemap: false,
+      hreflang_group: "fixture-twin",
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000029",
+      slug: "fixture-twin-en",
+      title: "Fixture twin page",
+      in_sitemap: false,
+      hreflang_group: "fixture-twin",
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000002a",
+      slug: "fixture-twin-es",
+      title: "Fixture twin pagina",
+      locale: "es",
+      in_sitemap: false,
+      hreflang_group: "fixture-twin",
+    }),
+    // A US page whose stored override names a ccTLD: the mapping keeps it on www.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000027",
+      slug: "fixture-us-wrong-override",
+      title: "Fixture US page with a ccTLD override",
+      canonical_override: "https://poolrentalnearme.co.uk/p/fixture-us-wrong-override",
+    }),
     // A comparison city page that a content row redirects.
     contentPage({
       id: "00000000-0000-4000-8000-00000000001a",
@@ -248,6 +321,23 @@ const FIXTURES = {
       is_published: true,
       updated_at: NOW,
     },
+    // A confirmed exact-duplicate pair (src/lib/comparison-duplicates.ts):
+    // /p/<competitor>-vs-pool-rental-near-me-in-boston 301s to ...-boston-ma.
+    ...[
+      ["boston", 42.3601, -71.0589],
+      ["boston-ma", 42.358665, -71.05634],
+    ].map(([slug, latitude, longitude]) => ({
+      slug,
+      name: "Boston",
+      state: "Massachusetts",
+      state_code: "MA",
+      description: null,
+      latitude,
+      longitude,
+      hero_image_url: null,
+      is_published: true,
+      updated_at: NOW,
+    })),
     // More published cities than one PostgREST answer holds (max-rows 1,000),
     // so a sitemap that reads `cities` without paging is caught.
     ...Array.from({ length: FIXTURE_EXTRA_CITIES }, (_, i) => ({
@@ -481,6 +571,8 @@ function matches(value, expr) {
   switch (op) {
     case "eq":
       return String(value) === arg;
+    case "neq":
+      return String(value) !== arg;
     case "in":
       return arg
         .replace(/^\(|\)$/g, "")
@@ -705,11 +797,13 @@ async function fetchWithDeadline(request) {
   }
 }
 
-async function get(path, { host = "localhost" } = {}) {
+async function get(path, { host = "localhost", forwardedHost } = {}) {
   const started = Date.now();
-  const res = await fetchWithDeadline(
-    new Request(`http://${host}${path}`, { headers: { accept: "text/html,*/*" } }),
-  );
+  const headers = { accept: "text/html,*/*" };
+  // As production: the proxy (WEST nginx for www, EAST nginx for the ccTLDs)
+  // sets X-Forwarded-Host; the app sees an internal Host.
+  if (forwardedHost) headers["x-forwarded-host"] = forwardedHost;
+  const res = await fetchWithDeadline(new Request(`http://${host}${path}`, { headers }));
   return { ...res, ms: Date.now() - started, path };
 }
 
@@ -859,6 +953,17 @@ async function failurePhase(mode, { cold = false } = {}) {
     `unknown become-a-swimming-pool-host-<x> -> 503, not 301`,
     is503(host).length === 0,
     `${describe(host)} ${is503(host).join("; ")}`,
+  );
+
+  // A confirmed comparison duplicate 301s from a checked-in list, before any
+  // read, so it does not depend on the database at all.
+  const dup = await get("/p/giggster-vs-pool-rental-near-me-in-boston");
+  check(
+    phase,
+    "confirmed duplicate -> 301 to its -boston-ma twin without a read",
+    dup.status === 301 &&
+      /\/p\/giggster-vs-pool-rental-near-me-in-boston-ma$/.test(dup.headers.get("location") || ""),
+    describe(dup),
   );
 
   // Client-side navigation reaches the same lookup through the RPC endpoint.
@@ -1172,6 +1277,8 @@ async function healthyPhase(phase) {
   );
 
   await sitemapIntegrity(phase, index);
+  await comparisonDuplicates(phase);
+  await canonicalHosts(phase);
 }
 
 const locsOf = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/&amp;/g, "&"));
@@ -1241,6 +1348,14 @@ async function sitemapIntegrity(phase, index) {
     "/p/fixture-redirect-row": "redirect row",
     "/p/giggster-vs-pool-rental-near-me-in-fixture-city-0002": "redirected comparison page",
     "/l/config-listing-do-not-delete/6768ea36-b435-40df-b331-43be74aa882f": "configuration listing",
+    // Country pages: canonical on their ccTLD, listed only by its sitemap-country.xml.
+    "/p/rent-out-your-pool-uk": "country_launch page (canonical on poolrentalnearme.co.uk)",
+    "/p/pool-rental-london": "country page (canonical on poolrentalnearme.co.uk)",
+    "/p/fixture-maintenance-uk": "country page (canonical on poolrentalnearme.co.uk)",
+    "/p/fixture-maintenance-canada": "country page (canonical on poolrentalnearme.ca)",
+    // Confirmed exact duplicates: 301 to the state-suffixed twin.
+    "/p/giggster-vs-pool-rental-near-me-in-boston": "exact duplicate (301 to -boston-ma)",
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": "exact duplicate (301 to -boston-ma)",
   };
   for (const [path, why] of Object.entries(forbidden)) {
     const listedIn = where.get(`${SITE}${path}`) ?? [];
@@ -1253,6 +1368,8 @@ async function sitemapIntegrity(phase, index) {
     "/p/fixture-blog-post": "/sitemap-pages-blog.xml",
     "/p/fixture-blog-behind-redirect": "/sitemap-pages-blog.xml",
     "/l/fixture-listing/00000000-0000-4000-8000-0000000000c1": "/sitemap-listings.xml",
+    // Its ccTLD override is ignored (wrong host for a US page): a www page again.
+    "/p/fixture-us-wrong-override": "/sitemap-pages-articles.xml",
   };
   for (const [path, owner] of Object.entries(owners)) {
     const listedIn = where.get(`${SITE}${path}`) ?? [];
@@ -1270,7 +1387,11 @@ async function sitemapIntegrity(phase, index) {
     phase,
     `comparisons paging: ${cities} published cities (> 1,000) -> more than 1,000 entries, every city`,
     comparisons.length > 1000 &&
-      comparisons.length === 3 + 2 * cities - 1 &&
+      // minus the fixture comparison page a content row redirects, minus the
+      // two bare-Boston pages that 301 to their -boston-ma twins
+      comparisons.length === 3 + 2 * cities - 1 - 2 &&
+      comparisons.includes(`${SITE}/p/giggster-vs-pool-rental-near-me-in-boston-ma`) &&
+      comparisons.includes(`${SITE}/p/peerspace-vs-pool-rental-near-me-in-boston-ma`) &&
       comparisons.includes(`${SITE}/p/peerspace-vs-pool-rental-near-me-in-fixture-city-1199`),
     `${comparisons.length} entries for ${cities} cities`,
   );
@@ -1280,7 +1401,7 @@ async function sitemapIntegrity(phase, index) {
   const served = [...where.keys()].filter((u) => {
     const p = new URL(u).pathname;
     if (p === "/s" || p.startsWith("/l/")) return false; // marketplace (WEST)
-    if (/-vs-pool-rental-near-me-in-/.test(p)) return /fixture-city-(0000|0999|1199)$|-akron$/.test(p);
+    if (/-vs-pool-rental-near-me-in-/.test(p)) return /fixture-city-(0000|0999|1199)$|-akron$|-boston-ma$/.test(p);
     return true;
   });
   const bad = [];
@@ -1300,6 +1421,161 @@ async function sitemapIntegrity(phase, index) {
     bad.length === 0,
     bad.slice(0, 6).join("; "),
   );
+}
+
+/**
+ * Audit F6(a): each confirmed exact duplicate answers ONE 301 to its
+ * state-suffixed twin, which answers 200 and is its own canonical; a city
+ * comparison that is not on the list is untouched.
+ */
+async function comparisonDuplicates(phase) {
+  const SITE = "https://www.poolrentalnearme.com";
+  for (const competitor of ["giggster", "peerspace"]) {
+    const bare = `/p/${competitor}-vs-pool-rental-near-me-in-boston`;
+    const twin = `${bare}-ma`;
+    const r = await get(bare);
+    const loc = r.headers.get("location") || "";
+    check(phase, `${bare} -> 301 ${twin}`, r.status === 301 && loc.endsWith(twin), describe(r));
+    const t = await get(twin);
+    const canon = t.body.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/)?.[1];
+    check(
+      phase,
+      `${twin} -> 200, canonical itself (one hop, no chain)`,
+      t.status === 200 && canon === `${SITE}${twin}`,
+      `${describe(t)} canonical ${canon}`,
+    );
+  }
+  const other = await get("/p/peerspace-vs-pool-rental-near-me-in-akron");
+  check(phase, "a comparison not on the list is unchanged (200)", other.status === 200, describe(other));
+}
+
+/**
+ * Audit F10: the canonical host comes from the explicit country mapping, not
+ * from the host that served the request. Every request carries
+ * X-Forwarded-Host as production's proxies set it.
+ */
+async function canonicalHosts(phase) {
+  const WWW = "https://www.poolrentalnearme.com";
+  const HOSTS = {
+    "www.poolrentalnearme.com": null,
+    "poolrentalnearme.co.uk": "poolrentalnearme.co.uk",
+    "www.poolrentalnearme.co.uk": "poolrentalnearme.co.uk",
+    "poolrentalnearme.ca": "poolrentalnearme.ca",
+    "www.poolrentalnearme.ca": "poolrentalnearme.ca",
+    "poolrentalnearme.com.au": "poolrentalnearme.com.au",
+    "www.poolrentalnearme.com.au": "poolrentalnearme.com.au",
+  };
+  const PAGES = {
+    "/p/fixture-live-page": WWW,
+    "/p/fixture-us-wrong-override": WWW,
+    "/p/peerspace-vs-pool-rental-near-me-in-akron": WWW,
+    "/p/es/fixture-pagina": WWW,
+    "/p/rent-out-your-pool-uk": "https://poolrentalnearme.co.uk",
+    "/p/pool-rental-london": "https://poolrentalnearme.co.uk",
+    "/p/fixture-maintenance-uk": "https://poolrentalnearme.co.uk",
+    "/p/fixture-maintenance-canada": "https://poolrentalnearme.ca",
+    "/p/fixture-maintenance-australia": "https://poolrentalnearme.com.au",
+    "/p/pool-rental-toronto": "https://poolrentalnearme.ca",
+    "/p/fixture-twin-en": WWW,
+  };
+  // What sitemap-country.xml must list on each country (both host variants).
+  const COUNTRY_LOCS = {
+    "poolrentalnearme.co.uk": [
+      "/p/fixture-hosting-uk",
+      "/p/fixture-maintenance-uk",
+      "/p/pool-rental-london",
+      "/p/rent-out-your-pool-uk",
+    ],
+    "poolrentalnearme.ca": ["/p/fixture-maintenance-canada", "/p/pool-rental-toronto"],
+    "poolrentalnearme.com.au": ["/p/fixture-maintenance-australia"],
+  };
+  const hreflangOf = (body) =>
+    [...body.matchAll(/<link[^>]+rel="alternate"[^>]*>/g)]
+      .map((m) => [m[0].match(/hreflang="([^"]+)"/)?.[1], m[0].match(/href="([^"]+)"/)?.[1]])
+      .filter(([l]) => l)
+      .map(([l, h]) => `${l} ${h}`)
+      .sort();
+  const MAINTENANCE_SET = [
+    "en-AU https://poolrentalnearme.com.au/p/fixture-maintenance-australia",
+    "en-CA https://poolrentalnearme.ca/p/fixture-maintenance-canada",
+    "en-GB https://poolrentalnearme.co.uk/p/fixture-maintenance-uk",
+  ];
+
+  for (const [host, country] of Object.entries(HOSTS)) {
+    const opts = { forwardedHost: host };
+    const wrong = [];
+    for (const [path, origin] of Object.entries(PAGES)) {
+      const r = await get(path, opts);
+      const canons = [...r.body.matchAll(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/g)].map((m) => m[1]);
+      const ogUrl = r.body.match(/<meta[^>]+property="og:url"[^>]+content="([^"]+)"/)?.[1];
+      if (r.status !== 200 || canons.length !== 1 || canons[0] !== `${origin}${path}`) {
+        wrong.push(`${path}: ${r.status} canonical ${canons.join(" + ") || "missing"}`);
+      } else if (!/vs-pool-rental/.test(path) && ogUrl !== canons[0]) {
+        wrong.push(`${path}: og:url ${ogUrl}`);
+      }
+      const alts = hreflangOf(r.body);
+      if (/fixture-maintenance-/.test(path)) {
+        if (JSON.stringify(alts) !== JSON.stringify(MAINTENANCE_SET)) wrong.push(`${path}: hreflang ${alts.join(", ")}`);
+      } else if (path === "/p/fixture-twin-en") {
+        const want = [
+          `en-US ${WWW}/p/fixture-twin-en`,
+          `es-US ${WWW}/p/fixture-twin-es`,
+          `x-default ${WWW}/p/fixture-twin-en`,
+        ].sort();
+        if (JSON.stringify(alts) !== JSON.stringify(want)) wrong.push(`${path}: hreflang ${alts.join(", ") || "none"}`);
+      } else if (/pool-rental-(london|toronto)|rent-out-your-pool/.test(path) && alts.length) {
+        wrong.push(`${path}: hreflang ${alts.join(", ")} (no defined equivalent)`);
+      }
+    }
+    check(
+      phase,
+      `[${host}] canonical + og:url: country pages on their ccTLD, every other page on www; hreflang only between equivalents`,
+      wrong.length === 0,
+      wrong.slice(0, 4).join("; "),
+    );
+
+    const robots = await get("/robots.txt", opts);
+    const sm = await get("/sitemap-country.xml", opts);
+    const locs = locsOf(sm.body);
+    if (!country) {
+      check(
+        phase,
+        `[${host}] robots.txt is the production body; sitemap-country.xml is empty`,
+        robots.status === 200 &&
+          /^Allow: \/$/m.test(robots.body) &&
+          robots.body.includes(`Sitemap: ${WWW}/sitemap.xml`) &&
+          sm.status === 200 &&
+          locs.length === 0,
+        `robots ${robots.status}, sitemap-country ${sm.status} ${locs.length} <loc>`,
+      );
+      continue;
+    }
+    const allow = [...robots.body.matchAll(/^Allow: (\S+)$/gm)].map((m) => m[1]);
+    const problems = [];
+    if (robots.status !== 200) problems.push(`status ${robots.status}`);
+    if (!/^Disallow: \/$/m.test(robots.body)) problems.push("no Disallow: /");
+    for (const need of ["/sitemap-country.xml$", "/fw-assets/"]) if (!allow.includes(need)) problems.push(`no Allow ${need}`);
+    if (!robots.body.includes(`Sitemap: https://${country}/sitemap-country.xml`)) problems.push("Sitemap line not on the canonical host");
+    for (const path of COUNTRY_LOCS[country]) {
+      const slug = path.slice(3);
+      if (!allow.some((a) => (a.startsWith("/p/*") ? slug.endsWith(a.slice(4, -1)) : a === `${path}$`)))
+        problems.push(`${path} not allowed`);
+    }
+    if (allow.some((a) => !a.endsWith("$") && a !== "/fw-assets/")) problems.push(`unanchored Allow: ${allow.join(" ")}`);
+    check(
+      phase,
+      `[${host}] robots.txt allows the mapped pages, its sitemap and /fw-assets/ (bare-host Sitemap line)`,
+      problems.length === 0,
+      problems.join("; "),
+    );
+    const want = COUNTRY_LOCS[country].map((p) => `https://${country}${p}`).sort();
+    check(
+      phase,
+      `[${host}] sitemap-country.xml lists exactly the country's mapped pages, on https://${country}`,
+      sm.status === 200 && JSON.stringify([...locs].sort()) === JSON.stringify(want),
+      `${describe(sm)}: ${locs.join(" ")}`,
+    );
+  }
 }
 
 let crashed = null;

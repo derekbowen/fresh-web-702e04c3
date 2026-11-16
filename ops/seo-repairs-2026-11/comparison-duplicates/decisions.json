@@ -1,0 +1,480 @@
+{
+ "generated_from": {
+  "refetch_fetched_at": [
+   "2026-11-15T23:30:20Z",
+   "2026-11-16T19:29:39Z"
+  ],
+  "max_km": 40
+ },
+ "confirmed": [
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-boston",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-boston-ma",
+   "km": 0.3,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-carrollton",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-carrollton-tx",
+   "km": 4.8,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-charlotte",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-charlotte-nc",
+   "km": 19.4,
+   "words": 1815
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-cincinnati",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-cincinnati-oh",
+   "km": 7.7,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-dallas",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-dallas-tx",
+   "km": 15.9,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-denver",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-denver-co",
+   "km": 10.5,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-el-paso",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-el-paso-tx",
+   "km": 0.2,
+   "words": 1859
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-escondido",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-escondido-ca",
+   "km": 2,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-fort-worth",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-fort-worth-tx",
+   "km": 10.2,
+   "words": 1859
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-franklin",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-franklin-tn",
+   "km": 0,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-fresno",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-fresno-ca",
+   "km": 9.1,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-frisco",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-frisco-tx",
+   "km": 5.1,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-glendale",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-glendale-az",
+   "km": 2,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-hayward",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-hayward-ca",
+   "km": 5.5,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-houston",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-houston-tx",
+   "km": 34.2,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-huntington-beach",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-huntington-beach-ca",
+   "km": 2.7,
+   "words": 1859
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-indianapolis",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-indianapolis-in",
+   "km": 9.8,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-lakewood",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-lakewood-co",
+   "km": 3.1,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-littleton",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-littleton-co",
+   "km": 9.6,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-louisville",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-louisville-ky",
+   "km": 19.3,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-memphis",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-memphis-tn",
+   "km": 13.7,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-mesa",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-mesa-az",
+   "km": 22.7,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-murfreesboro",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-murfreesboro-tn",
+   "km": 7,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-murrieta",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-murrieta-ca",
+   "km": 7.2,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-nashville",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-nashville-tn",
+   "km": 9.9,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-norfolk",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-norfolk-va",
+   "km": 0,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-north-las-vegas",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-north-las-vegas-nv",
+   "km": 5.4,
+   "words": 1910
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-phoenix",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-phoenix-az",
+   "km": 25.5,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-plano",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-plano-tx",
+   "km": 12.7,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-portland",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-portland-or",
+   "km": 11.4,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-raleigh",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-raleigh-nc",
+   "km": 10.7,
+   "words": 1815
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-richmond",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-richmond-va",
+   "km": 6.3,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-rockville",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-rockville-md",
+   "km": 5.4,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-roseville",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-roseville-ca",
+   "km": 0,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-san-diego",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-san-diego-ca",
+   "km": 12.2,
+   "words": 1859
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-santa-clara",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-santa-clara-ca",
+   "km": 1.9,
+   "words": 1859
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-scottsdale",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-scottsdale-az",
+   "km": 15.5,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-sunnyvale",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-sunnyvale-ca",
+   "km": 0,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-tempe",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-tempe-az",
+   "km": 5.4,
+   "words": 1808
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-the-woodlands",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-the-woodlands-tx",
+   "km": 3,
+   "words": 1859
+  },
+  {
+   "from": "/p/giggster-vs-pool-rental-near-me-in-tulsa",
+   "to": "/p/giggster-vs-pool-rental-near-me-in-tulsa-ok",
+   "km": 15.4,
+   "words": 1808
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-boston",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-boston-ma",
+   "km": 0.3,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-carlsbad",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-carlsbad-ca",
+   "km": 3.9,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-carrollton",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-carrollton-tx",
+   "km": 4.8,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-charlotte",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-charlotte-nc",
+   "km": 19.4,
+   "words": 885
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-cincinnati",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-cincinnati-oh",
+   "km": 7.7,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-dallas",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-dallas-tx",
+   "km": 15.9,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-denver",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-denver-co",
+   "km": 10.5,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-el-paso",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-el-paso-tx",
+   "km": 0.2,
+   "words": 913
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-fort-worth",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-fort-worth-tx",
+   "km": 10.2,
+   "words": 913
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-franklin",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-franklin-tn",
+   "km": 0,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-fresno",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-fresno-ca",
+   "km": 9.1,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-frisco",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-frisco-tx",
+   "km": 5.1,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-glendale",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-glendale-az",
+   "km": 2,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-houston",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-houston-tx",
+   "km": 34.2,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-huntington-beach",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-huntington-beach-ca",
+   "km": 2.7,
+   "words": 913
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-indianapolis",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-indianapolis-in",
+   "km": 9.8,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-lakewood",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-lakewood-co",
+   "km": 3.1,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-littleton",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-littleton-co",
+   "km": 9.6,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-los-angeles",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-los-angeles-ca",
+   "km": 13,
+   "words": 913
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-louisville",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-louisville-ky",
+   "km": 19.3,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-murfreesboro",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-murfreesboro-tn",
+   "km": 7,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-nashville",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-nashville-tn",
+   "km": 9.9,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-new-york",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-new-york-ny",
+   "km": 0.6,
+   "words": 918
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-norfolk",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-norfolk-va",
+   "km": 0,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-north-las-vegas",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-north-las-vegas-nv",
+   "km": 5.4,
+   "words": 946
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-phoenix",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-phoenix-az",
+   "km": 25.5,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-plano",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-plano-tx",
+   "km": 12.7,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-portland",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-portland-or",
+   "km": 11.4,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-rockville",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-rockville-md",
+   "km": 5.4,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-round-rock",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-round-rock-tx",
+   "km": 0.4,
+   "words": 913
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-san-diego",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-san-diego-ca",
+   "km": 12.2,
+   "words": 913
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-santa-clara",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-santa-clara-ca",
+   "km": 1.9,
+   "words": 913
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-scottsdale",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-scottsdale-az",
+   "km": 15.5,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-sunnyvale",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-sunnyvale-ca",
+   "km": 0,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-tampa",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-tampa-fl",
+   "km": 9.9,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-tempe",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-tempe-az",
+   "km": 5.4,
+   "words": 880
+  },
+  {
+   "from": "/p/peerspace-vs-pool-rental-near-me-in-the-woodlands",
+   "to": "/p/peerspace-vs-pool-rental-near-me-in-the-woodlands-tx",
+   "km": 3,
+   "words": 913
+  }
+ ],
+ "rejected": []
+}

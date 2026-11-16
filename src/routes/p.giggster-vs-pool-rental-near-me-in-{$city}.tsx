@@ -16,6 +16,7 @@ import {
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
+import { comparisonDuplicateTarget } from "@/lib/comparison-duplicates";
 
 /**
  * Programmatic city variant of the Giggster pillar comparison.
@@ -48,6 +49,14 @@ function cityTier(city: CityRow): CityTier {
 }
 
 export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me-in-{$city}")({
+  // A confirmed exact duplicate (same text, same city as its state-suffixed
+  // twin): one 301 to the twin, from a checked-in list, in beforeLoad so it is
+  // answered before any loader (or database read) runs. See
+  // src/lib/comparison-duplicates.ts.
+  beforeLoad: ({ params }) => {
+    const duplicateOf = comparisonDuplicateTarget(`/p/giggster-vs-pool-rental-near-me-in-${params.city}`);
+    if (duplicateOf) throw redirect({ href: duplicateOf, statusCode: 301 });
+  },
   loader: async ({ params }) => {
     const fullSlug = `giggster-vs-pool-rental-near-me-in-${params.city}`;
     const lookup = await lookupContentPage({ data: { slug: fullSlug } });

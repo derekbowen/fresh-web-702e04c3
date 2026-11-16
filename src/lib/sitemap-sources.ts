@@ -32,6 +32,8 @@ import {
   listingExclusion,
   redirectShadowedSlugs,
 } from "./sitemap-rules.ts";
+import { countryForSlug, slugOrFilter, type CountrySite } from "./country-sites.ts";
+import { isComparisonDuplicatePath } from "./comparison-duplicates.ts";
 
 /** Rows asked for per request. Equal to the PostgREST cap; see the header. */
 export const READ_WINDOW = 1000;
@@ -181,6 +183,55 @@ export async function loadContentGroupEntries(
     };
     if (row.hero_image_url) entry.images = [{ loc: row.hero_image_url }];
     entries.push(entry);
+  }
+  return { ok: true, data: dedupeByLoc(entries) };
+}
+
+// ───────────────────────────── country pages ────────────────────────────────
+
+/**
+ * sitemap-country.xml for one country: exactly the content pages the country
+ * mapping assigns to it (src/lib/country-sites.ts) that may be listed at all —
+ * published, in_sitemap, no redirect_to, and every content rule (servable and
+ * well-formed slug, plain /p/<slug>, not a dedicated route, not shadowed by a
+ * redirect row, canonical equal to its own URL). <loc> is always on the
+ * country's canonical host, whichever host variant asked. Paged and fail
+ * closed like every other list. The old route read `ilike` patterns with a
+ * flat `.limit(5000)` and no status / redirect filter.
+ */
+export async function loadCountryEntries(
+  site: CountrySite,
+  supabase: SupabaseClient,
+): Promise<ListOutcome<SitemapEntry>> {
+  const shadowed = await loadRedirectShadowedSlugs(supabase);
+  if (!shadowed.ok) return shadowed;
+  const rows = await readAllRows<ContentRow>(`sitemap country ${site.code}`, (from, to, signal) =>
+    supabase
+      .from("content_pages")
+      .select("id, slug, url_path, canonical_override, content_refreshed_at, created_at")
+      .or(slugOrFilter(site))
+      .eq("in_sitemap", true)
+      .eq("status", "published")
+      .is("redirect_to", null)
+      .not("slug", "is", null)
+      .order("slug")
+      .order("id")
+      .range(from, to)
+      .abortSignal(signal),
+  );
+  if (!rows.ok) return rows;
+  const siteUrl = `https://${site.canonicalHost}`;
+  const ctx = { siteUrl, redirectShadowedSlugs: new Set(shadowed.data) };
+  const entries: SitemapEntry[] = [];
+  for (const row of rows.data) {
+    if (countryForSlug(row.slug) !== site) continue;
+    if (contentRowExclusion(row, ctx)) continue;
+    entries.push({
+      loc: contentRowLoc(row, siteUrl)!,
+      // Same lastmod rule as the www content sitemaps: updated_at is bumped
+      // by any column write, so it is not a content date.
+      lastmod: row.content_refreshed_at ?? row.created_at ?? null,
+    });
   }
   return { ok: true, data: dedupeByLoc(entries) };
 }
@@ -479,8 +530,9 @@ export const COMPARISON_CITY_PREFIXES = [
 /**
  * The comparison sitemap: three pillars plus two city pages per published
  * cities row, minus every city page that a content_pages row redirects
- * (redirect_to set), because that URL 301s instead of serving itself.
- * Both reads are paged: the cities read used `.limit(5000)`, which PostgREST
+ * (redirect_to set), because that URL 301s instead of serving itself, and
+ * minus the confirmed exact duplicates that 301 to their state-suffixed twin
+ * (COMPARISON_DUPLICATE_REDIRECTS). Both reads are paged: the cities read used `.limit(5000)`, which PostgREST
  * caps at 1,000 rows (2,003 URLs), and the redirect read the same.
  */
 export async function loadComparisonEntries(
@@ -526,6 +578,9 @@ export async function loadComparisonEntries(
     const lastmod = row.updated_at ? new Date(row.updated_at) : now;
     for (const prefix of COMPARISON_CITY_PREFIXES) {
       if (redirected.has(`${prefix}${row.slug}`)) continue;
+      // A confirmed exact duplicate 301s to its state-suffixed twin
+      // (src/lib/comparison-duplicates.ts); only the twin is listed.
+      if (isComparisonDuplicatePath(`/p/${prefix}${row.slug}`)) continue;
       entries.push({ loc: `${siteUrl}/p/${prefix}${row.slug}`, lastmod });
     }
   }

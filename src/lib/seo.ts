@@ -2,6 +2,7 @@
  * SEO helpers for building meta tags and JSON-LD structured data.
  */
 import ogDefaultImage from "@/assets/og-default.jpg";
+import { resolveCanonicalUrl } from "@/lib/country-sites";
 
 export const SITE_URL = "https://www.poolrentalnearme.com";
 export const SITE_NAME = "Pool Rental Near Me";
@@ -48,7 +49,12 @@ export interface SeoMetaInput {
   description: string;
   path: string; // starts with /
   canonicalPath?: string; // overrides `path` for canonical (e.g. strip query)
-  /** Absolute URL override for canonical (e.g. cross-domain). Wins over canonicalPath. */
+  /**
+   * Stored canonical override (content_pages.canonical_override). It may move
+   * the canonical to another PATH; the host is always the one the country
+   * mapping assigns (src/lib/country-sites.ts resolveCanonicalUrl), so an
+   * override on any other host is ignored.
+   */
   canonicalUrl?: string;
   /** Optional override for og:title and twitter:title. Falls back to `title`. */
   ogTitle?: string;
@@ -60,10 +66,11 @@ export interface SeoMetaInput {
   prevPath?: string | null;
   nextPath?: string | null;
   /**
-   * Request-scoped origin from getRouteOrigin() (which reads X-Forwarded-Host
-   * on the server). When provided, canonical, og:url, and og:image are built
-   * from this origin instead of the hardcoded SITE_URL fallback. Workspace
-   * rule #6.
+   * Request-scoped origin from getRouteOrigin(). No longer used for any URL
+   * this function emits: canonical, og:url, og:image and prev/next are built
+   * on the canonical host from the country mapping, whichever host served the
+   * request (audit fix F10 — every page used to self-canonicalise to the
+   * ccTLD it was fetched on). Kept so existing callers need not change.
    */
   origin?: string;
   /**
@@ -87,14 +94,13 @@ export function buildMeta({
   noindex,
   prevPath,
   nextPath,
-  origin,
   hreflang,
 }: SeoMetaInput) {
-  // Prefer the request-scoped origin (X-Forwarded-Host via getRouteOrigin())
-  // so canonicals and social URLs honor the production proxy. Fall back to
-  // SITE_URL only when the caller didn't thread origin through.
-  const siteOrigin = (origin ?? SITE_URL).replace(/\/+$/, "");
-  const canonicalUrl = canonicalUrlOverride ?? `${siteOrigin}${canonicalPath ?? path}`;
+  // One canonical per page, on the host the country mapping assigns
+  // (src/lib/country-sites.ts): a country page on its ccTLD, everything else
+  // on www. The request host does not matter.
+  const canonicalUrl = resolveCanonicalUrl(canonicalPath ?? path, canonicalUrlOverride);
+  const siteOrigin = new URL(canonicalUrl).origin;
   // og:url and twitter URLs should reflect the canonical location, not the
   // (potentially legacy) request path. This keeps social shares deduplicated
   // when a page is reachable via multiple URLs that 301 to one canonical.

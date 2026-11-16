@@ -1,0 +1,99 @@
+# Read-only snapshot of production `cities`, 2026-11-15 (project qbzpjsiahqgyoazjurqy).
+# Query: every row whose slug is one of the 46 bare city slugs in the evidence,
+# or that slug plus "-" and two letters. Columns: slug|name|state|state_code|latitude|longitude|is_published
+boston|Boston|Massachusetts|MA|42.3601|-71.0589|t
+boston-ma|Boston|Massachusetts|MA|42.358665|-71.05634|t
+carlsbad|Carlsbad|California|CA|33.1581|-117.3506|t
+carlsbad-ca|Carlsbad|California|CA|33.128105|-117.32836|t
+carrollton|Carrollton|Texas|TX|32.9756|-96.89|t
+carrollton-tx|Carrollton|Texas|TX|32.93762|-96.91458|t
+charlotte|Charlotte|North Carolina|NC|35.2271|-80.8431|t
+charlotte-nc|Charlotte|North Carolina|NC|35.05309|-80.84716|t
+cincinnati|Cincinnati|Ohio|OH|39.1031|-84.512|t
+cincinnati-oh|Cincinnati|Ohio|OH|39.118935|-84.599365|t
+dallas|Dallas|Texas|TX|32.7767|-96.797|t
+dallas-tx|Dallas|Texas|TX|32.89392|-96.69873|t
+denver|Denver|Colorado|CO|39.7392|-104.9903|t
+denver-co|Denver|Colorado|CO|39.83138|-104.961655|t
+el-paso|El Paso|Texas|TX|31.7619|-106.485|t
+el-paso-tx|El Paso|Texas|TX|31.760159|-106.485985|t
+escondido|Escondido|California|CA|33.1192|-117.0864|t
+escondido-ca|Escondido|California|CA|33.130577|-117.1032|t
+fort-worth|Fort Worth|Texas|TX|32.7555|-97.3308|t
+fort-worth-tx|Fort Worth|Texas|TX|32.847313|-97.33027|t
+franklin|Franklin|Tennessee|TN|35.9251|-86.8689|t
+franklin-tn|Franklin|Tennessee|TN|35.9251|-86.8689|t
+fresno|Fresno|California|CA|36.7378|-119.7871|t
+fresno-ca|Fresno|California|CA|36.671047|-119.72853|t
+frisco|Frisco|Texas|TX|33.1507|-96.8236|t
+frisco-tx|Frisco|Texas|TX|33.104717|-96.82396|t
+glendale|Glendale|Arizona|AZ|33.5387|-112.186|t
+glendale-az|Glendale|Arizona|AZ|33.5243|-112.17261|t
+glendale-ca|Glendale|California|CA|34.1425|-118.2551|t
+hayward|Hayward|California|CA|37.6688|-122.0808|t
+hayward-ca|Hayward|California|CA|37.6288|-122.116806|t
+houston|Houston|Texas|TX|29.7604|-95.3698|t
+houston-tx|Houston|Texas|TX|30.004925|-95.5848|t
+huntington-beach|Huntington Beach|California|CA|33.6603|-117.9992|t
+huntington-beach-ca|Huntington Beach|California|CA|33.678776|-117.98029|t
+indianapolis|Indianapolis|Indiana|IN|39.7684|-86.1581|t
+indianapolis-in|Indianapolis|Indiana|IN|39.70413|-86.07918|t
+lakewood|Lakewood|Colorado|CO|39.7047|-105.0814|t
+lakewood-co|Lakewood|Colorado|CO|39.710407|-105.11713|t
+littleton|Littleton|Colorado|CO|39.6133|-105.0166|t
+littleton-co|Littleton|Colorado|CO|39.56844|-105.11231|t
+los-angeles|Los Angeles|California|CA|34.0522|-118.2437|t
+los-angeles-ca|Los Angeles|California|CA|34.071568|-118.382416|t
+louisville|Louisville|Kentucky|KY|38.2527|-85.7585|t
+louisville-ky|Louisville|Kentucky|KY|38.296814|-85.54447|t
+louisville-oh|Louisville|Ohio|OH|40.85295|-81.21174|t
+memphis|Memphis|Tennessee|TN|35.1495|-90.049|t
+memphis-tn|Memphis|Tennessee|TN|35.073334|-89.93108|t
+mesa|Mesa|Arizona|AZ|33.4152|-111.8315|t
+mesa-az|Mesa|Arizona|AZ|33.2845|-111.64418|t
+murfreesboro|Murfreesboro|Tennessee|TN|35.8456|-86.3903|t
+murfreesboro-tn|Murfreesboro|Tennessee|TN|35.883617|-86.45214|t
+murrieta|Murrieta|California|CA|33.5539|-117.2139|t
+murrieta-ca|Murrieta|California|CA|33.556175|-117.13621|t
+nashville|Nashville|Tennessee|TN|36.1627|-86.7816|t
+nashville-ga|Nashville|Georgia|GA|31.208899|-83.250114|t
+nashville-tn|Nashville|Tennessee|TN|36.075478|-86.7603|t
+new-york|New York|New York|NY|40.7128|-74.006|t
+new-york-ny|New York|New York|NY|40.7111|-74.0131|t
+norfolk|Norfolk|Virginia|VA|36.8508|-76.2859|t
+norfolk-va|Norfolk|Virginia|VA|36.8508|-76.2859|t
+north-las-vegas|North Las Vegas|Nevada|NV|36.1989|-115.1175|t
+north-las-vegas-nv|North Las Vegas|Nevada|NV|36.241486|-115.08971|t
+phoenix|Phoenix|Arizona|AZ|33.4484|-112.074|t
+phoenix-az|Phoenix|Arizona|AZ|33.674835|-112.03022|t
+phoenix-md|Phoenix|Maryland|MD|39.49585|-76.56916|t
+plano|Plano|Texas|TX|33.0198|-96.6989|t
+plano-tx|Plano|Texas|TX|33.100365|-96.79475|t
+portland|Portland|Oregon|OR|45.5152|-122.6784|t
+portland-or|Portland|Oregon|OR|45.50891|-122.53239|t
+raleigh|Raleigh|North Carolina|NC|35.7796|-78.6382|t
+raleigh-nc|Raleigh|North Carolina|NC|35.876186|-78.641754|t
+richmond|Richmond|Virginia|VA|37.5407|-77.436|t
+richmond-va|Richmond|Virginia|VA|37.49027|-77.46907|t
+rockville|Rockville|Maryland|MD|39.084|-77.1528|t
+rockville-md|Rockville|Maryland|MD|39.07636|-77.09069|t
+roseville|Roseville|California|CA|38.7521|-121.288|t
+roseville-ca|Roseville|California|CA|38.7521|-121.288|t
+round-rock|Round Rock|Texas|TX|30.5083|-97.6789|t
+round-rock-tx|Round Rock|Texas|TX|30.511044|-97.67661|t
+san-diego|San Diego|California|CA|32.7157|-117.1611|t
+san-diego-ca|San Diego|California|CA|32.82575|-117.15695|t
+santa-clara|Santa Clara|California|CA|37.3541|-121.9552|t
+santa-clara-ca|Santa Clara|California|CA|37.365948|-121.94023|t
+scottsdale|Scottsdale|Arizona|AZ|33.4942|-111.9261|t
+scottsdale-az|Scottsdale|Arizona|AZ|33.631935|-111.90241|t
+sunnyvale|Sunnyvale|California|CA|37.3688|-122.0363|t
+sunnyvale-ca|Sunnyvale|California|CA|37.3688|-122.0363|t
+tampa|Tampa|Florida|FL|27.9506|-82.4572|t
+tampa-fl|Tampa|Florida|FL|28.035334|-82.4875|t
+tempe|Tempe|Arizona|AZ|33.4255|-111.94|t
+tempe-az|Tempe|Arizona|AZ|33.376984|-111.94535|t
+the-woodlands|The Woodlands|Texas|TX|30.1658|-95.4613|t
+the-woodlands-tx|The Woodlands|Texas|TX|30.14035|-95.450035|t
+tulsa|Tulsa|Oklahoma|OK|36.154|-95.9928|t
+tulsa-ok|Tulsa|Oklahoma|OK|36.019886|-95.950325|t
