@@ -151,10 +151,29 @@ all 66 in-sitemap rows answered 200 with no redirect in the 2026-11-14 crawl.
 Expected result: the same 69 rows, `redirect_to` null on all.
 Any new row is mapped by `countryForSlug()`; check it lands where intended.
 
+It also confirms two columns the snapshot did not record, which the
+sitemap-country.xml "after" counts (22 / 22 / 22) assume:
+
+- `url_path`: expected null or `'/p/' || slug` on all 69. A row whose
+  `url_path` is anything else is dropped by `contentRowExclusion`
+  (`url_path_mismatch`). The www sitemaps exclude every country path, so such a
+  row would then be in **no** sitemap. Before this step the old route listed
+  `/p/<slug>` whatever the `url_path`. Indirect evidence: the 9 launch hubs
+  were self-canonical at `/p/<slug>` in the 2026-11-14 crawl, and the
+  canonical is built from `url_path`, so theirs is `/p/<slug>`. For the 60
+  override rows the canonical comes from the override, so nothing saved shows
+  their `url_path`.
+- `updated_at`, `content_refreshed_at`, `created_at`: the old and new
+  `<lastmod>` sources. The new value per URL is
+  `coalesce(content_refreshed_at, created_at)`. The live "before" values are
+  in `ops/seo-repairs-2026-11/country-mapping/sitemap-country-lastmod-live-2026-11-16.tsv`.
+
 ```sql
 set transaction read only;
 select slug, status, in_sitemap, template_type, locale, canonical_override,
-       hreflang_group, redirect_to
+       hreflang_group, redirect_to, url_path,
+       url_path is null or url_path = '/p/' || slug as url_path_ok,
+       updated_at, content_refreshed_at, created_at
 from content_pages
 where slug ~ '-(uk|united-kingdom|canada|australia)$'
    or slug ~ '^(australian|canadian|british|uk)-'
@@ -190,6 +209,47 @@ where hreflang_group in (
 )
 order by 1, 2
 limit 300;
+```
+
+## R5 — published blog posts whose slug maps to a country
+
+Confirms: no published `blog_posts` row has a slug the mapping assigns to a
+country. `/p/<slug>` serves published blog posts too, and the mapping is by
+path, so such a post now canonicalises to its ccTLD, leaves
+`sitemap-pages-blog.xml` and is listed by that country's
+`sitemap-country.xml`. Expected result: 0 rows (none of the 2026-11-14 crawl's
+blog-sitemap URLs ends in a country suffix). Any row returned should be checked:
+it moves to the ccTLD on deploy. A `-little-canada` slug is a US page
+(`usPlaceTraps`) and does not move.
+
+```sql
+set transaction read only;
+select slug, is_published, updated_at
+from blog_posts
+where is_published
+  and (slug ~ '-(uk|united-kingdom|canada|australia)$'
+       or slug in ('rent-out-your-pool-london','rent-out-your-pool-manchester','pool-rental-london',
+                   'pool-rental-manchester','uk-cities-with-pools','canadian-cities-with-pools',
+                   'rent-out-your-pool-toronto','rent-out-your-pool-vancouver','pool-rental-toronto',
+                   'pool-rental-vancouver','australian-cities-with-pools','rent-out-your-pool-sydney',
+                   'rent-out-your-pool-melbourne','pool-rental-sydney','pool-rental-melbourne'))
+order by slug
+limit 100;
+```
+
+## R6 — content rows ending in "-little-canada"
+
+Confirms: which content pages the `usPlaceTraps` guard keeps on www. Expected
+result: 0 rows, or US pages for Little Canada, MN only (the live host page is
+`-little-canada-mn`, which never matched `-canada`).
+
+```sql
+set transaction read only;
+select slug, status, in_sitemap, template_type, locale
+from content_pages
+where slug = 'little-canada' or slug like '%-little-canada'
+order by slug
+limit 50;
 ```
 
 ## Template, only if R1 returns rows (content-repair step)

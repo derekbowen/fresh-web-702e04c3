@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { SITE_URL } from "@/lib/seo";
+import { structuredDataUrl } from "@/lib/seo";
 
 export interface Crumb {
   name: string;
@@ -20,7 +20,9 @@ export function BreadcrumbsWithSchema({ items, className }: { items: Crumb[]; cl
       "@type": "ListItem",
       position: i + 1,
       name: c.name,
-      item: `${SITE_URL}${c.path}`,
+      // On the host the country mapping assigns (a country page's own crumb is
+      // its ccTLD canonical), as breadcrumbJsonLd in seo.ts.
+      item: structuredDataUrl(c.path),
     })),
   };
   // fresh-web only owns /, /p/*, /landing-page client-side. For any other

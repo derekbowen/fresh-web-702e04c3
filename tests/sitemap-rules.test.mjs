@@ -553,6 +553,50 @@ test("loadCountryEntries: exactly the country's mapped, listable pages, on its c
   assert.equal(failed.ok, false);
 });
 
+test("a blog post whose slug maps to a country: listed by that country's sitemap-country.xml, never by the www blog sitemap", async () => {
+  // /p/<slug> serves published blog posts too, and the mapping is by path, so
+  // such a post canonicalises to the ccTLD (none existed on 2026-11-14).
+  const uk = COUNTRY_SITES.find((s) => s.code === "GB");
+  const posts = [
+    { id: "b1", slug: "winter-pool-care-uk", updated_at: "2026-10-01T00:00:00Z" },
+    { id: "b2", slug: "winter-pool-care", updated_at: "2026-10-01T00:00:00Z" },
+    { id: "b3", slug: "winter-pool-care-canada", updated_at: "2026-10-01T00:00:00Z" },
+    // served by a content row with the same slug: the content row is the page
+    { id: "b4", slug: "hosting-uk", updated_at: "2026-10-01T00:00:00Z" },
+    // a US place, not a Canadian page
+    { id: "b5", slug: "pool-parties-little-canada", updated_at: "2026-10-01T00:00:00Z" },
+  ];
+  const content = [
+    { id: "c1", slug: "hosting-uk", url_path: "/p/hosting-uk", status: "published", redirect_to: null, priority: 0, canonical_override: null },
+  ];
+  const tables = {
+    blog_posts: () => posts,
+    content_pages: (q) => {
+      if (has(q, "eq", "status") && q.calls.some((c) => c[0] === "eq" && c[2] === "redirect")) return [];
+      if (has(q, "in", "slug")) return content.filter((c) => q.calls.find((x) => x[0] === "in" && x[1] === "slug")[2].includes(c.slug));
+      if (has(q, "overlaps", "legacy_slugs")) return [];
+      if (q.calls.some((c) => c[0] === "or")) return content;
+      return [];
+    },
+  };
+  const blog = await loadBlogEntries(fakeDb(tables), SITE);
+  assert.equal(blog.ok, true);
+  assert.deepEqual(blog.data.map((e) => e.loc).sort(), [`${SITE}/p/pool-parties-little-canada`, `${SITE}/p/winter-pool-care`]);
+  const db = fakeDb(tables);
+  const country = await loadCountryEntries(uk, db);
+  assert.equal(country.ok, true);
+  assert.deepEqual(country.data.map((e) => e.loc), [
+    "https://poolrentalnearme.co.uk/p/hosting-uk",
+    "https://poolrentalnearme.co.uk/p/winter-pool-care-uk",
+  ]);
+  assert.equal(country.data[1].lastmod, "2026-10-01T00:00:00Z");
+  const blogRead = db.queries.find((q) => q.table === "blog_posts");
+  assert.ok(has(blogRead, "eq", "is_published") && blogRead.calls.some((c) => c[0] === "or"), "narrowed, published only");
+  // a failed blog read fails the country list (503), never a partial list
+  const failed = await loadCountryEntries(uk, fakeDb(tables, { fail: (q) => q.table === "blog_posts" }));
+  assert.equal(failed.ok, false);
+});
+
 test("loadComparisonEntries: a failed redirect read or cities window fails the list", async () => {
   const cities = Array.from({ length: 1500 }, (_, i) => ({ slug: `c${i}` }));
   for (const fail of [

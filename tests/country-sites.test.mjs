@@ -7,6 +7,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   COUNTRY_SITES,
+  RENDER_ASSET_PATHS,
   WWW_ORIGIN,
   canonicalUrlForPath,
   countryForHost,
@@ -69,6 +70,14 @@ const US_TRAPS = [
   "hosting",
   "how-it-works",
   "american-cities-with-pools",
+  // Little Canada, MN (city key "little-canada|mn"; its -mn host page is live).
+  // The bare-city forms end in "-canada" and must not become .ca pages.
+  "little-canada",
+  "become-a-swimming-pool-host-little-canada",
+  "become-a-swimming-pool-host-little-canada-mn",
+  "swim-instructor-pool-rental-little-canada",
+  "giggster-vs-pool-rental-near-me-in-little-canada",
+  "peerspace-vs-pool-rental-near-me-in-little-canada",
 ];
 
 test("snapshot: 69 country rows, 60 overrides (57 in a sitemap), 9 country_launch", () => {
@@ -158,6 +167,36 @@ test("resolveCanonicalUrl: an override may change the path, never the host", () 
     resolveCanonicalUrl(uk, "https://poolrentalnearme.co.uk/p/how-it-works-uk"),
     "https://poolrentalnearme.co.uk/p/how-it-works-uk",
   );
+  assert.equal(resolveCanonicalUrl(uk, "/p/how-it-works-uk"), "https://poolrentalnearme.co.uk/p/how-it-works-uk");
+});
+
+test("resolveCanonicalUrl: an override never moves a page to another market, by any path", () => {
+  // A US page pointed at a country page (another path), relative or absolute,
+  // on the right ccTLD or not: stays on www at its own path.
+  const us = "/p/pool-maintenance";
+  const own = `${WWW_ORIGIN}${us}`;
+  for (const o of [
+    "/p/pool-maintenance-uk",
+    "https://poolrentalnearme.co.uk/p/pool-maintenance-uk",
+    "https://www.poolrentalnearme.co.uk/p/pool-maintenance-uk",
+    "/p/rent-out-your-pool-toronto",
+    "https://poolrentalnearme.ca/p/rent-out-your-pool-toronto",
+    "https://poolrentalnearme.com.au/p/hosting-australia",
+  ]) {
+    assert.equal(resolveCanonicalUrl(us, o), own, o);
+  }
+  // A country page pointed at a US page or at another country's page.
+  const uk = "/p/hosting-uk";
+  const ukOwn = "https://poolrentalnearme.co.uk/p/hosting-uk";
+  for (const o of ["/p/hosting", `${WWW_ORIGIN}/p/hosting`, "/p/hosting-canada", "https://poolrentalnearme.ca/p/hosting-canada"]) {
+    assert.equal(resolveCanonicalUrl(uk, o), ukOwn, o);
+  }
+  // Same market, another path: honoured.
+  assert.equal(resolveCanonicalUrl(us, "/p/pool-maintenance-guide"), `${WWW_ORIGIN}/p/pool-maintenance-guide`);
+  // Every stored override still resolves to itself (none crosses a market).
+  for (const r of rows.filter((x) => x.canonical_override)) {
+    assert.equal(resolveCanonicalUrl(`/p/${r.slug}`, r.canonical_override), r.canonical_override, r.slug);
+  }
 });
 
 test("hosts: both variants of each ccTLD map to their country; .com and others to none", () => {
@@ -196,7 +235,41 @@ test("robots: each ccTLD allows exactly its mapped pages, its sitemap and /fw-as
       assert.equal(robotsAllows(body, `/p/${r.slug}`), mine, `${s.code} /p/${r.slug}`);
     }
     for (const slug of US_TRAPS) assert.equal(robotsAllows(body, `/p/${slug}`), false, `${s.code} ${slug}`);
+    // what the pages need to render: the bundle, the logo and the favicons
+    for (const asset of RENDER_ASSET_PATHS) assert.ok(robotsAllows(body, asset), `${s.code} ${asset}`);
+    for (const other of ["/icon.svg.bak", "/favicon.ico/x", "/logo.png", "/llms.txt"]) {
+      assert.equal(robotsAllows(body, other), false, `${s.code} ${other}`);
+    }
   }
+});
+
+test("robots: every same-origin file the layout references is allowed on each ccTLD", () => {
+  // The <head> links in __root.tsx and the header/footer logo in site-layout.tsx
+  // are on every page, country pages included. A ccTLD that blocks them
+  // renders its pages without a logo and gets no site favicon.
+  const refs = new Set();
+  for (const file of ["src/routes/__root.tsx", "src/components/site-layout.tsx"]) {
+    const src = readFileSync(join(ROOT, file), "utf8");
+    for (const m of src.matchAll(/\b(?:href|src)\s*[:=]\s*\{?\s*["'](\/[^"'/][^"']*\.(?:svg|png|ico|jpe?g|webp|webmanifest|css|js))["']/g)) {
+      refs.add(m[1]);
+    }
+  }
+  assert.ok(refs.has("/icon.svg") && refs.has("/favicon.ico"), [...refs].join(" "));
+  for (const s of COUNTRY_SITES) {
+    const body = countryRobotsTxt(s);
+    for (const ref of refs) assert.ok(robotsAllows(body, ref), `${s.code} ${ref}`);
+  }
+});
+
+test("Little Canada, MN never maps to Canada; real -canada pages still do", () => {
+  assert.equal(countryForSlug("hosting-canada")?.code, "CA");
+  assert.equal(countryForSlug("rent-out-your-pool-canada")?.code, "CA");
+  assert.equal(countryForPath("/p/become-a-swimming-pool-host-little-canada"), null);
+  assert.equal(canonicalUrlForPath("/p/little-canada"), `${WWW_ORIGIN}/p/little-canada`);
+  const ca = countryRobotsTxt(site("CA"));
+  assert.ok(robotsAllows(ca, "/p/hosting-canada"));
+  assert.equal(robotsAllows(ca, "/p/little-canada"), false);
+  assert.equal(robotsAllows(ca, "/p/swim-instructor-pool-rental-little-canada"), false);
 });
 
 test("robots: the 7 canonical targets that used to be robots-blocked are now crawlable", () => {

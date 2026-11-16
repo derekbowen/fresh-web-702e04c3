@@ -266,13 +266,24 @@ const FIXTURES = {
       locale: "en-CA",
       in_sitemap: false,
     }),
+    // The .com group-key article of the fixture-maintenance group (as
+    // production's /p/pool-maintenance): every sibling is a country page, so
+    // it gets no hreflang at all and stays canonical on www.
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000002b",
+      slug: "fixture-maintenance",
+      title: "Fixture maintenance (US)",
+      in_sitemap: false,
+      hreflang_group: "fixture-maintenance",
+    }),
     // A US page whose hreflang_group also holds a country page (as production's
     // "new-york-ny" does): its EN<->ES twin must still be found, and the
     // country page must not be offered as its equivalent. The country row
-    // comes first, as the old `.limit(1)` sibling read could pick it.
+    // sorts first under the sibling read's ORDER BY slug ("0" < "e"), so the
+    // first row returned is the country page.
     contentPage({
       id: "00000000-0000-4000-8000-000000000028",
-      slug: "fixture-twin-uk",
+      slug: "fixture-twin-0-uk",
       locale: "en-GB",
       in_sitemap: false,
       hreflang_group: "fixture-twin",
@@ -298,6 +309,20 @@ const FIXTURES = {
       slug: "fixture-us-wrong-override",
       title: "Fixture US page with a ccTLD override",
       canonical_override: "https://poolrentalnearme.co.uk/p/fixture-us-wrong-override",
+    }),
+    // A US page whose override names ANOTHER page, a UK one, on the right UK
+    // host: still ignored (an override never moves a page to another market).
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000002c",
+      slug: "fixture-us-cross-override",
+      title: "Fixture US page pointed at a UK page",
+      canonical_override: "https://poolrentalnearme.co.uk/p/fixture-maintenance-uk",
+    }),
+    // A US place whose bare-city slug ends in "-canada" (Little Canada, MN).
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000002d",
+      slug: "fixture-host-little-canada",
+      title: "Fixture Little Canada MN page",
     }),
     // A comparison city page that a content row redirects.
     contentPage({
@@ -377,6 +402,9 @@ const FIXTURES = {
     { ...blogPost("00000000-0000-4000-8000-0000000000b3", "fixture-old-slug") },
     // Shares its slug with a redirect row the dispatcher skips: served as the blog post.
     { ...blogPost("00000000-0000-4000-8000-0000000000b4", "fixture-blog-behind-redirect") },
+    // A blog post whose slug maps to the UK: canonical on poolrentalnearme.co.uk,
+    // listed by its sitemap-country.xml, not by the www blog sitemap.
+    { ...blogPost("00000000-0000-4000-8000-0000000000b5", "fixture-blog-uk") },
   ],
   synced_listings: [
     {
@@ -620,6 +648,28 @@ function matchesTree(row, expr, kind) {
   return kind === "and" ? alts.every(Boolean) : alts.some(Boolean);
 }
 
+/** A sort comparator for a PostgREST `order` parameter (Postgres null placement by default). */
+function orderComparator(order) {
+  const keys = order.split(",").map((term) => {
+    const [col, ...mods] = term.split(".");
+    const desc = mods.includes("desc");
+    const nullsFirst = mods.includes("nullsfirst") ? true : mods.includes("nullslast") ? false : desc;
+    return { col, desc, nullsFirst };
+  });
+  return (a, b) => {
+    for (const { col, desc, nullsFirst } of keys) {
+      const x = a[col] ?? null;
+      const y = b[col] ?? null;
+      if (x === y) continue;
+      if (x === null) return nullsFirst ? -1 : 1;
+      if (y === null) return nullsFirst ? 1 : -1;
+      const c = typeof x === "number" && typeof y === "number" ? x - y : String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0;
+      if (c !== 0) return desc ? -c : c;
+    }
+    return 0;
+  };
+}
+
 function query(table, url) {
   let rows = FIXTURES[table] ?? [];
   // Malformed filters are rejected whether or not any row would be compared.
@@ -636,6 +686,11 @@ function query(table, url) {
     }
     rows = rows.filter((r) => !(key in r) || matches(r[key], expr));
   }
+  // ORDER BY as PostgREST sends it (`order=slug.asc,id.desc.nullsfirst`), so
+  // fixtures come back in the order production would return them, not in
+  // insertion order. Text compares by code point (C collation).
+  const order = url.searchParams.get("order");
+  if (order) rows = [...rows].sort(orderComparator(order));
   const total = rows.length;
   const offset = Number(url.searchParams.get("offset") ?? 0);
   const asked = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : rows.length;
@@ -900,7 +955,9 @@ const SITEMAPS = [
   { path: "/sitemap-pages-comparisons.xml" },
   { path: "/sitemap-pages-blog.xml" },
   { path: "/sitemap-listings.xml" },
-  { path: "/sitemap-country.xml", host: "www.poolrentalnearme.co.uk" },
+  // The canonical (bare) country host: the only one whose list reads the
+  // database (www.<ccTLD> answers an empty urlset without a read).
+  { path: "/sitemap-country.xml", host: "poolrentalnearme.co.uk" },
   { path: "/sitemap-pages-host-acquisition.xml" },
   { path: "/sitemap-pages-articles.xml" },
   { path: "/sitemap-pages-event-guides.xml" },
@@ -1353,6 +1410,7 @@ async function sitemapIntegrity(phase, index) {
     "/p/pool-rental-london": "country page (canonical on poolrentalnearme.co.uk)",
     "/p/fixture-maintenance-uk": "country page (canonical on poolrentalnearme.co.uk)",
     "/p/fixture-maintenance-canada": "country page (canonical on poolrentalnearme.ca)",
+    "/p/fixture-blog-uk": "country blog post (canonical on poolrentalnearme.co.uk)",
     // Confirmed exact duplicates: 301 to the state-suffixed twin.
     "/p/giggster-vs-pool-rental-near-me-in-boston": "exact duplicate (301 to -boston-ma)",
     "/p/peerspace-vs-pool-rental-near-me-in-boston": "exact duplicate (301 to -boston-ma)",
@@ -1370,6 +1428,10 @@ async function sitemapIntegrity(phase, index) {
     "/l/fixture-listing/00000000-0000-4000-8000-0000000000c1": "/sitemap-listings.xml",
     // Its ccTLD override is ignored (wrong host for a US page): a www page again.
     "/p/fixture-us-wrong-override": "/sitemap-pages-articles.xml",
+    // Its override names a UK page: ignored, still a www page.
+    "/p/fixture-us-cross-override": "/sitemap-pages-articles.xml",
+    // Little Canada, MN: a US page, though its slug ends in "-canada".
+    "/p/fixture-host-little-canada": "/sitemap-pages-articles.xml",
   };
   for (const [path, owner] of Object.entries(owners)) {
     const listedIn = where.get(`${SITE}${path}`) ?? [];
@@ -1477,10 +1539,73 @@ async function canonicalHosts(phase) {
     "/p/fixture-maintenance-australia": "https://poolrentalnearme.com.au",
     "/p/pool-rental-toronto": "https://poolrentalnearme.ca",
     "/p/fixture-twin-en": WWW,
+    "/p/fixture-maintenance": WWW,
+    "/p/fixture-us-cross-override": WWW,
+    "/p/fixture-host-little-canada": WWW,
+    "/p/fixture-blog-uk": "https://poolrentalnearme.co.uk",
+  };
+  // Pages whose own markup must carry no hreflang: no defined equivalent.
+  const NO_HREFLANG = new Set([
+    "/p/rent-out-your-pool-uk",
+    "/p/pool-rental-london",
+    "/p/pool-rental-toronto",
+    "/p/fixture-maintenance",
+    "/p/fixture-us-cross-override",
+    "/p/fixture-host-little-canada",
+    "/p/fixture-blog-uk",
+  ]);
+  const OUR_HOSTS = new Set(Object.keys(HOSTS).concat(["poolrentalnearme.com", "localhost"]));
+  /** Every absolute URL in the page's JSON-LD that names the page itself (same path, any of our hosts). */
+  const selfUrlsInJsonLd = (body, path) => {
+    const out = [];
+    const walk = (v) => {
+      if (typeof v === "string") {
+        try {
+          const u = new URL(v);
+          if (OUR_HOSTS.has(u.hostname) && u.pathname === path) out.push(v);
+        } catch {
+          /* not a URL */
+        }
+      } else if (Array.isArray(v)) v.forEach(walk);
+      else if (v && typeof v === "object") Object.values(v).forEach(walk);
+    };
+    for (const m of body.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) {
+      try {
+        walk(JSON.parse(m[1]));
+      } catch {
+        out.push(`unparseable JSON-LD`);
+      }
+    }
+    return out;
+  };
+  /** Same-origin files the page's markup loads (link/script/img), not page links. */
+  const renderAssetsOf = (body) =>
+    [
+      ...new Set(
+        [...body.matchAll(/<(?:link|script|img)\b[^>]*?\s(?:href|src)="(\/[^"/][^"]*)"/g)].map((m) =>
+          m[1].replace(/&amp;/g, "&"),
+        ),
+      ),
+    ];
+  /** Google's robots.txt matching (RFC 9309): longest pattern wins, a tie goes to Allow. */
+  const robotsAllows = (body, path) => {
+    let best = { len: -1, allow: true };
+    for (const line of body.split("\n")) {
+      const m = line.match(/^(Allow|Disallow):\s*(\S*)\s*$/);
+      if (!m || !m[2]) continue;
+      const pat = m[2];
+      const anchored = pat.endsWith("$");
+      const core = (anchored ? pat.slice(0, -1) : pat).replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
+      if (!new RegExp(`^${core}${anchored ? "$" : ""}`).test(path)) continue;
+      const allow = m[1] === "Allow";
+      if (pat.length > best.len || (pat.length === best.len && allow)) best = { len: pat.length, allow };
+    }
+    return best.allow;
   };
   // What sitemap-country.xml must list on each country (both host variants).
   const COUNTRY_LOCS = {
     "poolrentalnearme.co.uk": [
+      "/p/fixture-blog-uk",
       "/p/fixture-hosting-uk",
       "/p/fixture-maintenance-uk",
       "/p/pool-rental-london",
@@ -1513,6 +1638,13 @@ async function canonicalHosts(phase) {
       } else if (!/vs-pool-rental/.test(path) && ogUrl !== canons[0]) {
         wrong.push(`${path}: og:url ${ogUrl}`);
       }
+      // Structured data names the page by its canonical URL too (breadcrumb
+      // self crumb, mainEntityOfPage, LocalBusiness url), never by another host.
+      const selfUrls = selfUrlsInJsonLd(r.body, path);
+      const strayLd = selfUrls.filter((u) => u !== canons[0]);
+      if (!/vs-pool-rental/.test(path) && (selfUrls.length === 0 || strayLd.length)) {
+        wrong.push(`${path}: JSON-LD self URL ${strayLd.join(" + ") || "missing"}`);
+      }
       const alts = hreflangOf(r.body);
       if (/fixture-maintenance-/.test(path)) {
         if (JSON.stringify(alts) !== JSON.stringify(MAINTENANCE_SET)) wrong.push(`${path}: hreflang ${alts.join(", ")}`);
@@ -1523,13 +1655,13 @@ async function canonicalHosts(phase) {
           `x-default ${WWW}/p/fixture-twin-en`,
         ].sort();
         if (JSON.stringify(alts) !== JSON.stringify(want)) wrong.push(`${path}: hreflang ${alts.join(", ") || "none"}`);
-      } else if (/pool-rental-(london|toronto)|rent-out-your-pool/.test(path) && alts.length) {
+      } else if (NO_HREFLANG.has(path) && alts.length) {
         wrong.push(`${path}: hreflang ${alts.join(", ")} (no defined equivalent)`);
       }
     }
     check(
       phase,
-      `[${host}] canonical + og:url: country pages on their ccTLD, every other page on www; hreflang only between equivalents`,
+      `[${host}] canonical + og:url + JSON-LD self URL: country pages on their ccTLD, every other page on www; hreflang only between equivalents`,
       wrong.length === 0,
       wrong.slice(0, 4).join("; "),
     );
@@ -1557,22 +1689,35 @@ async function canonicalHosts(phase) {
     for (const need of ["/sitemap-country.xml$", "/fw-assets/"]) if (!allow.includes(need)) problems.push(`no Allow ${need}`);
     if (!robots.body.includes(`Sitemap: https://${country}/sitemap-country.xml`)) problems.push("Sitemap line not on the canonical host");
     for (const path of COUNTRY_LOCS[country]) {
-      const slug = path.slice(3);
-      if (!allow.some((a) => (a.startsWith("/p/*") ? slug.endsWith(a.slice(4, -1)) : a === `${path}$`)))
-        problems.push(`${path} not allowed`);
+      if (!robotsAllows(robots.body, path)) problems.push(`${path} not allowed`);
+    }
+    for (const [path, origin] of Object.entries(PAGES)) {
+      if (origin !== `https://${country}` && robotsAllows(robots.body, path)) problems.push(`${path} (not this country's) allowed`);
     }
     if (allow.some((a) => !a.endsWith("$") && a !== "/fw-assets/")) problems.push(`unanchored Allow: ${allow.join(" ")}`);
+    // Everything a country page loads from this origin (bundle, logo,
+    // favicons) must be fetchable, or Google renders it without them.
+    const page = await get(COUNTRY_LOCS[country][0], opts);
+    const assets = renderAssetsOf(page.body);
+    if (!assets.some((a) => a.startsWith("/fw-assets/")) || !assets.includes("/icon.svg")) {
+      problems.push(`asset scan found too little: ${assets.join(" ")}`);
+    }
+    for (const a of assets) if (!robotsAllows(robots.body, a)) problems.push(`render asset ${a} blocked`);
     check(
       phase,
-      `[${host}] robots.txt allows the mapped pages, its sitemap and /fw-assets/ (bare-host Sitemap line)`,
+      `[${host}] robots.txt allows the mapped pages, its sitemap and every render asset a country page loads; nothing else (bare-host Sitemap line)`,
       problems.length === 0,
       problems.join("; "),
     );
-    const want = COUNTRY_LOCS[country].map((p) => `https://${country}${p}`).sort();
+    // The list lives on the canonical host only: www.<ccTLD> may not list
+    // bare-host URLs (cross-host sitemap), so it answers an empty urlset.
+    const want = host === country ? COUNTRY_LOCS[country].map((p) => `https://${country}${p}`).sort() : [];
     check(
       phase,
-      `[${host}] sitemap-country.xml lists exactly the country's mapped pages, on https://${country}`,
-      sm.status === 200 && JSON.stringify([...locs].sort()) === JSON.stringify(want),
+      host === country
+        ? `[${host}] sitemap-country.xml lists exactly the country's mapped pages (blog posts included), on https://${country}`
+        : `[${host}] sitemap-country.xml is an empty urlset (its pages' canonical host lists them)`,
+      sm.status === 200 && /<urlset/.test(sm.body) && JSON.stringify([...locs].sort()) === JSON.stringify(want),
       `${describe(sm)}: ${locs.join(" ")}`,
     );
   }

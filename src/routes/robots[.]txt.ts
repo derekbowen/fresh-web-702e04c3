@@ -12,7 +12,8 @@ const PROD_HOST = "poolrentalnearme.com";
 /**
  * Country domains: the body is countryRobotsTxt() in src/lib/country-sites.ts
  * (Disallow everything except the pages the mapping assigns to the country,
- * its sitemap-country.xml and /fw-assets/), on both the bare and www. host.
+ * its sitemap-country.xml, /fw-assets/ and the logo/favicon files its pages
+ * load; US place traps disallowed again), on both the bare and www. host.
  */
 
 export const Route = createFileRoute("/robots.txt")({

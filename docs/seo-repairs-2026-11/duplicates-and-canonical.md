@@ -20,9 +20,11 @@ redirected. No database write. No deploy.
 | `comparison-duplicates/cities-2026-11-15.psv` | 2026-11-15 | read-only `cities` rows behind both slugs of every pair (96 rows) |
 | `country-mapping/content-pages-2026-11-15.psv` | 2026-11-15 | read-only `content_pages` rows matched by any country test (69 rows) |
 | `country-mapping/live-before-2026-11-15.json` and `live-before-2026-11-16.json` | 2026-11-15 23:50 UTC and 2026-11-16 19:34 UTC | per host: robots.txt, sitemap-country.xml, canonical and hreflang of 5 pages. The two runs are identical |
+| `country-mapping/sitemap-country-lastmod-live-2026-11-16.tsv` | 2026-11-16 20:02 UTC | every `<loc>` and `<lastmod>` of the three bare-host `sitemap-country.xml` (59 URLs) |
+| `seo/cities.json` (audit scratch data) | 2026-11-14 | 5,360 US `city\|state` keys; the only one ending in a country suffix is `little-canada\|mn` |
 
-Production's database tool was unavailable on 2026-11-16, so four facts are
-not yet confirmed by a fresh read. They are in `PENDING-READS.md` (R1 to R4),
+Production's database tool was unavailable on 2026-11-16, so some facts are
+not yet confirmed by a fresh read. They are in `PENDING-READS.md` (R1 to R6),
 each with the result it should return.
 
 ---
@@ -165,6 +167,18 @@ them maps to a country.
 | AU | `poolrentalnearme.com.au` | `www.poolrentalnearme.com.au` | `-australia` | `australian-cities-with-pools`, `rent-out-your-pool-sydney`, `rent-out-your-pool-melbourne`, `pool-rental-sydney`, `pool-rental-melbourne` |
 | everything else | `www.poolrentalnearme.com` | the ccTLDs serve it too | — | — |
 
+**US place traps** (`usPlaceTraps`). A suffix can sweep in a US place exactly
+as a wildcard can. Little Canada, MN is in the site's own data (city key
+`little-canada|mn`; `/p/become-a-swimming-pool-host-little-canada-mn` is in
+the 2026-11-14 sitemap). Its bare-city forms (`/p/<prefix>-little-canada`;
+bare-city slugs such as `become-a-swimming-pool-host-akron` exist) end in
+`-canada`. A slug equal to `little-canada` or ending in `-little-canada` is
+therefore not a Canadian page: it stays canonical on www, and the `.ca`
+robots.txt disallows it again with `Disallow: /p/*-little-canada$` and
+`Disallow: /p/little-canada$`, which are longer than `Allow: /p/*-canada$` and so
+win. No such page existed on 2026-11-14 or 2026-11-15 (R6 confirms). No other
+key in the 5,360 ends in `uk`, `united-kingdom`, `canada` or `australia`.
+
 **Why the bare ccTLD is the canonical host.** On 2026-11-15 all 60 stored
 `canonical_override` values pointed at the bare ccTLD with the page's own path.
 Every ccTLD sitemap already listed the bare host. `www.<ccTLD>` already
@@ -177,10 +191,15 @@ answered with a canonical to the bare host for those rows (live matrix,
    `https://<its canonical host>/p/<slug>`, whichever of the 7 hosts served it.
 2. Every other page canonicalises to `https://www.poolrentalnearme.com`,
    whichever host served it.
-3. A stored `canonical_override` may change the **path**, never the host. The
-   mapping decides the host. On 2026-11-15 every one of the 60 overrides equals
-   its own row's mapped canonical, so no stored decision changes. An override
-   that names another host is ignored.
+3. A stored `canonical_override` may change the **path**, never the host, and
+   only to another page **in the same market**: the target must map to the
+   same country as the page, or both to www. The mapping decides the host. An
+   override that names another host, or a page in another market by any path
+   (e.g. `/p/pool-maintenance` → `/p/pool-maintenance-uk`, relative or absolute
+   on the right ccTLD), is ignored. The admin tool can write
+   `canonical_override`, so this matters for future edits. On 2026-11-15 every
+   one of the 60 overrides equals its own row's mapped canonical, so no stored
+   decision changes.
 
 **Which rows are country pages** (read-only snapshot, 2026-11-15). There are
 69 rows, all published, and all map to the country of their locale:
@@ -199,9 +218,19 @@ override pages and the 9 launch hubs, all in the snapshot.
 | host | before (live 2026-11-16) | after |
 |---|---|---|
 | `www.poolrentalnearme.com` | production body | unchanged |
-| `poolrentalnearme.co.uk` and `www.` | `Disallow: /`; Allow `/p/*-uk$`, `/p/*-united-kingdom$`, 2 launch hubs; Sitemap on the requesting host | `Disallow: /`; Allow the 2 suffixes + 5 exact slugs (each `$`-anchored), `/sitemap-country.xml$`, `/fw-assets/`; Sitemap `https://poolrentalnearme.co.uk/sitemap-country.xml` on both hosts |
-| `poolrentalnearme.ca` and `www.` | Allow `/p/*-canada$`, `/p/canadian-*` (unanchored prefix), 2 hubs | Allow `-canada` + 5 exact slugs, `/sitemap-country.xml$`, `/fw-assets/`; Sitemap on `poolrentalnearme.ca` |
-| `poolrentalnearme.com.au` and `www.` | Allow `/p/*-australia$`, `/p/australian-*` (unanchored prefix), 2 hubs | Allow `-australia` + 5 exact slugs, `/sitemap-country.xml$`, `/fw-assets/`; Sitemap on `poolrentalnearme.com.au` |
+| `poolrentalnearme.co.uk` and `www.` | `Disallow: /`; Allow `/p/*-uk$`, `/p/*-united-kingdom$`, 2 launch hubs; Sitemap on the requesting host | `Disallow: /`; Allow the 2 suffixes + 5 exact slugs (each `$`-anchored), `/sitemap-country.xml$`, `/fw-assets/`, the 5 render files; Sitemap `https://poolrentalnearme.co.uk/sitemap-country.xml` on both hosts |
+| `poolrentalnearme.ca` and `www.` | Allow `/p/*-canada$`, `/p/canadian-*` (unanchored prefix), 2 hubs | Allow `-canada` + 5 exact slugs, `/sitemap-country.xml$`, `/fw-assets/`, the 5 render files; Disallow `/p/little-canada$`, `/p/*-little-canada$`; Sitemap on `poolrentalnearme.ca` |
+| `poolrentalnearme.com.au` and `www.` | Allow `/p/*-australia$`, `/p/australian-*` (unanchored prefix), 2 hubs | Allow `-australia` + 5 exact slugs, `/sitemap-country.xml$`, `/fw-assets/`, the 5 render files; Sitemap on `poolrentalnearme.com.au` |
+
+**Render files.** Every page's markup loads, outside `/fw-assets/`, the
+header/footer logo `<img src="/icon.svg">` (`site-layout.tsx`) and the favicon
+links in `__root.tsx`: `/favicon.ico`, `/favicon-192.png`, `/favicon-512.png`,
+`/apple-touch-icon.png`, `/icon.svg` (live on 2026-11-16: `/icon.svg` answers
+200 on `poolrentalnearme.co.uk`). Each is allowed with an anchored line
+(`RENDER_ASSET_PATHS`). A unit test reads both source files and fails if they
+reference a same-origin file a ccTLD would block. The harness renders a
+country page on each of the 6 ccTLD hosts and checks every file it loads
+against that host's robots.txt.
 
 The robots route now keys on `X-Forwarded-Host`, then `Host`, the same as the
 page renderer. Before, it keyed on `request.url`.
@@ -220,11 +249,45 @@ are now allowed.
 |---|---|---|
 | `www.poolrentalnearme.com` | 404 (WEST does not proxy it) | unchanged at the edge; the app answers an empty urlset for non-country hosts |
 | `poolrentalnearme.co.uk` | 19 `<loc>` on co.uk | 22 `<loc>` on co.uk (+`pool-rental-london`, `pool-rental-manchester`, `uk-cities-with-pools`) |
-| `www.poolrentalnearme.co.uk` | 19 `<loc>` on **www**.co.uk (canonical is the bare host) | the same 22 `<loc>` on the bare host |
+| `www.poolrentalnearme.co.uk` | 19 `<loc>` on **www**.co.uk (canonical is the bare host) | empty urlset, no database read |
 | `poolrentalnearme.ca` | 20 | 22 (+`pool-rental-toronto`, `pool-rental-vancouver`) |
-| `www.poolrentalnearme.ca` | 20 on **www**.ca | the same 22 on the bare host |
+| `www.poolrentalnearme.ca` | 20 on **www**.ca | empty urlset |
 | `poolrentalnearme.com.au` | 20 | 22 (+`pool-rental-sydney`, `pool-rental-melbourne`) |
-| `www.poolrentalnearme.com.au` | 20 on **www**.com.au | the same 22 on the bare host |
+| `www.poolrentalnearme.com.au` | 20 on **www**.com.au | empty urlset |
+
+**Why the www.<ccTLD> variant is empty.** Its old `<loc>`s were on the www
+host, whose pages canonicalise to the bare host. Listing the bare-host URLs
+there instead would be a cross-host sitemap: under the sitemaps.org rule a
+sitemap may list another host's URLs only when that host's robots.txt points
+at it, and the bare host's robots.txt points at its own sitemap. Both
+variants' robots.txt now name `https://<bare ccTLD>/sitemap-country.xml`, so
+the list is still found from either host.
+
+**The 22 / 22 / 22 counts are assumed until R3.** They count the snapshot's
+in-sitemap rows. A row whose `url_path` is set to something other than
+`/p/<slug>` is dropped by the step-03 content rule (`url_path_mismatch`) and,
+since the www sitemaps exclude every country path, would then be in no
+sitemap at all. The snapshot did not record `url_path` (R3 reads it).
+
+**Blog posts.** `/p/<slug>` also serves published `blog_posts`, and the
+mapping is by path, so a blog post whose slug maps to a country canonicalises
+to its ccTLD. Such a post now leaves `sitemap-pages-blog.xml` and is listed by
+its country's `sitemap-country.xml` (same served-as-blog rules as the blog
+sitemap). None existed in the 2026-11-14 crawl; R5 confirms for today.
+
+**`<lastmod>` source (deliberate change).** The old route used `updated_at`,
+or the request time when it was null. The new list uses the step-03 rule of
+the www content sitemaps, `coalesce(content_refreshed_at, created_at)`,
+because `updated_at` is bumped by any column write. The live values show it:
+of the 59 bare-host URLs on 2026-11-16, 46 share `2026-08-06T08:32:45.177Z`
+and the 9 launch hubs share `2026-08-06T06:27:13.618Z` (bulk writes, not
+content dates; full list in
+`country-mapping/sitemap-country-lastmod-live-2026-11-16.tsv`). Every country
+URL's `<lastmod>` therefore changes on deploy, to its content date. The
+snapshot did not record `content_refreshed_at` or `created_at`, so the after
+values per URL come from R3. The list also gained the `status='published'` and
+`redirect_to is null` filters the www lists use. On 2026-11-15 all 69 rows
+were published, and no in-sitemap row redirected in the 2026-11-14 crawl.
 
 Each list is exactly the mapped rows that may be listed: published,
 `in_sitemap`, no `redirect_to`, and passing every content rule from step 03.
@@ -252,7 +315,14 @@ sitemap lists a country page.
 | comparison pages | all hosts | www.com | www.com (they already used the constant origin) |
 
 `og:url`, `og:image`, JSON-LD `mainEntityOfPage` and the `/p/jan` and
-`/p/lukes-lounge` JSON-LD `url` follow the canonical. `getCanonicalUrl()` in
+`/p/lukes-lounge` JSON-LD `url` follow the canonical. So does every other
+structured-data URL that names a page by path (`structuredDataUrl` in
+`seo.ts`): the BreadcrumbList items from `breadcrumbJsonLd` and from the
+templates' `BreadcrumbsWithSchema` component, the ItemList entries, the
+LocalBusiness `url` and the host-acquisition WebPage `url`. Before, a country
+page's own breadcrumb named `https://www.poolrentalnearme.com/p/<slug>`, a URL
+whose canonical is now the ccTLD. The harness checks, on all 7 hosts, that
+every JSON-LD URL naming the page itself equals its canonical. `getCanonicalUrl()` in
 `canonical.server.ts` is now the mapping. `getCanonicalOrigin()` remains a
 request-origin helper, and its header says it is not a canonical host.
 
@@ -277,7 +347,14 @@ establishes they are the same article.
 The EN↔ES twin lookup (`getHreflangSibling`) now skips country rows. A US page
 in a group that also holds country pages therefore still finds its Spanish
 twin (harness fixture `fixture-twin-*`), and never offers a country page as its
-equivalent. R4 lists the real groups this touches.
+equivalent. The read is now `ORDER BY slug` (it was an unordered `limit(1)`),
+so in a pure-US group with more than one other row the twin is the first by
+slug. The harness stub now applies `order=` as PostgREST does, and the
+fixture's country row sorts first (`fixture-twin-0-uk`), so the skip is what
+the harness exercises. A second fixture covers production's common shape: the
+.com group-key article (`fixture-maintenance`, like `/p/pool-maintenance`)
+whose every sibling is a country page gets no hreflang and stays on www. R4
+lists the real groups this touches.
 
 ---
 
@@ -285,13 +362,14 @@ equivalent. R4 lists the real groups this touches.
 
 - `src/lib/country-sites.ts` (new): the mapping, canonical rules, robots body, PostgREST filter, hreflang.
 - `src/lib/comparison-duplicates.ts` (new, generated): the 78 redirects.
-- `src/lib/seo.ts`, `src/server/canonical.server.ts`: canonical from the mapping, not from `X-Forwarded-Host`.
+- `src/lib/seo.ts`, `src/server/canonical.server.ts`: canonical from the mapping, not from `X-Forwarded-Host`; `structuredDataUrl` for JSON-LD.
+- `src/components/breadcrumbs-jsonld.tsx`, `src/lib/page-localbusiness.ts`, `src/lib/host-acq-schemas.ts`: JSON-LD page URLs from the mapping.
 - `src/routes/p.$slug.tsx`, `p.es.$slug.tsx`, `p.jan.tsx`, `p.lukes-lounge.tsx`: canonical, hreflang and JSON-LD URLs from the mapping.
 - `src/routes/p.{giggster,peerspace}-vs-pool-rental-near-me-in-{$city}.tsx`: the 301.
 - `src/routes/robots[.]txt.ts`, `src/routes/sitemap-country[.]xml.ts`: from the mapping.
 - `src/lib/sitemap-rules.ts`, `src/lib/sitemap-sources.ts`: `canonicalIsElsewhere` uses the page's own canonical rule; `loadCountryEntries`; comparisons skip the 78.
 - `src/server/content-pages.functions.ts`: sibling lookup skips country rows and returns the group's slugs.
-- `ops/seo-repairs-2026-11/comparison-duplicates/`, `ops/seo-repairs-2026-11/country-mapping/`: inputs, generator, measurement scripts, live matrices.
+- `ops/seo-repairs-2026-11/comparison-duplicates/`, `ops/seo-repairs-2026-11/country-mapping/`: inputs, generator, measurement scripts, live matrices, live sitemap-country lastmods.
 - `tests/comparison-duplicates.test.mjs`, `tests/country-sites.test.mjs` (new), `tests/sitemap-rules.test.mjs`, `scripts/test-failed-reads.mjs` (fixtures and per-host checks).
 
 ## Open decisions
@@ -302,5 +380,12 @@ equivalent. R4 lists the real groups this touches.
 - Whether the .com group-key articles are true equivalents of the localised
   versions. If they are, an en-US + x-default alternate could be added by
   listing them in the mapping.
+- Whether each ccTLD should allow its root `/` in robots.txt. On 2026-11-16
+  the root answers a 302 to the country hub (`poolrentalnearme.co.uk/` →
+  `/p/rent-out-your-pool-uk`). Google fetches a site's favicon from its home
+  page, so with `/` disallowed the ccTLD results may show no favicon even
+  though the favicon files are now allowed. Allowing `/$` would expose only
+  that redirect. This step allows only the mapped pages and their render
+  files, as instructed, and leaves the root to the owner.
 - `jobs.xml` still builds its URLs from the request origin. It is a feed,
   disallowed on the ccTLDs by robots, and out of this step's scope.

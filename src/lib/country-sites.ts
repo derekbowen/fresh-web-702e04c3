@@ -56,6 +56,14 @@ export interface CountrySite {
   slugSuffixes: readonly string[];
   /** And these exact slugs. */
   exactSlugs: readonly string[];
+  /**
+   * US places whose name ends in a country suffix. A slug equal to one of
+   * these, or ending in "-" + one of these, is NOT this country's page even
+   * though it ends with a suffix above (the suffix form of the "%melbourne%"
+   * trap CLAUDE.md warns about). Each entry is a real US place in the site's
+   * own data.
+   */
+  usPlaceTraps: readonly string[];
 }
 
 export const COUNTRY_SITES: readonly CountrySite[] = [
@@ -75,6 +83,9 @@ export const COUNTRY_SITES: readonly CountrySite[] = [
       "pool-rental-manchester",
       "uk-cities-with-pools",
     ],
+    // No US place in the site's cities data (5,360 city|state keys, audit
+    // 2026-11-14) ends in "uk" or "united-kingdom".
+    usPlaceTraps: [],
   },
   {
     code: "CA",
@@ -90,6 +101,12 @@ export const COUNTRY_SITES: readonly CountrySite[] = [
       "pool-rental-toronto",
       "pool-rental-vancouver",
     ],
+    // Little Canada, MN: city key "little-canada|mn" in the site's cities data
+    // and /p/become-a-swimming-pool-host-little-canada-mn in the 2026-11-14
+    // sitemap. Its bare-city forms (/p/<prefix>-little-canada, as other
+    // bare-city slugs like become-a-swimming-pool-host-akron exist) would
+    // otherwise end in "-canada" and be mapped to poolrentalnearme.ca.
+    usPlaceTraps: ["little-canada"],
   },
   {
     code: "AU",
@@ -105,7 +122,23 @@ export const COUNTRY_SITES: readonly CountrySite[] = [
       "pool-rental-sydney",
       "pool-rental-melbourne",
     ],
+    // No US place in the site's cities data ends in "australia".
+    usPlaceTraps: [],
   },
+];
+
+/**
+ * Same-origin files every page's markup references outside /fw-assets/: the
+ * header/footer logo (<img src="/icon.svg"> in site-layout.tsx) and the
+ * favicon links in __root.tsx. A country domain's robots.txt allows them so
+ * its pages render with their logo and get a site favicon.
+ */
+export const RENDER_ASSET_PATHS: readonly string[] = [
+  "/icon.svg",
+  "/favicon.ico",
+  "/favicon-192.png",
+  "/favicon-512.png",
+  "/apple-touch-icon.png",
 ];
 
 /** A content slug: lower-case words of [a-z0-9] joined by single hyphens, one segment. */
@@ -152,11 +185,17 @@ function matchedSuffix(site: CountrySite, slug: string): string | null {
   return null;
 }
 
+/** Is `slug` a US place trap of `site` (equal to one, or ending in "-" + one)? */
+function isUsPlaceTrap(site: CountrySite, slug: string): boolean {
+  return site.usPlaceTraps.some((t) => slug === t || slug.endsWith(`-${t}`));
+}
+
 /** The country a /p/<slug> content slug belongs to, or null (a US / www page). */
 export function countryForSlug(slug: string | null | undefined): CountrySite | null {
   if (typeof slug !== "string" || !SINGLE_SEGMENT_SLUG.test(slug)) return null;
   for (const site of COUNTRY_SITES) {
-    if (site.exactSlugs.includes(slug) || matchedSuffix(site, slug)) return site;
+    if (site.exactSlugs.includes(slug)) return site;
+    if (matchedSuffix(site, slug) && !isUsPlaceTrap(site, slug)) return site;
   }
   return null;
 }
@@ -189,19 +228,26 @@ export function canonicalUrlForPath(path: string): string {
 /**
  * The canonical URL for a page at `pagePath` that may carry a stored override
  * (content_pages.canonical_override). The mapping decides the host; an
- * override may only name a PATH, and is honoured when it is (a) relative, or
- * (b) absolute on exactly the host the mapping assigns to that path. Anything
- * else — another host, a ccTLD for a US page, www for a country page, a
- * non-http(s) or unparseable value — is ignored and the page's own mapped
- * canonical is used. On 2026-11-15 every one of the 60 overrides equals the
- * mapped canonical of its own row, so this changes no stored override's
- * effect; it stops a future one from moving a page to the wrong host.
+ * override may only name another PATH IN THE PAGE'S OWN MARKET (the target
+ * maps to the same country as the page, or both to www), and is honoured when
+ * it is (a) relative, or (b) absolute on exactly the host the mapping assigns
+ * to that path. Anything else is ignored and the page's own mapped canonical
+ * is used: another host, a ccTLD URL for a US page (same path or not — e.g.
+ * /p/pool-maintenance -> /p/pool-maintenance-uk), a www URL for a country
+ * page, a non-http(s) or unparseable value. Market is compared, not host,
+ * because a relative override names no host at all. On 2026-11-15 every one
+ * of the 60 overrides equals the mapped canonical of its own row, so this
+ * changes no stored override's effect; it stops a future one (the admin tool
+ * can write canonical_override) from moving a page to another market's host.
  */
 export function resolveCanonicalUrl(pagePath: string, override?: string | null): string {
   const own = canonicalUrlForPath(pagePath);
   const raw = (override ?? "").trim();
   if (!raw) return own;
-  if (raw.startsWith("/") && !raw.startsWith("//")) return canonicalUrlForPath(raw);
+  const sameMarket = (path: string) => countryForPath(path) === countryForPath(pagePath);
+  if (raw.startsWith("/") && !raw.startsWith("//")) {
+    return sameMarket(raw) ? canonicalUrlForPath(raw) : own;
+  }
   let url: URL;
   try {
     url = new URL(raw);
@@ -210,6 +256,7 @@ export function resolveCanonicalUrl(pagePath: string, override?: string | null):
   }
   if (url.protocol !== "https:" && url.protocol !== "http:") return own;
   const path = url.pathname.replace(/\/+$/, "") || "/";
+  if (!sameMarket(path)) return own;
   const mapped = canonicalUrlForPath(path);
   return normaliseHost(url.host) === new URL(mapped).host ? mapped : own;
 }
@@ -223,22 +270,39 @@ export function robotsAllowPatterns(site: CountrySite): string[] {
 }
 
 /**
+ * robots.txt Disallow patterns that carve the US place traps back out of the
+ * suffix Allow lines. Each is longer than the suffix pattern it overrides, so
+ * it wins under the longest-match rule (Google, RFC 9309).
+ */
+export function robotsTrapDisallowPatterns(site: CountrySite): string[] {
+  return site.usPlaceTraps.flatMap((t) => [`/p/${t}$`, `/p/*-${t}$`]);
+}
+
+/**
  * robots.txt for a country domain (bare and www.): everything disallowed
  * except the pages the mapping assigns to the country, its own
- * sitemap-country.xml, and /fw-assets/ (the JS/CSS bundle its pages need to
- * render — it used to be disallowed, so Googlebot could fetch the HTML only).
- * The Sitemap line names the canonical host, where the sitemap's <loc>s live,
- * on both host variants.
+ * sitemap-country.xml, and what those pages need to render: /fw-assets/ (the
+ * JS/CSS bundle — it used to be disallowed, so Googlebot could fetch the HTML
+ * only) and the logo and favicon files (RENDER_ASSET_PATHS). The US place
+ * traps are disallowed again after the suffix Allow lines. The Sitemap line
+ * names the canonical host, where the sitemap's <loc>s live, on both host
+ * variants.
  */
 export function countryRobotsTxt(site: CountrySite, wwwOrigin: string = WWW_ORIGIN): string {
-  const allow = [...robotsAllowPatterns(site), "/sitemap-country.xml$", "/fw-assets/"];
+  const allow = [
+    ...robotsAllowPatterns(site),
+    "/sitemap-country.xml$",
+    "/fw-assets/",
+    ...RENDER_ASSET_PATHS.map((p) => `${p}$`),
+  ];
+  const traps = robotsTrapDisallowPatterns(site);
   return `# ${site.label} domain for Pool Rental Near Me.
 # Only this country's pages are crawlable here; everything else lives on
 # ${wwwOrigin} and must not be duplicated across origins.
 User-agent: *
 Disallow: /
 ${allow.map((p) => `Allow: ${p}`).join("\n")}
-
+${traps.map((p) => `Disallow: ${p}`).join("\n")}${traps.length ? "\n" : ""}
 Sitemap: https://${site.canonicalHost}/sitemap-country.xml
 `;
 }

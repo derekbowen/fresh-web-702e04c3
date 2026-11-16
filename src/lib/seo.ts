@@ -2,7 +2,7 @@
  * SEO helpers for building meta tags and JSON-LD structured data.
  */
 import ogDefaultImage from "@/assets/og-default.jpg";
-import { resolveCanonicalUrl } from "@/lib/country-sites";
+import { canonicalOriginForPath, resolveCanonicalUrl } from "@/lib/country-sites";
 
 export const SITE_URL = "https://www.poolrentalnearme.com";
 export const SITE_NAME = "Pool Rental Near Me";
@@ -153,6 +153,16 @@ export interface BreadcrumbItem {
   path: string;
 }
 
+/**
+ * Absolute URL of a site path in structured data: on the host the country
+ * mapping assigns to that path (a country page's ccTLD, else www), so JSON-LD
+ * names the same URL the page's canonical does. The path's query, if any, is
+ * kept (e.g. the blog topic crumb /p/blog?topic=...).
+ */
+export function structuredDataUrl(path: string): string {
+  return `${canonicalOriginForPath(path)}${path}`;
+}
+
 export function breadcrumbJsonLd(items: BreadcrumbItem[]) {
   return {
     "@context": "https://schema.org",
@@ -161,7 +171,7 @@ export function breadcrumbJsonLd(items: BreadcrumbItem[]) {
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      item: `${SITE_URL}${item.path}`,
+      item: structuredDataUrl(item.path),
     })),
   };
 }
@@ -180,7 +190,7 @@ export function itemListJsonLd(items: ItemListEntry[], listName?: string) {
     itemListElement: items.map((item, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `${SITE_URL}${item.path}`,
+      url: structuredDataUrl(item.path),
       name: item.name,
       ...(item.image ? { image: item.image } : {}),
     })),
