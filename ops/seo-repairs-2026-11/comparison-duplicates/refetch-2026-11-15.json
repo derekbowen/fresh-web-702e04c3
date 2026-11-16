@@ -1,0 +1,1566 @@
+{
+ "fetched_at": "2026-11-15T23:30:20Z",
+ "base": "https://www.poolrentalnearme.com",
+ "pairs": [
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-boston",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-boston",
+    "h1": "Giggster vs Pool Rental Near Me in Boston , MA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "cd9f5bc8d2686a5c4b218cf24accd6c4ca167df9"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-boston-ma",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-boston-ma",
+    "h1": "Giggster vs Pool Rental Near Me in Boston , MA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "cd9f5bc8d2686a5c4b218cf24accd6c4ca167df9"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-boston",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston",
+    "h1": "Peerspace vs Pool Rental Near Me in Boston , MA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "60550b12fca057facd77cd0a9c9e67a36a5a8007"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-boston-ma",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston-ma",
+    "h1": "Peerspace vs Pool Rental Near Me in Boston , MA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "60550b12fca057facd77cd0a9c9e67a36a5a8007"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-carlsbad",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-carlsbad",
+    "h1": "Peerspace vs Pool Rental Near Me in Carlsbad , CA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "6ed0e68f2e8c0870859f33e7b3ab0800800b474a"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-carlsbad-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-carlsbad-ca",
+    "h1": "Peerspace vs Pool Rental Near Me in Carlsbad , CA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "6ed0e68f2e8c0870859f33e7b3ab0800800b474a"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-carrollton",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-carrollton",
+    "h1": "Peerspace vs Pool Rental Near Me in Carrollton , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "44f18c6298e60a32b4a688b39ba6559e59396870"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-carrollton-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-carrollton-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in Carrollton , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "44f18c6298e60a32b4a688b39ba6559e59396870"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-carrollton",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-carrollton",
+    "h1": "Giggster vs Pool Rental Near Me in Carrollton , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "07b4a536a231c791f8043f8eb767b28f95901823"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-carrollton-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-carrollton-tx",
+    "h1": "Giggster vs Pool Rental Near Me in Carrollton , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "07b4a536a231c791f8043f8eb767b28f95901823"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-charlotte",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-charlotte",
+    "h1": "Giggster vs Pool Rental Near Me in Charlotte , NC (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1815,
+    "text_sha1": "8641505b3d59f6aea7b0cb8839fced664791f6ec"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-charlotte-nc",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-charlotte-nc",
+    "h1": "Giggster vs Pool Rental Near Me in Charlotte , NC (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1815,
+    "text_sha1": "8641505b3d59f6aea7b0cb8839fced664791f6ec"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-charlotte",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-charlotte",
+    "h1": "Peerspace vs Pool Rental Near Me in Charlotte , NC (2026)",
+    "has_main": true,
+    "words": 885,
+    "text_sha1": "a2aaaae0fbc6e1fc00a61bbbba5e851927469d2f"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-charlotte-nc",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-charlotte-nc",
+    "h1": "Peerspace vs Pool Rental Near Me in Charlotte , NC (2026)",
+    "has_main": true,
+    "words": 885,
+    "text_sha1": "a2aaaae0fbc6e1fc00a61bbbba5e851927469d2f"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-cincinnati",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-cincinnati",
+    "h1": "Giggster vs Pool Rental Near Me in Cincinnati , OH (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "5ac00eb8e7bf5c786157cf2c0960340e46860c85"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-cincinnati-oh",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-cincinnati-oh",
+    "h1": "Giggster vs Pool Rental Near Me in Cincinnati , OH (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "5ac00eb8e7bf5c786157cf2c0960340e46860c85"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-cincinnati",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-cincinnati",
+    "h1": "Peerspace vs Pool Rental Near Me in Cincinnati , OH (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "e1ef03eb68e2748c4d46cf5d041cf4b1f419a928"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-cincinnati-oh",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-cincinnati-oh",
+    "h1": "Peerspace vs Pool Rental Near Me in Cincinnati , OH (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "e1ef03eb68e2748c4d46cf5d041cf4b1f419a928"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-dallas",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-dallas",
+    "h1": "Peerspace vs Pool Rental Near Me in Dallas , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "157f7687bb19e7f8558607648c38aa3b2bd2660e"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-dallas-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-dallas-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in Dallas , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "157f7687bb19e7f8558607648c38aa3b2bd2660e"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-dallas",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-dallas",
+    "h1": "Giggster vs Pool Rental Near Me in Dallas , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "05c6a25ee11394be14b36591b2740397f19aa10a"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-dallas-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-dallas-tx",
+    "h1": "Giggster vs Pool Rental Near Me in Dallas , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "05c6a25ee11394be14b36591b2740397f19aa10a"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-denver",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-denver",
+    "h1": "Giggster vs Pool Rental Near Me in Denver , CO (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "5da20f8e86d088dce581ba4a32b17151e732ef25"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-denver-co",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-denver-co",
+    "h1": "Giggster vs Pool Rental Near Me in Denver , CO (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "5da20f8e86d088dce581ba4a32b17151e732ef25"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-denver",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-denver",
+    "h1": "Peerspace vs Pool Rental Near Me in Denver , CO (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "5e899c7ceb99af2a38e4212d2d529b5ee3c02c4a"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-denver-co",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-denver-co",
+    "h1": "Peerspace vs Pool Rental Near Me in Denver , CO (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "5e899c7ceb99af2a38e4212d2d529b5ee3c02c4a"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-el-paso",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-el-paso",
+    "h1": "Peerspace vs Pool Rental Near Me in El Paso , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "165c9a6e40066eee96a951381cb001c4345a8f99"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-el-paso-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-el-paso-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in El Paso , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "165c9a6e40066eee96a951381cb001c4345a8f99"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-el-paso",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-el-paso",
+    "h1": "Giggster vs Pool Rental Near Me in El Paso , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "2120d0ce9624e1ac9371cfb92dfa5b953b76b193"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-el-paso-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-el-paso-tx",
+    "h1": "Giggster vs Pool Rental Near Me in El Paso , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "2120d0ce9624e1ac9371cfb92dfa5b953b76b193"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-escondido",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-escondido",
+    "h1": "Giggster vs Pool Rental Near Me in Escondido , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "ae8f9e867d7e08b480c2e1448b40f16c6bb2322c"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-escondido-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-escondido-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Escondido , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "ae8f9e867d7e08b480c2e1448b40f16c6bb2322c"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-fort-worth",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-fort-worth",
+    "h1": "Giggster vs Pool Rental Near Me in Fort Worth , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "fe72543521d57c224251a68aca83425d4e2711a7"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-fort-worth-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-fort-worth-tx",
+    "h1": "Giggster vs Pool Rental Near Me in Fort Worth , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "fe72543521d57c224251a68aca83425d4e2711a7"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-fort-worth",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-fort-worth",
+    "h1": "Peerspace vs Pool Rental Near Me in Fort Worth , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "f50e85c696e3dc16fb0542d889247eced2cae3d0"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-fort-worth-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-fort-worth-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in Fort Worth , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "f50e85c696e3dc16fb0542d889247eced2cae3d0"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-franklin",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-franklin",
+    "h1": "Giggster vs Pool Rental Near Me in Franklin , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "b9090bf0134b923cf349eac3f82d6e8c4b1693dd"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-franklin-tn",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-franklin-tn",
+    "h1": "Giggster vs Pool Rental Near Me in Franklin , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "b9090bf0134b923cf349eac3f82d6e8c4b1693dd"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-franklin",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-franklin",
+    "h1": "Peerspace vs Pool Rental Near Me in Franklin , TN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "ac339ed9aee74f9dd47de0f59b710265763857d8"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-franklin-tn",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-franklin-tn",
+    "h1": "Peerspace vs Pool Rental Near Me in Franklin , TN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "ac339ed9aee74f9dd47de0f59b710265763857d8"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-fresno",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-fresno",
+    "h1": "Peerspace vs Pool Rental Near Me in Fresno , CA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "27d526b48f4a926e05c975650c2c1df8685e3f54"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-fresno-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-fresno-ca",
+    "h1": "Peerspace vs Pool Rental Near Me in Fresno , CA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "27d526b48f4a926e05c975650c2c1df8685e3f54"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-fresno",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-fresno",
+    "h1": "Giggster vs Pool Rental Near Me in Fresno , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "0fc83fad26a22a5c1821125b248d23cab8e8154e"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-fresno-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-fresno-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Fresno , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "0fc83fad26a22a5c1821125b248d23cab8e8154e"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-frisco",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-frisco",
+    "h1": "Peerspace vs Pool Rental Near Me in Frisco , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "09919ac110099bcf2c1b8ce72b9b5d45967f8224"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-frisco-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-frisco-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in Frisco , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "09919ac110099bcf2c1b8ce72b9b5d45967f8224"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-frisco",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-frisco",
+    "h1": "Giggster vs Pool Rental Near Me in Frisco , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "4544f78764276b23ab06bf2c1dfb7c60141776bd"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-frisco-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-frisco-tx",
+    "h1": "Giggster vs Pool Rental Near Me in Frisco , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "4544f78764276b23ab06bf2c1dfb7c60141776bd"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-glendale",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-glendale",
+    "h1": "Giggster vs Pool Rental Near Me in Glendale , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "7af3741ac9fc0ad735f11eb4a1cec172a39be820"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-glendale-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-glendale-az",
+    "h1": "Giggster vs Pool Rental Near Me in Glendale , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "7af3741ac9fc0ad735f11eb4a1cec172a39be820"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-glendale",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-glendale",
+    "h1": "Peerspace vs Pool Rental Near Me in Glendale , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "864354e539632c34b5611c7e5d9977ca4f4e0e58"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-glendale-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-glendale-az",
+    "h1": "Peerspace vs Pool Rental Near Me in Glendale , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "864354e539632c34b5611c7e5d9977ca4f4e0e58"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-hayward",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-hayward",
+    "h1": "Giggster vs Pool Rental Near Me in Hayward , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "e3a7a5a543043689633cb59557feaf3612638cb3"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-hayward-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-hayward-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Hayward , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "e3a7a5a543043689633cb59557feaf3612638cb3"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-houston",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-houston",
+    "h1": "Peerspace vs Pool Rental Near Me in Houston , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "bf7e20c7878b99cc18f2e2546a594eca07d40437"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-houston-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-houston-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in Houston , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "bf7e20c7878b99cc18f2e2546a594eca07d40437"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-houston",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-houston",
+    "h1": "Giggster vs Pool Rental Near Me in Houston , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "a11a9c8210ec12d2c3f19decdc74c9964476ebfd"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-houston-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-houston-tx",
+    "h1": "Giggster vs Pool Rental Near Me in Houston , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "a11a9c8210ec12d2c3f19decdc74c9964476ebfd"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-huntington-beach",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-huntington-beach",
+    "h1": "Giggster vs Pool Rental Near Me in Huntington Beach , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "9e7d8ecc27c2a22dd5adf168baf62fdce495f2e8"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-huntington-beach-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-huntington-beach-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Huntington Beach , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "9e7d8ecc27c2a22dd5adf168baf62fdce495f2e8"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-huntington-beach",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-huntington-beach",
+    "h1": "Peerspace vs Pool Rental Near Me in Huntington Beach , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "0dfcb4e6b5d791a22ad8b18b02e36c5e4dcb9095"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-huntington-beach-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-huntington-beach-ca",
+    "h1": "Peerspace vs Pool Rental Near Me in Huntington Beach , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "0dfcb4e6b5d791a22ad8b18b02e36c5e4dcb9095"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-indianapolis",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-indianapolis",
+    "h1": "Giggster vs Pool Rental Near Me in Indianapolis , IN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "4b56b70303e906dfb03b9bb05fa9c95d57f3c9b6"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-indianapolis-in",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-indianapolis-in",
+    "h1": "Giggster vs Pool Rental Near Me in Indianapolis , IN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "4b56b70303e906dfb03b9bb05fa9c95d57f3c9b6"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-indianapolis",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-indianapolis",
+    "h1": "Peerspace vs Pool Rental Near Me in Indianapolis , IN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "58f5a452239b7d3c73e6946094a70ff45c3aef73"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-indianapolis-in",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-indianapolis-in",
+    "h1": "Peerspace vs Pool Rental Near Me in Indianapolis , IN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "58f5a452239b7d3c73e6946094a70ff45c3aef73"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-lakewood",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-lakewood",
+    "h1": "Giggster vs Pool Rental Near Me in Lakewood , CO (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "638389f9d32482657dd6d092a8c1669225fccae7"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-lakewood-co",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-lakewood-co",
+    "h1": "Giggster vs Pool Rental Near Me in Lakewood , CO (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "638389f9d32482657dd6d092a8c1669225fccae7"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-lakewood",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-lakewood",
+    "h1": "Peerspace vs Pool Rental Near Me in Lakewood , CO (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "e00b61b5acf2820543226b0a20f7a00e5d967cb3"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-lakewood-co",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-lakewood-co",
+    "h1": "Peerspace vs Pool Rental Near Me in Lakewood , CO (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "e00b61b5acf2820543226b0a20f7a00e5d967cb3"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-littleton",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-littleton",
+    "h1": "Giggster vs Pool Rental Near Me in Littleton , CO (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "145809a388a8271de883b6476a3d130606a7f275"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-littleton-co",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-littleton-co",
+    "h1": "Giggster vs Pool Rental Near Me in Littleton , CO (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "145809a388a8271de883b6476a3d130606a7f275"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-littleton",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-littleton",
+    "h1": "Peerspace vs Pool Rental Near Me in Littleton , CO (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "43a233233d43ed5e47ba704e29b914b89b6492a5"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-littleton-co",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-littleton-co",
+    "h1": "Peerspace vs Pool Rental Near Me in Littleton , CO (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "43a233233d43ed5e47ba704e29b914b89b6492a5"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-los-angeles",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-los-angeles",
+    "h1": "Peerspace vs Pool Rental Near Me in Los Angeles , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "6213a811ae82829b209cf393ee6243d3fe654365"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-los-angeles-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-los-angeles-ca",
+    "h1": "Peerspace vs Pool Rental Near Me in Los Angeles , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "6213a811ae82829b209cf393ee6243d3fe654365"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-louisville",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-louisville",
+    "h1": "Giggster vs Pool Rental Near Me in Louisville , KY (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "d20097f926b3f28eeb172c270adb199561094d02"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-louisville-ky",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-louisville-ky",
+    "h1": "Giggster vs Pool Rental Near Me in Louisville , KY (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "d20097f926b3f28eeb172c270adb199561094d02"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-louisville",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-louisville",
+    "h1": "Peerspace vs Pool Rental Near Me in Louisville , KY (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "07af5b8a389795430ed47d3c72fd7c5dd98f2c3d"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-louisville-ky",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-louisville-ky",
+    "h1": "Peerspace vs Pool Rental Near Me in Louisville , KY (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "07af5b8a389795430ed47d3c72fd7c5dd98f2c3d"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-memphis",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-memphis",
+    "h1": "Giggster vs Pool Rental Near Me in Memphis , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "e61199459573edd3a0af63969899b9e238a42d4a"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-memphis-tn",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-memphis-tn",
+    "h1": "Giggster vs Pool Rental Near Me in Memphis , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "e61199459573edd3a0af63969899b9e238a42d4a"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-mesa",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-mesa",
+    "h1": "Giggster vs Pool Rental Near Me in Mesa , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "1ff0ea9229f486cb64a4f36d9f87c26e4b9f0e0a"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-mesa-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-mesa-az",
+    "h1": "Giggster vs Pool Rental Near Me in Mesa , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "1ff0ea9229f486cb64a4f36d9f87c26e4b9f0e0a"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-murfreesboro",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-murfreesboro",
+    "h1": "Giggster vs Pool Rental Near Me in Murfreesboro , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "8692f59a805ab8cd3e409ee9c0486429aeee0aea"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-murfreesboro-tn",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-murfreesboro-tn",
+    "h1": "Giggster vs Pool Rental Near Me in Murfreesboro , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "8692f59a805ab8cd3e409ee9c0486429aeee0aea"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-murfreesboro",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-murfreesboro",
+    "h1": "Peerspace vs Pool Rental Near Me in Murfreesboro , TN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "becf7597959d1f85ecd9d1cf062bd15afac0992a"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-murfreesboro-tn",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-murfreesboro-tn",
+    "h1": "Peerspace vs Pool Rental Near Me in Murfreesboro , TN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "becf7597959d1f85ecd9d1cf062bd15afac0992a"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-murrieta",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-murrieta",
+    "h1": "Giggster vs Pool Rental Near Me in Murrieta , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "c9a2d711c91990d824e10b5fd26f8049d441a966"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-murrieta-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-murrieta-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Murrieta , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "c9a2d711c91990d824e10b5fd26f8049d441a966"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-nashville",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-nashville",
+    "h1": "Peerspace vs Pool Rental Near Me in Nashville , TN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "c12abfa546c51d9aa552f0a016ae0883b58fa007"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-nashville-tn",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-nashville-tn",
+    "h1": "Peerspace vs Pool Rental Near Me in Nashville , TN (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "c12abfa546c51d9aa552f0a016ae0883b58fa007"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-nashville",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-nashville",
+    "h1": "Giggster vs Pool Rental Near Me in Nashville , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "0f5b03b57f7e0564e948ad9f9830dcba6e5716ef"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-nashville-tn",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-nashville-tn",
+    "h1": "Giggster vs Pool Rental Near Me in Nashville , TN (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "0f5b03b57f7e0564e948ad9f9830dcba6e5716ef"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-new-york",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-new-york",
+    "h1": "Peerspace vs Pool Rental Near Me in New York , NY (2026)",
+    "has_main": true,
+    "words": 918,
+    "text_sha1": "ad99b406819c6085ef6435064f5e4948e6ff5f36"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-new-york-ny",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-new-york-ny",
+    "h1": "Peerspace vs Pool Rental Near Me in New York , NY (2026)",
+    "has_main": true,
+    "words": 918,
+    "text_sha1": "ad99b406819c6085ef6435064f5e4948e6ff5f36"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-norfolk",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-norfolk",
+    "h1": "Giggster vs Pool Rental Near Me in Norfolk , VA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "c6d4ad1f5a7b79332741759c0a768a8bcdd2b753"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-norfolk-va",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-norfolk-va",
+    "h1": "Giggster vs Pool Rental Near Me in Norfolk , VA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "c6d4ad1f5a7b79332741759c0a768a8bcdd2b753"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-norfolk",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-norfolk",
+    "h1": "Peerspace vs Pool Rental Near Me in Norfolk , VA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "2d8394c71bed31c4c8b360864e519609486fb259"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-norfolk-va",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-norfolk-va",
+    "h1": "Peerspace vs Pool Rental Near Me in Norfolk , VA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "2d8394c71bed31c4c8b360864e519609486fb259"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-north-las-vegas",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-north-las-vegas",
+    "h1": "Giggster vs Pool Rental Near Me in North Las Vegas , NV (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1910,
+    "text_sha1": "5c0f6792167b0dd503d2ef5e8ae255028aa7974d"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-north-las-vegas-nv",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-north-las-vegas-nv",
+    "h1": "Giggster vs Pool Rental Near Me in North Las Vegas , NV (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1910,
+    "text_sha1": "5c0f6792167b0dd503d2ef5e8ae255028aa7974d"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-north-las-vegas",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-north-las-vegas",
+    "h1": "Peerspace vs Pool Rental Near Me in North Las Vegas , NV (2026)",
+    "has_main": true,
+    "words": 946,
+    "text_sha1": "54d866aa0bef1e72e33cb2c7c67809d8722cdc89"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-north-las-vegas-nv",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-north-las-vegas-nv",
+    "h1": "Peerspace vs Pool Rental Near Me in North Las Vegas , NV (2026)",
+    "has_main": true,
+    "words": 946,
+    "text_sha1": "54d866aa0bef1e72e33cb2c7c67809d8722cdc89"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-phoenix",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-phoenix",
+    "h1": "Giggster vs Pool Rental Near Me in Phoenix , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "e8f78c50708580231b106d4970a0174c8597e475"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-phoenix-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-phoenix-az",
+    "h1": "Giggster vs Pool Rental Near Me in Phoenix , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "e8f78c50708580231b106d4970a0174c8597e475"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-phoenix",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-phoenix",
+    "h1": "Peerspace vs Pool Rental Near Me in Phoenix , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "27a751a9ebe3e642051681539e58d9a8cf767326"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-phoenix-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-phoenix-az",
+    "h1": "Peerspace vs Pool Rental Near Me in Phoenix , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "27a751a9ebe3e642051681539e58d9a8cf767326"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-plano",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-plano",
+    "h1": "Giggster vs Pool Rental Near Me in Plano , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "3714fe8d6cfabd00565c569a025eeb1f855ed24b"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-plano-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-plano-tx",
+    "h1": "Giggster vs Pool Rental Near Me in Plano , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "3714fe8d6cfabd00565c569a025eeb1f855ed24b"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-plano",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-plano",
+    "h1": "Peerspace vs Pool Rental Near Me in Plano , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "f1ca45fb24f0847ceceff9eae3fff902e978dc56"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-plano-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-plano-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in Plano , TX (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "f1ca45fb24f0847ceceff9eae3fff902e978dc56"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-portland",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-portland",
+    "h1": "Giggster vs Pool Rental Near Me in Portland , OR (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "49837fd570c49008a54b5c895273b26a6efa1e17"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-portland-or",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-portland-or",
+    "h1": "Giggster vs Pool Rental Near Me in Portland , OR (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "49837fd570c49008a54b5c895273b26a6efa1e17"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-portland",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-portland",
+    "h1": "Peerspace vs Pool Rental Near Me in Portland , OR (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "91b1e0f09df15a95eb91de6c8be1e38c38662420"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-portland-or",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-portland-or",
+    "h1": "Peerspace vs Pool Rental Near Me in Portland , OR (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "91b1e0f09df15a95eb91de6c8be1e38c38662420"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-raleigh",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-raleigh",
+    "h1": "Giggster vs Pool Rental Near Me in Raleigh , NC (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1815,
+    "text_sha1": "78cb590a59e0840c1f07a945c7eab94f132426df"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-raleigh-nc",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-raleigh-nc",
+    "h1": "Giggster vs Pool Rental Near Me in Raleigh , NC (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1815,
+    "text_sha1": "78cb590a59e0840c1f07a945c7eab94f132426df"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-richmond",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-richmond",
+    "h1": "Giggster vs Pool Rental Near Me in Richmond , VA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "653228f96e7ca0e37b9070220502139857057156"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-richmond-va",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-richmond-va",
+    "h1": "Giggster vs Pool Rental Near Me in Richmond , VA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "653228f96e7ca0e37b9070220502139857057156"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-rockville",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-rockville",
+    "h1": "Giggster vs Pool Rental Near Me in Rockville , MD (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "6844a0ea060b2de94939328748a000e9dac274e2"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-rockville-md",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-rockville-md",
+    "h1": "Giggster vs Pool Rental Near Me in Rockville , MD (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "6844a0ea060b2de94939328748a000e9dac274e2"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-rockville",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-rockville",
+    "h1": "Peerspace vs Pool Rental Near Me in Rockville , MD (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "7351ff4faf2dde4250a99948fa3b0592588dbab8"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-rockville-md",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-rockville-md",
+    "h1": "Peerspace vs Pool Rental Near Me in Rockville , MD (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "7351ff4faf2dde4250a99948fa3b0592588dbab8"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-roseville",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-roseville",
+    "h1": "Giggster vs Pool Rental Near Me in Roseville , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "bb368b6d19fbde9f3f3b70d0d20d940805fc9617"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-roseville-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-roseville-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Roseville , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "bb368b6d19fbde9f3f3b70d0d20d940805fc9617"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-round-rock",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-round-rock",
+    "h1": "Peerspace vs Pool Rental Near Me in Round Rock , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "febf5ee27395d5d98e92b771d90004717ba2bd76"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-round-rock-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-round-rock-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in Round Rock , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "febf5ee27395d5d98e92b771d90004717ba2bd76"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-san-diego",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-san-diego",
+    "h1": "Giggster vs Pool Rental Near Me in San Diego , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "836a75e41f071d014ca9288bfbf0e5d5fbb50f19"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-san-diego-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-san-diego-ca",
+    "h1": "Giggster vs Pool Rental Near Me in San Diego , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "836a75e41f071d014ca9288bfbf0e5d5fbb50f19"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-san-diego",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-san-diego",
+    "h1": "Peerspace vs Pool Rental Near Me in San Diego , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "d907682e0ff270d3faf486a7c1d10c98fab58e42"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-san-diego-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-san-diego-ca",
+    "h1": "Peerspace vs Pool Rental Near Me in San Diego , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "d907682e0ff270d3faf486a7c1d10c98fab58e42"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-santa-clara",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-santa-clara",
+    "h1": "Peerspace vs Pool Rental Near Me in Santa Clara , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "a961804938303551d5210d5d2987a599a0900d2a"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-santa-clara-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-santa-clara-ca",
+    "h1": "Peerspace vs Pool Rental Near Me in Santa Clara , CA (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "a961804938303551d5210d5d2987a599a0900d2a"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-santa-clara",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-santa-clara",
+    "h1": "Giggster vs Pool Rental Near Me in Santa Clara , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "eefe2daf2ea21bdb0e443f401a5d9e81f1a1bcc2"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-santa-clara-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-santa-clara-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Santa Clara , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "eefe2daf2ea21bdb0e443f401a5d9e81f1a1bcc2"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-scottsdale",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-scottsdale",
+    "h1": "Giggster vs Pool Rental Near Me in Scottsdale , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "eb67412bef4ac501e41109773145d5168da5332e"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-scottsdale-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-scottsdale-az",
+    "h1": "Giggster vs Pool Rental Near Me in Scottsdale , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "eb67412bef4ac501e41109773145d5168da5332e"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-scottsdale",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-scottsdale",
+    "h1": "Peerspace vs Pool Rental Near Me in Scottsdale , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "7de11cd8aad58b46d5dcb2f2e0397c3c05b5ab6c"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-scottsdale-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-scottsdale-az",
+    "h1": "Peerspace vs Pool Rental Near Me in Scottsdale , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "7de11cd8aad58b46d5dcb2f2e0397c3c05b5ab6c"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-sunnyvale",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-sunnyvale",
+    "h1": "Giggster vs Pool Rental Near Me in Sunnyvale , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "0d9cab4bacaf7efd518d0007dd82a693c24056e7"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-sunnyvale-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-sunnyvale-ca",
+    "h1": "Giggster vs Pool Rental Near Me in Sunnyvale , CA (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "0d9cab4bacaf7efd518d0007dd82a693c24056e7"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-sunnyvale",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-sunnyvale",
+    "h1": "Peerspace vs Pool Rental Near Me in Sunnyvale , CA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "c8ea709afb6f85a19520a8841076d684ffac88c7"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-sunnyvale-ca",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-sunnyvale-ca",
+    "h1": "Peerspace vs Pool Rental Near Me in Sunnyvale , CA (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "c8ea709afb6f85a19520a8841076d684ffac88c7"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-tampa",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-tampa",
+    "h1": "Peerspace vs Pool Rental Near Me in Tampa , FL (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "eea779e80ba64471c2155efcfaf366ac2cac0105"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-tampa-fl",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-tampa-fl",
+    "h1": "Peerspace vs Pool Rental Near Me in Tampa , FL (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "eea779e80ba64471c2155efcfaf366ac2cac0105"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-tempe",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-tempe",
+    "h1": "Giggster vs Pool Rental Near Me in Tempe , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "6020dc096161b522faf9df8b32bef00d7c62e4e5"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-tempe-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-tempe-az",
+    "h1": "Giggster vs Pool Rental Near Me in Tempe , AZ (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "6020dc096161b522faf9df8b32bef00d7c62e4e5"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-tempe",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-tempe",
+    "h1": "Peerspace vs Pool Rental Near Me in Tempe , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "e8208b7eb688b1a4f445baf3757e592c31e36e90"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-tempe-az",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-tempe-az",
+    "h1": "Peerspace vs Pool Rental Near Me in Tempe , AZ (2026)",
+    "has_main": true,
+    "words": 880,
+    "text_sha1": "e8208b7eb688b1a4f445baf3757e592c31e36e90"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-the-woodlands",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-the-woodlands",
+    "h1": "Giggster vs Pool Rental Near Me in The Woodlands , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "4013c4761fc796bd50378a25e3bd0044891af8e6"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-the-woodlands-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-the-woodlands-tx",
+    "h1": "Giggster vs Pool Rental Near Me in The Woodlands , TX (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1859,
+    "text_sha1": "4013c4761fc796bd50378a25e3bd0044891af8e6"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-the-woodlands",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-the-woodlands",
+    "h1": "Peerspace vs Pool Rental Near Me in The Woodlands , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "b1512a1ee4233e1b666af501c4146bddec87715f"
+   },
+   "suffixed": {
+    "path": "/p/peerspace-vs-pool-rental-near-me-in-the-woodlands-tx",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-the-woodlands-tx",
+    "h1": "Peerspace vs Pool Rental Near Me in The Woodlands , TX (2026)",
+    "has_main": true,
+    "words": 913,
+    "text_sha1": "b1512a1ee4233e1b666af501c4146bddec87715f"
+   }
+  },
+  {
+   "bare": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-tulsa",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-tulsa",
+    "h1": "Giggster vs Pool Rental Near Me in Tulsa , OK (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "6950a5c797db9e963e03c4ce1812629c47336b20"
+   },
+   "suffixed": {
+    "path": "/p/giggster-vs-pool-rental-near-me-in-tulsa-ok",
+    "status": 200,
+    "canonical": "https://www.poolrentalnearme.com/p/giggster-vs-pool-rental-near-me-in-tulsa-ok",
+    "h1": "Giggster vs Pool Rental Near Me in Tulsa , OK (2026): Fees, Insurance & Best Use",
+    "has_main": true,
+    "words": 1808,
+    "text_sha1": "6950a5c797db9e963e03c4ce1812629c47336b20"
+   }
+  }
+ ]
+}

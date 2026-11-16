@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { FaqBlock } from "@/components/faq-block";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
@@ -36,7 +37,7 @@ export function SwimInstructorCityTemplate({
               items={[
                 { name: "Home", path: "/" },
                 { name: "Swim instructor pool rentals", path: "/p/swim-instructor-pool-rental" },
-                { name: where, path: page.url_path },
+                { name: where, path: contentPagePath(page) },
               ]}
             />
             <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">

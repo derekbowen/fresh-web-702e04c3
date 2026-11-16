@@ -4,6 +4,7 @@ import { useMemo, type ReactNode } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { FaqBlock } from "@/components/faq-block";
 import { RelatedPages } from "@/components/related-pages";
 import { faqsForContentPage } from "@/lib/page-faqs";
@@ -80,7 +81,7 @@ export function PoolMaintenanceTemplate({ page }: { page: ContentPage }) {
     { name: "Pool Maintenance", path: HUB_PATH },
   ];
   if (!isHub) {
-    breadcrumbs.push({ name: page.title || page.slug || "", path: page.url_path });
+    breadcrumbs.push({ name: page.title || page.slug || "", path: contentPagePath(page) });
   }
 
   // Pick siblings: prefer related_slugs from DB, else fallback to first 4 hub

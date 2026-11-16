@@ -23,6 +23,7 @@ import {
   AUTHOR_PERSON_JSONLD_REF,
 } from "@/lib/seo";
 import { getRouteOrigin } from "@/lib/route-origin";
+import { canonicalUrlForPath } from "@/lib/country-sites";
 
 import { GenericPageTemplate } from "@/components/templates/generic-page";
 
@@ -96,14 +97,14 @@ export const Route = createFileRoute("/p/es/$slug")({
     const title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
     const description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
 
-    // EN ↔ ES hreflang pairing for the Texas launch.
-    const origin = loaderData.origin ?? SITE_URL;
+    // EN ↔ ES hreflang pairing for the Texas launch. Hrefs are canonical
+    // URLs (src/lib/country-sites.ts), not the host that served the request.
     const enTwin = ES_TO_EN_SLUG[params.slug];
     const hreflang = enTwin
       ? [
-          { lang: "es", href: `${origin}${path}` },
-          { lang: "en", href: `${origin}/p/${enTwin}` },
-          { lang: "x-default", href: `${origin}/p/${enTwin}` },
+          { lang: "es", href: canonicalUrlForPath(path) },
+          { lang: "en", href: canonicalUrlForPath(`/p/${enTwin}`) },
+          { lang: "x-default", href: canonicalUrlForPath(`/p/${enTwin}`) },
         ]
       : undefined;
 
@@ -114,7 +115,6 @@ export const Route = createFileRoute("/p/es/$slug")({
       canonicalPath,
       image: p.cover_image_url || p.hero_image_url || undefined,
       type: "article",
-      origin,
       hreflang,
     });
 

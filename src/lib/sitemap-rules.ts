@@ -22,7 +22,9 @@
  *     (src/lib/sitemap-groups.ts).
  */
 
-export const SITE_ORIGIN = "https://www.poolrentalnearme.com";
+import { countryForHost, resolveCanonicalUrl, WWW_ORIGIN } from "./country-sites.ts";
+
+export const SITE_ORIGIN = WWW_ORIGIN;
 
 /**
  * /p/<slug> paths answered by a dedicated route file, not by the content
@@ -131,21 +133,30 @@ function normaliseUrl(u: string): string | null {
 }
 
 /**
- * True when `canonicalOverride` names a URL other than `loc`. A sitemap on www
- * must not list a URL whose canonical is elsewhere (57 rows on 2026-11-15
- * canonicalise to a ccTLD host). Empty / whitespace-only overrides are ignored,
- * as p.$slug.tsx ignores them (`canonical_override?.trim() || undefined`). A
- * relative override is resolved against the site origin, as seo.ts would.
+ * True when the page listed at `loc` declares a canonical other than `loc`.
+ * The canonical is computed exactly as the page computes it
+ * (resolveCanonicalUrl in country-sites.ts, used by buildMeta): the country
+ * mapping picks the host, a stored override may only change the path. So a
+ * www sitemap never lists a country page (its canonical is on the ccTLD), a
+ * ccTLD sitemap never lists a www page, and a row whose override names
+ * another page on the right host is not listed either.
  */
 export function canonicalIsElsewhere(
   canonicalOverride: string | null | undefined,
   loc: string,
 ): boolean {
-  const raw = (canonicalOverride ?? "").trim();
-  if (!raw) return false;
-  const target = normaliseUrl(raw.startsWith("/") ? `${SITE_ORIGIN}${raw}` : raw);
-  const self = normaliseUrl(loc);
-  return target === null || self === null || target !== self;
+  let url: URL;
+  try {
+    url = new URL(loc);
+  } catch {
+    return true;
+  }
+  // A sitemap built for a host that is not a country host is a www sitemap
+  // (siteUrl is SITE_URL in production; tests pass a stand-in origin).
+  const self = normaliseUrl(
+    countryForHost(url.host) ? loc : `${WWW_ORIGIN}${url.pathname}`,
+  );
+  return normaliseUrl(resolveCanonicalUrl(url.pathname, canonicalOverride)) !== self;
 }
 
 export interface ContentRowForSitemap {

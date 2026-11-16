@@ -16,6 +16,7 @@ import {
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
+import { comparisonCanonicalPath, comparisonDuplicateTarget } from "@/lib/comparison-duplicates";
 
 /**
  * Programmatic city variant of the Peerspace pillar page.
@@ -26,6 +27,14 @@ import { absUrl } from "@/lib/site-origin";
  */
 
 export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$city}")({
+  // A confirmed exact duplicate (same text, same city as its state-suffixed
+  // twin): one 301 to the twin, from a checked-in list, in beforeLoad so it is
+  // answered before any loader (or database read) runs. See
+  // src/lib/comparison-duplicates.ts.
+  beforeLoad: ({ params }) => {
+    const duplicateOf = comparisonDuplicateTarget(`/p/peerspace-vs-pool-rental-near-me-in-${params.city}`);
+    if (duplicateOf) throw redirect({ href: duplicateOf, statusCode: 301 });
+  },
   loader: async ({ params }) => {
     const fullSlug = `peerspace-vs-pool-rental-near-me-in-${params.city}`;
     const lookup = await lookupContentPage({ data: { slug: fullSlug } });
@@ -42,7 +51,11 @@ export const Route = createFileRoute("/p/peerspace-vs-pool-rental-near-me-in-{$c
   head: ({ loaderData }) => {
     const city = loaderData?.city;
     if (!city) return { meta: [{ title: "City not found" }] };
-    const slug = `peerspace-vs-pool-rental-near-me-in-${city.slug}`;
+    // The resolved row's slug, unless that URL is a listed duplicate (it 301s
+    // to the state-suffixed twin): then the twin. With the twin's own row
+    // missing the resolver serves the twin from the bare row, and a canonical
+    // built from that row would point at the 301 back to this page (a loop).
+    const slug = comparisonCanonicalPath(`/p/peerspace-vs-pool-rental-near-me-in-${city.slug}`).slice("/p/".length);
     const title = `Peerspace vs Pool Rental Near Me in ${city.name}, ${city.state_code} (2026)`;
     const description = `${city.name} pool hosts: should you list on Peerspace or Pool Rental Near Me?`;
     return {

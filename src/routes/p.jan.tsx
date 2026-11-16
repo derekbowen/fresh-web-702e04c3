@@ -4,6 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { buildMeta, ldJsonScript } from "@/lib/seo";
 import { getShareListing, type ShareListing } from "@/server/sharetribe.functions";
 import { getRouteOrigin } from "@/lib/route-origin";
+import { canonicalUrlForPath } from "@/lib/country-sites";
 import {
   MapPin,
   Users,
@@ -93,7 +94,7 @@ export const Route = createFileRoute("/p/jan")({
       name: listing.title,
       description,
       image: listing.images.slice(0, 6),
-      url: `${origin}${PATH}`,
+      url: canonicalUrlForPath(PATH),
       priceRange: `$${listing.pricePerHour}/hr`,
       address: locStr
         ? {

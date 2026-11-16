@@ -4,7 +4,8 @@
  */
 import type { ContentPage } from "@/server/content-pages.functions";
 import { cityForContentPage, parseCitySlug } from "@/lib/city-slug";
-import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { SITE_NAME, SITE_URL, structuredDataUrl } from "@/lib/seo";
+import { contentPagePath } from "@/lib/country-sites";
 
 const CITY_TEMPLATE_TYPES = new Set([
   "host_acq_city",
@@ -49,7 +50,8 @@ export function localBusinessForContentPage(
       url: SITE_URL,
     },
     areaServed,
-    url: `${SITE_URL}${page.url_path}`,
+    // On the host the country mapping assigns, as the page's canonical.
+    url: structuredDataUrl(contentPagePath(page)),
     inLanguage: language,
   };
 }

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/seo";
+import { countryForHost, countryRobotsTxt, publicHostOf } from "@/lib/country-sites";
 
 /**
  * Production host — only this hostname serves an indexable robots.txt.
@@ -9,56 +10,22 @@ import { SITE_URL } from "@/lib/seo";
 const PROD_HOST = "poolrentalnearme.com";
 
 /**
- * Country domains. Each serves the same app as .com and self-canonicalises, so
- * they must NOT be opened up wholesale - that would advertise four copies of
- * every page. Each one is allowed to be crawled only for its own country's
- * pages, and points at a country-scoped sitemap on its own origin.
+ * Country domains: the body is countryRobotsTxt() in src/lib/country-sites.ts
+ * (Disallow everything except the pages the mapping assigns to the country,
+ * its sitemap-country.xml, /fw-assets/ and the logo/favicon files its pages
+ * load; US place traps disallowed again), on both the bare and www. host.
  */
-const COUNTRY_HOSTS: Record<string, { label: string; allow: string[] }> = {
-  "poolrentalnearme.com.au": {
-    label: "Australia",
-    allow: [
-      "/p/*-australia$",
-      "/p/australian-*",
-      "/p/rent-out-your-pool-sydney$",
-      "/p/rent-out-your-pool-melbourne$",
-    ],
-  },
-  "poolrentalnearme.co.uk": {
-    label: "United Kingdom",
-    allow: [
-      "/p/*-uk$",
-      "/p/*-united-kingdom$",
-      "/p/rent-out-your-pool-london$",
-      "/p/rent-out-your-pool-manchester$",
-    ],
-  },
-  "poolrentalnearme.ca": {
-    label: "Canada",
-    allow: [
-      "/p/*-canada$",
-      "/p/canadian-*",
-      "/p/rent-out-your-pool-toronto$",
-      "/p/rent-out-your-pool-vancouver$",
-    ],
-  },
-};
 
 export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const host = (() => {
-          try {
-            return new URL(request.url).hostname.toLowerCase();
-          } catch {
-            return "";
-          }
-        })();
+        // The public host, keyed the same way as the page canonicals and
+        // sitemap-country.xml (X-Forwarded-Host, then Host).
+        const host = publicHostOf(request);
 
         const isProd = host === PROD_HOST || host === `www.${PROD_HOST}`;
-        const bareHost = host.replace(/^www\./, "");
-        const country = isProd ? undefined : COUNTRY_HOSTS[bareHost];
+        const country = isProd ? null : countryForHost(host);
 
         const body = isProd
           ? `User-agent: *
@@ -91,15 +58,7 @@ Disallow: /s?
 Sitemap: ${SITE_URL}/sitemap.xml
 `
           : country
-            ? `# ${country.label} domain for Pool Rental Near Me.
-# Only this country's pages are crawlable here; everything else lives on
-# ${SITE_URL} and must not be duplicated across origins.
-User-agent: *
-Disallow: /
-${country.allow.map((p) => `Allow: ${p}`).join("\n")}
-
-Sitemap: https://${host}/sitemap-country.xml
-`
+            ? countryRobotsTxt(country, SITE_URL)
             : `# Non-production host (${host || "unknown"}): block all crawling.
 User-agent: *
 Disallow: /

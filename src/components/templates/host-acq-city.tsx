@@ -2,6 +2,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AUTHOR_PERSON_JSONLD_REF } from "@/lib/seo";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { HeroImage } from "@/components/hero-image";
 import { type LinkTarget } from "@/components/auto-linked-content";
 import ReactMarkdown from "react-markdown";
@@ -101,7 +102,8 @@ export function HostAcqCityTemplate({
   const dateFormatted = new Date(dateModified).toLocaleDateString("en-US", {
     month: "long", day: "numeric", year: "numeric",
   });
-  const pageUrl = `https://www.poolrentalnearme.com${page.url_path}`;
+  // The page's own URL from /p/<slug> when url_path is NULL (never ".comnull").
+  const pageUrl = `https://www.poolrentalnearme.com${contentPagePath(page)}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -190,7 +192,7 @@ export function HostAcqCityTemplate({
               items={[
                 { name: "Home", path: "/" },
                 { name: "Become a host", path: "/p/hosting" },
-                { name: title, path: page.url_path },
+                { name: title, path: contentPagePath(page) },
               ]}
             />
           </div>

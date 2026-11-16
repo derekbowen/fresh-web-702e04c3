@@ -3,6 +3,7 @@ import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema, type Crumb } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { FaqBlock } from "@/components/faq-block";
 import { FounderBookingInline } from "@/components/founder-booking";
 import { faqsForContentPage } from "@/lib/page-faqs";
@@ -49,7 +50,7 @@ export function CountryLaunchTemplate({
     { name: "Become a host", path: COUNTRY_LAUNCH_URLS.hosting },
   ];
   if (market?.city && hubPath) crumbs.push({ name: market.country.label, path: hubPath });
-  crumbs.push({ name: title, path: page.url_path || `/p/${page.slug}` });
+  crumbs.push({ name: title, path: contentPagePath(page) });
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
