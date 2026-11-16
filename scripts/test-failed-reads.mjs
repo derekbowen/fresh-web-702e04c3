@@ -195,7 +195,7 @@ const FIXTURES = {
     // ── host_acq_city intent fixtures ────────────────────────────────────────
     // HOST with pools listed in the city (Tempe has two eligible listings).
     contentPage({
-      id: "00000000-0000-4000-8000-000000000011",
+      id: "00000000-0000-4000-8000-0000000000f1",
       slug: "become-a-swimming-pool-host-tempe-az",
       url_path: "/p/become-a-swimming-pool-host-tempe-az",
       title: "Become a Pool Host in Tempe, AZ",
@@ -208,7 +208,7 @@ const FIXTURES = {
     }),
     // HOST with only nearby pools (none filed under Mesa; Tempe's are close).
     contentPage({
-      id: "00000000-0000-4000-8000-000000000016",
+      id: "00000000-0000-4000-8000-0000000000f6",
       slug: "become-a-swimming-pool-host-mesa-az",
       url_path: "/p/become-a-swimming-pool-host-mesa-az",
       title: "Become a Pool Host in Mesa, AZ",
@@ -217,7 +217,7 @@ const FIXTURES = {
     }),
     // RENTER with exact-city pools — same city as the HOST page above.
     contentPage({
-      id: "00000000-0000-4000-8000-000000000012",
+      id: "00000000-0000-4000-8000-0000000000f2",
       slug: "tempe-az",
       url_path: "/p/tempe-az",
       title: "Pool Rental in Tempe, AZ",
@@ -229,7 +229,7 @@ const FIXTURES = {
     }),
     // RENTER with only nearby pools (Mesa has none; Tempe's are a few miles away).
     contentPage({
-      id: "00000000-0000-4000-8000-000000000013",
+      id: "00000000-0000-4000-8000-0000000000f3",
       slug: "mesa-az",
       url_path: "/p/mesa-az",
       title: "Pool Rental in Mesa, AZ",
@@ -239,7 +239,7 @@ const FIXTURES = {
     // RENTER whose city has no coordinates (no cities row): nearby is not
     // checked, so the page must not say nothing is near.
     contentPage({
-      id: "00000000-0000-4000-8000-000000000015",
+      id: "00000000-0000-4000-8000-0000000000f5",
       slug: "chevy-chase-md",
       url_path: "/p/chevy-chase-md",
       title: "Pool Rental in Chevy Chase, MD",
@@ -250,7 +250,7 @@ const FIXTURES = {
     // from the title; the "chapel-hill" cities row (NC) gives the centre, and no
     // listing is within 60 miles of it.
     contentPage({
-      id: "00000000-0000-4000-8000-000000000014",
+      id: "00000000-0000-4000-8000-0000000000f4",
       slug: "chapel-hill",
       url_path: "/p/chapel-hill",
       title: "Pool Rental in Chapel Hill, NC",
