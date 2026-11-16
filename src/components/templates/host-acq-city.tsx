@@ -364,7 +364,7 @@ export function HostAcqCityTemplate({
                 <tbody className="divide-y divide-border">
                   {[
                     ["Host service fee", "0%", "15%+"],
-                    ["You take home on $200", "$180", "≈ $170 or less"],
+                    ["You take home on $200", "$200", "≈ $170 or less"],
                     ["Payout timing", "Initiated after each completed booking", "See their published terms"],
                     ["Listing fee", "Free", "Free"],
                     ["Guest approval", "Full host approval", "Auto-approve default"],
