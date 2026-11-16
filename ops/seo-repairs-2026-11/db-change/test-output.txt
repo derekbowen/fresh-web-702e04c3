@@ -1,0 +1,87 @@
+# Local test run 2026-11-16T20:15:16Z on vm: bash ops/seo-repairs-2026-11/db-change/test/test.sh
+PostgreSQL: PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+cluster: /tmp/seo_repair_pg.R2y5SP (port 55439, unix socket only)
+== 0. reproducibility: the checked-in SQL is exactly what generate.py produces from the CSVs
+   link rules 562 (REWRITE 428, UNLINK 134), excluded link targets 607; fee rules 2843 on 2416 fields, excluded fee rows 617; pins no
+ok   checked-in apply.sql is byte-identical to a fresh generation
+ok   checked-in dry-run.sql is byte-identical to a fresh generation
+ok   checked-in rollback.sql is byte-identical to a fresh generation
+ok   checked-in rules-manifest.csv is byte-identical to a fresh generation
+ok   checked-in excluded-pending-derek.csv is byte-identical to a fresh generation
+ok   checked-in pending/p1_fee_field_pins_01.sql is byte-identical to a fresh generation
+ok   checked-in pending/p1_fee_field_pins_02.sql is byte-identical to a fresh generation
+ok   checked-in pending/p1_fee_field_pins_03.sql is byte-identical to a fresh generation
+ok   checked-in pending/p1_fee_field_pins_04.sql is byte-identical to a fresh generation
+ok   checked-in pending/p1_fee_field_pins_05.sql is byte-identical to a fresh generation
+   fixtures: 2147 rows, 2985 fields (2416 fee fields with 2843 fee rules, 562 link rules)
+== 1. load the fixture database
+ok   all 2147 fixture rows loaded
+== 2. PENDING-READS P1 on the fixture: read the field md5 pins, then edit one fee field (changed after the pin)
+ok   P1 returned one md5 pin per fee field (2416)
+   link rules 562 (REWRITE 428, UNLINK 134), excluded link targets 607; fee rules 2843 on 2416 fields, excluded fee rows 617; pins yes
+== 3. the checked-in (unpinned) apply.sql refuses to run
+ok   unpinned apply.sql raised 'no field md5 pin'
+ok   database unchanged after the refused run
+ok   log tables were not created (the whole transaction rolled back)
+== 4. the count guard aborts when a rule's count is off
+ok   count guard aborted when F5-0002 expected +3
+ok   database unchanged after the aborted run (F5-0002)
+ok   count guard aborted when F5-0603 expected -3
+ok   database unchanged after the aborted run (F5-0603)
+ok   fixture has 414 description fields for the fee guard test
+ok   fee count guard aborted when 414 fee fields changed after the pins
+ok   database unchanged after the fee-guard abort
+== 5. dry-run (read-only) on the fixture
+ok   dry-run changed nothing
+ok   'set transaction read only' under psql -1 blocks writes
+ok   dry-run reports every link rule
+ok   dry-run verdict ok for every link rule
+ok   dry-run: F5-0002 would change 4 fields, 1 skipped for an insurance sentence
+ok   dry-run: F5-0603 reports 1 row with an image link it does not unlink
+ok   dry-run: 2841 fee rules ok, 2 not (pin mismatch field + duplicated anchor)
+== 6. apply
+ok   apply changed exactly the 2982 expected fields (and nothing else)
+ok   every changed field equals its hand-written / constructed expected value byte for byte
+ok   h1: change_log records 6 occurrence(s) for F5-0002
+ok   h2: change_log records 3 occurrence(s) for F5-0002
+ok   h2: change_log records 1 occurrence(s) for F5-0005
+ok   h2: change_log records 2 occurrence(s) for F5-0018
+ok   h3: change_log records 2 occurrence(s) for F5-0603
+ok   h3: change_log records 1 occurrence(s) for F5-0652
+ok   h4: change_log records 1 occurrence(s) for F5-0603
+ok   h4: change_log records 1 occurrence(s) for F5-0652
+ok   h7: change_log records 1 occurrence(s) for F5-0002
+ok   one backup row per changed field (2982) and every changed field logged
+ok   backup old_md5 matches the stored old value
+ok   every backup holds the exact pre-apply value
+ok   change_log old/new md5 form an unbroken chain per field
+ok   fee field edited after the pin: all 1 of its rules skipped and logged
+ok   fee anchor present twice: F14-2158 skipped and logged
+ok   link inside an insurance sentence: skipped and logged
+ok   image link UNLINK cannot handle: left and logged
+ok   apply printed the per-rule summary (F5-0002: 4 fields)
+ok   seed: Saratoga Springs body_markdown corrected
+ok   seed: swim-instructor-pool-rental-fair-oaks-ranch-tx corrected in 1 field(s)
+ok   seed: swim-instructor-pool-rental-mount-vernon-va corrected in 1 field(s)
+ok   backup table: row level security on, no anon access
+== 7. second apply changes nothing and does not touch the backup
+ok   second apply: every field unchanged
+ok   second apply: no new change_log rows
+ok   second apply: backup table byte-identical
+ok   second apply summary: 0 changes, 0 fields, 0 backups
+== 8. a human edits one repaired field, then rollback
+ok   rollback restored every field byte-identical to before apply, except the edited one
+ok   rollback left the human-edited field exactly as the person left it
+ok   rollback reported 2981 restored, 1 skipped
+ok   rollback reported why it skipped
+== 9. rollback again: nothing more to restore
+ok   second rollback changed nothing
+ok   second rollback restored 0 fields (the edited one is reported skipped again)
+== 10. apply again after the rollback (backup not duplicated)
+ok   re-apply changed the same fields again
+ok   re-applied values equal the expected values
+ok   backup rows not duplicated by the re-apply
+
+ALL 66 CHECKS PASSED
+test exit code: 0
+cluster stopped; /tmp/seo_repair_pg.R2y5SP removed
