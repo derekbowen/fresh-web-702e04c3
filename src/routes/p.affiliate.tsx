@@ -8,22 +8,21 @@ import {
 } from "@/lib/seo";
 
 const PATH = "/p/affiliate";
-const TITLE = "Host Referral Program — Refer 5 Hosts, Pay $0 Fees for a Year";
+// Fee policy: guests pay a 15% booking fee; hosts pay 0% and keep 100%.
+// This page used to offer "we'll waive your 10% platform fee" for referring
+// five hosts. There is no host fee to waive, so that tier and the figures
+// built on it were removed (SEO audit 2026-11-14, F14). The recruiter terms
+// below are unchanged.
+const TITLE = "Host Referral Program — Recruit Pool Hosts, Earn 5% of Their Bookings";
 const DESCRIPTION =
-  "Refer 5 approved pool hosts and we waive your platform fees for 12 months. Recruit pools and earn 5% of their bookings for 2 years.";
+  "Hosts on Pool Rental Near Me pay 0% host fees. Recruit new pool hosts and earn 5% of their bookings for 2 years.";
 
 const TIERS = [
   {
-    badge: "Tier 1",
-    title: "Refer 5 hosts → 0% fees for 12 months",
-    body:
-      "Get 5 friends approved as Pool Rental Near Me hosts and we'll waive your 10% platform fee for a full year. That's pure profit on every booking you take — typically $1,500–$5,000 in saved fees per host per season.",
-  },
-  {
-    badge: "Tier 2",
+    badge: "Recruiter program",
     title: "Recruit pools → 5% of bookings for 2 years",
     body:
-      "Want to go pro? If you actively recruit new pool hosts (not just casual referrals — outreach, signups, training), we pay you 5% of every booking they take for 2 full years. Build a recruiting territory and earn passive income on every swim.",
+      "If you actively recruit new pool hosts (not just casual referrals — outreach, signups, training), we pay you 5% of every booking they take for 2 full years. Build a recruiting territory and earn on every swim.",
   },
 ];
 
@@ -36,12 +35,12 @@ const HOW_IT_WORKS = [
   {
     n: "2",
     title: "They sign up and get approved",
-    body: "Your referral creates a host account, lists their pool, passes our safety review, and takes their first paid booking. That's when they count toward your 5.",
+    body: "Your referral creates a host account, lists their pool, passes our safety review, and takes their first paid booking.",
   },
   {
     n: "3",
-    title: "You unlock the reward",
-    body: "Hit 5 approved hosts and your fees drop to 0% for the next 12 months automatically. Want the recruiter deal? Email referrals@poolrentalnearme.com to apply for the 5%-for-2-years program.",
+    title: "Apply for the recruiter program",
+    body: "Email referrals@poolrentalnearme.com to apply for the 5%-for-2-years program.",
   },
 ];
 
@@ -51,20 +50,16 @@ const FAQS = [
     a: "An approved host has completed onboarding, passed safety review, listed at least one pool, and completed at least one paid booking using your referral link.",
   },
   {
-    q: "When does the 0% fee window start?",
-    a: "The day your 5th referral completes their first paid booking. It runs for 12 consecutive months from that date and applies to every booking on every pool you host.",
+    q: "Do hosts pay a platform fee?",
+    a: "No. Hosts on Pool Rental Near Me pay 0% host fees and keep 100% of their price. Guests pay a 15% booking fee at checkout.",
   },
   {
     q: "How is the 5% recruiter commission paid?",
     a: "Monthly, via the same payout method as your hosting earnings. You'll see a separate 'Recruiter commission' line in your dashboard with a breakdown by referred host.",
   },
   {
-    q: "Can I do both — earn the fee waiver AND recruit?",
-    a: "Yes. The fee waiver applies to your own hosting income. The 5% recruiter commission is a separate program for active recruiters. Many top recruiters do both.",
-  },
-  {
     q: "Is there a cap?",
-    a: "No cap on referrals or commission. Some of our top recruiters earn more from commissions than from their own pool.",
+    a: "No cap on referrals or commission.",
   },
 ];
 
@@ -115,15 +110,14 @@ function ReferralPage() {
               For Pool Hosts
             </div>
             <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
-              Refer 5 hosts.
+              Recruit pool hosts.
               <br />
-              <span className="text-primary">Pay $0 in fees for a year.</span>
+              <span className="text-primary">Earn 5% of their bookings.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-              The most generous referral program in pool sharing. Bring 5 approved
-              hosts onto Pool Rental Near Me and we'll waive your 10% platform fee
-              for 12 full months. Want to go bigger? Recruit pools and earn 5% of
-              their bookings for 2 years.
+              Hosts on Pool Rental Near Me pay 0% host fees and keep 100% of their
+              price. Recruit new pool hosts and earn 5% of their bookings for 2
+              years.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -145,12 +139,12 @@ function ReferralPage() {
         {/* Tiers */}
         <section className="mx-auto max-w-5xl px-4 py-16">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Two ways to earn
+            How you earn
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Pick the path that fits you — or do both. There's no cap on either.
+            There's no cap on referrals or commission.
           </p>
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="mt-10 grid gap-6 md:grid-cols-1">
             {TIERS.map((t) => (
               <div
                 key={t.badge}
@@ -198,9 +192,9 @@ function ReferralPage() {
             </h2>
             <div className="mt-6 grid gap-6 sm:grid-cols-3">
               <div>
-                <div className="text-4xl font-bold text-primary">$3,200</div>
+                <div className="text-4xl font-bold text-primary">0%</div>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Avg. fees waived per host per season
+                  Host fees on Pool Rental Near Me
                 </p>
               </div>
               <div>
