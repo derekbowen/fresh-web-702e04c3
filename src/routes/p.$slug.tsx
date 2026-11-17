@@ -86,15 +86,17 @@ function academyLangForSlug(slug: string | null | undefined): "en" | "es" | null
 
 export const Route = createFileRoute("/p/$slug")({
   beforeLoad: async ({ params }) => {
-    // 301 known junk slugs to home (external LLM hallucinations / stale caches).
-    // /p/null, /p/details, /p/mailto:* leak into GSC 404 reports; redirect
-    // to silence them rather than continuing to serve 404s.
+    // Known junk slugs (external LLM hallucinations, stale caches, a mailto
+    // link written as a relative URL). They are not pages and never were, so
+    // they answer a plain 404. They used to 301 to the homepage, which Google
+    // treats as a soft 404 and which sends a visitor somewhere unrelated
+    // (SEO audit 2026-11-14, F11). Not logged: there is nothing to repair.
     if (
       params.slug === "null" ||
       params.slug === "details" ||
       params.slug.startsWith("mailto:")
     ) {
-      throw redirect({ href: "/", statusCode: 301, replace: true });
+      throw notFound();
     }
     // Lowercase normalization: all canonical slugs in content_pages are lowercase
     // (built via slugify()). Issue a 301 to the lowercase variant before any DB

@@ -111,9 +111,31 @@ const failedReadMiddleware = createMiddleware().server(async ({ next, request })
   return unavailableResponse("html");
 });
 
+// /p and /p/ are not pages. Production showed a redirect loop on them:
+// WEST nginx answered /p with a 301 to /p/, and the router answered /p/ with a
+// 307 back to /p (SEO audit 2026-11-14, F11). Answer both with a plain 404
+// here, before routing, so this app never adds a hop. The nginx hop on bare
+// /p remains until WEST adds `location = /p { return 404; }`.
+const BARE_P_PATHS = new Set(["/p", "/p/"]);
+const BARE_P_404_HTML =
+  '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Page not found | Pool Rental Near Me</title></head><body><h1>Page not found</h1><p><a href="/">Pool Rental Near Me home</a> · <a href="/p/all-locations">All locations</a></p></body></html>';
+const bareP404Middleware = createMiddleware().server(async ({ next, request }) => {
+  if (BARE_P_PATHS.has(new URL(request.url).pathname)) {
+    return new Response(BARE_P_404_HTML, {
+      status: 404,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Robots-Tag": "noindex",
+        "Cache-Control": "public, max-age=300",
+      },
+    });
+  }
+  return next();
+});
+
 export const startInstance = createStart(() => ({
-  // Order matters: security headers wrap the 503 as well.
-  requestMiddleware: [securityHeadersMiddleware, failedReadMiddleware],
+  // Order matters: security headers wrap the 503 and the bare-/p 404 as well.
+  requestMiddleware: [securityHeadersMiddleware, bareP404Middleware, failedReadMiddleware],
   functionMiddleware: [attachSupabaseAuth],
   serverFns: {
     fetch: async (url, requestInit) => {
