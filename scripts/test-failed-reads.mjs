@@ -79,6 +79,27 @@ const contentPage = (over) => ({
   ...over,
 });
 
+/** Published cities beyond the first: with akron, more than PostgREST's 1,000-row cap. */
+const FIXTURE_EXTRA_CITIES = 1200;
+
+const blogPost = (id, slug) => ({
+  id,
+  slug,
+  title: `Fixture blog ${slug}`,
+  excerpt: null,
+  content: "Fixture blog body.",
+  cover_image_url: null,
+  author: null,
+  seo_title: null,
+  seo_description: null,
+  is_published: true,
+  published_at: NOW,
+  updated_at: NOW,
+  topic: null,
+  tldr_bullets: null,
+  related_slugs: null,
+});
+
 const FIXTURES = {
   content_pages: [
     contentPage({
@@ -125,6 +146,94 @@ const FIXTURES = {
       title: "Fixture UK page",
       template_type: "country_launch",
     }),
+    // ── sitemap integrity fixtures: each row below is one exclusion rule ──
+    // A content row and a blog post with the same slug: the dispatcher serves
+    // the content row, so only the articles sitemap may list the URL.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000011",
+      slug: "fixture-shared-slug",
+      url_path: "/p/fixture-shared-slug",
+      title: "Fixture shared slug page",
+    }),
+    // Underscore slug: the edge 301s it to the hyphenated form.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000012",
+      slug: "fixture_underscore_slug",
+      url_path: "/p/fixture_underscore_slug",
+    }),
+    // A content row under a noindex dedicated route.
+    contentPage({ id: "00000000-0000-4000-8000-000000000013", slug: "pool-pros", url_path: "/p/pool-pros" }),
+    // Canonical on another host.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000014",
+      slug: "fixture-hosting-uk",
+      url_path: "/p/fixture-hosting-uk",
+      canonical_override: "https://poolrentalnearme.co.uk/p/fixture-hosting-uk",
+    }),
+    // A content row under a dedicated static route (sitemap-static owns it).
+    contentPage({ id: "00000000-0000-4000-8000-000000000015", slug: "all-locations", url_path: "/p/all-locations" }),
+    // A published row shadowed by a redirect row with the same slug.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000016",
+      slug: "fixture-shadowed",
+      url_path: "/p/fixture-shadowed",
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000017",
+      slug: "fixture-shadowed",
+      url_path: "/p/fixture-shadowed",
+      status: "redirect",
+      redirect_to: "fixture-live-page",
+      in_sitemap: false,
+      priority: 1,
+    }),
+    // Untyped: an unreviewed page is in no sitemap; a reviewed academy course is.
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000018",
+      slug: "fixture-untyped-page",
+      url_path: "/p/fixture-untyped-page",
+      template_type: null,
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-000000000019",
+      slug: "elearning-academy-fixture-course",
+      url_path: "/p/elearning-academy-fixture-course",
+      template_type: null,
+      title: "Fixture academy course",
+      body_markdown: `## Fixture course\n\n${"Fixture course body sentence. ".repeat(40)}`,
+    }),
+    // Malformed slugs (a stray ")" copy and a double hyphen): they answer 200
+    // but are not a page to advertise.
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000001b",
+      slug: "fixture-stray-copy)",
+      url_path: "/p/fixture-stray-copy)",
+    }),
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000001c",
+      slug: "fixture--double-hyphen",
+      url_path: "/p/fixture--double-hyphen",
+      template_type: "host_acq_city",
+    }),
+    // A redirect row the dispatcher skips (url_path is not /p/<slug>): the
+    // blog post with that slug is what /p/<slug> serves, so the blog sitemap
+    // must list it.
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000001d",
+      slug: "fixture-blog-behind-redirect",
+      url_path: "/p/old/fixture-blog-behind-redirect",
+      status: "redirect",
+      redirect_to: "fixture-live-page",
+      in_sitemap: false,
+    }),
+    // A comparison city page that a content row redirects.
+    contentPage({
+      id: "00000000-0000-4000-8000-00000000001a",
+      slug: "giggster-vs-pool-rental-near-me-in-fixture-city-0002",
+      url_path: "/p/giggster-vs-pool-rental-near-me-in-fixture-city-0002",
+      template_type: null,
+      redirect_to: "giggster-vs-pool-rental-near-me",
+    }),
   ],
   cities: [
     {
@@ -139,6 +248,20 @@ const FIXTURES = {
       is_published: true,
       updated_at: NOW,
     },
+    // More published cities than one PostgREST answer holds (max-rows 1,000),
+    // so a sitemap that reads `cities` without paging is caught.
+    ...Array.from({ length: FIXTURE_EXTRA_CITIES }, (_, i) => ({
+      slug: `fixture-city-${String(i).padStart(4, "0")}`,
+      name: `Fixture City ${i}`,
+      state: "Ohio",
+      state_code: "OH",
+      description: null,
+      latitude: 40,
+      longitude: -82,
+      hero_image_url: null,
+      is_published: true,
+      updated_at: NOW,
+    })),
   ],
   blog_posts: [
     {
@@ -158,6 +281,12 @@ const FIXTURES = {
       tldr_bullets: null,
       related_slugs: null,
     },
+    // Same slug as a content row (served by the content row).
+    { ...blogPost("00000000-0000-4000-8000-0000000000b2", "fixture-shared-slug") },
+    // A legacy_slugs alias of fixture-live-page: /p/fixture-old-slug 301s.
+    { ...blogPost("00000000-0000-4000-8000-0000000000b3", "fixture-old-slug") },
+    // Shares its slug with a redirect row the dispatcher skips: served as the blog post.
+    { ...blogPost("00000000-0000-4000-8000-0000000000b4", "fixture-blog-behind-redirect") },
   ],
   synced_listings: [
     {
@@ -165,6 +294,16 @@ const FIXTURES = {
       sharetribe_id: "00000000-0000-4000-8000-0000000000c1",
       primary_image_url: null,
       title: "Fixture listing",
+      updated_at: NOW,
+      state: "published",
+      is_deleted: false,
+    },
+    // The marketplace configuration listing (id from NON_PUBLIC_LISTING_IDS).
+    {
+      slug: "config-listing-do-not-delete",
+      sharetribe_id: "6768ea36-b435-40df-b331-43be74aa882f",
+      primary_image_url: null,
+      title: "CONFIG LISTING - DO NOT DELETE",
       updated_at: NOW,
       state: "published",
       is_deleted: false,
@@ -328,6 +467,7 @@ function splitLogicTree(expr) {
 function validateFilter(expr) {
   const bare = expr.startsWith("not.") ? expr.slice(4) : expr;
   if (bare.startsWith("cs.")) parsePgArray(bare.slice(3));
+  if (bare.startsWith("ov.")) parsePgArray(bare.slice(3));
 }
 
 /** Evaluate one PostgREST filter (`eq.x`, `in.(a,b)`, `like.a%`, `is.null`, `cs.{a}`, `not.…`). */
@@ -355,6 +495,8 @@ function matches(value, expr) {
       return arg === "null" ? value === null || value === undefined : String(value) === arg;
     case "cs":
       return Array.isArray(value) && parsePgArray(arg).every((s) => value.includes(s));
+    case "ov":
+      return Array.isArray(value) && parsePgArray(arg).some((s) => value.includes(s));
     default:
       return true; // an operator this stub does not model: do not filter on it
   }
@@ -362,31 +504,51 @@ function matches(value, expr) {
 
 const NON_FILTER_PARAMS = new Set(["select", "order", "limit", "offset", "on_conflict", "columns"]);
 
+/** PostgREST's `max-rows`: no answer carries more rows than this, whatever `limit` asks. */
+const MAX_ROWS = 1000;
+
+/** Validate every leaf of a logic tree (`a.eq.x,and(b.is.null,c.like.d*)`). */
+function validateTree(expr) {
+  for (const part of splitLogicTree(expr)) {
+    const nested = part.match(/^(and|or)(\(.*\))$/s);
+    if (nested) validateTree(nested[2]);
+    else validateFilter(part.slice(part.indexOf(".") + 1));
+  }
+}
+
+/** Does `row` satisfy the logic tree? `kind` is how the alternatives combine. */
+function matchesTree(row, expr, kind) {
+  const alts = splitLogicTree(expr).map((part) => {
+    const nested = part.match(/^(and|or)(\(.*\))$/s);
+    if (nested) return matchesTree(row, nested[2], nested[1]);
+    const i = part.indexOf(".");
+    const col = part.slice(0, i);
+    return !(col in row) || matches(row[col], part.slice(i + 1));
+  });
+  return kind === "and" ? alts.every(Boolean) : alts.some(Boolean);
+}
+
 function query(table, url) {
   let rows = FIXTURES[table] ?? [];
   // Malformed filters are rejected whether or not any row would be compared.
   for (const [key, expr] of url.searchParams) {
     if (NON_FILTER_PARAMS.has(key)) continue;
-    if (key === "or") {
-      for (const part of splitLogicTree(expr)) validateFilter(part.slice(part.indexOf(".") + 1));
-    } else validateFilter(expr);
+    if (key === "or" || key === "and") validateTree(expr);
+    else validateFilter(expr);
   }
   for (const [key, expr] of url.searchParams) {
     if (NON_FILTER_PARAMS.has(key)) continue;
-    if (key === "or") {
-      const alts = splitLogicTree(expr).map((s) => {
-        const i = s.indexOf(".");
-        return [s.slice(0, i), s.slice(i + 1)];
-      });
-      rows = rows.filter((r) => alts.some(([col, e]) => !(col in r) || matches(r[col], e)));
+    if (key === "or" || key === "and") {
+      rows = rows.filter((r) => matchesTree(r, expr, key));
       continue;
     }
     rows = rows.filter((r) => !(key in r) || matches(r[key], expr));
   }
   const total = rows.length;
   const offset = Number(url.searchParams.get("offset") ?? 0);
-  const limit = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : rows.length;
-  return { rows: rows.slice(offset, offset + limit), total };
+  const asked = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : rows.length;
+  const limit = Math.min(asked, MAX_ROWS);
+  return { rows: rows.slice(offset, offset + limit), total, offset };
 }
 
 function startStub() {
@@ -431,8 +593,9 @@ function startStub() {
         res.end(JSON.stringify({ code: err.code, message: err.message, details: null, hint: null }));
         return;
       }
-      const { rows, total } = found;
-      const range = total === 0 ? "*/0" : `0-${Math.max(rows.length - 1, 0)}/${total}`;
+      const { rows, total, offset } = found;
+      const range =
+        rows.length === 0 ? `*/${total}` : `${offset}-${offset + rows.length - 1}/${total}`;
       const single = (req.headers.accept || "").includes("vnd.pgrst.object");
       if (single && rows.length !== 1) {
         res.writeHead(406, { "Content-Type": "application/json" });
@@ -725,7 +888,6 @@ const SITEMAPS = [
   { path: "/sitemap-pages-comparisons.xml" },
   { path: "/sitemap-pages-blog.xml" },
   { path: "/sitemap-listings.xml" },
-  { path: "/sitemap-directory.xml" },
   { path: "/sitemap-country.xml", host: "www.poolrentalnearme.co.uk" },
   { path: "/sitemap-pages-host-acquisition.xml" },
   { path: "/sitemap-pages-articles.xml" },
@@ -740,7 +902,6 @@ const SITEMAPS = [
 // Template groups the fixtures have no row for answer a legitimate empty 200.
 const SITEMAPS_EMPTY_WHEN_HEALTHY = new Set([
   "/sitemap-pages-event-guides.xml",
-  "/sitemap-pages-academy.xml",
   "/sitemap-pages-advocacy.xml",
   "/sitemap-pages-swim-instructor.xml",
   "/sitemap-pages-money.xml",
@@ -821,6 +982,15 @@ async function failurePhase(mode, { cold = false } = {}) {
       `${describe(r)}, ${n} <loc> ${is503(r).join("; ")}`,
     );
   }
+
+  // Retired: 410 whatever the database does (it reads nothing).
+  const dir = await get("/sitemap-directory.xml");
+  check(
+    phase,
+    "/sitemap-directory.xml -> 410 Gone, no <loc>",
+    dir.status === 410 && countLocs(dir.body) === 0,
+    `${describe(dir)}, ${countLocs(dir.body)} <loc>`,
+  );
 
   // The index is memoised in-process once built, so only a cold process must
   // answer 503; a warm one may keep serving the last complete index.
@@ -1147,6 +1317,136 @@ async function healthyPhase(phase) {
     `no rendered page (${pages.size}) has an href or JSON-LD URL targeting /p or /p/`,
     pages.size > 0 && offenders.length === 0,
     offenders.join(" | ") || `${pages.size} page(s) scanned`,
+  );
+
+  await sitemapIntegrity(phase, index);
+}
+
+const locsOf = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/&amp;/g, "&"));
+const localPath = (loc) => {
+  const u = new URL(loc);
+  return `${u.pathname}${u.search}`;
+};
+
+/**
+ * Healthy mode: every child the index lists exists and is non-empty; no URL
+ * is listed twice across all children; none of the fixture rows that an
+ * exclusion rule is for is listed; every listed /p/ URL this app serves
+ * answers 200, is not noindex and is its own canonical; comparisons pages
+ * past PostgREST's 1,000-row cap are listed.
+ */
+async function sitemapIntegrity(phase, index) {
+  const children = locsOf(index.body).map(localPath);
+  const byChild = new Map();
+  for (const path of children) {
+    const r = await get(path);
+    const urls = locsOf(r.body);
+    byChild.set(path, urls);
+    check(
+      phase,
+      `index child ${path} -> 200 and non-empty`,
+      r.status === 200 && urls.length > 0,
+      `${describe(r)}, ${urls.length} <loc>`,
+    );
+  }
+  // An orphan: a database-backed child with entries that the index leaves out.
+  for (const s of SITEMAPS.filter((x) => !x.host)) {
+    if (children.includes(s.path)) continue;
+    const r = await get(s.path);
+    check(
+      phase,
+      `${s.path} not in the index -> it has no entries (no orphan sitemap)`,
+      r.status === 200 && countLocs(r.body) === 0,
+      `${describe(r)}, ${countLocs(r.body)} <loc>`,
+    );
+  }
+
+  const where = new Map();
+  for (const [child, urls] of byChild) {
+    for (const u of urls) where.set(u, [...(where.get(u) ?? []), child]);
+  }
+  const dupes = [...where].filter(([, c]) => c.length > 1);
+  check(
+    phase,
+    "no URL is listed twice across the index's children",
+    dupes.length === 0,
+    dupes
+      .slice(0, 5)
+      .map(([u, c]) => `${u} in ${c.join(" + ")}`)
+      .join("; "),
+  );
+
+  const SITE = "https://www.poolrentalnearme.com";
+  const forbidden = {
+    "/p/fixture_underscore_slug": "redirecting (underscore) slug",
+    "/p/pool-pros": "noindex route",
+    "/p/fixture-hosting-uk": "canonical on another host",
+    "/p/fixture-shadowed": "shadowed by a redirect row",
+    "/p/fixture-old-slug": "blog post on a legacy alias (301)",
+    "/p/fixture-untyped-page": "unreviewed untyped page",
+    "/p/fixture-stray-copy)": "malformed slug (stray copy)",
+    "/p/fixture--double-hyphen": "malformed slug (double hyphen)",
+    "/p/fixture-redirect-row": "redirect row",
+    "/p/giggster-vs-pool-rental-near-me-in-fixture-city-0002": "redirected comparison page",
+    "/l/config-listing-do-not-delete/6768ea36-b435-40df-b331-43be74aa882f": "configuration listing",
+  };
+  for (const [path, why] of Object.entries(forbidden)) {
+    const listedIn = where.get(`${SITE}${path}`) ?? [];
+    check(phase, `not listed: ${path} (${why})`, listedIn.length === 0, `listed in ${listedIn.join(", ")}`);
+  }
+  const owners = {
+    "/p/fixture-shared-slug": "/sitemap-pages-articles.xml",
+    "/p/all-locations": "/sitemap-static.xml",
+    "/p/elearning-academy-fixture-course": "/sitemap-pages-academy.xml",
+    "/p/fixture-blog-post": "/sitemap-pages-blog.xml",
+    "/p/fixture-blog-behind-redirect": "/sitemap-pages-blog.xml",
+    "/l/fixture-listing/00000000-0000-4000-8000-0000000000c1": "/sitemap-listings.xml",
+  };
+  for (const [path, owner] of Object.entries(owners)) {
+    const listedIn = where.get(`${SITE}${path}`) ?? [];
+    check(
+      phase,
+      `listed once, by its owner: ${path} in ${owner}`,
+      listedIn.length === 1 && listedIn[0] === owner,
+      `listed in ${listedIn.join(", ") || "nothing"}`,
+    );
+  }
+
+  const comparisons = byChild.get("/sitemap-pages-comparisons.xml") ?? [];
+  const cities = FIXTURES.cities.filter((c) => c.is_published).length;
+  check(
+    phase,
+    `comparisons paging: ${cities} published cities (> 1,000) -> more than 1,000 entries, every city`,
+    comparisons.length > 1000 &&
+      comparisons.length === 3 + 2 * cities - 1 &&
+      comparisons.includes(`${SITE}/p/peerspace-vs-pool-rental-near-me-in-fixture-city-1199`),
+    `${comparisons.length} entries for ${cities} cities`,
+  );
+
+  // Each listed URL this app serves: 200, not noindex, its own canonical.
+  // Comparison city pages are one template, so a sample of them is enough.
+  const served = [...where.keys()].filter((u) => {
+    const p = new URL(u).pathname;
+    if (p === "/s" || p.startsWith("/l/")) return false; // marketplace (WEST)
+    if (/-vs-pool-rental-near-me-in-/.test(p)) return /fixture-city-(0000|0999|1199)$|-akron$/.test(p);
+    return true;
+  });
+  const bad = [];
+  for (const u of served) {
+    const r = await get(localPath(u));
+    const canon = r.body.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/)?.[1];
+    const noindex =
+      /noindex/.test(r.headers.get("x-robots-tag") || "") ||
+      /<meta[^>]+name="robots"[^>]+content="[^"]*noindex/.test(r.body);
+    if (r.status !== 200 || noindex || canon !== u) {
+      bad.push(`${localPath(u)}: ${r.status}${noindex ? " noindex" : ""}${canon !== u ? ` canonical ${canon ?? "missing"}` : ""}`);
+    }
+  }
+  check(
+    phase,
+    `every listed URL served here (${served.length}) -> 200, indexable, self-canonical`,
+    bad.length === 0,
+    bad.slice(0, 6).join("; "),
   );
 }
 

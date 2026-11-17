@@ -1,14 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { SITE_URL } from "@/lib/seo";
-import {
-  buildUrlsetXml,
-  sitemapResponse,
-  sitemapUnavailableResponse,
-  SITEMAP_PAGE_SIZE,
-  type SitemapUrl,
-} from "@/lib/sitemap";
-import { guardedRead } from "@/lib/failed-read";
+import { pagedSitemapResponse, sitemapUnavailableResponse } from "@/lib/sitemap";
+import { loadListingEntries } from "@/lib/sitemap-sources";
 
 /**
  * Sitemap of Sharetribe listings mirrored into `synced_listings`.
@@ -17,48 +11,17 @@ import { guardedRead } from "@/lib/failed-read";
  *
  * Mirror table is refreshed by the listing-sync job; sitemap reads
  * the mirror to avoid burning Sharetribe API quota on every fetch.
+ * Configuration listings are left out (NON_PUBLIC_LISTING_IDS and the title
+ * marker in src/lib/sitemap-rules.ts).
  */
 export const Route = createFileRoute("/sitemap-listings.xml")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const url = new URL(request.url);
-        const page = Math.max(1, Number(url.searchParams.get("page") ?? "1"));
-        const from = (page - 1) * SITEMAP_PAGE_SIZE;
-        const to = from + SITEMAP_PAGE_SIZE - 1;
-
-        const read = await guardedRead<any[]>("sitemap synced_listings", (signal) =>
-          (supabaseAdmin as any)
-            .from("synced_listings")
-            .select("slug, sharetribe_id, primary_image_url, title, updated_at")
-            .eq("state", "published")
-            .eq("is_deleted", false)
-            .not("slug", "is", null)
-            .not("sharetribe_id", "is", null)
-            .order("updated_at", { ascending: false })
-            .range(from, to)
-            .abortSignal(signal),
-        );
-
+        const list = await loadListingEntries(supabaseAdmin, SITE_URL);
         // Failed read: 503, not a 200 with an empty <urlset>.
-        if (!read.ok) return sitemapUnavailableResponse();
-
-        const urls: SitemapUrl[] = (read.data ?? [])
-          .filter((r: { slug: string | null; sharetribe_id: string | null }) =>
-            !!r?.slug && !!r?.sharetribe_id,
-          )
-          .map((r: any) => {
-            const u: SitemapUrl = {
-              loc: `${SITE_URL}/l/${r.slug}/${r.sharetribe_id}`,
-              lastmod: r.updated_at ?? null,
-            };
-            if (r.primary_image_url) {
-              u.images = [{ loc: r.primary_image_url, title: r.title ?? undefined }];
-            }
-            return u;
-          });
-
-        return sitemapResponse(buildUrlsetXml(urls));
+        if (!list.ok) return sitemapUnavailableResponse();
+        return pagedSitemapResponse(request, list.data);
       },
     },
   },
