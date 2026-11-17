@@ -40,7 +40,7 @@ can be undone field by field.
 | `rollback.sql` | Undoes one apply run, only where the current value still has the logged new md5. |
 | `verify-live.sql` | READ ONLY. After an apply: page URL, new value and backed-up old value of every changed field (for `cleaner/verify_live.py`). |
 | `cleaner/core.sql.tmpl` | The plan (pure SQL: one WITH list, no extension, no function, no procedural language). |
-| `cleaner/build.py` | Renders the template with the exact regexes of `text-defects/text_defect_rules.py` (the source of truth behind rules.json) into `cleaner/core.sql`, `dry-run.sql`, `apply.sql`, `rollback.sql`. The core is pasted byte-identical into the dry run and the apply; its md5 is in both headers (currently `0ef3b1c06bd022afe4be7f379ed65352`). |
+| `cleaner/build.py` | Renders the template with the exact regexes of `text-defects/text_defect_rules.py` (the source of truth behind rules.json) into `cleaner/core.sql`, `dry-run.sql`, `apply.sql`, `rollback.sql`. The core is pasted byte-identical into the dry run and the apply; its md5 is in both headers (currently `ed9c0e651acfaaee549d642419db99d2`). |
 | `cleaner/reference.py` | The same cleaner in Python, built on the rules module; the oracle the test compares the SQL with. Holds the additions A1-A5. |
 | `cleaner/test_cleaner.py`, `pglocal.py`, `compare.py`, `surrogate.py`, `fixtures.json`, `build_fixtures.py`, `schema.sql` | The local test (section 8). |
 | `cleaner/run_surrogate.py` | Produces `dry-run-SURROGATE-live-2026-11-16.txt` and `before-after-sample.md`. |
@@ -125,6 +125,26 @@ fields (43 of them `ALL:joined_clause_kept`); Mount Pleasant SC's R6 sentence ("
 ... is key.") is now `review_mixed`. 6 must-keep regression examples were added from live text and 5 examples
 revised; TEXT-DEFECTS.md section 10.
 
+**2026-11-17, third round (independent check of 9473f6a).** Four more fact losses, each fixed by keeping more:
+(1) in a FAQ answer to a yes/no question, the narrator sentence that states whether the asked thing exists is the
+answer and is kept (`answers_question`; "Are there any indoor swimming pools in Coronado?" -> "I'm not aware of any
+dedicated indoor municipal swimming pools.", 17 city FAQ answers on S2); (2) a narrator sentence that ranks a
+facility (primary / main / only / biggest / largest / closest ... + a facility word, "is the one", "only lists /
+shows ...") is kept (`fact_claim`; "My records show the Kyle Aquatic Center as the primary public pool offering in
+Kyle, TX."); (3) ", as" + a subject is a joined clause ("I couldn't nail down specific daily hours, as they often
+change seasonally or for special events.": Southland Aquatic Center Pool's whole hours entry was deleted by R5);
+(4) the comma-less join is "so" or "and" + a pronoun or an article ("... run by the city so the vibe is ...",
+"... popular and it fills up fast."). The two new keep reasons are checked last, and a column in which one of them
+keeps a sentence the rules would otherwise delete is left unchanged (`ALL:fact_guard_kept`), exactly like the
+joined-clause freeze: without it 3 surrogate fields would have lost a sentence for the first time (Hesperia Civic
+Plaza Pool, Double Oaks Aquatic Center, Chisholm Aquatics Center). Checked page by page: 0 new deletions; every
+field the plan still changes, it changes exactly as before; 80 sentences / entries in 59 fields are no longer
+deleted (rules module). Effect on the surrogate: 2,568 -> 2,510 field changes, 641 -> 646 skipped fields (46
+`ALL:joined_clause_kept`, 16 `ALL:fact_guard_kept`). The SQL also got faster (section 4, run times): the slowdown
+of the second round came from PostgreSQL's 32-entry cache of compiled regular expressions, not from the repeated
+clause tests. 8 must-keep regression examples were added from live text and 3 synthetic fixture rows;
+TEXT-DEFECTS.md section 10c.
+
 The same review found SQL-safety gaps, fixed in `cleaner/build.py` (so dry-run.sql, apply.sql, rollback.sql and
 verify-live.sql follow) and covered by new checks in `cleaner/test_cleaner.py`:
 
@@ -140,23 +160,24 @@ verify-live.sql follow) and covered by new checks in `cleaner/test_cleaner.py`:
 
 ## 4. Numbers (with their dates)
 
-**Surrogate dry run, re-run 2026-11-17 with the 2026-11-17 rules** (the 2,000 pool + 476 city pages of the saved sitemap, fetched read-only
+**Surrogate dry run, re-run 2026-11-17 with the rules of the third 2026-11-17 round** (the 2,000 pool + 476 city pages of the saved sitemap, fetched read-only
 2026-11-16T19:36Z-20:05Z, rebuilt as rows; [dry-run-SURROGATE-live-2026-11-16.txt](dry-run-SURROGATE-live-2026-11-16.txt)):
 
 | Rule(s) | Fields changed | Sentences / entries deleted |
 |---|---|---|
 | R1 Best-for list | 1,678 pool pages | - |
-| R2 descriptions | 187 | 194 sentences |
-| R3 pool FAQ (incl. 14 with R5) | 566 | 698 sentences |
-| R5 pool FAQ (incl. 14 with R3) | 45 | 46 entries |
-| R4 city intros | 78 | 87 sentences |
-| R4 city FAQ | 27 | 32 sentences |
+| R2 descriptions | 186 | 193 sentences |
+| R3 pool FAQ (incl. 12 with R5) | 534 | 654 sentences |
+| R5 pool FAQ (incl. 12 with R3) | 40 | 41 entries |
+| R4 city intros | 72 | 80 sentences |
+| R4 city FAQ | 11 | 11 sentences |
 | R6 city intros / FAQ | 1 / 0 | 1 sentence |
-| **Total** | **2,568 fields** | |
-| Skipped (a rule would have changed them) | 641 fields | reasons in before-after-sample.md (43 `ALL:joined_clause_kept`) |
+| **Total** | **2,510 fields** | |
+| Skipped (a rule would have changed them) | 646 fields | reasons in before-after-sample.md (46 `ALL:joined_clause_kept`, 16 `ALL:fact_guard_kept`) |
 
 (Before the 2026-11-16 review revision, section 3a, the same pages gave 2,746 changes and 576 skips; before the
-first 2026-11-17 change, 2,661 changes and 629 skips; before the second, 2,640 changes and 626 skips.)
+first 2026-11-17 change, 2,661 changes and 629 skips; before the second, 2,640 changes and 626 skips; before the
+third, 2,568 changes and 641 skips.)
 
 The production tables are larger (3,381 pools and 647 cities; 1,821 JSON-array Best-for values of which 8 `[]`,
 S1 extract 2026-11-15, all rows). PR-6 gives the real numbers; expect roughly 1.5-2x the surrogate.
@@ -164,7 +185,7 @@ S1 extract 2026-11-15, all rows). PR-6 gives the real numbers; expect roughly 1.
 **What remains after the apply, by design** (measured on the same live pages, TEXT-DEFECTS.md sections 2-3):
 * first-person sentences that also carry a fact (a number, an amenity, a price, a second clause ...) are NOT
   deleted: about 3,535 such sentences on pool pages and 624 on city pages (counted before the 2026-11-16
-  and both 2026-11-17 revisions, which keep more). The owner's "829 pool pages and 148 city pages with first-person filler"
+  and the three 2026-11-17 revisions, which keep more). The owner's "829 pool pages and 148 city pages with first-person filler"
   will therefore **not** drop to zero; removing the rest needs rewriting, which this task does not allow;
 * of the contradicted counts, only the 6 `auto` statements are automatic (18 before the 2026-11-16 revision, 8
   before the first 2026-11-17 one, which moved Aurora's "..., so you've got options." to `review_mixed`, 7 before
@@ -184,10 +205,15 @@ S1 extract 2026-11-15, all rows). PR-6 gives the real numbers; expect roughly 1.
 
 **Run times** (local PostgreSQL 16, surrogate, 2026-11-16 revision): dry run about 145 s (it now also prints
 section 7 and exports section 8); apply 18 s; rollback of 2,661 fields under 1 s (it was 65 s before rollback.sql
-got its own planner settings). With the rules of the second 2026-11-17 round (the plan also decides every
-sentence with `CLAUSE_CORE` for the joined-clause freeze), in test-output.txt: dry run 337 s (128 s with the first
-2026-11-17 round), apply 43 s (16 s), rollback of 2,568 fields 0.2 s. Production has about 1.5-2x the text, so
-expect the apply to hold its lock for roughly 1-1.5 minutes. The apply holds a SHARE ROW EXCLUSIVE lock on `pp_pools` and `pp_cities`: reads (the pages)
+got its own planner settings). With the rules of the second 2026-11-17 round the dry run took 337 s (128 s with
+the first round) and the apply 43 s (16 s). Cause: PostgreSQL keeps only 32 compiled regular expressions per
+session (`MAX_CACHED_RES`); the second round's extra clause pattern made each sentence row test more than 32
+patterns in turn, so every pattern was recompiled on every row (on the S2 sentences: 32 patterns per row 9 s, 33
+patterns 482 s). Since the third round the plan computes the sentence features in two sorted stages (11 and 23
+patterns) and the R6 chain in three (at most 12 each), each clause pattern runs once, and the narrator-only
+features are tested only on narrator sentences. Now, in test-output.txt: **dry run 126 s (118 s on another run), apply 15 s, rollback of
+2,510 fields 0.2 s** (one evaluation of the plan: 43 s at 9473f6a, 15 s now). Production has about 1.5-2x the text, so
+expect the apply to hold its lock for roughly 20-30 seconds. The apply holds a SHARE ROW EXCLUSIVE lock on `pp_pools` and `pp_cities`: reads (the pages)
 continue, writes to those two tables wait until it commits.
 
 ## 5. Preconditions (all of them, before any write)
@@ -288,7 +314,7 @@ left, so no API key can read, change or truncate them; only the role that ran ap
    ```
    Every field should be `NEW`. `OLD` means a cache or a copy (wait for the cache lifetime and fetch again);
    `NEITHER` means the page shows something else: stop and look. (Tested offline: on the pages fetched
-   before the change, the verifier rated all 2,568 surrogate changes `OLD`.)
+   before the change, the verifier rated all 2,510 surrogate changes `OLD`.)
 3. By eye, on a handful of pages: "Best for:" shows a plain list; the FAQ section and its FAQPage JSON-LD
    no longer contain the deleted entries; city intros no longer state a wrong count.
 4. Afterwards a new dry run shows R1 values as `R1:not_json` (they are plain text now) and should plan no
@@ -298,25 +324,27 @@ Idempotency: after an R6 deletion, an answer can become pure narrator filler tha
 second run. The apply never does that unapproved (it logs it `planned_not_in_manifest`). On the 2,476 live
 pages the re-plan after apply changed **0** fields; the synthetic test case shows the mechanism.
 
-## 8. Local test (what was proved, 2026-11-16)
+## 8. Local test (what was proved, 2026-11-16; re-run for each 2026-11-17 round)
 
 `python3 -I cleaner/test_cleaner.py` (result in [test-output.txt](test-output.txt)) builds a throwaway
 PostgreSQL 16 cluster (binaries in /usr/lib/postgresql/16/bin, run as the unprivileged user `postgres`, data
 under /tmp, Unix socket only, port 55441, removed at the end), with the production column types
 (`cleaner/schema.sql`, from the information_schema extract of 2026-11-15) and:
 
-* fixtures (regenerated for the 2026-11-16 revision and again for both 2026-11-17 rounds, reproducibly: same seed, byte-identical on a second run): 96 real rows from the live pages of 2026-11-16 (up to 3
+* fixtures (regenerated for the 2026-11-16 revision and again for each of the three 2026-11-17 rounds, reproducibly: same seed, byte-identical on a second run): 102 real rows from the live pages of 2026-11-16 (up to 3
   per outcome category: every rule, every skip reason that occurs in the data, unchanged rows, every R6
-  statement category) and 37 synthetic rows (33 pools, 4 cities) with 39 hand-derived expected results, among
+  statement category) and 40 synthetic rows (36 pools, 4 cities) with 42 hand-derived expected results, among
   them the review cases of section 3a: apostrophes and quotes in list items, nested / non-string / object /
   malformed / empty / blank / insurance JSON, a filler sentence between two factual ones, "St.", "Ave.",
   "Dr.", "U.S.", "No. 4", "a.m.", "p.m.", "4.5", "$4.50", a URL, curly quotes, a paragraph break, the `§`
   mark, insurance in a question, a FAQ with `a2` and a non-string answer and an extra key, a lone FAQ entry,
-  an answer that would get too short, and a field edited after apply;
+  an answer that would get too short, a field edited after apply, and (third 2026-11-17 round) a yes/no
+  answer and a primacy claim that freeze their column (`ALL:fact_guard_kept`) and the same answer under an open
+  question;
 * checks: every embedded core identical; the dry run aborts outside a read-only transaction, changes nothing,
   creates nothing; SQL plan = Python reference on every fixture field; all hand expectations hold; apply
   changes exactly the planned fields to exactly the planned values and nothing else; no output field empty;
-  all 1,724 must-keep sentences still present; full old values in the backup; second apply is a no-op with
+  all 1,845 must-keep sentences still present; full old values in the backup; second apply is a no-op with
   the backup byte-identical; rollback restores byte-identical values and skips the field edited after apply;
   the count guard aborts on drift and on a wrong count or md5; a drifted field is never overwritten; a missing
   variable exits 3; rollback with an unrestored field exits 3 (`ROLLBACK INCOMPLETE`); with Supabase-style
@@ -327,7 +355,7 @@ under /tmp, Unix socket only, port 55441, removed at the end), with the producti
   the full run then logs that field `already_applied`, rolling back the full run leaves only the canary field
   changed and names the canary run, and rolling back the canary run too restores every field byte-identical;
   every statement of `text-defects/text-defects-measure.sql` (PENDING-READS) runs read-only;
-* the whole surrogate (2,476 live pages): SQL plan = Python reference on all 3,209 planned/skipped fields (2,568 changes);
+* the whole surrogate (2,476 live pages): SQL plan = Python reference on all 3,156 planned/skipped fields (2,510 changes);
   dry-run section 7 = the reference founder-voice list; `check_dry_run.py` on the dry run's own exports finds 0
   differences; dry run, apply, re-plan, offline live verification and rollback (under 30 s) all pass.
 

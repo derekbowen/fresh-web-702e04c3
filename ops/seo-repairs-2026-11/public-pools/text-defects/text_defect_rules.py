@@ -145,8 +145,15 @@ CLAUSE_CORE = (r"(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|ex
 # follow from "not followed by a letter"; "so your" is not matched). Like the rest of CLAUSE, they only ever
 # keep a sentence. A list comma before "and" / "or" ("ramps, lifts, or other accommodations") matches too:
 # the pattern does not try to tell a list from a joined clause, and errs on the side of keeping.
-CLAUSE_JOIN_BODY = (r"," + WS + r"*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so" + WS +
-                    r"+(you|they|it|that|this|there|we|i)(?![a-z])")
+# Third round (2026-11-17, independent check of 9473f6a): (c) ", as" + a subject ("I couldn't nail down specific
+# daily hours, as they often change seasonally or for special events."): a comma, optional whitespace, the word "as",
+# whitespace and a letter, unless "as" starts "as well", "as soon as" or "as of"; (d) the comma-less join widened from
+# "so" + pronoun to "so" / "and" + a pronoun or an article ("I've heard it's run by the city so the vibe is
+# community-focused.", "I think it's popular and it fills up fast."). Fixed phrases "and so on", "so far", "so much",
+# "so many", "and more" do not match (the word after so / and must be one of the listed ones).
+CLAUSE_JOIN_BODY = (r"," + WS + r"*(so|and|or|plus|but|then|yet)(?![a-z])|," + WS + r"*as" + WS +
+                    r"+(?!(well|soon|of)([^a-z]|$))[a-z]|(?<![a-z])(so|and)" + WS +
+                    r"+(you|they|it|that|this|these|those|there|we|i|he|she|the|a|an)(?![a-z])")
 CLAUSE_JOIN = r"(?i)" + CLAUSE_JOIN_BODY
 CLAUSE = CLAUSE_CORE + "|" + CLAUSE_JOIN_BODY
 # Keeping a joined-clause sentence must never unlock a deletion elsewhere in its field: a field-level skip
@@ -157,7 +164,9 @@ CLAUSE = CLAUSE_CORE + "|" + CLAUSE_JOIN_BODY
 # CLAUSE_CORE but not under CLAUSE) is left exactly as it is whenever the rules would otherwise change it:
 # skip reason ALL:joined_clause_kept (see joined_keep / column_joined_keep). Every other column is planned
 # with decisions identical to CLAUSE_CORE, so the 2026-11-17 joined-clause change can only make the cleaner
-# change less.
+# change less. The third round extends the same freeze to the guards answers_question / fact_claim (below POLARITY):
+# a column in which one of them keeps a sentence the rules would otherwise delete is left unchanged too, skip reason
+# ALL:fact_guard_kept (ALL:joined_clause_kept wins when both apply).
 # A narrator clause spliced onto another clause with a comma ("It's not too far from Decatur, I'd say ...")
 # hides an assertion. Allowed only when everything before the comma is a non-assertive lead-in.
 COMMA_SPLICE = (r"," + WS + r"+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|"
@@ -167,6 +176,39 @@ SPLICE_OK = (r"(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|ei
              r"i've|i’ve|i'll|my|we)(?![a-z])[^,]*$")
 # A sentence that opens with the answer's polarity carries the answer itself ("Yes, I think so.").
 POLARITY = r"(?i)^(yes|no|nope|yep|yeah|absolutely|definitely|unfortunately|sadly|sure|certainly)(?![a-z])"
+# Third round of 2026-11-17 (independent check of 9473f6a): two more keep reasons for narrator sentences. Like every
+# guard they only ever keep a sentence. They are the LAST checks of classify(), so a sentence kept before keeps its
+# reason, and only a sentence the previous rules deleted can get one of the two new reasons.
+# (1) answers_question: in a FAQ answer whose question is a yes/no question, a narrator sentence that states whether
+# the asked thing exists IS the answer ("Are there any indoor swimming pools in Coronado?" -> "I'm not aware of any
+# dedicated indoor municipal swimming pools."). YESNO_Q is tested on the entry's own question text (ai_faqs[*].q).
+YESNO_Q = (r"(?i)^" + WS + r"*(are|aren't|aren’t|is|isn't|isn’t|does|doesn't|doesn’t|do|don't|don’t|can|can't|can’t|"
+           r"could|will|would|should|has|have|was|were|did|may|might|must|shall)(?![a-z'’])")
+# Existence claims: (a) "not / n't / never" + aware of / know of / seeing / seen / see / found / find / heard of /
+# come across / familiar with + any / a single / many / too many / much, unless what follows is the narrator's own
+# data ("I couldn't find any information on ..." is a data gap, not an answer); (b) "there is / are / isn't /
+# aren't ..." at the start of the sentence or after "I'm sure", "I think", "I'd imagine", "my guess is" ...; (c)
+# "I know of", "I'm aware of", "I'm seeing", "that I know of" (positive, and "no ... that I know of").
+EXISTENCE = (r"(?i)(((?<![a-z])(not|never)|n't|n’t)( really| personally| currently| actually| yet)? (aware of|know of|"
+             r"seeing|seen|see|found|find|heard of|come across|came across|familiar with) (any|a single|many|too many|"
+             r"much)(?![a-z])(?!" + WS + r"+(specific |detailed |current |exact |official |more |other |further )?"
+             r"(info|information|details?|data|mention|mentions|records?|listings?|specifics)([^a-z]|$))|"
+             r"(^|(?<![a-z])i('m|’m| am) (sure|pretty sure|fairly sure|certain|confident|positive)|(?<![a-z])i(('d|’d| "
+             r"would) | )(think|believe|expect|imagine|bet|guess|suspect|assume)|(?<![a-z])my (bet|guess) is)( that)?"
+             + WS + r"*there( really)? (is|are|isn't|isn’t|aren't|aren’t|'s|’s|was|were|might be|may be|could be|"
+             r"should be|must be|are likely|is likely)(?![a-z])|(?<![a-z])i('m|’m| am)? (aware of|know of|seeing)"
+             r"(?![a-z]))")
+# (2) fact_claim: a narrator sentence that says a facility (named, or "this" / "it") is the primary / main / only /
+# sole / biggest / largest / closest / nearest one ("My records show the Kyle Aquatic Center as the primary public pool
+# offering in Kyle, TX."), "is the one", or that the narrator's data "only lists / shows / includes ..." a facility.
+# The noun after the ranking word must be a facility word, so "the main thing to know", "my main advice", "their main
+# website / office / number" and "the closest lot" do not match. "I only have information on X" is a data gap
+# (GAP), not a claim, and is not matched ("have" is not in the verb list).
+FACT_CLAIM = (r"(?i)(?<![a-z])((the|this|that|its|it's|it’s|is|as|your|our|their|a|an)( [a-z-]+)? (primary|main|only|"
+              r"sole|biggest|largest|closest|nearest)( [a-z-]+){0,3} (pools?|options?|facility|facilities|spots?|places?|"
+              r"centers?|centres?|aquatics?|choices?|venues?|offerings?|game|destination|one)|(is|it's|it’s|that's|that’s|as) (really |"
+              r"probably |definitely )?the one|only (lists?|listed|shows?|showed|includes?|tracks?|mentions?|features?|"
+              r"knows? of))(?![a-z])")
 # Vocabulary of real pool facts: price, rating, amenities, pool type, hours/schedule.
 LEX_PRICE_SCHEDULE = (r"(?i)(?<![a-z])(free|no charge|no cost|cheap|inexpensive|affordable|pricey|expensive|"
            r"bucks?|dollars?|admission|fees?|prices?|pricing|costs?|rates?|open|opens|opened|closed|closes|closing|hours|"
@@ -312,9 +354,16 @@ def has_entity(s, names, last=False):
     return re.search(CAPWORD, rest) is not None
 
 
-def classify(s, pool_page=False, clause=None):
+def is_yesno(question):
+    return isinstance(question, str) and re.search(YESNO_Q, question) is not None
+
+
+def classify(s, pool_page=False, clause=None, question=None, guards=True):
     """Return (narrator_kind, sentence_class, deletable_if_context_allows, reason).
-    clause: the second-clause pattern (default CLAUSE; joined_keep also asks with CLAUSE_CORE)."""
+    clause: the second-clause pattern (default CLAUSE; joined_keep also asks with CLAUSE_CORE).
+    question: the FAQ question whose answer s belongs to (None for a description or an intro).
+    guards: False leaves out the two keep reasons of the third 2026-11-17 round (answers_question, fact_claim);
+    joined_keep uses it to find the sentences those reasons keep."""
     clause = clause or CLAUSE
     kind = is_narrator(s)
     if kind is None:
@@ -330,7 +379,8 @@ def classify(s, pool_page=False, clause=None):
             return kind, "founder", False, "fact_vocabulary"
         if re.search(POLARITY, s):
             return kind, "founder", False, "answer_polarity"
-        return kind, "founder", True, None
+        why = _new_guard(s, question) if guards else None
+        return kind, "founder", why is None, why
     if kind == "local" and pool_page:
         return kind, "opinion", False, "local_marker_on_pool_page"
     cls = ("gap" if re.search(GAP, s) and re.search(GAP_NEG, s) else "advice" if re.search(ADVICE, s)
@@ -351,7 +401,17 @@ def classify(s, pool_page=False, clause=None):
         return kind, cls, False, "fact_vocabulary"
     if cls == "gap" and not re.search(GAP_HARD, s) and (re.search(LEXICON, s) or re.search(LEX_PRICE_SCHEDULE, s)):
         return kind, cls, False, "fact_vocabulary"   # "I only have data on this facility being free"
-    return kind, cls, True, None
+    why = _new_guard(s, question) if guards else None
+    return kind, cls, why is None, why
+
+
+def _new_guard(s, question):
+    """The keep reasons of the third 2026-11-17 round, checked last (see YESNO_Q / EXISTENCE / FACT_CLAIM)."""
+    if is_yesno(question) and re.search(EXISTENCE, s):
+        return "answers_question"
+    if re.search(FACT_CLAIM, s):
+        return "fact_claim"
+    return None
 
 
 # --------------------------------------------------------------------------- R6 count statements
@@ -420,29 +480,46 @@ def r6_classify(s, actual, distinct_after_duplicates=None, clause=None):
     return "auto", h
 
 
-# --------------------------------------------------------------------------- joined-clause freeze (2026-11-17)
-def joined_keep(s, pool_page=False, actual=None, distinct=None):
-    """True if the joined-clause alternatives (CLAUSE_JOIN) change the decision for sentence s: a narrator
-    sentence deletable under CLAUSE_CORE but kept under CLAUSE, a generic referral non-informative under
-    CLAUSE_CORE but not under CLAUSE, or (cities: actual given) an R6 count sentence 'auto' under CLAUSE_CORE
-    but not under CLAUSE."""
-    if not re.search(CLAUSE_JOIN, s):
-        return False   # CLAUSE matches s exactly when CLAUSE_CORE does: every decision is the same
-    k1, c1, ok1, _ = classify(s, pool_page)
-    k0, c0, ok0, _ = classify(s, pool_page, CLAUSE_CORE)
-    if (k1 is not None and ok1) != (k0 is not None and ok0) or c1 != c0:
-        return True
-    if actual is not None:
-        return (r6_classify(s, actual, distinct)[0] == "auto") != \
-            (r6_classify(s, actual, distinct, CLAUSE_CORE)[0] == "auto")
-    return False
+# --------------------------------------------------------------------------- column freeze (2026-11-17)
+JOINED, GUARDED = "joined_clause_kept", "fact_guard_kept"
 
 
-def column_joined_keep(texts, pool_page=False, actual=None, distinct=None):
-    """True if any sentence of the column's prose units (a description / intro, or every plain FAQ answer of
-    an ai_faqs array) is a joined_keep sentence. Such a column is left unchanged (ALL:joined_clause_kept)
-    whenever the rules would otherwise change it."""
-    return any(joined_keep(s, pool_page, actual, distinct) for x in texts for s in split_sentences(x))
+def _decide(s, pool_page, actual, distinct, question, clause, guards):
+    k, c, ok, _ = classify(s, pool_page, clause, question, guards)
+    gen = k is None and c == "generic_noninformative"
+    auto = actual is not None and r6_classify(s, actual, distinct, clause)[0] == "auto"
+    return (k is not None and ok, gen, auto)
+
+
+def joined_keep(s, pool_page=False, actual=None, distinct=None, question=None):
+    """Why the 2026-11-17 guards change the decision for sentence s, or None.
+
+    Three levels are compared: BASE (CLAUSE_CORE, no new guard: the rules before 2026-11-17's second round),
+    JOINED (CLAUSE, no new guard) and FULL (CLAUSE and the guards answers_question / fact_claim). A decision is:
+    narrator sentence deletable, generic referral non-informative, and (cities: actual given) R6 count sentence
+    'auto'. Returns "joined_clause_kept" if BASE and JOINED differ, else "fact_guard_kept" if JOINED and FULL
+    differ, else None."""
+    joined = re.search(CLAUSE_JOIN, s) is not None   # without it CLAUSE matches s exactly when CLAUSE_CORE does
+    if joined and _decide(s, pool_page, actual, distinct, question, CLAUSE_CORE, False) != \
+            _decide(s, pool_page, actual, distinct, question, CLAUSE, False):
+        return JOINED
+    k, c, ok, why = classify(s, pool_page, CLAUSE, question, True)
+    if k is not None and not ok and why in ("answers_question", "fact_claim"):
+        return GUARDED                               # the guards change only the narrator decision
+    return None
+
+
+def column_joined_keep(texts, pool_page=False, actual=None, distinct=None, questions=None):
+    """Freeze reason of a column (a description / intro, or every plain FAQ answer of an ai_faqs array, with its
+    question in `questions`), or None: "joined_clause_kept" if any sentence is a JOINED one, else
+    "fact_guard_kept" if any is a GUARDED one. Such a column is left unchanged (ALL:<reason>) whenever the rules
+    would otherwise change it, so a sentence kept by a 2026-11-17 guard can never lift a field-level skip and
+    unlock a deletion elsewhere in its column; every other column is planned exactly as before 2026-11-17's
+    second round."""
+    questions = questions or [None] * len(texts)
+    reasons = {joined_keep(s, pool_page, actual, distinct, q) for x, q in zip(texts, questions)
+               for s in split_sentences(x)}
+    return JOINED if JOINED in reasons else GUARDED if GUARDED in reasons else None
 
 
 # --------------------------------------------------------------------------- field planner (R2/R3/R4/R6)
@@ -457,7 +534,7 @@ def field_has_insurance(text, pool_page=False, actual=None, distinct=None):
     return False
 
 
-def _pass(text, names, pool_page, rule, actual=None, distinct=None):
+def _pass(text, names, pool_page, rule, actual=None, distinct=None, question=None):
     """One rule pass over one field: (new_text, [(rule, deleted_sentence)], skip_reason).
     rule == "R6" deletes 'auto' count sentences; any other rule label deletes deletable narrator
     sentences. On a skip the text is returned unchanged."""
@@ -468,7 +545,7 @@ def _pass(text, names, pool_page, rule, actual=None, distinct=None):
             if r6_classify(s, actual, distinct)[0] == "auto":
                 marks[i] = rule
         else:
-            kind, cls, ok, why = classify(s, pool_page)
+            kind, cls, ok, why = classify(s, pool_page, question=question)
             if kind is not None and ok:
                 marks[i] = rule
     dels = [(m, s) for m, s in zip(marks, sents) if m]
@@ -487,8 +564,9 @@ def _pass(text, names, pool_page, rule, actual=None, distinct=None):
     return rebuild(text, sents, marks), dels, None
 
 
-def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_rule=None):
-    """Plan the deletions for ONE prose field (a description, an intro, one FAQ answer).
+def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_rule=None, question=None):
+    """Plan the deletions for ONE prose field (a description, an intro, one FAQ answer; for an answer, `question`
+    is its FAQ question).
 
     Passes run in order: R6 (only when the page's published count `actual` is given), then the narrator
     rule (R2 on pool pages, R4 on city pages, R3 when called for pool FAQ answers). Each pass is checked
@@ -510,14 +588,15 @@ def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_ru
         return res
     cur = text
     for rule in (["R6"] if actual is not None else []) + [narr_rule]:
-        new, dels, why = _pass(cur, names, pool_page, rule, actual, distinct)
+        new, dels, why = _pass(cur, names, pool_page, rule, actual, distinct, question)
         if why:
             res["skips"][rule] = why
         elif dels:
             cur = new
             res["deleted"] += dels
-    if res["deleted"] and column_joined_keep([text], pool_page, actual, distinct):
-        return {"after": None, "deleted": [], "skips": {"ALL": "joined_clause_kept"}, "r6": r6}
+    frz = res["deleted"] and column_joined_keep([text], pool_page, actual, distinct, [question])
+    if frz:
+        return {"after": None, "deleted": [], "skips": {"ALL": frz}, "r6": r6}
     if res["deleted"]:
         res["after"] = cur
     return res
@@ -549,12 +628,12 @@ def rebuild(text, sents, marks):
 
 
 # --------------------------------------------------------------------------- R5 (FAQ entries)
-def answer_is_noninformative(a, pool_page=False):
+def answer_is_noninformative(a, pool_page=False, question=None):
     """True when EVERY sentence is a deletable narrator sentence or a generic referral / data-gap sentence
-    with no number, URL or second clause, and at least one sentence is narrator."""
+    with no number, URL or second clause, and at least one sentence is narrator. `question`: the entry's question."""
     narr = 0
     for s in split_sentences(a):
-        kind, cls, ok, _ = classify(s, pool_page)
+        kind, cls, ok, _ = classify(s, pool_page, question=question)
         if kind is not None:
             if not ok:
                 return False
@@ -566,6 +645,12 @@ def answer_is_noninformative(a, pool_page=False):
 
 def _plain_entry(e):
     return isinstance(e, dict) and isinstance(e.get("a"), str) and not (set(e) & {"a2", "a3", "a4", "a5"})
+
+
+def _q(e):
+    """The question of a FAQ entry when it is a string (the SQL reads it the same way), else None."""
+    q = e.get("q") if isinstance(e, dict) else None
+    return q if isinstance(q, str) else None
 
 
 def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None):
@@ -583,7 +668,7 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None):
         if not _plain_entry(e):
             keep.append(e)
             continue
-        if answer_is_noninformative(e["a"], pool_page):
+        if answer_is_noninformative(e["a"], pool_page, _q(e)):
             q = e.get("q")
             if re.search(INSURANCE, e["a"]) or (isinstance(q, str) and re.search(INSURANCE, q)):
                 rep["r5_skip"] = "insurance"
@@ -606,7 +691,7 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None):
     else:
         narr = "R3" if pool_page else "R4"
         for rule in (["R6"] if actual is not None else []) + [narr]:
-            results = [(_pass(e["a"], names, pool_page, rule, actual, distinct) if _plain_entry(e) else None)
+            results = [(_pass(e["a"], names, pool_page, rule, actual, distinct, _q(e)) if _plain_entry(e) else None)
                        for e in cur]
             why = next((r[2] for r in results if r and r[2]), None)
             if why:
@@ -617,8 +702,10 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None):
                     e["a"] = r[0]
                     rep["sent_deleted"] += r[1]
     changed = bool(rep["r5_deleted"]) or bool(rep["sent_deleted"])
-    if changed and column_joined_keep([e["a"] for e in faqs if _plain_entry(e)], pool_page, actual, distinct):
-        rep.update(r5_deleted=[], r5_skip=None, sent_deleted=[], skips={"ALL": "joined_clause_kept"})
+    plain = [e for e in faqs if _plain_entry(e)]
+    frz = changed and column_joined_keep([e["a"] for e in plain], pool_page, actual, distinct, [_q(e) for e in plain])
+    if frz:
+        rep.update(r5_deleted=[], r5_skip=None, sent_deleted=[], skips={"ALL": frz})
         return None, rep
     return (cur if changed else None), rep
 
@@ -680,7 +767,24 @@ def rules():
                  "with core_pattern but not with the full pattern, or an R6 count sentence 'auto' with "
                  "core_pattern but not with the full pattern. Keeping a joined-clause sentence must never "
                  "unlock another deletion in its field, so every other column is planned exactly as with "
-                 "core_pattern (added 2026-11-17)"},
+                 "core_pattern (added 2026-11-17; joined_clause_pattern widened in the third round to ', as' + a "
+                 "subject and a comma-less so / and + a pronoun or article)"},
+        {"id": "answers_question", "pattern": EXISTENCE, "question_pattern": YESNO_Q,
+         "skip": "narrator sentence is kept: in a FAQ answer whose question (ai_faqs[*].q) matches question_pattern "
+                 "(a yes/no question), a narrator sentence that states whether the asked thing exists is the answer "
+                 "(\"I'm not aware of any dedicated indoor municipal swimming pools.\"). Checked last, after every "
+                 "other keep reason (added 2026-11-17, third round)"},
+        {"id": "fact_claim", "pattern": FACT_CLAIM,
+         "skip": "narrator sentence is kept: it says a facility (named, or this / it) is the primary / main / only / "
+                 "sole / biggest / largest / closest / nearest one, 'is the one', or that the data 'only lists / shows "
+                 "...' a facility (\"My records show the Kyle Aquatic Center as the primary public pool offering in "
+                 "Kyle, TX.\"). Checked last (added 2026-11-17, third round)"},
+        {"id": "fact_guard_kept",
+         "skip": "the whole column (a description, an intro, or the whole ai_faqs array, R5 included) is left "
+                 "unchanged and reported as ALL:fact_guard_kept if the rules would change it, it is not "
+                 "ALL:joined_clause_kept, and any of its narrator sentences is deletable without the two guards "
+                 "answers_question / fact_claim but kept with them. Keeping such a sentence must never unlock another "
+                 "deletion in its column (added 2026-11-17, third round)"},
     ]
     narrator = {"split": {"protect_abbrev": ABBREV, "mark": ABBREV_MARK, "split": SPLIT},
                 "roman_numeral_mask": ROMAN_I, "singular": SING, "plural": PLUR, "local_insider": LOCAL,
@@ -738,7 +842,7 @@ def rules():
              "skip": [{"id": "insurance", "pattern": INSURANCE,
                        "skip": "entry kept if its question or answer matches"},
                       {"id": "array_would_be_empty", "skip": "no entry of the row is deleted; reported"},
-                      common_skip[10]],
+                      common_skip[10], common_skip[13]],
              "side_effect": "pp-ssr also prints ai_faqs as FAQPage JSON-LD; deleting an entry removes it there "
                             "too (observed on live pages 2026-11-16)"},
             {"id": "R6", "column": "pp_cities.ai_intro, pp_cities.ai_faqs[*].a", "kind": "delete_sentence",
@@ -761,7 +865,8 @@ def rules():
                                                         "duplicates (duplicate-mapping.csv SAME_FACILITY / "
                                                         "LIKELY_SAME) are merged",
                                       "vague": COUNT_VAGUE},
-             "skip": [common_skip[0], common_skip[7], common_skip[8], common_skip[9], common_skip[10]]},
+             "skip": [common_skip[0], common_skip[7], common_skip[8], common_skip[9], common_skip[10],
+                      common_skip[13]]},
         ],
         "not_rendered": {"pp_pools.ai_tips": "not printed on live pool pages or their JSON-LD (checked "
                                              "2026-11-16); no rule"},
@@ -783,10 +888,11 @@ def run_tests(path=None):
             if why:
                 got = before
         elif rid == "R5":
-            got = "delete_entry" if answer_is_noninformative(before["a"], e.get("pool_page", False)) else "keep_entry"
-        else:
+            got = "delete_entry" if answer_is_noninformative(before["a"], e.get("pool_page", False),
+                                                             _q(before)) else "keep_entry"
+        else:   # "question": the FAQ question of an answer example (R3 / R4 / R6 on ai_faqs[*].a)
             p = plan_field(before, names, e.get("pool_page", rid in ("R2", "R3")), e.get("actual"),
-                           e.get("distinct"), rid if rid in ("R2", "R3", "R4") else None)
+                           e.get("distinct"), rid if rid in ("R2", "R3", "R4") else None, e.get("question"))
             got = p["after"] if p["after"] is not None else before
             why = p["skips"].get(rid) or p["skips"].get("ALL")
         if got != after or (e.get("expect_skip") and e["expect_skip"] != why):
@@ -801,15 +907,46 @@ def run_tests(path=None):
               (". so there .", True), (". So we .", True),
               ("Honestly, I don't have that.", False), ("From what I can tell, I don't have that.", False),
               (". so your .", False), ("., also the .", False), ("., orange .", False), (". also .", False),
-              ("., sometimes .", False), (". soon you .", False))
+              ("., sometimes .", False), (". soon you .", False),
+              # third round (2026-11-17): ", as" + a subject; comma-less so / and + a pronoun or an article
+              ("., as they often change .", True), ("., as schedules can change .", True), ("., as it's .", True),
+              (".,as a .", True), (". run by the city so the vibe .", True), (". popular and it fills .", True),
+              (". and they're .", True), (". and there's .", True), (". so a .", True), (". and the .", True),
+              ("., as well as .", False), ("., as soon as .", False), ("., as of .", False), (". and so on .", False),
+              (". so far .", False), (". so much .", False), (". so many .", False), (". and more .", False),
+              (". asked .", False), ("., asking .", False), (". android .", False), (". sand the .", False))
     for frag, want in shapes:
         if (re.search(CLAUSE_JOIN, frag) is not None) != want:
             fails += 1
             print("FAIL CLAUSE_JOIN shape", repr(frag), "want match" if want else "want no match")
+    # Shape checks for the third-round guards (fragments, not page text).
+    gshapes = ((YESNO_Q, "Are there any indoor pools?", True), (YESNO_Q, "Is there parking?", True),
+               (YESNO_Q, "Does it have a slide?", True), (YESNO_Q, "Isn't it free?", True),
+               (YESNO_Q, "What are the hours?", False), (YESNO_Q, "Island pools?", False),
+               (YESNO_Q, "How much is it?", False),
+               (EXISTENCE, "I'm not aware of any indoor pools.", True), (EXISTENCE, "I don't know of any free pools.", True),
+               (EXISTENCE, "I'm not seeing any dedicated pools.", True), (EXISTENCE, "I haven't seen too many.", True),
+               (EXISTENCE, "There aren't any that I know of.", True), (EXISTENCE, "I'm sure there are other options.", True),
+               (EXISTENCE, "I'd imagine there are other pools.", True), (EXISTENCE, "It's the main one I know of.", True),
+               (EXISTENCE, "I couldn't find any information on parking.", False),
+               (EXISTENCE, "I don't have any specific details.", False),
+               (EXISTENCE, "My data doesn't specify if there are changing rooms.", False),
+               (EXISTENCE, "I only have information on this pool.", False),
+               (FACT_CLAIM, "My records show X as the primary public pool offering.", True),
+               (FACT_CLAIM, "This is the main Aquatic Center.", True), (FACT_CLAIM, "It's the one to pick.", True),
+               (FACT_CLAIM, "My data only lists the Y Pool.", True), (FACT_CLAIM, "your main public option, Z,", True),
+               (FACT_CLAIM, "My main advice is to call.", False), (FACT_CLAIM, "the main thing to know", False),
+               (FACT_CLAIM, "call their main office", False), (FACT_CLAIM, "know the closest lot", False),
+               (FACT_CLAIM, "I only have information on X.", False), (FACT_CLAIM, "an adults-only venue", False))
+    for pat, frag, want in gshapes:
+        if (re.search(pat, frag) is not None) != want:
+            fails += 1
+            print("FAIL guard shape", repr(frag), "want match" if want else "want no match")
     counts = {}
     for e in ex:
         counts[e["rule"]] = counts.get(e["rule"], 0) + 1
-    print(f"{len(ex)} examples {counts}, {len(shapes)} CLAUSE_JOIN shape checks, {fails} failures")
+    print(f"{len(ex)} examples {counts}, {len(shapes)} CLAUSE_JOIN shape checks, {len(gshapes)} guard shape checks, "
+          f"{fails} failures")
     return fails == 0
 
 
@@ -931,22 +1068,22 @@ def live(paths, outdir):
         # narrator presence and the out-of-scope (kept) narrator sentences
         texts = []
         if kind == "pool" and r.get("about"):
-            texts += [("desc", s) for s in split_sentences("\n\n".join(r["about"]))]
+            texts += [("desc", s, None) for s in split_sentences("\n\n".join(r["about"]))]
         if kind == "city" and r.get("intro"):
-            texts += [("intro", s) for s in split_sentences(r["intro"])]
+            texts += [("intro", s, None) for s in split_sentences(r["intro"])]
         for e in faqs:
             if isinstance(e.get("a"), str):
-                texts += [("faq", s) for s in split_sentences(e["a"])]
+                texts += [("faq", s, _q(e)) for s in split_sentences(e["a"])]
                 narr_e = any(classify(s, kind == "pool")[0] is not None for s in split_sentences(e["a"]))
                 inc(S["faq_entries"], kind + "_total")
                 if narr_e:
                     inc(S["faq_entries"], kind + "_with_narrator")
-                    if answer_is_noninformative(e["a"], kind == "pool"):
+                    if answer_is_noninformative(e["a"], kind == "pool", _q(e)):
                         inc(S["faq_entries"], kind + "_noninformative")
                     else:
                         inc(S["faq_entries"], kind + "_narrator_plus_fact")
-        for where, s in texts:
-            k2, cls, ok, why = classify(s, kind == "pool")
+        for where, s, q in texts:
+            k2, cls, ok, why = classify(s, kind == "pool", question=q)
             if k2 is not None:
                 narr_any = True
                 if not ok:

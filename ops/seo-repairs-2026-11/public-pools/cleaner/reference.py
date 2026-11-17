@@ -47,9 +47,11 @@ A5_BACKREF = (r"(?i)^(([a-z0-9'’-]+ ){0,3}(these|those)(?![a-z'’])|([a-z0-9'
 MIN_ANSWER_CHARS = 40   # a FAQ answer that a pass changes
 
 FIELD_MIN = {"desc": MIN_PROSE_CHARS, "intro": MIN_PROSE_CHARS, "answer": MIN_ANSWER_CHARS}
-# The joined-clause freeze of the rules (text_defect_rules.column_joined_keep, 2026-11-17) is set only when the
-# rules would change the column, so unlike the freezes below it is always reported.
-JOINED = "joined_clause_kept"
+# The column freezes of the rules (text_defect_rules.column_joined_keep, 2026-11-17: joined_clause_kept and
+# fact_guard_kept) are set only when the rules would change the column, so unlike the freezes below they are always
+# reported.
+JOINED = T.JOINED
+FREEZES = (T.JOINED, T.GUARDED)
 
 
 def split_with_seps(text):
@@ -59,10 +61,10 @@ def split_with_seps(text):
     return [p.replace(T.ABBREV_MARK, ".") for p in pieces[0::2]], pieces[1::2]
 
 
-def would_touch(text, pool_page, actual=None, distinct=None):
+def would_touch(text, pool_page, actual=None, distinct=None, question=None):
     """True if R6 (cities) or the narrator rule would mark at least one sentence of this text."""
     for s in T.split_sentences(text):
-        kind, cls, ok, why = T.classify(s, pool_page)
+        kind, cls, ok, why = T.classify(s, pool_page, question=question)
         if kind is not None and ok:
             return True
         if actual is not None and T.r6_classify(s, actual, distinct)[0] == "auto":
@@ -70,21 +72,21 @@ def would_touch(text, pool_page, actual=None, distinct=None):
     return False
 
 
-def _marks(sents, names, pool_page, rule, actual, distinct):
+def _marks(sents, names, pool_page, rule, actual, distinct, question=None):
     out = []
     for s in sents:
         if rule == "R6":
             out.append(T.r6_classify(s, actual, distinct)[0] == "auto")
         else:
-            kind, cls, ok, why = T.classify(s, pool_page)
+            kind, cls, ok, why = T.classify(s, pool_page, question=question)
             out.append(kind is not None and ok)
     return out
 
 
-def one_pass(text, names, pool_page, rule, actual=None, distinct=None, field="desc", addendum=True):
+def one_pass(text, names, pool_page, rule, actual=None, distinct=None, field="desc", addendum=True, question=None):
     """Same contract as text_defect_rules._pass: (new_text, [(rule, sentence)], skip_reason)."""
     sents = T.split_sentences(text)
-    marks = _marks(sents, names, pool_page, rule, actual, distinct)
+    marks = _marks(sents, names, pool_page, rule, actual, distinct, question)
     dels = [(rule, s) for m, s in zip(marks, sents) if m]
     if not dels:
         return text, [], None
@@ -133,8 +135,9 @@ def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_ru
         elif dels:
             cur = new
             res["deleted"] += dels
-    if res["deleted"] and T.column_joined_keep([text], pool_page, actual, distinct):   # rules 2026-11-17
-        return {"after": None, "deleted": [], "skips": {"ALL": "joined_clause_kept"}}
+    frz = res["deleted"] and T.column_joined_keep([text], pool_page, actual, distinct)   # rules 2026-11-17
+    if frz:
+        return {"after": None, "deleted": [], "skips": {"ALL": frz}}
     if res["deleted"]:
         res["after"] = cur
     return res
@@ -150,7 +153,7 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None, addendum
         if not T._plain_entry(e):
             keep.append(e)
             continue
-        if T.answer_is_noninformative(e["a"], pool_page):
+        if T.answer_is_noninformative(e["a"], pool_page, T._q(e)):
             q = e.get("q")
             if re.search(T.INSURANCE, e["a"]) or (isinstance(q, str) and re.search(T.INSURANCE, q)):
                 rep["r5_skip"] = "insurance"
@@ -163,7 +166,7 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None, addendum
         rep["r5_skip"], rep["r5_deleted"], keep = "array_would_be_empty", [], list(faqs)
     cur = [dict(e) if isinstance(e, dict) else e for e in keep]
     plain = [e for e in cur if T._plain_entry(e)]
-    rep["would_touch"] = any(would_touch(e["a"], pool_page, actual, distinct) for e in plain)
+    rep["would_touch"] = any(would_touch(e["a"], pool_page, actual, distinct, T._q(e)) for e in plain)
     if any(T.field_has_insurance(e["a"], pool_page, actual, distinct) for e in plain):
         rep["skips"]["ALL"] = "insurance"
     elif addendum and any(re.search(T.INSURANCE, e["a"]) or (isinstance(e.get("q"), str) and
@@ -174,7 +177,7 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None, addendum
     else:
         narr = "R3" if pool_page else "R4"
         for rule in (["R6"] if actual is not None else []) + [narr]:
-            results = [(one_pass(e["a"], names, pool_page, rule, actual, distinct, "answer", addendum)
+            results = [(one_pass(e["a"], names, pool_page, rule, actual, distinct, "answer", addendum, T._q(e))
                         if T._plain_entry(e) else None) for e in cur]
             why = next((r[2] for r in results if r and r[2]), None)
             if why:
@@ -185,8 +188,11 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None, addendum
                     e["a"] = r[0]
                     rep["sent_deleted"] += r[1]
     changed = bool(rep["r5_deleted"]) or bool(rep["sent_deleted"])
-    if changed and T.column_joined_keep([e["a"] for e in faqs if T._plain_entry(e)], pool_page, actual, distinct):
-        rep.update(r5_deleted=[], r5_skip=None, sent_deleted=[], skips={"ALL": "joined_clause_kept"})
+    plain0 = [e for e in faqs if T._plain_entry(e)]
+    frz = changed and T.column_joined_keep([e["a"] for e in plain0], pool_page, actual, distinct,
+                                           [T._q(e) for e in plain0])
+    if frz:
+        rep.update(r5_deleted=[], r5_skip=None, sent_deleted=[], skips={"ALL": frz})
         return None, rep
     return (cur if changed else None), rep
 
@@ -216,14 +222,14 @@ def plan_pool(row, addendum=True):
     d = row.get("ai_description")
     if d is not None:
         p = plan_field(d, names, True, addendum=addendum)
-        if p["skips"].get("ALL", JOINED) != JOINED and not would_touch(d, True):
+        if p["skips"].get("ALL", JOINED) not in FREEZES and not would_touch(d, True):
             del p["skips"]["ALL"]
         out["ai_description"] = {"new": p["after"], "rules": sorted({r for r, _ in p["deleted"]}),
                                  "skips": p["skips"]}
     f = row.get("ai_faqs")
     if isinstance(f, list):
         new, rep = plan_faqs(f, names, True, addendum=addendum)
-        if rep["skips"].get("ALL", JOINED) != JOINED and not rep["would_touch"]:
+        if rep["skips"].get("ALL", JOINED) not in FREEZES and not rep["would_touch"]:
             del rep["skips"]["ALL"]
         rules = (["R5"] if rep["r5_deleted"] else []) + sorted({r for r, _ in rep["sent_deleted"]})
         sk = dict(rep["skips"])
@@ -239,14 +245,14 @@ def plan_city(row, actual, distinct=None, addendum=True):
     t = row.get("ai_intro")
     if t is not None:
         p = plan_field(t, names, False, actual, distinct, addendum=addendum)
-        if p["skips"].get("ALL", JOINED) != JOINED and not would_touch(t, False, actual, distinct):
+        if p["skips"].get("ALL", JOINED) not in FREEZES and not would_touch(t, False, actual, distinct):
             del p["skips"]["ALL"]
         out["ai_intro"] = {"new": p["after"], "rules": sorted({r for r, _ in p["deleted"]}, key="R6R4".index),
                            "skips": p["skips"]}
     f = row.get("ai_faqs")
     if isinstance(f, list):
         new, rep = plan_faqs(f, names, False, actual, distinct, addendum=addendum)
-        if rep["skips"].get("ALL", JOINED) != JOINED and not rep["would_touch"]:
+        if rep["skips"].get("ALL", JOINED) not in FREEZES and not rep["would_touch"]:
             del rep["skips"]["ALL"]
         rules = (["R5"] if rep["r5_deleted"] else []) + sorted({r for r, _ in rep["sent_deleted"]},
                                                                key="R6R4".index)

@@ -2,10 +2,11 @@
  "ALL": {
   "desc_rows_skipped_insurance": 15,
   "desc_rows_skipped_joined_clause_kept": 5,
+  "faq_rows_skipped_fact_guard_kept": 16,
   "faq_rows_skipped_insurance": 14,
-  "faq_rows_skipped_joined_clause_kept": 25,
+  "faq_rows_skipped_joined_clause_kept": 26,
   "intro_rows_skipped_insurance": 2,
-  "intro_rows_skipped_joined_clause_kept": 14
+  "intro_rows_skipped_joined_clause_kept": 16
  },
  "R1": {
   "no_best_for_line": 315,
@@ -13,30 +14,30 @@
   "skip_empty_list": 7
  },
  "R2": {
-  "desc_rows_changed": 204,
+  "desc_rows_changed": 203,
   "desc_rows_skipped_deleted_sentence_names_an_entity": 10,
-  "desc_rows_skipped_next_sentence_refers_back": 190,
-  "desc_sentences_deleted": 214
+  "desc_rows_skipped_next_sentence_refers_back": 187,
+  "desc_sentences_deleted": 213
  },
  "R3": {
-  "faq_rows_changed": 577,
-  "faq_rows_skipped_deleted_sentence_names_an_entity": 60,
-  "faq_rows_skipped_next_sentence_refers_back": 213,
-  "faq_sentences_deleted": 714
+  "faq_rows_changed": 544,
+  "faq_rows_skipped_deleted_sentence_names_an_entity": 59,
+  "faq_rows_skipped_next_sentence_refers_back": 211,
+  "faq_sentences_deleted": 668
  },
  "R4": {
-  "faq_rows_changed": 28,
+  "faq_rows_changed": 12,
   "faq_rows_skipped_deleted_sentence_names_an_entity": 7,
-  "faq_rows_skipped_next_sentence_refers_back": 19,
-  "faq_sentences_deleted": 33,
-  "intro_rows_changed": 81,
+  "faq_rows_skipped_next_sentence_refers_back": 14,
+  "faq_sentences_deleted": 12,
+  "intro_rows_changed": 75,
   "intro_rows_skipped_deleted_sentence_names_an_entity": 6,
-  "intro_rows_skipped_next_sentence_refers_back": 46,
-  "intro_sentences_deleted": 90
+  "intro_rows_skipped_next_sentence_refers_back": 44,
+  "intro_sentences_deleted": 83
  },
  "R5": {
-  "pool_entries": 46,
-  "pool_rows": 45
+  "pool_entries": 41,
+  "pool_rows": 40
  },
  "R6": {
   "faq_rows_changed": 1,
@@ -50,8 +51,8 @@
   "city_narrator_plus_fact": 228,
   "city_total": 1900,
   "city_with_narrator": 228,
-  "pool_narrator_plus_fact": 2331,
-  "pool_noninformative": 47,
+  "pool_narrator_plus_fact": 2335,
+  "pool_noninformative": 43,
   "pool_total": 5322,
   "pool_with_narrator": 2378
  },
@@ -63,6 +64,10 @@
   "city.faq:founder:fact_vocabulary": [
    "My site, PoolRentalNearMe.com, isn't free, but it lets you rent private backyard pools by the hour, which can be a good option for groups or if you want privacy without a membership.",
    "My company, PoolRentalNearMe.com, helps people in Johns Creek find and book private pools for a few hours, without needing a membership."
+  ],
+  "city.faq:gap:answers_question": [
+   "I'm not aware of any free public pools in Glendora.",
+   "I don't know of any completely free public swimming pools in the area."
   ],
   "city.faq:gap:number": [
    "I don't know of any completely free options, but daily passes are usually available at a reasonable cost if you're just looking for a one-off swim."
@@ -77,6 +82,10 @@
   "city.faq:opinion:answer_polarity": [
    "Yes, we have both.",
    "Yes, we do."
+  ],
+  "city.faq:opinion:fact_claim": [
+   "From what I know, the Wackford Aquatic Complex is really the main spot for families.",
+   "It's the primary public facility for family swimming around here."
   ],
   "city.faq:opinion:fact_vocabulary": [
    "There aren't any publicly accessible indoor pools that I'm aware of.",
@@ -100,6 +109,9 @@
   "city.intro:insurance:mentions insurance/liability/coverage/claims/damage": [
    "We've got you covered for that kind of info too.",
    "We've got a decent number of public pools listed for Wake Forest, and they cover the basics for most swimmers looking for a public spot."
+  ],
+  "city.intro:opinion:fact_claim": [
+   "If you're new around here and looking to get in the water, your main public option, Las Flores Pool, serves the community pretty well."
   ],
   "city.intro:opinion:fact_vocabulary": [
    "It's not uncommon for folks to be looking for a place to swim from May all the way through September, sometimes even into October if we get a late warm spell.",
@@ -165,6 +177,9 @@
    "I mean, they even have their own project site on the Philly.gov website, that's a good sign that it's important to the area.",
    "I've seen its website listed as northwoods-hoa.org, which makes me wonder if it's more for residents than the general public."
   ],
+  "pool.faq:advice:fact_claim": [
+   "If Double Oaks is packed, I'd suggest checking their main website for other aquatic centers or community pools around the city."
+  ],
   "pool.faq:advice:fact_vocabulary": [
    "If this pool doesn't work out, I'd check the Shreveport Parks and Recreation department for other public pools or splash pads.",
    "I'd check if they have dedicated shallow areas."
@@ -183,6 +198,14 @@
   ],
   "pool.faq:founder:fact_vocabulary": [
    "If Mason Swimming Pool's limited hours don't work for you, I'd suggest checking the Houston Parks and Recreation Department site or looking on PoolRentalNearMe.com for more options in your area."
+  ],
+  "pool.faq:gap:answers_question": [
+   "I haven't heard of any parking issues there.",
+   "I haven't heard of any major issues there."
+  ],
+  "pool.faq:gap:fact_claim": [
+   "Our data for Hesperia only lists the Civic Plaza Pool as a public option right now.",
+   "I only have detailed information on the Coral Springs Community Pool as a primary option."
   ],
   "pool.faq:gap:fact_vocabulary": [
    "I only have information on the Conroe Aquatic Center for indoor swimming.",
@@ -208,6 +231,14 @@
    "Yes, I think so.",
    "Yes, I'd say it's designed with families in mind."
   ],
+  "pool.faq:opinion:answers_question": [
+   "I'm sure there are plenty of other public pools run by the city's parks department.",
+   "I'd imagine there are other options."
+  ],
+  "pool.faq:opinion:fact_claim": [
+   "Based on the information I have, the City of Coronado Aquatics Center is the primary public pool listed in Coronado.",
+   "This is the main public aquatic center I have information on."
+  ],
   "pool.faq:opinion:fact_vocabulary": [
    "I think that pricing is pretty fair, especially with the competition-style amenities they have available.",
    "For weekday options, I'd suggest checking the City of San Antonio Parks and Recreation website for a full list of their public pools and operating schedules."
@@ -226,19 +257,22 @@
  },
  "kept_narrator": {
   "city.faq:founder:fact_vocabulary": 4,
+  "city.faq:gap:answers_question": 24,
   "city.faq:gap:number": 1,
   "city.faq:gap:second_clause": 11,
   "city.faq:insurance:mentions insurance/liability/coverage/claims/damage": 1,
   "city.faq:opinion:answer_polarity": 4,
-  "city.faq:opinion:fact_vocabulary": 48,
+  "city.faq:opinion:fact_claim": 2,
+  "city.faq:opinion:fact_vocabulary": 47,
   "city.faq:opinion:number": 2,
-  "city.faq:opinion:second_clause": 98,
+  "city.faq:opinion:second_clause": 99,
   "city.intro:advice:number": 6,
   "city.intro:founder:fact_vocabulary": 2,
   "city.intro:insurance:mentions insurance/liability/coverage/claims/damage": 2,
-  "city.intro:opinion:fact_vocabulary": 168,
+  "city.intro:opinion:fact_claim": 1,
+  "city.intro:opinion:fact_vocabulary": 167,
   "city.intro:opinion:number": 48,
-  "city.intro:opinion:second_clause": 299,
+  "city.intro:opinion:second_clause": 307,
   "pool.desc:advice:fact_vocabulary": 14,
   "pool.desc:advice:number": 132,
   "pool.desc:advice:second_clause": 42,
@@ -247,25 +281,30 @@
   "pool.desc:gap:number": 8,
   "pool.desc:gap:second_clause": 26,
   "pool.desc:insurance:mentions insurance/liability/coverage/claims/damage": 15,
-  "pool.desc:opinion:fact_vocabulary": 222,
+  "pool.desc:opinion:fact_vocabulary": 205,
   "pool.desc:opinion:local_marker_on_pool_page": 10,
   "pool.desc:opinion:number": 916,
-  "pool.desc:opinion:second_clause": 672,
+  "pool.desc:opinion:second_clause": 693,
   "pool.desc:opinion:url_or_contact": 4,
-  "pool.faq:advice:fact_vocabulary": 126,
+  "pool.faq:advice:fact_claim": 1,
+  "pool.faq:advice:fact_vocabulary": 124,
   "pool.faq:advice:number": 340,
-  "pool.faq:advice:second_clause": 67,
+  "pool.faq:advice:second_clause": 75,
   "pool.faq:advice:url_or_contact": 23,
   "pool.faq:founder:fact_vocabulary": 1,
+  "pool.faq:gap:answers_question": 3,
+  "pool.faq:gap:fact_claim": 4,
   "pool.faq:gap:fact_vocabulary": 7,
   "pool.faq:gap:number": 26,
-  "pool.faq:gap:second_clause": 240,
+  "pool.faq:gap:second_clause": 244,
   "pool.faq:gap:url_or_contact": 2,
   "pool.faq:insurance:mentions insurance/liability/coverage/claims/damage": 13,
   "pool.faq:opinion:answer_polarity": 34,
-  "pool.faq:opinion:fact_vocabulary": 134,
+  "pool.faq:opinion:answers_question": 21,
+  "pool.faq:opinion:fact_claim": 11,
+  "pool.faq:opinion:fact_vocabulary": 130,
   "pool.faq:opinion:number": 178,
-  "pool.faq:opinion:second_clause": 343,
+  "pool.faq:opinion:second_clause": 347,
   "pool.faq:opinion:url_or_contact": 1
  },
  "narrator_pages": {

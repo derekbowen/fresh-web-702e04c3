@@ -165,7 +165,8 @@ select f.tbl, f.rid::text, f.col, f.ent, f.k, f3.s, coalesce(p.new_text is not n
     md.append("Every change below either deletes whole sentences, deletes whole FAQ entries, or re-joins an existing "
               "list (R1). No word is added or reworded. Rules: [rules.json](rules.json), "
               "[TEXT-DEFECTS.md](TEXT-DEFECTS.md); field-level additions A1-A5: [RUNBOOK.md](RUNBOOK.md) section 3. "
-              "Regenerated 2026-11-16 after the content review narrowed the rules (RUNBOOK.md section 3a); invented "
+              "Regenerated 2026-11-16 after the content review narrowed the rules (RUNBOOK.md section 3a), and after "
+              "each 2026-11-17 round (TEXT-DEFECTS.md section 10); invented "
               "founder-voice sentences that stay are listed in [FOUNDER-VOICE-REMAINING.md](FOUNDER-VOICE-REMAINING.md).\n")
     md.append("## Totals on the surrogate (2,476 live pages, 2026-11-16)\n")
     md.append("| Table | Column | Rules | Fields changed |\n|---|---|---|---|")
@@ -201,8 +202,9 @@ select f.tbl, f.rid::text, f.col, f.ent, f.k, f3.s, coalesce(p.new_text is not n
     md.append("## Every skipped field, with the reason\n")
     md.append("Production row ids come from the production dry run (section 3). Here each field is identified by its "
               "live page. `ALL:` = the field was frozen before any sentence rule ran (insurance word, A3, A4), or, for "
-              "`ALL:joined_clause_kept`, left unchanged after the rules because a sentence in it is kept only by the "
-              "joined-clause guard of 2026-11-17 (TEXT-DEFECTS.md section 10); "
+              "`ALL:joined_clause_kept` / `ALL:fact_guard_kept`, left unchanged after the rules because a sentence in it "
+              "is kept only by the joined-clause guard of 2026-11-17 or by the answers_question / fact_claim guards of "
+              "its third round (TEXT-DEFECTS.md sections 10b and 10c); "
               "`R5:`/`R6:`/`R2:`/`R3:`/`R4:` = that pass was skipped and the field left as the other passes made it. "
               "Reasons: `next_sentence_refers_back` (the next kept sentence starts with It/They/That/So ...), "
               "`deleted_sentence_names_an_entity`, `field_would_be_empty`, `below_min_length` (A1), `paragraph_break` "

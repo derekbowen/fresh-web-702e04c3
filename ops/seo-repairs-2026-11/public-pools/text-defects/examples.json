@@ -1,5 +1,5 @@
 {
- "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test 2026-11-16 review: 5 R6 examples revised (rules narrowed) and 10 regression examples added from the content review (live page text of 2026-11-16); for those, 'after' is the text a person keeps (in each case the whole field), decided from the review finding, not from the cleaner's output. 2026-11-17 Codex review of PR #9: a second clause addressed to the reader (', so you'd ...') now keeps the sentence; 2 examples revised (Murray R4, Aurora R6: 'after' is now the whole field) and 3 must-keep regression examples added (live page text of 2026-11-16). 2026-11-17, second round (independent check of the clause guard): a joined second clause after a comma (', so / and / or / plus / but / then / yet ...') or 'so' + a subject pronoun keeps the sentence, and a field in which that changes a decision is left unchanged (ALL:joined_clause_kept); 5 examples revised (Livermore R2, Omaha R4, Miami R4, Sparks R5, Mount Pleasant R6) and 6 must-keep regression examples added (live page text of 2026-11-16).",
+ "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test 2026-11-16 review: 5 R6 examples revised (rules narrowed) and 10 regression examples added from the content review (live page text of 2026-11-16); for those, 'after' is the text a person keeps (in each case the whole field), decided from the review finding, not from the cleaner's output. 2026-11-17 Codex review of PR #9: a second clause addressed to the reader (', so you'd ...') now keeps the sentence; 2 examples revised (Murray R4, Aurora R6: 'after' is now the whole field) and 3 must-keep regression examples added (live page text of 2026-11-16). 2026-11-17, second round (independent check of the clause guard): a joined second clause after a comma (', so / and / or / plus / but / then / yet ...') or 'so' + a subject pronoun keeps the sentence, and a field in which that changes a decision is left unchanged (ALL:joined_clause_kept); 5 examples revised (Livermore R2, Omaha R4, Miami R4, Sparks R5, Mount Pleasant R6) and 6 must-keep regression examples added (live page text of 2026-11-16). 2026-11-17, third round (independent check of 9473f6a): ', as' + a subject and a comma-less 'so' / 'and' + a pronoun or article are joined clauses; in a FAQ answer to a yes/no question a narrator existence claim is the answer (answers_question; the entry's question is given in 'question', or in before.q for R5); a narrator sentence that ranks a facility (primary / main / only ...) is a fact claim (fact_claim); a field in which one of the two new reasons changes a decision is left unchanged (ALL:fact_guard_kept). 8 must-keep regression examples added (live page text of 2026-11-16; 'after' is the whole field, keep_entry for R5); all 8 fail on the previous rules.",
  "examples": [
   {
    "rule": "R1",
@@ -1046,6 +1046,130 @@
    "pool_page": false,
    "actual": 5,
    "expect_skip": "joined_clause_kept"
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/california/coronado/ (ai_faqs[3].a)",
+   "source": "live page fetched 2026-11-16T19:36:35Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    null,
+    "Coronado",
+    "California"
+   ],
+   "pool_page": false,
+   "actual": 3,
+   "question": "Are there any indoor swimming pools in Coronado?",
+   "before": "Most of the pools here are outdoors, taking advantage of the great weather. I'm not aware of any dedicated indoor municipal swimming pools. The mild climate makes outdoor swimming comfortable almost any day of the year.",
+   "after": "Most of the pools here are outdoors, taking advantage of the great weather. I'm not aware of any dedicated indoor municipal swimming pools. The mild climate makes outdoor swimming comfortable almost any day of the year.",
+   "note": "answers_question: a yes/no question answered by a narrator existence claim ('I'm not aware of any dedicated indoor municipal swimming pools.')"
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/oklahoma/norman/ (ai_faqs[3].a)",
+   "source": "live page fetched 2026-11-16T19:39:57Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    null,
+    "Norman",
+    "Oklahoma"
+   ],
+   "pool_page": false,
+   "actual": 2,
+   "question": "Are there indoor pools available in Norman for year-round swimming?",
+   "before": "Our directory for Norman focuses on outdoor-centric options specific to summer fun. I'm not seeing any dedicated public indoor pools listed in our system. For year-round indoor swimming, you might need to check with local gyms or community centers.",
+   "after": "Our directory for Norman focuses on outdoor-centric options specific to summer fun. I'm not seeing any dedicated public indoor pools listed in our system. For year-round indoor swimming, you might need to check with local gyms or community centers.",
+   "note": "answers_question: 'I'm not seeing any dedicated public indoor pools listed in our system.' answers 'Are there indoor pools available in Norman ...?'"
+  },
+  {
+   "rule": "R3",
+   "ref": "live pool page /public-pools/texas/kyle/kyle-aquatic-center/ (ai_faqs[2].a)",
+   "source": "live page fetched 2026-11-16T19:56:05Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    "Kyle Aquatic Center",
+    "Kyle",
+    "Texas"
+   ],
+   "pool_page": true,
+   "question": "Are there other public pools in Kyle, TX, if the Aquatic Center is busy?",
+   "before": "My records show the Kyle Aquatic Center as the primary public pool offering in Kyle, TX. If you're looking for alternatives, you might need to check neighboring towns or see if there are private clubs with day passes.",
+   "after": "My records show the Kyle Aquatic Center as the primary public pool offering in Kyle, TX. If you're looking for alternatives, you might need to check neighboring towns or see if there are private clubs with day passes.",
+   "note": "fact_claim: 'My records show the Kyle Aquatic Center as the primary public pool offering in Kyle, TX.' answers 'Are there other public pools in Kyle, TX ...?'"
+  },
+  {
+   "rule": "R3",
+   "ref": "live pool page /public-pools/california/temecula/temecula-community-pool/ (ai_faqs[2].a)",
+   "source": "live page fetched 2026-11-16T20:02:19Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    "Temecula Community Pool",
+    "Temecula",
+    "California"
+   ],
+   "pool_page": true,
+   "question": "Are there other public swimming pools in Temecula, CA?",
+   "before": "My records show this as the primary community pool for Temecula. For other options, you might check if local high schools open their pools to the public, or look into private gyms with pools. The city's parks and recreation website might list others.",
+   "after": "My records show this as the primary community pool for Temecula. For other options, you might check if local high schools open their pools to the public, or look into private gyms with pools. The city's parks and recreation website might list others.",
+   "note": "fact_claim: 'My records show this as the primary community pool for Temecula.'"
+  },
+  {
+   "rule": "R5",
+   "ref": "live pool page /public-pools/kentucky/lexington/southland-aquatic-center-pool/ (ai_faqs[0])",
+   "source": "live page fetched 2026-11-16T19:49:33Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    "Southland Aquatic Center Pool",
+    "Lexington",
+    "Kentucky"
+   ],
+   "before": {
+    "q": "What are the hours for Southland Aquatic Center Pool?",
+    "a": "I couldn't nail down specific daily hours, as they often change seasonally or for special events. Your best bet is to call the facility directly or check the Lexington Parks and Recreation website before you go."
+   },
+   "pool_page": true,
+   "after": "keep_entry",
+   "note": "', as' + subject is a second clause: 'I couldn't nail down specific daily hours, as they often change seasonally or for special events.' says the hours change seasonally; the entry was deleted whole"
+  },
+  {
+   "rule": "R3",
+   "ref": "live pool page /public-pools/california/palo-alto/rinconada-pool/ (ai_faqs[0].a)",
+   "source": "live page fetched 2026-11-16T19:49:00Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    "Rinconada Pool",
+    "Palo Alto",
+    "California"
+   ],
+   "pool_page": true,
+   "question": "How much does it cost to use Rinconada Pool?",
+   "before": "For a drop-in visit, it's $6 for adults and $4 for youth. From what I've seen, they also offer various passes if you plan to visit regularly. I'd definitely check their website or call them for details on those, as pass structures can vary.",
+   "after": "For a drop-in visit, it's $6 for adults and $4 for youth. From what I've seen, they also offer various passes if you plan to visit regularly. I'd definitely check their website or call them for details on those, as pass structures can vary.",
+   "note": "', as' + subject: '..., as pass structures can vary.'"
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/california/hayward/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:37:40Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    null,
+    "Hayward",
+    "California"
+   ],
+   "pool_page": false,
+   "actual": 4,
+   "before": "Out here in Hayward, when those summer months roll around and the sun gets serious, having a place to cool off is a big deal. Folks around here really look forward to pool season, which usually kicks off in late spring, around May, and runs straight through September, sometimes even into October if we get a nice, long stretch of warm weather. We've got a mixed swim scene. You'll see a lot of families heading to the pools, especially on weekends. It's also a big spot for lap swimmers keeping up with their routine. If you're new to the area and looking for a swim, the public facilities are a good starting point. You can usually find their schedules and availability online easily enough.",
+   "after": "Out here in Hayward, when those summer months roll around and the sun gets serious, having a place to cool off is a big deal. Folks around here really look forward to pool season, which usually kicks off in late spring, around May, and runs straight through September, sometimes even into October if we get a nice, long stretch of warm weather. We've got a mixed swim scene. You'll see a lot of families heading to the pools, especially on weekends. It's also a big spot for lap swimmers keeping up with their routine. If you're new to the area and looking for a swim, the public facilities are a good starting point. You can usually find their schedules and availability online easily enough.",
+   "expect_skip": "joined_clause_kept",
+   "note": "comma-less join 'and the sun gets serious' (and + article): the sentence is kept"
+  },
+  {
+   "rule": "R2",
+   "ref": "live pool page /public-pools/virginia/fairfax/fairfax-community-pool/ (ai_description)",
+   "source": "live page fetched 2026-11-16T19:44:26Z (2026-11-17 third-round regression case: must keep)",
+   "names": [
+    "Fairfax Community Pool",
+    "Fairfax",
+    "Virginia"
+   ],
+   "pool_page": true,
+   "before": "Honestly, finding a good indoor pool can be tough, but Fairfax Community Pool looks pretty solid. I've seen a lot of places with way fewer reviews, so 331 reviews at 4.6 stars tells me people generally like it there. It's an indoor spot, which is a big plus if you want to swim year-round without worrying about the weather. They have lap lanes, which is key for anyone trying to get some serious swimming in. And a sauna, that's a nice touch after a workout. For a family of four, say two adults and two kids, admission would be $20 ($7 for each adult, $3 for each child). Fairfax isn't a huge city, around 24,000 folks, so a community pool like this probably gets a decent amount of use. I'd expect it to be well-maintained and a good option for pretty much anyone looking to get in the water.",
+   "after": "Honestly, finding a good indoor pool can be tough, but Fairfax Community Pool looks pretty solid. I've seen a lot of places with way fewer reviews, so 331 reviews at 4.6 stars tells me people generally like it there. It's an indoor spot, which is a big plus if you want to swim year-round without worrying about the weather. They have lap lanes, which is key for anyone trying to get some serious swimming in. And a sauna, that's a nice touch after a workout. For a family of four, say two adults and two kids, admission would be $20 ($7 for each adult, $3 for each child). Fairfax isn't a huge city, around 24,000 folks, so a community pool like this probably gets a decent amount of use. I'd expect it to be well-maintained and a good option for pretty much anyone looking to get in the water.",
+   "note": "comma-less join 'and a good option' (and + article): the sentence is kept"
   }
  ]
 }

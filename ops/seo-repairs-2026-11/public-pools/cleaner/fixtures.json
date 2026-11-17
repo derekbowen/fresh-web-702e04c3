@@ -2,85 +2,151 @@
  "about": "Build cleaner/fixtures.json: the rows the local test loads.\n\n    python3 -I cleaner/build_fixtures.py\n\nREAL rows: chosen from the live-page extract of 2026-11-16 (surrogate.py explains how a page becomes a row),\nup to PER_CATEGORY rows per outcome category of the reference cleaner (every rule, every skip reason that occurs\nin the data, and rows that must not change), selected by md5(url + SEED) so the choice is reproducible.\nSYNTHETIC rows: hand-written edge cases (marked \"synthetic\": true, slug prefix \"synthetic-\", state\n\"synthetic-state\"), each with a hand-derived expected result in \"expect\" that does not come from the code.\nmust_keep: for every fixture field, every sentence that no rule is allowed to delete (not a deletable narrator\nsentence, not an R6 'auto' count sentence, not inside a wholly non-informative FAQ answer). The test checks\nthat all of them are still in the field after apply.\nOpens no network or database connection.",
  "seed": "fixtures-2026-11-16",
  "source": "text-defects/live-2026-11-16/live-fields.jsonl.gz (live pages fetched 2026-11-16T19:36Z-20:05Z)",
- "real_text_rows": 96,
+ "real_text_rows": 102,
  "categories_covered": {
-  "city.ai_faqs:changed:R4": 4,
+  "city.ai_faqs:changed:R4": 3,
+  "city.ai_faqs:skip:ALL:fact_guard_kept": 3,
   "city.ai_faqs:skip:ALL:insurance_anywhere": 1,
   "city.ai_faqs:skip:R4:deleted_sentence_names_an_entity": 3,
-  "city.ai_faqs:skip:R4:next_sentence_refers_back": 4,
+  "city.ai_faqs:skip:R4:next_sentence_refers_back": 3,
   "city.ai_faqs:skip:R6:next_sentence_refers_back": 2,
   "city.ai_faqs:skip:R6:next_sentence_refers_back_a5": 1,
-  "city.ai_faqs:unchanged": 27,
-  "city.ai_intro:changed:R4": 8,
+  "city.ai_faqs:unchanged": 29,
+  "city.ai_intro:changed:R4": 9,
   "city.ai_intro:changed:R6": 1,
   "city.ai_intro:skip:ALL:insurance_anywhere": 3,
   "city.ai_intro:skip:ALL:joined_clause_kept": 3,
-  "city.ai_intro:skip:R4:deleted_sentence_names_an_entity": 3,
+  "city.ai_intro:skip:R4:deleted_sentence_names_an_entity": 4,
   "city.ai_intro:skip:R4:next_sentence_refers_back": 5,
   "city.ai_intro:skip:R6:deleted_sentence_names_an_entity": 2,
-  "city.ai_intro:unchanged": 19,
+  "city.ai_intro:unchanged": 20,
   "city.r6_statement:auto": 6,
   "city.r6_statement:consistent": 4,
   "city.r6_statement:hold_duplicate": 1,
   "city.r6_statement:review_mixed": 4,
   "city.r6_statement:review_scope": 5,
   "city.r6_statement:review_subtype": 2,
-  "city.r6_statement:vague": 3,
-  "pool.ai_best_for:changed:R1": 48,
+  "city.r6_statement:vague": 4,
+  "pool.ai_best_for:changed:R1": 51,
   "pool.ai_best_for:null": 3,
   "pool.ai_best_for:skip:R1:empty_list": 3,
   "pool.ai_best_for:unchanged": 3,
-  "pool.ai_description:changed:R2": 6,
+  "pool.ai_description:changed:R2": 7,
   "pool.ai_description:skip:ALL:insurance": 3,
   "pool.ai_description:skip:ALL:insurance_anywhere": 3,
   "pool.ai_description:skip:ALL:joined_clause_kept": 3,
   "pool.ai_description:skip:R2:deleted_sentence_names_an_entity": 3,
   "pool.ai_description:skip:R2:next_sentence_refers_back": 7,
   "pool.ai_description:skip:R2:next_sentence_refers_back_a5": 1,
-  "pool.ai_description:unchanged": 26,
-  "pool.ai_faqs:changed:R3": 10,
+  "pool.ai_description:unchanged": 28,
+  "pool.ai_faqs:changed:R3": 9,
   "pool.ai_faqs:changed:R5": 4,
   "pool.ai_faqs:changed:R5+R3": 3,
+  "pool.ai_faqs:skip:ALL:fact_guard_kept": 3,
   "pool.ai_faqs:skip:ALL:insurance": 3,
   "pool.ai_faqs:skip:ALL:insurance_anywhere": 3,
   "pool.ai_faqs:skip:ALL:joined_clause_kept": 3,
   "pool.ai_faqs:skip:R3:below_min_length": 3,
   "pool.ai_faqs:skip:R3:deleted_sentence_names_an_entity": 3,
   "pool.ai_faqs:skip:R3:next_sentence_refers_back": 4,
-  "pool.ai_faqs:unchanged": 16
+  "pool.ai_faqs:unchanged": 17
  },
  "cities": [
   {
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
-   "url": "https://www.poolrentalnearme.com/public-pools/arizona/queen-creek/",
-   "state_slug": "arizona",
-   "city_slug": "queen-creek",
-   "city_name": "Queen Creek",
-   "ai_intro": "When the Arizona sun really kicks in, Queen Creek knows how to cool off. We're talking long pool seasons out here, usually getting started in May and running strong through September, sometimes even into October if the weather holds up. It's a lifesaver with those triple-digit days. Folks generally use the pools for everything: families splashing around, a good number of lap swimmers, and just a general escape from the heat. If you're new to the area and looking for a place to swim, the public aquatic centers are a great starting point for day passes. But for something more private or just a different vibe, keep in mind there are a lot of backyard pools available for rent by the hour. It's how many of us locals find a quieter swim without needing a full membership somewhere.",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "url": "https://www.poolrentalnearme.com/public-pools/texas/sugar-land/",
+   "state_slug": "texas",
+   "city_slug": "sugar-land",
+   "city_name": "Sugar Land",
+   "ai_intro": "Living in Sugar Land, you know the heat can stick around for a good chunk of the year. That means our pool season starts early, usually by May, and can run well into October, sometimes even longer if we get a warm fall. Even in the cooler months, indoor pools keep things going. It's a pretty active swim scene here, especially for families. With a population pushing 118,000, there's a real need for good places to swim, and folks here definitely use them. If you're new to the area or just looking for a spot to cool off, you'll find a mix of options. Some are city-run and pretty accessible, others might be through a rec center or a gym with different memberships. But overall, people here hit the water a lot, and it's mostly about beating the heat and having fun with the family.",
    "ai_faqs": [
     {
-     "q": "What is the typical pool season in Queen Creek?",
-     "a": "Public pools in Queen Creek generally open around May and stay open through September. Sometimes, facilities will extend hours or remain open later into October, depending on the weather and local demand. It's a long season to beat the Arizona heat."
+     "q": "What's the typical pool season in Sugar Land?",
+     "a": "Outdoor pools usually open up in May and stay open through September, sometimes even into October depending on the weather. For year-round swimming, you'll need to look for indoor facilities. It gets hot here, so the season is long."
     },
     {
-     "q": "Are there any free or low-cost swimming options in Queen Creek?",
-     "a": "Public pools like the Queen Creek Aquatic Center and Queen Creek Community Pool offer daily admission at a low cost, which is the most affordable way to swim without a membership. Look into their schedules for specific pricing and hours."
+     "q": "Are there any free or low-cost public swimming options?",
+     "a": "The city of Sugar Land operates several pools like the Sugar Land Community Pool and the Sugar Land Family Aquatic Center. These typically have daily admission fees that are pretty affordable, especially for residents. You won't find many free options, but the city pools are budget-friendly."
     },
     {
-     "q": "What are the best options for kids and families looking to swim?",
-     "a": "The Queen Creek Aquatic Center is usually the go-to for families. It has features like slides and splash pads, making it very kid-friendly. The Community Pool is also a good option for general family swimming and lessons."
+     "q": "What are the best pools for kids and families?",
+     "a": "The Sugar Land Family Aquatic Center is definitely geared towards families with features like play structures and slides. The Sugar Land Community Pool is also family-friendly, usually offering lessons and open swim times that work for all ages. They're both good picks for kids."
     },
     {
-     "q": "Are there any indoor swimming pools in Queen Creek?",
-     "a": "Most pools in Queen Creek are outdoor, designed to take advantage of the long warm season. I don't know of any dedicated indoor public swimming facilities right in Queen Creek itself. People usually swim outdoors here."
+     "q": "Are there more indoor or outdoor pools in Sugar Land?",
+     "a": "During the main swim season, you'll find more outdoor pools open. However, there are a few indoor options available year-round, like the Sugar Land Aquatic Center, which is part of the city's offerings. It balances out depending on the time of year."
     },
     {
-     "q": "Can I rent a private pool by the hour in Queen Creek?",
-     "a": "Yes, you can. PoolRentalNearMe.com lets you find and book private backyard pools by the hour, without needing a membership. It's a great option for a more private swim, small gatherings, or just when you want a different kind of pool experience."
+     "q": "Can I rent a private pool by the hour in Sugar Land?",
+     "a": "Yeah, definitely. If you're looking for something more private than a public pool, you can check out PoolRentalNearMe.com. We've got backyard pools in Sugar Land you can rent by the hour. No membership needed, just book what you want, when you want it."
     }
    ],
    "is_published": true,
-   "header_count": 3
+   "header_count": 17
+  },
+  {
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "url": "https://www.poolrentalnearme.com/public-pools/indiana/bennington/",
+   "state_slug": "indiana",
+   "city_slug": "bennington",
+   "city_name": "Bennington",
+   "ai_intro": "Summer here starts heating up around late May, early June. By then, everyone's ready to jump in the water. We get a good long pool season, usually right through Labor Day, sometimes a bit longer if we get a warm fall. Most folks around here are looking for a place to cool off with family or just relax by the water. It's not a big lap swimming scene, more about splashing around and having fun. If you're new to Bennington and trying to find a spot to swim, you'll find most of what's available is pretty laid back. Don't expect huge water parks, but you'll definitely find somewhere a little more chill to beat the heat.",
+   "ai_faqs": [
+    {
+     "q": "When is pool season in Bennington, IN?",
+     "a": "Pool season in this area generally runs from late May or early June through Labor Day. Some private or community pools might extend their season a bit longer if the weather stays warm into September."
+    },
+    {
+     "q": "Are there any free or low-cost public swimming options?",
+     "a": "Public swimming options usually have an entry fee, but some community centers or parks might offer daily rates that are pretty affordable for local residents or visitors. We don't list free options in our directory for Bennington."
+    },
+    {
+     "q": "What kind of pool options are there for families with kids?",
+     "a": "Typically, the pools you'll find around here are good for families. Many public and community pools have shallower areas or dedicated spaces where kids can play. Drakes Ridge Rustic Nudist Retreat is for adults only."
+    },
+    {
+     "q": "Are there indoor pools available, or is it mostly outdoor swimming?",
+     "a": "Most of the swimming options in Bennington are outdoors. Indoor pools are less common and usually found at private clubs or fitness centers. Our PoolRentalNearMe.com directory primarily focuses on outdoor pools for seasonal enjoyment."
+    },
+    {
+     "q": "Can I rent a private backyard pool in Bennington by the hour?",
+     "a": "Yes, you can. PoolRentalNearMe.com lets you find and book private backyard pools in Bennington by the hour. It's a great option if you want a private swim without a membership or crowded public spaces. Just check our listings for availability."
+    }
+   ],
+   "is_published": true,
+   "header_count": 1
+  },
+  {
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "url": "https://www.poolrentalnearme.com/public-pools/texas/corpus-christi/",
+   "state_slug": "texas",
+   "city_slug": "corpus-christi",
+   "city_name": "Corpus Christi",
+   "ai_intro": "Down here in Corpus Christi, it's pretty much pool season all year. Sure, we get a few cooler weeks in winter, but someone's always swimming. When the heat really kicks in, and that Gulf humidity hits, a cool pool is a must-have. Most of the swim culture is pretty easygoing, a mix of folks doing laps for fitness and families just trying to beat the heat. If you're new in town and looking for a place to splash around, public pools are an option, but you'll find they sometimes have limited hours or get crowded. For something more consistent, or if you want a private spot, a backyard pool rental is often the best way to go.",
+   "ai_faqs": [
+    {
+     "q": "What is the typical pool season in Corpus Christi?",
+     "a": "The pool season in Corpus Christi is nearly year-round. While some facilities might reduce hours in late fall and winter, you can generally find pools open for swimming most months due to the warm climate. Summer is, of course, the busiest time when pools are fully operational."
+    },
+    {
+     "q": "Are there any free or low-cost public swimming options available?",
+     "a": "The Corpus Christi Natatorium is a public facility. Entry fees are typically low. I'd recommend checking their official website or calling ahead for current pricing and any free swim times. Public parks sometimes have splash pads that are free for kids, too."
+    },
+    {
+     "q": "What are the best options for kid-friendly swimming?",
+     "a": "The Corpus Christi Natatorium is a good option for kids, as it's designed for public access. Many private pools available through PoolRentalNearMe.com also have shallow ends, toys, or features that are great for families. It just depends on what kind of experience you're looking for."
+    },
+    {
+     "q": "Are there more indoor or outdoor pools in the area?",
+     "a": "Given our warm climate, most pools in Corpus Christi are outdoors. The Corpus Christi Natatorium is a notable indoor facility, providing a year-round option regardless of weather. Outdoor pools are common in residential areas and at various community centers."
+    },
+    {
+     "q": "Can I rent a private pool by the hour in Corpus Christi?",
+     "a": "Yes, absolutely. PoolRentalNearMe.com allows you to rent private, backyard pools by the hour in Corpus Christi. This is a great alternative if you want a more private setting, flexible scheduling, or don't want to deal with crowded public pools or membership fees. You can find swimming pools that fit your exact needs."
+    }
+   ],
+   "is_published": true,
+   "header_count": 12
   },
   {
    "id": "e85a8d84-9752-0741-05f3-ee0983b47114",
@@ -115,36 +181,68 @@
    "header_count": 1
   },
   {
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "url": "https://www.poolrentalnearme.com/public-pools/north-carolina/cary/",
-   "state_slug": "north-carolina",
-   "city_slug": "cary",
-   "city_name": "Cary",
-   "ai_intro": "The summers in North Carolina get hot, no surprise there. Around here, outdoor pool season usually kicks off by Memorial Day and runs strong through Labor Day. Some places try to stretch it a bit, opening in mid-May or staying open a week or two into September if the weather holds. It's a pretty mixed swim scene. You've got your folks who like to get their laps in early, then families come out in force by late morning. If you're new to the area or just visiting, know that public pools often have specific lap swim times versus open swim. Check their schedules online. It can save you a trip. Also, weekend afternoons can get crowded everywhere.",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "url": "https://www.poolrentalnearme.com/public-pools/georgia/canton/",
+   "state_slug": "georgia",
+   "city_slug": "canton",
+   "city_name": "Canton",
+   "ai_intro": "When it gets hot in Georgia, it gets really hot. You'll want a pool here, trust me. People in Canton hit the water as soon as temps consistently get into the 80s, which is usually around May, and they stay in through September. It's mostly a family-first swim scene up here. You'll see a lot of parents teaching little ones to swim, and teenagers hanging out by the diving boards. We've got a decent mix of public pools in Canton. The good news is, you won't have to look far for a place to cool off. The bad news, if you're a serious lap swimmer, you might find yourself doing a lot of lane sharing. For something more private, backyard rentals are big here too.",
    "ai_faqs": [
     {
-     "q": "What is the typical pool season in Cary, NC?",
-     "a": "Outdoor pools usually open around Memorial Day weekend and close after Labor Day. Some facilities might have slightly extended seasons depending on staffing and weather. Indoor aquatic centers are open year-round for swimming."
+     "q": "What's the typical pool season in Canton?",
+     "a": "Outdoor pools in Canton usually open up around Memorial Day weekend. They stay open all summer, closing down after Labor Day. We don't have a lot of year-round outdoor swimming, but some facilities have indoor pools available longer."
     },
     {
-     "q": "Are there any free or low-cost public swimming options?",
-     "a": "Most public pools like the Cary Community Pool or the Cary Aquatic Center charge a daily entry fee or require a membership. I'm not aware of any completely free public swimming facilities in the area. Some community centers might offer discounted rates for residents."
+     "q": "Are there any free or really low-cost swimming options in Canton?",
+     "a": "For public pools, you're usually looking at a daily entry fee or a seasonal pass. I don't know of any completely free public swimming. Some community centers or parks might offer free splash pads, but those aren't for swimming laps or lessons."
     },
     {
-     "q": "Which public pools in Cary are best for kids and families?",
-     "a": "The Cary Family Aquatic Center is usually a good bet for families because it's designed with different areas, including shallower sections. The Cary Community Pool also has family-friendly hours. Always check their specific schedules for open swim times and features."
+     "q": "Which pools in Canton are best for kids and families?",
+     "a": "All our public pools in Canton are pretty family-friendly. The Canton Community Pool and Canton Aquatic Center often have dedicated shallow areas and lifeguards. You'll find a lot of families at these spots on any given weekend once summer hits."
     },
     {
-     "q": "Does Cary have indoor pools, and are they open year-round?",
-     "a": "Yes, facilities like the Cary Aquatic Center have indoor pools that are open year-round. This is where most people go for swimming laps or lessons outside of the summer outdoor season. Check their website for current hours and programs."
+     "q": "Does Canton have indoor pools, or are they all outdoors?",
+     "a": "Canton does have at least one indoor pool. The Canton Aquatic Center has an indoor option, which is great for swimming when the weather isn't cooperating, or if you want to swim outside of the main summer season."
     },
     {
-     "q": "What if I want a more private swimming experience or don't want to deal with public pool crowds?",
-     "a": "If you're looking for a private pool experience, you can always check out PoolRentalNearMe.com. We connect folks with backyard pools available for rent by the hour. It's a good alternative if you want to avoid memberships or crowded public spots and just want a pool all to yourself."
+     "q": "What if I want a more private pool experience without a big membership?",
+     "a": "That's exactly why we started PoolRentalNearMe.com. You can find backyard pools to rent by the hour in Canton. It's a sweet deal if you want a private spot for laps, a family get-together, or just a quiet afternoon without the crowds. No memberships, just pay for the time you use."
     }
    ],
    "is_published": true,
-   "header_count": 17
+   "header_count": 3
+  },
+  {
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "url": "https://www.poolrentalnearme.com/public-pools/florida/boca-raton/",
+   "state_slug": "florida",
+   "city_slug": "boca-raton",
+   "city_name": "Boca Raton",
+   "ai_intro": "Down here in South Florida, the water's warm most of the year. We're talking outdoor swimming for almost ten months out of twelve, sometimes even longer if we get mild winters. People here are serious about their pool time. It's not just for cooling off, it's a big part of staying active year-round. You'll see a lot of lap swimmers, but also plenty of families making the most of the sun. If you're new to Boca, a public pool is a good starting point, but a lot of folks like to find more private options, especially when the public spots get crowded. We've got a decent number of pools in the area, but sometimes you want something that's just yours for a few hours, without the membership fees or the crowds.",
+   "ai_faqs": [
+    {
+     "q": "What's the typical pool season in Boca Raton?",
+     "a": "You can swim outdoors for most of the year here, usually from March through November, sometimes even into December or January if the weather holds up. The public pools often have some heated options to extend the season through the cooler months, but you'll mostly be outside."
+    },
+    {
+     "q": "Are there any free or low-cost public swimming options?",
+     "a": "The public pools in Boca Raton generally have an entry fee. It's usually a daily rate, or you can get a membership if you plan on going often. Unfortunately, there aren't many free public swimming options in the city itself. Check the city's parks and recreation website for current rates."
+    },
+    {
+     "q": "Which public pools are best for kids and families?",
+     "a": "The Boca Raton Family Aquatic Center is built with families in mind, and the Boca Raton Aquatic Center also has features that kids enjoy. These typically have play areas or zero-entry sections that are good for younger swimmers. The Community Pool and Municipal Pool are also always an option. I'd call ahead to check specifics."
+    },
+    {
+     "q": "Are there any indoor swimming pools in Boca Raton?",
+     "a": "Most of the public pools in Boca Raton are outdoors because of the consistently warm climate. I don't know of any dedicated indoor public swimming pools here. Some private gyms or community centers might have indoor pools, but it's not common for the public facilities."
+    },
+    {
+     "q": "Can I rent a private pool by the hour in Boca Raton?",
+     "a": "Yes, you can. That's actually what we do at PoolRentalNearMe.com. We connect people with private backyard pools available for rent by the hour. It's a good alternative to public pools if you want more privacy, more space, or just a different vibe without needing a membership."
+    }
+   ],
+   "is_published": true,
+   "header_count": 4
   },
   {
    "id": "cab321b5-3f41-eda8-221f-204324e55599",
@@ -627,6 +725,38 @@
    "header_count": 5
   },
   {
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "url": "https://www.poolrentalnearme.com/public-pools/ohio/columbus/",
+   "state_slug": "ohio",
+   "city_slug": "columbus",
+   "city_name": "Columbus",
+   "ai_intro": "When the summer sun hits, Columbus really heats up, and that means it's pool time. Our outdoor pool season usually kicks off around Memorial Day and runs right up to Labor Day. We've got a good mix of swimmers here. You'll definitely see the lap swimmers getting their workouts in, especially at places like McCorkle. But there's also a big family scene, plenty of places for the kids to splash around. If you're new in town and looking for a swim, the public pools are a solid bet for a low-cost dip. Just check their individual websites for hours and entry fees. For something more private, or if you're looking for a specific vibe, that's where PoolRentalNearMe.com comes in handy. Locals use it all the time to rent out backyard pools by the hour, no membership needed.",
+   "ai_faqs": [
+    {
+     "q": "When is pool season in Columbus, Ohio?",
+     "a": "Outdoor pools in Columbus typically open around Memorial Day weekend and close after Labor Day weekend. Indoor pools, like the McCorkle Aquatic Pavilion, are open year-round, offering swimming options regardless of the weather."
+    },
+    {
+     "q": "Are there any free or low-cost swimming options in Columbus?",
+     "a": "Yes, many of the public pools in Columbus offer affordable daily admission fees, and some might have discounted rates for residents. Places like Driving Park Pool are good examples of community-focused, budget-friendly choices."
+    },
+    {
+     "q": "What are the best pools in Columbus for kids and families?",
+     "a": "Several pools cater well to families. Hilliard East Community Pool is known for being family-friendly. LC Brooklands Residential Pool, if you can access it, is also a good spot. Public pools generally have areas suitable for children."
+    },
+    {
+     "q": "Does Columbus have indoor and outdoor swimming pools?",
+     "a": "Absolutely. Columbus has a mix of both. During the summer, most public pools like Northwest Swim Club are outdoors. For year-round swimming, the McCorkle Aquatic Pavilion provides excellent indoor facilities."
+    },
+    {
+     "q": "Can I rent a private pool in Columbus without a membership?",
+     "a": "Yes, you can. PoolRentalNearMe.com allows you to rent private, backyard pools by the hour directly from local owners. It's a great option if you're looking for a more private swimming experience, or if public pool hours don't fit your schedule."
+    }
+   ],
+   "is_published": true,
+   "header_count": 41
+  },
+  {
    "id": "e96f7b09-9d3f-e765-ccae-96af0f62d12b",
    "url": "https://www.poolrentalnearme.com/public-pools/florida/pembroke-pines/",
    "state_slug": "florida",
@@ -915,38 +1045,6 @@
    "header_count": 3
   },
   {
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "url": "https://www.poolrentalnearme.com/public-pools/indiana/bennington/",
-   "state_slug": "indiana",
-   "city_slug": "bennington",
-   "city_name": "Bennington",
-   "ai_intro": "Summer here starts heating up around late May, early June. By then, everyone's ready to jump in the water. We get a good long pool season, usually right through Labor Day, sometimes a bit longer if we get a warm fall. Most folks around here are looking for a place to cool off with family or just relax by the water. It's not a big lap swimming scene, more about splashing around and having fun. If you're new to Bennington and trying to find a spot to swim, you'll find most of what's available is pretty laid back. Don't expect huge water parks, but you'll definitely find somewhere a little more chill to beat the heat.",
-   "ai_faqs": [
-    {
-     "q": "When is pool season in Bennington, IN?",
-     "a": "Pool season in this area generally runs from late May or early June through Labor Day. Some private or community pools might extend their season a bit longer if the weather stays warm into September."
-    },
-    {
-     "q": "Are there any free or low-cost public swimming options?",
-     "a": "Public swimming options usually have an entry fee, but some community centers or parks might offer daily rates that are pretty affordable for local residents or visitors. We don't list free options in our directory for Bennington."
-    },
-    {
-     "q": "What kind of pool options are there for families with kids?",
-     "a": "Typically, the pools you'll find around here are good for families. Many public and community pools have shallower areas or dedicated spaces where kids can play. Drakes Ridge Rustic Nudist Retreat is for adults only."
-    },
-    {
-     "q": "Are there indoor pools available, or is it mostly outdoor swimming?",
-     "a": "Most of the swimming options in Bennington are outdoors. Indoor pools are less common and usually found at private clubs or fitness centers. Our PoolRentalNearMe.com directory primarily focuses on outdoor pools for seasonal enjoyment."
-    },
-    {
-     "q": "Can I rent a private backyard pool in Bennington by the hour?",
-     "a": "Yes, you can. PoolRentalNearMe.com lets you find and book private backyard pools in Bennington by the hour. It's a great option if you want a private swim without a membership or crowded public spaces. Just check our listings for availability."
-    }
-   ],
-   "is_published": true,
-   "header_count": 1
-  },
-  {
    "id": "90749c23-c441-d504-b204-6f9a2e943664",
    "url": "https://www.poolrentalnearme.com/public-pools/wisconsin/milwaukee/",
    "state_slug": "wisconsin",
@@ -1041,38 +1139,6 @@
    ],
    "is_published": true,
    "header_count": 11
-  },
-  {
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "url": "https://www.poolrentalnearme.com/public-pools/florida/tampa/",
-   "state_slug": "florida",
-   "city_slug": "tampa",
-   "city_name": "Tampa",
-   "ai_intro": "Warm weather in Florida means a long pool season, usually from about March to October, sometimes even longer depending on the specific pool and the year's temperatures. It's not just for tourism, locals use pools here all the time to beat the heat. You see a mix of competitive swimmers, families, and people just looking to cool off. Finding a spot to swim isn't too hard, but if you're new in town, it helps to know what's open and what kind of vibe each place has. We've got a few public options, but lots of people also look at private rentals when they want something more flexible or with specific amenities. Tampa has a pretty active swim scene, so there's usually something for everyone.",
-   "ai_faqs": [
-    {
-     "q": "What is the typical pool season in Tampa, FL?",
-     "a": "The pool season in Tampa is pretty long because of the warm climate. Most outdoor public pools are open from around March through October. Some facilities, especially those with heating, might open earlier or stay open later, sometimes even year-round depending on the weather and specific pool operations."
-    },
-    {
-     "q": "Are there any free or low-cost public swimming options available?",
-     "a": "Yes, there are public pools like Bobby Hicks Pool, Copeland Park Pool, and Rey Park Pool that offer affordable entry fees. These are typically operated by the city and are a good option for low-cost swimming. Sometimes, specific programs or certain age groups might have free access, so it's always good to check with the facility directly."
-    },
-    {
-     "q": "What are the best pools in Tampa for families with children?",
-     "a": "Pools like Bobby Hicks, Copeland Park, and Rey Park are generally family-friendly and welcome children. They often have shallow areas and lifeguards on duty. If you're looking for something private or with specific kid-focused features, you might also consider a private pool rental through PoolRentalNearMe.com, which can offer more tailored experiences."
-    },
-    {
-     "q": "Are most pools in Tampa indoor or outdoor?",
-     "a": "Given the hot Florida climate, the vast majority of pools in Tampa are outdoor. There are a few indoor options, primarily at fitness centers or private clubs, but public access most often points to outdoor facilities. Outdoor pools are common for lap swimming, recreational use, and simply staying cool in the heat."
-    },
-    {
-     "q": "What are the alternatives if public pools don't meet my needs?",
-     "a": "If public pools aren't working for you, a good alternative is checking out PoolRentalNearMe.com. You can rent private backyard pools by the hour directly from owners. It’s like booking a small, private oasis and you don't need a membership. It offers a lot more flexibility in terms of schedule and amenities than public options."
-    }
-   ],
-   "is_published": true,
-   "header_count": 14
   },
   {
    "id": "1eba4954-b953-3ccf-07ea-06c3e1467276",
@@ -1361,6 +1427,38 @@
    ],
    "is_published": true,
    "header_count": 12
+  },
+  {
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "url": "https://www.poolrentalnearme.com/public-pools/florida/tampa/",
+   "state_slug": "florida",
+   "city_slug": "tampa",
+   "city_name": "Tampa",
+   "ai_intro": "Warm weather in Florida means a long pool season, usually from about March to October, sometimes even longer depending on the specific pool and the year's temperatures. It's not just for tourism, locals use pools here all the time to beat the heat. You see a mix of competitive swimmers, families, and people just looking to cool off. Finding a spot to swim isn't too hard, but if you're new in town, it helps to know what's open and what kind of vibe each place has. We've got a few public options, but lots of people also look at private rentals when they want something more flexible or with specific amenities. Tampa has a pretty active swim scene, so there's usually something for everyone.",
+   "ai_faqs": [
+    {
+     "q": "What is the typical pool season in Tampa, FL?",
+     "a": "The pool season in Tampa is pretty long because of the warm climate. Most outdoor public pools are open from around March through October. Some facilities, especially those with heating, might open earlier or stay open later, sometimes even year-round depending on the weather and specific pool operations."
+    },
+    {
+     "q": "Are there any free or low-cost public swimming options available?",
+     "a": "Yes, there are public pools like Bobby Hicks Pool, Copeland Park Pool, and Rey Park Pool that offer affordable entry fees. These are typically operated by the city and are a good option for low-cost swimming. Sometimes, specific programs or certain age groups might have free access, so it's always good to check with the facility directly."
+    },
+    {
+     "q": "What are the best pools in Tampa for families with children?",
+     "a": "Pools like Bobby Hicks, Copeland Park, and Rey Park are generally family-friendly and welcome children. They often have shallow areas and lifeguards on duty. If you're looking for something private or with specific kid-focused features, you might also consider a private pool rental through PoolRentalNearMe.com, which can offer more tailored experiences."
+    },
+    {
+     "q": "Are most pools in Tampa indoor or outdoor?",
+     "a": "Given the hot Florida climate, the vast majority of pools in Tampa are outdoor. There are a few indoor options, primarily at fitness centers or private clubs, but public access most often points to outdoor facilities. Outdoor pools are common for lap swimming, recreational use, and simply staying cool in the heat."
+    },
+    {
+     "q": "What are the alternatives if public pools don't meet my needs?",
+     "a": "If public pools aren't working for you, a good alternative is checking out PoolRentalNearMe.com. You can rent private backyard pools by the hour directly from owners. It’s like booking a small, private oasis and you don't need a membership. It offers a lot more flexibility in terms of schedule and amenities than public options."
+    }
+   ],
+   "is_published": true,
+   "header_count": 14
   },
   {
    "id": "27278bab-5bd6-731e-57b8-3d87a0403463",
@@ -1767,6 +1865,42 @@
    "text_less_copy": true
   },
   {
+   "id": "82876116-0c6a-5608-3932-fb97155c5647",
+   "url": null,
+   "state_slug": "pennsylvania",
+   "city_slug": "harrisburg",
+   "city_name": "Harrisburg",
+   "ai_intro": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "header_count": null,
+   "text_less_copy": true
+  },
+  {
+   "id": "1045ee43-abb5-0177-3f1d-28063fc07f5e",
+   "url": null,
+   "state_slug": "california",
+   "city_slug": "rowland-heights",
+   "city_name": "Rowland Heights",
+   "ai_intro": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "header_count": null,
+   "text_less_copy": true
+  },
+  {
+   "id": "17e30e8b-d5ab-e452-7f4f-2c61f29c2288",
+   "url": null,
+   "state_slug": "texas",
+   "city_slug": "fort-worth",
+   "city_name": "Fort Worth",
+   "ai_intro": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "header_count": null,
+   "text_less_copy": true
+  },
+  {
    "id": "dd5c3565-eb49-c2e9-74e4-421799e7905c",
    "url": null,
    "state_slug": "florida",
@@ -1832,30 +1966,6 @@
    "state_slug": "new-york",
    "city_slug": "brooklyn",
    "city_name": "Brooklyn",
-   "ai_intro": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "header_count": null,
-   "text_less_copy": true
-  },
-  {
-   "id": "17e30e8b-d5ab-e452-7f4f-2c61f29c2288",
-   "url": null,
-   "state_slug": "texas",
-   "city_slug": "fort-worth",
-   "city_name": "Fort Worth",
-   "ai_intro": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "header_count": null,
-   "text_less_copy": true
-  },
-  {
-   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
-   "url": null,
-   "state_slug": "ohio",
-   "city_slug": "columbus",
-   "city_name": "Columbus",
    "ai_intro": null,
    "ai_faqs": null,
    "is_published": true,
@@ -2927,6 +3037,91 @@
    "is_placeholder": false
   },
   {
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "url": "https://www.poolrentalnearme.com/public-pools/pennsylvania/harrisburg/harrisburg-community-pool/",
+   "slug": "harrisburg-community-pool",
+   "name": "Harrisburg Community Pool",
+   "city": "Harrisburg",
+   "city_id": "82876116-0c6a-5608-3932-fb97155c5647",
+   "state_slug": "pennsylvania",
+   "ai_best_for": "[\"families\", \"lap swimmers\", \"toddlers\", \"casual recreation\", \"summer cooldown\"]",
+   "ai_description": "It's always nice to see a community pool with free admission, and Harrisburg Community Pool offers just that for everyone. With a city population of about 50,000, easy access to a place to cool off in the summer is a real plus. They've got lap lanes if you're looking to get some exercise, and a diving board too, which kids usually love. For families, there's a kiddie pool, along with plenty of picnic areas and some shade structures. With a 4.4 out of 5 rating from over 200 reviews, people generally seem happy with their experience, which I find is usually a good sign. It's an outdoor pool, so it's a seasonal spot, but a solid option for Harrisburg residents.",
+   "ai_faqs": [
+    {
+     "q": "How much does it cost to get into Harrisburg Community Pool?",
+     "a": "Admission to the Harrisburg Community Pool is free for both adults and children. This is a great perk that makes it very accessible for everyone in the community to enjoy a swim without worrying about the cost."
+    },
+    {
+     "q": "Is Harrisburg Community Pool good for families with young kids?",
+     "a": "Yes, it appears to be a good spot for families. This pool offers a dedicated kiddie pool, which is perfect for younger children. They also have picnic areas and some shade structures, which can be helpful for a family outing."
+    },
+    {
+     "q": "Does Harrisburg Community Pool have parking or accessible features?",
+     "a": "The information I have doesn't specify details about parking or accessibility features. For information on parking availability or any accessibility accommodations, I'd recommend contacting the City of Harrisburg Parks and Recreation Department directly."
+    },
+    {
+     "q": "Are there other swimming options in Harrisburg if this pool doesn't work out?",
+     "a": "My records only show the Harrisburg Community Pool directly. If this pool doesn't fit your needs, you might look into local YMCA facilities or other city parks in Harrisburg. Sometimes local high schools also open their pools to the public during certain hours."
+    }
+   ],
+   "is_published": true,
+   "is_placeholder": false
+  },
+  {
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "url": "https://www.poolrentalnearme.com/public-pools/california/rowland-heights/rowland-heights-community-pool/",
+   "slug": "rowland-heights-community-pool",
+   "name": "Rowland Heights Community Pool",
+   "city": "Rowland Heights",
+   "city_id": "1045ee43-abb5-0177-3f1d-28063fc07f5e",
+   "state_slug": "california",
+   "ai_best_for": "[\"families\", \"lap swimmers\", \"casual recreation\", \"summer cooldown\"]",
+   "ai_description": "If you're looking for an outdoor pool in Rowland Heights, the community pool on Lerona Ave is a pretty solid option. It's got a 4.1-star rating on Google, based on 95 reviews, which is decent. They have a lap pool, which is good for fitness swimmers, and they also run swim lessons. I know they do open swim times too, so it's not all structured activities. Rowland Heights isn't huge, about 50,000 people, so a local community spot like this makes sense. Pricing is usually low-cost, especially in the summer. Honestly, for community rec, it covers the basics pretty well.",
+   "ai_faqs": [
+    {
+     "q": "How much does it cost to use the pool?",
+     "a": "The information I have says they offer low-cost summer admission. For precise pricing on daily passes, swim lessons, or other programs, you'll need to contact the pool staff at (626) 965-5975."
+    },
+    {
+     "q": "Is this a good pool for kids and families?",
+     "a": "Yes, it generally is. It's a community recreation hub with open swim and swim lessons, which usually means it's set up to be family-friendly. Many community pools are great for kids during open swim hours."
+    },
+    {
+     "q": "Are there other public swimming options in Rowland Heights?",
+     "a": "My records point to the Rowland Heights Community Pool as a primary option. For any others, I'd suggest checking the City of Rowland Heights' official website or parks and recreation department listings."
+    }
+   ],
+   "is_published": true,
+   "is_placeholder": false
+  },
+  {
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "url": "https://www.poolrentalnearme.com/public-pools/texas/fort-worth/chisholm-aquatics-center/",
+   "slug": "chisholm-aquatics-center",
+   "name": "Chisholm Aquatics Center",
+   "city": "Fort Worth",
+   "city_id": "17e30e8b-d5ab-e452-7f4f-2c61f29c2288",
+   "state_slug": "texas",
+   "ai_best_for": "[\"families\", \"casual recreation\", \"summer cooldown\"]",
+   "ai_description": "With a 4.5 star rating from over 500 reviews, people definitely like the Chisholm Aquatics Center. It's a public pool in Hurst, Texas, which is just outside Fort Worth. I like that they're open relatively late, until 8 PM on weekdays, which gives you time to get there after work. On weekends they open at 10 AM, so you can make a full day of it. Honestly, a public pool with that kind of rating usually means they're doing something right, whether it's keeping the place clean or having friendly staff. I haven't been myself, but these kinds of facilities are often great for burning off some energy and just cooling down when it's hot. It's good to see a well-regarded public option available, especially in a city the size of Fort Worth.",
+   "ai_faqs": [
+    {
+     "q": "What are the operating hours for the Chisholm Aquatics Center?",
+     "a": "It's open from 12 PM to 8 PM on weekdays (Monday through Friday). On weekends, Saturday and Sunday, they open earlier, from 10 AM to 6 PM. Always a good idea to double check their site if you're making a special trip."
+    },
+    {
+     "q": "Is the Chisholm Aquatics Center a good place for kids and families?",
+     "a": "With a 4.5-star rating from over 500 reviews, I'd say it's likely a popular spot for families. Public aquatic centers are generally designed with kids in mind, offering features that make swimming fun for all ages. It's a solid option for family recreation."
+    },
+    {
+     "q": "Are there other public pools around Fort Worth if this one is too busy?",
+     "a": "Fort Worth is a big city. I'd imagine there are other public pools nearby. To find them, I'd suggest checking the Fort Worth Parks and Recreation Department's website or searching for 'public pools Fort Worth TX' online to see what else is available."
+    }
+   ],
+   "is_published": true,
+   "is_placeholder": false
+  },
+  {
    "id": "4fa3e203-7721-40ee-6048-a6ac69c51b0e",
    "url": "https://www.poolrentalnearme.com/public-pools/florida/boynton-beach/boynton-beach-community-pool/",
    "slug": "boynton-beach-community-pool",
@@ -3229,33 +3424,6 @@
    "is_placeholder": false
   },
   {
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "url": "https://www.poolrentalnearme.com/public-pools/texas/fort-worth/chisholm-aquatics-center/",
-   "slug": "chisholm-aquatics-center",
-   "name": "Chisholm Aquatics Center",
-   "city": "Fort Worth",
-   "city_id": "17e30e8b-d5ab-e452-7f4f-2c61f29c2288",
-   "state_slug": "texas",
-   "ai_best_for": "[\"families\", \"casual recreation\", \"summer cooldown\"]",
-   "ai_description": "With a 4.5 star rating from over 500 reviews, people definitely like the Chisholm Aquatics Center. It's a public pool in Hurst, Texas, which is just outside Fort Worth. I like that they're open relatively late, until 8 PM on weekdays, which gives you time to get there after work. On weekends they open at 10 AM, so you can make a full day of it. Honestly, a public pool with that kind of rating usually means they're doing something right, whether it's keeping the place clean or having friendly staff. I haven't been myself, but these kinds of facilities are often great for burning off some energy and just cooling down when it's hot. It's good to see a well-regarded public option available, especially in a city the size of Fort Worth.",
-   "ai_faqs": [
-    {
-     "q": "What are the operating hours for the Chisholm Aquatics Center?",
-     "a": "It's open from 12 PM to 8 PM on weekdays (Monday through Friday). On weekends, Saturday and Sunday, they open earlier, from 10 AM to 6 PM. Always a good idea to double check their site if you're making a special trip."
-    },
-    {
-     "q": "Is the Chisholm Aquatics Center a good place for kids and families?",
-     "a": "With a 4.5-star rating from over 500 reviews, I'd say it's likely a popular spot for families. Public aquatic centers are generally designed with kids in mind, offering features that make swimming fun for all ages. It's a solid option for family recreation."
-    },
-    {
-     "q": "Are there other public pools around Fort Worth if this one is too busy?",
-     "a": "Fort Worth is a big city. I'd imagine there are other public pools nearby. To find them, I'd suggest checking the Fort Worth Parks and Recreation Department's website or searching for 'public pools Fort Worth TX' online to see what else is available."
-    }
-   ],
-   "is_published": true,
-   "is_placeholder": false
-  },
-  {
    "id": "053b8c47-1479-0ce2-6137-6e2bb8fa7925",
    "url": "https://www.poolrentalnearme.com/public-pools/ohio/columbus/worthington-pools/",
    "slug": "worthington-pools",
@@ -3281,6 +3449,33 @@
     {
      "q": "Are there other public pools in Columbus, Ohio, with more flexible hours?",
      "a": "Columbus is a big city. If Worthington Pools' hours don't work, I'd check the Columbus Recreation and Parks Department website for a list of other public pools that might have different schedules or be closer to you."
+    }
+   ],
+   "is_published": true,
+   "is_placeholder": false
+  },
+  {
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "url": "https://www.poolrentalnearme.com/public-pools/california/san-diego/mcgrath-family-ymca/",
+   "slug": "mcgrath-family-ymca",
+   "name": "McGrath Family YMCA",
+   "city": "San Diego",
+   "city_id": "ef2dd448-7963-6d40-3d08-1138576434bc",
+   "state_slug": "california",
+   "ai_best_for": "[\"families\", \"lap swimmers\", \"fitness swimmers\", \"year-round swimming\"]",
+   "ai_description": "If you're in San Diego and looking for a pool, the McGrath Family YMCA is an option. It's listed at 12006 Campo Rd in Spring Valley. It's a public pool, which means it's usually open to everyone, though there might be a membership or day-use fee. They've got pretty long hours during the week, opening at 5 AM on Monday through Thursday, and going until 9 PM. Fridays close a bit earlier at 7 PM. Weekends are shorter, closing at 5 PM on Saturday and 3 PM on Sunday. The Google rating is 3.9 out of 5 from 168 reviews, so it's generally well-regarded but not perfect. If you have questions, their number is (619) 462-9622. I always recommend calling ahead to confirm anything important.",
+   "ai_faqs": [
+    {
+     "q": "What are the hours of the McGrath Family YMCA pool?",
+     "a": "The pool is open Monday to Thursday from 5:00 AM to 9:00 PM. On Friday, it's 5:00 AM to 7:00 PM. Saturday hours are 7:00 AM to 5:00 PM, and Sunday it's open from 8:00 AM to 3:00 PM."
+    },
+    {
+     "q": "How much does it cost to swim at the McGrath Family YMCA?",
+     "a": "The information I have doesn't list specific prices for entry or day passes. I'd recommend calling the McGrath Family YMCA directly at (619) 462-9622 to get current pricing information."
+    },
+    {
+     "q": "Are there other public pools in San Diego besides the McGrath Family YMCA?",
+     "a": "Yes, San Diego is a big city. For other public pool options, I'd suggest checking the official City of San Diego Parks and Recreation website or calling the San Diego Parks department for a list of their facilities."
     }
    ],
    "is_published": true,
@@ -3469,13 +3664,13 @@
    "is_placeholder": false
   },
   {
-   "id": "7cc13b92-67e2-64b4-d968-d2fb84d904ca",
+   "id": "b7a33a7b-5fbc-e6ae-4579-998d117cad2e",
    "url": null,
-   "slug": "placeholder-queen-creek-0",
+   "slug": "placeholder-sugar-land-0",
    "name": null,
-   "city": "Queen Creek",
-   "city_id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
-   "state_slug": "arizona",
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3483,13 +3678,13 @@
    "is_placeholder": true
   },
   {
-   "id": "6522854b-6647-b38e-090f-a808414e96aa",
+   "id": "c4df6ee8-691e-68da-a804-f4a2cc684674",
    "url": null,
-   "slug": "placeholder-queen-creek-1",
+   "slug": "placeholder-sugar-land-1",
    "name": null,
-   "city": "Queen Creek",
-   "city_id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
-   "state_slug": "arizona",
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3497,13 +3692,391 @@
    "is_placeholder": true
   },
   {
-   "id": "c705bcc4-70ce-ff24-74f8-85618bc57f89",
+   "id": "744d2c9f-191d-bb6f-0bf3-c09aedba8726",
    "url": null,
-   "slug": "placeholder-queen-creek-2",
+   "slug": "placeholder-sugar-land-2",
    "name": null,
-   "city": "Queen Creek",
-   "city_id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
-   "state_slug": "arizona",
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "5c428a81-c74f-7b8d-c6e5-22155f2151c2",
+   "url": null,
+   "slug": "placeholder-sugar-land-3",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "8ff3a6fd-d93e-9756-4234-0a7bfd7b4d50",
+   "url": null,
+   "slug": "placeholder-sugar-land-4",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "bee52713-f4b1-a2e5-9f70-170f974c2d3c",
+   "url": null,
+   "slug": "placeholder-sugar-land-5",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "b650ccc0-1b39-906b-dde8-ef72ff692a2a",
+   "url": null,
+   "slug": "placeholder-sugar-land-6",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "5c7fde66-f1bb-4208-7c3e-bdab6feb3742",
+   "url": null,
+   "slug": "placeholder-sugar-land-7",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "db06c92d-2216-d323-4e5e-77e06e711983",
+   "url": null,
+   "slug": "placeholder-sugar-land-8",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "1a8d74d4-2489-f103-4853-cfa6612c22f2",
+   "url": null,
+   "slug": "placeholder-sugar-land-9",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "4212bdfb-8a4d-7bc9-8096-f809ec772866",
+   "url": null,
+   "slug": "placeholder-sugar-land-10",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "5c97037f-3809-81e7-83cb-44d6edd7af28",
+   "url": null,
+   "slug": "placeholder-sugar-land-11",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "644c1fdf-c339-3d97-d4c2-fa60e5bf4547",
+   "url": null,
+   "slug": "placeholder-sugar-land-12",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "ab9fa807-0225-185f-a4a6-7b33b9c9cc3f",
+   "url": null,
+   "slug": "placeholder-sugar-land-13",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "6d3fa6d3-47a8-508a-4792-8709c8bcdb3d",
+   "url": null,
+   "slug": "placeholder-sugar-land-14",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "a393d867-8072-6999-6d8d-7fce60980968",
+   "url": null,
+   "slug": "placeholder-sugar-land-15",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "7cf82078-ee56-ff08-1808-21a4d77ab3cc",
+   "url": null,
+   "slug": "placeholder-sugar-land-16",
+   "name": null,
+   "city": "Sugar Land",
+   "city_id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "45098eb4-bc9d-c556-9fcb-4ee213ac3667",
+   "url": null,
+   "slug": "placeholder-bennington-0",
+   "name": null,
+   "city": "Bennington",
+   "city_id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "state_slug": "indiana",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "f643acd5-986c-6160-94df-45a523f8a903",
+   "url": null,
+   "slug": "placeholder-corpus-christi-0",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "915fb6c1-dd82-4077-6198-844cb67e6e57",
+   "url": null,
+   "slug": "placeholder-corpus-christi-1",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "dacfc2d7-63e2-6419-bc8f-5eac54c286a0",
+   "url": null,
+   "slug": "placeholder-corpus-christi-2",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "a5f8868b-dda9-ae54-77ab-87e9a47bfadd",
+   "url": null,
+   "slug": "placeholder-corpus-christi-3",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "16939775-3d39-a7b3-899d-f5dd08711d34",
+   "url": null,
+   "slug": "placeholder-corpus-christi-4",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "72b5cf46-5016-db61-80e1-5b6825084c73",
+   "url": null,
+   "slug": "placeholder-corpus-christi-5",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "946edaaa-6956-3f91-1e75-e83f54a7759a",
+   "url": null,
+   "slug": "placeholder-corpus-christi-6",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "a6f2bb4c-42fd-ba7e-af24-c0254c50915e",
+   "url": null,
+   "slug": "placeholder-corpus-christi-7",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "68856f8c-7758-e360-8d3b-b88dc3d0265c",
+   "url": null,
+   "slug": "placeholder-corpus-christi-8",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "c87e7084-c84d-0012-c9f2-96685038d81b",
+   "url": null,
+   "slug": "placeholder-corpus-christi-9",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "b15b7eb3-e4e8-5211-3b4c-d5257a2c9f01",
+   "url": null,
+   "slug": "placeholder-corpus-christi-10",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "b6e5e39f-e972-76e2-bfe1-3b8b5a8814c0",
+   "url": null,
+   "slug": "placeholder-corpus-christi-11",
+   "name": null,
+   "city": "Corpus Christi",
+   "city_id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "state_slug": "texas",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3525,13 +4098,13 @@
    "is_placeholder": true
   },
   {
-   "id": "d13ee7b4-796e-1b35-0633-0ee539ad40b6",
+   "id": "b8afa510-ea7b-2e5a-4678-84b71e41783a",
    "url": null,
-   "slug": "placeholder-cary-0",
+   "slug": "placeholder-canton-0",
    "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
+   "city": "Canton",
+   "city_id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "state_slug": "georgia",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3539,13 +4112,13 @@
    "is_placeholder": true
   },
   {
-   "id": "af8be5da-7ab9-4c6f-d242-1b1adc76c53c",
+   "id": "3838cc79-f345-7885-8199-a12a8ffd2189",
    "url": null,
-   "slug": "placeholder-cary-1",
+   "slug": "placeholder-canton-1",
    "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
+   "city": "Canton",
+   "city_id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "state_slug": "georgia",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3553,13 +4126,13 @@
    "is_placeholder": true
   },
   {
-   "id": "ff35da1a-1813-f7a1-a223-7fca458ed067",
+   "id": "45431cfc-44a3-47a4-f909-13d717872a51",
    "url": null,
-   "slug": "placeholder-cary-2",
+   "slug": "placeholder-canton-2",
    "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
+   "city": "Canton",
+   "city_id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "state_slug": "georgia",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3567,13 +4140,13 @@
    "is_placeholder": true
   },
   {
-   "id": "b69ec6b4-92d7-6cb2-e6c7-c849a8297ece",
+   "id": "9e5570d2-5ff4-7d12-609c-0dfac94ef395",
    "url": null,
-   "slug": "placeholder-cary-3",
+   "slug": "placeholder-boca-raton-0",
    "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
+   "city": "Boca Raton",
+   "city_id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "state_slug": "florida",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3581,13 +4154,13 @@
    "is_placeholder": true
   },
   {
-   "id": "d43cffcd-bed8-e229-6b06-21f6e97eb75b",
+   "id": "69d2f30e-2bd2-a3f6-40bc-3fc7eb966475",
    "url": null,
-   "slug": "placeholder-cary-4",
+   "slug": "placeholder-boca-raton-1",
    "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
+   "city": "Boca Raton",
+   "city_id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "state_slug": "florida",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3595,13 +4168,13 @@
    "is_placeholder": true
   },
   {
-   "id": "e37c15c1-0ed1-430b-60a7-380e83f6fe50",
+   "id": "452c9c02-2bb3-9d68-8a0d-fa985f7258cc",
    "url": null,
-   "slug": "placeholder-cary-5",
+   "slug": "placeholder-boca-raton-2",
    "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
+   "city": "Boca Raton",
+   "city_id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "state_slug": "florida",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -3609,153 +4182,13 @@
    "is_placeholder": true
   },
   {
-   "id": "28f44c3d-4b9b-bb61-a513-db409bd0ecb0",
+   "id": "6a340d86-6c86-ed02-f649-c64099111c69",
    "url": null,
-   "slug": "placeholder-cary-6",
+   "slug": "placeholder-boca-raton-3",
    "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "46f839af-988c-270f-42ef-0f6423f8b21a",
-   "url": null,
-   "slug": "placeholder-cary-7",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "d6198578-2e2b-8965-6005-8f48235667e0",
-   "url": null,
-   "slug": "placeholder-cary-8",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "7f5a86f2-9bf7-d4e6-b053-25842496a521",
-   "url": null,
-   "slug": "placeholder-cary-9",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "34cd2eff-85b9-8484-9094-baf6d33d1c83",
-   "url": null,
-   "slug": "placeholder-cary-10",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "68e6cbf5-8d7f-9bf7-46c5-612228a0f8ec",
-   "url": null,
-   "slug": "placeholder-cary-11",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "436cb3a3-40f9-35ac-a021-7b59c271fb64",
-   "url": null,
-   "slug": "placeholder-cary-12",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "ea14ce3c-9d62-c292-73d6-33a337a825d6",
-   "url": null,
-   "slug": "placeholder-cary-13",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "f4dcbb95-1571-3605-4bed-3500a45fb62b",
-   "url": null,
-   "slug": "placeholder-cary-14",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "c3db2de7-a7ad-0ce6-5bb9-1d6da52c83bb",
-   "url": null,
-   "slug": "placeholder-cary-15",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "26fc9458-d0bb-ae0f-266d-c1bcc204ba94",
-   "url": null,
-   "slug": "placeholder-cary-16",
-   "name": null,
-   "city": "Cary",
-   "city_id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "state_slug": "north-carolina",
+   "city": "Boca Raton",
+   "city_id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "state_slug": "florida",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -4718,20 +5151,6 @@
    "id": "c58f2572-c062-3fd2-b338-8a262bd85939",
    "url": null,
    "slug": "placeholder-san-diego-43",
-   "name": null,
-   "city": "San Diego",
-   "city_id": "ef2dd448-7963-6d40-3d08-1138576434bc",
-   "state_slug": "california",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "593f0651-0182-e88b-51ee-f1559dfc3493",
-   "url": null,
-   "slug": "placeholder-san-diego-44",
    "name": null,
    "city": "San Diego",
    "city_id": "ef2dd448-7963-6d40-3d08-1138576434bc",
@@ -6101,6 +6520,552 @@
    "is_placeholder": true
   },
   {
+   "id": "a33ff2cb-3dc0-5cea-2eca-71e30c2b3eda",
+   "url": null,
+   "slug": "placeholder-columbus-0",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "8cb34dca-d3e1-b89d-345a-0c2c10f48a16",
+   "url": null,
+   "slug": "placeholder-columbus-1",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "387cc6b0-82ee-1c2c-415d-8a6115be2534",
+   "url": null,
+   "slug": "placeholder-columbus-2",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "1971d2da-fe11-7954-90c9-124c1653ea72",
+   "url": null,
+   "slug": "placeholder-columbus-3",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "37f0ca0a-156b-27d8-5c43-81dcb675b5b9",
+   "url": null,
+   "slug": "placeholder-columbus-4",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "142fb124-4c78-9948-5e42-b7e284b38f9b",
+   "url": null,
+   "slug": "placeholder-columbus-5",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "98a4c121-f2f6-48ac-c9bd-fd9c7b4e8474",
+   "url": null,
+   "slug": "placeholder-columbus-6",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "90ee1c72-b1c9-3320-0817-30365adb3a92",
+   "url": null,
+   "slug": "placeholder-columbus-7",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "c9f9e662-5fdb-907a-a162-160805ea52c5",
+   "url": null,
+   "slug": "placeholder-columbus-8",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "c16a3f33-34e3-3931-e365-1531a0b3dac4",
+   "url": null,
+   "slug": "placeholder-columbus-9",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "f555db3b-b89e-0a49-ae0f-9d758cc9b8ba",
+   "url": null,
+   "slug": "placeholder-columbus-10",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "825e9865-c87b-e175-9350-500b8c8f8f27",
+   "url": null,
+   "slug": "placeholder-columbus-11",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "7b202e9e-7f65-269c-f168-678efee7a7e2",
+   "url": null,
+   "slug": "placeholder-columbus-12",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "2644b698-3687-6ee6-fe9e-e6f2d037d9ec",
+   "url": null,
+   "slug": "placeholder-columbus-13",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "4d19c279-02e2-193d-b4e4-e474a665c2e1",
+   "url": null,
+   "slug": "placeholder-columbus-14",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "a489634d-65ea-93e7-a6d1-e163ea9f2c1d",
+   "url": null,
+   "slug": "placeholder-columbus-15",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "b2f05309-034f-de25-e235-114328887085",
+   "url": null,
+   "slug": "placeholder-columbus-16",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "1a559120-0c24-fe70-7fa8-fc2a67c45da9",
+   "url": null,
+   "slug": "placeholder-columbus-17",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "409badbe-ca9b-fa9c-a92f-a41da0b3a30b",
+   "url": null,
+   "slug": "placeholder-columbus-18",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "4926b7fa-7ef4-fe43-c445-2d5646b7d7f8",
+   "url": null,
+   "slug": "placeholder-columbus-19",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "9f34d2cb-526b-fd21-011e-539a6e900d7d",
+   "url": null,
+   "slug": "placeholder-columbus-20",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "47207fda-940b-78ee-ebcf-40f2eded204a",
+   "url": null,
+   "slug": "placeholder-columbus-21",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "9f675588-1811-c23c-d694-704ec83899b8",
+   "url": null,
+   "slug": "placeholder-columbus-22",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "f69959a2-825c-ba67-8e6f-6e517258af76",
+   "url": null,
+   "slug": "placeholder-columbus-23",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "ed672006-87ff-b932-8756-99eb0c9ff2bf",
+   "url": null,
+   "slug": "placeholder-columbus-24",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "4d6fb8bd-5f21-fc7a-5c2e-fe160edbfb27",
+   "url": null,
+   "slug": "placeholder-columbus-25",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "3c0edf66-69df-308c-8e4b-d47d8a360e6f",
+   "url": null,
+   "slug": "placeholder-columbus-26",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "b828b383-e384-7435-edbc-a9dc9228a9a2",
+   "url": null,
+   "slug": "placeholder-columbus-27",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "d80d29cd-f5b8-781c-9f31-ca9c9af349d7",
+   "url": null,
+   "slug": "placeholder-columbus-28",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "b629688e-441b-ba5e-490f-272ad27e38c8",
+   "url": null,
+   "slug": "placeholder-columbus-29",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "1ed028d5-42f6-a771-c3e2-902fcc99e148",
+   "url": null,
+   "slug": "placeholder-columbus-30",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "33f5c2b5-fe22-b808-2b27-3207fb43c309",
+   "url": null,
+   "slug": "placeholder-columbus-31",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "9938682d-cd2e-9a90-03eb-818d3350909a",
+   "url": null,
+   "slug": "placeholder-columbus-32",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "869fc244-6a03-729d-9ebc-23a25832b602",
+   "url": null,
+   "slug": "placeholder-columbus-33",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "34f8a691-8669-ae60-0595-26f363322561",
+   "url": null,
+   "slug": "placeholder-columbus-34",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "4f13c8c7-f0e0-22b1-acdb-495f06761c53",
+   "url": null,
+   "slug": "placeholder-columbus-35",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "1c9f103e-1a1e-73ed-9bd8-ca231fdea898",
+   "url": null,
+   "slug": "placeholder-columbus-36",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "bdad9848-eb7a-d16e-4e12-12119844fd12",
+   "url": null,
+   "slug": "placeholder-columbus-37",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "009941b5-4b65-2168-1742-a46b861d612c",
+   "url": null,
+   "slug": "placeholder-columbus-38",
+   "name": null,
+   "city": "Columbus",
+   "city_id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "state_slug": "ohio",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
    "id": "346c3bde-bdca-4ff7-669e-1e4bba649a56",
    "url": null,
    "slug": "placeholder-pembroke-pines-0",
@@ -6885,20 +7850,6 @@
    "is_placeholder": true
   },
   {
-   "id": "45098eb4-bc9d-c556-9fcb-4ee213ac3667",
-   "url": null,
-   "slug": "placeholder-bennington-0",
-   "name": null,
-   "city": "Bennington",
-   "city_id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "state_slug": "indiana",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
    "id": "8d532c42-c1d2-6f4c-a713-f3185e9245ae",
    "url": null,
    "slug": "placeholder-milwaukee-0",
@@ -7382,202 +8333,6 @@
    "city": "Scottsdale",
    "city_id": "ea4609d5-9c78-f2e0-c67d-6b534fbb8382",
    "state_slug": "arizona",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "2065139e-3fbe-198c-db7e-1c28e5465cb7",
-   "url": null,
-   "slug": "placeholder-tampa-0",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "c52d5211-412f-3957-9eec-a061086510ad",
-   "url": null,
-   "slug": "placeholder-tampa-1",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "799b1122-1e18-0761-6bfd-56bfedc1a89b",
-   "url": null,
-   "slug": "placeholder-tampa-2",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "7c77104e-856b-0975-785c-9315b51acddf",
-   "url": null,
-   "slug": "placeholder-tampa-3",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "1a8923da-5041-5a66-8541-93db133e2245",
-   "url": null,
-   "slug": "placeholder-tampa-4",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "844a5c3d-e335-3a34-8728-d6b4d08544ea",
-   "url": null,
-   "slug": "placeholder-tampa-5",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "2f7e6192-2cdf-7f70-e948-95aba6442984",
-   "url": null,
-   "slug": "placeholder-tampa-6",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "9f3e07f9-7a93-34e7-6459-893352de4374",
-   "url": null,
-   "slug": "placeholder-tampa-7",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "cef8a275-b423-05f1-14a5-bd5e05070131",
-   "url": null,
-   "slug": "placeholder-tampa-8",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "bbbafbf5-030e-3b7e-6d4d-179d3f1a7d61",
-   "url": null,
-   "slug": "placeholder-tampa-9",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "6ed59cce-c59d-31b8-68c0-fca4728a907b",
-   "url": null,
-   "slug": "placeholder-tampa-10",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "2f683e57-6c24-f12b-0a83-ae83bbfc1164",
-   "url": null,
-   "slug": "placeholder-tampa-11",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "2a6c66af-cae8-db3a-e67c-797ecf0744ef",
-   "url": null,
-   "slug": "placeholder-tampa-12",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "bd2d341a-0410-dc1a-499c-5156714bb14c",
-   "url": null,
-   "slug": "placeholder-tampa-13",
-   "name": null,
-   "city": "Tampa",
-   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "state_slug": "florida",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -8943,6 +9698,202 @@
    "is_placeholder": true
   },
   {
+   "id": "2065139e-3fbe-198c-db7e-1c28e5465cb7",
+   "url": null,
+   "slug": "placeholder-tampa-0",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "c52d5211-412f-3957-9eec-a061086510ad",
+   "url": null,
+   "slug": "placeholder-tampa-1",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "799b1122-1e18-0761-6bfd-56bfedc1a89b",
+   "url": null,
+   "slug": "placeholder-tampa-2",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "7c77104e-856b-0975-785c-9315b51acddf",
+   "url": null,
+   "slug": "placeholder-tampa-3",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "1a8923da-5041-5a66-8541-93db133e2245",
+   "url": null,
+   "slug": "placeholder-tampa-4",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "844a5c3d-e335-3a34-8728-d6b4d08544ea",
+   "url": null,
+   "slug": "placeholder-tampa-5",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "2f7e6192-2cdf-7f70-e948-95aba6442984",
+   "url": null,
+   "slug": "placeholder-tampa-6",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "9f3e07f9-7a93-34e7-6459-893352de4374",
+   "url": null,
+   "slug": "placeholder-tampa-7",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "cef8a275-b423-05f1-14a5-bd5e05070131",
+   "url": null,
+   "slug": "placeholder-tampa-8",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "bbbafbf5-030e-3b7e-6d4d-179d3f1a7d61",
+   "url": null,
+   "slug": "placeholder-tampa-9",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "6ed59cce-c59d-31b8-68c0-fca4728a907b",
+   "url": null,
+   "slug": "placeholder-tampa-10",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "2f683e57-6c24-f12b-0a83-ae83bbfc1164",
+   "url": null,
+   "slug": "placeholder-tampa-11",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "2a6c66af-cae8-db3a-e67c-797ecf0744ef",
+   "url": null,
+   "slug": "placeholder-tampa-12",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
+   "id": "bd2d341a-0410-dc1a-499c-5156714bb14c",
+   "url": null,
+   "slug": "placeholder-tampa-13",
+   "name": null,
+   "city": "Tampa",
+   "city_id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "state_slug": "florida",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": true
+  },
+  {
    "id": "1a78dc61-19ff-7391-3d88-a9dea3ab86c7",
    "url": null,
    "slug": "placeholder-conroe-0",
@@ -9783,6 +10734,65 @@
    "is_published": false,
    "is_placeholder": false,
    "synthetic": true
+  },
+  {
+   "id": "f2831232-d2f0-4a1b-7f7f-2ed49956f36e",
+   "url": null,
+   "slug": "synthetic-guard-yesno",
+   "name": "Yesno Pool",
+   "city": "Textburg",
+   "city_id": "0f37fa37-e3bf-1acf-4429-d8a313386a59",
+   "state_slug": "synthetic-state",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": [
+    {
+     "q": "Are there any other indoor pools in Textburg?",
+     "a": "The Textburg Rec Center has an indoor lap pool with six lanes. I'm not aware of any other indoor public pools in town."
+    },
+    {
+     "q": "What are the hours?",
+     "a": "The pool opens at 10 a.m. daily in summer. I'd call ahead to confirm."
+    }
+   ],
+   "is_published": true,
+   "is_placeholder": false,
+   "synthetic": true
+  },
+  {
+   "id": "ba1a2065-f6f6-5541-3c06-a0fb67a2075f",
+   "url": null,
+   "slug": "synthetic-guard-open-question",
+   "name": "Open Question Pool",
+   "city": "Textburg",
+   "city_id": "0f37fa37-e3bf-1acf-4429-d8a313386a59",
+   "state_slug": "synthetic-state",
+   "ai_best_for": null,
+   "ai_description": null,
+   "ai_faqs": [
+    {
+     "q": "What indoor pools are in Textburg?",
+     "a": "The Textburg Rec Center has an indoor lap pool with six lanes. I'm not aware of any other indoor public pools in town."
+    }
+   ],
+   "is_published": true,
+   "is_placeholder": false,
+   "synthetic": true
+  },
+  {
+   "id": "6dd51cf4-f2b4-aa31-e998-832529152d49",
+   "url": null,
+   "slug": "synthetic-guard-claim",
+   "name": "Kestrel Park Pool",
+   "city": "Textburg",
+   "city_id": "0f37fa37-e3bf-1acf-4429-d8a313386a59",
+   "state_slug": "synthetic-state",
+   "ai_best_for": null,
+   "ai_description": "Kestrel Park Pool is an outdoor pool with a lap lane and a diving board in Textburg. My records show Kestrel Park Pool as the main public pool in Textburg. I love a good swim on a hot afternoon. Lifeguards are on duty every day from June to August.",
+   "ai_faqs": null,
+   "is_published": true,
+   "is_placeholder": false,
+   "synthetic": true
   }
  ],
  "expect": [
@@ -10167,6 +11177,38 @@
    "rules": "",
    "why": "unpublished rows are out of scope",
    "skip": null
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "f2831232-d2f0-4a1b-7f7f-2ed49956f36e",
+   "col": "ai_faqs",
+   "new": null,
+   "rules": "",
+   "why": "answer 1's narrator sentence answers its yes/no question (answers_question) and is kept; R3 would still delete answer 2's 'I'd call ahead to confirm.', so the array is frozen",
+   "skip": "ALL:fact_guard_kept"
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "ba1a2065-f6f6-5541-3c06-a0fb67a2075f",
+   "col": "ai_faqs",
+   "new": [
+    {
+     "q": "What indoor pools are in Textburg?",
+     "a": "The Textburg Rec Center has an indoor lap pool with six lanes."
+    }
+   ],
+   "rules": "R3",
+   "why": "the same answer under a question that is not yes/no: the narrator gap sentence is deleted as before",
+   "skip": null
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "6dd51cf4-f2b4-aa31-e998-832529152d49",
+   "col": "ai_description",
+   "new": null,
+   "rules": "",
+   "why": "'... as the main public pool ...' is a fact claim and is kept; R2 would still delete 'I love a good swim on a hot afternoon.', so the description is frozen",
+   "skip": "ALL:fact_guard_kept"
   }
  ],
  "must_keep": [
@@ -12244,6 +13286,12 @@
    "tbl": "pp_pools",
    "id": "c0200a66-cdbd-df50-dcf8-963365c6a62f",
    "col": "ai_faqs",
+   "s": "I'm sure there are plenty of other public pools run by the city's parks department."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "c0200a66-cdbd-df50-dcf8-963365c6a62f",
+   "col": "ai_faqs",
    "s": "A quick search for 'Dallas public pools' would likely show you some alternatives."
   },
   {
@@ -13127,6 +14175,264 @@
    "id": "638593ed-99db-d3c5-3eef-a9dc629bc76d",
    "col": "ai_faqs",
    "s": "I'd recommend calling the San Mateo Swim Center at (650) 522-7460 to ask about their accessibility options before you visit."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_description",
+   "s": "It's always nice to see a community pool with free admission, and Harrisburg Community Pool offers just that for everyone."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_description",
+   "s": "With a city population of about 50,000, easy access to a place to cool off in the summer is a real plus."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_description",
+   "s": "They've got lap lanes if you're looking to get some exercise, and a diving board too, which kids usually love."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_description",
+   "s": "For families, there's a kiddie pool, along with plenty of picnic areas and some shade structures."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_description",
+   "s": "With a 4.4 out of 5 rating from over 200 reviews, people generally seem happy with their experience, which I find is usually a good sign."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_description",
+   "s": "It's an outdoor pool, so it's a seasonal spot, but a solid option for Harrisburg residents."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "Admission to the Harrisburg Community Pool is free for both adults and children."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "This is a great perk that makes it very accessible for everyone in the community to enjoy a swim without worrying about the cost."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "Yes, it appears to be a good spot for families."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "This pool offers a dedicated kiddie pool, which is perfect for younger children."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "They also have picnic areas and some shade structures, which can be helpful for a family outing."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "For information on parking availability or any accessibility accommodations, I'd recommend contacting the City of Harrisburg Parks and Recreation Department directly."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "My records only show the Harrisburg Community Pool directly."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "If this pool doesn't fit your needs, you might look into local YMCA facilities or other city parks in Harrisburg."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "4cb34aa7-b52b-cbea-2066-85b99647d933",
+   "col": "ai_faqs",
+   "s": "Sometimes local high schools also open their pools to the public during certain hours."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_description",
+   "s": "If you're looking for an outdoor pool in Rowland Heights, the community pool on Lerona Ave is a pretty solid option."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_description",
+   "s": "It's got a 4.1-star rating on Google, based on 95 reviews, which is decent."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_description",
+   "s": "They have a lap pool, which is good for fitness swimmers, and they also run swim lessons."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_description",
+   "s": "I know they do open swim times too, so it's not all structured activities."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_description",
+   "s": "Rowland Heights isn't huge, about 50,000 people, so a local community spot like this makes sense."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_description",
+   "s": "Pricing is usually low-cost, especially in the summer."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_description",
+   "s": "Honestly, for community rec, it covers the basics pretty well."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_faqs",
+   "s": "The information I have says they offer low-cost summer admission."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_faqs",
+   "s": "For precise pricing on daily passes, swim lessons, or other programs, you'll need to contact the pool staff at (626) 965-5975."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_faqs",
+   "s": "Yes, it generally is."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_faqs",
+   "s": "It's a community recreation hub with open swim and swim lessons, which usually means it's set up to be family-friendly."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_faqs",
+   "s": "Many community pools are great for kids during open swim hours."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "81b47b26-f2cc-35b3-f308-943019999171",
+   "col": "ai_faqs",
+   "s": "My records point to the Rowland Heights Community Pool as a primary option."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_description",
+   "s": "With a 4.5 star rating from over 500 reviews, people definitely like the Chisholm Aquatics Center."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_description",
+   "s": "It's a public pool in Hurst, Texas, which is just outside Fort Worth."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_description",
+   "s": "I like that they're open relatively late, until 8 PM on weekdays, which gives you time to get there after work."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_description",
+   "s": "On weekends they open at 10 AM, so you can make a full day of it."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_description",
+   "s": "Honestly, a public pool with that kind of rating usually means they're doing something right, whether it's keeping the place clean or having friendly staff."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_description",
+   "s": "I haven't been myself, but these kinds of facilities are often great for burning off some energy and just cooling down when it's hot."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_description",
+   "s": "It's good to see a well-regarded public option available, especially in a city the size of Fort Worth."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "It's open from 12 PM to 8 PM on weekdays (Monday through Friday)."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "On weekends, Saturday and Sunday, they open earlier, from 10 AM to 6 PM."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "Always a good idea to double check their site if you're making a special trip."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "With a 4.5-star rating from over 500 reviews, I'd say it's likely a popular spot for families."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "Public aquatic centers are generally designed with kids in mind, offering features that make swimming fun for all ages."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "It's a solid option for family recreation."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "Fort Worth is a big city."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
+   "col": "ai_faqs",
+   "s": "I'd imagine there are other public pools nearby."
   },
   {
    "tbl": "pp_pools",
@@ -14090,90 +15396,6 @@
   },
   {
    "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_description",
-   "s": "With a 4.5 star rating from over 500 reviews, people definitely like the Chisholm Aquatics Center."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_description",
-   "s": "It's a public pool in Hurst, Texas, which is just outside Fort Worth."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_description",
-   "s": "I like that they're open relatively late, until 8 PM on weekdays, which gives you time to get there after work."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_description",
-   "s": "On weekends they open at 10 AM, so you can make a full day of it."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_description",
-   "s": "Honestly, a public pool with that kind of rating usually means they're doing something right, whether it's keeping the place clean or having friendly staff."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_description",
-   "s": "I haven't been myself, but these kinds of facilities are often great for burning off some energy and just cooling down when it's hot."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_description",
-   "s": "It's good to see a well-regarded public option available, especially in a city the size of Fort Worth."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_faqs",
-   "s": "It's open from 12 PM to 8 PM on weekdays (Monday through Friday)."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_faqs",
-   "s": "On weekends, Saturday and Sunday, they open earlier, from 10 AM to 6 PM."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_faqs",
-   "s": "Always a good idea to double check their site if you're making a special trip."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_faqs",
-   "s": "With a 4.5-star rating from over 500 reviews, I'd say it's likely a popular spot for families."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_faqs",
-   "s": "Public aquatic centers are generally designed with kids in mind, offering features that make swimming fun for all ages."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_faqs",
-   "s": "It's a solid option for family recreation."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "0755b8a9-42fd-3914-75b1-6a688ca2e463",
-   "col": "ai_faqs",
-   "s": "Fort Worth is a big city."
-  },
-  {
-   "tbl": "pp_pools",
    "id": "053b8c47-1479-0ce2-6137-6e2bb8fa7925",
    "col": "ai_description",
    "s": "Honestly, the first thing I noticed looking at Worthington Pools was those tricky hours."
@@ -14255,6 +15477,84 @@
    "id": "053b8c47-1479-0ce2-6137-6e2bb8fa7925",
    "col": "ai_faqs",
    "s": "Columbus is a big city."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "If you're in San Diego and looking for a pool, the McGrath Family YMCA is an option."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "It's listed at 12006 Campo Rd in Spring Valley."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "It's a public pool, which means it's usually open to everyone, though there might be a membership or day-use fee."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "They've got pretty long hours during the week, opening at 5 AM on Monday through Thursday, and going until 9 PM."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "Fridays close a bit earlier at 7 PM."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "Weekends are shorter, closing at 5 PM on Saturday and 3 PM on Sunday."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "The Google rating is 3.9 out of 5 from 168 reviews, so it's generally well-regarded but not perfect."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_description",
+   "s": "If you have questions, their number is (619) 462-9622."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_faqs",
+   "s": "The pool is open Monday to Thursday from 5:00 AM to 9:00 PM."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_faqs",
+   "s": "On Friday, it's 5:00 AM to 7:00 PM."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_faqs",
+   "s": "Saturday hours are 7:00 AM to 5:00 PM, and Sunday it's open from 8:00 AM to 3:00 PM."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_faqs",
+   "s": "I'd recommend calling the McGrath Family YMCA directly at (619) 462-9622 to get current pricing information."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "be4de72a-82b1-3e35-9622-cfa05ed59562",
+   "col": "ai_faqs",
+   "s": "Yes, San Diego is a big city."
   },
   {
    "tbl": "pp_pools",
@@ -15043,124 +16343,430 @@
    "s": "Admission is $3 for adults."
   },
   {
+   "tbl": "pp_pools",
+   "id": "f2831232-d2f0-4a1b-7f7f-2ed49956f36e",
+   "col": "ai_faqs",
+   "s": "The Textburg Rec Center has an indoor lap pool with six lanes."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "f2831232-d2f0-4a1b-7f7f-2ed49956f36e",
+   "col": "ai_faqs",
+   "s": "I'm not aware of any other indoor public pools in town."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "f2831232-d2f0-4a1b-7f7f-2ed49956f36e",
+   "col": "ai_faqs",
+   "s": "The pool opens at 10 a.m. daily in summer."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "ba1a2065-f6f6-5541-3c06-a0fb67a2075f",
+   "col": "ai_faqs",
+   "s": "The Textburg Rec Center has an indoor lap pool with six lanes."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "6dd51cf4-f2b4-aa31-e998-832529152d49",
+   "col": "ai_description",
+   "s": "Kestrel Park Pool is an outdoor pool with a lap lane and a diving board in Textburg."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "6dd51cf4-f2b4-aa31-e998-832529152d49",
+   "col": "ai_description",
+   "s": "My records show Kestrel Park Pool as the main public pool in Textburg."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "6dd51cf4-f2b4-aa31-e998-832529152d49",
+   "col": "ai_description",
+   "s": "Lifeguards are on duty every day from June to August."
+  },
+  {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_intro",
-   "s": "When the Arizona sun really kicks in, Queen Creek knows how to cool off."
+   "s": "Living in Sugar Land, you know the heat can stick around for a good chunk of the year."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_intro",
-   "s": "We're talking long pool seasons out here, usually getting started in May and running strong through September, sometimes even into October if the weather holds up."
+   "s": "That means our pool season starts early, usually by May, and can run well into October, sometimes even longer if we get a warm fall."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_intro",
-   "s": "It's a lifesaver with those triple-digit days."
+   "s": "Even in the cooler months, indoor pools keep things going."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_intro",
-   "s": "Folks generally use the pools for everything: families splashing around, a good number of lap swimmers, and just a general escape from the heat."
+   "s": "It's a pretty active swim scene here, especially for families."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_intro",
-   "s": "If you're new to the area and looking for a place to swim, the public aquatic centers are a great starting point for day passes."
+   "s": "With a population pushing 118,000, there's a real need for good places to swim, and folks here definitely use them."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_intro",
-   "s": "But for something more private or just a different vibe, keep in mind there are a lot of backyard pools available for rent by the hour."
+   "s": "If you're new to the area or just looking for a spot to cool off, you'll find a mix of options."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_intro",
-   "s": "It's how many of us locals find a quieter swim without needing a full membership somewhere."
+   "s": "Some are city-run and pretty accessible, others might be through a rec center or a gym with different memberships."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "col": "ai_intro",
+   "s": "But overall, people here hit the water a lot, and it's mostly about beating the heat and having fun with the family."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "Public pools in Queen Creek generally open around May and stay open through September."
+   "s": "Outdoor pools usually open up in May and stay open through September, sometimes even into October depending on the weather."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "Sometimes, facilities will extend hours or remain open later into October, depending on the weather and local demand."
+   "s": "For year-round swimming, you'll need to look for indoor facilities."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "It's a long season to beat the Arizona heat."
+   "s": "It gets hot here, so the season is long."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "Public pools like the Queen Creek Aquatic Center and Queen Creek Community Pool offer daily admission at a low cost, which is the most affordable way to swim without a membership."
+   "s": "The city of Sugar Land operates several pools like the Sugar Land Community Pool and the Sugar Land Family Aquatic Center."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "Look into their schedules for specific pricing and hours."
+   "s": "These typically have daily admission fees that are pretty affordable, especially for residents."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "The Queen Creek Aquatic Center is usually the go-to for families."
+   "s": "You won't find many free options, but the city pools are budget-friendly."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "It has features like slides and splash pads, making it very kid-friendly."
+   "s": "The Sugar Land Family Aquatic Center is definitely geared towards families with features like play structures and slides."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "The Community Pool is also a good option for general family swimming and lessons."
+   "s": "The Sugar Land Community Pool is also family-friendly, usually offering lessons and open swim times that work for all ages."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "Most pools in Queen Creek are outdoor, designed to take advantage of the long warm season."
+   "s": "They're both good picks for kids."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
    "col": "ai_faqs",
-   "s": "People usually swim outdoors here."
+   "s": "During the main swim season, you'll find more outdoor pools open."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "col": "ai_faqs",
+   "s": "However, there are a few indoor options available year-round, like the Sugar Land Aquatic Center, which is part of the city's offerings."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "col": "ai_faqs",
+   "s": "It balances out depending on the time of year."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "col": "ai_faqs",
+   "s": "Yeah, definitely."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "col": "ai_faqs",
+   "s": "If you're looking for something more private than a public pool, you can check out PoolRentalNearMe.com."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "44f21e6b-abdb-b39d-1456-20e15b99da7f",
+   "col": "ai_faqs",
+   "s": "No membership needed, just book what you want, when you want it."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_intro",
+   "s": "Summer here starts heating up around late May, early June."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_intro",
+   "s": "By then, everyone's ready to jump in the water."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_intro",
+   "s": "We get a good long pool season, usually right through Labor Day, sometimes a bit longer if we get a warm fall."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_intro",
+   "s": "It's not a big lap swimming scene, more about splashing around and having fun."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_intro",
+   "s": "If you're new to Bennington and trying to find a spot to swim, you'll find most of what's available is pretty laid back."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_intro",
+   "s": "Don't expect huge water parks, but you'll definitely find somewhere a little more chill to beat the heat."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Pool season in this area generally runs from late May or early June through Labor Day."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Some private or community pools might extend their season a bit longer if the weather stays warm into September."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Public swimming options usually have an entry fee, but some community centers or parks might offer daily rates that are pretty affordable for local residents or visitors."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "We don't list free options in our directory for Bennington."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Many public and community pools have shallower areas or dedicated spaces where kids can play."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Drakes Ridge Rustic Nudist Retreat is for adults only."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Most of the swimming options in Bennington are outdoors."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Indoor pools are less common and usually found at private clubs or fitness centers."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Our PoolRentalNearMe.com directory primarily focuses on outdoor pools for seasonal enjoyment."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
    "col": "ai_faqs",
    "s": "Yes, you can."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
    "col": "ai_faqs",
-   "s": "PoolRentalNearMe.com lets you find and book private backyard pools by the hour, without needing a membership."
+   "s": "PoolRentalNearMe.com lets you find and book private backyard pools in Bennington by the hour."
   },
   {
    "tbl": "pp_cities",
-   "id": "a6ea8218-a724-d00b-8f00-274037cfe9bd",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
    "col": "ai_faqs",
-   "s": "It's a great option for a more private swim, small gatherings, or just when you want a different kind of pool experience."
+   "s": "It's a great option if you want a private swim without a membership or crowded public spaces."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
+   "col": "ai_faqs",
+   "s": "Just check our listings for availability."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_intro",
+   "s": "Down here in Corpus Christi, it's pretty much pool season all year."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_intro",
+   "s": "Sure, we get a few cooler weeks in winter, but someone's always swimming."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_intro",
+   "s": "When the heat really kicks in, and that Gulf humidity hits, a cool pool is a must-have."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_intro",
+   "s": "Most of the swim culture is pretty easygoing, a mix of folks doing laps for fitness and families just trying to beat the heat."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_intro",
+   "s": "If you're new in town and looking for a place to splash around, public pools are an option, but you'll find they sometimes have limited hours or get crowded."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_intro",
+   "s": "For something more consistent, or if you want a private spot, a backyard pool rental is often the best way to go."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "The pool season in Corpus Christi is nearly year-round."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "While some facilities might reduce hours in late fall and winter, you can generally find pools open for swimming most months due to the warm climate."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "Summer is, of course, the busiest time when pools are fully operational."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "The Corpus Christi Natatorium is a public facility."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "Entry fees are typically low."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "Public parks sometimes have splash pads that are free for kids, too."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "The Corpus Christi Natatorium is a good option for kids, as it's designed for public access."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "Many private pools available through PoolRentalNearMe.com also have shallow ends, toys, or features that are great for families."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "It just depends on what kind of experience you're looking for."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "Given our warm climate, most pools in Corpus Christi are outdoors."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "The Corpus Christi Natatorium is a notable indoor facility, providing a year-round option regardless of weather."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "Outdoor pools are common in residential areas and at various community centers."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "Yes, absolutely."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "PoolRentalNearMe.com allows you to rent private, backyard pools by the hour in Corpus Christi."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "This is a great alternative if you want a more private setting, flexible scheduling, or don't want to deal with crowded public pools or membership fees."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "cbc56716-a060-a9dc-dff4-a1c9f30336f7",
+   "col": "ai_faqs",
+   "s": "You can find swimming pools that fit your exact needs."
   },
   {
    "tbl": "pp_cities",
@@ -15209,6 +16815,12 @@
    "id": "e85a8d84-9752-0741-05f3-ee0983b47114",
    "col": "ai_faqs",
    "s": "Typically, public pools will have a daily entry fee or a seasonal pass option."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "e85a8d84-9752-0741-05f3-ee0983b47114",
+   "col": "ai_faqs",
+   "s": "I haven't seen too many free public pools around."
   },
   {
    "tbl": "pp_cities",
@@ -15266,141 +16878,255 @@
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
    "col": "ai_intro",
-   "s": "The summers in North Carolina get hot, no surprise there."
+   "s": "When it gets hot in Georgia, it gets really hot."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
    "col": "ai_intro",
-   "s": "Around here, outdoor pool season usually kicks off by Memorial Day and runs strong through Labor Day."
+   "s": "People in Canton hit the water as soon as temps consistently get into the 80s, which is usually around May, and they stay in through September."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
    "col": "ai_intro",
-   "s": "Some places try to stretch it a bit, opening in mid-May or staying open a week or two into September if the weather holds."
+   "s": "It's mostly a family-first swim scene up here."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
    "col": "ai_intro",
-   "s": "It's a pretty mixed swim scene."
+   "s": "You'll see a lot of parents teaching little ones to swim, and teenagers hanging out by the diving boards."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
    "col": "ai_intro",
-   "s": "You've got your folks who like to get their laps in early, then families come out in force by late morning."
+   "s": "The good news is, you won't have to look far for a place to cool off."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
    "col": "ai_intro",
-   "s": "If you're new to the area or just visiting, know that public pools often have specific lap swim times versus open swim."
+   "s": "The bad news, if you're a serious lap swimmer, you might find yourself doing a lot of lane sharing."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
    "col": "ai_intro",
-   "s": "Check their schedules online."
+   "s": "For something more private, backyard rentals are big here too."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "Outdoor pools in Canton usually open up around Memorial Day weekend."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "They stay open all summer, closing down after Labor Day."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "We don't have a lot of year-round outdoor swimming, but some facilities have indoor pools available longer."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "For public pools, you're usually looking at a daily entry fee or a seasonal pass."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "I don't know of any completely free public swimming."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "Some community centers or parks might offer free splash pads, but those aren't for swimming laps or lessons."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "The Canton Community Pool and Canton Aquatic Center often have dedicated shallow areas and lifeguards."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "You'll find a lot of families at these spots on any given weekend once summer hits."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "Canton does have at least one indoor pool."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "The Canton Aquatic Center has an indoor option, which is great for swimming when the weather isn't cooperating, or if you want to swim outside of the main summer season."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "That's exactly why we started PoolRentalNearMe.com."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "You can find backyard pools to rent by the hour in Canton."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "It's a sweet deal if you want a private spot for laps, a family get-together, or just a quiet afternoon without the crowds."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "4ba11895-764f-9a14-f2c2-9bc7ae5a1836",
+   "col": "ai_faqs",
+   "s": "No memberships, just pay for the time you use."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_intro",
-   "s": "It can save you a trip."
+   "s": "We're talking outdoor swimming for almost ten months out of twelve, sometimes even longer if we get mild winters."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_intro",
-   "s": "Also, weekend afternoons can get crowded everywhere."
+   "s": "It's not just for cooling off, it's a big part of staying active year-round."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "col": "ai_faqs",
-   "s": "Outdoor pools usually open around Memorial Day weekend and close after Labor Day."
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_intro",
+   "s": "You'll see a lot of lap swimmers, but also plenty of families making the most of the sun."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "col": "ai_faqs",
-   "s": "Some facilities might have slightly extended seasons depending on staffing and weather."
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_intro",
+   "s": "If you're new to Boca, a public pool is a good starting point, but a lot of folks like to find more private options, especially when the public spots get crowded."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
-   "col": "ai_faqs",
-   "s": "Indoor aquatic centers are open year-round for swimming."
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_intro",
+   "s": "We've got a decent number of pools in the area, but sometimes you want something that's just yours for a few hours, without the membership fees or the crowds."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "Most public pools like the Cary Community Pool or the Cary Aquatic Center charge a daily entry fee or require a membership."
+   "s": "You can swim outdoors for most of the year here, usually from March through November, sometimes even into December or January if the weather holds up."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "Some community centers might offer discounted rates for residents."
+   "s": "The public pools often have some heated options to extend the season through the cooler months, but you'll mostly be outside."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "The Cary Family Aquatic Center is usually a good bet for families because it's designed with different areas, including shallower sections."
+   "s": "The public pools in Boca Raton generally have an entry fee."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "The Cary Community Pool also has family-friendly hours."
+   "s": "It's usually a daily rate, or you can get a membership if you plan on going often."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "Always check their specific schedules for open swim times and features."
+   "s": "Unfortunately, there aren't many free public swimming options in the city itself."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "Yes, facilities like the Cary Aquatic Center have indoor pools that are open year-round."
+   "s": "Check the city's parks and recreation website for current rates."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "This is where most people go for swimming laps or lessons outside of the summer outdoor season."
+   "s": "The Boca Raton Family Aquatic Center is built with families in mind, and the Boca Raton Aquatic Center also has features that kids enjoy."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "Check their website for current hours and programs."
+   "s": "These typically have play areas or zero-entry sections that are good for younger swimmers."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "If you're looking for a private pool experience, you can always check out PoolRentalNearMe.com."
+   "s": "The Community Pool and Municipal Pool are also always an option."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "We connect folks with backyard pools available for rent by the hour."
+   "s": "Most of the public pools in Boca Raton are outdoors because of the consistently warm climate."
   },
   {
    "tbl": "pp_cities",
-   "id": "4b9f1f94-8121-227c-c1f5-504eb10445c6",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
    "col": "ai_faqs",
-   "s": "It's a good alternative if you want to avoid memberships or crowded public spots and just want a pool all to yourself."
+   "s": "I don't know of any dedicated indoor public swimming pools here."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_faqs",
+   "s": "Some private gyms or community centers might have indoor pools, but it's not common for the public facilities."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_faqs",
+   "s": "Yes, you can."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_faqs",
+   "s": "That's actually what we do at PoolRentalNearMe.com."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_faqs",
+   "s": "We connect people with private backyard pools available for rent by the hour."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "bae659f6-5736-2739-023c-de9fed2b9c0a",
+   "col": "ai_faqs",
+   "s": "It's a good alternative to public pools if you want more privacy, more space, or just a different vibe without needing a membership."
   },
   {
    "tbl": "pp_cities",
@@ -15611,6 +17337,12 @@
    "id": "58d6e6ab-c7b3-3a6a-7ea8-32009e2455d4",
    "col": "ai_faqs",
    "s": "Public pools usually have an entry fee or require a membership."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "58d6e6ab-c7b3-3a6a-7ea8-32009e2455d4",
+   "col": "ai_faqs",
+   "s": "I'm not aware of any free public pool options in Union City."
   },
   {
    "tbl": "pp_cities",
@@ -16725,6 +18457,12 @@
   {
    "tbl": "pp_cities",
    "id": "5b3b2706-1ba3-e8a1-8b38-ee2a3b299bd3",
+   "col": "ai_intro",
+   "s": "They're usually well-maintained and a staple for folks around here."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "5b3b2706-1ba3-e8a1-8b38-ee2a3b299bd3",
    "col": "ai_faqs",
    "s": "Outdoor pool season in the area typically starts Memorial Day weekend and wraps up right after Labor Day."
   },
@@ -17318,6 +19056,144 @@
   },
   {
    "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "When the summer sun hits, Columbus really heats up, and that means it's pool time."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "Our outdoor pool season usually kicks off around Memorial Day and runs right up to Labor Day."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "You'll definitely see the lap swimmers getting their workouts in, especially at places like McCorkle."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "But there's also a big family scene, plenty of places for the kids to splash around."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "If you're new in town and looking for a swim, the public pools are a solid bet for a low-cost dip."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "Just check their individual websites for hours and entry fees."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "For something more private, or if you're looking for a specific vibe, that's where PoolRentalNearMe.com comes in handy."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_intro",
+   "s": "Locals use it all the time to rent out backyard pools by the hour, no membership needed."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Outdoor pools in Columbus typically open around Memorial Day weekend and close after Labor Day weekend."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Indoor pools, like the McCorkle Aquatic Pavilion, are open year-round, offering swimming options regardless of the weather."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Yes, many of the public pools in Columbus offer affordable daily admission fees, and some might have discounted rates for residents."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Places like Driving Park Pool are good examples of community-focused, budget-friendly choices."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Several pools cater well to families."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Hilliard East Community Pool is known for being family-friendly."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "LC Brooklands Residential Pool, if you can access it, is also a good spot."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Public pools generally have areas suitable for children."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Absolutely."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Columbus has a mix of both."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "During the summer, most public pools like Northwest Swim Club are outdoors."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "For year-round swimming, the McCorkle Aquatic Pavilion provides excellent indoor facilities."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "Yes, you can."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "PoolRentalNearMe.com allows you to rent private, backyard pools by the hour directly from local owners."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "daae945b-5df7-762a-4017-d350e3f994b6",
+   "col": "ai_faqs",
+   "s": "It's a great option if you're looking for a more private swimming experience, or if public pool hours don't fit your schedule."
+  },
+  {
+   "tbl": "pp_cities",
    "id": "e96f7b09-9d3f-e765-ccae-96af0f62d12b",
    "col": "ai_intro",
    "s": "Around here, it's pretty much pool season all year long."
@@ -17639,6 +19515,12 @@
    "id": "e7cf8926-19a7-7af1-3575-0955100600d1",
    "col": "ai_faqs",
    "s": "The public pools in Peachtree City generally have a daily admission fee or require a membership."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "e7cf8926-19a7-7af1-3575-0955100600d1",
+   "col": "ai_faqs",
+   "s": "I'm not aware of any completely free public swimming spots."
   },
   {
    "tbl": "pp_cities",
@@ -18458,120 +20340,6 @@
   },
   {
    "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_intro",
-   "s": "Summer here starts heating up around late May, early June."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_intro",
-   "s": "By then, everyone's ready to jump in the water."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_intro",
-   "s": "We get a good long pool season, usually right through Labor Day, sometimes a bit longer if we get a warm fall."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_intro",
-   "s": "It's not a big lap swimming scene, more about splashing around and having fun."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_intro",
-   "s": "If you're new to Bennington and trying to find a spot to swim, you'll find most of what's available is pretty laid back."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_intro",
-   "s": "Don't expect huge water parks, but you'll definitely find somewhere a little more chill to beat the heat."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Pool season in this area generally runs from late May or early June through Labor Day."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Some private or community pools might extend their season a bit longer if the weather stays warm into September."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Public swimming options usually have an entry fee, but some community centers or parks might offer daily rates that are pretty affordable for local residents or visitors."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "We don't list free options in our directory for Bennington."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Many public and community pools have shallower areas or dedicated spaces where kids can play."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Drakes Ridge Rustic Nudist Retreat is for adults only."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Most of the swimming options in Bennington are outdoors."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Indoor pools are less common and usually found at private clubs or fitness centers."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Our PoolRentalNearMe.com directory primarily focuses on outdoor pools for seasonal enjoyment."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Yes, you can."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "PoolRentalNearMe.com lets you find and book private backyard pools in Bennington by the hour."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "It's a great option if you want a private swim without a membership or crowded public spaces."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b40ca21c-f50f-c01c-e85a-ca739b573ce4",
-   "col": "ai_faqs",
-   "s": "Just check our listings for availability."
-  },
-  {
-   "tbl": "pp_cities",
    "id": "90749c23-c441-d504-b204-6f9a2e943664",
    "col": "ai_intro",
    "s": "When summer finally hits Milwaukee, people are ready to jump in a pool."
@@ -18947,138 +20715,6 @@
    "id": "ea4609d5-9c78-f2e0-c67d-6b534fbb8382",
    "col": "ai_faqs",
    "s": "It's a great option if you want a private swim, a small party, or lap time without dealing with crowded public pools or a gym membership."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_intro",
-   "s": "Warm weather in Florida means a long pool season, usually from about March to October, sometimes even longer depending on the specific pool and the year's temperatures."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_intro",
-   "s": "It's not just for tourism, locals use pools here all the time to beat the heat."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_intro",
-   "s": "You see a mix of competitive swimmers, families, and people just looking to cool off."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_intro",
-   "s": "Finding a spot to swim isn't too hard, but if you're new in town, it helps to know what's open and what kind of vibe each place has."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_intro",
-   "s": "We've got a few public options, but lots of people also look at private rentals when they want something more flexible or with specific amenities."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_intro",
-   "s": "Tampa has a pretty active swim scene, so there's usually something for everyone."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "The pool season in Tampa is pretty long because of the warm climate."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "Most outdoor public pools are open from around March through October."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "Some facilities, especially those with heating, might open earlier or stay open later, sometimes even year-round depending on the weather and specific pool operations."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "Yes, there are public pools like Bobby Hicks Pool, Copeland Park Pool, and Rey Park Pool that offer affordable entry fees."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "These are typically operated by the city and are a good option for low-cost swimming."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "Sometimes, specific programs or certain age groups might have free access, so it's always good to check with the facility directly."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "Pools like Bobby Hicks, Copeland Park, and Rey Park are generally family-friendly and welcome children."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "They often have shallow areas and lifeguards on duty."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "If you're looking for something private or with specific kid-focused features, you might also consider a private pool rental through PoolRentalNearMe.com, which can offer more tailored experiences."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "Given the hot Florida climate, the vast majority of pools in Tampa are outdoor."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "There are a few indoor options, primarily at fitness centers or private clubs, but public access most often points to outdoor facilities."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "Outdoor pools are common for lap swimming, recreational use, and simply staying cool in the heat."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "If public pools aren't working for you, a good alternative is checking out PoolRentalNearMe.com."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "You can rent private backyard pools by the hour directly from owners."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "It’s like booking a small, private oasis and you don't need a membership."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
-   "col": "ai_faqs",
-   "s": "It offers a lot more flexibility in terms of schedule and amenities than public options."
   },
   {
    "tbl": "pp_cities",
@@ -20291,6 +21927,138 @@
    "id": "7c4c6a69-81d8-b467-d1b9-086a870625c5",
    "col": "ai_faqs",
    "s": "It's a good way to get a pool all to yourself without a membership."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_intro",
+   "s": "Warm weather in Florida means a long pool season, usually from about March to October, sometimes even longer depending on the specific pool and the year's temperatures."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_intro",
+   "s": "It's not just for tourism, locals use pools here all the time to beat the heat."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_intro",
+   "s": "You see a mix of competitive swimmers, families, and people just looking to cool off."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_intro",
+   "s": "Finding a spot to swim isn't too hard, but if you're new in town, it helps to know what's open and what kind of vibe each place has."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_intro",
+   "s": "We've got a few public options, but lots of people also look at private rentals when they want something more flexible or with specific amenities."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_intro",
+   "s": "Tampa has a pretty active swim scene, so there's usually something for everyone."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "The pool season in Tampa is pretty long because of the warm climate."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "Most outdoor public pools are open from around March through October."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "Some facilities, especially those with heating, might open earlier or stay open later, sometimes even year-round depending on the weather and specific pool operations."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "Yes, there are public pools like Bobby Hicks Pool, Copeland Park Pool, and Rey Park Pool that offer affordable entry fees."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "These are typically operated by the city and are a good option for low-cost swimming."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "Sometimes, specific programs or certain age groups might have free access, so it's always good to check with the facility directly."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "Pools like Bobby Hicks, Copeland Park, and Rey Park are generally family-friendly and welcome children."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "They often have shallow areas and lifeguards on duty."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "If you're looking for something private or with specific kid-focused features, you might also consider a private pool rental through PoolRentalNearMe.com, which can offer more tailored experiences."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "Given the hot Florida climate, the vast majority of pools in Tampa are outdoor."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "There are a few indoor options, primarily at fitness centers or private clubs, but public access most often points to outdoor facilities."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "Outdoor pools are common for lap swimming, recreational use, and simply staying cool in the heat."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "If public pools aren't working for you, a good alternative is checking out PoolRentalNearMe.com."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "You can rent private backyard pools by the hour directly from owners."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "It’s like booking a small, private oasis and you don't need a membership."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "b130df6b-ee04-7be0-ec88-d2ead11fbb99",
+   "col": "ai_faqs",
+   "s": "It offers a lot more flexibility in terms of schedule and amenities than public options."
   },
   {
    "tbl": "pp_cities",

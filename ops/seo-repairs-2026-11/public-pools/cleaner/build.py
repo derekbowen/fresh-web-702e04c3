@@ -105,7 +105,7 @@ with {core_block}
 select tbl, col, rules, count(*) fields_changed, sum(n_del_sentences) sentences_deleted, sum(n_del_entries) faq_entries_deleted
   from plan where new_text is not null group by 1, 2, 3 order by 1, 2, 3;
 
-\echo '== 2. fields skipped, per skip reason (ALL = field frozen before any rule ran; ALL:joined_clause_kept = left unchanged after the rules)'
+\echo '== 2. fields skipped, per skip reason (ALL = field frozen before any rule ran; ALL:joined_clause_kept / ALL:fact_guard_kept = left unchanged after the rules)'
 with {core_block}
 select p.tbl, p.col, split_part(r.reason, ':', 1) rule, split_part(r.reason, ':', 2) reason, count(*) fields,
        count(*) filter (where p.new_text is not null) of_which_changed_by_another_rule

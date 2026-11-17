@@ -9,12 +9,12 @@
 >
 > Machine-readable rules: [`rules.json`](rules.json) (generated from
 > [`text-defects/text_defect_rules.py`](text-defects/text_defect_rules.py), the single source of truth).
-> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (79 since the second 2026-11-17
+> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (87 since the third 2026-11-17
 > revision, all passing `python3 -I text_defect_rules.py test`).
 >
-> **Revised 2026-11-16 after a content review** (section 9) and **twice on 2026-11-17** (the Codex review of
-> PR #9 and an independent check of the clause guard; section 10). The rules were narrowed; sections 2-4 keep the figures measured before the 2026-11-16 revision,
-> section 9 gives the current ones (updated for section 10). Reads still owed to production: [`PENDING-READS.md`](PENDING-READS.md).
+> **Revised 2026-11-16 after a content review** (section 9) and **three times on 2026-11-17** (the Codex review of
+> PR #9 and two independent checks of the clause guard; section 10, 10b, 10c). The rules were narrowed; sections 2-4 keep the figures measured before the 2026-11-16 revision,
+> section 9 gives the current ones (updated for section 10, through 10c). Reads still owed to production: [`PENDING-READS.md`](PENDING-READS.md).
 
 ## 0. Sources and their dates
 
@@ -1044,22 +1044,23 @@ deletes less); the list of changes and the case behind each is RUNBOOK.md sectio
 all follow. Section 8's line "No apply script is part of this task" is superseded: the guarded, logged and
 reversible apply is `apply.sql` / `rollback.sql` (RUNBOOK.md); nothing has been applied.
 
-**Revised counts (S2, the 2,476 live pages of 2026-11-16, rules module alone, current rules including both
+**Revised counts (S2, the 2,476 live pages of 2026-11-16, rules module alone, current rules including all three
 2026-11-17 changes of section 10**, i.e. without the apply's field
 checks A1-A5; `live-2026-11-16/live-summary.json`; the cleaner's own figures, with A1-A5, are in RUNBOOK.md
 section 4):
 
 | Field | Fields changed | Sentences deleted | Before the revision |
 |---|---|---|---|
-| Pool descriptions (R2) | 204 | 214 | 229 / 243 |
-| Pool FAQ answers (R3) | 577 | 714 | 655 / 810 |
-| City intros (R4) | 81 | 90 | 140 / 168 |
-| City FAQ answers (R4) | 28 | 33 | 32 / 38 |
-| Wholly non-informative pool FAQ entries (R5) | 45 rows | 46 entries | 58 / 59 |
+| Pool descriptions (R2) | 203 | 213 | 229 / 243 |
+| Pool FAQ answers (R3) | 544 | 668 | 655 / 810 |
+| City intros (R4) | 75 | 83 | 140 / 168 |
+| City FAQ answers (R4) | 12 | 12 | 32 / 38 |
+| Wholly non-informative pool FAQ entries (R5) | 40 rows | 41 entries | 58 / 59 |
 | Contradicted count sentences deleted (R6) | 2 | 2 | 13 |
 
 Fields left unchanged by the joined-clause freeze of section 10 (`ALL:joined_clause_kept`, rules module alone):
-5 pool descriptions, 25 pool FAQ arrays, 14 city intros.
+5 pool descriptions, 26 pool FAQ arrays, 16 city intros; by the guard freeze of section 10c
+(`ALL:fact_guard_kept`): 13 pool FAQ arrays, 3 city FAQ arrays.
 
 **R6 categories** (65 count statements on the 476 city pages, `live-2026-11-16/count-statements.csv`): auto 6
 (18 before; 8 after the 2026-11-16 revision, 7 after the first 2026-11-17 one), review_mixed 24 (12 before; 22
@@ -1086,10 +1087,11 @@ names a pool: "Pulaski and Schulz", "(Skyline Aquatic Center)"), Lakewood CO and
 refers back) and Chicago's FAQ (A5, "Three of those ..."). The rules module alone (table above) also deletes the
 Chicago FAQ sentence; only the cleaner's A5 check stops it.
 
-**Examples.** 79 (R1 10, R2 15, R3 14, R4 17, R5 11, R6 12): the 60 of section 7, 5 R6 examples revised to
+**Examples.** 87 (R1 10, R2 16, R3 17, R4 20, R5 12, R6 12): the 60 of section 7, 5 R6 examples revised to
 the narrower rule, and 10 regression examples taken from the review cases (each fails on the old rules and
 passes on the new), plus the 2026-11-17 changes of section 10 (first round: Murray R4 and Aurora R6 revised, 3
-regression examples added; second round: 5 examples revised, 6 regression examples added). All pass.
+regression examples added; second round: 5 examples revised, 6 regression examples added; third round: 8
+regression examples added). All pass.
 
 **Founder voice left in place.** The cleaner never rewrites, so sentences in which an invented "I" speaks as
 the founder or the company stay wherever a field guard stops the deletion or the sentence carries fact
@@ -1246,3 +1248,149 @@ skip is now kept, so the field is unchanged), Omaha (R4.2) is now `ALL:joined_cl
 (R5.2) is now keep_entry, and Mount Pleasant SC (R6.5) is unchanged (its count sentence is `review_mixed`). The 79
 examples pass on the current rules; 9 of the 11 new or revised ones fail on the previous rules (the other 2,
 Livermore and Miami, had the same text outcome before, as a skip).
+
+### 10c. Third round of 2026-11-17 (independent check of 9473f6a)
+
+**Finding.** An independent check of the second round found five remaining fact losses, all present before it
+(the cleaner may only ever change less, so each is fixed by keeping more):
+
+1. *Yes/no FAQ answers.* When the question is a yes/no question, the narrator sentence that gives the direct
+   answer was deleted: "Are there any indoor swimming pools in Coronado?" -> "I'm not aware of any dedicated indoor
+   municipal swimming pools." (also Boca Raton "I don't know of any dedicated indoor public swimming pools here.",
+   Queen Creek, Norman "I'm not seeing any dedicated public indoor pools listed in our system.", and 13 more city
+   FAQ answers on S2).
+2. *Primacy claims.* "My records show the Kyle Aquatic Center as the primary public pool offering in Kyle, TX." and
+   "My records show this as the primary community pool for Temecula." were deleted although they answer "Are there
+   other public pools in ...?".
+3. *", as <clause>".* "I couldn't nail down specific daily hours, as they often change seasonally or for special
+   events." (Southland Aquatic Center Pool: the whole hours entry was deleted by R5) and the same shape at Rinconada
+   Pool, Temescal Pool and the Grove City YMCA.
+4. *Comma-less joins.* Only "so" + pronoun was a join without a comma; "I've heard it's run by the city so the vibe
+   is community-focused." and "I think it's popular and it fills up fast." were still deletable.
+5. *Run time.* The second round tested `CLAUSE`, `CLAUSE_CORE` and `CLAUSE_JOIN` on every sentence, and the R6
+   rest test twice; the surrogate dry run went from 128 s to 337 s and the apply from 16 s to 43 s (under the
+   SHARE ROW EXCLUSIVE lock).
+
+Each was reproduced with the rules module before the change (`classify(...)` returned deletable for every quoted
+sentence; the Southland entry was `answer_is_noninformative`).
+
+**Change** (`text-defects/text_defect_rules.py`; rules.json, text-defects-measure.sql, the cleaner SQL and the
+reference follow).
+
+* `CLAUSE_JOIN` gets two more alternatives (both only ever keep a sentence):
+
+      ,WS*asWS+(?!(well|soon|of)([^a-z]|$))[a-z]
+      (?<![a-z])(so|and)WS+(you|they|it|that|this|these|those|there|we|i|he|she|the|a|an)(?![a-z])
+
+  The first is ", as" followed by a word that does not start "as well", "as soon as" or "as of". The second
+  replaces the previous comma-less "so" + pronoun: "so" or "and" + a pronoun or an article (it's, they're,
+  there's follow from "not followed by a letter"). "and so on", "so far", "so much", "so many" and "and more" do
+  not match (the next word is not in the list). 22 more `CLAUSE_JOIN` shape checks (45 in all).
+* Two new keep reasons, checked **last** in `classify()`, so a sentence kept before keeps its reason and only a
+  sentence the previous rules deleted can get a new one:
+  * `answers_question`: in a FAQ answer whose question (`ai_faqs[*].q`, a string) matches `YESNO_Q` (starts with
+    are / is / does / do / can / could / will / would / should / has / have / was / were / did / may / might /
+    must / shall, or their n't forms), a narrator sentence matching `EXISTENCE` is kept: "not / n't / never" +
+    aware of / know of / seeing / seen / see / found / find / heard of / come across / familiar with + any / a
+    single / many / too many / much (unless what follows is the narrator's own data: "any information / details /
+    data / records ..."); "there is / are / isn't / aren't ..." at the start or after "I'm sure", "I think", "I'd
+    imagine", "my guess is" ...; "I know of", "I'm aware of", "I'm seeing", "that I know of". The question is
+    passed to the planner per entry (`plan_field(..., question=)`, `answer_is_noninformative(a, pool_page, q)`);
+    the SQL reads it from the same entry.
+  * `fact_claim`: a narrator sentence matching `FACT_CLAIM` is kept: a determiner or "is / as" + primary / main /
+    only / sole / biggest / largest / closest / nearest + up to three words + a facility word (pool, option,
+    facility, spot, place, center, aquatics, choice, venue, offering, game, destination, one); "is / it's / that's
+    / as the one"; "only lists / shows / includes / tracks / mentions / features / knows of". "the main thing to
+    know", "my main advice", "their main website / office / number", "the closest lot" and "I only have
+    information on X" (a data gap, `GAP`) do not match. 30 guard shape checks.
+* R6 is unchanged by the two guards (a wrong directory count stays `auto`); it sees the wider `CLAUSE` through the
+  rest-of-sentence test, which moved no count statement on S2 (`count-statements.csv` is byte-identical).
+
+**Freeze of the column, extended (`ALL:fact_guard_kept`).** As in section 10b, keeping a sentence can lift a
+field-level skip and unlock a deletion that never happened before. Measured on S2 with the new keeps but without
+extending the freeze: the rules module would newly delete 3 sentences in 3 fields (Double Oaks Aquatic Center
+"I consider it a solid family choice.", Rowland Heights Community Pool "For any others, I'd suggest checking ...",
+Hesperia Civic Plaza Pool "I'd say it's a good spot for family fun."), and the cleaner 3 (Hesperia, Double Oaks,
+and Chisholm Aquatics Center "To find them, I'd suggest checking the Fort Worth Parks and Recreation Department's
+website ..."). The new `CLAUSE_JOIN` alternatives alone unlock nothing (the 9473f6a freeze would have sufficed for
+them). `joined_keep` / `column_joined_keep` now compare three levels per sentence: BASE (`CLAUSE_CORE`, no new
+guard), JOINED (`CLAUSE`, no new guard) and FULL (`CLAUSE` and the two guards). A column in which BASE and JOINED
+differ for any sentence is `ALL:joined_clause_kept` as before (the wider `CLAUSE_JOIN` included); otherwise a column
+in which JOINED and FULL differ is `ALL:fact_guard_kept`. Either is set only when the rules would change the
+column, and every other column is planned with exactly the decisions of the rules before the second round. So the
+freeze is a superset of the 9473f6a one, and a column the new plan changes is changed exactly as 9473f6a changed it.
+SQL: `narr_del` (FULL), `narr_del_joined`, `narr_del_core`, `jkc.jk` / `jkc.jg`, `plan1`.
+
+**Only less change.** Checked page by page on S2 (rules module, `live-planned-changes.jsonl` of 9473f6a vs now):
+**0** sentences or FAQ entries are deleted now that were not deleted before; **80** that were deleted before are not
+(59 fields):
+
+| Newly kept | Count |
+|---|---|
+| R3 pool FAQ: `answers_question` / `fact_claim` / `second_clause` (", as") / frozen column | 18 / 9 / 5 / 14 |
+| R4 city FAQ: `answers_question` / `fact_claim` / frozen column | 17 / 1 / 3 |
+| R4 city intro: `second_clause` (comma-less and + article) / frozen column | 5 / 2 |
+| R2 pool description: `second_clause` (comma-less and + article) | 1 |
+| R5 pool FAQ entries: kept by `fact_claim` / `second_clause` (Southland) / in a frozen array | 3 / 1 / 1 |
+| **Total** | **80** |
+
+The cleaner on the surrogate (reference = SQL, A1-A5 included): every field the new plan changes, it changes to
+exactly the value 9473f6a planned (0 fields changed differently or newly).
+
+**Effect on S2** (rules module alone, `live-2026-11-16/`; previous figure -> current):
+
+| | After the second 2026-11-17 round | Now |
+|---|---|---|
+| R2 pool descriptions: fields / sentences | 204 / 214 | 203 / 213 |
+| R3 pool FAQ answers: fields / sentences | 577 / 714 | 544 / 668 |
+| R4 city intros: fields / sentences | 81 / 90 | 75 / 83 |
+| R4 city FAQ answers: fields / sentences | 28 / 33 | 12 / 12 |
+| R5 wholly non-informative pool FAQ entries: rows / entries | 45 / 46 | 40 / 41 |
+| R6 contradicted count sentences deleted: fields / sentences | 2 / 2 | 2 / 2 |
+| R6 categories: auto / review_mixed | 6 / 24 | 6 / 24 |
+| Columns frozen `ALL:joined_clause_kept`: pool descriptions / pool FAQ arrays / city intros | 5 / 25 / 14 | 5 / 26 / 16 |
+| Columns frozen `ALL:fact_guard_kept`: pool FAQ arrays / city FAQ arrays | - | 13 / 3 |
+| Kept narrator sentences with reason `answers_question`: pool FAQ (opinion / gap), city FAQ (gap) | - | 21 / 3, 24 |
+| Kept narrator sentences with reason `fact_claim`: pool FAQ (opinion / gap / advice), city FAQ, city intro | - | 11 / 4 / 1, 2, 1 |
+| Kept narrator sentences with reason `second_clause`: pool descriptions, pool FAQ (gap / advice / opinion), city intros, city FAQ | 672, 240 / 67 / 343, 299, 98 | 693, 244 / 75 / 347, 307, 99 |
+
+(Some sentences kept before for `fact_vocabulary` now report `second_clause`, because the clause test comes first
+in `classify()`: pool descriptions 222 -> 205 `fact_vocabulary`. Their decision did not change.)
+
+Cleaner on the surrogate (with A1-A5, `dry-run-SURROGATE-live-2026-11-16.txt`, RUNBOOK.md section 4): 2,568 ->
+**2,510** field changes, 641 -> **646** skipped fields (46 `ALL:joined_clause_kept`, 16 `ALL:fact_guard_kept`),
+28 founder-voice sentences left in place (unchanged).
+
+**Run time** (item 5). Deriving `has_clause = has_clause_core OR has_join` (and the R6 rest test from
+`rest_core` / `rest_join`) removes the duplicate evaluations, but it was not the cause: on the surrogate the plan
+query took 43 s at 9473f6a and still 44 s with only that change. Every pattern costs under 1.2 s over all 36,389
+S2 sentences on its own. The cause is PostgreSQL's cache of compiled regular expressions, which holds 32 entries
+per session (`MAX_CACHED_RES` in `regexp.c`): a row that tests more than 32 distinct patterns in turn recompiles
+every one of them on every row. Measured on the S2 sentences: 32 patterns per row 9 s, 33 patterns per row 482 s.
+The second round's `clause_core` / `clause_join` pushed the per-sentence features (and, separately, the R6 chain
+with the splitter's patterns) over that limit. The template now computes the sentence features in two stages,
+separated by a sort (a materialized CTE with ORDER BY consumes all of its input before it returns a row): stage 1
+(narrator kind, generic referral, openers; 11 patterns with the splitter's) and stage 2 (23 patterns, tested only
+where a decision reads them: narrator sentences, and number / URL / clause also for generic referrals). The R6 chain
+runs in three such stages of at most 12 patterns. Results are byte-identical: the SQL plan equals the Python
+reference on every fixture field, on the 30 non-ASCII-whitespace rows and on all 3,156 planned/skipped fields of the
+2,476 surrogate pages (test-output.txt). Plan query on the surrogate: 43 s (9473f6a) -> about 15 s (17 s at 9fd9489,
+before the second round). In test-output.txt (local PostgreSQL 16): surrogate dry run 337 s -> 126 s (118 s on another run), apply 43 s -> 15 s, rollback 0.2 s; fixture dry run 37 s -> 10 s.
+
+**Examples.** 8 must-keep regression examples added from the live page text of 2026-11-16, each failing on the
+previous rules: Coronado and Norman city FAQ answers (R4, `answers_question`; the examples carry the FAQ question in
+`question`), Kyle Aquatic Center and Temecula Community Pool FAQ answers (R3, `fact_claim`), Southland Aquatic
+Center Pool's hours entry (R5, keep_entry), Rinconada Pool's admission answer (R3, ", as"), the Hayward intro (R4,
+comma-less "and the sun gets serious"; `ALL:joined_clause_kept`) and the Fairfax Community Pool description (R2,
+"and a good option"). The 87 examples pass. 3 synthetic fixture rows were added (a yes/no answer that freezes its
+array, the same answer under an open question where the gap sentence is deleted, a description with a primacy
+claim that is frozen).
+
+**What this keeps that a person might delete.** `answers_question` also keeps hedged guesses that answer a yes/no
+question ("I'm sure there are other options.", "I'd imagine there are other public pools nearby.", 16 such pool FAQ
+sentences) and "I haven't heard of any major parking issues there." (a parking question). The comma-less join with
+an article keeps list conjunctions ("Our swim scene leans toward families and a relaxed vibe.", "They're usually
+well-maintained and a staple for folks around here."). `fact_claim` keeps "My current data only shows the
+Northbrook Municipal Pool." (an inventory claim on a pool page, where R6 does not run). All of it stays listed for
+the owner (kept sentences in `live-summary.json`, frozen columns in before-after-sample.md and dry-run.sql
+section 2).

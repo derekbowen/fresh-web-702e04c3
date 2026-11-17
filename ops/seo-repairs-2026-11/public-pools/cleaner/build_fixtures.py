@@ -69,12 +69,12 @@ def categories_city(c, actual, distinct):
     return cats
 
 
-def must_keep_sentences(text, pool_page, actual=None, distinct=None):
+def must_keep_sentences(text, pool_page, actual=None, distinct=None, question=None):
     if T.ABBREV_MARK in text:    # A4: the whole field must stay as it is (the splitter would rewrite the mark)
         return [text]
     keep = []
     for s in T.split_sentences(text):
-        kind, cls, ok, why = T.classify(s, pool_page)
+        kind, cls, ok, why = T.classify(s, pool_page, question=question)
         if kind is not None and ok:
             continue
         if actual is not None and T.r6_classify(s, actual, distinct)[0] == "auto":
@@ -303,6 +303,28 @@ def synthetic():
              ai_best_for='["families"]', ai_description="I love this unpublished pool. It has a slide and a diving board.")
     exp(p, "ai_best_for", None, "", "unpublished rows are out of scope")
     exp(p, "ai_description", None, "", "unpublished rows are out of scope")
+    # 2026-11-17, third round: the guards answers_question / fact_claim and the freeze ALL:fact_guard_kept
+    yes = {"q": "Are there any other indoor pools in Textburg?",
+           "a": "The Textburg Rec Center has an indoor lap pool with six lanes. "
+                "I'm not aware of any other indoor public pools in town."}
+    p = pool("guard-yesno", "Yesno Pool",
+             ai_faqs=[yes, {"q": "What are the hours?", "a": "The pool opens at 10 a.m. daily in summer. "
+                                                             "I'd call ahead to confirm."}])
+    exp(p, "ai_faqs", None, "", "answer 1's narrator sentence answers its yes/no question (answers_question) and "
+        "is kept; R3 would still delete answer 2's 'I'd call ahead to confirm.', so the array is frozen",
+        "ALL:fact_guard_kept")
+    p = pool("guard-open-question", "Open Question Pool",
+             ai_faqs=[{"q": "What indoor pools are in Textburg?", "a": yes["a"]}])
+    exp(p, "ai_faqs", [{"q": "What indoor pools are in Textburg?",
+                        "a": "The Textburg Rec Center has an indoor lap pool with six lanes."}], "R3",
+        "the same answer under a question that is not yes/no: the narrator gap sentence is deleted as before")
+    p = pool("guard-claim", "Kestrel Park Pool",
+             ai_description=("Kestrel Park Pool is an outdoor pool with a lap lane and a diving board in Textburg. "
+                             "My records show Kestrel Park Pool as the main public pool in Textburg. "
+                             "I love a good swim on a hot afternoon. "
+                             "Lifeguards are on duty every day from June to August."))
+    exp(p, "ai_description", None, "", "'... as the main public pool ...' is a fact claim and is kept; R2 would "
+        "still delete 'I love a good swim on a hot afternoon.', so the description is frozen", "ALL:fact_guard_kept")
     return cities, pools, expect
 
 
@@ -371,9 +393,9 @@ def main():
             mk += [{"tbl": "pp_pools", "id": p["id"], "col": "ai_description", "s": s}
                    for s in must_keep_sentences(p["ai_description"], True)]
         for e in p["ai_faqs"] or []:
-            if T._plain_entry(e) and not T.answer_is_noninformative(e["a"], True):
+            if T._plain_entry(e) and not T.answer_is_noninformative(e["a"], True, T._q(e)):
                 mk += [{"tbl": "pp_pools", "id": p["id"], "col": "ai_faqs", "s": s}
-                       for s in must_keep_sentences(e["a"], True)]
+                       for s in must_keep_sentences(e["a"], True, question=T._q(e))]
     for c in all_cities:
         a = pub_actual.get(c["id"], 0)
         m = merges.get((c["state_slug"], c["city_slug"]))
@@ -382,9 +404,9 @@ def main():
             mk += [{"tbl": "pp_cities", "id": c["id"], "col": "ai_intro", "s": s}
                    for s in must_keep_sentences(c["ai_intro"], False, a, dist)]
         for e in c.get("ai_faqs") or []:
-            if T._plain_entry(e) and not T.answer_is_noninformative(e["a"], False):
+            if T._plain_entry(e) and not T.answer_is_noninformative(e["a"], False, T._q(e)):
                 mk += [{"tbl": "pp_cities", "id": c["id"], "col": "ai_faqs", "s": s}
-                       for s in must_keep_sentences(e["a"], False, a, dist)]
+                       for s in must_keep_sentences(e["a"], False, a, dist, T._q(e))]
     real_rows = len(chosen_pools) + len(chosen_cities)
     covered = {k: sum(1 for kind, r in v if r["id"] in chosen_pools or r["id"] in chosen_cities)
                for k, v in sorted(cat_rows.items())}
