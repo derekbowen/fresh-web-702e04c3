@@ -1,0 +1,75 @@
+# Read-only snapshot of production content_pages, 2026-11-15 (project qbzpjsiahqgyoazjurqy):
+# every row that is a country page by any test used in the audit — slug ending in a
+# country suffix, slug starting australian-/canadian-/british-/uk-, a launch or city slug
+# (london, manchester, toronto, vancouver, sydney, melbourne), a canonical_override,
+# template_type country_launch, or an en-GB/en-CA/en-AU locale. 69 rows, all published.
+# Columns: slug|status|in_sitemap|template_type|locale|canonical_override|hreflang_group
+allowing-nudity-at-your-pool-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/allowing-nudity-at-your-pool-australia|allowing-nudity-at-your-pool
+allowing-nudity-at-your-pool-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/allowing-nudity-at-your-pool-canada|allowing-nudity-at-your-pool
+allowing-nudity-at-your-pool-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/allowing-nudity-at-your-pool-uk|allowing-nudity-at-your-pool
+australian-cities-with-pools|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/australian-cities-with-pools|american-cities-with-pools
+bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-australia|bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool
+bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-canada|bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool
+bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-uk|bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool
+canadian-cities-with-pools|published|t|resource|en-CA|https://poolrentalnearme.ca/p/canadian-cities-with-pools|american-cities-with-pools
+green-pool-recovery-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/green-pool-recovery-australia|green-pool-recovery
+green-pool-recovery-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/green-pool-recovery-canada|green-pool-recovery
+green-pool-recovery-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/green-pool-recovery-uk|green-pool-recovery
+hosting-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/hosting-australia|hosting
+hosting-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/hosting-canada|hosting
+hosting-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/hosting-uk|hosting
+how-it-works-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/how-it-works-australia|how-it-works
+how-it-works-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/how-it-works-canada|how-it-works
+how-it-works-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/how-it-works-uk|how-it-works
+pool-heating-guide-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-heating-guide-australia|pool-heating-everything-you-need-to-know-to-choose-the-best-device-in-2024
+pool-heating-guide-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-heating-guide-canada|pool-heating-everything-you-need-to-know-to-choose-the-best-device-in-2024
+pool-heating-guide-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-heating-guide-uk|pool-heating-everything-you-need-to-know-to-choose-the-best-device-in-2024
+pool-hire-tax-deductions-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-hire-tax-deductions-australia|pool-rental-tax-write-offs-your-missing-out-on
+pool-hire-tax-deductions-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-hire-tax-deductions-uk|pool-rental-tax-write-offs-your-missing-out-on
+pool-maintenance-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-maintenance-australia|pool-maintenance
+pool-maintenance-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-maintenance-canada|pool-maintenance
+pool-maintenance-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-maintenance-uk|pool-maintenance
+pool-pros-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-pros-australia|pool-pros
+pool-pros-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-pros-canada|pool-pros
+pool-pros-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-pros-uk|pool-pros
+pool-pump-troubleshooting-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-pump-troubleshooting-australia|pool-pump-troubleshooting
+pool-pump-troubleshooting-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-pump-troubleshooting-canada|pool-pump-troubleshooting
+pool-pump-troubleshooting-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-pump-troubleshooting-uk|pool-pump-troubleshooting
+pool-rental-insurance-explained-australia|published|f|resource|en-AU|https://poolrentalnearme.com.au/p/pool-rental-insurance-explained-australia|pool-rental-insurance-explained
+pool-rental-insurance-explained-canada|published|f|resource|en-CA|https://poolrentalnearme.ca/p/pool-rental-insurance-explained-canada|pool-rental-insurance-explained
+pool-rental-insurance-explained-uk|published|f|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-rental-insurance-explained-uk|pool-rental-insurance-explained
+pool-rental-london|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-rental-london|new-york-ny
+pool-rental-manchester|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-rental-manchester|san-diego-ca
+pool-rental-melbourne|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-rental-melbourne|san-diego-ca
+pool-rental-sydney|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-rental-sydney|new-york-ny
+pool-rental-tax-write-offs-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-rental-tax-write-offs-canada|pool-rental-tax-write-offs-your-missing-out-on
+pool-rental-toronto|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-rental-toronto|new-york-ny
+pool-rental-vancouver|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-rental-vancouver|san-diego-ca
+pool-stains-removal-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/pool-stains-removal-australia|pool-stains-removal
+pool-stains-removal-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/pool-stains-removal-canada|pool-stains-removal
+pool-stains-removal-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/pool-stains-removal-uk|pool-stains-removal
+rent-out-your-pool-australia|published|t|country_launch|en-AU||
+rent-out-your-pool-canada|published|t|country_launch|en-CA||
+rent-out-your-pool-london|published|t|country_launch|en-GB||
+rent-out-your-pool-manchester|published|t|country_launch|en-GB||
+rent-out-your-pool-melbourne|published|t|country_launch|en-AU||
+rent-out-your-pool-sydney|published|t|country_launch|en-AU||
+rent-out-your-pool-toronto|published|t|country_launch|en-CA||
+rent-out-your-pool-uk|published|t|country_launch|en-GB||
+rent-out-your-pool-vancouver|published|t|country_launch|en-CA||
+romantic-pool-escapes-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/romantic-pool-escapes-australia|top-20-romantic-us-retreats-with-pools
+romantic-pool-escapes-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/romantic-pool-escapes-canada|top-20-romantic-us-retreats-with-pools
+romantic-pool-escapes-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/romantic-pool-escapes-uk|top-20-romantic-us-retreats-with-pools
+swimply-alternative-vs-pool-rental-near-me-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/swimply-alternative-vs-pool-rental-near-me-australia|swimply-alternative-vs-pool-rental-near-me
+swimply-alternative-vs-pool-rental-near-me-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/swimply-alternative-vs-pool-rental-near-me-canada|swimply-alternative-vs-pool-rental-near-me
+swimply-alternative-vs-pool-rental-near-me-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/swimply-alternative-vs-pool-rental-near-me-uk|swimply-alternative-vs-pool-rental-near-me
+the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-australia|the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun
+the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-canada|the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun
+the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-uk|the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun
+top-pool-rental-platforms-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/top-pool-rental-platforms-australia|top-pool-rental-platforms
+top-pool-rental-platforms-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/top-pool-rental-platforms-canada|top-pool-rental-platforms
+top-pool-rental-platforms-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/top-pool-rental-platforms-uk|top-pool-rental-platforms
+uk-cities-with-pools|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/uk-cities-with-pools|american-cities-with-pools
+why-hosts-are-leaving-swimply-australia|published|t|resource|en-AU|https://poolrentalnearme.com.au/p/why-hosts-are-leaving-swimply-australia|why-hosts-are-leaving-swimply
+why-hosts-are-leaving-swimply-canada|published|t|resource|en-CA|https://poolrentalnearme.ca/p/why-hosts-are-leaving-swimply-canada|why-hosts-are-leaving-swimply
+why-hosts-are-leaving-swimply-uk|published|t|resource|en-GB|https://poolrentalnearme.co.uk/p/why-hosts-are-leaving-swimply-uk|why-hosts-are-leaving-swimply

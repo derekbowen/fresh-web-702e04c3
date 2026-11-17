@@ -36,8 +36,10 @@ import {
   loadListingEntries,
   loadComparisonEntries,
   loadContentGroupEntries,
+  loadCountryEntries,
   latestLastmod,
 } from "../src/lib/sitemap-sources.ts";
+import { COUNTRY_SITES } from "../src/lib/country-sites.ts";
 
 before(() => {
   console.error = () => {};
@@ -93,19 +95,38 @@ test("isServableSlug: underscore and upper case redirect at the edge / in p.$slu
   assert.equal(isServableSlug("has space"), false);
 });
 
-test("canonicalIsElsewhere: a ccTLD override is elsewhere; self, blank and trailing slash are not", () => {
-  const loc = `${SITE}/p/hosting-uk`;
-  assert.equal(canonicalIsElsewhere("https://poolrentalnearme.co.uk/p/hosting-uk", loc), true);
-  assert.equal(canonicalIsElsewhere("https://www.poolrentalnearme.co.uk/p/hosting-uk", loc), true);
-  assert.equal(canonicalIsElsewhere(`${SITE}/p/other-page`, loc), true);
-  assert.equal(canonicalIsElsewhere(null, loc), false);
-  assert.equal(canonicalIsElsewhere("", loc), false);
-  assert.equal(canonicalIsElsewhere("   ", loc), false);
-  assert.equal(canonicalIsElsewhere(`${SITE}/p/hosting-uk`, loc), false);
-  assert.equal(canonicalIsElsewhere(`${SITE}/p/hosting-uk/`, loc), false);
-  assert.equal(canonicalIsElsewhere("https://WWW.poolrentalnearme.com/p/hosting-uk", loc), false);
-  assert.equal(canonicalIsElsewhere("/p/hosting-uk", loc), false, "relative = same origin");
-  assert.equal(canonicalIsElsewhere("not a url", loc), true, "unparsable: not provably self");
+test("canonicalIsElsewhere: the page's own canonical decides (country mapping + path-only override)", () => {
+  // A US page on www: self unless an override names another www page.
+  const us = `${SITE}/p/about`;
+  assert.equal(canonicalIsElsewhere(null, us), false);
+  assert.equal(canonicalIsElsewhere("", us), false);
+  assert.equal(canonicalIsElsewhere("   ", us), false);
+  assert.equal(canonicalIsElsewhere(`${SITE}/p/about`, us), false);
+  assert.equal(canonicalIsElsewhere(`${SITE}/p/about/`, us), false);
+  assert.equal(canonicalIsElsewhere("https://WWW.poolrentalnearme.com/p/about", us), false);
+  assert.equal(canonicalIsElsewhere("/p/about", us), false, "relative = same page");
+  assert.equal(canonicalIsElsewhere(`${SITE}/p/other-page`, us), true, "another www page");
+  // An override can no longer move a US page to a ccTLD: the page keeps its www canonical.
+  assert.equal(canonicalIsElsewhere("https://poolrentalnearme.co.uk/p/about", us), false);
+  assert.equal(canonicalIsElsewhere("not a url", us), false, "an unusable override is ignored by the page too");
+  // A country page is never canonical on www, override or not (the 57 + the 9 launch pages).
+  const uk = `${SITE}/p/hosting-uk`;
+  assert.equal(canonicalIsElsewhere("https://poolrentalnearme.co.uk/p/hosting-uk", uk), true);
+  assert.equal(canonicalIsElsewhere(null, uk), true);
+  assert.equal(canonicalIsElsewhere(null, `${SITE}/p/rent-out-your-pool-uk`), true);
+  assert.equal(canonicalIsElsewhere(null, `${SITE}/p/pool-rental-london`), true);
+  // ...and is self-canonical on its country's canonical host, not on www.<ccTLD>.
+  assert.equal(canonicalIsElsewhere(null, "https://poolrentalnearme.co.uk/p/hosting-uk"), false);
+  assert.equal(
+    canonicalIsElsewhere("https://poolrentalnearme.co.uk/p/hosting-uk", "https://poolrentalnearme.co.uk/p/hosting-uk"),
+    false,
+  );
+  assert.equal(canonicalIsElsewhere(null, "https://www.poolrentalnearme.co.uk/p/hosting-uk"), true);
+  // A US page listed on a ccTLD is elsewhere (its canonical is www).
+  assert.equal(canonicalIsElsewhere(null, "https://poolrentalnearme.co.uk/p/austin-tx"), true);
+  // A UK page listed in the Canadian sitemap is elsewhere.
+  assert.equal(canonicalIsElsewhere(null, "https://poolrentalnearme.ca/p/hosting-uk"), true);
+  assert.equal(canonicalIsElsewhere(null, "not a url"), true);
 });
 
 test("contentRowLoc: only /p/<slug>; a different url_path is not listed", () => {
@@ -475,6 +496,105 @@ test("loadComparisonEntries: more than 1,000 published cities -> every city, min
     "no .limit(): it never lifted the cap",
   );
   assert.ok(has(cityReads[0], "eq", "is_published"));
+});
+
+test("loadComparisonEntries: a confirmed exact duplicate is not listed, its state-suffixed twin is", async () => {
+  const db = fakeDb({
+    cities: () => [{ slug: "akron" }, { slug: "boston" }, { slug: "boston-ma" }, { slug: "los-angeles" }],
+    content_pages: () => [],
+  });
+  const r = await loadComparisonEntries(db, SITE);
+  assert.equal(r.ok, true);
+  const locs = new Set(r.data.map((e) => e.loc));
+  for (const p of ["giggster", "peerspace"]) {
+    assert.ok(!locs.has(`${SITE}/p/${p}-vs-pool-rental-near-me-in-boston`), `${p} boston`);
+    assert.ok(locs.has(`${SITE}/p/${p}-vs-pool-rental-near-me-in-boston-ma`), `${p} boston-ma`);
+    assert.ok(locs.has(`${SITE}/p/${p}-vs-pool-rental-near-me-in-akron`), `${p} akron`);
+  }
+  // Los Angeles: only the Peerspace pair is a confirmed duplicate (Giggster's hub copy differs).
+  assert.ok(locs.has(`${SITE}/p/giggster-vs-pool-rental-near-me-in-los-angeles`));
+  assert.ok(!locs.has(`${SITE}/p/peerspace-vs-pool-rental-near-me-in-los-angeles`));
+  assert.equal(r.data.length, 3 + 2 * 4 - 3);
+});
+
+test("loadCountryEntries: exactly the country's mapped, listable pages, on its canonical host", async () => {
+  const uk = COUNTRY_SITES.find((s) => s.code === "GB");
+  const rows = [
+    { id: "1", slug: "hosting-uk", url_path: null, canonical_override: "https://poolrentalnearme.co.uk/p/hosting-uk", content_refreshed_at: "2026-09-01T00:00:00Z" },
+    { id: "2", slug: "rent-out-your-pool-london", url_path: null, canonical_override: null, created_at: "2026-09-16T00:00:00Z" },
+    { id: "3", slug: "pool-rental-london", url_path: null, canonical_override: "https://poolrentalnearme.co.uk/p/pool-rental-london" },
+    // the database filter is only a narrowing: anything the mapping does not assign to GB is dropped
+    { id: "4", slug: "hosting-canada", url_path: null },
+    { id: "5", slug: "become-a-swimming-pool-host-london-oh", url_path: null },
+    // content rules still apply
+    { id: "6", slug: "fixture_bad-uk", url_path: null },
+    { id: "7", slug: "shadowed-uk", url_path: null },
+    { id: "8", slug: "moved-uk", url_path: "/p/a/moved-uk" },
+    { id: "9", slug: "pointed-uk", url_path: null, canonical_override: "https://poolrentalnearme.co.uk/p/hosting-uk" },
+  ];
+  const db = fakeDb({
+    content_pages: (q) =>
+      q.calls.some((c) => c[0] === "eq" && c[1] === "status" && c[2] === "redirect")
+        ? [{ slug: "shadowed-uk", url_path: "/p/shadowed-uk", redirect_to: "hosting-uk" }]
+        : rows,
+  });
+  const r = await loadCountryEntries(uk, db);
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.data.map((e) => e.loc), [
+    "https://poolrentalnearme.co.uk/p/hosting-uk",
+    "https://poolrentalnearme.co.uk/p/rent-out-your-pool-london",
+    "https://poolrentalnearme.co.uk/p/pool-rental-london",
+  ]);
+  assert.equal(r.data[0].lastmod, "2026-09-01T00:00:00Z");
+  const read = db.queries.find((q) => q.calls.some((c) => c[0] === "or"));
+  assert.ok(has(read, "eq", "in_sitemap") && has(read, "eq", "status") && has(read, "is", "redirect_to"));
+  assert.ok(read.calls.some((c) => c[0] === "range"), "paged");
+  const failed = await loadCountryEntries(uk, fakeDb({ content_pages: () => rows }, { fail: () => true }));
+  assert.equal(failed.ok, false);
+});
+
+test("a blog post whose slug maps to a country: listed by that country's sitemap-country.xml, never by the www blog sitemap", async () => {
+  // /p/<slug> serves published blog posts too, and the mapping is by path, so
+  // such a post canonicalises to the ccTLD (none existed on 2026-11-14).
+  const uk = COUNTRY_SITES.find((s) => s.code === "GB");
+  const posts = [
+    { id: "b1", slug: "winter-pool-care-uk", updated_at: "2026-10-01T00:00:00Z" },
+    { id: "b2", slug: "winter-pool-care", updated_at: "2026-10-01T00:00:00Z" },
+    { id: "b3", slug: "winter-pool-care-canada", updated_at: "2026-10-01T00:00:00Z" },
+    // served by a content row with the same slug: the content row is the page
+    { id: "b4", slug: "hosting-uk", updated_at: "2026-10-01T00:00:00Z" },
+    // a US place, not a Canadian page
+    { id: "b5", slug: "pool-parties-little-canada", updated_at: "2026-10-01T00:00:00Z" },
+  ];
+  const content = [
+    { id: "c1", slug: "hosting-uk", url_path: "/p/hosting-uk", status: "published", redirect_to: null, priority: 0, canonical_override: null },
+  ];
+  const tables = {
+    blog_posts: () => posts,
+    content_pages: (q) => {
+      if (has(q, "eq", "status") && q.calls.some((c) => c[0] === "eq" && c[2] === "redirect")) return [];
+      if (has(q, "in", "slug")) return content.filter((c) => q.calls.find((x) => x[0] === "in" && x[1] === "slug")[2].includes(c.slug));
+      if (has(q, "overlaps", "legacy_slugs")) return [];
+      if (q.calls.some((c) => c[0] === "or")) return content;
+      return [];
+    },
+  };
+  const blog = await loadBlogEntries(fakeDb(tables), SITE);
+  assert.equal(blog.ok, true);
+  assert.deepEqual(blog.data.map((e) => e.loc).sort(), [`${SITE}/p/pool-parties-little-canada`, `${SITE}/p/winter-pool-care`]);
+  const db = fakeDb(tables);
+  const country = await loadCountryEntries(uk, db);
+  assert.equal(country.ok, true);
+  assert.deepEqual(country.data.map((e) => e.loc), [
+    "https://poolrentalnearme.co.uk/p/hosting-uk",
+    "https://poolrentalnearme.co.uk/p/winter-pool-care-uk",
+  ]);
+  assert.equal(country.data[1].lastmod, "2026-10-01T00:00:00Z");
+  const blogRead = db.queries.find((q) => q.table === "blog_posts");
+  assert.ok(has(blogRead, "eq", "is_published") && blogRead.calls.some((c) => c[0] === "or"), "narrowed, published only");
+  // a failed blog read fails the country list (503), never a partial list
+  const failed = await loadCountryEntries(uk, fakeDb(tables, { fail: (q) => q.table === "blog_posts" }));
+  assert.equal(failed.ok, false);
 });
 
 test("loadComparisonEntries: a failed redirect read or cities window fails the list", async () => {

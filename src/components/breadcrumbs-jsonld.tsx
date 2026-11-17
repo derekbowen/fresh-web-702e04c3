@@ -1,9 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { SITE_URL } from "@/lib/seo";
+import { breadcrumbListItem } from "@/lib/seo";
 
 export interface Crumb {
   name: string;
-  path: string;
+  /**
+   * May be null/empty at runtime (content_pages.url_path is NULL on most
+   * country pages); a template's own crumb passes contentPagePath(page).
+   */
+  path: string | null | undefined;
 }
 
 /**
@@ -16,17 +20,16 @@ export function BreadcrumbsWithSchema({ items, className }: { items: Crumb[]; cl
   const ld = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((c, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: c.name,
-      item: `${SITE_URL}${c.path}`,
-    })),
+    // On the host the country mapping assigns (a country page's own crumb is
+    // its ccTLD canonical), as breadcrumbJsonLd in seo.ts. A crumb without a
+    // path gets no `item` rather than a URL ending in "null".
+    itemListElement: items.map((c, i) => breadcrumbListItem(c.name, c.path, i + 1)),
   };
   // fresh-web only owns /, /p/*, /landing-page client-side. For any other
   // path (e.g. /public-pools served by another app via the nginx proxy), use
   // a plain <a> so the browser does a full navigation through the proxy.
   const isInternal = (p: string) => p === "/" || p.startsWith("/p/") || p.startsWith("/landing-page");
+  // A crumb with no path renders as plain text, never a link to "null".
   return (
     <>
       <nav aria-label="Breadcrumb" className={className ?? "text-sm text-muted-foreground"}>
@@ -37,6 +40,8 @@ export function BreadcrumbsWithSchema({ items, className }: { items: Crumb[]; cl
               <li key={`${c.path}-${i}`} className="flex items-center gap-1.5">
                 {last ? (
                   <span aria-current="page" className="text-foreground font-medium">{c.name}</span>
+                ) : !c.path ? (
+                  <span>{c.name}</span>
                 ) : isInternal(c.path) ? (
                   <Link to={c.path} className="hover:text-primary hover:underline">{c.name}</Link>
                 ) : (

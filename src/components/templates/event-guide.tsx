@@ -1,6 +1,7 @@
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { HeroImage } from "@/components/hero-image";
 import { AutoLinkedContent, type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
@@ -35,7 +36,7 @@ export function EventGuideTemplate({
           items={[
             { name: "Home", path: "/" },
             { name: "Event guides", path: "/p/learningacademy" },
-            { name: title, path: page.url_path },
+            { name: title, path: contentPagePath(page) },
           ]}
         />
         <article className="mt-6">

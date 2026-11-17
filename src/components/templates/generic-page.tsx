@@ -5,6 +5,7 @@ import { AuthorByline } from "@/components/author-byline";
 import { type LinkTarget } from "@/components/auto-linked-content";
 import { RelatedPages } from "@/components/related-pages";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { FounderBookingInline } from "@/components/founder-booking";
 import type { ContentPage } from "@/server/content-pages.functions";
 
@@ -41,7 +42,7 @@ export function GenericPageTemplate({
         <BreadcrumbsWithSchema
           items={[
             { name: "Home", path: "/" },
-            { name: title, path: page.url_path },
+            { name: title, path: contentPagePath(page) },
           ]}
         />
         <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">

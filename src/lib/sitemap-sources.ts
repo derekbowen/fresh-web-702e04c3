@@ -26,12 +26,15 @@ import {
 import { groupOrFilter, type ContentSitemapGroup } from "./sitemap-groups.ts";
 import {
   blogPostExclusion,
+  canonicalIsElsewhere,
   contentRowExclusion,
   contentRowLoc,
   dedupeByLoc,
   listingExclusion,
   redirectShadowedSlugs,
 } from "./sitemap-rules.ts";
+import { countryForSlug, slugOrFilter, type CountrySite } from "./country-sites.ts";
+import { isComparisonDuplicatePath } from "./comparison-duplicates.ts";
 
 /** Rows asked for per request. Equal to the PostgREST cap; see the header. */
 export const READ_WINDOW = 1000;
@@ -181,6 +184,70 @@ export async function loadContentGroupEntries(
     };
     if (row.hero_image_url) entry.images = [{ loc: row.hero_image_url }];
     entries.push(entry);
+  }
+  return { ok: true, data: dedupeByLoc(entries) };
+}
+
+// ───────────────────────────── country pages ────────────────────────────────
+
+/**
+ * sitemap-country.xml for one country: exactly the /p/<slug> pages the country
+ * mapping assigns to it (src/lib/country-sites.ts) that may be listed at all.
+ *   - content_pages rows: published, in_sitemap, no redirect_to, and every
+ *     content rule (servable and well-formed slug, plain /p/<slug>, not a
+ *     dedicated route, not shadowed by a redirect row, canonical equal to its
+ *     own URL);
+ *   - published blog_posts that /p/<slug> serves as the blog post (the same
+ *     rule as the blog sitemap): the mapping is by path, so a blog post whose
+ *     slug ends in a country suffix canonicalises to the ccTLD and belongs
+ *     here, not in sitemap-pages-blog.xml. None existed in the 2026-11-14
+ *     crawl; this keeps the two lists complementary if one is published.
+ * <loc> is on the country's canonical host. Paged and fail closed like every
+ * other list. The old route read `ilike` patterns with a flat `.limit(5000)`
+ * and no status / redirect filter, and took lastmod from updated_at (else the
+ * request time); see the lastmod note below.
+ */
+export async function loadCountryEntries(
+  site: CountrySite,
+  supabase: SupabaseClient,
+): Promise<ListOutcome<SitemapEntry>> {
+  const shadowed = await loadRedirectShadowedSlugs(supabase);
+  if (!shadowed.ok) return shadowed;
+  const rows = await readAllRows<ContentRow>(`sitemap country ${site.code}`, (from, to, signal) =>
+    supabase
+      .from("content_pages")
+      .select("id, slug, url_path, canonical_override, content_refreshed_at, created_at")
+      .or(slugOrFilter(site))
+      .eq("in_sitemap", true)
+      .eq("status", "published")
+      .is("redirect_to", null)
+      .not("slug", "is", null)
+      .order("slug")
+      .order("id")
+      .range(from, to)
+      .abortSignal(signal),
+  );
+  if (!rows.ok) return rows;
+  const siteUrl = `https://${site.canonicalHost}`;
+  const ctx = { siteUrl, redirectShadowedSlugs: new Set(shadowed.data) };
+  const entries: SitemapEntry[] = [];
+  for (const row of rows.data) {
+    if (countryForSlug(row.slug) !== site) continue;
+    if (contentRowExclusion(row, ctx)) continue;
+    entries.push({
+      loc: contentRowLoc(row, siteUrl)!,
+      // Same lastmod rule as the www content sitemaps (step 03): updated_at is
+      // bumped by any column write, so it is not a content date. Deliberate
+      // change from the old route: on 2026-11-16 its live <lastmod>s were
+      // updated_at bulk-write times (46 of 59 URLs share 2026-08-06T08:32:45Z).
+      lastmod: row.content_refreshed_at ?? row.created_at ?? null,
+    });
+  }
+  const blogs = await loadServedBlogPosts(supabase, `sitemap country ${site.code} blog_posts`, slugOrFilter(site));
+  if (!blogs.ok) return blogs;
+  for (const r of blogs.data) {
+    if (countryForSlug(r.slug) !== site) continue;
+    entries.push({ loc: `${siteUrl}/p/${r.slug}`, lastmod: r.updated_at ?? r.published_at ?? null });
   }
   return { ok: true, data: dedupeByLoc(entries) };
 }
@@ -387,30 +454,57 @@ interface BlogRow {
   published_at?: string | null;
 }
 
-/** Published blog posts that /p/<slug> really serves from blog_posts. Newest first. */
-export async function loadBlogEntries(
+/**
+ * Published blog posts that /p/<slug> really serves from blog_posts (every
+ * blogPostExclusion rule applied), newest first. `slugFilter`, a PostgREST
+ * `or=(...)` filter, narrows the read (sitemap-country uses the mapping's).
+ */
+async function loadServedBlogPosts(
   supabase: SupabaseClient,
-  siteUrl: string,
-): Promise<ListOutcome<SitemapEntry>> {
-  const rows = await readAllRows<BlogRow>("sitemap blog_posts", (from, to, signal) =>
-    supabase
+  label: string,
+  slugFilter?: string,
+): Promise<ListOutcome<BlogRow & { slug: string }>> {
+  const rows = await readAllRows<BlogRow>(label, (from, to, signal) => {
+    let q = supabase
       .from("blog_posts")
       .select("id, slug, cover_image_url, title, updated_at, published_at")
-      .eq("is_published", true)
+      .eq("is_published", true);
+    if (slugFilter) q = q.or(slugFilter);
+    return q
       .order("updated_at", { ascending: false })
       .order("id")
       .range(from, to)
-      .abortSignal(signal),
-  );
+      .abortSignal(signal);
+  });
   if (!rows.ok) return rows;
   const slugs = rows.data.map((r) => r.slug).filter((s): s is string => !!s);
   const served = await loadContentServedSlugs(supabase, [...new Set(slugs)]);
   if (!served.ok) return served;
   const contentSlugs = new Set(served.data);
+  return {
+    ok: true,
+    data: rows.data.filter(
+      (r): r is BlogRow & { slug: string } => !blogPostExclusion(r, contentSlugs),
+    ),
+  };
+}
+
+/**
+ * Published blog posts that /p/<slug> really serves from blog_posts, minus any
+ * whose canonical is elsewhere: the country mapping is by path, so a blog post
+ * whose slug maps to a country canonicalises to its ccTLD and is listed by
+ * that country's sitemap-country.xml instead. Newest first.
+ */
+export async function loadBlogEntries(
+  supabase: SupabaseClient,
+  siteUrl: string,
+): Promise<ListOutcome<SitemapEntry>> {
+  const rows = await loadServedBlogPosts(supabase, "sitemap blog_posts");
+  if (!rows.ok) return rows;
 
   const entries: SitemapEntry[] = [];
   for (const r of rows.data) {
-    if (blogPostExclusion(r, contentSlugs)) continue;
+    if (canonicalIsElsewhere(null, `${siteUrl}/p/${r.slug}`)) continue;
     const e: SitemapEntry = {
       loc: `${siteUrl}/p/${r.slug}`,
       lastmod: r.updated_at ?? r.published_at ?? null,
@@ -479,8 +573,9 @@ export const COMPARISON_CITY_PREFIXES = [
 /**
  * The comparison sitemap: three pillars plus two city pages per published
  * cities row, minus every city page that a content_pages row redirects
- * (redirect_to set), because that URL 301s instead of serving itself.
- * Both reads are paged: the cities read used `.limit(5000)`, which PostgREST
+ * (redirect_to set), because that URL 301s instead of serving itself, and
+ * minus the confirmed exact duplicates that 301 to their state-suffixed twin
+ * (COMPARISON_DUPLICATE_REDIRECTS). Both reads are paged: the cities read used `.limit(5000)`, which PostgREST
  * caps at 1,000 rows (2,003 URLs), and the redirect read the same.
  */
 export async function loadComparisonEntries(
@@ -526,6 +621,9 @@ export async function loadComparisonEntries(
     const lastmod = row.updated_at ? new Date(row.updated_at) : now;
     for (const prefix of COMPARISON_CITY_PREFIXES) {
       if (redirected.has(`${prefix}${row.slug}`)) continue;
+      // A confirmed exact duplicate 301s to its state-suffixed twin
+      // (src/lib/comparison-duplicates.ts); only the twin is listed.
+      if (isComparisonDuplicatePath(`/p/${prefix}${row.slug}`)) continue;
       entries.push({ loc: `${siteUrl}/p/${prefix}${row.slug}`, lastmod });
     }
   }

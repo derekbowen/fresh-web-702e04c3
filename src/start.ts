@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import { unavailableResponse, UNAVAILABLE_RETRY_AFTER_SECONDS } from "@/lib/failed-read";
 import { watchRequestUnavailable } from "@/server/request-unavailable.server";
+import { comparisonDuplicateSlashRedirect } from "@/lib/comparison-duplicates";
 
 // Baseline security headers applied to every response (HTML, server fns, server routes).
 // CSP is intentionally permissive enough to allow Supabase, Lovable assets, embedded
@@ -133,9 +134,30 @@ const bareP404Middleware = createMiddleware().server(async ({ next, request }) =
   return next();
 });
 
+// A listed comparison duplicate (src/lib/comparison-duplicates.ts) asked for
+// with a trailing slash: one 301 straight to its state-suffixed twin. The
+// router strips a trailing slash with a 307 before any route's beforeLoad
+// runs, so "/p/...-in-boston/" used to take two hops (307 to the bare URL, then
+// its 301). Only the listed bare URLs are matched; every other URL, the twins
+// included, keeps the router's own trailing-slash handling. Like the route's
+// 301, the query string is not carried over.
+const comparisonDuplicateSlashMiddleware = createMiddleware().server(async ({ next, request }) => {
+  if (request.method === "GET" || request.method === "HEAD") {
+    const target = comparisonDuplicateSlashRedirect(new URL(request.url).pathname);
+    if (target) return new Response(null, { status: 301, headers: { Location: target } });
+  }
+  return next();
+});
+
 export const startInstance = createStart(() => ({
-  // Order matters: security headers wrap the 503 and the bare-/p 404 as well.
-  requestMiddleware: [securityHeadersMiddleware, bareP404Middleware, failedReadMiddleware],
+  // Order matters: security headers wrap the 503, the bare-/p 404 and the
+  // duplicate 301 as well.
+  requestMiddleware: [
+    securityHeadersMiddleware,
+    bareP404Middleware,
+    comparisonDuplicateSlashMiddleware,
+    failedReadMiddleware,
+  ],
   functionMiddleware: [attachSupabaseAuth],
   serverFns: {
     fetch: async (url, requestInit) => {

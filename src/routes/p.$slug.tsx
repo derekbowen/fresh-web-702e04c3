@@ -37,6 +37,13 @@ import {
   AUTHOR_PERSON_URL,
 } from "@/lib/seo";
 import { getRouteOrigin } from "@/lib/route-origin";
+import {
+  canonicalUrlForPath,
+  contentPagePath,
+  countryForSlug,
+  countryHreflangAlternates,
+  resolveCanonicalUrl,
+} from "@/lib/country-sites";
 
 import { ResourceArticleTemplate } from "@/components/templates/resource-article";
 import { GenericPageTemplate } from "@/components/templates/generic-page";
@@ -216,8 +223,12 @@ export const Route = createFileRoute("/p/$slug")({
         pageForSibling.hreflang_group
           ? safe(getHreflangSibling({ data: { pageId: page.id } }), {
               sibling: null as { slug: string; language: string } | null,
+              groupSlugs: [] as string[],
             })
-          : Promise.resolve({ sibling: null as { slug: string; language: string } | null }),
+          : Promise.resolve({
+              sibling: null as { slug: string; language: string } | null,
+              groupSlugs: [] as string[],
+            }),
         Array.isArray(relatedSlugs) && relatedSlugs.length > 0
           ? safe(getRelatedBlogMeta({ data: { slugs: relatedSlugs.slice(0, 8) } }), {
               posts: [] as RelatedPostMeta[],
@@ -278,6 +289,7 @@ export const Route = createFileRoute("/p/$slug")({
       cityInventory,
       academyHub,
       hreflangSibling: hreflangRes.sibling,
+      hreflangGroupSlugs: hreflangRes.groupSlugs,
       relatedPosts: relatedRes.posts,
       origin,
       launchGuides,
@@ -290,7 +302,9 @@ export const Route = createFileRoute("/p/$slug")({
     // Canonical always points at the page's stored url_path (which uses the
     // canonical slug), so legacy/case/duplicate slug variants all collapse to
     // a single canonical URL — even before the 301 redirect fires.
-    const canonicalPath = p.url_path || `/p/${p.slug ?? params.slug}`;
+    // contentPagePath: url_path, else /p/<slug> (url_path is NULL on most
+    // country pages in production).
+    const canonicalPath = contentPagePath(p) || `/p/${params.slug}`;
     const titleBase = p.title || p.seo_title || params.slug;
     let title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
     let description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
@@ -309,19 +323,26 @@ export const Route = createFileRoute("/p/$slug")({
       description = copy.metaDescription;
     }
 
-    // Hreflang — emit the EN↔ES pair for the academy hubs and any other
-    // page that has a known twin. (Skipped on simple en pages with no twin.)
+    // Hreflang — only between true equivalents, every href a canonical URL
+    // (src/lib/country-sites.ts), never the request host:
+    //   - the academy hubs' EN↔ES pair;
+    //   - a country page: its localised versions in the other markets
+    //     (countryHreflangAlternates; none for pages with no defined equivalent);
+    //   - a US page and its known twin (EN↔ES), unless the twin is a country page.
     const academyLang = academyLangForSlug(p.slug);
-    const origin = loaderData.origin ?? SITE_URL;
     let hreflang: Array<{ lang: string; href: string }> | undefined;
     if (academyLang) {
       hreflang = [
-        { lang: "en", href: `${origin}${academyHubPath("en")}` },
-        { lang: "es", href: `${origin}${academyHubPath("es")}` },
-        { lang: "x-default", href: `${origin}${academyHubPath("en")}` },
+        { lang: "en", href: canonicalUrlForPath(academyHubPath("en")) },
+        { lang: "es", href: canonicalUrlForPath(academyHubPath("es")) },
+        { lang: "x-default", href: canonicalUrlForPath(academyHubPath("en")) },
       ];
+    } else if (countryForSlug(p.slug)) {
+      hreflang = (p as { hreflang_group?: string | null }).hreflang_group
+        ? countryHreflangAlternates(p.slug ?? "", loaderData.hreflangGroupSlugs ?? [])
+        : undefined;
     } else {
-      hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null, origin);
+      hreflang = buildHreflangLinks(p, loaderData.hreflangSibling ?? null);
     }
 
     const pAny = p as unknown as {
@@ -339,7 +360,6 @@ export const Route = createFileRoute("/p/$slug")({
       ogDescription: pAny.og_description?.trim() || undefined,
       image: p.cover_image_url || p.hero_image_url || undefined,
       type: isArticleType(p.template_type) || academyLang ? "article" : "website",
-      origin,
       hreflang,
     });
 
@@ -411,7 +431,8 @@ export const Route = createFileRoute("/p/$slug")({
           : { "@type": "Person", name: authorName },
         datePublished: toIsoOrUndefined(p.published_at),
         dateModified: toIsoOrUndefined(p.updated_at) ?? toIsoOrUndefined(p.published_at),
-        mainEntityOfPage: `${SITE_URL}${path}`,
+        // The page's canonical URL (a country article's lives on its ccTLD).
+        mainEntityOfPage: resolveCanonicalUrl(canonicalPath, pAny.canonical_override),
         publisher: {
           "@type": "Organization",
           name: SITE_NAME,
@@ -577,13 +598,15 @@ function isArticleType(t: ContentPage["template_type"]): boolean {
 function buildHreflangLinks(
   p: ContentPage,
   sibling: { slug: string; language: string } | null,
-  origin: string = SITE_URL,
 ): Array<{ lang: string; href: string }> | undefined {
   const pAny = p as { hreflang_group?: string | null };
   if (!sibling || !pAny.hreflang_group) return undefined;
+  // A country page is never the equivalent of a US page.
+  if (countryForSlug(sibling.slug)) return undefined;
+  const href = (path: string) => canonicalUrlForPath(path);
 
 
-  const pagePath = p.url_path || `/p/${p.slug ?? ""}`;
+  const pagePath = contentPagePath(p);
   const siblingPath = `/p/${sibling.slug}`;
   const pageLang = p.locale || p.language || "en";
 
@@ -594,14 +617,14 @@ function buildHreflangLinks(
 
   const englishHref =
     pageLang === "en"
-      ? `${origin}${pagePath}`
+      ? href(pagePath)
       : sibling.language === "en"
-        ? `${origin}${siblingPath}`
-        : `${origin}${pagePath}`;
+        ? href(siblingPath)
+        : href(pagePath);
 
   return [
-    { lang: regional(pageLang), href: `${origin}${pagePath}` },
-    { lang: regional(sibling.language), href: `${origin}${siblingPath}` },
+    { lang: regional(pageLang), href: href(pagePath) },
+    { lang: regional(sibling.language), href: href(siblingPath) },
     { lang: "x-default", href: englishHref },
   ];
 }

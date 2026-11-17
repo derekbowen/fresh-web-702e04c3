@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import { SiteHeader, SiteFooter } from "@/components/site-layout";
 import { AuthorByline } from "@/components/author-byline";
 import { BreadcrumbsWithSchema } from "@/components/breadcrumbs-jsonld";
+import { contentPagePath } from "@/lib/country-sites";
 import { HeroImage } from "@/components/hero-image";
 import { RelatedPages } from "@/components/related-pages";
 import { FaqBlock } from "@/components/faq-block";
@@ -77,7 +78,7 @@ export function ResourceArticleTemplate({
   }
   breadcrumbItems.push({
     name: page.title || page.slug || "",
-    path: page.url_path,
+    path: contentPagePath(page),
   });
 
   const halves = splitMarkdownInHalf(body);

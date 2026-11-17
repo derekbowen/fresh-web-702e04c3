@@ -1,0 +1,676 @@
+{
+ "fetched_at": "2026-11-16T19:34:18Z",
+ "hosts": {
+  "www.poolrentalnearme.com": {
+   "robots": {
+    "status": 200,
+    "allow": [
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/",
+     "/"
+    ],
+    "disallow_all": true,
+    "sitemap": [
+     "https://www.poolrentalnearme.com/sitemap.xml",
+     "https://www.poolrentalnearme.com/public-pools.xml"
+    ]
+   },
+   "sitemap_country": {
+    "status": 404,
+    "locs": 0,
+    "loc_hosts": [],
+    "slugs": []
+   },
+   "pages": {
+    "/p/rent-out-your-pool-uk": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/rent-out-your-pool-uk"
+     ],
+     "hreflang": []
+    },
+    "/p/pool-maintenance-canada": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ],
+     "hreflang": [
+      "en-CA https://www.poolrentalnearme.com/p/pool-maintenance-canada",
+      "en-GB https://www.poolrentalnearme.com/p/pool-maintenance-uk",
+      "x-default https://www.poolrentalnearme.com/p/pool-maintenance-canada"
+     ]
+    },
+    "/p/pool-rental-london": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ],
+     "hreflang": [
+      "en-GB https://www.poolrentalnearme.com/p/pool-rental-london",
+      "en-CA https://www.poolrentalnearme.com/p/pool-rental-toronto",
+      "x-default https://www.poolrentalnearme.com/p/pool-rental-london"
+     ]
+    },
+    "/p/become-a-swimming-pool-host-austin-tx": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/become-a-swimming-pool-host-austin-tx"
+     ],
+     "hreflang": [
+      "en-US https://www.poolrentalnearme.com/p/become-a-swimming-pool-host-austin-tx",
+      "es-US https://www.poolrentalnearme.com/p/conviertete-en-anfitrion-de-alberca-austin-tx",
+      "x-default https://www.poolrentalnearme.com/p/become-a-swimming-pool-host-austin-tx"
+     ]
+    },
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston"
+     ],
+     "hreflang": []
+    }
+   }
+  },
+  "poolrentalnearme.co.uk": {
+   "robots": {
+    "status": 200,
+    "allow": [
+     "/p/*-uk$",
+     "/p/*-united-kingdom$",
+     "/p/rent-out-your-pool-london$",
+     "/p/rent-out-your-pool-manchester$"
+    ],
+    "disallow_all": true,
+    "sitemap": [
+     "https://poolrentalnearme.co.uk/sitemap-country.xml"
+    ]
+   },
+   "sitemap_country": {
+    "status": 200,
+    "locs": 19,
+    "loc_hosts": [
+     "poolrentalnearme.co.uk"
+    ],
+    "slugs": [
+     "allowing-nudity-at-your-pool-uk",
+     "bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-uk",
+     "green-pool-recovery-uk",
+     "hosting-uk",
+     "how-it-works-uk",
+     "pool-heating-guide-uk",
+     "pool-hire-tax-deductions-uk",
+     "pool-maintenance-uk",
+     "pool-pros-uk",
+     "pool-pump-troubleshooting-uk",
+     "pool-stains-removal-uk",
+     "rent-out-your-pool-london",
+     "rent-out-your-pool-manchester",
+     "rent-out-your-pool-uk",
+     "romantic-pool-escapes-uk",
+     "swimply-alternative-vs-pool-rental-near-me-uk",
+     "the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-uk",
+     "top-pool-rental-platforms-uk",
+     "why-hosts-are-leaving-swimply-uk"
+    ]
+   },
+   "pages": {
+    "/p/rent-out-your-pool-uk": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/rent-out-your-pool-uk"
+     ],
+     "hreflang": []
+    },
+    "/p/pool-maintenance-canada": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ],
+     "hreflang": [
+      "en-CA https://poolrentalnearme.co.uk/p/pool-maintenance-canada",
+      "en-GB https://poolrentalnearme.co.uk/p/pool-maintenance-uk",
+      "x-default https://poolrentalnearme.co.uk/p/pool-maintenance-canada"
+     ]
+    },
+    "/p/pool-rental-london": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ],
+     "hreflang": [
+      "en-GB https://poolrentalnearme.co.uk/p/pool-rental-london",
+      "en-CA https://poolrentalnearme.co.uk/p/pool-rental-toronto",
+      "x-default https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ]
+    },
+    "/p/become-a-swimming-pool-host-austin-tx": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/become-a-swimming-pool-host-austin-tx"
+     ],
+     "hreflang": [
+      "en-US https://poolrentalnearme.co.uk/p/become-a-swimming-pool-host-austin-tx",
+      "es-US https://poolrentalnearme.co.uk/p/conviertete-en-anfitrion-de-alberca-austin-tx",
+      "x-default https://poolrentalnearme.co.uk/p/become-a-swimming-pool-host-austin-tx"
+     ]
+    },
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston"
+     ],
+     "hreflang": []
+    }
+   }
+  },
+  "www.poolrentalnearme.co.uk": {
+   "robots": {
+    "status": 200,
+    "allow": [
+     "/p/*-uk$",
+     "/p/*-united-kingdom$",
+     "/p/rent-out-your-pool-london$",
+     "/p/rent-out-your-pool-manchester$"
+    ],
+    "disallow_all": true,
+    "sitemap": [
+     "https://www.poolrentalnearme.co.uk/sitemap-country.xml"
+    ]
+   },
+   "sitemap_country": {
+    "status": 200,
+    "locs": 19,
+    "loc_hosts": [
+     "www.poolrentalnearme.co.uk"
+    ],
+    "slugs": [
+     "allowing-nudity-at-your-pool-uk",
+     "bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-uk",
+     "green-pool-recovery-uk",
+     "hosting-uk",
+     "how-it-works-uk",
+     "pool-heating-guide-uk",
+     "pool-hire-tax-deductions-uk",
+     "pool-maintenance-uk",
+     "pool-pros-uk",
+     "pool-pump-troubleshooting-uk",
+     "pool-stains-removal-uk",
+     "rent-out-your-pool-london",
+     "rent-out-your-pool-manchester",
+     "rent-out-your-pool-uk",
+     "romantic-pool-escapes-uk",
+     "swimply-alternative-vs-pool-rental-near-me-uk",
+     "the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-uk",
+     "top-pool-rental-platforms-uk",
+     "why-hosts-are-leaving-swimply-uk"
+    ]
+   },
+   "pages": {
+    "/p/rent-out-your-pool-uk": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.co.uk/p/rent-out-your-pool-uk"
+     ],
+     "hreflang": []
+    },
+    "/p/pool-maintenance-canada": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ],
+     "hreflang": [
+      "en-CA https://www.poolrentalnearme.co.uk/p/pool-maintenance-canada",
+      "en-GB https://www.poolrentalnearme.co.uk/p/pool-maintenance-uk",
+      "x-default https://www.poolrentalnearme.co.uk/p/pool-maintenance-canada"
+     ]
+    },
+    "/p/pool-rental-london": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ],
+     "hreflang": [
+      "en-GB https://www.poolrentalnearme.co.uk/p/pool-rental-london",
+      "en-CA https://www.poolrentalnearme.co.uk/p/pool-rental-toronto",
+      "x-default https://www.poolrentalnearme.co.uk/p/pool-rental-london"
+     ]
+    },
+    "/p/become-a-swimming-pool-host-austin-tx": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.co.uk/p/become-a-swimming-pool-host-austin-tx"
+     ],
+     "hreflang": [
+      "en-US https://www.poolrentalnearme.co.uk/p/become-a-swimming-pool-host-austin-tx",
+      "es-US https://www.poolrentalnearme.co.uk/p/conviertete-en-anfitrion-de-alberca-austin-tx",
+      "x-default https://www.poolrentalnearme.co.uk/p/become-a-swimming-pool-host-austin-tx"
+     ]
+    },
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston"
+     ],
+     "hreflang": []
+    }
+   }
+  },
+  "poolrentalnearme.ca": {
+   "robots": {
+    "status": 200,
+    "allow": [
+     "/p/*-canada$",
+     "/p/canadian-*",
+     "/p/rent-out-your-pool-toronto$",
+     "/p/rent-out-your-pool-vancouver$"
+    ],
+    "disallow_all": true,
+    "sitemap": [
+     "https://poolrentalnearme.ca/sitemap-country.xml"
+    ]
+   },
+   "sitemap_country": {
+    "status": 200,
+    "locs": 20,
+    "loc_hosts": [
+     "poolrentalnearme.ca"
+    ],
+    "slugs": [
+     "allowing-nudity-at-your-pool-canada",
+     "bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-canada",
+     "canadian-cities-with-pools",
+     "green-pool-recovery-canada",
+     "hosting-canada",
+     "how-it-works-canada",
+     "pool-heating-guide-canada",
+     "pool-maintenance-canada",
+     "pool-pros-canada",
+     "pool-pump-troubleshooting-canada",
+     "pool-rental-tax-write-offs-canada",
+     "pool-stains-removal-canada",
+     "rent-out-your-pool-canada",
+     "rent-out-your-pool-toronto",
+     "rent-out-your-pool-vancouver",
+     "romantic-pool-escapes-canada",
+     "swimply-alternative-vs-pool-rental-near-me-canada",
+     "the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-canada",
+     "top-pool-rental-platforms-canada",
+     "why-hosts-are-leaving-swimply-canada"
+    ]
+   },
+   "pages": {
+    "/p/rent-out-your-pool-uk": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/rent-out-your-pool-uk"
+     ],
+     "hreflang": []
+    },
+    "/p/pool-maintenance-canada": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ],
+     "hreflang": [
+      "en-CA https://poolrentalnearme.ca/p/pool-maintenance-canada",
+      "en-GB https://poolrentalnearme.ca/p/pool-maintenance-uk",
+      "x-default https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ]
+    },
+    "/p/pool-rental-london": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ],
+     "hreflang": [
+      "en-GB https://poolrentalnearme.ca/p/pool-rental-london",
+      "en-CA https://poolrentalnearme.ca/p/pool-rental-toronto",
+      "x-default https://poolrentalnearme.ca/p/pool-rental-london"
+     ]
+    },
+    "/p/become-a-swimming-pool-host-austin-tx": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/become-a-swimming-pool-host-austin-tx"
+     ],
+     "hreflang": [
+      "en-US https://poolrentalnearme.ca/p/become-a-swimming-pool-host-austin-tx",
+      "es-US https://poolrentalnearme.ca/p/conviertete-en-anfitrion-de-alberca-austin-tx",
+      "x-default https://poolrentalnearme.ca/p/become-a-swimming-pool-host-austin-tx"
+     ]
+    },
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston"
+     ],
+     "hreflang": []
+    }
+   }
+  },
+  "www.poolrentalnearme.ca": {
+   "robots": {
+    "status": 200,
+    "allow": [
+     "/p/*-canada$",
+     "/p/canadian-*",
+     "/p/rent-out-your-pool-toronto$",
+     "/p/rent-out-your-pool-vancouver$"
+    ],
+    "disallow_all": true,
+    "sitemap": [
+     "https://www.poolrentalnearme.ca/sitemap-country.xml"
+    ]
+   },
+   "sitemap_country": {
+    "status": 200,
+    "locs": 20,
+    "loc_hosts": [
+     "www.poolrentalnearme.ca"
+    ],
+    "slugs": [
+     "allowing-nudity-at-your-pool-canada",
+     "bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-canada",
+     "canadian-cities-with-pools",
+     "green-pool-recovery-canada",
+     "hosting-canada",
+     "how-it-works-canada",
+     "pool-heating-guide-canada",
+     "pool-maintenance-canada",
+     "pool-pros-canada",
+     "pool-pump-troubleshooting-canada",
+     "pool-rental-tax-write-offs-canada",
+     "pool-stains-removal-canada",
+     "rent-out-your-pool-canada",
+     "rent-out-your-pool-toronto",
+     "rent-out-your-pool-vancouver",
+     "romantic-pool-escapes-canada",
+     "swimply-alternative-vs-pool-rental-near-me-canada",
+     "the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-canada",
+     "top-pool-rental-platforms-canada",
+     "why-hosts-are-leaving-swimply-canada"
+    ]
+   },
+   "pages": {
+    "/p/rent-out-your-pool-uk": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.ca/p/rent-out-your-pool-uk"
+     ],
+     "hreflang": []
+    },
+    "/p/pool-maintenance-canada": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ],
+     "hreflang": [
+      "en-CA https://www.poolrentalnearme.ca/p/pool-maintenance-canada",
+      "en-GB https://www.poolrentalnearme.ca/p/pool-maintenance-uk",
+      "x-default https://www.poolrentalnearme.ca/p/pool-maintenance-canada"
+     ]
+    },
+    "/p/pool-rental-london": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ],
+     "hreflang": [
+      "en-GB https://www.poolrentalnearme.ca/p/pool-rental-london",
+      "en-CA https://www.poolrentalnearme.ca/p/pool-rental-toronto",
+      "x-default https://www.poolrentalnearme.ca/p/pool-rental-london"
+     ]
+    },
+    "/p/become-a-swimming-pool-host-austin-tx": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.ca/p/become-a-swimming-pool-host-austin-tx"
+     ],
+     "hreflang": [
+      "en-US https://www.poolrentalnearme.ca/p/become-a-swimming-pool-host-austin-tx",
+      "es-US https://www.poolrentalnearme.ca/p/conviertete-en-anfitrion-de-alberca-austin-tx",
+      "x-default https://www.poolrentalnearme.ca/p/become-a-swimming-pool-host-austin-tx"
+     ]
+    },
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston"
+     ],
+     "hreflang": []
+    }
+   }
+  },
+  "poolrentalnearme.com.au": {
+   "robots": {
+    "status": 200,
+    "allow": [
+     "/p/*-australia$",
+     "/p/australian-*",
+     "/p/rent-out-your-pool-sydney$",
+     "/p/rent-out-your-pool-melbourne$"
+    ],
+    "disallow_all": true,
+    "sitemap": [
+     "https://poolrentalnearme.com.au/sitemap-country.xml"
+    ]
+   },
+   "sitemap_country": {
+    "status": 200,
+    "locs": 20,
+    "loc_hosts": [
+     "poolrentalnearme.com.au"
+    ],
+    "slugs": [
+     "allowing-nudity-at-your-pool-australia",
+     "australian-cities-with-pools",
+     "bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-australia",
+     "green-pool-recovery-australia",
+     "hosting-australia",
+     "how-it-works-australia",
+     "pool-heating-guide-australia",
+     "pool-hire-tax-deductions-australia",
+     "pool-maintenance-australia",
+     "pool-pros-australia",
+     "pool-pump-troubleshooting-australia",
+     "pool-stains-removal-australia",
+     "rent-out-your-pool-australia",
+     "rent-out-your-pool-melbourne",
+     "rent-out-your-pool-sydney",
+     "romantic-pool-escapes-australia",
+     "swimply-alternative-vs-pool-rental-near-me-australia",
+     "the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-australia",
+     "top-pool-rental-platforms-australia",
+     "why-hosts-are-leaving-swimply-australia"
+    ]
+   },
+   "pages": {
+    "/p/rent-out-your-pool-uk": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.com.au/p/rent-out-your-pool-uk"
+     ],
+     "hreflang": []
+    },
+    "/p/pool-maintenance-canada": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ],
+     "hreflang": [
+      "en-CA https://poolrentalnearme.com.au/p/pool-maintenance-canada",
+      "en-GB https://poolrentalnearme.com.au/p/pool-maintenance-uk",
+      "x-default https://poolrentalnearme.com.au/p/pool-maintenance-canada"
+     ]
+    },
+    "/p/pool-rental-london": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ],
+     "hreflang": [
+      "en-GB https://poolrentalnearme.com.au/p/pool-rental-london",
+      "en-CA https://poolrentalnearme.com.au/p/pool-rental-toronto",
+      "x-default https://poolrentalnearme.com.au/p/pool-rental-london"
+     ]
+    },
+    "/p/become-a-swimming-pool-host-austin-tx": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.com.au/p/become-a-swimming-pool-host-austin-tx"
+     ],
+     "hreflang": [
+      "en-US https://poolrentalnearme.com.au/p/become-a-swimming-pool-host-austin-tx",
+      "es-US https://poolrentalnearme.com.au/p/conviertete-en-anfitrion-de-alberca-austin-tx",
+      "x-default https://poolrentalnearme.com.au/p/become-a-swimming-pool-host-austin-tx"
+     ]
+    },
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston"
+     ],
+     "hreflang": []
+    }
+   }
+  },
+  "www.poolrentalnearme.com.au": {
+   "robots": {
+    "status": 200,
+    "allow": [
+     "/p/*-australia$",
+     "/p/australian-*",
+     "/p/rent-out-your-pool-sydney$",
+     "/p/rent-out-your-pool-melbourne$"
+    ],
+    "disallow_all": true,
+    "sitemap": [
+     "https://www.poolrentalnearme.com.au/sitemap-country.xml"
+    ]
+   },
+   "sitemap_country": {
+    "status": 200,
+    "locs": 20,
+    "loc_hosts": [
+     "www.poolrentalnearme.com.au"
+    ],
+    "slugs": [
+     "allowing-nudity-at-your-pool-australia",
+     "australian-cities-with-pools",
+     "bubble-covers-for-swimming-pools-the-ultimate-guide-to-protecting-and-enhancing-your-pool-australia",
+     "green-pool-recovery-australia",
+     "hosting-australia",
+     "how-it-works-australia",
+     "pool-heating-guide-australia",
+     "pool-hire-tax-deductions-australia",
+     "pool-maintenance-australia",
+     "pool-pros-australia",
+     "pool-pump-troubleshooting-australia",
+     "pool-stains-removal-australia",
+     "rent-out-your-pool-australia",
+     "rent-out-your-pool-melbourne",
+     "rent-out-your-pool-sydney",
+     "romantic-pool-escapes-australia",
+     "swimply-alternative-vs-pool-rental-near-me-australia",
+     "the-evolution-and-rise-of-pool-toys-a-journey-through-summer-fun-australia",
+     "top-pool-rental-platforms-australia",
+     "why-hosts-are-leaving-swimply-australia"
+    ]
+   },
+   "pages": {
+    "/p/rent-out-your-pool-uk": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com.au/p/rent-out-your-pool-uk"
+     ],
+     "hreflang": []
+    },
+    "/p/pool-maintenance-canada": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.ca/p/pool-maintenance-canada"
+     ],
+     "hreflang": [
+      "en-CA https://www.poolrentalnearme.com.au/p/pool-maintenance-canada",
+      "en-GB https://www.poolrentalnearme.com.au/p/pool-maintenance-uk",
+      "x-default https://www.poolrentalnearme.com.au/p/pool-maintenance-canada"
+     ]
+    },
+    "/p/pool-rental-london": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://poolrentalnearme.co.uk/p/pool-rental-london"
+     ],
+     "hreflang": [
+      "en-GB https://www.poolrentalnearme.com.au/p/pool-rental-london",
+      "en-CA https://www.poolrentalnearme.com.au/p/pool-rental-toronto",
+      "x-default https://www.poolrentalnearme.com.au/p/pool-rental-london"
+     ]
+    },
+    "/p/become-a-swimming-pool-host-austin-tx": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com.au/p/become-a-swimming-pool-host-austin-tx"
+     ],
+     "hreflang": [
+      "en-US https://www.poolrentalnearme.com.au/p/become-a-swimming-pool-host-austin-tx",
+      "es-US https://www.poolrentalnearme.com.au/p/conviertete-en-anfitrion-de-alberca-austin-tx",
+      "x-default https://www.poolrentalnearme.com.au/p/become-a-swimming-pool-host-austin-tx"
+     ]
+    },
+    "/p/peerspace-vs-pool-rental-near-me-in-boston": {
+     "status": 200,
+     "location": null,
+     "canonical": [
+      "https://www.poolrentalnearme.com/p/peerspace-vs-pool-rental-near-me-in-boston"
+     ],
+     "hreflang": []
+    }
+   }
+  }
+ }
+}

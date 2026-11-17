@@ -25,6 +25,7 @@ import {
   type ContentPageLookupReads,
 } from "@/lib/content-page-lookup";
 import { markRequestUnavailable } from "@/server/request-unavailable.server";
+import { countryForSlug } from "@/lib/country-sites";
 
 // Fire-and-forget: log a 301 redirect from a legacy slug to the canonical
 // slug. Failures are swallowed so logging never blocks the user-visible
@@ -196,7 +197,14 @@ export const lookupContentPage = createServerFn({ method: "GET" })
 
 export const getHreflangSibling = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ pageId: z.string().uuid() }).parse(data))
-  .handler(async ({ data }): Promise<{ sibling: null | { slug: string; language: string } }> => {
+  .handler(
+    async ({
+      data,
+    }): Promise<{
+      sibling: null | { slug: string; language: string };
+      /** Every other published slug in the group (country pages build their alternates from it). */
+      groupSlugs: string[];
+    }> => {
     const { pageId } = data;
 
     // Load the source page to read its hreflang_group.
@@ -206,11 +214,11 @@ export const getHreflangSibling = createServerFn({ method: "GET" })
       .eq("id", pageId)
       .maybeSingle();
 
-    if (!pageRow) return { sibling: null };
+    if (!pageRow) return { sibling: null, groupSlugs: [] };
 
     // Find another published row sharing the same hreflang_group.
     const group = (pageRow as { hreflang_group?: string | null }).hreflang_group;
-    if (!group) return { sibling: null };
+    if (!group) return { sibling: null, groupSlugs: [] };
 
 
 
@@ -220,12 +228,19 @@ export const getHreflangSibling = createServerFn({ method: "GET" })
       .eq("hreflang_group", group)
       .eq("status", "published")
       .neq("id", pageId)
-      .limit(1);
+      .order("slug")
+      .limit(100);
 
-    const sib = (sibRows ?? [])[0] as { slug: string | null; locale: string | null } | undefined;
+    const rows = (sibRows ?? []) as Array<{ slug: string | null; locale: string | null }>;
+    const groupSlugs = rows.map((r) => r.slug).filter((s): s is string => !!s);
+    // The twin of a non-country page (EN<->ES) is never a country page. Some
+    // groups mix them ("new-york-ny" holds London, Toronto and Sydney), so the
+    // first non-country row is the twin; country pages use groupSlugs instead.
+    const sib = rows.find((r) => r.slug && r.locale && !countryForSlug(r.slug));
     if (sib?.slug && sib?.locale) {
-      return { sibling: { slug: sib.slug, language: sib.locale } };
+      return { sibling: { slug: sib.slug, language: sib.locale }, groupSlugs };
     }
-    return { sibling: null };
-  });
+    return { sibling: null, groupSlugs };
+  },
+  );
 
