@@ -3,8 +3,14 @@
 **Status: nothing in this document has been run.** It was written on 2026-11-15 from the
 branches, PRs and files named below, and brought up to date on 2026-11-17 with the final
 branch SHAs and the integration trial of 2026-11-17 (trial merge `414ca06`, section 1,
-step 1.1). Every count was read from those files or measured with read-only GETs on the
-date given. Items marked **pending** do not exist yet.
+step 1.2). It was updated again on 2026-11-17 for seo/05's final tip `a832991` (which
+replaces `df808bb`) and for the published release branch: `seo/release-2026-11` is
+published on GitHub at the gated commit, and A3 deploys that exact commit. Nobody
+re-merges it by hand. Figures marked **previous trial** come from `414ca06`, which merged
+seo/05 at `df808bb` and seo/07 at `71de758`. They were not recomputed for `a832991`. The
+release integrator reports the new diffstat and gate numbers (see the release branch's
+merge commits). Every count was read from those files or measured with read-only GETs on
+the date given. Items marked **pending** do not exist yet.
 
 How to use it:
 
@@ -33,10 +39,10 @@ How to use it:
 |---|---|---|
 | What EAST runs | `77028454655e7b272d8c23987b54f445f9eba9f7`, branch `ops/deploy-sha-enforcement`, `dirty` 5, built 2026-11-04T07:38:03Z | `curl -s https://www.poolrentalnearme.com/fw-assets/__build.json` |
 | EAST-only files (the five `dirtyFiles`) | `src/components/home-page.tsx`, `src/routes/__root.tsx`, `src/server/listing-sync.server.ts`, `src/server/sharetribe.server.ts`, `src/lib/listing-slug.ts` | same stamp, `dirtyFiles` |
-| Rule for those five | They exist only on EAST. They must be byte-for-byte the same after every step. No branch in this release changes them (checked with `git diff --name-only 7702845 <branch> -- <five files>`: empty for all seven branches below, and for the trial merge `414ca06`). | step 1, check 1.3 |
+| Rule for those five | They exist only on EAST. They must be byte-for-byte the same after every step. No branch in this release changes them (checked with `git diff --name-only 7702845 <branch> -- <five files>`: empty for all seven branches below, seo/05 re-checked at `a832991` on 2026-11-17, and for the previous trial merge `414ca06`). | step 1, checks 1.2 and 1.3 |
 | fresh-web repo | `https://github.com/derekbowen/fresh-web-702e04c3.git` (public) | |
-| Final branch tips (used for the trial merge of 2026-11-17) | `seo/01-failed-read-503` `b3e2acef90d8be9e30dfb12f45d03a6cdd2e98e9` (PR #1); `seo/02-redirects-fees-links` `b0c524d712071d797b7ef1bb8b43cc495be23760` (PR #3); `seo/03-sitemaps` `359ff20a8b80d7a31b178868b1b0868db38262af` (PR #6); `seo/04-dupes-canonical` `58c2ede4530ae108789f7c254c48474c4d8cae39` (PR #7); `seo/05-intent` `df808bbe2cadac5e90a65d987adf3548b6c8cba2` (PR #5); `seo/06-scheduled-jobs` `f9b6d9b629277fc35c37bb8038bd93978248dd9f` (PR #2); `seo/07-release-tracking` `71de7580996bdc24cf0e51b7c6045aab0798e72f` (PR #4) | `git ls-remote https://github.com/derekbowen/fresh-web-702e04c3.git 'refs/heads/seo/*'` |
-| On GitHub already | All seven, at exactly those SHAs (`git ls-remote`, 2026-11-17). The update of this file is a later commit on `seo/07-release-tracking` that changes only `ops/seo-repairs-2026-11/RELEASE.md`; until it is pushed, GitHub's seo/07 is 71de758. Stacking: seo/02, seo/03 and seo/05 are built on seo/01 (b3e2ace); seo/04 is built on seo/03 (359ff20). | same command |
+| Final branch tips (the second parents of the release branch's merge commits, in this order) | `seo/01-failed-read-503` `b3e2acef90d8be9e30dfb12f45d03a6cdd2e98e9` (PR #1); `seo/02-redirects-fees-links` `b0c524d712071d797b7ef1bb8b43cc495be23760` (PR #3); `seo/03-sitemaps` `359ff20a8b80d7a31b178868b1b0868db38262af` (PR #6); `seo/04-dupes-canonical` `58c2ede4530ae108789f7c254c48474c4d8cae39` (PR #7); `seo/05-intent` `a83299181ffb7aad36eb013c0c24549118363f0f` (PR #5; replaces `df808bb`, which it descends from); `seo/06-scheduled-jobs` `f9b6d9b629277fc35c37bb8038bd93978248dd9f` (PR #2); `seo/07-release-tracking`: the commit that carries this version of this file (PR #4). Relative to `71de7580996bdc24cf0e51b7c6045aab0798e72f` it changes only `ops/seo-repairs-2026-11/RELEASE.md`. The previous trial used seo/05 `df808bb` and seo/07 `71de758`. | `git ls-remote https://github.com/derekbowen/fresh-web-702e04c3.git 'refs/heads/seo/*'` |
+| On GitHub already (`git ls-remote`, 2026-11-17, after `a832991`) | seo/01, 02, 03, 04 and 06 are at exactly those SHAs. seo/05 on GitHub is still `df808bb` and seo/07 is still `71de758`. `seo/release-2026-11` is not on GitHub yet (**pending**). It will be published there at the gated commit, and step 1.1 fetches it from there. Stacking: seo/02, seo/03 and seo/05 are built on seo/01 (b3e2ace); seo/04 is built on seo/03 (359ff20). | same command |
 | `seo/04-dupes-canonical` (F6a + F10) | **Final and included** (58c2ede, PR #7). A0 is resolved by this: the release does not wait and does not leave it out. | same command |
 | Data packages (not in `RELEASE_SHA`; applied separately, each with its own approval) | F5 + F14 content repair: PR #8, branch `seo/02-content-repairs` (67dc60f), `ops/seo-repairs-2026-11/db-change/RUNBOOK.md`. F8 public-pools text cleaner + duplicate mapping: PR #9, branch `seo/05b-public-pools-data` (9fd9489), `ops/seo-repairs-2026-11/public-pools/RUNBOOK.md`. Neither has been dry-run on production: the database tool's SQL calls hung on 2026-11-16. | same command |
 | EAST release tooling | poolrentalnearme-web `ops/east/seo-release-2026-11/`: `east_seo_release.py` (PLAN, GO, ROLLBACK), `ship.py` (sends it to EAST in parts: it no longer fits one SSM command), `README.md`, `test/` (local simulation of EAST, 42 scenarios). Not pushed; never run on EAST. | `ls ops/east/seo-release-2026-11` in poolrentalnearme-web |
@@ -50,8 +56,8 @@ How to use it:
 ## 1. What is being released
 
 "Merge" below means: merged into the integration branch `seo/release-2026-11`, which is
-built from `ops/deploy-sha-enforcement` (7702845). PR numbers are fresh-web unless marked
-WEST (poolrentalnearme-web).
+built from `ops/deploy-sha-enforcement` (7702845) and published on GitHub at the gated
+commit (step 1.1). PR numbers are fresh-web unless marked WEST (poolrentalnearme-web).
 
 | Fix | Branch / PR | What changes, for which URLs | How it was tested | Rollback |
 |---|---|---|---|---|
@@ -59,14 +65,14 @@ WEST (poolrentalnearme-web).
 | **F11** (EAST part) loops and junk slugs | `seo/02-redirects-fees-links`, PR #3 (stacked on #1), b0c524d | `/p` and `/p/` answer **404** in the app (they looped 301/307). `/p/null`, `/p/details`, `/p/mailto:*` answer **404** instead of 301 to `/`, and are not logged. The `/p/` crumb fix (b0c524d): the BreadcrumbList of `/p/giggster-vs-pool-rental-near-me` no longer has a middle "Compare" item at `/p/` (now a 404); it is Home → this page. | Harness 271/0 at 3e67ab1 (+11 F11 checks). b0c524d adds to the harness: the three static comparison pillars are rendered, and no rendered fixture page, JSON-LD URL or sitemap `<loc>` may target `/p` or `/p/` (with a detector self-test); it fails on the old route. | EAST rollback. |
 | **F14** (code) false fee | `seo/02-redirects-fees-links`, PR #3 | `/p/affiliate`: removes the non-existent "10% platform fee" waiver and the figures built on it. Title, description and H1 state the 0% host fee; a new FAQ says 0% host / 15% guest. The 5%-for-2-years recruiter terms are unchanged. Profit calculator (`PoolRentalProfit`): host fee default 15% → 0%, still editable. Host-city take-home cell (24f5778): the comparison table on host-acquisition city pages said "You take home on $200: $180"; the PRNM cell now says "$200" (about 3,900 pages in the 2026-11-14 crawl). The competitor column is unchanged. | As above; a source test pins both PRNM cells (0% fee, $200 take-home) and fails on the previous file. | EAST rollback. |
 | **F4** sitemaps (+ sitemap part of F2) | `seo/03-sitemaps`, PR #6, 359ff20 | Entries 10,181 → 10,022; distinct URLs 10,074 → 10,022. URLs in two sitemaps 107 → 0 (5 stay on www until WEST proxies the academy sitemap, step 5e). Listed redirects 2 → 0. Listed malformed-slug copies 2 → 0. Listed noindex 1 → 0 (`/p/pool-pros`). Cross-host canonicals 57 → 0. Config listing removed. Comparisons read is paged past PostgREST's 1,000-row cap. Academy app route 70 → 202 URLs. `/sitemap-directory.xml` (1,357 noindex URLs) answers **410**. `sitemap-static.xml` 75 → 77 (adds `/s` and 7 dedicated `/p/` routes). Details: `docs/seo-repairs-2026-11/sitemaps.md` on that branch. | `tests/sitemap-rules.test.mjs` (20), `tests/sitemap.test.mjs` (15); harness 317/0 at 04d965b, where a build of b3e2ace fails 30 of the same checks. 359ff20 adds harness fixtures (both malformed slugs, a blog post behind a skipped redirect row) and unit tests. | EAST rollback. |
-| **F1, F7** renter vs host intent (+ template part of F2) | `seo/05-intent`, PR #5, df808bb | 3,696 rendering HOST pages (`/p/become-a-*`): H1 carries the state; the stored control-arm `<title>` is kept unless it states an earnings figure (154 rows); the empty-inventory notice is gone from the top; the inventory section shows only when pools exist in or near the city; the unbacked "$3,600/mo" projection and the `$75/hr` `priceRange` are removed. 256 RENTER pages (`/p/<city>-<st>`, bare `/p/<city>`, 3 topic pages): renter H1 and title, inventory-based meta description, a labelled host section below. Renter search CTA (df808bb): a bounded `/s` search around the inventory centre (address plus `neLat,neLng,swLat,swLng`, the 60-mile box the inventory uses); a page without coordinates links bare `/s`. Links: 3,107 distinct `/p/pool-pros?city=` URLs → one `/p/pool-pros` link; generated `/s?address=` links in one spelling per place. Duplicate H1 groups 518 → 25 (each is one place published under two URLs; 0 after the 29-row redirect of step 4d). Details: `docs/seo-repairs-2026-11/intent.md` on that branch. | `tests/city-intent.test.mjs`; harness renders seven intent fixtures; df808bb adds the check that every renter `/s` link is bounded or bare `/s` (12 harness checks fail on 0116e9f). Counts in the doc come from `scripts/intent-report.mjs` over a read-only export of 2026-11-15. | EAST rollback. |
-| **F6a** duplicate comparison pages | `seo/04-dupes-canonical`, PR #7 (stacked on #6), 58c2ede | The 78 bare `-in-<city>` comparison URLs (`src/lib/comparison-duplicates.ts`, generated from checked-in evidence; all 78 pairs confirmed, 0 left alone) answer **one 301** to their `-in-<city>-<st>` twin from the routes' `beforeLoad`; `/p/<listed bare>/` gets one 301 from a request middleware instead of 307 + 301. Comparison canonicals, og:url and JSON-LD never name a listed 301 source. `sitemap-pages-comparisons.xml` 1,091 → 1,013. Details: `docs/seo-repairs-2026-11/duplicates-and-canonical.md` on that branch; production reads not yet run: `docs/seo-repairs-2026-11/PENDING-READS.md` R1–R6. | Unit tests (comparison duplicates, `tests/null-url-path.test.mjs`); harness duplicate 301s, trailing-slash checks, comparisons paging derived from the fixtures. | EAST rollback. |
+| **F1, F7** renter vs host intent (+ template part of F2) | `seo/05-intent`, PR #5, a832991 | 3,696 rendering HOST pages (`/p/become-a-*`): H1 carries the state; the stored control-arm `<title>` is kept unless it states an earnings figure (154 rows); the empty-inventory notice is gone from the top; the inventory section shows only when pools exist in or near the city; the unbacked "$3,600/mo" projection and the `$75/hr` `priceRange` are removed. 256 RENTER pages (`/p/<city>-<st>`, bare `/p/<city>`, 3 topic pages): renter H1 and title, inventory-based meta description, a labelled host section below. Renter search CTA (df808bb): a bounded `/s` search around the inventory centre (address plus `neLat,neLng,swLat,swLng`, the 60-mile box the inventory uses); a page without coordinates links bare `/s`. Hand-offs (a832991): (1) the Giggster and Peerspace `-in-{$city}` comparisons link `searchHrefNearPlace(city.name, city.state_code, {lat: city.latitude, lng: city.longitude})`, the same 60-mile box as the renter CTAs. A `cities` row without coordinates links bare `/s` with the 7702845 wording "Browse all pools", and "{City} pool search" / "See live {City} pool-rental demand" no longer appear in that case. (2) State hubs (`p.pool-rentals-{$state}`) and the advocacy template link bare `/s` instead of `/s?address=<State>`. On WEST an address-only link shows every pool in no order and turns off the nearest-pools default (`SearchPageWithMap.js` returns early when `address` is present). No state boxes were invented. Hub hero "Find a pool in {State}" → "Browse all pools"; the hub's "See all →" is unchanged; advocacy uses "Find pools →", the template's own no-state wording. (3) Every rendered `/l/draft/00000000-0000-0000-0000-000000000000/new/details` host CTA links `/wizard/`: generic-page, advocacy and pool-maintenance templates, `p.pool-rentals-{$state}`, `p.pool-rentals`, `p.hosting`, `p.start-hosting`, `p.blog`, `p.author.derek-bowen`, `p.pool-pros.$slug`, `p.pool-party-rentals`, `p.pool-rental-app`, `p.private-pool-rental` (none is EAST-only). (4) The WebSite `SearchAction` (`src/lib/seo.ts`) targets `/s?keywords={search_term_string}` instead of `?q=`. Links: 3,107 distinct `/p/pool-pros?city=` URLs → one `/p/pool-pros` link; generated `/s?address=` links in one spelling per place. Duplicate H1 groups 518 → 25 (each is one place published under two URLs; 0 after the 29-row redirect of step 4d). Details: `docs/seo-repairs-2026-11/intent.md` on that branch. | `tests/city-intent.test.mjs`; harness renders seven intent fixtures; df808bb adds the check that every renter `/s` link is bounded or bare `/s` (12 harness checks fail on 0116e9f); a832991 adds `handoffChecks` (10 checks: bounded or bare `/s` on comparisons, bare `/s` on the state hub and advocacy, no `/l/draft/` on 27 rendered fixture pages, the `?keywords=` SearchAction), which fail on a df808bb build. Counts in the doc come from `scripts/intent-report.mjs` over a read-only export of 2026-11-15; its link-variant "after" numbers for comparison, advocacy and state-hub links predate a832991 (K13). | EAST rollback. |
+| **F6a** duplicate comparison pages | `seo/04-dupes-canonical`, PR #7 (stacked on #6), 58c2ede | The 78 bare `-in-<city>` comparison URLs (`src/lib/comparison-duplicates.ts`, generated from checked-in evidence; all 78 pairs confirmed, 0 left alone) answer **one 301** to their `-in-<city>-<st>` twin from the routes' `beforeLoad`. When `/p/<listed bare>/` reaches EAST with the slash (e.g. ccTLD hosts), a request middleware answers one 301 instead of 307 + 301. On www and the apex, WEST nginx strips the trailing slash with its own 301 before the request reaches EAST, so there it takes 2 hops (WEST slash 301, then the app's 301); see step 5h. Comparison canonicals, og:url and JSON-LD never name a listed 301 source. `sitemap-pages-comparisons.xml` 1,091 → 1,013. Details: `docs/seo-repairs-2026-11/duplicates-and-canonical.md` on that branch; production reads not yet run: `docs/seo-repairs-2026-11/PENDING-READS.md` R1–R6. | Unit tests (comparison duplicates, `tests/null-url-path.test.mjs`); harness duplicate 301s, trailing-slash checks, comparisons paging derived from the fixtures. | EAST rollback. |
 | **F10** canonical host | `seo/04-dupes-canonical`, PR #7, 58c2ede | One explicit country/host mapping (`src/lib/country-sites.ts`) decides every canonical, og:url, JSON-LD URL and hreflang href: a country page is canonical on its bare ccTLD, every other page on `www.poolrentalnearme.com`, whichever host served it. Each ccTLD `robots.txt` allows exactly its mapped pages, its own `/sitemap-country.xml`, `/fw-assets/` and the render files; `sitemap-country.xml` lists the mapped rows on the canonical host (empty on `www.<ccTLD>`). NULL `url_path` fix (58c2ede): a content page with NULL `url_path` rendered a blank 200; every template and JSON-LD helper now names the page by `contentPagePath(page)` (`url_path`, else `/p/<slug>`). | Harness: `X-Forwarded-Host` per host for canonical, robots and sitemap-country; NULL-`url_path` fixtures on each ccTLD and a US page; no URL ending in `null` on any rendered page. | EAST rollback. |
 | **F15** related-links job | `seo/06-scheduled-jobs`, PR #2 | **Already applied in production on 2026-11-15.** Pages with `redirect_to` are never picked as related links; only changed rows are written. One refresh changed 136 rows; 0 visible pages now link to a redirecting page. The release only records the migration file in git. | `related-links-job/test.sh` on a throwaway PostgreSQL 16: ALL PASS. | `ops/seo-repairs-2026-11/related-links-job/rollback.sql` (seo/06). |
 | **F13** listing-mirror sync | `seo/06-scheduled-jobs`, PR #2 | Prepared, not installed. A cron job every 15 minutes calls the deployed hook `POST /api/public/hooks/sync-listings`. `synced_listings` was last refreshed 2026-09-25. Step 6. | Runner tested against a local stub (commit f9b6d9b message). Not run on EAST. | STOP file, or remove the cron line (step 6). |
-| **F7 data** 29 duplicate city pages | SQL in `docs/seo-repairs-2026-11/intent.md` §6a (seo/05, df808bb) | 29 published HOST rows that are second copies of a place (a bare, full-state-name, malformed or misspelled slug next to the `-xx` page) become `status='redirect'` (301 to the keeper), `in_sitemap=false`. Step 4d. (§6b, 8 duplicate control-arm titles, is a separate proposal; no step or approval line of this runbook covers it.) | Generated by `scripts/intent-report.mjs --sql`; not applied. | ROLLBACK SQL in the same section. |
+| **F7 data** 29 duplicate city pages | SQL in `docs/seo-repairs-2026-11/intent.md` §6a (seo/05; written at df808bb, unchanged at a832991) | 29 published HOST rows that are second copies of a place (a bare, full-state-name, malformed or misspelled slug next to the `-xx` page) become `status='redirect'` (301 to the keeper), `in_sitemap=false`. Step 4d. (§6b, 8 duplicate control-arm titles, is a separate proposal; no step or approval line of this runbook covers it.) | Generated by `scripts/intent-report.mjs --sql`; not applied. | ROLLBACK SQL in the same section. |
 | **F14 data** fee statements in page bodies | PR #8, branch `seo/02-content-repairs` (67dc60f): `ops/seo-repairs-2026-11/db-change/` (one package with F5, `RUNBOOK.md`), source CSV `fees/fee-corrections.csv`. | 2,724 corrections (the `FIX` rows) on 2,334 fields of 1,547 pages; 1,729 of them if only verified rules are applied (`--verified-only`). 767 `NEEDS_DEREK` rows on 418 pages are not applied (RUNBOOK §6). Includes the three database pages the tracker checks (`become-a-swimming-pool-host-saratoga-springs-ny`, `swim-instructor-pool-rental-fair-oaks-ranch-tx`, `swim-instructor-pool-rental-mount-vernon-va`). Step 4a. | Local test on PostgreSQL 16, 94 checks (RUNBOOK status line). **Not dry-run on production:** `db-change/PENDING-READS.md` and `fees/PENDING-READS.md` have not run. | `db-change/rollback.sql` (backup table, RUNBOOK §5). |
-| **F5** internal links | PR #8, same package (`db-change/`), source CSV `links/link-mapping.csv` | 514 link rules (393 `REWRITE`, 121 `UNLINK`) for targets that a database field holds; 482 link targets `NEEDS_DEREK`; 173 targets are code- or render-only (`links/code-handoff.md`, e.g. `/p/free-host-tools` through the auto-link rules in `src/server/internal-links.functions.ts`). **The code part is in no branch.** Step 4b. | As F14 data (one package, one transaction). | As F14 data. |
+| **F5** internal links | PR #8, same package (`db-change/`), source CSV `links/link-mapping.csv` | 514 link rules (393 `REWRITE`, 121 `UNLINK`) for targets that a database field holds; 482 link targets `NEEDS_DEREK`; 173 targets are code- or render-only (`links/code-handoff.md`, e.g. `/p/free-host-tools` through the auto-link rules in `src/server/internal-links.functions.ts`). **Code part:** the rendered `/l/draft/…` host CTAs now link `/wizard/` in seo/05 (a832991). The rest of `code-handoff.md` (e.g. `/p/free-host-tools`) is in no branch. Step 4b. | As F14 data (one package, one transaction). | As F14 data. |
 | **F8** public pools | Data: PR #9, branch `seo/05b-public-pools-data` (9fd9489), `ops/seo-repairs-2026-11/public-pools/RUNBOOK.md`. Rendering: `pp-ssr` on WEST, after WEST PR #3. | Text cleaner (rules R1–R6): turns the raw `ai_best_for` list into plain text and deletes whole filler, narrator and contradicted-count sentences; never rewords, adds a word or touches insurance, liability, coverage, claims or damage text. Surrogate dry run over the 2,476 live pages of 2026-11-16: 2,661 fields changed, 629 skipped; production has more rows. Duplicate mapping (`duplicate-mapping.csv`, 291 candidate pairs; `count-consistency.csv`, 444 cities): mapping only, nothing merged. Applies only after the pp-ssr capture (step 5a) and the RUNBOOK §5 preconditions. Step 4c. | Local test (RUNBOOK §8). **Not dry-run on production** (PR-6 of `public-pools/PENDING-READS.md`). | `public-pools/rollback.sql` (backup table). |
 | **F9** listing status codes; **F11** `/l` loop; `/confirm` | WEST PR #2 (`seo/west-status-and-robots`, 34d12a7) | `/l/<not-a-uuid>` (the six "Error in loading the listing" pages) → **404**. A temporary listing-load failure (5xx, 429, network, timeout, unknown, a 403 without an API error) → **503**, `Retry-After: 120`, `no-store`, `noindex`. `/l` and `/l/` → **404** in the app. `/confirm` → `noindex, follow`. Healthy, closed and owner-view listings: byte-identical. Record: `docs/OPS_RECORD_2026-11-15_seo-status-codes.md` (on that branch). | `jest server` 19 suites, 322 passed; `ssrStatus` 83; `bun run test-ssr-status` 58/58. | WEST nginx upstream swap back (step 5b). |
 | **F12** robots.txt | WEST PR #2, `ops/west/robots/` | The live www `robots.txt` is versioned byte-for-byte. Proposed file applies edits E1–E6 (README §4). Every URL in today's sitemaps stays allowed. Step 5f. | `node --test ops/west/robots/*.test.mjs`: 269 tests, 268 pass, 1 skipped (opt-in live run); live run 91/91. | Swap back the backup file (step 5f). |
@@ -98,13 +104,14 @@ relative `Location`, so EAST may have its own copy. Step 0.4 locates it.
 ## 2. Order of operations
 
 ```
-0 pre-checks ── 1 build + local checks ── 2 EAST deploy ── 3 post-deploy checks ──┬── 4a fees    (data)
+0 pre-checks ── 1 verify + local checks ─ 2 EAST deploy ── 3 post-deploy checks ──┬── 4a fees    (data)
                                                                                     ├── 4b links   (data)
                                                                                     ├── 4c public pools (data, after 5a for rendering)
                                                                                     └── 4d 29 city redirects (data)
 5a pp-ssr capture ── (independent of EAST; can run any time)
 5b WEST release (PR #2) ── 5c nginx /p 404 ── 5d underscore fix ── 5g nginx /l
 5e academy proxy (only after step 2 has shipped seo/03)      5f robots.txt (any time after A15)
+5h optional WEST slash rule (own GO; not in this approval round)
 6 F13 sync cron (after step 2; before the Sunoblack cutover it must be switched or stopped)
 7 tracking (after every step, then on the dates in 7.1)
 ```
@@ -129,22 +136,28 @@ Expect `sha` 77028454655e7b272d8c23987b54f445f9eba9f7, `dirty` 5, and exactly th
 git ls-remote https://github.com/derekbowen/fresh-web-702e04c3.git 'refs/heads/seo/*' refs/heads/ops/deploy-sha-enforcement
 ```
 
-Every branch of section 1 must be on GitHub at its final SHA **before** step 1, because
-step 1 clones from GitHub. On 2026-11-17 all seven are there, at the SHAs of section 0:
+Every branch of section 1 must be on GitHub at its final SHA **before** step 1, and so
+must `seo/release-2026-11`, because step 1 fetches from GitHub. On 2026-11-17 (after
+`a832991`):
 
-- `seo/01` b3e2ace, `seo/02` b0c524d, `seo/03` 359ff20, `seo/04` 58c2ede, `seo/05` df808bb,
-  `seo/06` f9b6d9b (it has the token fix; 2c2f857's runner always sent the service-role
-  key), all as listed;
-- `seo/07-release-tracking`: 71de758 on GitHub. The commit that carries this version of
-  the runbook is newer and changes only `ops/seo-repairs-2026-11/RELEASE.md`. If it is not
-  on GitHub yet, pushing it is the only branch push left (needs A2; the owner or an
-  operator with push rights).
+- `seo/01` b3e2ace, `seo/02` b0c524d, `seo/03` 359ff20, `seo/04` 58c2ede, `seo/06` f9b6d9b
+  (it has the token fix; 2c2f857's runner always sent the service-role key) are there, as
+  listed;
+- `seo/05-intent`: GitHub still has `df808bb`. The final tip `a832991` is not pushed yet
+  (needs A2);
+- `seo/07-release-tracking`: GitHub still has 71de758. The commit that carries this
+  version of the runbook is newer and changes only `ops/seo-repairs-2026-11/RELEASE.md`.
+  Not pushed yet (needs A2);
+- `seo/release-2026-11`: not on GitHub yet. It is published at the gated commit (needs
+  A2).
 
-If any tip differs from section 0, stop: the trial of step 1.1 no longer describes what
-would be merged. Write every SHA into the release record. Check:
+The owner or an operator with push rights does these pushes. If any tip differs from
+section 0, stop: the release branch would no longer merge what section 1 describes. Write
+every SHA into the release record. Check:
 
 ```
 git ls-remote https://github.com/derekbowen/fresh-web-702e04c3.git 'refs/heads/seo/*'
+git merge-base --is-ancestor df808bb <recorded seo/05 SHA> && echo seo/05 descends from df808bb
 git merge-base --is-ancestor f9b6d9b <recorded seo/06 SHA> && echo seo/06 has the token fix
 git show <recorded seo/07 SHA>:ops/deploy-east.sh | grep -c -e EAST_ONLY_SHA256 -e restart_proven -e BUILD_DIR   # 3 kinds of line, so >= 3
 git diff --name-only 71de7580996bdc24cf0e51b7c6045aab0798e72f <recorded seo/07 SHA>   # only ops/seo-repairs-2026-11/RELEASE.md (or nothing)
@@ -223,60 +236,100 @@ set transaction read only;
 ```
 
 0.7 **Approvals.** Section 3 is filled in and dated by the owner, after 0.2–0.4 are
-recorded, so that A3 names the exact branch SHAs.
+recorded. A3 names the commit as "the tip of `seo/release-2026-11` recorded at step 1.1",
+and step 1.2 must prove that commit merges exactly the branch SHAs of section 0.
 
-**Gate 0:** 0.1 matches; 0.2 pushed and checked (seo/06 contains f9b6d9b; seo/07's
+**Gate 0:** 0.1 matches; 0.2 pushed and checked (seo/05 at a832991; seo/06 contains f9b6d9b; seo/07's
 `deploy-east.sh` has all three markers); 0.2b recorded; 0.3 recorded; 0.4 reviewed and no
 `error_page` stop; 0.5 baseline saved; A0 is resolved (seo/04 is final and included);
 **A1, A2 and A3 are Yes. A1 is a precondition of A3:** F3 cannot be left out (seo/02,
 seo/03, seo/04 and seo/05 are all built on its commit b3e2ace), so A1 = No means no EAST
 release until the cache question is settled, by a Cloudflare decision outside this release.
 
-### Step 1. Build the integration branch and run the local checks
+### Step 1. Fetch and verify the release branch, then run the local checks
 
-Run in a fresh clone, never in a shared worktree.
+Run in a fresh clone, never in a shared worktree. This step merges nothing and pushes
+nothing. `seo/release-2026-11` is published on GitHub at the gated commit (0.2), and A3
+deploys exactly that commit. Nobody re-merges by hand.
 
-1.1 Build `seo/release-2026-11`:
-
-Merge in this order, 01 to 07, by SHA (the SHAs recorded in 0.2; they must equal section 0):
+1.1 **Fetch `seo/release-2026-11` and record `RELEASE_SHA` = its tip:**
 
 ```
 git clone https://github.com/derekbowen/fresh-web-702e04c3.git fw-release && cd fw-release
-git checkout -b seo/release-2026-11 77028454655e7b272d8c23987b54f445f9eba9f7
-git merge --no-ff -m "Merge seo/01-failed-read-503 (b3e2ace) into seo/release-2026-11" b3e2acef90d8be9e30dfb12f45d03a6cdd2e98e9
-git merge --no-ff -m "Merge seo/02-redirects-fees-links (b0c524d) into seo/release-2026-11" b0c524d712071d797b7ef1bb8b43cc495be23760
-git merge --no-ff -m "Merge seo/03-sitemaps (359ff20) into seo/release-2026-11" 359ff20a8b80d7a31b178868b1b0868db38262af            # conflicts: (b)
-git merge --no-ff -m "Merge seo/04-dupes-canonical (58c2ede) into seo/release-2026-11" 58c2ede4530ae108789f7c254c48474c4d8cae39     # conflicts: (a), (b)
-git merge --no-ff -m "Merge seo/05-intent (df808bb) into seo/release-2026-11" df808bbe2cadac5e90a65d987adf3548b6c8cba2              # conflicts: (b), (c), (d)
-git merge --no-ff -m "Merge seo/06-scheduled-jobs (f9b6d9b) into seo/release-2026-11" f9b6d9b629277fc35c37bb8038bd93978248dd9f
-git merge --no-ff -m "Merge seo/07-release-tracking (<short SHA>) into seo/release-2026-11" <recorded seo/07 SHA>                   # 71de758 in the trial
+git checkout --detach origin/seo/release-2026-11
+RELEASE_SHA=$(git rev-parse HEAD); echo "$RELEASE_SHA"
+git ls-remote origin refs/heads/seo/release-2026-11      # the same SHA
 ```
 
-When a merge stops on a conflict: `git diff --name-only --diff-filter=U` must list exactly
-the files named for that merge below. Any other conflicting file: stop and report
-(`git merge --abort`). Resolve as described, `git add` the files, `git commit --no-edit`.
+Write `RELEASE_SHA` into the release record. A3 deploys exactly this commit. If the branch
+is not on GitHub, stop. If its tip moves later, stop: Gate 1 re-checks it.
 
-**Trial merge, 2026-11-17** (scratch clone, all seven branches at the SHAs of section 0,
-result `414ca06`):
+1.2 **Verify `RELEASE_SHA`** (git 2.38 or newer, for `git merge-tree --write-tree`). Every
+check must pass, or stop and report. Never fix, re-merge or force-push the release branch
+from here.
 
-| Merge | Trial commit | Result | Tree after the merge |
-|---|---|---|---|
-| seo/01 b3e2ace | 367de60 | clean | `d4bc4b7a9f071550217a01e9f899caed0b6c5004` |
-| seo/02 b0c524d | ff0acea | clean | `183f8fa402361925b17dc993bcc31fa473e24e7b` |
-| seo/03 359ff20 | dc6c86f | conflict in `scripts/test-failed-reads.mjs` (b), resolved by hand | `51aa47eb4a0f27ea2e6ab6b8811a45dd1c59f970` |
-| seo/04 58c2ede | 2c114e5 | conflicts in `src/start.ts` (a) and `scripts/test-failed-reads.mjs` (b), resolved by hand | `e0b32fc6a7556ef382c183f21c23da818958e264` |
-| seo/05 df808bb | b973fb5 | conflicts in `scripts/test-failed-reads.mjs` (b), both comparison city routes (c) and `src/components/templates/host-acq-city.tsx` (d), resolved by hand | `a36a17768c18919517693f3f8352ba83a123f0a2` |
-| seo/06 f9b6d9b | 6a513e6 | clean | `02a4df4cd6db5bbedc8df8d7b5129e7dfe63a31a` |
-| seo/07 71de758 | 414ca06 | clean | `a2767df31ca62c3327771c116af5a237039b4f01` |
+(i) **Seven merge commits, in order 01..07, onto 7702845.** Each merge commit's second
+parent equals the listed branch tip, in that order:
 
-After each merge, `git rev-parse HEAD^{tree}` must equal the tree in the table (merge
-commit SHAs differ from the trial's; trees do not). The one expected difference: if seo/07
-is recorded at the later commit that carries this file, the last tree differs from the
-trial's, and only by that commit's `ops/seo-repairs-2026-11/RELEASE.md` (0.2 checked that
-the commit changes nothing else; the trial's seo/07 merge was clean). Any other tree that differs
-means the resolution is not the trial's: redo it, or stop.
+```
+B=77028454655e7b272d8c23987b54f445f9eba9f7
+EXPECT="b3e2acef90d8be9e30dfb12f45d03a6cdd2e98e9 b0c524d712071d797b7ef1bb8b43cc495be23760 359ff20a8b80d7a31b178868b1b0868db38262af 58c2ede4530ae108789f7c254c48474c4d8cae39 a83299181ffb7aad36eb013c0c24549118363f0f f9b6d9b629277fc35c37bb8038bd93978248dd9f <recorded seo/07 SHA>"
+git rev-list --first-parent --reverse --parents $B..$RELEASE_SHA > merges.txt
+awk -v b=$B -v t=$RELEASE_SHA -v want="$EXPECT" 'BEGIN { n = split(want, w, " "); prev = b }
+  { ok = (NF == 3 && $2 == prev && $3 == w[NR]); print (ok ? "ok  " : "FAIL"), NR, $1, $3; if (!ok) bad = 1; prev = $1 }
+  END { if (NR != n || prev != t) bad = 1; print (bad ? "FAIL" : "PASS") ": " NR " merges" }' merges.txt
+```
 
-**The known conflicts and their required resolution** (the trial applied exactly these):
+Expect seven `ok` lines and `PASS: 7 merges`: every line has exactly two parents (no
+fast-forward, no octopus); the first merge's first parent is 7702845; each later merge's
+first parent is the merge before it; the second parents are the section 0 tips in order;
+the seventh merge is `RELEASE_SHA`.
+
+(ii) **The first four trees.** They do not depend on seo/05, so they must equal the
+previous trial's (table below): `for m in $(head -4 merges.txt | cut -d' ' -f1); do git
+rev-parse $m^{tree}; done` prints `d4bc4b7a…`, `183f8fa4…`, `51aa47eb…`, `e0b32fc6…`.
+Merges 5–7 differ from the previous trial (seo/05 is now `a832991`, seo/07 is newer).
+
+(iii) **Only the five hand-resolved files, resolved as described.** For each merge, list the
+files where the merge commit differs from git's own merge of its two parents:
+
+```
+for m in $(cut -d' ' -f1 merges.txt); do
+  auto=$(git merge-tree --write-tree --no-messages $m^1 $m^2 | head -1)
+  echo "$m: $(git diff --name-only $auto $m | tr '\n' ' ')"
+done
+```
+
+Expect nothing for merges 1, 2, 6 and 7. Merge 3 (seo/03): `scripts/test-failed-reads.mjs`.
+Merge 4 (seo/04): `scripts/test-failed-reads.mjs src/start.ts`. Merge 5 (seo/05):
+`scripts/test-failed-reads.mjs`, `src/components/templates/host-acq-city.tsx` and both
+comparison city routes. That is five files in all. `git merge-tree` leaves git's conflict
+markers in a conflicted file, so `git diff $auto $m -- <file>` shows exactly how each
+conflict was resolved. Review each one against conflicts (a)–(d) below and the table after them.
+(On 2026-11-17 this recipe, run against an earlier local integration with seo/05 at
+df808bb, listed exactly these files. A read-only `git merge-tree` of `a832991` onto the
+seo/04 merge conflicts in the same four files for merge 5.)
+
+(iv) **Changed files = union of the branch files:**
+
+```
+for s in $EXPECT; do git diff --name-only $B $s; done | sort -u > union.txt
+git diff --name-only $B $RELEASE_SHA | sort > release.txt
+diff union.txt release.txt && echo same file list
+wc -l < release.txt; grep -c '^src/' release.txt
+git diff --stat $B $RELEASE_SHA | tail -1
+```
+
+`diff` prints nothing. The union of the final branch file lists (seo/05 `a832991`, seo/07
+at the commit carrying this file), computed on 2026-11-17, is 128 files, 77 of them
+under `src/`. Previous trial (`414ca06`): 119 files, 68 under `src/`,
+`119 files changed, 21228 insertions(+), 1261 deletions(-)`. Write the counts and the
+diffstat into the release record. The release integrator reports them too (see the
+release branch's merge commits).
+
+(v) **EAST-only files and lockfiles untouched:** step 1.3.
+
+**The known conflicts and their required resolution:**
 
 - **(a) `src/start.ts`, merging seo/04 (against seo/02).** Keep both middlewares as
   separate definitions: seo/02's `bareP404Middleware` and seo/04's
@@ -296,15 +349,20 @@ means the resolution is not the trial's: redo it, or stop.
     `sitemapIntegrity`, `comparisonDuplicates` and `canonicalHosts`.
   - seo/05 merge: `FIXTURES.synced_listings` keeps `fixture-listing`, seo/03's
     configuration listing (`config-listing-do-not-delete`, `6768ea36-…`) and
-    `...INTENT_LISTINGS`.
+    `...INTENT_LISTINGS`. New with `a832991` (two more conflict regions in the same
+    file): `FIXTURES.cities` keeps seo/04's Boston pair (`boston`, `boston-ma`), its
+    `charlotte` row and its `FIXTURE_EXTRA_CITIES` block, **and** seo/05's
+    no-coordinates `youngstown` row. Every row stays complete.
 - **(c) `src/routes/p.giggster-vs-pool-rental-near-me-in-{$city}.tsx` and
   `src/routes/p.peerspace-vs-pool-rental-near-me-in-{$city}.tsx`, merging seo/05.** Only
   the import blocks conflict. Keep both imports: seo/04's `comparisonCanonicalPath` /
-  `comparisonDuplicateTarget` and seo/05's `searchHrefForPlace`. The bodies auto-merge and
-  carry both changes: seo/04's `beforeLoad` 301 and canonical slug, and seo/05's
-  `searchHrefForPlace` link.
+  `comparisonDuplicateTarget` and seo/05's `searchHrefNearPlace` (`a832991`; at df808bb
+  it was `searchHrefForPlace`). The bodies auto-merge and carry both changes: seo/04's
+  `beforeLoad` 301 and canonical slug, and seo/05's bounded `searchHrefNearPlace` link
+  (bare `/s`, "Browse all pools", when the `cities` row has no coordinates).
 - **(d) `src/components/templates/host-acq-city.tsx`, merging seo/05.** Take seo/05's
-  version (`git checkout --theirs`, df808bb's blob) and make exactly four edits:
+  version (`git checkout --theirs`; `a832991`'s blob, identical to df808bb's for this
+  file) and make exactly four edits:
   1. add seo/04's `import { contentPagePath } from "@/lib/country-sites";`;
   2. seo/04's `pageUrl` line and its comment, using `contentPagePath(page)`, for the body
      JSON-LD;
@@ -314,46 +372,77 @@ means the resolution is not the trial's: redo it, or stop.
   4. seo/02's "You take home on $200" cell set to `"$200"`.
 
   seo/05's search-link changes in this file stay as seo/05 wrote them. Check:
-  `git diff df808bb HEAD -- src/components/templates/host-acq-city.tsx` shows exactly these
-  edits (4 hunks, 6 insertions, 4 deletions), and the only `url_path` left in the file is
-  in the `pageUrl` comment. Nothing else.
+  `git diff a832991 <merge 5> -- src/components/templates/host-acq-city.tsx` shows exactly
+  these edits (4 hunks, 6 insertions, 4 deletions), and the only `url_path` left in the
+  file is in the `pageUrl` comment. Nothing else.
 
-1.2 Record the release SHA: `git rev-parse HEAD`. Call it `RELEASE_SHA`. Also record
-`git diff --stat 77028454655e7b272d8c23987b54f445f9eba9f7 HEAD | tail -1` (trial: `119
-files changed, 21228 insertions(+), 1261 deletions(-)`) and check that
-`git diff --name-only 7702845 HEAD` is exactly the union of the merged branches' own file
-lists (`git diff --name-only 7702845 <branch SHA>` for each SHA recorded in 0.2; trial:
-119 files, 68 of them under `src/`). The only hand edits allowed are these, in these five
-files, with the resolutions of 1.1:
+The only hand edits allowed are these, in these five files:
 
 | File | Merge | Hand edit |
 |---|---|---|
 | `scripts/test-failed-reads.mjs` | seo/03 | seo/02's `/p` checks kept, then `await sitemapIntegrity(phase, index);` and seo/03's helpers |
 | `src/start.ts` | seo/04 | `bareP404Middleware` and `comparisonDuplicateSlashMiddleware` both defined; order `[securityHeaders, bareP404, comparisonDuplicateSlash, failedRead]` |
 | `scripts/test-failed-reads.mjs` | seo/04 | `get()` combines seo/04's `forwardedHost` header with seo/02's `renderedPages` capture |
-| `scripts/test-failed-reads.mjs` | seo/05 | `synced_listings` = `fixture-listing` + config listing + `...INTENT_LISTINGS` |
+| `scripts/test-failed-reads.mjs` | seo/05 | `synced_listings` = `fixture-listing` + config listing + `...INTENT_LISTINGS`; `cities` = seo/04's Boston pair, `charlotte` and `FIXTURE_EXTRA_CITIES` + seo/05's `youngstown` |
 | `src/routes/p.giggster-vs-pool-rental-near-me-in-{$city}.tsx` | seo/05 | both imports kept |
 | `src/routes/p.peerspace-vs-pool-rental-near-me-in-{$city}.tsx` | seo/05 | both imports kept |
 | `src/components/templates/host-acq-city.tsx` | seo/05 | seo/05 blob + `contentPagePath` import + `pageUrl` via `contentPagePath` + both `placeLabel` crumbs via `contentPagePath` + `"$200"` cell |
 
-That is what A3 approves; a conflict in any other file, or any other hand edit, means stop.
+That is what A3 approves. A conflict in any other file, or any other hand edit, means stop.
+
+**Optional cross-check: re-merge by hand.** It is not required for Gate 1. In a second
+fresh clone, rebuild the merges and resolve them as (a)–(d):
+
+```
+git checkout -b recheck 77028454655e7b272d8c23987b54f445f9eba9f7
+git merge --no-ff -m "Merge seo/01-failed-read-503 (b3e2ace)" b3e2acef90d8be9e30dfb12f45d03a6cdd2e98e9
+git merge --no-ff -m "Merge seo/02-redirects-fees-links (b0c524d)" b0c524d712071d797b7ef1bb8b43cc495be23760
+git merge --no-ff -m "Merge seo/03-sitemaps (359ff20)" 359ff20a8b80d7a31b178868b1b0868db38262af            # conflicts: (b)
+git merge --no-ff -m "Merge seo/04-dupes-canonical (58c2ede)" 58c2ede4530ae108789f7c254c48474c4d8cae39     # conflicts: (a), (b)
+git merge --no-ff -m "Merge seo/05-intent (a832991)" a83299181ffb7aad36eb013c0c24549118363f0f              # conflicts: (b), (c), (d)
+git merge --no-ff -m "Merge seo/06-scheduled-jobs (f9b6d9b)" f9b6d9b629277fc35c37bb8038bd93978248dd9f
+git merge --no-ff -m "Merge seo/07-release-tracking (<short SHA>)" <recorded seo/07 SHA>
+```
+
+When a merge stops on a conflict, `git diff --name-only --diff-filter=U` must list exactly
+the files named for that merge. Resolve them, `git add` them, then `git commit --no-edit`.
+After each merge, compare `git rev-parse HEAD^{tree}` with the tree of the release
+branch's merge of the same number. If they differ, `git diff <release merge N> HEAD` may
+touch only that merge's hand-resolved files: review the difference against (a)–(d). Any
+other difference: stop and report.
+
+**Previous trial merge, 2026-11-17** (scratch clone; seo/05 at `df808bb`, seo/07 at
+`71de758`, the other five at the SHAs of section 0; result `414ca06`). Rows 01–04 still
+apply and are checked in 1.2 (ii). Rows 05–07 do not apply to `a832991`. For the new trees,
+see the release branch's merge commits.
+
+| Merge | Trial commit | Result | Tree after the merge |
+|---|---|---|---|
+| seo/01 b3e2ace | 367de60 | clean | `d4bc4b7a9f071550217a01e9f899caed0b6c5004` |
+| seo/02 b0c524d | ff0acea | clean | `183f8fa402361925b17dc993bcc31fa473e24e7b` |
+| seo/03 359ff20 | dc6c86f | conflict in `scripts/test-failed-reads.mjs` (b), resolved by hand | `51aa47eb4a0f27ea2e6ab6b8811a45dd1c59f970` |
+| seo/04 58c2ede | 2c114e5 | conflicts in `src/start.ts` (a) and `scripts/test-failed-reads.mjs` (b), resolved by hand | `e0b32fc6a7556ef382c183f21c23da818958e264` |
+| seo/05 df808bb (previous trial) | b973fb5 | conflicts in `scripts/test-failed-reads.mjs` (b), both comparison city routes (c) and `src/components/templates/host-acq-city.tsx` (d), resolved by hand | `a36a17768c18919517693f3f8352ba83a123f0a2` |
+| seo/06 f9b6d9b (previous trial) | 6a513e6 | clean | `02a4df4cd6db5bbedc8df8d7b5129e7dfe63a31a` |
+| seo/07 71de758 (previous trial) | 414ca06 | clean | `a2767df31ca62c3327771c116af5a237039b4f01` |
 
 1.3 Prove the release does not touch what it must not:
 
 ```
-git diff --name-only 77028454655e7b272d8c23987b54f445f9eba9f7 HEAD -- src/components/home-page.tsx src/routes/__root.tsx src/server/listing-sync.server.ts src/server/sharetribe.server.ts src/lib/listing-slug.ts
-git diff --name-only 77028454655e7b272d8c23987b54f445f9eba9f7 HEAD -- package-lock.json bun.lock bun.lockb
-git diff 77028454655e7b272d8c23987b54f445f9eba9f7 HEAD -- package.json
+git diff --name-only 77028454655e7b272d8c23987b54f445f9eba9f7 $RELEASE_SHA -- src/components/home-page.tsx src/routes/__root.tsx src/server/listing-sync.server.ts src/server/sharetribe.server.ts src/lib/listing-slug.ts
+git diff --name-only 77028454655e7b272d8c23987b54f445f9eba9f7 $RELEASE_SHA -- package-lock.json bun.lock bun.lockb
+git diff 77028454655e7b272d8c23987b54f445f9eba9f7 $RELEASE_SHA -- package.json
 ```
 
-The first two must print nothing (trial: nothing). The third may only add the `test:unit`
-and `test:failed-reads` scripts (that is all branches 01–05 change there; 06 and 07 do not
-touch it); no dependency may change.
+The first two must print nothing (previous trial: nothing; seo/05 at `a832991` touches
+none of these files). The third may only add the `test:unit` and `test:failed-reads`
+scripts (branches 01–05 change nothing else there; 06 and 07 do not touch it). No
+dependency may change.
 
-1.4 Local checks:
+1.4 Local checks, on the checkout of `RELEASE_SHA`:
 
 ```
-npm ci
+ln -s <an existing fresh-web node_modules> node_modules
 node scripts/check-types.mjs
 npm run test:unit
 VITE_SUPABASE_URL=http://127.0.0.1:54399 VITE_SUPABASE_PUBLISHABLE_KEY=stub-anon-key VITE_SUPABASE_PROJECT_ID=stub NODE_OPTIONS=--max-old-space-size=3072 npm run build
@@ -362,28 +451,34 @@ bun scripts/check-breadcrumb-jsonld.mjs
 python3 -I ops/seo-repairs-2026-11/tracking/track_groups.py --selftest
 ```
 
-If `npm ci` refuses because the lockfile is out of step, stop: do not regenerate a
-lockfile. The stub build is for the harness only; it is never shipped. EAST builds its own
-`dist/` in step 2.
+No dependency install. `package-lock.json` has been out of step with `package.json` since
+7702845, so `npm ci` refuses. Do not regenerate a lockfile. The deploy never installs
+dependencies either: `ops/deploy-east.sh` links the existing `node_modules` into its build
+copy, and the release changes no dependency (1.3 proves it). The local checks link an
+existing `node_modules` the same way. The stub build is for the harness only and is never
+shipped. EAST builds its own `dist/` in step 2.
 
-1.5 Push the branch (needs A2): `git push origin seo/release-2026-11`. EAST fetches it
+1.5 Nothing is pushed in this step: the branch is already on GitHub (1.1). EAST fetches it
 anonymously in step 2.
 
-Trial result at `414ca06` (2026-11-17, worktree clean afterwards): typecheck 5 errors in
-the 4 baselined entries, "PASS: no type errors beyond the recorded baseline" (baseline file
-unchanged); unit 137 tests, 137 pass, 0 fail; stub build exit 0, stamp `414ca067`, dirty 0;
-`test:failed-reads` 535 passed, 0 failed (total 535, 1,857 stub requests), including
-seo/02's `/p` checks, seo/03's sitemap integrity and config-listing exclusion, seo/04's
-comparison paging (2,411 fixture entries) and ccTLD canonical checks, and seo/05's intent
-checks; `bun scripts/check-breadcrumb-jsonld.mjs` exit 1 with exactly one issue, the known
-pre-existing `tool-placeholder.tsx: missing import of BreadcrumbsWithSchema`; tracker
-selftest 5 PASS, 0 FAIL.
+**Previous trial result** at `414ca06` (seo/05 at df808bb, seo/07 at 71de758; 2026-11-17,
+worktree clean afterwards): typecheck 5 errors in the 4 baselined entries, "PASS: no type
+errors beyond the recorded baseline" (baseline file unchanged); unit 137 tests, 137 pass,
+0 fail; stub build exit 0, stamp `414ca067`, dirty 0; `test:failed-reads` 535 passed, 0
+failed (total 535, 1,857 stub requests), including seo/02's `/p` checks, seo/03's sitemap
+integrity and config-listing exclusion, seo/04's comparison paging (2,411 fixture entries)
+and ccTLD canonical checks, and seo/05's intent checks; `bun scripts/check-breadcrumb-jsonld.mjs`
+exit 1 with exactly one issue, the known pre-existing `tool-placeholder.tsx: missing
+import of BreadcrumbsWithSchema`; tracker selftest 5 PASS, 0 FAIL. These were not
+recomputed for `a832991`, which adds seo/05's 10 `handoffChecks` to the harness. The release
+integrator reports the new gate numbers (see the release branch's merge commits).
 
-**Gate 1:** 1.3 prints nothing; typecheck has no errors beyond the baseline; `test:unit`
-0 failed and at least 137 tests; `test:failed-reads` 0 failed (write down the total; it
-must be at least 535, the trial's total); `/root/.bun/bin/bun scripts/check-breadcrumb-jsonld.mjs`
-(or `bun` on the PATH) reports only the known `tool-placeholder.tsx` issue; tracker selftest
-ALL PASS; `git ls-remote origin seo/release-2026-11` equals `RELEASE_SHA`.
+**Gate 1:** 1.2 (i)–(iv) pass; 1.3 prints nothing; typecheck has no errors beyond the
+baseline; `test:unit` 0 failed and at least 137 tests (the previous trial's count);
+`test:failed-reads` 0 failed (write down the total; it must be at least 535, the previous
+trial's total); `/root/.bun/bin/bun scripts/check-breadcrumb-jsonld.mjs` (or `bun` on the
+PATH) reports only the known `tool-placeholder.tsx` issue; tracker selftest ALL PASS;
+`git ls-remote origin seo/release-2026-11` still equals `RELEASE_SHA`.
 
 ### Step 2. EAST deploy (needs A3)
 
@@ -544,9 +639,9 @@ Common rules for 4a–4d:
 | Step | Prepared files | Dry-run | Backup | Apply | Verify | Rollback |
 |---|---|---|---|---|---|---|
 | **4a** F14 fee statements (A4) | PR #8 `ops/seo-repairs-2026-11/db-change/`: `generate.py`, `apply.sql` (refuses to run until built with the P1 pins), `dry-run.sql`, `rollback.sql`, `verify.sql`, `RUNBOOK.md`; source `fees/fee-corrections.csv`. Owner decisions before GO: RUNBOOK §0 (pin reference, `updated_at` bump, unverified fee rows) | `build/dry-run.sql` from the P1 pins: **not yet run on production** | `public.seo_repair_backup_20261115`, written by `apply.sql` before a field is first changed | `FIX` rows only (2,724 rules; 1,729 with `--verified-only`), in the same transaction as 4b | `build/verify.sql` (RUNBOOK §4, expect 0 rows in its first section); tracker `--only F14`: 4/4 PASS | `rollback.sql` (RUNBOOK §5) |
-| **4b** F5 internal links (A5) | PR #8, the same package as 4a; source `links/link-mapping.csv`, `links/code-handoff.md`. The `src/**` link changes are in no branch (see below) | as 4a (one dry run) | as 4a | `REWRITE` and `UNLINK` rules only (514), **excluding** every link inside a paragraph or list item that mentions insurance, liability, coverage, claims or damage (the package's insurance guard) | `build/verify.sql`; re-crawl the pages whose links come from the **database**: 0 database-sourced links to a 301 or 404 for the mapped targets. Links that come from code are out of scope (below) | as 4a |
+| **4b** F5 internal links (A5) | PR #8, the same package as 4a; source `links/link-mapping.csv`, `links/code-handoff.md`. Of the `src/**` link changes, only the rendered `/l/draft/…` host CTAs are in this release (seo/05, a832991); the rest are in no branch (see below) | as 4a (one dry run) | as 4a | `REWRITE` and `UNLINK` rules only (514), **excluding** every link inside a paragraph or list item that mentions insurance, liability, coverage, claims or damage (the package's insurance guard) | `build/verify.sql`; re-crawl the pages whose links come from the **database**: 0 database-sourced links to a 301 or 404 for the mapped targets. Links that come from code are out of scope (below) | as 4a |
 | **4c** F8 public-pools data (A6) | PR #9 `ops/seo-repairs-2026-11/public-pools/`: `dry-run.sql`, `apply.sql`, `rollback.sql`, `verify-live.sql`, `RUNBOOK.md`; mapping only: `duplicate-mapping.sql`, `count-consistency.sql` and their CSVs. Preconditions: public-pools RUNBOOK §5 (pp-ssr captured, step 5a; pp-ssr confirmed to read this database; PR-7) | PR-6 (`dry-run.sql`): **not yet run on production**; `cleaner/check_dry_run.py` must report 0 differences | `public.seo_repair_pp_backup_20261115`, written by `apply.sql` | the approved manifest only (`expected_changes`, `manifest_md5` of the reviewed dry run) | public-pools RUNBOOK §7: `verify-live.sql`, then `cleaner/verify_live.py` on the fetched pages, every field `NEW` | `rollback.sql` (one run) |
-| **4d** 29 duplicate city pages (A7) | `docs/seo-repairs-2026-11/intent.md` §6a (seo/05, df808bb): APPLY and ROLLBACK SQL (present) | re-run the export and `node scripts/intent-report.mjs export.json --sql`; the 29 pairs must be unchanged | `create table <backup schema>.content_pages_city_dupes_<date> as select * from public.content_pages where template_type = 'host_acq_city' and slug in (<the 29 dup slugs of §6a>);` must hold 29 rows | §6a APPLY | each dup URL 301s once to its keeper; the keeper answers 200; tracker F1/F7 PASS | §6a ROLLBACK |
+| **4d** 29 duplicate city pages (A7) | `docs/seo-repairs-2026-11/intent.md` §6a (seo/05; unchanged from df808bb to a832991): APPLY and ROLLBACK SQL (present) | re-run the export and `node scripts/intent-report.mjs export.json --sql`; the 29 pairs must be unchanged | `create table <backup schema>.content_pages_city_dupes_<date> as select * from public.content_pages where template_type = 'host_acq_city' and slug in (<the 29 dup slugs of §6a>);` must hold 29 rows | §6a APPLY | each dup URL 301s once to its keeper; the keeper answers 200; tracker F1/F7 PASS | §6a ROLLBACK |
 
 **4b, what it cannot fix and what must change first** (measured from `link-mapping.csv`):
 
@@ -554,9 +649,11 @@ Common rules for 4a–4d:
   `/p/free-host-tools` (2,323 linking pages; `src/components/related-pages.tsx`,
   `src/components/templates/*`, `src/server/internal-links.functions.ts`) and the
   `/l/draft/00000000-…/new/details` CTA (4,182 linking pages; `src/components/templates/*`).
-  Those `src/**` changes are in no branch, so they are not in `RELEASE_SHA`. They need
-  their own fresh-web branch and a later EAST release; 4b's verify counts database links
-  only.
+  The `/l/draft/…` CTA is now in `RELEASE_SHA` for the rendered templates and routes:
+  seo/05 (a832991) points every rendered one at `/wizard/`. Still `/l/draft/…`: the
+  content-generator prompts and stored page bodies (K15, K16). The `/p/free-host-tools`
+  code changes are in no branch, so they are not in `RELEASE_SHA`. They need their own
+  fresh-web branch and a later EAST release. 4b's verify counts database links only.
 - **9 `REWRITE` targets have rows inside insurance sentences** (`/faq`,
   `/guest_pool_safety_guidelines`, `/pool_safety_for_hosts`, `/community_guidelines`,
   `/make_money_renting_out_your_pool` (2 rows), `/p/trust-safety`,
@@ -678,6 +775,15 @@ tests pass; the live file still hashes to `3fa2699d…773cca`; find the served f
 through Cloudflare (the edge can show the old file for 600 s). Rollback is the same swap
 with the backup. Decisions D1–D4 of README §4 come first (A16).
 
+**5h. Optional: one-hop trailing-slash 301 for the listed bare comparisons on www and the
+apex (not part of A3, no approval line in this round).** On www and the apex, WEST nginx
+strips a trailing slash with its own 301 before the request reaches EAST. So
+`/p/<listed bare comparison>/` takes 2 hops there: the WEST slash 301, then the app's 301
+to the `-<st>` twin. seo/04's one-hop middleware applies only when the request reaches
+EAST with the slash (e.g. ccTLD hosts). An exact-match WEST nginx rule would make it one
+hop. It is an optional WEST item that needs its own GO, with its exact block in the
+release record. It is not part of A3.
+
 ### Step 6. F13 listing-sync cron on EAST (A13)
 
 Disclosure (CLAUDE.md rule 4), to repeat in the message that installs it:
@@ -693,7 +799,8 @@ Disclosure (CLAUDE.md rule 4), to repeat in the message that installs it:
 
 Before installing:
 
-1. Confirm `RELEASE_SHA` contains the token fix (seo/06 f9b6d9b, merged in step 1.1):
+1. Confirm `RELEASE_SHA` contains the token fix (seo/06 f9b6d9b, merge 6 of the release
+   branch, checked in step 1.2):
    `git merge-base --is-ancestor f9b6d9b <RELEASE_SHA> && echo ok`. EAST's checkout of
    `RELEASE_SHA` is what step 6 installs from.
 2. The hook's implementation is the EAST-only `src/server/listing-sync.server.ts`, which
@@ -768,12 +875,12 @@ does not exist yet. Each comes back as its own line, with its files, when it doe
 |---|---|---|---|---|---|
 | A0 | **Resolved, not asked.** Scope question "release without `seo/04-dupes-canonical`, or wait for it": seo/04 is final (58c2ede, PR #7) and included. Step 1.1 merges it; A3 deploys it. | n/a | What A3 deploys: F6a and F10 are in it | see A3 | n/a |
 | A1 | Cloudflare 5xx: having read step 0.3, accept that a 503 may be edge-cached for up to 600 s on cached paths, and go ahead with F3. **A precondition of A3:** F3 cannot be dropped (seo/02, 03, 04 and 05 are built on it), so No = no EAST release until a separate Cloudflare decision. | | Nothing | A short database blip shows a cached 503 page for up to 10 minutes on the URLs hit during it | n/a |
-| A2 | Push `seo/07-release-tracking` at the commit that carries this version of the runbook, if it is not yet on GitHub (step 0.2; the other six branches are on GitHub at their final SHAs), build `seo/release-2026-11` from the SHAs recorded in 0.2 and push it to GitHub | | GitHub only | none on production | delete the branch |
-| A3 | Deploy `RELEASE_SHA` to EAST with the tooling (step 2). `RELEASE_SHA` is the merge, in order 01 to 07, of exactly the seven branch SHAs recorded in 0.2 (seo/04 included), with only the hand edits of step 1.2: the known conflicts in `scripts/test-failed-reads.mjs`, `src/start.ts`, both comparison city routes and `src/components/templates/host-acq-city.tsx`, resolved as (a)–(d) of step 1.1 (step 1.1 checks the trees, step 1.2 the file list) | | Every EAST page: F3, F11, F14 code (including the host-city "$200" take-home cell), F4, F6a, F10, F1/F7. **Every EAST request** now passes the request middlewares in the order `[securityHeaders, bareP404, comparisonDuplicateSlash, failedRead]`: `bareP404` (bare `/p` and `/p/` → 404) and `comparisonDuplicateSlash` (`/p/<listed bare comparison>/` → one 301) answer from static data, before `failedRead`. **Also the EAST deploy gate itself** (section 1, "EAST deploy gate"): pinned EAST-only files allowed, build in a copy, proven restarts, no `--update-env` | Medium: the largest change (trial 414ca06: 119 files across branches 01–07, 68 of them under `src/`; 21,228 insertions, 1,261 deletions; recounted at step 1.2). During GO: (1) the build runs next to the live site and Chatwoot on a 3.8 GB box. It runs in a memory-capped scope (MemAvailable − 512 MB, plus up to 1.5 GB swap), so if it needs more it is killed inside the cap and production is untouched; it has never been run on this t3.medium, so it may fail that way, and the next step is then more swap or a temporary resize (owner). The box may still swap, slowing EAST pages and Chatwoot while it builds. (2) The live `dist/` is not touched by the build; the swap and restart cost a few seconds of EAST pages. Choose a low-traffic window. Every gate failure restores the previous build and proves the restart | Tooling ROLLBACK |
+| A2 | Push to GitHub the section 0 branch tips that are not there yet (step 0.2; on 2026-11-17 these were `seo/05-intent` at `a832991` and `seo/07-release-tracking` at the commit that carries this version of the runbook; seo/01–04 and seo/06 were already there at their final SHAs). Publish `seo/release-2026-11` at the gated commit: the merge, in order 01..07 onto 7702845, of the SHAs of section 0, which step 1.2 then verifies | | GitHub only | none on production | delete the branch |
+| A3 | Deploy to EAST with the tooling (step 2) the tip of `seo/release-2026-11` recorded at step 1.1 (`RELEASE_SHA`), after step 1.2 has verified it. Step 1.2 checks: seven merge commits onto 7702845, in order 01 to 07, whose second parents are exactly the seven branch SHAs of section 0 (seo/04 included, seo/05 at `a832991`); only the hand edits of step 1.2 (the known conflicts in `scripts/test-failed-reads.mjs`, `src/start.ts`, both comparison city routes and `src/components/templates/host-acq-city.tsx`, resolved as (a)–(d)); changed files = the union of the branch files; EAST-only files and lockfiles untouched (1.3) | | Every EAST page: F3, F11, F14 code (including the host-city "$200" take-home cell), F4, F6a, F10, F1/F7, including seo/05's hand-offs (comparison search links bounded or bare `/s`; state hubs and advocacy on bare `/s`; rendered `/l/draft/…` host CTAs → `/wizard/`; WebSite `SearchAction` on `/s?keywords=`). **Every EAST request** now passes the request middlewares in the order `[securityHeaders, bareP404, comparisonDuplicateSlash, failedRead]`: `bareP404` (bare `/p` and `/p/` → 404) and `comparisonDuplicateSlash` (`/p/<listed bare comparison>/` → one 301 when the request reaches EAST with the slash; on www and the apex WEST's own slash 301 comes first, so 2 hops there, step 5h) answer from static data, before `failedRead`. **Also the EAST deploy gate itself** (section 1, "EAST deploy gate"): pinned EAST-only files allowed, build in a copy, proven restarts, no `--update-env` | Medium: the largest change (previous trial 414ca06, seo/05 at df808bb: 119 files across branches 01–07, 68 of them under `src/`; 21,228 insertions, 1,261 deletions. Union of the final branch file lists: 128 files, 77 under `src/`. The release integrator reports the new diffstat, and it is recounted at step 1.2). During GO: (1) the build runs next to the live site and Chatwoot on a 3.8 GB box. It runs in a memory-capped scope (MemAvailable − 512 MB, plus up to 1.5 GB swap), so if it needs more it is killed inside the cap and production is untouched; it has never been run on this t3.medium, so it may fail that way, and the next step is then more swap or a temporary resize (owner). The box may still swap, slowing EAST pages and Chatwoot while it builds. (2) The live `dist/` is not touched by the build; the swap and restart cost a few seconds of EAST pages. Choose a low-traffic window. Every gate failure restores the previous build and proves the restart | Tooling ROLLBACK |
 | A4 | **Not yet approvable.** Apply the `FIX` rows of the fee corrections (step 4a). The files exist (PR #8, `db-change/`); still needed: the pending reads (`db-change/PENDING-READS.md`, `fees/PENDING-READS.md`), the production dry run built from the P1 pins and its output, and the owner's decisions of RUNBOOK §0, reviewed. PR #8 applies 4a and 4b in one transaction (RUNBOOK §1) | | `content_pages` text fields | Low to medium (bulk text edit: 2,724 rules on 2,334 fields of 1,547 pages) | `rollback.sql` from the backup table |
 | A5 | **Not yet approvable.** Apply the `REWRITE` and `UNLINK` rows of the link mapping (step 4b), without the 9 insurance-sentence targets, after the 2 redirect destinations are corrected. Needs the same reads, dry run and review as A4 (same package) | | `content_pages` and `blog_posts` text fields | Low to medium | `rollback.sql` from the backup table |
 | A6 | **Not yet approvable.** Apply the public-pools text cleaner (step 4c). The files exist (PR #9, `public-pools/`); still needed: the pp-ssr capture (A8), the pending reads PR-1 to PR-7 (`public-pools/PENDING-READS.md`), and the production dry run PR-6 with its `expected_changes` and `manifest_md5`, reviewed. The duplicate mapping is mapping only and is not applied by it | | `pp_pools`, `pp_cities` text fields | Medium (bulk text edit of generated fields; no record merged, deleted or unpublished) | `rollback.sql` from the backup table |
-| A7 | Redirect the 29 duplicate city pages of `intent.md` §6a (seo/05, df808bb) to their keepers (step 4d). (This line said 24 when it was written from the earlier draft 46aa05e; §6a at df808bb lists 29.) | | 29 rows: `status`, `redirect_to`, `in_sitemap` | Low; each is a 301 to a page already in the sitemap | §6a ROLLBACK SQL |
+| A7 | Redirect the 29 duplicate city pages of `intent.md` §6a (seo/05; unchanged from df808bb to a832991) to their keepers (step 4d). (This line said 24 when it was written from the earlier draft 46aa05e; §6a at df808bb lists 29.) | | 29 rows: `status`, `redirect_to`, `in_sitemap` | Low; each is a 301 to a page already in the sitemap | §6a ROLLBACK SQL |
 | A8 | Run the pp-ssr capture on WEST (step 5a) | | A new orphan branch in the public repo; two temporary files on WEST | Low; read-only on WEST; secret scan before push | delete the branch |
 | A9 | Release WEST PR #2 by the gated flip (step 5b) | | Marketplace status codes for `/l/*`, `/l`, `/confirm` | Medium: marketplace routing | upstream file swap back |
 | A10 | WEST nginx `location = /p { return 404; }` (step 5c) | | bare `/p` | Low | restore the config backup |
@@ -797,7 +904,7 @@ does not exist yet. Each comes back as its own line, with its files, when it doe
 | D-f | Sitemap choices (sitemaps.md, "Decisions left open") | list `/p/affiliate` after F14; `/p/jan` and `/p/la-saltwater-featured`; the 65 published `host_acq_city` rows with `in_sitemap = false`. |
 | D-g | Search Console | resubmit `/sitemap.xml`; remove `/sitemap-directory.xml` if submitted (owner action, step 7). |
 | D-h | Insurance text | The `NEEDS_DEREK` rows of 4a and 4b, the rows of the 9 `REWRITE` targets of 4b that sit inside insurance sentences, and three academy courses on insurance and claims already listed on www (untyped-pages.md). Owner only (rule 8). |
-| D-i | F5 link fixes in code | `/p/free-host-tools` (2,323 pages) and the `/l/draft/…` CTA (4,182 pages) are linked from `src/**` (`links/code-handoff.md`). Needs its own fresh-web branch and a later EAST release; not in this one. |
+| D-i | F5 link fixes in code | `/p/free-host-tools` (2,323 pages) is linked from `src/**` (`links/code-handoff.md`). It needs its own fresh-web branch and a later EAST release, and is not in this one. The `/l/draft/…` CTA (4,182 pages) is fixed in rendered templates and routes by seo/05 (a832991, → `/wizard/`); generator prompts and stored bodies still contain it (K15, K16). |
 
 **Known issues NOT fixed by this release** (no step or approval line here covers them;
 the owner decides each):
@@ -808,10 +915,20 @@ the owner decides each):
 | K2 | `/p/privacy-request` answers `index, follow` without a canonical | `src/routes/p.privacy-request.tsx` |
 | K3 | `jobs.xml` builds URLs from `url_path`, so a NULL `url_path` gives a URL ending in `null` | `src/routes/jobs[.]xml.ts` (seo/04's NULL fix covers the page templates, not this route) |
 | K4 | Whether `www.<ccTLD>` should 301 to the bare ccTLD (today both serve; seo/04 only makes the canonical and `sitemap-country.xml` point at the bare host) | `duplicates-and-canonical.md` (seo/04) |
-| K5 | Comparison pages and state hubs still link `/s?address=` without bounds (predates this release; seo/05 bounds only the renter city-page CTAs) | `intent.md` §5 (seo/05) |
+| K5 | `activity_city` (`src/components/templates/activity-city.tsx`) still links address-only `searchHrefForPlace()`. It was not on the verifier's list, has no published rows, and its template has no coordinates, so it was left alone. If it is ever published, it should get a bare `/s` or a bounded link. (Comparison pages and state hubs, listed here before a832991, are now bounded or bare `/s`.) | `intent.md` §5 (seo/05, a832991) |
 | K6 | 28 AI sentences in the public-pools data speak as the founder or the company; the cleaner leaves them for the owner | `ops/seo-repairs-2026-11/public-pools/FOUNDER-VOICE-REMAINING.md` (PR #9) |
 | K7 | Two possibly invented host testimonials (Humble TX; Lee's Summit MO) and 767 fee rows held for the owner (`NEEDS_DEREK`) | `fees/README.md` §5, `db-change/RUNBOOK.md` §6, `db-change/excluded-pending-derek.csv` (PR #8) |
 | K8 | The host-lifecycle sender treats a failed suppression lookup as "not suppressed" (outside SEO scope) | `ops/host-lifecycle/src/send.ts` |
+| K9 | Comparison pages link `/p/terms-of-service`, which answers a live 301 to `/terms-of-service` | the code fix is listed in PR #8 `links/code-handoff.md` |
+| K10 | `/p/affiliate` links `/p/affiliate-dashboard`, which answers 307 to `/p/affiliate-program` | |
+| K11 | On ccTLD hosts the header and footer marketplace links are relative, so each costs a 302 to www | |
+| K12 | The renter search box is a 60-mile square while the page counts a 60-mile circle, so WEST may show a few more pools than the page's count | |
+| K13 | The "after" numbers for comparison, advocacy and state-hub links in `intent.md` §5 (link-variant table) predate a832991. Re-measure them with `scripts/intent-report.mjs` on a fresh export | `intent.md` §5 (seo/05) |
+| K14 | The merged harness runs seo/02's `/p`-link scan over 18 of the rendered pages only. The release crawl verifier checked every page independently and found none | `scripts/test-failed-reads.mjs` |
+| K15 | `/l/draft/` is still in the content-generator prompts: `src/server/admin-quick-page.functions.ts`, `src/server/admin-tools.functions.ts`, `src/server/backfill-content-pages.server.ts`, `src/server/content-404-log.functions.ts`, `src/routes/api/public/hooks/gen-host-pages.ts`. Future generated bodies may contain it. Not edited, for the same reason as the `/s?address=` prompt: production runs server-only files that differ from the repo | `intent.md` (seo/05, a832991) |
+| K16 | Stored `content_pages` bodies that already contain `/l/draft/` or address-only `/s?address=` links (HOST pages, links to other cities) are not rewritten at render. Fixing them is a data question and needs the owner's GO | `intent.md` (seo/05, a832991) |
+| K17 | Not live-verified: that WEST's `/s?keywords=` returns keyword-filtered results in production (the new `SearchAction` target). It was confirmed from WEST source only; no GETs were made | seo/05 hand-off report |
+| K18 | Process note from the seo/05 work: its df808bb tree was written into an existing shared scratch folder (`scratchpad/base`), overwriting that folder's source files. Later work used a fresh folder (`scratchpad/intent-base-df808bb`). If another job depended on `scratchpad/base`, that folder needs re-creating | seo/05 hand-off report |
 
 ---
 
