@@ -1,5 +1,5 @@
 {
- "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test 2026-11-16 review: 5 R6 examples revised (rules narrowed) and 10 regression examples added from the content review (live page text of 2026-11-16); for those, 'after' is the text a person keeps (in each case the whole field), decided from the review finding, not from the cleaner's output.",
+ "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test 2026-11-16 review: 5 R6 examples revised (rules narrowed) and 10 regression examples added from the content review (live page text of 2026-11-16); for those, 'after' is the text a person keeps (in each case the whole field), decided from the review finding, not from the cleaner's output. 2026-11-17 Codex review of PR #9: a second clause addressed to the reader (', so you'd ...') now keeps the sentence; 2 examples revised (Murray R4, Aurora R6: 'after' is now the whole field) and 3 must-keep regression examples added (live page text of 2026-11-16).",
  "examples": [
   {
    "rule": "R1",
@@ -367,8 +367,8 @@
     null
    ],
    "before": "Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends. We've got a decent selection for a town this size, so you'll definitely find somewhere to take a dip.",
-   "after": "Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends.",
-   "note": "Narrator inventory claim with no number deleted (last sentence).",
+   "after": "Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends. We've got a decent selection for a town this size, so you'll definitely find somewhere to take a dip.",
+   "note": "Revised 2026-11-17 (Codex review of PR #9: a ', so you...' clause addressed to the reader is a second clause, so the sentence is kept). Was: 'Narrator inventory claim with no number deleted (last sentence).' The last sentence 'We've got a decent selection for a town this size, so you'll definitely find somewhere to take a dip.' has a second clause addressed to the reader: kept, so the field is unchanged.",
    "pool_page": false
   },
   {
@@ -644,8 +644,8 @@
    ],
    "actual": 44,
    "before": "Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees. We've got five public pools listed in our directory, so you've got options.",
-   "after": "Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees.",
-   "note": "Header 44; prose five. Deleted. 'We've got things like wave pools and lazy rivers ...' stays (amenity words).",
+   "after": "Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees. We've got five public pools listed in our directory, so you've got options.",
+   "note": "Revised 2026-11-17 (Codex review of PR #9: a ', so you...' clause addressed to the reader is a second clause, so the sentence is kept). Was: header 44, prose five, deleted. 'We've got five public pools listed in our directory, so you've got options.' now has a second clause after the count, so R6 lists it as review_mixed (count-statements.csv) instead of deleting it: the field is unchanged.",
    "pool_page": false
   },
   {
@@ -915,6 +915,49 @@
    "note": "Added 2026-11-16 (content review). '..., five public pools right in our directory, plus lots of backyard pools available by the hour.' carries a second claim: review_mixed, not deleted. Page header: 53 pools.",
    "pool_page": false,
    "actual": 53
+  },
+  {
+   "rule": "R3",
+   "ref": "live pool page /georgia/peachtree-city/peachtree-city-community-pool/ (ai_faqs[0].a)",
+   "source": "live page fetched 2026-11-16T19:51:37Z (2026-11-17 Codex review regression case)",
+   "names": [
+    "Peachtree City Community Pool",
+    "Peachtree City",
+    "Georgia"
+   ],
+   "before": "Adult admission is $10. Kids get in for $3. It's a pretty standard price for a community pool, especially with the amenities they offer. They don't have family passes listed in the info I have, so you'd pay per person.",
+   "after": "Adult admission is $10. Kids get in for $3. It's a pretty standard price for a community pool, especially with the amenities they offer. They don't have family passes listed in the info I have, so you'd pay per person.",
+   "note": "Added 2026-11-17 (Codex review of PR #9). 'They don't have family passes listed in the info I have, so you'd pay per person.' says admission is paid per person: the ', so you'd ...' clause is a second clause, so the sentence is kept and the answer is unchanged.",
+   "pool_page": true
+  },
+  {
+   "rule": "R3",
+   "ref": "live pool page /texas/dallas/beckley-saner-recreation-center/ (ai_faqs[2].a)",
+   "source": "live page fetched 2026-11-16T19:48:06Z (2026-11-17 Codex review regression case)",
+   "names": [
+    "Beckley-Saner Recreation Center",
+    "Dallas",
+    "Texas"
+   ],
+   "before": "Yes, as a recreation center, there should be dedicated parking. I haven't heard of any specific issues with parking availability there, so you should be fine when you visit.",
+   "after": "Yes, as a recreation center, there should be dedicated parking. I haven't heard of any specific issues with parking availability there, so you should be fine when you visit.",
+   "note": "Added 2026-11-17 (Codex review of PR #9). 'I haven't heard of any specific issues with parking availability there, so you should be fine when you visit.' is the parking answer: the ', so you should ...' clause is a second clause, so the sentence is kept and the answer is unchanged.",
+   "pool_page": true
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /florida/palm-coast/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:36:30Z (2026-11-17 Codex review regression case)",
+   "names": [
+    null,
+    "Palm Coast",
+    "Florida"
+   ],
+   "actual": 4,
+   "before": "Look, down here in Florida, it's pretty much pool season all the time. But even here, December and January get a little cool for some folks. From about March through November, though, the public pools are usually packed. We've got a lot of families in Palm Coast, so you'll find plenty of kids splashing around. Lap swimmers definitely have their lanes, but it's not a super intense swim scene. If you're new to the area and looking for a place to cool off or get some exercise, the municipal pools are a good start. Just remember peak times can get busy, especially on weekends and school breaks.",
+   "after": "Look, down here in Florida, it's pretty much pool season all the time. But even here, December and January get a little cool for some folks. From about March through November, though, the public pools are usually packed. We've got a lot of families in Palm Coast, so you'll find plenty of kids splashing around. Lap swimmers definitely have their lanes, but it's not a super intense swim scene. If you're new to the area and looking for a place to cool off or get some exercise, the municipal pools are a good start. Just remember peak times can get busy, especially on weekends and school breaks.",
+   "note": "Added 2026-11-17 (Codex review of PR #9). 'We've got a lot of families in Palm Coast, so you'll find plenty of kids splashing around.' says the pools are used by many families with kids: the ', so you'll ...' clause is a second clause, so the sentence is kept and the intro is unchanged.",
+   "pool_page": false
   }
  ]
 }

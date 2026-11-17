@@ -126,9 +126,15 @@ NUMERIC = (r"(?i)[0-9$%]|(?<![a-z])(one|two|three|four|five|six|seven|eight|nine
            r"first|second|third)(?![a-z])")
 URL = r"(?i)(www\.|https?://|@|\.(com|org|gov|net|edu|us)(?![a-z]))"
 # Clauses that usually carry an assertion ("I'd call, since they close early") or join two sentences.
+# Last alternative (added 2026-11-17, Codex review of PR #9): a second clause addressed to the reader after a
+# comma ("They don't have family passes listed in the info I have, so you'd pay per person." states that
+# admission is per person). Comma, whitespace, optional and/so/but/then, then "you" not followed by a letter:
+# that covers you, you'd, you'll, you're, you've (straight or curly apostrophe) and you will / would / can /
+# should / may / might. Matching only ever keeps a sentence, so it errs on the side of matching.
 CLAUSE = (r"(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|"
           r"unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|"
-          r"they’re|their|the pool|there|this|that)(?![a-z])")
+          r"they’re|their|the pool|there|this|that)(?![a-z])|," + WS + r"+((and|so|but|then)" + WS +
+          r"+)?you(?![a-z])")
 # A narrator clause spliced onto another clause with a comma ("It's not too far from Decatur, I'd say ...")
 # hides an assertion. Allowed only when everything before the comma is a non-assertive lead-in.
 COMMA_SPLICE = (r"," + WS + r"+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|"

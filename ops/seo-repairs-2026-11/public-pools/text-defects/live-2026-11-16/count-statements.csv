@@ -1,7 +1,6 @@
 city_url,page_count,distinct_after_mapped_duplicates,field,category,stated,form,phrase,sentence
 https://www.poolrentalnearme.com/public-pools/arizona/mesa/,13,12,intro,auto,1,number+noun,one public spot,We've got just one public spot listed for Mesa so far (Skyline Aquatic Center).
 https://www.poolrentalnearme.com/public-pools/california/torrance/,2,,faq,auto,1,the_one,The only public pool,The only public pool we have listed is the Victor E. Benstead Plunge.
-https://www.poolrentalnearme.com/public-pools/colorado/aurora/,44,43,intro,auto,5,number+noun,five public pools,"We've got five public pools listed in our directory, so you've got options."
 https://www.poolrentalnearme.com/public-pools/colorado/lakewood/,10,,faq,auto,4,number+noun,four public pools,Our directory lists four public pools in Lakewood.
 https://www.poolrentalnearme.com/public-pools/illinois/chicago/,57,,intro,auto,5,number+noun,five public pools,"Even with five public pools in our system, finding your perfect swim can sometimes mean looking beyond the city parks."
 https://www.poolrentalnearme.com/public-pools/illinois/chicago/,57,,faq,auto,5,number+noun,five public pools,We've got five public pools in our directory.
@@ -13,6 +12,7 @@ https://www.poolrentalnearme.com/public-pools/california/fremont/,12,,intro,revi
 https://www.poolrentalnearme.com/public-pools/california/oceanside/,9,,faq,review_mixed,1,number+noun,one listed public pool,"Our one listed public pool, El Corazon Aquatic Center, has multiple pools, including an indoor competition pool and outdoor recreational pools."
 https://www.poolrentalnearme.com/public-pools/california/sacramento/,22,19,intro,review_mixed,5,number+noun,five public pools,"We've got five public pools on our site for Sacramento, so there are options across the city."
 https://www.poolrentalnearme.com/public-pools/california/sacramento/,22,19,faq,review_mixed,5,number+noun,five pools,"The five pools listed in our directory for Sacramento (Clunie, Pannell Meadowview, Tahoe, Southside, Oki) are all outdoor pools."
+https://www.poolrentalnearme.com/public-pools/colorado/aurora/,44,43,intro,review_mixed,5,number+noun,five public pools,"We've got five public pools listed in our directory, so you've got options."
 https://www.poolrentalnearme.com/public-pools/colorado/centennial/,6,,intro,review_mixed,4,number+listed,four listed,"We've got a decent number of public pools, four listed in our directory, covering everything from basic swim to full-blown aquatic centers."
 https://www.poolrentalnearme.com/public-pools/delaware/wilmington/,7,,intro,review_mixed,5,number+noun,five public pools,"Our site lists five public pools in Wilmington, but there are always private options too if you want something different."
 https://www.poolrentalnearme.com/public-pools/florida/clearwater/,6,,faq,review_mixed,4,number+noun,four public pools,"Our directory lists four public pools: Clearwater Family Aquatic Center, Clearwater Municipal Pool, Clearwater Aquatic Center, and Clearwater Community Pool."

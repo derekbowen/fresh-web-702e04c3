@@ -2,7 +2,7 @@
  "about": "Build cleaner/fixtures.json: the rows the local test loads.\n\n    python3 -I cleaner/build_fixtures.py\n\nREAL rows: chosen from the live-page extract of 2026-11-16 (surrogate.py explains how a page becomes a row),\nup to PER_CATEGORY rows per outcome category of the reference cleaner (every rule, every skip reason that occurs\nin the data, and rows that must not change), selected by md5(url + SEED) so the choice is reproducible.\nSYNTHETIC rows: hand-written edge cases (marked \"synthetic\": true, slug prefix \"synthetic-\", state\n\"synthetic-state\"), each with a hand-derived expected result in \"expect\" that does not come from the code.\nmust_keep: for every fixture field, every sentence that no rule is allowed to delete (not a deletable narrator\nsentence, not an R6 'auto' count sentence, not inside a wholly non-informative FAQ answer). The test checks\nthat all of them are still in the field after apply.\nOpens no network or database connection.",
  "seed": "fixtures-2026-11-16",
  "source": "text-defects/live-2026-11-16/live-fields.jsonl.gz (live pages fetched 2026-11-16T19:36Z-20:05Z)",
- "real_text_rows": 92,
+ "real_text_rows": 91,
  "categories_covered": {
   "city.ai_faqs:changed:R4": 4,
   "city.ai_faqs:skip:ALL:insurance_anywhere": 1,
@@ -10,16 +10,16 @@
   "city.ai_faqs:skip:R4:next_sentence_refers_back": 4,
   "city.ai_faqs:skip:R6:next_sentence_refers_back": 2,
   "city.ai_faqs:skip:R6:next_sentence_refers_back_a5": 1,
-  "city.ai_faqs:unchanged": 29,
-  "city.ai_intro:changed:R4": 13,
-  "city.ai_intro:changed:R6": 2,
+  "city.ai_faqs:unchanged": 28,
+  "city.ai_intro:changed:R4": 12,
+  "city.ai_intro:changed:R6": 1,
   "city.ai_intro:changed:R6+R4": 1,
   "city.ai_intro:skip:ALL:insurance_anywhere": 3,
   "city.ai_intro:skip:R4:deleted_sentence_names_an_entity": 3,
   "city.ai_intro:skip:R4:next_sentence_refers_back": 5,
   "city.ai_intro:skip:R6:deleted_sentence_names_an_entity": 2,
-  "city.ai_intro:unchanged": 17,
-  "city.r6_statement:auto": 8,
+  "city.ai_intro:unchanged": 18,
+  "city.r6_statement:auto": 7,
   "city.r6_statement:consistent": 4,
   "city.r6_statement:hold_duplicate": 1,
   "city.r6_statement:review_mixed": 4,
@@ -30,13 +30,13 @@
   "pool.ai_best_for:null": 3,
   "pool.ai_best_for:skip:R1:empty_list": 3,
   "pool.ai_best_for:unchanged": 3,
-  "pool.ai_description:changed:R2": 4,
+  "pool.ai_description:changed:R2": 5,
   "pool.ai_description:skip:ALL:insurance": 3,
   "pool.ai_description:skip:ALL:insurance_anywhere": 3,
   "pool.ai_description:skip:R2:deleted_sentence_names_an_entity": 3,
   "pool.ai_description:skip:R2:next_sentence_refers_back": 7,
   "pool.ai_description:skip:R2:next_sentence_refers_back_a5": 2,
-  "pool.ai_description:unchanged": 24,
+  "pool.ai_description:unchanged": 23,
   "pool.ai_faqs:changed:R3": 11,
   "pool.ai_faqs:changed:R5": 4,
   "pool.ai_faqs:changed:R5+R3": 3,
@@ -591,38 +591,6 @@
    ],
    "is_published": true,
    "header_count": 3
-  },
-  {
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "url": "https://www.poolrentalnearme.com/public-pools/colorado/aurora/",
-   "state_slug": "colorado",
-   "city_slug": "aurora",
-   "city_name": "Aurora",
-   "ai_intro": "Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees. We've got five public pools listed in our directory, so you've got options.",
-   "ai_faqs": [
-    {
-     "q": "When do pools typically open and close in Aurora?",
-     "a": "Public outdoor pools in Aurora generally open the Saturday of Memorial Day weekend. They stay open through the summer, usually closing for the season right after Labor Day weekend. Indoor options are available year-round."
-    },
-    {
-     "q": "Are there any free or low-cost swimming options available?",
-     "a": "Most public pools in Aurora charge a daily admission fee. You can usually find discounted multi-visit passes or season passes. Free options are pretty rare for public facilities, but some community centers might offer specific programs."
-    },
-    {
-     "q": "What kind of pools are best for kids?",
-     "a": "Aurora has some great pools for kids. The Leisure Pool and the Wave Pool are popular choices for families. Many places with a lazy river are also a big hit, offering a fun, relaxing experience for all ages."
-    },
-    {
-     "q": "Are there indoor pools for swimming year-round?",
-     "a": "Yes, Aurora has indoor pools like the Utah Park Indoor Pool, which is open all year. These are great for lap swimming, lessons, and just general recreation during the colder months when outdoor pools are closed."
-    },
-    {
-     "q": "Can I rent a private pool by the hour in Aurora?",
-     "a": "Absolutely. If you want a private spot without the crowds, you can rent a backyard pool by the hour. We make that easy at PoolRentalNearMe.com. It's a good alternative to public pools if you're looking for something more exclusive or don't want a membership."
-    }
-   ],
-   "is_published": true,
-   "header_count": 44
   },
   {
    "id": "a4c00276-1baf-894c-4aa3-530f833925fb",
@@ -1721,18 +1689,6 @@
    "text_less_copy": true
   },
   {
-   "id": "c8102fdb-bc21-04e8-0489-81fcf21e8b28",
-   "url": null,
-   "state_slug": "illinois",
-   "city_slug": "northbrook",
-   "city_name": "Northbrook",
-   "ai_intro": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "header_count": null,
-   "text_less_copy": true
-  },
-  {
    "id": "51a5776b-023f-5394-84f8-fad41118aa53",
    "url": null,
    "state_slug": "arizona",
@@ -1750,6 +1706,18 @@
    "state_slug": "nevada",
    "city_slug": "sparks",
    "city_name": "Sparks",
+   "ai_intro": null,
+   "ai_faqs": null,
+   "is_published": true,
+   "header_count": null,
+   "text_less_copy": true
+  },
+  {
+   "id": "118dfbe9-76a0-b2de-3005-b8df3ea9debb",
+   "url": null,
+   "state_slug": "california",
+   "city_slug": "menifee",
+   "city_name": "Menifee",
    "ai_intro": null,
    "ai_faqs": null,
    "is_published": true,
@@ -2686,33 +2654,6 @@
    "is_placeholder": false
   },
   {
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "url": "https://www.poolrentalnearme.com/public-pools/illinois/northbrook/northbrook-municipal-pool/",
-   "slug": "northbrook-municipal-pool",
-   "name": "Northbrook Municipal Pool",
-   "city": "Northbrook",
-   "city_id": "c8102fdb-bc21-04e8-0489-81fcf21e8b28",
-   "state_slug": "illinois",
-   "ai_best_for": "[\"families\", \"lap swimmers\", \"toddlers\", \"casual recreation\", \"summer cooldown\"]",
-   "ai_description": "It's always a good sign when a town of 33,000 people has its own outdoor pool. The Northbrook Municipal Pool is a good option if you're in the area. I see they've got a diving board, which is a big win for a lot of folks. There are also lap lanes if you're looking to get some exercise, and a separate kiddie pool. That usually means it's a decent spot for families with younger kids since they can splash around safely. The admission prices are pretty reasonable too, $6 for adults and $3 for kids. I always tell people to check the reviews, and at 3.5 out of 5 stars from 136 reviews, it sounds like most people have a decent time, but there might be a few things to be aware of. Overall, it's a solid community pool setup.",
-   "ai_faqs": [
-    {
-     "q": "How much does it cost to get into Northbrook Municipal Pool?",
-     "a": "Adult admission is $6. Kids can get in for $3. These are pretty standard prices for a municipal pool, which is good."
-    },
-    {
-     "q": "Is Northbrook Municipal Pool good for families with young children?",
-     "a": "Yes, it looks like it. They have a dedicated kiddie pool, which is usually a big plus for families. Also a picnic area is nice for lunch."
-    },
-    {
-     "q": "Are there other pools in Northbrook besides the municipal pool?",
-     "a": "My current data only shows the Northbrook Municipal Pool. For other options, you might look into local health clubs or community centers in the area, or check neighboring towns."
-    }
-   ],
-   "is_published": true,
-   "is_placeholder": false
-  },
-  {
    "id": "a872b2a5-31e6-2e30-c8cc-3f5849ad36fd",
    "url": "https://www.poolrentalnearme.com/public-pools/arizona/peoria/peoria-aquatic-center/",
    "slug": "peoria-aquatic-center",
@@ -2765,6 +2706,33 @@
     {
      "q": "Are there other public pools in Sparks, NV?",
      "a": "Sparks is a pretty good size city, 108,445 people. It's likely there are other public or even private options in the area. A quick search on the city's parks site or our own PoolRentalNearMe site should give you more options."
+    }
+   ],
+   "is_published": true,
+   "is_placeholder": false
+  },
+  {
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "url": "https://www.poolrentalnearme.com/public-pools/california/menifee/menifee-valley-aquatics-center/",
+   "slug": "menifee-valley-aquatics-center",
+   "name": "Menifee Valley Aquatics Center",
+   "city": "Menifee",
+   "city_id": "118dfbe9-76a0-b2de-3005-b8df3ea9debb",
+   "state_slug": "california",
+   "ai_best_for": "[\"families\", \"lap swimmers\", \"casual recreation\", \"summer cooldown\"]",
+   "ai_description": "Menifee Valley Aquatics Center has a good setup, they've got a competition pool if you're looking to put in some serious laps or just want to swim some length. They also have water slides and a separate kids pool, which is a nice touch for families. It's an outdoor spot. I see they offer swim lessons too, so that's good if you've got little ones learning or want to brush up on your strokes. With a population of over 100,000 in Menifee, I bet this place gets busy, especially in summer. The day pass is pretty reasonable, $4 for adults and $3 for youth. 89 reviews isn't a ton for a city like Menifee, but a 4/5 starts means people are generally happy. They've got locker rooms, which is always a plus. Overall, it seems like a solid community pool. My guess is it's a good place to cool off and let the kids burn some energy.",
+   "ai_faqs": [
+    {
+     "q": "How much does it cost to swim at Menifee Valley Aquatics Center?",
+     "a": "A day pass for adults is $4. Youth passes are $3. This pricing is pretty standard and makes it an affordable option for a swim day."
+    },
+    {
+     "q": "Is the Menifee Valley Aquatics Center good for families and young children?",
+     "a": "Yes, it looks like a good spot for families. They have a specific kids pool and water slides, which are usually a big hit with younger swimmers. Swim lessons are also available."
+    },
+    {
+     "q": "Are there other public swimming options in Menifee besides this aquatics center?",
+     "a": "I couldn't tell you offhand what other public pools Menifee has. I'd recommend looking at the City of Menifee's parks and recreation website or calling their community services department for more options."
     }
    ],
    "is_published": true,
@@ -5872,622 +5840,6 @@
    "city": "New Braunfels",
    "city_id": "65d1755d-c468-ee58-3a30-83d0f91fcf48",
    "state_slug": "texas",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "1bc4f537-f5c9-a494-9cb4-b118928201ac",
-   "url": null,
-   "slug": "placeholder-aurora-0",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "90751a78-7ac4-b700-7324-3d9f5d5cfc63",
-   "url": null,
-   "slug": "placeholder-aurora-1",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "bb956280-7cd8-46be-8ca3-9fbced121207",
-   "url": null,
-   "slug": "placeholder-aurora-2",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "5f4863de-e93d-57e7-f217-6ae4e36ee1b2",
-   "url": null,
-   "slug": "placeholder-aurora-3",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "bda39cff-ddf0-98e3-88f7-f6860c3a90ff",
-   "url": null,
-   "slug": "placeholder-aurora-4",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "b015e425-22fb-b8fe-f5a4-4d42baa40d1f",
-   "url": null,
-   "slug": "placeholder-aurora-5",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "e9aa348e-9595-204f-6699-d343100c5d61",
-   "url": null,
-   "slug": "placeholder-aurora-6",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "f2c1827d-9f3d-c479-ac93-a45a029d97bb",
-   "url": null,
-   "slug": "placeholder-aurora-7",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "5451503c-5349-ba62-5afb-b9a657c882b0",
-   "url": null,
-   "slug": "placeholder-aurora-8",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "8db1db9a-370c-af5a-0a16-498dac971317",
-   "url": null,
-   "slug": "placeholder-aurora-9",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "789334d0-d75f-a6c1-d1a5-ff244e955ff3",
-   "url": null,
-   "slug": "placeholder-aurora-10",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "cc5037cc-8e75-c077-29ec-dbfdeb500c9c",
-   "url": null,
-   "slug": "placeholder-aurora-11",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "73964f84-663f-b4a9-e65c-f04f65e802ac",
-   "url": null,
-   "slug": "placeholder-aurora-12",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "3a3038cb-a569-f0a6-fd6c-d37083ffe16a",
-   "url": null,
-   "slug": "placeholder-aurora-13",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "9d8f567f-530a-0dc5-a0eb-d14a7687eaa3",
-   "url": null,
-   "slug": "placeholder-aurora-14",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "b5b3fcfc-391f-ed2c-5cf2-4321be0353de",
-   "url": null,
-   "slug": "placeholder-aurora-15",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "7e91f55a-2658-3612-2bb6-a6fd3609e9c1",
-   "url": null,
-   "slug": "placeholder-aurora-16",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "a2fe1c58-de58-6ebd-3df0-7ae8e06ca01f",
-   "url": null,
-   "slug": "placeholder-aurora-17",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "baecfcb1-9a9a-ca1d-51df-b902e96c9bcb",
-   "url": null,
-   "slug": "placeholder-aurora-18",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "cdd79286-d008-a19f-2a08-be0b0e8b9e79",
-   "url": null,
-   "slug": "placeholder-aurora-19",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "bd9055cd-64af-6d63-e373-7eb1baf5760f",
-   "url": null,
-   "slug": "placeholder-aurora-20",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "b9fb7a37-0561-5a67-9ade-4a64585966f4",
-   "url": null,
-   "slug": "placeholder-aurora-21",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "2d45466a-9175-e31e-87ae-170fe389de66",
-   "url": null,
-   "slug": "placeholder-aurora-22",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "074c45dd-aeae-b4ef-9c6b-d67dc8950bf6",
-   "url": null,
-   "slug": "placeholder-aurora-23",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "8655fa6a-14f2-ad74-52a5-8ae7f5ec5663",
-   "url": null,
-   "slug": "placeholder-aurora-24",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "acafa945-be62-3394-32ad-28971729cc8f",
-   "url": null,
-   "slug": "placeholder-aurora-25",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "a82fc5e6-2a28-53aa-3e03-3f86c0c9faa5",
-   "url": null,
-   "slug": "placeholder-aurora-26",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "7c4e692d-4d43-27ad-d820-f6e3c35c834f",
-   "url": null,
-   "slug": "placeholder-aurora-27",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "825be8f4-8fe4-d28d-7f93-6b44aa348b3c",
-   "url": null,
-   "slug": "placeholder-aurora-28",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "bbfa5859-1baa-251b-d618-20d8edf259c1",
-   "url": null,
-   "slug": "placeholder-aurora-29",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "d79ae403-2e61-bea9-6991-6a848dde2ca3",
-   "url": null,
-   "slug": "placeholder-aurora-30",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "e9a4465c-00df-fa2b-f959-d8e7181bdd95",
-   "url": null,
-   "slug": "placeholder-aurora-31",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "adaf4240-deda-97f5-8691-72908592ced7",
-   "url": null,
-   "slug": "placeholder-aurora-32",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "12343df6-3f90-e1ad-00c2-7cb673d1b2da",
-   "url": null,
-   "slug": "placeholder-aurora-33",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "3e5098c7-ebb0-e78a-9709-afd8cdb97970",
-   "url": null,
-   "slug": "placeholder-aurora-34",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "05b7af6c-2255-7d18-a485-cc6520693b8e",
-   "url": null,
-   "slug": "placeholder-aurora-35",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "71a07461-3975-4975-909c-38f5fe187831",
-   "url": null,
-   "slug": "placeholder-aurora-36",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "c2f912e9-61bf-bbe8-6585-0e9a786a8ba5",
-   "url": null,
-   "slug": "placeholder-aurora-37",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "a1ad7b3e-a4b7-ecc6-cf45-86625e50dfa3",
-   "url": null,
-   "slug": "placeholder-aurora-38",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "7dfe0ba3-95d3-3423-2fc7-6e02ddb260fb",
-   "url": null,
-   "slug": "placeholder-aurora-39",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "0d885c03-b7c5-f23e-400e-6379a69e58bb",
-   "url": null,
-   "slug": "placeholder-aurora-40",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "af4e20e7-9659-528d-2e2e-428d367d1b0e",
-   "url": null,
-   "slug": "placeholder-aurora-41",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "ae23f788-2fe7-f8e9-01a7-bea153f5f88b",
-   "url": null,
-   "slug": "placeholder-aurora-42",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
-   "ai_best_for": null,
-   "ai_description": null,
-   "ai_faqs": null,
-   "is_published": true,
-   "is_placeholder": true
-  },
-  {
-   "id": "48d2cff1-2e3f-1083-5dca-8cd30c5d2977",
-   "url": null,
-   "slug": "placeholder-aurora-43",
-   "name": null,
-   "city": "Aurora",
-   "city_id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "state_slug": "colorado",
    "ai_best_for": null,
    "ai_description": null,
    "ai_faqs": null,
@@ -12946,90 +12298,6 @@
   },
   {
    "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "It's always a good sign when a town of 33,000 people has its own outdoor pool."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "The Northbrook Municipal Pool is a good option if you're in the area."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "I see they've got a diving board, which is a big win for a lot of folks."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "There are also lap lanes if you're looking to get some exercise, and a separate kiddie pool."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "That usually means it's a decent spot for families with younger kids since they can splash around safely."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "The admission prices are pretty reasonable too, $6 for adults and $3 for kids."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "I always tell people to check the reviews, and at 3.5 out of 5 stars from 136 reviews, it sounds like most people have a decent time, but there might be a few things to be aware of."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_description",
-   "s": "Overall, it's a solid community pool setup."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_faqs",
-   "s": "Adult admission is $6."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_faqs",
-   "s": "Kids can get in for $3."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_faqs",
-   "s": "These are pretty standard prices for a municipal pool, which is good."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_faqs",
-   "s": "Yes, it looks like it."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_faqs",
-   "s": "They have a dedicated kiddie pool, which is usually a big plus for families."
-  },
-  {
-   "tbl": "pp_pools",
-   "id": "4fff76a4-d6d3-b2a9-959a-78eb9d43a59f",
-   "col": "ai_faqs",
-   "s": "Also a picnic area is nice for lunch."
-  },
-  {
-   "tbl": "pp_pools",
    "id": "a872b2a5-31e6-2e30-c8cc-3f5849ad36fd",
    "col": "ai_description",
    "s": "Honestly, 151 reviews and a 3.9 out of 5 rating for a public pool?"
@@ -13195,6 +12463,96 @@
    "id": "0f5e8b3f-5e99-aed2-5299-4f3259533128",
    "col": "ai_faqs",
    "s": "A quick search on the city's parks site or our own PoolRentalNearMe site should give you more options."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "Menifee Valley Aquatics Center has a good setup, they've got a competition pool if you're looking to put in some serious laps or just want to swim some length."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "They also have water slides and a separate kids pool, which is a nice touch for families."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "It's an outdoor spot."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "I see they offer swim lessons too, so that's good if you've got little ones learning or want to brush up on your strokes."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "With a population of over 100,000 in Menifee, I bet this place gets busy, especially in summer."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "The day pass is pretty reasonable, $4 for adults and $3 for youth."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "89 reviews isn't a ton for a city like Menifee, but a 4/5 starts means people are generally happy."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "They've got locker rooms, which is always a plus."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_description",
+   "s": "Overall, it seems like a solid community pool."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_faqs",
+   "s": "A day pass for adults is $4."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_faqs",
+   "s": "Youth passes are $3."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_faqs",
+   "s": "This pricing is pretty standard and makes it an affordable option for a swim day."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_faqs",
+   "s": "Yes, it looks like a good spot for families."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_faqs",
+   "s": "They have a specific kids pool and water slides, which are usually a big hit with younger swimmers."
+  },
+  {
+   "tbl": "pp_pools",
+   "id": "b364d15a-1670-7909-1975-9ff6fd27ef83",
+   "col": "ai_faqs",
+   "s": "Swim lessons are also available."
   },
   {
    "tbl": "pp_pools",
@@ -15798,6 +15156,12 @@
    "tbl": "pp_cities",
    "id": "70345ea0-130d-8770-f3a3-35c5b6873084",
    "col": "ai_intro",
+   "s": "Around here, you get a good long pool season."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "70345ea0-130d-8770-f3a3-35c5b6873084",
+   "col": "ai_intro",
    "s": "From late May right through September, maybe even early October depending on the year, people are looking for a place to swim."
   },
   {
@@ -15901,6 +15265,12 @@
    "id": "70345ea0-130d-8770-f3a3-35c5b6873084",
    "col": "ai_faqs",
    "s": "It's a good alternative if you want a quieter swim, a private party, or just a change of scenery from the public pools."
+  },
+  {
+   "tbl": "pp_cities",
+   "id": "a6d69fc9-fbb0-31b3-e577-2365e0878ee0",
+   "col": "ai_intro",
+   "s": "In Arizona, especially out here, you pretty much live by the pool."
   },
   {
    "tbl": "pp_cities",
@@ -17167,144 +16537,6 @@
    "id": "65d1755d-c468-ee58-3a30-83d0f91fcf48",
    "col": "ai_faqs",
    "s": "No memberships or crowded public places, just you and your group."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "Man, Aurora can get hot, especially come July and August."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "You really feel it when you're looking for a good place to cool off."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "The swimming season here generally kicks off around Memorial Day weekend."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "Most outdoor public pools open up then and run pretty steady until Labor Day."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_intro",
-   "s": "They'll have the most current info on hours and fees."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Public outdoor pools in Aurora generally open the Saturday of Memorial Day weekend."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "They stay open through the summer, usually closing for the season right after Labor Day weekend."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Indoor options are available year-round."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Most public pools in Aurora charge a daily admission fee."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "You can usually find discounted multi-visit passes or season passes."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Free options are pretty rare for public facilities, but some community centers might offer specific programs."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Aurora has some great pools for kids."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "The Leisure Pool and the Wave Pool are popular choices for families."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Many places with a lazy river are also a big hit, offering a fun, relaxing experience for all ages."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Yes, Aurora has indoor pools like the Utah Park Indoor Pool, which is open all year."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "These are great for lap swimming, lessons, and just general recreation during the colder months when outdoor pools are closed."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "Absolutely."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "If you want a private spot without the crowds, you can rent a backyard pool by the hour."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "We make that easy at PoolRentalNearMe.com."
-  },
-  {
-   "tbl": "pp_cities",
-   "id": "55cde00f-f873-7d9b-5fa7-eb5567190fb4",
-   "col": "ai_faqs",
-   "s": "It's a good alternative to public pools if you're looking for something more exclusive or don't want a membership."
   },
   {
    "tbl": "pp_cities",

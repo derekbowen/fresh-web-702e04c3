@@ -99,7 +99,7 @@
         },
         {
           "id": "second_clause",
-          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])",
+          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
           "also": {
             "comma_splice": ",[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|[Ww]e've|[Ww]e’ve)(?![A-Za-z])",
             "splice_ok": "(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(i|i'd|i’d|i'm|i’m|i've|i’ve|i'll|my|we)(?![a-z])[^,]*$"
@@ -181,7 +181,7 @@
         },
         {
           "id": "second_clause",
-          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])",
+          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
           "also": {
             "comma_splice": ",[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|[Ww]e've|[Ww]e’ve)(?![A-Za-z])",
             "splice_ok": "(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(i|i'd|i’d|i'm|i’m|i've|i’ve|i'll|my|we)(?![a-z])[^,]*$"
@@ -271,7 +271,7 @@
         },
         {
           "id": "second_clause",
-          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])",
+          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
           "also": {
             "comma_splice": ",[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|[Ww]e've|[Ww]e’ve)(?![A-Za-z])",
             "splice_ok": "(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(i|i'd|i’d|i'm|i’m|i've|i’ve|i'll|my|we)(?![a-z])[^,]*$"

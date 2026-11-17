@@ -9,11 +9,12 @@
 >
 > Machine-readable rules: [`rules.json`](rules.json) (generated from
 > [`text-defects/text_defect_rules.py`](text-defects/text_defect_rules.py), the single source of truth).
-> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (70 since the 2026-11-16
+> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (73 since the 2026-11-17
 > revision, all passing `python3 -I text_defect_rules.py test`).
 >
-> **Revised 2026-11-16 after a content review** (section 9). The rules were narrowed; sections 2-4 keep the
-> figures measured before that revision, section 9 gives the revised ones. Reads still owed to production: [`PENDING-READS.md`](PENDING-READS.md).
+> **Revised 2026-11-16 after a content review** (section 9) and **2026-11-17 after the Codex review of PR #9**
+> (section 10). The rules were narrowed; sections 2-4 keep the figures measured before the 2026-11-16 revision,
+> section 9 gives the current ones (updated for section 10). Reads still owed to production: [`PENDING-READS.md`](PENDING-READS.md).
 
 ## 0. Sources and their dates
 
@@ -713,9 +714,9 @@ Before:
 > Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends. We've got a decent selection for a town this size, so you'll definitely find somewhere to take a dip.
 
 After:
-> Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends.
+> Murray gets hot in the summer, real hot. So folks are always looking for a good place to cool off. Pool season really kicks in around June when the outdoor spots open, and it runs through August. It's mostly a family-friendly swim scene here, especially at the public pools. You'll see a lot of kids splashing around, but there are dedicated lap lanes too for those who want to get some exercise. If you're new to the area and looking for a place to swim, the public options are solid. They're usually well-maintained and pretty affordable. Just be prepared for crowds on those super hot days, especially on weekends. We've got a decent selection for a town this size, so you'll definitely find somewhere to take a dip.
 
-Narrator inventory claim with no number deleted (last sentence).
+Revised 2026-11-17 (Codex review of PR #9: a ', so you...' clause addressed to the reader is a second clause, so the sentence is kept). Was: 'Narrator inventory claim with no number deleted (last sentence).' The last sentence 'We've got a decent selection for a town this size, so you'll definitely find somewhere to take a dip.' has a second clause addressed to the reader: kept, so the field is unchanged.
 
 **R4.2** pp_cities 0a8ffa (Omaha) ai_intro (pp_pools / pp_cities read-only extract 2026-11-15 (r33)).
 
@@ -920,9 +921,9 @@ Before:
 > Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees. We've got five public pools listed in our directory, so you've got options.
 
 After:
-> Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees.
+> Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees. We've got five public pools listed in our directory, so you've got options.
 
-Header 44; prose five. Deleted. 'We've got things like wave pools and lazy rivers ...' stays (amenity words).
+Revised 2026-11-17 (Codex review of PR #9: a ', so you...' clause addressed to the reader is a second clause, so the sentence is kept). Was: header 44, prose five, deleted. 'We've got five public pools listed in our directory, so you've got options.' now has a second clause after the count, so R6 lists it as review_mixed (count-statements.csv) instead of deleting it: the field is unchanged.
 
 **R6.3** live city page /public-pools/illinois/chicago/ (ai_intro) (live page fetched 2026-11-16T19:38:01Z (rendered pp_cities.ai_intro)).
  Page count: 57.
@@ -1043,23 +1044,24 @@ deletes less); the list of changes and the case behind each is RUNBOOK.md sectio
 all follow. Section 8's line "No apply script is part of this task" is superseded: the guarded, logged and
 reversible apply is `apply.sql` / `rollback.sql` (RUNBOOK.md); nothing has been applied.
 
-**Revised counts (S2, the 2,476 live pages of 2026-11-16, rules module alone**, i.e. without the apply's field
+**Revised counts (S2, the 2,476 live pages of 2026-11-16, rules module alone, current rules including the
+2026-11-17 change of section 10**, i.e. without the apply's field
 checks A1-A5; `live-2026-11-16/live-summary.json`; the cleaner's own figures, with A1-A5, are in RUNBOOK.md
 section 4):
 
 | Field | Fields changed | Sentences deleted | Before the revision |
 |---|---|---|---|
-| Pool descriptions (R2) | 213 | 225 | 229 / 243 |
+| Pool descriptions (R2) | 212 | 224 | 229 / 243 |
 | Pool FAQ answers (R3) | 610 | 754 | 655 / 810 |
-| City intros (R4) | 125 | 149 | 140 / 168 |
+| City intros (R4) | 109 | 131 | 140 / 168 |
 | City FAQ answers (R4) | 29 | 34 | 32 / 38 |
-| Wholly non-informative pool FAQ entries (R5) | 57 rows | 58 entries | 58 / 59 |
-| Contradicted count sentences deleted (R6) | 4 | 4 | 13 |
+| Wholly non-informative pool FAQ entries (R5) | 51 rows | 52 entries | 58 / 59 |
+| Contradicted count sentences deleted (R6) | 3 | 3 | 13 |
 
-**R6 categories** (65 count statements on the 476 city pages, `live-2026-11-16/count-statements.csv`): auto 8
-(18 before), review_mixed 22 (12 before), review_scope 9, review_subtype 2, hold_duplicate 1, vague 23. The hand
+**R6 categories** (65 count statements on the 476 city pages, `live-2026-11-16/count-statements.csv`): auto 7
+(18 before; 8 after the 2026-11-16 revision), review_mixed 23 (12 before; 22 after the 2026-11-16 revision), review_scope 9, review_subtype 2, hold_duplicate 1, vague 23. The hand
 verdicts of section 3 are unchanged; only the automatic category narrowed. These 10 statements moved from `auto`
-to `review_mixed` and now need the owner's decision (city page, page count, sentence as printed):
+to `review_mixed` on 2026-11-16 (Aurora CO followed on 2026-11-17, section 10) and now need the owner's decision (city page, page count, sentence as printed):
 
 | City page | Pool count on the page | Statement (field) |
 |---|---|---|
@@ -1074,15 +1076,16 @@ to `review_mixed` and now need the owner's decision (city page, page count, sent
 | texas/houston | 53 | "We've got a decent number of places listed for Houston, five public pools right in our directory, plus lots of backyard pools available by the hour." (intro) |
 | washington/bellevue | 6 | "We list four public pools ourselves, which is pretty good for a city this size." (intro) |
 
-The 8 statements still `auto`, and what the cleaner does with them on the same pages: deleted in Aurora CO
-(intro), Chicago (intro) and Mount Pleasant SC (intro); skipped and reported in Milwaukee and Mesa (the sentence
+The 7 statements still `auto`, and what the cleaner does with them on the same pages: deleted in Chicago
+(intro) and Mount Pleasant SC (intro); skipped and reported in Milwaukee and Mesa (the sentence
 names a pool: "Pulaski and Schulz", "(Skyline Aquatic Center)"), Lakewood CO and Torrance (the next sentence
 refers back) and Chicago's FAQ (A5, "Three of those ..."). The rules module alone (table above) also deletes the
 Chicago FAQ sentence; only the cleaner's A5 check stops it.
 
-**Examples.** 70 (R1 10, R2 13, R3 11, R4 13, R5 11, R6 12): the 60 of section 7, 5 R6 examples revised to
+**Examples.** 73 (R1 10, R2 13, R3 13, R4 14, R5 11, R6 12): the 60 of section 7, 5 R6 examples revised to
 the narrower rule, and 10 regression examples taken from the review cases (each fails on the old rules and
-passes on the new). All pass.
+passes on the new), plus the 2026-11-17 changes of section 10 (Murray R4 and Aurora R6 revised, 3 regression
+examples added). All pass.
 
 **Founder voice left in place.** The cleaner never rewrites, so sentences in which an invented "I" speaks as
 the founder or the company stay wherever a field guard stops the deletion or the sentence carries fact
@@ -1092,3 +1095,53 @@ They need the owner's decision (CLAUDE.md hard rule 1).
 
 Still not verified: the revised patterns have run in Python on S2 and in PostgreSQL 16.15 locally (test-output.txt),
 not yet on production (PR-6, PR-3, PR-4).
+
+## 10. Revision of 2026-11-17 (Codex review of PR #9)
+
+**Finding.** The second-clause guard `CLAUSE` caught ", so it / they / there ..." but not a second clause
+addressed to the reader. `classify("They don't have family passes listed in the info I have, so you'd pay per
+person.", pool_page=True)` returned deletable, so the cleaner deleted the only sentence of the Peachtree City
+Community Pool admission answer (S2, `ai_faqs[0]`) that says admission is paid per person. The same held for
+", so you'll / you should / you can / you will / you would / you're ...".
+
+**Change** (one new alternative at the end of `CLAUSE` in `text-defects/text_defect_rules.py`; rules.json,
+text-defects-measure.sql, the cleaner SQL and the reference follow): a comma, whitespace, an optional
+`and` / `so` / `but` / `then`, then `you` not followed by a letter, case-insensitive:
+
+    ,WS+((and|so|but|then)WS+)?you(?![a-z])        (WS = the explicit whitespace class of section 9)
+
+It covers you, you'd, you'll, you're, you've (straight or curly apostrophe) and you will / would / can /
+should / may / might; "your" is not matched. A matching narrator sentence is kept with reason `second_clause`.
+`CLAUSE` is also the second-clause test of the generic referral sentences of R5 and of the rest of an R6 count
+sentence, so the change applies there too. It only makes the cleaner change less: on the 2,476 S2 pages every
+sentence and FAQ entry the revised rules delete was deleted before (checked page by page; in the 6 pool FAQ
+entries that R5 no longer deletes whole, R3 now deletes one narrator sentence inside the entry instead).
+
+**Effect on S2** (rules module alone, `live-2026-11-16/`; previous figure -> current):
+
+| | Before 2026-11-17 | Now |
+|---|---|---|
+| R2 pool descriptions: fields / sentences | 213 / 225 | 212 / 224 |
+| R3 pool FAQ answers: fields / sentences | 610 / 754 | 610 / 754 (6 sentences no longer deleted, 6 deleted inside entries R5 now keeps) |
+| R4 city intros: fields / sentences | 125 / 149 | 109 / 131 |
+| R4 city FAQ answers: fields / sentences | 29 / 34 | 29 / 34 |
+| R5 wholly non-informative pool FAQ entries: rows / entries | 57 / 58 | 51 / 52 |
+| R6 contradicted count sentences deleted: fields / sentences | 4 / 4 | 3 / 3 |
+| R6 categories: auto / review_mixed | 8 / 22 | 7 / 23 (Aurora CO, "We've got five public pools listed in our directory, so you've got options.", page count 44) |
+| Kept narrator sentences with reason `second_clause`: pool descriptions (opinion / advice), pool FAQ (gap), city intros, city FAQ | 611 / 40, 224, 177, 94 | 622 / 41, 232, 216, 95 |
+
+Cleaner on the surrogate (with A1-A5, `dry-run-SURROGATE-live-2026-11-16.txt`, RUNBOOK.md section 4): 2,661 ->
+2,640 field changes, 629 -> 626 skipped fields, 28 founder-voice sentences left in place (unchanged).
+
+**What this keeps that a person might delete.** Most of the 18 city-intro sentences that are no longer deleted
+are local-voice openers such as "Around here, you get a good long pool season." (Berkeley, Marietta,
+Pleasanton, San Mateo, Spring Hill) or "Around here, you're looking at a pretty long pool season." They stay,
+listed as out of scope (`city.intro:opinion:second_clause`); the guard does not try to tell such a clause from
+one that carries a fact.
+
+**Examples.** Murray (R4) and Aurora (R6) revised: in each the last sentence has a ", so you'll / you've ..."
+clause and is now kept, so "after" is the whole field. Three must-keep regression examples added from the live
+page text of 2026-11-16: Peachtree City Community Pool `ai_faqs[0]` (", so you'd pay per person", R3),
+Beckley-Saner Recreation Center `ai_faqs[2]` (", so you should be fine when you visit", R3) and the Palm Coast
+city intro (", so you'll find plenty of kids splashing around", R4). The 73 examples pass on the current rules;
+the 5 new or revised ones fail on the previous rules.

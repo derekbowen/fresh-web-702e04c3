@@ -40,7 +40,7 @@ can be undone field by field.
 | `rollback.sql` | Undoes one apply run, only where the current value still has the logged new md5. |
 | `verify-live.sql` | READ ONLY. After an apply: page URL, new value and backed-up old value of every changed field (for `cleaner/verify_live.py`). |
 | `cleaner/core.sql.tmpl` | The plan (pure SQL: one WITH list, no extension, no function, no procedural language). |
-| `cleaner/build.py` | Renders the template with the exact regexes of `text-defects/text_defect_rules.py` (the source of truth behind rules.json) into `cleaner/core.sql`, `dry-run.sql`, `apply.sql`, `rollback.sql`. The core is pasted byte-identical into the dry run and the apply; its md5 is in both headers (currently `cc451c2e7b21197a101760f428f6f1f0`). |
+| `cleaner/build.py` | Renders the template with the exact regexes of `text-defects/text_defect_rules.py` (the source of truth behind rules.json) into `cleaner/core.sql`, `dry-run.sql`, `apply.sql`, `rollback.sql`. The core is pasted byte-identical into the dry run and the apply; its md5 is in both headers (currently `a2f7964e23faff083cbafa6a5cc42907`). |
 | `cleaner/reference.py` | The same cleaner in Python, built on the rules module; the oracle the test compares the SQL with. Holds the additions A1-A5. |
 | `cleaner/test_cleaner.py`, `pglocal.py`, `compare.py`, `surrogate.py`, `fixtures.json`, `build_fixtures.py`, `schema.sql` | The local test (section 8). |
 | `cleaner/run_surrogate.py` | Produces `dry-run-SURROGATE-live-2026-11-16.txt` and `before-after-sample.md`. |
@@ -99,6 +99,14 @@ Effect on the surrogate (2,476 live pages): 2,746 -> 2,661 field changes; R6 aut
 to examples.json (all 10 fail on the old rules and pass on the new), 5 R6 examples were revised, and 6 synthetic
 fixture cases were added. Section 4 has the new numbers.
 
+**2026-11-17 (Codex review of PR #9).** One more narrowing: `CLAUSE` also treats a second clause addressed to the
+reader as a second clause (comma, optional and/so/but/then, then `you` / you'd / you'll / you're / you've / you
+will / would / can / should / may / might). The case: "They don't have family passes listed in the info I have,
+so you'd pay per person." (Peachtree City Community Pool admission FAQ) was deletable, and the cleaner removed
+the per-person payment fact. Effect on the surrogate: 2,661 -> 2,640 field changes, 629 -> 626 skips; Aurora's
+R6 sentence ("..., so you've got options.") is now `review_mixed`. 3 must-keep regression examples were added
+and 2 examples revised (Murray R4, Aurora R6); details and every changed count in TEXT-DEFECTS.md section 10.
+
 The same review found SQL-safety gaps, fixed in `cleaner/build.py` (so dry-run.sql, apply.sql, rollback.sql and
 verify-live.sql follow) and covered by new checks in `cleaner/test_cleaner.py`:
 
@@ -114,22 +122,23 @@ verify-live.sql follow) and covered by new checks in `cleaner/test_cleaner.py`:
 
 ## 4. Numbers (with their dates)
 
-**Surrogate dry run, 2026-11-16** (the 2,000 pool + 476 city pages of the saved sitemap, fetched read-only
+**Surrogate dry run, re-run 2026-11-17 with the 2026-11-17 rules** (the 2,000 pool + 476 city pages of the saved sitemap, fetched read-only
 2026-11-16T19:36Z-20:05Z, rebuilt as rows; [dry-run-SURROGATE-live-2026-11-16.txt](dry-run-SURROGATE-live-2026-11-16.txt)):
 
 | Rule(s) | Fields changed | Sentences / entries deleted |
 |---|---|---|
 | R1 Best-for list | 1,678 pool pages | - |
-| R2 descriptions | 195 | 204 sentences |
-| R3 pool FAQ (incl. 18 with R5) | 597 | 735 sentences |
-| R5 pool FAQ (incl. 18 with R3) | 57 | 58 entries |
-| R4 city intros (incl. 1 with R6) | 122 | 146 sentences |
+| R2 descriptions | 194 | 203 sentences |
+| R3 pool FAQ (incl. 15 with R5) | 597 | 735 sentences |
+| R5 pool FAQ (incl. 15 with R3) | 51 | 52 entries |
+| R4 city intros (incl. 1 with R6) | 106 | 128 sentences |
 | R4 city FAQ | 28 | 33 sentences |
-| R6 city intros / FAQ | 3 / 0 | 3 sentences |
-| **Total** | **2,661 fields** | |
-| Skipped (a rule would have changed them) | 629 fields | reasons in before-after-sample.md |
+| R6 city intros / FAQ | 2 / 0 | 2 sentences |
+| **Total** | **2,640 fields** | |
+| Skipped (a rule would have changed them) | 626 fields | reasons in before-after-sample.md |
 
-(Before the 2026-11-16 review revision, section 3a, the same pages gave 2,746 changes and 576 skips.)
+(Before the 2026-11-16 review revision, section 3a, the same pages gave 2,746 changes and 576 skips; before the
+2026-11-17 change, 2,661 changes and 629 skips.)
 
 The production tables are larger (3,381 pools and 647 cities; 1,821 JSON-array Best-for values of which 8 `[]`,
 S1 extract 2026-11-15, all rows). PR-6 gives the real numbers; expect roughly 1.5-2x the surrogate.
@@ -137,11 +146,12 @@ S1 extract 2026-11-15, all rows). PR-6 gives the real numbers; expect roughly 1.
 **What remains after the apply, by design** (measured on the same live pages, TEXT-DEFECTS.md sections 2-3):
 * first-person sentences that also carry a fact (a number, an amenity, a price, a second clause ...) are NOT
   deleted: about 3,535 such sentences on pool pages and 624 on city pages (counted before the 2026-11-16
-  revision, which keeps a few more). The owner's "829 pool pages and 148 city pages with first-person filler"
+  and 2026-11-17 revisions, which keep a few more). The owner's "829 pool pages and 148 city pages with first-person filler"
   will therefore **not** drop to zero; removing the rest needs rewriting, which this task does not allow;
-* of the contradicted counts, only the 8 `auto` statements are automatic (18 before the revision), and 5 of them
+* of the contradicted counts, only the 7 `auto` statements are automatic (18 before the 2026-11-16 revision, 8
+  before the 2026-11-17 one, which moved Aurora's "..., so you've got options." to `review_mixed`), and 5 of them
   are skipped (Milwaukee and Mesa because the sentence names a pool, Lakewood and Torrance because the next
-  sentence refers back, Chicago's FAQ by A5), so 3 are deleted (Aurora, Chicago intro, Mount Pleasant SC).
+  sentence refers back, Chicago's FAQ by A5), so 2 are deleted (Chicago intro, Mount Pleasant SC).
   **Wilmington** ("Our site lists five public pools in Wilmington, but ...") and **Austin** ("five public pools ...
   and there are some specific places that are pretty well-known") are `review_mixed`. The 36 cities with a
   contradiction and the hand verdict for each are in TEXT-DEFECTS.md section 3, and the statements that moved
@@ -154,7 +164,7 @@ S1 extract 2026-11-15, all rows). PR-6 gives the real numbers; expect roughly 1.
 * the 7 pages whose Best-for value is `[]` keep printing `[]` (the renderer should hide an empty line).
 
 **Run times** (local PostgreSQL 16, surrogate, 2026-11-16 revision): dry run about 145 s (it now also prints
-section 7 and exports section 8); apply 18 s; rollback of 2,661 fields under 1 s (it was 65 s before rollback.sql
+section 7 and exports section 8); apply 18 s; rollback of 2,640 fields under 1 s (it was 65 s before rollback.sql
 got its own planner settings). The apply holds a SHARE ROW EXCLUSIVE lock on `pp_pools` and `pp_cities`: reads (the pages)
 continue, writes to those two tables wait until it commits.
 
@@ -256,7 +266,7 @@ left, so no API key can read, change or truncate them; only the role that ran ap
    ```
    Every field should be `NEW`. `OLD` means a cache or a copy (wait for the cache lifetime and fetch again);
    `NEITHER` means the page shows something else: stop and look. (Tested offline: on the pages fetched
-   before the change, the verifier rated all 2,661 surrogate changes `OLD`.)
+   before the change, the verifier rated all 2,640 surrogate changes `OLD`.)
 3. By eye, on a handful of pages: "Best for:" shows a plain list; the FAQ section and its FAQPage JSON-LD
    no longer contain the deleted entries; city intros no longer state a wrong count.
 4. Afterwards a new dry run shows R1 values as `R1:not_json` (they are plain text now) and should plan no
@@ -273,7 +283,7 @@ PostgreSQL 16 cluster (binaries in /usr/lib/postgresql/16/bin, run as the unpriv
 under /tmp, Unix socket only, port 55441, removed at the end), with the production column types
 (`cleaner/schema.sql`, from the information_schema extract of 2026-11-15) and:
 
-* fixtures (regenerated for the 2026-11-16 revision): 92 real rows from the live pages of 2026-11-16 (up to 3
+* fixtures (regenerated for the 2026-11-16 revision and again for the 2026-11-17 one): 91 real rows from the live pages of 2026-11-16 (up to 3
   per outcome category: every rule, every skip reason that occurs in the data, unchanged rows, every R6
   statement category) and 37 synthetic rows (33 pools, 4 cities) with 39 hand-derived expected results, among
   them the review cases of section 3a: apostrophes and quotes in list items, nested / non-string / object /
@@ -284,7 +294,7 @@ under /tmp, Unix socket only, port 55441, removed at the end), with the producti
 * checks: every embedded core identical; the dry run aborts outside a read-only transaction, changes nothing,
   creates nothing; SQL plan = Python reference on every fixture field; all hand expectations hold; apply
   changes exactly the planned fields to exactly the planned values and nothing else; no output field empty;
-  all 1,673 must-keep sentences still present; full old values in the backup; second apply is a no-op with
+  all 1,653 must-keep sentences still present; full old values in the backup; second apply is a no-op with
   the backup byte-identical; rollback restores byte-identical values and skips the field edited after apply;
   the count guard aborts on drift and on a wrong count or md5; a drifted field is never overwritten; a missing
   variable exits 3; rollback with an unrestored field exits 3 (`ROLLBACK INCOMPLETE`); with Supabase-style
@@ -295,7 +305,7 @@ under /tmp, Unix socket only, port 55441, removed at the end), with the producti
   the full run then logs that field `already_applied`, rolling back the full run leaves only the canary field
   changed and names the canary run, and rolling back the canary run too restores every field byte-identical;
   every statement of `text-defects/text-defects-measure.sql` (PENDING-READS) runs read-only;
-* the whole surrogate (2,476 live pages): SQL plan = Python reference on all 3,290 planned/skipped fields;
+* the whole surrogate (2,476 live pages): SQL plan = Python reference on all 3,266 planned/skipped fields;
   dry-run section 7 = the reference founder-voice list; `check_dry_run.py` on the dry run's own exports finds 0
   differences; dry run, apply, re-plan, offline live verification and rollback (under 30 s) all pass.
 

@@ -10,15 +10,15 @@
   "skip_empty_list": 7
  },
  "R2": {
-  "desc_rows_changed": 213,
+  "desc_rows_changed": 212,
   "desc_rows_skipped_deleted_sentence_names_an_entity": 11,
-  "desc_rows_skipped_next_sentence_refers_back": 197,
-  "desc_sentences_deleted": 225
+  "desc_rows_skipped_next_sentence_refers_back": 196,
+  "desc_sentences_deleted": 224
  },
  "R3": {
   "faq_rows_changed": 610,
   "faq_rows_skipped_deleted_sentence_names_an_entity": 64,
-  "faq_rows_skipped_next_sentence_refers_back": 215,
+  "faq_rows_skipped_next_sentence_refers_back": 214,
   "faq_sentences_deleted": 754
  },
  "R4": {
@@ -26,29 +26,29 @@
   "faq_rows_skipped_deleted_sentence_names_an_entity": 7,
   "faq_rows_skipped_next_sentence_refers_back": 19,
   "faq_sentences_deleted": 34,
-  "intro_rows_changed": 125,
+  "intro_rows_changed": 109,
   "intro_rows_skipped_deleted_sentence_names_an_entity": 8,
-  "intro_rows_skipped_next_sentence_refers_back": 58,
-  "intro_sentences_deleted": 149
+  "intro_rows_skipped_next_sentence_refers_back": 57,
+  "intro_sentences_deleted": 131
  },
  "R5": {
-  "pool_entries": 58,
-  "pool_rows": 57
+  "pool_entries": 52,
+  "pool_rows": 51
  },
  "R6": {
   "faq_rows_changed": 1,
   "faq_rows_skipped_next_sentence_refers_back": 2,
   "faq_sentences_deleted": 1,
-  "intro_rows_changed": 3,
+  "intro_rows_changed": 2,
   "intro_rows_skipped_deleted_sentence_names_an_entity": 2,
-  "intro_sentences_deleted": 3
+  "intro_sentences_deleted": 2
  },
  "faq_entries": {
   "city_narrator_plus_fact": 228,
   "city_total": 1900,
   "city_with_narrator": 228,
-  "pool_narrator_plus_fact": 2320,
-  "pool_noninformative": 58,
+  "pool_narrator_plus_fact": 2326,
+  "pool_noninformative": 52,
   "pool_total": 5322,
   "pool_with_narrator": 2378
  },
@@ -191,7 +191,7 @@
   ],
   "pool.faq:gap:second_clause": [
    "Most municipal pools have dedicated parking lots, but I couldn't confirm the details for this specific location.",
-   "However, I can't confirm specific kid-friendly amenities like a separate wading area."
+   "I couldn't tell you if they have a dedicated shallow area or specific family programs, so you might want to call and ask about that."
   ],
   "pool.faq:gap:url_or_contact": [
    "Since it's a public pool run by the city of Jacksonville, it's likely very affordable, but I can't confirm without looking it up on coj.net or calling them.",
@@ -227,27 +227,27 @@
   "city.faq:gap:second_clause": 11,
   "city.faq:insurance:mentions insurance/liability/coverage/claims/damage": 1,
   "city.faq:opinion:answer_polarity": 4,
-  "city.faq:opinion:fact_vocabulary": 50,
+  "city.faq:opinion:fact_vocabulary": 49,
   "city.faq:opinion:number": 2,
-  "city.faq:opinion:second_clause": 94,
+  "city.faq:opinion:second_clause": 95,
   "city.intro:advice:number": 6,
   "city.intro:founder:fact_vocabulary": 2,
   "city.intro:insurance:mentions insurance/liability/coverage/claims/damage": 2,
-  "city.intro:opinion:fact_vocabulary": 223,
+  "city.intro:opinion:fact_vocabulary": 206,
   "city.intro:opinion:number": 48,
-  "city.intro:opinion:second_clause": 177,
+  "city.intro:opinion:second_clause": 216,
   "pool.desc:advice:fact_vocabulary": 14,
   "pool.desc:advice:number": 132,
-  "pool.desc:advice:second_clause": 40,
+  "pool.desc:advice:second_clause": 41,
   "pool.desc:advice:url_or_contact": 12,
   "pool.desc:founder:fact_vocabulary": 4,
   "pool.desc:gap:number": 8,
   "pool.desc:gap:second_clause": 26,
   "pool.desc:insurance:mentions insurance/liability/coverage/claims/damage": 15,
-  "pool.desc:opinion:fact_vocabulary": 266,
+  "pool.desc:opinion:fact_vocabulary": 258,
   "pool.desc:opinion:local_marker_on_pool_page": 10,
   "pool.desc:opinion:number": 916,
-  "pool.desc:opinion:second_clause": 611,
+  "pool.desc:opinion:second_clause": 622,
   "pool.desc:opinion:url_or_contact": 4,
   "pool.faq:advice:fact_vocabulary": 134,
   "pool.faq:advice:number": 340,
@@ -256,7 +256,7 @@
   "pool.faq:founder:fact_vocabulary": 1,
   "pool.faq:gap:fact_vocabulary": 7,
   "pool.faq:gap:number": 26,
-  "pool.faq:gap:second_clause": 224,
+  "pool.faq:gap:second_clause": 232,
   "pool.faq:gap:url_or_contact": 2,
   "pool.faq:insurance:mentions insurance/liability/coverage/claims/damage": 13,
   "pool.faq:opinion:answer_polarity": 34,

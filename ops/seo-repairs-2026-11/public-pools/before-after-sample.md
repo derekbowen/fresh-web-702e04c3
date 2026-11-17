@@ -1,6 +1,6 @@
 # Public-pools text cleaner: before / after sample
 
-> **Data source: SURROGATE, NOT PRODUCTION.** The production dry run could not be run on 2026-11-16 (database tool unavailable; PR-6 in [PENDING-READS.md](PENDING-READS.md)). The rows below are real text: the fields of the live pages fetched read-only on **2026-11-16** (2,000 pool and 476 city pages of the saved sitemap), which equalled the production extract of 2026-11-15 byte for byte wherever compared. They were loaded into a throwaway local PostgreSQL 16 table and run through the SAME SQL as dry-run.sql (core md5 `cc451c2e7b21197a101760f428f6f1f0`). The 15 fields per rule were chosen in the database with the dry run's own seeded selection (`order by md5(row_id || col || '2026-11-15')`, row ids being local md5s of the page URL). The production dry run prints the same section (section 4) on production rows; **that** is the sample to approve. Whether pp-ssr reads this database live is **UNVERIFIED**.
+> **Data source: SURROGATE, NOT PRODUCTION.** The production dry run could not be run on 2026-11-16 (database tool unavailable; PR-6 in [PENDING-READS.md](PENDING-READS.md)). The rows below are real text: the fields of the live pages fetched read-only on **2026-11-16** (2,000 pool and 476 city pages of the saved sitemap), which equalled the production extract of 2026-11-15 byte for byte wherever compared. They were loaded into a throwaway local PostgreSQL 16 table and run through the SAME SQL as dry-run.sql (core md5 `a2f7964e23faff083cbafa6a5cc42907`). The 15 fields per rule were chosen in the database with the dry run's own seeded selection (`order by md5(row_id || col || '2026-11-15')`, row ids being local md5s of the page URL). The production dry run prints the same section (section 4) on production rows; **that** is the sample to approve. Whether pp-ssr reads this database live is **UNVERIFIED**.
 
 Every change below either deletes whole sentences, deletes whole FAQ entries, or re-joins an existing list (R1). No word is added or reworded. Rules: [rules.json](rules.json), [TEXT-DEFECTS.md](TEXT-DEFECTS.md); field-level additions A1-A5: [RUNBOOK.md](RUNBOOK.md) section 3. Regenerated 2026-11-16 after the content review narrowed the rules (RUNBOOK.md section 3a); invented founder-voice sentences that stay are listed in [FOUNDER-VOICE-REMAINING.md](FOUNDER-VOICE-REMAINING.md).
 
@@ -9,23 +9,23 @@ Every change below either deletes whole sentences, deletes whole FAQ entries, or
 | Table | Column | Rules | Fields changed |
 |---|---|---|---|
 | pp_cities | ai_faqs | R4 | 28 |
-| pp_cities | ai_intro | R4 | 121 |
-| pp_cities | ai_intro | R6 | 2 |
+| pp_cities | ai_intro | R4 | 105 |
+| pp_cities | ai_intro | R6 | 1 |
 | pp_cities | ai_intro | R6+R4 | 1 |
 | pp_pools | ai_best_for | R1 | 1,678 |
-| pp_pools | ai_description | R2 | 195 |
-| pp_pools | ai_faqs | R3 | 579 |
-| pp_pools | ai_faqs | R5 | 39 |
-| pp_pools | ai_faqs | R5+R3 | 18 |
-| | | **total** | **2,661** |
+| pp_pools | ai_description | R2 | 194 |
+| pp_pools | ai_faqs | R3 | 582 |
+| pp_pools | ai_faqs | R5 | 36 |
+| pp_pools | ai_faqs | R5+R3 | 15 |
+| | | **total** | **2,640** |
 
 Fields skipped (a rule would have changed them, a skip condition stopped it), by reason:
 
 | Skip | Fields |
 |---|---|
-| `R3:next_sentence_refers_back` | 214 |
-| `R2:next_sentence_refers_back` | 186 |
-| `R4:next_sentence_refers_back` | 77 |
+| `R3:next_sentence_refers_back` | 213 |
+| `R2:next_sentence_refers_back` | 185 |
+| `R4:next_sentence_refers_back` | 76 |
 | `R3:deleted_sentence_names_an_entity` | 64 |
 | `ALL:insurance_anywhere` | 38 |
 | `R4:deleted_sentence_names_an_entity` | 15 |
@@ -194,7 +194,7 @@ After:
 
 ## R2: narrator sentences in pool descriptions
 
-15 of 195 fields carrying R2.
+15 of 194 fields carrying R2.
 
 ### R2.1 `pp_pools.ai_description` /public-pools/georgia/decatur/decatur-aquatic-center/ (rules applied to this field: R2)
 
@@ -626,7 +626,7 @@ Deleted sentence(s):
 
 ## R4: narrator sentences in city intros / FAQ answers
 
-15 of 150 fields carrying R4.
+15 of 134 fields carrying R4.
 
 ### R4.1 `pp_cities.ai_intro` /public-pools/louisiana/slidell/ (rules applied to this field: R4)
 
@@ -642,21 +642,7 @@ Deleted sentence(s):
 
 - “When summers hit down here, the heat and humidity are no joke.”
 
-### R4.2 `pp_cities.ai_intro` /public-pools/texas/pearland/ (rules applied to this field: R4)
-
-Before:
-
-> Around here, you're looking at a pretty long pool season. Most outdoor pools open up around late May, Memorial Day weekend usually, and they stay open straight through to Labor Day, sometimes a little longer into September if the weather holds and people are still wanting a swim. With the heat we get, pools are a big deal for families, so you'll find a lot of spots geared toward kids with water play areas and slides. It's not so much a lap swimming culture at the public spots during the peak summer, more about cooling off and having fun. If you're new to the Pearland area and want to find a place to swim, starting with the city's aquatic centers is usually your best bet. They keep their schedules pretty clear on their websites.
-
-After:
-
-> Most outdoor pools open up around late May, Memorial Day weekend usually, and they stay open straight through to Labor Day, sometimes a little longer into September if the weather holds and people are still wanting a swim. With the heat we get, pools are a big deal for families, so you'll find a lot of spots geared toward kids with water play areas and slides. It's not so much a lap swimming culture at the public spots during the peak summer, more about cooling off and having fun. If you're new to the Pearland area and want to find a place to swim, starting with the city's aquatic centers is usually your best bet. They keep their schedules pretty clear on their websites.
-
-Deleted sentence(s):
-
-- “Around here, you're looking at a pretty long pool season.”
-
-### R4.3 `pp_cities.ai_intro` /public-pools/florida/jacksonville/ (rules applied to this field: R4)
+### R4.2 `pp_cities.ai_intro` /public-pools/florida/jacksonville/ (rules applied to this field: R4)
 
 Before:
 
@@ -671,7 +657,7 @@ Deleted sentence(s):
 - “I've heard some people even put tarps over their pools in winter, heat 'em up a little, and keep going.”
 - “My advice is to check the schedules online or give a pool a call before you head over.”
 
-### R4.4 `pp_cities.ai_intro` /public-pools/texas/bacliff/ (rules applied to this field: R4)
+### R4.3 `pp_cities.ai_intro` /public-pools/texas/bacliff/ (rules applied to this field: R4)
 
 Before:
 
@@ -685,7 +671,7 @@ Deleted sentence(s):
 
 - “A lot of folks here are looking for a casual swim, a place for the kids, or just to relax by the water.”
 
-### R4.5 `pp_cities.ai_faqs` /public-pools/pennsylvania/lancaster/ (rules applied to this field: R4)
+### R4.4 `pp_cities.ai_faqs` /public-pools/pennsylvania/lancaster/ (rules applied to this field: R4)
 
 - **Q:** What's the typical pool season in Lancaster, PA?
   - answer unchanged
@@ -702,7 +688,7 @@ Deleted sentence(s):
 - **Q:** What if I want to rent a private pool by the hour in Lancaster?
   - answer unchanged
 
-### R4.6 `pp_cities.ai_faqs` /public-pools/pennsylvania/philadelphia/ (rules applied to this field: R4)
+### R4.5 `pp_cities.ai_faqs` /public-pools/pennsylvania/philadelphia/ (rules applied to this field: R4)
 
 - **Q:** When do pools in Philadelphia typically open and close for the season?
   - answer unchanged
@@ -719,7 +705,7 @@ Deleted sentence(s):
 - **Q:** What if I want private pool access without a membership?
   - answer unchanged
 
-### R4.7 `pp_cities.ai_intro` /public-pools/florida/hollywood/ (rules applied to this field: R4)
+### R4.6 `pp_cities.ai_intro` /public-pools/florida/hollywood/ (rules applied to this field: R4)
 
 Before:
 
@@ -735,21 +721,7 @@ Deleted sentence(s):
 - “A lot of folks here grew up in the water, so pool time is just part of life.”
 - “We've got a decent selection of public pools, and then there are always the private rentals if you want something more low-key.”
 
-### R4.8 `pp_cities.ai_intro` /public-pools/california/san-mateo/ (rules applied to this field: R4)
-
-Before:
-
-> Around here, you get a good long pool season. From May through October, the weather's usually warm enough for a comfortable outdoor swim. Even in the cooler months, a lot of people are still in the water, especially at indoor spots. It's a pretty active swim scene, a good mix of lap swimmers getting their workout in and families looking for a place for the kids to splash around. If you're new to the area or just visiting San Mateo, the main thing to know is that while public options exist, they can get busy. Looking at private rentals is a good alternative if you want more space or a specific time slot without the crowds.
-
-After:
-
-> From May through October, the weather's usually warm enough for a comfortable outdoor swim. Even in the cooler months, a lot of people are still in the water, especially at indoor spots. It's a pretty active swim scene, a good mix of lap swimmers getting their workout in and families looking for a place for the kids to splash around. If you're new to the area or just visiting San Mateo, the main thing to know is that while public options exist, they can get busy. Looking at private rentals is a good alternative if you want more space or a specific time slot without the crowds.
-
-Deleted sentence(s):
-
-- “Around here, you get a good long pool season.”
-
-### R4.9 `pp_cities.ai_intro` /public-pools/south-carolina/mount-pleasant/ (rules applied to this field: R6+R4)
+### R4.7 `pp_cities.ai_intro` /public-pools/south-carolina/mount-pleasant/ (rules applied to this field: R6+R4)
 
 Before:
 
@@ -764,7 +736,7 @@ Deleted sentence(s):
 - “Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off.”
 - “We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.”
 
-### R4.10 `pp_cities.ai_faqs` /public-pools/iowa/cedar-rapids/ (rules applied to this field: R4)
+### R4.8 `pp_cities.ai_faqs` /public-pools/iowa/cedar-rapids/ (rules applied to this field: R4)
 
 - **Q:** When do pools typically open and close for the season in Cedar Rapids?
   - answer unchanged
@@ -781,7 +753,7 @@ Deleted sentence(s):
 - **Q:** Can I rent a private backyard pool for a few hours in Cedar Rapids?
   - answer unchanged
 
-### R4.11 `pp_cities.ai_intro` /public-pools/georgia/marietta/ (rules applied to this field: R4)
+### R4.9 `pp_cities.ai_intro` /public-pools/georgia/marietta/ (rules applied to this field: R4)
 
 Before:
 
@@ -789,14 +761,13 @@ Before:
 
 After:
 
-> From late May right through September, maybe even early October depending on the year, people are looking for a place to swim. It's hot and humid for a big chunk of that. It's a pretty family-focused area so you'll see a lot of kids splashes, swim lessons, that kind of thing. For someone just moving to Marietta or visiting, finding a good pool is usually pretty straightforward. Public pools are pretty popular, and there's a strong community vibe around those spots. If you're looking for something more private, or just a different experience without the crowds, that's where we come in.
+> Around here, you get a good long pool season. From late May right through September, maybe even early October depending on the year, people are looking for a place to swim. It's hot and humid for a big chunk of that. It's a pretty family-focused area so you'll see a lot of kids splashes, swim lessons, that kind of thing. For someone just moving to Marietta or visiting, finding a good pool is usually pretty straightforward. Public pools are pretty popular, and there's a strong community vibe around those spots. If you're looking for something more private, or just a different experience without the crowds, that's where we come in.
 
 Deleted sentence(s):
 
-- “Around here, you get a good long pool season.”
 - “I built PoolRentalNearMe.com for exactly that situation: easy access to backyard pools by the hour.”
 
-### R4.12 `pp_cities.ai_faqs` /public-pools/georgia/roswell/ (rules applied to this field: R4)
+### R4.10 `pp_cities.ai_faqs` /public-pools/georgia/roswell/ (rules applied to this field: R4)
 
 - **Q:** What's the typical pool season in Roswell, GA?
   - answer unchanged
@@ -813,7 +784,7 @@ Deleted sentence(s):
 - **Q:** What if I want a private pool experience without a membership?
   - answer unchanged
 
-### R4.13 `pp_cities.ai_intro` /public-pools/new-york/sprakers/ (rules applied to this field: R4)
+### R4.11 `pp_cities.ai_intro` /public-pools/new-york/sprakers/ (rules applied to this field: R4)
 
 Before:
 
@@ -827,7 +798,7 @@ Deleted sentence(s):
 
 - “We've got pretty tight-knit communities, so knowing where to look is key.”
 
-### R4.14 `pp_cities.ai_intro` /public-pools/minnesota/woodbury/ (rules applied to this field: R4)
+### R4.12 `pp_cities.ai_intro` /public-pools/minnesota/woodbury/ (rules applied to this field: R4)
 
 Before:
 
@@ -842,7 +813,7 @@ Deleted sentence(s):
 - “Woodbury, Minnesota gets proper hot in the summer, and people here love their pools.”
 - “It's mostly a family-oriented swim scene around here, with lots of kids splashing around and parents supervising.”
 
-### R4.15 `pp_cities.ai_intro` /public-pools/nevada/henderson/ (rules applied to this field: R4)
+### R4.13 `pp_cities.ai_intro` /public-pools/nevada/henderson/ (rules applied to this field: R4)
 
 Before:
 
@@ -856,9 +827,37 @@ Deleted sentence(s):
 
 - “It's just part of the lifestyle out here.”
 
+### R4.14 `pp_cities.ai_intro` /public-pools/massachusetts/boston/ (rules applied to this field: R4)
+
+Before:
+
+> Summer in Boston can get pretty sticky, so finding a good pool isn't just for exercise, it's about cooling down. People here really use their pools when the weather's hot. The swim season for outdoor pools usually runs from late June right through to Labor Day. Given the long winters, when the sun is out, folks are ready to hit the water. You'll find a mix of serious lap swimmers and families just trying to beat the heat. If you're new to the area, know that space can be tight, and public pools are a hot commodity. Getting there early or knowing the off-peak times can make a big difference. It's a pretty active city, so the swim culture leans towards getting some lengths in, but there's always room for just splashing around.
+
+After:
+
+> Summer in Boston can get pretty sticky, so finding a good pool isn't just for exercise, it's about cooling down. The swim season for outdoor pools usually runs from late June right through to Labor Day. Given the long winters, when the sun is out, folks are ready to hit the water. You'll find a mix of serious lap swimmers and families just trying to beat the heat. If you're new to the area, know that space can be tight, and public pools are a hot commodity. Getting there early or knowing the off-peak times can make a big difference. It's a pretty active city, so the swim culture leans towards getting some lengths in, but there's always room for just splashing around.
+
+Deleted sentence(s):
+
+- “People here really use their pools when the weather's hot.”
+
+### R4.15 `pp_cities.ai_intro` /public-pools/virginia/chesapeake/ (rules applied to this field: R4)
+
+Before:
+
+> The swim season in Chesapeake usually kicks off in late May, around Memorial Day weekend. That's when most of the outdoor spots open up. It runs strong through the summer, sometimes pushing into early September if the weather holds. Folks around here really use the pools to beat the heat. You'll see a mix of serious lap swimmers early in the morning and a lot of families later in the day. It's a pretty family-friendly swim scene. Many of the community pools are set up for that, with dedicated shallow areas for the kids. If you're new to the area and looking for a place to swim, I recommend checking out one of the public aquatic centers first to get a feel for what's available. The city does a good job with them.
+
+After:
+
+> The swim season in Chesapeake usually kicks off in late May, around Memorial Day weekend. That's when most of the outdoor spots open up. It runs strong through the summer, sometimes pushing into early September if the weather holds. You'll see a mix of serious lap swimmers early in the morning and a lot of families later in the day. It's a pretty family-friendly swim scene. Many of the community pools are set up for that, with dedicated shallow areas for the kids. If you're new to the area and looking for a place to swim, I recommend checking out one of the public aquatic centers first to get a feel for what's available. The city does a good job with them.
+
+Deleted sentence(s):
+
+- “Folks around here really use the pools to beat the heat.”
+
 ## R5: wholly non-informative FAQ entries
 
-15 of 57 fields carrying R5.
+15 of 51 fields carrying R5.
 
 ### R5.1 `pp_pools.ai_faqs` /public-pools/texas/pleasanton/freedom-rv-resort/ (rules applied to this field: R5)
 
@@ -982,19 +981,7 @@ Deleted sentence(s):
   - **entry deleted** (R5). Old answer:
     > My current information only lists Las Flores Pool for public access in La Verne. If you're looking for other options, checking the City of La Verne's official website or contacting their parks and recreation department would be the way to go.
 
-### R5.11 `pp_pools.ai_faqs` /public-pools/arizona/goodyear/goodyear-aquatic-center/ (rules applied to this field: R5)
-
-- **Q:** How much does it cost to swim at the Goodyear Aquatic Center?
-  - answer unchanged
-- **Q:** Is the Goodyear Aquatic Center good for families with small children?
-  - answer unchanged
-- **Q:** Is there parking available at the Goodyear Aquatic Center?
-  - answer unchanged
-- **Q:** Are there other indoor pools in Goodyear, AZ?
-  - **entry deleted** (R5). Old answer:
-    > I only have information on Goodyear Aquatic Center right now. For other indoor pool options in Goodyear, you would need to check with the city's parks department or do a quick local search.
-
-### R5.12 `pp_pools.ai_faqs` /public-pools/arizona/casa-grande/casa-grande-municipal-pool/ (rules applied to this field: R5)
+### R5.11 `pp_pools.ai_faqs` /public-pools/arizona/casa-grande/casa-grande-municipal-pool/ (rules applied to this field: R5)
 
 - **Q:** How much does it cost to get into the Casa Grande Municipal Pool?
   - answer unchanged
@@ -1004,7 +991,7 @@ Deleted sentence(s):
   - **entry deleted** (R5). Old answer:
     > I only have details for the Casa Grande Municipal Pool right now. You might check with local community centers or hotels in the area to see if they offer public swim times or day passes.
 
-### R5.13 `pp_pools.ai_faqs` /public-pools/california/redlands/redlands-community-pool/ (rules applied to this field: R5+R3)
+### R5.12 `pp_pools.ai_faqs` /public-pools/california/redlands/redlands-community-pool/ (rules applied to this field: R5+R3)
 
 - **Q:** What are the hours for the Redlands Community Pool?
   - old answer:
@@ -1020,7 +1007,7 @@ Deleted sentence(s):
   - **entry deleted** (R5). Old answer:
     > My current data focuses on this specific community pool. For other options in Redlands, I'd suggest checking the City of Redlands parks and recreation website or doing a local search for 'pools Redlands CA'.
 
-### R5.14 `pp_pools.ai_faqs` /public-pools/florida/coral-springs/coral-springs-community-pool/ (rules applied to this field: R5+R3)
+### R5.13 `pp_pools.ai_faqs` /public-pools/florida/coral-springs/coral-springs-community-pool/ (rules applied to this field: R5+R3)
 
 - **Q:** How much does it cost to get into the Coral Springs pool?
   - old answer:
@@ -1034,7 +1021,7 @@ Deleted sentence(s):
   - **entry deleted** (R5). Old answer:
     > I only have detailed information on the Coral Springs Community Pool as a primary option. You could check the City of Coral Springs website for a list of other public aquatics centers they might operate.
 
-### R5.15 `pp_pools.ai_faqs` /public-pools/new-york/garden-city/garden-city-community-pool/ (rules applied to this field: R5)
+### R5.14 `pp_pools.ai_faqs` /public-pools/new-york/garden-city/garden-city-community-pool/ (rules applied to this field: R5)
 
 - **Q:** How much does it cost to get into Garden City Community Pool?
   - answer unchanged
@@ -1046,9 +1033,21 @@ Deleted sentence(s):
   - **entry deleted** (R5). Old answer:
     > I only have data for the Garden City Community Pool. For other swimming options in the area, I'd suggest checking the Garden City Parks and Recreation department's website.
 
+### R5.15 `pp_pools.ai_faqs` /public-pools/florida/deltona/deltona-community-pool/ (rules applied to this field: R5)
+
+- **Q:** How much does it cost to get into the Deltona pool?
+  - answer unchanged
+- **Q:** Is the Deltona Community Pool good for families with young kids?
+  - answer unchanged
+- **Q:** Is there parking or special access for people with disabilities?
+  - **entry deleted** (R5). Old answer:
+    > My data doesn't specify parking or accessibility features. I'd recommend contacting the City of Deltona's Parks and Recreation department or the pool itself to confirm what's available.
+- **Q:** Are there other swimming options if the Deltona Community Pool is closed?
+  - answer unchanged
+
 ## R6: pool-count sentences contradicted by the page count
 
-3 of 3 fields carrying R6 (all of them: fewer than 15 exist on the surrogate).
+2 of 2 fields carrying R6 (all of them: fewer than 15 exist on the surrogate).
 
 ### R6.1 `pp_cities.ai_intro` /public-pools/south-carolina/mount-pleasant/ (rules applied to this field: R6+R4)
 
@@ -1065,21 +1064,7 @@ Deleted sentence(s):
 - “Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off.”
 - “We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.”
 
-### R6.2 `pp_cities.ai_intro` /public-pools/colorado/aurora/ (rules applied to this field: R6)
-
-Before:
-
-> Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees. We've got five public pools listed in our directory, so you've got options.
-
-After:
-
-> Man, Aurora can get hot, especially come July and August. You really feel it when you're looking for a good place to cool off. The swimming season here generally kicks off around Memorial Day weekend. Most outdoor public pools open up then and run pretty steady until Labor Day. You'll find a solid mix of swimmers, from serious lap folks who are logging miles to families just wanting to splash around. We've got things like wave pools and lazy rivers, so there's a lot to keep the kids entertained too. If you're new to the area or just visiting, the best way to find a spot is to check out the city's parks and recreation department listings. They'll have the most current info on hours and fees.
-
-Deleted sentence(s):
-
-- “We've got five public pools listed in our directory, so you've got options.”
-
-### R6.3 `pp_cities.ai_intro` /public-pools/illinois/chicago/ (rules applied to this field: R6)
+### R6.2 `pp_cities.ai_intro` /public-pools/illinois/chicago/ (rules applied to this field: R6)
 
 Before:
 
@@ -1245,7 +1230,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R2:next_sentence_refers_back` | /public-pools/illinois/evanston/evanston-aquatic-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/indiana/fishers/fishers-municipal-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/ellenberger-public-pool/ | pp_pools.ai_description |  |
-| `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/garfield-park-aquatic-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/gustafson-park-outdoor-pool/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/indiana/indianapolis/riverside-park-family-recreation-center/ | pp_pools.ai_description |  |
 | `R2:next_sentence_refers_back` | /public-pools/iowa/des-moines/lions-park-seasonal-wading-pool-des-moines/ | pp_pools.ai_description |  |
@@ -1585,7 +1569,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R3:next_sentence_refers_back` | /public-pools/pennsylvania/philadelphia/drexel-university-recreation-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/pennsylvania/philadelphia/francisville-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/south-carolina/charleston/james-island-recreation-complex-pool/ | pp_pools.ai_faqs |  |
-| `R3:next_sentence_refers_back` | /public-pools/south-carolina/myrtle-beach/myrtle-beach-indoor-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/tennessee/knoxville/knoxville-aquatic-center/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/tennessee/knoxville/knoxville-municipal-pool/ | pp_pools.ai_faqs |  |
 | `R3:next_sentence_refers_back` | /public-pools/texas/arlington/hugh-smith-pool/ | pp_pools.ai_faqs |  |
@@ -1681,7 +1664,6 @@ Production row ids come from the production dry run (section 3). Here each field
 | `R4:next_sentence_refers_back` | /public-pools/florida/coral-springs/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/florida/daytona-beach/ | pp_cities.ai_faqs |  |
 | `R4:next_sentence_refers_back` | /public-pools/florida/hialeah/ | pp_cities.ai_faqs |  |
-| `R4:next_sentence_refers_back` | /public-pools/florida/land-o-lakes/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/florida/miami/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/florida/sarasota/ | pp_cities.ai_intro |  |
 | `R4:next_sentence_refers_back` | /public-pools/florida/wesley-chapel/ | pp_cities.ai_intro |  |
