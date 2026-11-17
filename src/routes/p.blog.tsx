@@ -411,7 +411,7 @@ function BlogHubPage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a
-                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                href="/wizard/"
                 className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 List your pool

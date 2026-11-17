@@ -245,7 +245,9 @@ export function websiteJsonLd() {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/s?q={search_term_string}`,
+        // `keywords` is the full-text parameter WEST's SearchPage validates
+        // and passes to the listings query; it ignores `q`.
+        urlTemplate: `${SITE_URL}/s?keywords={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },

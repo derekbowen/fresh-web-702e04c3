@@ -18,6 +18,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { allInCents } from "@/lib/pricing";
 import { poolAmenityLabels } from "@/lib/amenity-claims";
+import { CITY_SEARCH_RADIUS_MI } from "@/lib/search-links";
 
 export type InventoryListing = {
   id: string;
@@ -39,6 +40,39 @@ export type CityInventory = {
   /** Why these results were returned — surfaced for debugging and verification. */
   matchReason: "exact_city" | "exact_plus_nearby" | "nearby_only" | "none";
   radiusMi: number | null;
+  /**
+   * True count of eligible exact-city listings. `exact` holds at most
+   * MAX_TOTAL cards, so a page that states "N pools listed" reads this, never
+   * `exact.length`.
+   */
+  exactTotal: number;
+  /** Eligible listings within `radiusMi` of the centroid, not counting exact ones. */
+  nearbyTotal: number;
+  /**
+   * A read failed, so how many pools there are is NOT known. A page must not
+   * say "no pools are listed" on the strength of a failed read.
+   */
+  readFailed: boolean;
+  /**
+   * The radius lookup ran. False when the city has no coordinates (85 renter
+   * pages on 2026-11-15), so "no pools near" is not known and must not be said.
+   */
+  nearbyChecked: boolean;
+  /**
+   * Latest `updated_at` of the listings returned: how current these cards and
+   * counts are. The mirror is refreshed only when listing-sync runs (last run
+   * 2026-09-25; no scheduled sync yet), so a page shows this date rather than
+   * implying the counts are live.
+   */
+  syncedAt: string | null;
+  /**
+   * The point the radius is measured from (the city's coordinates), or null
+   * when the city has none. The page's "Search pools near {City}" link is the
+   * marketplace search in a box around this same point
+   * (src/lib/search-links.ts searchHrefNearPlace), so the link and the counts
+   * describe the same area.
+   */
+  centre: { lat: number; lng: number } | null;
 };
 
 export const EMPTY_INVENTORY: CityInventory = {
@@ -46,17 +80,50 @@ export const EMPTY_INVENTORY: CityInventory = {
   nearby: [],
   matchReason: "none",
   radiusMi: null,
+  exactTotal: 0,
+  nearbyTotal: 0,
+  readFailed: false,
+  nearbyChecked: false,
+  syncedAt: null,
+  centre: null,
 };
+
+/** What a page gets when the inventory lookup itself failed. */
+export const FAILED_INVENTORY: CityInventory = { ...EMPTY_INVENTORY, readFailed: true };
 
 /** Cards shown before we top up with nearby supply. */
 const MIN_EXACT = 3;
 /** Hard cap on the initial render so we never dump 40 images on a page. */
 const MAX_TOTAL = 8;
-const NEARBY_RADIUS_MI = 60;
+/** Same radius as the search box a city page links (search-links.ts). */
+const NEARBY_RADIUS_MI = CITY_SEARCH_RADIUS_MI;
 
 const SELECT_COLS =
   "sharetribe_id, slug, title, city, state_code, price_amount, price_currency, " +
-  "primary_image_url, capacity, amenities, latitude, longitude";
+  "primary_image_url, capacity, amenities, latitude, longitude, updated_at";
+
+/**
+ * One pool listed twice (two Sharetribe ids, same slug and coordinates — e.g.
+ * "swim-relax-in-stylepersonal-oasis" in Rocky Point, NY on 2026-11-15) is one
+ * pool: counted and shown once.
+ */
+const listingKey = (r: any) => `${r.slug}|${r.latitude ?? ""}|${r.longitude ?? ""}`;
+function dedupe(rows: any[]): any[] {
+  const seen = new Set<string>();
+  return rows.filter((r) => {
+    const k = listingKey(r);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+const latest = (rows: any[]): string | null =>
+  rows.reduce<string | null>(
+    (m, r) => (typeof r.updated_at === "string" && (!m || r.updated_at > m) ? r.updated_at : m),
+    null,
+  );
+/** Upper bound on rows read per tier; the whole eligible mirror is 125 rows. */
+const READ_CAP = 500;
 
 /**
  * Canonical eligibility for customer-facing inventory. Defined once so the
@@ -125,25 +192,43 @@ export async function loadCityInventory(input: {
   lng: number | null;
 }): Promise<CityInventory> {
   const sb = supabaseAdmin as any;
+  const centre =
+    typeof input.lat === "number" &&
+    typeof input.lng === "number" &&
+    Number.isFinite(input.lat) &&
+    Number.isFinite(input.lng)
+      ? { lat: input.lat, lng: input.lng }
+      : null;
   const cityKey = normalizeCityKey(input.cityName);
   const st = input.stateCode ? input.stateCode.toUpperCase() : null;
 
   // ---- tier 1: exact normalized city + state -------------------------------
-  let exact: InventoryListing[] = [];
+  // Read every match (not a capped page + count) so a listing stored twice is
+  // counted once.
+  let exactRows: any[] = [];
   if (cityKey && st) {
-    const { data } = await eligible(sb.from("synced_listings").select(SELECT_COLS))
+    const { data, error } = await eligible(sb.from("synced_listings").select(SELECT_COLS))
       .eq("city_slug", cityKey)
       .eq("state_code", st)
-      .limit(MAX_TOTAL);
-    exact = (data ?? []).map(toListing);
+      .limit(READ_CAP);
+    if (error) return FAILED_INVENTORY;
+    exactRows = dedupe(data ?? []);
   }
+  const exact = exactRows.slice(0, MAX_TOTAL).map(toListing);
+  const exactTotal = exactRows.length;
 
   if (exact.length >= MIN_EXACT) {
     return {
-      exact: exact.slice(0, MAX_TOTAL),
+      exact,
       nearby: [],
       matchReason: "exact_city",
       radiusMi: null,
+      exactTotal,
+      nearbyTotal: 0,
+      readFailed: false,
+      nearbyChecked: false,
+      syncedAt: latest(exactRows),
+      centre,
     };
   }
 
@@ -155,6 +240,12 @@ export async function loadCityInventory(input: {
       nearby: [],
       matchReason: exact.length ? "exact_city" : "none",
       radiusMi: null,
+      exactTotal,
+      nearbyTotal: 0,
+      readFailed: false,
+      nearbyChecked: false,
+      syncedAt: latest(exactRows),
+      centre,
     };
   }
 
@@ -162,20 +253,26 @@ export async function loadCityInventory(input: {
   const dLat = NEARBY_RADIUS_MI / 69;
   const cos = Math.cos(toRad(lat));
   const dLng = NEARBY_RADIUS_MI / (69 * (Math.abs(cos) < 0.01 ? 0.01 : Math.abs(cos)));
-  const { data: box } = await eligible(sb.from("synced_listings").select(SELECT_COLS))
+  const { data: box, error: boxError } = await eligible(sb.from("synced_listings").select(SELECT_COLS))
     .gte("latitude", lat - dLat)
     .lte("latitude", lat + dLat)
     .gte("longitude", lng - dLng)
     .lte("longitude", lng + dLng)
-    .limit(200);
+    .limit(READ_CAP);
+  if (boxError) return FAILED_INVENTORY;
 
-  const seen = new Set(exact.map((l) => l.id));
-  const nearby = (box ?? [])
-    .filter((r: any) => r.latitude != null && r.longitude != null)
+  const exactKeys = new Set(exactRows.map(listingKey));
+  const nearRows = dedupe(box ?? []).filter(
+    (r: any) =>
+      r.latitude != null &&
+      r.longitude != null &&
+      !exactKeys.has(listingKey(r)) &&
+      miles(lat, lng, r.latitude, r.longitude) <= NEARBY_RADIUS_MI,
+  );
+  const inRadius = nearRows
     .map((r: any) => ({ ...toListing(r), mi: miles(lat, lng, r.latitude, r.longitude) }))
-    .filter((l: InventoryListing) => !seen.has(l.id) && (l.mi as number) <= NEARBY_RADIUS_MI)
-    .sort((a: InventoryListing, b: InventoryListing) => (a.mi as number) - (b.mi as number))
-    .slice(0, Math.max(0, MAX_TOTAL - exact.length));
+    .sort((a: InventoryListing, b: InventoryListing) => (a.mi as number) - (b.mi as number));
+  const nearby = inRadius.slice(0, Math.max(0, MAX_TOTAL - exact.length));
 
   const matchReason: CityInventory["matchReason"] =
     exact.length && nearby.length
@@ -186,7 +283,18 @@ export async function loadCityInventory(input: {
           ? "nearby_only"
           : "none";
 
-  return { exact, nearby, matchReason, radiusMi: nearby.length ? NEARBY_RADIUS_MI : null };
+  return {
+    exact,
+    nearby,
+    matchReason,
+    radiusMi: nearby.length ? NEARBY_RADIUS_MI : null,
+    exactTotal,
+    nearbyTotal: inRadius.length,
+    readFailed: false,
+    nearbyChecked: true,
+    syncedAt: latest([...exactRows, ...nearRows]),
+    centre,
+  };
 }
 
 export const getCityInventory = createServerFn({ method: "GET" })
@@ -204,6 +312,6 @@ export const getCityInventory = createServerFn({ method: "GET" })
     try {
       return await loadCityInventory(data);
     } catch {
-      return EMPTY_INVENTORY;
+      return FAILED_INVENTORY;
     }
   });

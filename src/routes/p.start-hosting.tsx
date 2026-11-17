@@ -112,7 +112,7 @@ const PROPS: Omit<ToolPlaceholderProps, "breadcrumbItems"> = {
   faqs: FAQS,
   primaryCta: {
     label: "List my pool — it's free",
-    href: "/l/draft/00000000-0000-0000-0000-000000000000/new/details",
+    href: "/wizard/",
   },
   secondaryCta: { label: "See the full host guide", href: "/p/hosting" },
 };

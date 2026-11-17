@@ -19,6 +19,7 @@ import { getCityBySlug, type CityRow } from "@/server/cities.functions";
 import {
   getCityInventory,
   EMPTY_INVENTORY,
+  FAILED_INVENTORY,
   type CityInventory,
 } from "@/server/city-inventory.functions";
 import { getCitySources, type CitySource } from "@/server/city-sources.functions";
@@ -62,8 +63,14 @@ import { faqsForContentPage, faqPageJsonLd } from "@/lib/page-faqs";
 import { heroPreloadLinks } from "@/lib/hero-image";
 import { localBusinessForContentPage } from "@/lib/page-localbusiness";
 import { hostAcqSchemasForPage } from "@/lib/host-acq-schemas";
-import { normalizeTitleVariant, getVariantCopy } from "@/lib/host-acq-variants";
 import { parseCitySlug } from "@/lib/city-slug";
+import {
+  slugIdentity,
+  placeForPage,
+  cityPageCopy,
+  cityMetaDescription,
+  inventorySummaryOf,
+} from "@/lib/city-intent";
 import { getAcademyHub, type AcademyHubData } from "@/server/academy-hub.functions";
 import { AcademyHubTemplate } from "@/components/templates/academy-hub";
 import { ACADEMY_HUB_SLUGS, academyHubPath } from "@/lib/course-urls";
@@ -185,6 +192,18 @@ export const Route = createFileRoute("/p/$slug")({
           ? "swim-instructor-pool-rental-"
           : undefined;
     const citySlug = cityForContentPage(page.template_type, page.slug);
+    // host_acq_city pages resolve their cities row from the intent module's
+    // lookup slug: state-suffixed whenever the slug or title names a state, so
+    // renter pages (/p/san-diego-ca, /p/chapel-hill) get a centroid for the
+    // nearby-inventory tier and a bare "jackson" is never matched to the wrong
+    // state. For become-a-…host-<city>-<st> slugs it equals citySlug.
+    const isHostAcqCity = page.template_type === "host_acq_city";
+    const hostAcqIdentity = isHostAcqCity ? slugIdentity(page) : null;
+    const cityLookupSlug = hostAcqIdentity ? hostAcqIdentity.lookupSlug || null : citySlug;
+    // The bare "<city>" cities row, read for its coordinates only (see
+    // SlugIdentity.centroidSlug): "houston-tx" sits 21 miles from downtown,
+    // "houston" is the city centre.
+    const centroidSlug = hostAcqIdentity?.centroidSlug ?? null;
     const academyLang = academyLangForSlug(page.slug);
     const pageForSibling = page as { hreflang_group?: string | null };
     const relatedSlugs = (page as { related_slugs?: string[] | null }).related_slugs;
@@ -196,7 +215,7 @@ export const Route = createFileRoute("/p/$slug")({
     const launchMarket =
       page.template_type === "country_launch" ? countryLaunchMarket(page.slug, page.locale) : null;
 
-    const [nearbyCities, city, citySources, academyHub, hreflangRes, relatedRes, origin, launchGuides] =
+    const [nearbyCities, city, citySources, academyHub, hreflangRes, relatedRes, origin, launchGuides, centroidRow] =
       await Promise.all([
         isCityTemplate
           ? safe(
@@ -211,8 +230,8 @@ export const Route = createFileRoute("/p/$slug")({
               [] as NearbyCity[],
             )
           : Promise.resolve([] as NearbyCity[]),
-        isCityTemplate && citySlug
-          ? safe(getCityBySlug({ data: { slug: citySlug } }), null as CityRow | null)
+        isCityTemplate && cityLookupSlug
+          ? safe(getCityBySlug({ data: { slug: cityLookupSlug } }), null as CityRow | null)
           : Promise.resolve(null as CityRow | null),
         isCityTemplate && citySlug && page.template_type === "host_acq_city"
           ? safe(getCitySources({ data: { slug: citySlug } }), [] as CitySource[])
@@ -241,6 +260,9 @@ export const Route = createFileRoute("/p/$slug")({
               [] as CountryLaunchGuide[],
             )
           : Promise.resolve([] as CountryLaunchGuide[]),
+        centroidSlug
+          ? safe(getCityBySlug({ data: { slug: centroidSlug } }), null as CityRow | null)
+          : Promise.resolve(null as CityRow | null),
       ]);
 
     // City identity for the inventory lookup. Mirrors how the template derives
@@ -249,11 +271,23 @@ export const Route = createFileRoute("/p/$slug")({
     // carries city_id or state_code (verified 2026-09-18: 0 of 4,008).
     const invCitySlug = citySlug ?? page.slug;
     const parsedCity = invCitySlug ? parseCitySlug(invCitySlug) : null;
-    const invCityName = city?.name || parsedCity?.city || null;
-    const invStateCode =
-      (city?.state_code || parsedCity?.stateCode || "").toUpperCase() || null;
+    const hostAcqPlace = isHostAcqCity ? placeForPage(page, city) : null;
+    const invCityName = hostAcqPlace ? hostAcqPlace.cityName : city?.name || parsedCity?.city || null;
+    const invStateCode = hostAcqPlace
+      ? hostAcqPlace.stateCode
+      : (city?.state_code || parsedCity?.stateCode || "").toUpperCase() || null;
     const num = (v: unknown): number | null =>
       v == null || v === "" || Number.isNaN(Number(v)) ? null : Number(v);
+    // Inventory centre: the bare cities row when it is the same state and has
+    // coordinates, otherwise the resolved row.
+    const centre =
+      centroidRow &&
+      hostAcqPlace?.stateCode &&
+      (centroidRow.state_code || "").toUpperCase() === hostAcqPlace.stateCode &&
+      num(centroidRow.latitude) != null &&
+      num(centroidRow.longitude) != null
+        ? centroidRow
+        : city;
 
     const [linkTargets, cityInventory] = await Promise.all([
       safe(
@@ -271,11 +305,11 @@ export const Route = createFileRoute("/p/$slug")({
               data: {
                 cityName: invCityName,
                 stateCode: invStateCode,
-                lat: num((city as { latitude?: unknown } | null)?.latitude),
-                lng: num((city as { longitude?: unknown } | null)?.longitude),
+                lat: num((centre as { latitude?: unknown } | null)?.latitude),
+                lng: num((centre as { longitude?: unknown } | null)?.longitude),
               },
             }),
-            EMPTY_INVENTORY as CityInventory,
+            FAILED_INVENTORY as CityInventory,
           )
         : Promise.resolve(EMPTY_INVENTORY as CityInventory),
     ]);
@@ -309,18 +343,28 @@ export const Route = createFileRoute("/p/$slug")({
     let title = p.seo_title || `${titleBase} | ${SITE_NAME}`;
     let description = (p.seo_description || p.description || titleBase || "").slice(0, 160);
 
-    // A/B/C/D title-test override (host_acq_city only; NULL = control = no change)
-    const variant = p.template_type === "host_acq_city"
-      ? normalizeTitleVariant((p as { title_variant?: string | null }).title_variant)
-      : null;
-    if (variant) {
-      const citySlug = cityForContentPage(p.template_type, p.slug);
-      const parsed = citySlug ? parseCitySlug(citySlug) : null;
-      const cityName = loaderData.city?.name || parsed?.city || "your city";
-      const stateCode = (loaderData.city?.state_code || parsed?.stateCode || "").toUpperCase();
-      const copy = getVariantCopy(variant, cityName, stateCode);
-      title = copy.title;
-      description = copy.metaDescription;
+    // host_acq_city: <title>, H1 and meta description come from
+    // src/lib/city-intent.ts, the same functions the template uses. HOST keeps
+    // its stored seo_title (the title_variant test's control arm) unless it
+    // states an earnings figure; a variant row keeps exactly its variant copy.
+    let variant: string | null = null;
+    let cityCopy: ReturnType<typeof cityPageCopy> | null = null;
+    if (p.template_type === "host_acq_city") {
+      const place = placeForPage(p, loaderData.city ?? null);
+      cityCopy = cityPageCopy(
+        p as { slug: string | null; title?: string | null; seo_title?: string | null; title_variant?: string | null },
+        place,
+        loaderData.city ?? null,
+      );
+      title = cityCopy.title;
+      variant = cityCopy.variant;
+      const inv = (loaderData.cityInventory ?? EMPTY_INVENTORY) as CityInventory;
+      description = cityMetaDescription(
+        p as { seo_description?: string | null; description?: string | null; locale?: string | null; language?: string | null },
+        place,
+        cityCopy,
+        inventorySummaryOf(inv),
+      );
     }
 
     // Hreflang — only between true equivalents, every href a canonical URL
@@ -356,7 +400,10 @@ export const Route = createFileRoute("/p/$slug")({
       path,
       canonicalPath,
       canonicalUrl: pAny.canonical_override?.trim() || undefined,
-      ogTitle: pAny.og_title?.trim() || undefined,
+      // host_acq_city: og:title is the <title>. Stored og_titles there carry
+      // unsourced earnings ranges ("earn $3K-$10K/month", 9 rows) and disagree
+      // with the H1/title the page now shows.
+      ogTitle: cityCopy ? title : pAny.og_title?.trim() || undefined,
       ogDescription: pAny.og_description?.trim() || undefined,
       image: p.cover_image_url || p.hero_image_url || undefined,
       type: isArticleType(p.template_type) || academyLang ? "article" : "website",
@@ -405,7 +452,9 @@ export const Route = createFileRoute("/p/$slug")({
       }
       crumbs.push({ name: titleBase || path, path });
       scripts.push(ldJsonScript(breadcrumbJsonLd(crumbs)));
-    } else {
+    } else if (!cityCopy) {
+      // host_acq_city emits its one BreadcrumbList from the template
+      // (BreadcrumbsWithSchema), matching the visible trail.
       scripts.push(
         ldJsonScript(
           breadcrumbJsonLd([
@@ -460,9 +509,15 @@ export const Route = createFileRoute("/p/$slug")({
     }
 
     // Host-acquisition structural signals (WebPage+audience, ProfessionalService,
-    // Offer, HowTo) — host-acq templates only. Renter-facing pages skip these.
-    for (const block of hostAcqSchemasForPage(p, loaderData.city ?? null)) {
-      scripts.push(ldJsonScript(block));
+    // Offer, HowTo) — host-acq templates only. Renter-facing pages skip these,
+    // including renter-intent host_acq_city rows (/p/<city>-<st>).
+    if (cityCopy?.intent !== "renter") {
+      // WebPage.name is the page's <title>, not a stored seo_title that may
+      // state an earnings figure.
+      const schemaPage = cityCopy ? { ...p, seo_title: title } : p;
+      for (const block of hostAcqSchemasForPage(schemaPage, loaderData.city ?? null)) {
+        scripts.push(ldJsonScript(block));
+      }
     }
 
     // State-scoped Service JSON-LD — advocacy state pages

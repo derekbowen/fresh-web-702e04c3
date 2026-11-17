@@ -13,6 +13,7 @@ import { parseCitySlug } from "@/lib/city-slug";
 import { parseActivityCitySlug } from "@/lib/activity-city";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
+import { searchHrefForPlace } from "@/lib/search-links";
 
 /**
  * Activity-modifier city pages: /p/{activity-prefix}{city-state}
@@ -47,7 +48,7 @@ export function ActivityCityTemplate({
     page.seo_description ??
     `Book a private backyard pool in ${where} by the hour.`;
   const ctaLabel = activity?.ctaLabel(cityName) ?? `Find a ${cityName} pool`;
-  const searchHref = `/s?address=${encodeURIComponent(`${cityName}, ${stateCode}`)}`;
+  const searchHref = searchHrefForPlace(city || null, stateCode);
   const breadcrumbActivityLabel = activity?.label ?? "Pool rentals";
 
   return (

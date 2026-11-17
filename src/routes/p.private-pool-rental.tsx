@@ -7,7 +7,7 @@ const PATH = "/p/private-pool-rental";
 const TITLE = "Private Pool Rental by the Hour | Pool Rental Near Me";
 const DESCRIPTION =
   "Book a private pool rental by the hour. Heated pools, hot tubs, saltwater backyards.";
-const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
+const LIST_HREF = "/wizard/";
 
 const CITY_LINKS = [
   { name: "Los Angeles, CA", slug: "los-angeles-ca" },

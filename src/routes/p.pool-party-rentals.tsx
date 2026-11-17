@@ -7,7 +7,7 @@ const PATH = "/p/pool-party-rentals";
 const TITLE = "Pool Party Rentals by the Hour | Pool Rental Near Me";
 const DESCRIPTION =
   "Book a private backyard for your birthday, graduation, baby shower, or company offsite.";
-const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
+const LIST_HREF = "/wizard/";
 
 const CITY_LINKS = [
   { name: "Los Angeles, CA", slug: "los-angeles-ca" },

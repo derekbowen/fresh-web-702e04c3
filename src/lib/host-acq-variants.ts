@@ -9,7 +9,7 @@
  * paragraph so Google sees a consistent signal per variant. A hidden
  * <meta name="title_test_variant"> tag goes out only on variant pages.
  */
-import { stateName as fullStateName } from "@/lib/states";
+import { stateName as fullStateName } from "./states.ts";
 
 export type TitleVariant = "A" | "B" | "C" | "D";
 

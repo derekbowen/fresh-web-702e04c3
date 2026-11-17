@@ -381,7 +381,7 @@ function MidContentCta() {
       </p>
       <div className="mt-4">
         <a
-          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          href="/wizard/"
           className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
         >
           List your pool →
@@ -406,7 +406,7 @@ function PrnmCta() {
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <a
-          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          href="/wizard/"
           className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground hover:opacity-90"
         >
           List your pool →
