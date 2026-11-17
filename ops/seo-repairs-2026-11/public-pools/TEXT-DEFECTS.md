@@ -9,11 +9,11 @@
 >
 > Machine-readable rules: [`rules.json`](rules.json) (generated from
 > [`text-defects/text_defect_rules.py`](text-defects/text_defect_rules.py), the single source of truth).
-> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (73 since the 2026-11-17
+> Hand-made examples: [`text-defects/examples.json`](text-defects/examples.json) (79 since the second 2026-11-17
 > revision, all passing `python3 -I text_defect_rules.py test`).
 >
-> **Revised 2026-11-16 after a content review** (section 9) and **2026-11-17 after the Codex review of PR #9**
-> (section 10). The rules were narrowed; sections 2-4 keep the figures measured before the 2026-11-16 revision,
+> **Revised 2026-11-16 after a content review** (section 9) and **twice on 2026-11-17** (the Codex review of
+> PR #9 and an independent check of the clause guard; section 10). The rules were narrowed; sections 2-4 keep the figures measured before the 2026-11-16 revision,
 > section 9 gives the current ones (updated for section 10). Reads still owed to production: [`PENDING-READS.md`](PENDING-READS.md).
 
 ## 0. Sources and their dates
@@ -545,9 +545,9 @@ Before:
 > If you're looking for an outdoor pool in Livermore, the Robert Livermore Community Center often comes up. They've got a competition pool, which is good if you're serious about your laps. My stats show they also have water slides and a kids pool, so it's not just for training. With a 4.2 out of 5 stars from over a hundred Google reviews, most people seem to like it. Day passes are pretty reasonable too, five bucks for adults and three for youth. They even offer swim lessons. I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in. They've got locker rooms, making it convenient.
 
 After:
-> (unchanged)  (skip: `next_sentence_refers_back`)
+> If you're looking for an outdoor pool in Livermore, the Robert Livermore Community Center often comes up. They've got a competition pool, which is good if you're serious about your laps. My stats show they also have water slides and a kids pool, so it's not just for training. With a 4.2 out of 5 stars from over a hundred Google reviews, most people seem to like it. Day passes are pretty reasonable too, five bucks for adults and three for youth. They even offer swim lessons. I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in. They've got locker rooms, making it convenient.
 
-By hand the opinion could go, but the next kept sentence starts with 'They've' (points back), so the rule must SKIP the row and report it.
+Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: 'By hand the opinion could go, but the next kept sentence starts with 'They've' (points back), so the rule must SKIP the row and report it.' The opinion 'I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in.' now has a second clause (', or if you ...') and is kept, so no sentence is deletable and there is nothing to skip: the field is unchanged.
 
 **R2.7** pp_pools d80140 (Conroe Family Aquatic Center) (pp_pools / pp_cities read-only extract 2026-11-15 (r35)).
 
@@ -725,9 +725,9 @@ Before:
 > Summer in this part of Nebraska gets hot, real hot. When the sun bakes down, people here are looking for water, and pools are a big part of that. Our pool season runs pretty standard, usually Memorial Day to Labor Day for most outdoor spots. We see a lot of families at the public pools. Folks bring their kids to cool off and splash around. For someone new to Omaha, finding a pool is pretty straightforward. The city runs several good ones. If you're looking for something more private, or just a different vibe than a crowded public spot, that's where PoolRentalNearMe.com comes in. We've got options for booking backyard pools by the hour, which can be a game changer.
 
 After:
-> Summer in this part of Nebraska gets hot, real hot. Our pool season runs pretty standard, usually Memorial Day to Labor Day for most outdoor spots. Folks bring their kids to cool off and splash around. For someone new to Omaha, finding a pool is pretty straightforward. The city runs several good ones. If you're looking for something more private, or just a different vibe than a crowded public spot, that's where PoolRentalNearMe.com comes in. We've got options for booking backyard pools by the hour, which can be a game changer.
+> (unchanged)  (skip: `joined_clause_kept`)
 
-Two local-voice opinions deleted. 'Our pool season runs ... Memorial Day to Labor Day' stays (schedule fact); 'We've got options for booking backyard pools ..., which ...' stays (second clause; listed as out of scope).
+Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: two local-voice opinions deleted. 'When the sun bakes down, people here are looking for water, and pools are a big part of that.' now has a joined second clause (', and pools are ...') and is kept; 'We see a lot of families at the public pools.' is still deletable, but a field in which the joined-clause guard keeps a sentence is left as it is (ALL:joined_clause_kept), so the intro is unchanged.
 
 **R4.3** pp_cities 38ac20 (Richmond) ai_intro (pp_pools / pp_cities read-only extract 2026-11-15 (r33)).
 
@@ -813,9 +813,9 @@ Before:
 > Miami. Even in January, you can pretty much count on being able to get in the water. We locals spend a lot of time by the water, and pools are a big part of that. It's year-round pool weather here. Our public pools are usually outdoors, so you get that sunny, open-air swim whenever you want. You'll find a mix of serious lap swimmers, families, and people just cooling off. If you're new to the area, the best way to find a pool is to check out our online directory. You can filter by what you need, like specific facilities or hours. It makes it easy to see what's close and open.
 
 After:
-> (unchanged)  (skip: `next_sentence_refers_back`)
+> Miami. Even in January, you can pretty much count on being able to get in the water. We locals spend a lot of time by the water, and pools are a big part of that. It's year-round pool weather here. Our public pools are usually outdoors, so you get that sunny, open-air swim whenever you want. You'll find a mix of serious lap swimmers, families, and people just cooling off. If you're new to the area, the best way to find a pool is to check out our online directory. You can filter by what you need, like specific facilities or hours. It makes it easy to see what's close and open.
 
-By hand 'We locals spend a lot of time by the water, and pools are a big part of that.' is filler, but the next sentence 'It's year-round pool weather here.' starts with It's: row skipped and reported.
+Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: by hand 'We locals spend a lot of time by the water, and pools are a big part of that.' is filler, but the next sentence 'It's year-round pool weather here.' starts with It's: row skipped and reported. The sentence now has a joined second clause (', and pools are ...') and is kept, so nothing is deletable and nothing is skipped: the intro is unchanged.
 
 ### R5
 
@@ -833,7 +833,7 @@ Hand verdict: **delete_entry**. Every sentence is a narrator data-gap or a refer
 >
 > A: The information I have doesn't specify accessibility features. I'd recommend contacting the pool directly or checking the City of Sparks Parks and Recreation website for details on ramps, lifts, or other accommodations.
 
-Hand verdict: **delete_entry**. Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes.
+Hand verdict: **keep_entry**. Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: 'Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes.' The referral '... for details on ramps, lifts, or other accommodations.' contains ', or' (here a list comma, which the guard does not tell apart from a joined clause): it is kept, so the answer is not wholly non-informative and the entry stays. A cost of erring on the side of keeping.
 
 **R5.3** live pool page /public-pools/minnesota/lakeville/lakeville-municipal-pool/ (live page fetched 2026-11-16T19:47:01Z (rendered pp_pools.ai_faqs entry; also in FAQPage JSON-LD)).
 
@@ -957,9 +957,9 @@ Before:
 > Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off. The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs. We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.
 
 After:
-> The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs.
+> Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off. The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs. We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.
 
-Header 2; prose one: R6 deletes the count sentence. The R4 pass then deletes the opening local-voice sentence ('folks here'); the new first sentence 'The heat usually sticks around from May ...' stands alone.
+Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: header 2, prose one: R6 deleted the count sentence and R4 the opening local-voice sentence. The count sentence 'We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.' now has a joined second clause after the count, so R6 lists it as review_mixed (count-statements.csv) instead of deleting it; 'Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off.' has one too and is kept. The intro is unchanged.
 
 **R6.6** live city page /public-pools/new-york/brooklyn/ (ai_intro) (live page fetched 2026-11-16T19:42:56Z (rendered pp_cities.ai_intro)).
  Page count: 28.
@@ -1044,24 +1044,28 @@ deletes less); the list of changes and the case behind each is RUNBOOK.md sectio
 all follow. Section 8's line "No apply script is part of this task" is superseded: the guarded, logged and
 reversible apply is `apply.sql` / `rollback.sql` (RUNBOOK.md); nothing has been applied.
 
-**Revised counts (S2, the 2,476 live pages of 2026-11-16, rules module alone, current rules including the
-2026-11-17 change of section 10**, i.e. without the apply's field
+**Revised counts (S2, the 2,476 live pages of 2026-11-16, rules module alone, current rules including both
+2026-11-17 changes of section 10**, i.e. without the apply's field
 checks A1-A5; `live-2026-11-16/live-summary.json`; the cleaner's own figures, with A1-A5, are in RUNBOOK.md
 section 4):
 
 | Field | Fields changed | Sentences deleted | Before the revision |
 |---|---|---|---|
-| Pool descriptions (R2) | 212 | 224 | 229 / 243 |
-| Pool FAQ answers (R3) | 610 | 754 | 655 / 810 |
-| City intros (R4) | 109 | 131 | 140 / 168 |
-| City FAQ answers (R4) | 29 | 34 | 32 / 38 |
-| Wholly non-informative pool FAQ entries (R5) | 51 rows | 52 entries | 58 / 59 |
-| Contradicted count sentences deleted (R6) | 3 | 3 | 13 |
+| Pool descriptions (R2) | 204 | 214 | 229 / 243 |
+| Pool FAQ answers (R3) | 577 | 714 | 655 / 810 |
+| City intros (R4) | 81 | 90 | 140 / 168 |
+| City FAQ answers (R4) | 28 | 33 | 32 / 38 |
+| Wholly non-informative pool FAQ entries (R5) | 45 rows | 46 entries | 58 / 59 |
+| Contradicted count sentences deleted (R6) | 2 | 2 | 13 |
 
-**R6 categories** (65 count statements on the 476 city pages, `live-2026-11-16/count-statements.csv`): auto 7
-(18 before; 8 after the 2026-11-16 revision), review_mixed 23 (12 before; 22 after the 2026-11-16 revision), review_scope 9, review_subtype 2, hold_duplicate 1, vague 23. The hand
+Fields left unchanged by the joined-clause freeze of section 10 (`ALL:joined_clause_kept`, rules module alone):
+5 pool descriptions, 25 pool FAQ arrays, 14 city intros.
+
+**R6 categories** (65 count statements on the 476 city pages, `live-2026-11-16/count-statements.csv`): auto 6
+(18 before; 8 after the 2026-11-16 revision, 7 after the first 2026-11-17 one), review_mixed 24 (12 before; 22
+after the 2026-11-16 revision, 23 after the first 2026-11-17 one), review_scope 9, review_subtype 2, hold_duplicate 1, vague 23. The hand
 verdicts of section 3 are unchanged; only the automatic category narrowed. These 10 statements moved from `auto`
-to `review_mixed` on 2026-11-16 (Aurora CO followed on 2026-11-17, section 10) and now need the owner's decision (city page, page count, sentence as printed):
+to `review_mixed` on 2026-11-16 (Aurora CO and Mount Pleasant SC followed on 2026-11-17, section 10) and now need the owner's decision (city page, page count, sentence as printed):
 
 | City page | Pool count on the page | Statement (field) |
 |---|---|---|
@@ -1076,16 +1080,16 @@ to `review_mixed` on 2026-11-16 (Aurora CO followed on 2026-11-17, section 10) a
 | texas/houston | 53 | "We've got a decent number of places listed for Houston, five public pools right in our directory, plus lots of backyard pools available by the hour." (intro) |
 | washington/bellevue | 6 | "We list four public pools ourselves, which is pretty good for a city this size." (intro) |
 
-The 7 statements still `auto`, and what the cleaner does with them on the same pages: deleted in Chicago
-(intro) and Mount Pleasant SC (intro); skipped and reported in Milwaukee and Mesa (the sentence
+The 6 statements still `auto`, and what the cleaner does with them on the same pages: deleted in Chicago
+(intro); skipped and reported in Milwaukee and Mesa (the sentence
 names a pool: "Pulaski and Schulz", "(Skyline Aquatic Center)"), Lakewood CO and Torrance (the next sentence
 refers back) and Chicago's FAQ (A5, "Three of those ..."). The rules module alone (table above) also deletes the
 Chicago FAQ sentence; only the cleaner's A5 check stops it.
 
-**Examples.** 73 (R1 10, R2 13, R3 13, R4 14, R5 11, R6 12): the 60 of section 7, 5 R6 examples revised to
+**Examples.** 79 (R1 10, R2 15, R3 14, R4 17, R5 11, R6 12): the 60 of section 7, 5 R6 examples revised to
 the narrower rule, and 10 regression examples taken from the review cases (each fails on the old rules and
-passes on the new), plus the 2026-11-17 changes of section 10 (Murray R4 and Aurora R6 revised, 3 regression
-examples added). All pass.
+passes on the new), plus the 2026-11-17 changes of section 10 (first round: Murray R4 and Aurora R6 revised, 3
+regression examples added; second round: 5 examples revised, 6 regression examples added). All pass.
 
 **Founder voice left in place.** The cleaner never rewrites, so sentences in which an invented "I" speaks as
 the founder or the company stay wherever a field guard stops the deletion or the sentence carries fact
@@ -1145,3 +1149,100 @@ page text of 2026-11-16: Peachtree City Community Pool `ai_faqs[0]` (", so you'd
 Beckley-Saner Recreation Center `ai_faqs[2]` (", so you should be fine when you visit", R3) and the Palm Coast
 city intro (", so you'll find plenty of kids splashing around", R4). The 73 examples pass on the current rules;
 the 5 new or revised ones fail on the previous rules.
+
+### 10b. Second round of 2026-11-17 (independent check of the clause guard)
+
+**Finding.** After the first round, the same kind of fact loss was still open. Deletable, and in some live fields
+deleted: "so you'd ..." without a comma; ", plus you'd"; ", or you'd / you can" (Sigma Swimming, Fort Worth,
+`ai_faqs[2]`: "I'd suggest checking the Fort Worth Parks and Recreation website, or you can use our site to look
+for more pools in the area."); ", and so you'd"; and a joined clause with another subject that carries a fact:
+Spring TX intro "We get long, hot summers, so pool season pretty much runs from late spring right into early
+fall.", Columbia MD intro "Most people here are used to the community association way of doing things, so a lot
+of the pools are tied into that.", Pecos Park Swimming Pool (Phoenix) description "It's a public pool, run by the
+city, and from what I've seen, ...", Marion Pool (Cedar Rapids) description "It's a city pool, from what I
+gather, so ...".
+
+**Change** (`text-defects/text_defect_rules.py`; rules.json, text-defects-measure.sql, the cleaner SQL and the
+reference follow). `CLAUSE` = the previous pattern (now named `CLAUSE_CORE`) | `CLAUSE_JOIN`, where
+`CLAUSE_JOIN` (case-insensitive) is
+
+    ,WS*(so|and|or|plus|but|then|yet)(?![a-z])  |  (?<![a-z])soWS+(you|they|it|that|this|there|we|i)(?![a-z])
+
+(WS = the explicit whitespace class of section 9). The first part is a comma, optional whitespace and a join word
+(", and so" starts with "and"), whatever the subject after it; the second is the word "so" followed by a subject
+pronoun without a comma (you'd, you'll, you're, you've, it's and I'd follow from "not followed by a letter";
+"so your" and "soon you" do not match). A lead-in comma with no join word ("Honestly, I don't have that.",
+"From what I can tell, I don't have that information.") does not match and is still judged by `COMMA_SPLICE` /
+`SPLICE_OK` exactly as before. A matching narrator sentence is kept with reason `second_clause`; as before,
+`CLAUSE` is also the second-clause test of the generic referral sentences of R5 and of the rest of an R6 count
+sentence. The pattern does not tell a list comma ("ramps, lifts, or other accommodations") from a joined clause
+and errs on the side of keeping. `text_defect_rules.py test` also runs 23 shape checks of `CLAUSE_JOIN` (15 that
+must match, 8 that must not).
+
+**Freeze of the column (`ALL:joined_clause_kept`).** Keeping a sentence can lift a field-level skip that the
+sentence used to cause, and the field's other sentences would then be deleted for the first time. Allen TX: "It
+gets hot here in North Texas, so a good pool is a necessity for a big chunk of the year." was deletable and named
+an entity, so the whole intro was skipped (`deleted_sentence_names_an_entity`); kept, the skip goes away and
+"Most of the pools here in Allen cater to families looking to cool off and have some fun." and "We've got a
+decent amount of aquatic centers that are pretty well-maintained." would be deleted. Measured on S2 without the
+freeze, 6 fields would have lost a sentence they keep today (Allen TX and Roseville CA intros; Dillingham Pool
+Honolulu description; Sparks Community Pool, Spring Hill Aquatic Center and McKinney Family Aquatic Center FAQ
+answers). So a column (a description, an intro, or a whole `ai_faqs` array, R5 included) in which
+`CLAUSE_JOIN` changes the decision for any sentence (narrator sentence deletable with `CLAUSE_CORE` but not with
+`CLAUSE`, generic referral non-informative with `CLAUSE_CORE` but not with `CLAUSE`, R6 count sentence `auto`
+with `CLAUSE_CORE` but not with `CLAUSE`) is left exactly as it is whenever the rules would otherwise change it,
+and reported as `ALL:joined_clause_kept`. Every other column is planned with decisions identical to the first
+round. The freeze is in the rules module (`joined_keep`, `column_joined_keep`), the reference and the SQL
+template (`clause_core`, `clause_join`, `narr_del_core`, `gen_ok_core`, `r6cat_core`, `jkc`, `plan1`).
+
+**Only less change.** Checked page by page on S2 (rules module alone, `live-planned-changes.jsonl` before and
+after): 0 sentences or FAQ entries are deleted now that were not deleted before; 99 that were deleted before are
+not (76 fields): 52 sentences kept by the pattern itself (R2 5, R3 18, R4 intro 27, R4 FAQ 1, R6 1), 6 R5
+entries (5 contain a joined clause, 1 is in a frozen array) and 41 sentences in frozen columns (R2 5, R3 22, R4
+14).
+
+**Effect on S2** (rules module alone, `live-2026-11-16/`; previous figure -> current):
+
+| | After the first 2026-11-17 round | Now |
+|---|---|---|
+| R2 pool descriptions: fields / sentences | 212 / 224 | 204 / 214 |
+| R3 pool FAQ answers: fields / sentences | 610 / 754 | 577 / 714 |
+| R4 city intros: fields / sentences | 109 / 131 | 81 / 90 |
+| R4 city FAQ answers: fields / sentences | 29 / 34 | 28 / 33 |
+| R5 wholly non-informative pool FAQ entries: rows / entries | 51 / 52 | 45 / 46 |
+| R6 contradicted count sentences deleted: fields / sentences | 3 / 3 | 2 / 2 |
+| R6 categories: auto / review_mixed | 7 / 23 | 6 / 24 (Mount Pleasant SC, "We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.", page count 2) |
+| Columns frozen `ALL:joined_clause_kept`: pool descriptions / pool FAQ arrays / city intros | - | 5 / 25 / 14 |
+| Kept narrator sentences with reason `second_clause`: pool descriptions (opinion / advice), pool FAQ (gap / advice / opinion), city intros, city FAQ | 622 / 41, 232 / 40 / 334, 216, 95 | 672 / 42, 240 / 67 / 343, 299, 98 |
+
+Cleaner on the surrogate (with A1-A5, `dry-run-SURROGATE-live-2026-11-16.txt`, RUNBOOK.md section 4): 2,640 ->
+2,568 field changes, 626 -> 641 skipped fields (43 of them `ALL:joined_clause_kept`: 14 city intros, 4 pool
+descriptions, 25 pool FAQ arrays), 28 founder-voice sentences left in place (unchanged).
+
+**Sentences and fields newly kept (examples, S2).** Kept by the pattern: "We get good, hot summers, so a pool is
+a real relief." (Fishers IN), "Here in Norfolk, summers can get pretty sticky, so having a good pool spot is
+key." (Norfolk VA), "We don't have many natural swimming holes, so public pools are the main game." (Richmond
+CA, FAQ), "I'd check the Houston Parks website if you want more details, or just call them directly." (Mac Gregor
+Swimming Pool, Houston), "I'd recommend looking at the Fort Wayne Parks and Recreation site, or calling the pool
+directly, to get the most accurate pricing." (McMillen Pool), and R5 entries such as The Chelsea Pool's admission
+answer ("Admission prices aren't something I track, as they can vary for residents versus non-residents, and for
+different age groups. ..."). Kept only because their column is frozen: "We see a lot of families at the public
+pools." (Omaha), "The information I have doesn't specifically mention parking." (Fayetteville Aquatic Center),
+"I'd say it's worth checking out if you're in the area and looking for a straightforward swim." (Westminster
+Community Pool).
+
+**What this keeps that a person might delete.** The freeze keeps every other deletable sentence of a frozen
+column (41 sentences on S2); list commas before "or" / "and" keep referrals and gap sentences that carry no
+fact (Sparks Community Pool's accessibility entry is no longer deleted by R5); and a sentence that opens with "So
+you'll ..." matches the second part of the pattern. All of it stays listed (skips in before-after-sample.md and
+dry-run.sql section 2; kept sentences as `second_clause` in `live-summary.json`), for the owner to remove by
+hand if wanted.
+
+**Examples.** 6 must-keep regression examples added from the live page text of 2026-11-16: Pecos Park Swimming
+Pool and Marion Pool descriptions (R2; Marion is `ALL:joined_clause_kept`), Sigma Swimming `ai_faqs[2]` (R3),
+and the Spring TX, Columbia MD and Allen TX intros (R4; Allen is `ALL:joined_clause_kept`). 5 examples revised:
+Robert Livermore Community Center (R2.6) and Miami (R4.10) are no longer skips (the sentence that caused the
+skip is now kept, so the field is unchanged), Omaha (R4.2) is now `ALL:joined_clause_kept`, Sparks Community Pool
+(R5.2) is now keep_entry, and Mount Pleasant SC (R6.5) is unchanged (its count sentence is `review_mixed`). The 79
+examples pass on the current rules; 9 of the 11 new or revised ones fail on the previous rules (the other 2,
+Livermore and Miami, had the same text outcome before, as a skip).

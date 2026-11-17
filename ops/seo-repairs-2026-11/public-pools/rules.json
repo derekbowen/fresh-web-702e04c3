@@ -99,12 +99,14 @@
         },
         {
           "id": "second_clause",
-          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
           "also": {
             "comma_splice": ",[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|[Ww]e've|[Ww]e’ve)(?![A-Za-z])",
             "splice_ok": "(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(i|i'd|i’d|i'm|i’m|i've|i’ve|i'll|my|we)(?![a-z])[^,]*$"
           },
-          "skip": "sentence is kept: a second clause usually carries an assertion"
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "joined_clause_pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "skip": "sentence is kept: a second clause usually carries an assertion (pattern = core_pattern | joined_clause_pattern; the joined-clause part was added 2026-11-17)"
         },
         {
           "id": "answer_polarity",
@@ -134,6 +136,12 @@
         {
           "id": "field_would_be_empty",
           "skip": "row (for this column) is skipped and reported if every sentence of a field would be deleted"
+        },
+        {
+          "id": "joined_clause_kept",
+          "pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "skip": "the whole column (a description, an intro, or the whole ai_faqs array, R5 included) is left unchanged and reported as ALL:joined_clause_kept if the rules would change it and any of its sentences is decided differently because of joined_clause_pattern: a narrator sentence deletable with core_pattern but kept with the full pattern, a generic referral non-informative with core_pattern but not with the full pattern, or an R6 count sentence 'auto' with core_pattern but not with the full pattern. Keeping a joined-clause sentence must never unlock another deletion in its field, so every other column is planned exactly as with core_pattern (added 2026-11-17)"
         }
       ]
     },
@@ -181,12 +189,14 @@
         },
         {
           "id": "second_clause",
-          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
           "also": {
             "comma_splice": ",[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|[Ww]e've|[Ww]e’ve)(?![A-Za-z])",
             "splice_ok": "(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(i|i'd|i’d|i'm|i’m|i've|i’ve|i'll|my|we)(?![a-z])[^,]*$"
           },
-          "skip": "sentence is kept: a second clause usually carries an assertion"
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "joined_clause_pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "skip": "sentence is kept: a second clause usually carries an assertion (pattern = core_pattern | joined_clause_pattern; the joined-clause part was added 2026-11-17)"
         },
         {
           "id": "answer_polarity",
@@ -216,6 +226,12 @@
         {
           "id": "field_would_be_empty",
           "skip": "row (for this column) is skipped and reported if every sentence of a field would be deleted"
+        },
+        {
+          "id": "joined_clause_kept",
+          "pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "skip": "the whole column (a description, an intro, or the whole ai_faqs array, R5 included) is left unchanged and reported as ALL:joined_clause_kept if the rules would change it and any of its sentences is decided differently because of joined_clause_pattern: a narrator sentence deletable with core_pattern but kept with the full pattern, a generic referral non-informative with core_pattern but not with the full pattern, or an R6 count sentence 'auto' with core_pattern but not with the full pattern. Keeping a joined-clause sentence must never unlock another deletion in its field, so every other column is planned exactly as with core_pattern (added 2026-11-17)"
         },
         {
           "id": "unit",
@@ -271,12 +287,14 @@
         },
         {
           "id": "second_clause",
-          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
           "also": {
             "comma_splice": ",[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|[Ww]e've|[Ww]e’ve)(?![A-Za-z])",
             "splice_ok": "(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(i|i'd|i’d|i'm|i’m|i've|i’ve|i'll|my|we)(?![a-z])[^,]*$"
           },
-          "skip": "sentence is kept: a second clause usually carries an assertion"
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "joined_clause_pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "skip": "sentence is kept: a second clause usually carries an assertion (pattern = core_pattern | joined_clause_pattern; the joined-clause part was added 2026-11-17)"
         },
         {
           "id": "answer_polarity",
@@ -306,6 +324,12 @@
         {
           "id": "field_would_be_empty",
           "skip": "row (for this column) is skipped and reported if every sentence of a field would be deleted"
+        },
+        {
+          "id": "joined_clause_kept",
+          "pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "skip": "the whole column (a description, an intro, or the whole ai_faqs array, R5 included) is left unchanged and reported as ALL:joined_clause_kept if the rules would change it and any of its sentences is decided differently because of joined_clause_pattern: a narrator sentence deletable with core_pattern but kept with the full pattern, a generic referral non-informative with core_pattern but not with the full pattern, or an R6 count sentence 'auto' with core_pattern but not with the full pattern. Keeping a joined-clause sentence must never unlock another deletion in its field, so every other column is planned exactly as with core_pattern (added 2026-11-17)"
         }
       ]
     },
@@ -328,6 +352,12 @@
         {
           "id": "array_would_be_empty",
           "skip": "no entry of the row is deleted; reported"
+        },
+        {
+          "id": "joined_clause_kept",
+          "pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "skip": "the whole column (a description, an intro, or the whole ai_faqs array, R5 included) is left unchanged and reported as ALL:joined_clause_kept if the rules would change it and any of its sentences is decided differently because of joined_clause_pattern: a narrator sentence deletable with core_pattern but kept with the full pattern, a generic referral non-informative with core_pattern but not with the full pattern, or an R6 count sentence 'auto' with core_pattern but not with the full pattern. Keeping a joined-clause sentence must never unlock another deletion in its field, so every other column is planned exactly as with core_pattern (added 2026-11-17)"
         }
       ],
       "side_effect": "pp-ssr also prints ai_faqs as FAQPage JSON-LD; deleting an entry removes it there too (observed on live pages 2026-11-16)"
@@ -397,6 +427,12 @@
         {
           "id": "field_would_be_empty",
           "skip": "row (for this column) is skipped and reported if every sentence of a field would be deleted"
+        },
+        {
+          "id": "joined_clause_kept",
+          "pattern": "(?i),[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+(you|they|it|that|this|there|we|i)(?![a-z])",
+          "core_pattern": "(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|they’re|their|the pool|there|this|that)(?![a-z])|,[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+((and|so|but|then)[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+)?you(?![a-z])",
+          "skip": "the whole column (a description, an intro, or the whole ai_faqs array, R5 included) is left unchanged and reported as ALL:joined_clause_kept if the rules would change it and any of its sentences is decided differently because of joined_clause_pattern: a narrator sentence deletable with core_pattern but kept with the full pattern, a generic referral non-informative with core_pattern but not with the full pattern, or an R6 count sentence 'auto' with core_pattern but not with the full pattern. Keeping a joined-clause sentence must never unlock another deletion in its field, so every other column is planned exactly as with core_pattern (added 2026-11-17)"
         }
       ]
     }

@@ -1,8 +1,11 @@
 {
  "ALL": {
   "desc_rows_skipped_insurance": 15,
+  "desc_rows_skipped_joined_clause_kept": 5,
   "faq_rows_skipped_insurance": 14,
-  "intro_rows_skipped_insurance": 2
+  "faq_rows_skipped_joined_clause_kept": 25,
+  "intro_rows_skipped_insurance": 2,
+  "intro_rows_skipped_joined_clause_kept": 14
  },
  "R1": {
   "no_best_for_line": 315,
@@ -10,45 +13,45 @@
   "skip_empty_list": 7
  },
  "R2": {
-  "desc_rows_changed": 212,
-  "desc_rows_skipped_deleted_sentence_names_an_entity": 11,
-  "desc_rows_skipped_next_sentence_refers_back": 196,
-  "desc_sentences_deleted": 224
+  "desc_rows_changed": 204,
+  "desc_rows_skipped_deleted_sentence_names_an_entity": 10,
+  "desc_rows_skipped_next_sentence_refers_back": 190,
+  "desc_sentences_deleted": 214
  },
  "R3": {
-  "faq_rows_changed": 610,
-  "faq_rows_skipped_deleted_sentence_names_an_entity": 64,
-  "faq_rows_skipped_next_sentence_refers_back": 214,
-  "faq_sentences_deleted": 754
+  "faq_rows_changed": 577,
+  "faq_rows_skipped_deleted_sentence_names_an_entity": 60,
+  "faq_rows_skipped_next_sentence_refers_back": 213,
+  "faq_sentences_deleted": 714
  },
  "R4": {
-  "faq_rows_changed": 29,
+  "faq_rows_changed": 28,
   "faq_rows_skipped_deleted_sentence_names_an_entity": 7,
   "faq_rows_skipped_next_sentence_refers_back": 19,
-  "faq_sentences_deleted": 34,
-  "intro_rows_changed": 109,
-  "intro_rows_skipped_deleted_sentence_names_an_entity": 8,
-  "intro_rows_skipped_next_sentence_refers_back": 57,
-  "intro_sentences_deleted": 131
+  "faq_sentences_deleted": 33,
+  "intro_rows_changed": 81,
+  "intro_rows_skipped_deleted_sentence_names_an_entity": 6,
+  "intro_rows_skipped_next_sentence_refers_back": 46,
+  "intro_sentences_deleted": 90
  },
  "R5": {
-  "pool_entries": 52,
-  "pool_rows": 51
+  "pool_entries": 46,
+  "pool_rows": 45
  },
  "R6": {
   "faq_rows_changed": 1,
   "faq_rows_skipped_next_sentence_refers_back": 2,
   "faq_sentences_deleted": 1,
-  "intro_rows_changed": 2,
+  "intro_rows_changed": 1,
   "intro_rows_skipped_deleted_sentence_names_an_entity": 2,
-  "intro_sentences_deleted": 2
+  "intro_sentences_deleted": 1
  },
  "faq_entries": {
   "city_narrator_plus_fact": 228,
   "city_total": 1900,
   "city_with_narrator": 228,
-  "pool_narrator_plus_fact": 2326,
-  "pool_noninformative": 52,
+  "pool_narrator_plus_fact": 2331,
+  "pool_noninformative": 47,
   "pool_total": 5322,
   "pool_with_narrator": 2378
  },
@@ -107,8 +110,8 @@
    "We're talking late spring through early fall, sometimes even later if it's a mild one."
   ],
   "city.intro:opinion:second_clause": [
-   "Around here, when the temps hit triple digits in summer, a pool isn't just a luxury, it's a necessity.",
-   "Don't expect a huge number of public pools, but the ones we do have are well-maintained and used a lot by the community."
+   "Atlanta summers get long and hot, so having a pool is a big deal around here.",
+   "Summer in Fremont gets plenty warm, and folks here really enjoy getting in the water to cool off."
   ],
   "pool.desc:advice:fact_vocabulary": [
    "I'd call ahead just to make sure they've got open swim times that fit your schedule.",
@@ -227,42 +230,42 @@
   "city.faq:gap:second_clause": 11,
   "city.faq:insurance:mentions insurance/liability/coverage/claims/damage": 1,
   "city.faq:opinion:answer_polarity": 4,
-  "city.faq:opinion:fact_vocabulary": 49,
+  "city.faq:opinion:fact_vocabulary": 48,
   "city.faq:opinion:number": 2,
-  "city.faq:opinion:second_clause": 95,
+  "city.faq:opinion:second_clause": 98,
   "city.intro:advice:number": 6,
   "city.intro:founder:fact_vocabulary": 2,
   "city.intro:insurance:mentions insurance/liability/coverage/claims/damage": 2,
-  "city.intro:opinion:fact_vocabulary": 206,
+  "city.intro:opinion:fact_vocabulary": 168,
   "city.intro:opinion:number": 48,
-  "city.intro:opinion:second_clause": 216,
+  "city.intro:opinion:second_clause": 299,
   "pool.desc:advice:fact_vocabulary": 14,
   "pool.desc:advice:number": 132,
-  "pool.desc:advice:second_clause": 41,
+  "pool.desc:advice:second_clause": 42,
   "pool.desc:advice:url_or_contact": 12,
   "pool.desc:founder:fact_vocabulary": 4,
   "pool.desc:gap:number": 8,
   "pool.desc:gap:second_clause": 26,
   "pool.desc:insurance:mentions insurance/liability/coverage/claims/damage": 15,
-  "pool.desc:opinion:fact_vocabulary": 258,
+  "pool.desc:opinion:fact_vocabulary": 222,
   "pool.desc:opinion:local_marker_on_pool_page": 10,
   "pool.desc:opinion:number": 916,
-  "pool.desc:opinion:second_clause": 622,
+  "pool.desc:opinion:second_clause": 672,
   "pool.desc:opinion:url_or_contact": 4,
-  "pool.faq:advice:fact_vocabulary": 134,
+  "pool.faq:advice:fact_vocabulary": 126,
   "pool.faq:advice:number": 340,
-  "pool.faq:advice:second_clause": 40,
+  "pool.faq:advice:second_clause": 67,
   "pool.faq:advice:url_or_contact": 23,
   "pool.faq:founder:fact_vocabulary": 1,
   "pool.faq:gap:fact_vocabulary": 7,
   "pool.faq:gap:number": 26,
-  "pool.faq:gap:second_clause": 232,
+  "pool.faq:gap:second_clause": 240,
   "pool.faq:gap:url_or_contact": 2,
   "pool.faq:insurance:mentions insurance/liability/coverage/claims/damage": 13,
   "pool.faq:opinion:answer_polarity": 34,
-  "pool.faq:opinion:fact_vocabulary": 141,
+  "pool.faq:opinion:fact_vocabulary": 134,
   "pool.faq:opinion:number": 178,
-  "pool.faq:opinion:second_clause": 334,
+  "pool.faq:opinion:second_clause": 343,
   "pool.faq:opinion:url_or_contact": 1
  },
  "narrator_pages": {

@@ -1,5 +1,5 @@
 {
- "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test 2026-11-16 review: 5 R6 examples revised (rules narrowed) and 10 regression examples added from the content review (live page text of 2026-11-16); for those, 'after' is the text a person keeps (in each case the whole field), decided from the review finding, not from the cleaner's output. 2026-11-17 Codex review of PR #9: a second clause addressed to the reader (', so you'd ...') now keeps the sentence; 2 examples revised (Murray R4, Aurora R6: 'after' is now the whole field) and 3 must-keep regression examples added (live page text of 2026-11-16).",
+ "about": "Hand-made before/after examples, 10 per rule. 'before' is real field text (2026-11-15 read-only extract, or the live page text of 2026-11-16 which renders the same field). 'after' was written by hand: whole sentences removed by plain string surgery, independently of the cleaner; for R5 the hand verdict is delete_entry / keep_entry. expect_skip marks rows the rules must leave untouched and report. Checked by: python3 -I text_defect_rules.py test 2026-11-16 review: 5 R6 examples revised (rules narrowed) and 10 regression examples added from the content review (live page text of 2026-11-16); for those, 'after' is the text a person keeps (in each case the whole field), decided from the review finding, not from the cleaner's output. 2026-11-17 Codex review of PR #9: a second clause addressed to the reader (', so you'd ...') now keeps the sentence; 2 examples revised (Murray R4, Aurora R6: 'after' is now the whole field) and 3 must-keep regression examples added (live page text of 2026-11-16). 2026-11-17, second round (independent check of the clause guard): a joined second clause after a comma (', so / and / or / plus / but / then / yet ...') or 'so' + a subject pronoun keeps the sentence, and a field in which that changes a decision is left unchanged (ALL:joined_clause_kept); 5 examples revised (Livermore R2, Omaha R4, Miami R4, Sparks R5, Mount Pleasant R6) and 6 must-keep regression examples added (live page text of 2026-11-16).",
  "examples": [
   {
    "rule": "R1",
@@ -159,8 +159,7 @@
    ],
    "before": "If you're looking for an outdoor pool in Livermore, the Robert Livermore Community Center often comes up. They've got a competition pool, which is good if you're serious about your laps. My stats show they also have water slides and a kids pool, so it's not just for training. With a 4.2 out of 5 stars from over a hundred Google reviews, most people seem to like it. Day passes are pretty reasonable too, five bucks for adults and three for youth. They even offer swim lessons. I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in. They've got locker rooms, making it convenient.",
    "after": "If you're looking for an outdoor pool in Livermore, the Robert Livermore Community Center often comes up. They've got a competition pool, which is good if you're serious about your laps. My stats show they also have water slides and a kids pool, so it's not just for training. With a 4.2 out of 5 stars from over a hundred Google reviews, most people seem to like it. Day passes are pretty reasonable too, five bucks for adults and three for youth. They even offer swim lessons. I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in. They've got locker rooms, making it convenient.",
-   "note": "By hand the opinion could go, but the next kept sentence starts with 'They've' (points back), so the rule must SKIP the row and report it.",
-   "expect_skip": "next_sentence_refers_back"
+   "note": "Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: 'By hand the opinion could go, but the next kept sentence starts with 'They've' (points back), so the rule must SKIP the row and report it.' The opinion 'I'd say it's a solid choice for a summer afternoon with the family, or if you just want to get some dedicated swimming in.' now has a second clause (', or if you ...') and is kept, so no sentence is deletable and there is nothing to skip: the field is unchanged."
   },
   {
    "rule": "R2",
@@ -381,9 +380,10 @@
     "Nebraska"
    ],
    "before": "Summer in this part of Nebraska gets hot, real hot. When the sun bakes down, people here are looking for water, and pools are a big part of that. Our pool season runs pretty standard, usually Memorial Day to Labor Day for most outdoor spots. We see a lot of families at the public pools. Folks bring their kids to cool off and splash around. For someone new to Omaha, finding a pool is pretty straightforward. The city runs several good ones. If you're looking for something more private, or just a different vibe than a crowded public spot, that's where PoolRentalNearMe.com comes in. We've got options for booking backyard pools by the hour, which can be a game changer.",
-   "after": "Summer in this part of Nebraska gets hot, real hot. Our pool season runs pretty standard, usually Memorial Day to Labor Day for most outdoor spots. Folks bring their kids to cool off and splash around. For someone new to Omaha, finding a pool is pretty straightforward. The city runs several good ones. If you're looking for something more private, or just a different vibe than a crowded public spot, that's where PoolRentalNearMe.com comes in. We've got options for booking backyard pools by the hour, which can be a game changer.",
-   "note": "Two local-voice opinions deleted. 'Our pool season runs ... Memorial Day to Labor Day' stays (schedule fact); 'We've got options for booking backyard pools ..., which ...' stays (second clause; listed as out of scope).",
-   "pool_page": false
+   "after": "Summer in this part of Nebraska gets hot, real hot. When the sun bakes down, people here are looking for water, and pools are a big part of that. Our pool season runs pretty standard, usually Memorial Day to Labor Day for most outdoor spots. We see a lot of families at the public pools. Folks bring their kids to cool off and splash around. For someone new to Omaha, finding a pool is pretty straightforward. The city runs several good ones. If you're looking for something more private, or just a different vibe than a crowded public spot, that's where PoolRentalNearMe.com comes in. We've got options for booking backyard pools by the hour, which can be a game changer.",
+   "note": "Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: two local-voice opinions deleted. 'When the sun bakes down, people here are looking for water, and pools are a big part of that.' now has a joined second clause (', and pools are ...') and is kept; 'We see a lot of families at the public pools.' is still deletable, but a field in which the joined-clause guard keeps a sentence is left as it is (ALL:joined_clause_kept), so the intro is unchanged.",
+   "pool_page": false,
+   "expect_skip": "joined_clause_kept"
   },
   {
    "rule": "R4",
@@ -494,9 +494,8 @@
    ],
    "before": "Miami. Even in January, you can pretty much count on being able to get in the water. We locals spend a lot of time by the water, and pools are a big part of that. It's year-round pool weather here. Our public pools are usually outdoors, so you get that sunny, open-air swim whenever you want. You'll find a mix of serious lap swimmers, families, and people just cooling off. If you're new to the area, the best way to find a pool is to check out our online directory. You can filter by what you need, like specific facilities or hours. It makes it easy to see what's close and open.",
    "after": "Miami. Even in January, you can pretty much count on being able to get in the water. We locals spend a lot of time by the water, and pools are a big part of that. It's year-round pool weather here. Our public pools are usually outdoors, so you get that sunny, open-air swim whenever you want. You'll find a mix of serious lap swimmers, families, and people just cooling off. If you're new to the area, the best way to find a pool is to check out our online directory. You can filter by what you need, like specific facilities or hours. It makes it easy to see what's close and open.",
-   "note": "By hand 'We locals spend a lot of time by the water, and pools are a big part of that.' is filler, but the next sentence 'It's year-round pool weather here.' starts with It's: row skipped and reported.",
-   "pool_page": false,
-   "expect_skip": "next_sentence_refers_back"
+   "note": "Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: by hand 'We locals spend a lot of time by the water, and pools are a big part of that.' is filler, but the next sentence 'It's year-round pool weather here.' starts with It's: row skipped and reported. The sentence now has a joined second clause (', and pools are ...') and is kept, so nothing is deletable and nothing is skipped: the intro is unchanged.",
+   "pool_page": false
   },
   {
    "rule": "R5",
@@ -518,9 +517,9 @@
     "q": "Is Sparks Community Pool accessible for people with disabilities?",
     "a": "The information I have doesn't specify accessibility features. I'd recommend contacting the pool directly or checking the City of Sparks Parks and Recreation website for details on ramps, lifts, or other accommodations."
    },
-   "after": "delete_entry",
+   "after": "keep_entry",
    "pool_page": true,
-   "note": "Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes."
+   "note": "Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: 'Every sentence is a narrator data-gap or a referral with no number, URL or second clause: the whole entry goes.' The referral '... for details on ramps, lifts, or other accommodations.' contains ', or' (here a list comma, which the guard does not tell apart from a joined clause): it is kept, so the answer is not wholly non-informative and the entry stays. A cost of erring on the side of keeping."
   },
   {
    "rule": "R5",
@@ -689,8 +688,8 @@
    ],
    "actual": 2,
    "before": "Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off. The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs. We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.",
-   "after": "The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs.",
-   "note": "Header 2; prose one: R6 deletes the count sentence. The R4 pass then deletes the opening local-voice sentence ('folks here'); the new first sentence 'The heat usually sticks around from May ...' stands alone.",
+   "after": "Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off. The heat usually sticks around from May right through September, sometimes even into October, so that's when most outdoor pools are open. It's a pretty family-oriented swim scene. Lots of kids splashing around, people just enjoying the water. If you're new in town and looking for a place to swim, it can be a bit tricky because there aren't a ton of public options. Mostly it's neighborhood pools or private clubs. We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.",
+   "note": "Revised 2026-11-17 (second round: a joined second clause after a comma, ', so / and / or / plus / but / then / yet ...', or 'so' + subject pronoun, keeps the sentence; a field where that changes a decision is not edited around it). Was: header 2, prose one: R6 deleted the count sentence and R4 the opening local-voice sentence. The count sentence 'We've only got one public pool listed in our directory for Mount Pleasant, so knowing your options for getting in the water is key.' now has a joined second clause after the count, so R6 lists it as review_mixed (count-statements.csv) instead of deleting it; 'Summer in Mount Pleasant can get pretty hot, and folks here definitely use their pools to cool off.' has one too and is kept. The intro is unchanged.",
    "pool_page": false
   },
   {
@@ -958,6 +957,95 @@
    "after": "Look, down here in Florida, it's pretty much pool season all the time. But even here, December and January get a little cool for some folks. From about March through November, though, the public pools are usually packed. We've got a lot of families in Palm Coast, so you'll find plenty of kids splashing around. Lap swimmers definitely have their lanes, but it's not a super intense swim scene. If you're new to the area and looking for a place to cool off or get some exercise, the municipal pools are a good start. Just remember peak times can get busy, especially on weekends and school breaks.",
    "note": "Added 2026-11-17 (Codex review of PR #9). 'We've got a lot of families in Palm Coast, so you'll find plenty of kids splashing around.' says the pools are used by many families with kids: the ', so you'll ...' clause is a second clause, so the sentence is kept and the intro is unchanged.",
    "pool_page": false
+  },
+  {
+   "rule": "R2",
+   "ref": "live pool page /public-pools/arizona/phoenix/pecos-park-swimming-pool/ (ai_description)",
+   "source": "live page fetched 2026-11-16T19:55:45Z (2026-11-17 second-round clause-guard regression case)",
+   "names": [
+    "Pecos Park Swimming Pool",
+    "Phoenix",
+    "Arizona"
+   ],
+   "before": "When you're looking for a good spot to cool off in Phoenix, Pecos Park Swimming Pool is one I often point people to. It's a public pool, run by the city, and from what I've seen, community pools usually offer a pretty straightforward swimming experience. Over two hundred people have rated it 4.5 out of 5 stars on Google, which is a solid showing. For a city as big as Phoenix (over 1.6 million people), having well-regarded public options like this is essential. They keep pretty consistent hours during the week, usually opening at noon and closing at 6 PM, with Fridays being an exception since they're closed that day. So if you're planning a Friday swim, you'll need to look elsewhere. Otherwise, it's a popular choice for a reason, and you can usually count on it to be open.",
+   "after": "When you're looking for a good spot to cool off in Phoenix, Pecos Park Swimming Pool is one I often point people to. It's a public pool, run by the city, and from what I've seen, community pools usually offer a pretty straightforward swimming experience. Over two hundred people have rated it 4.5 out of 5 stars on Google, which is a solid showing. For a city as big as Phoenix (over 1.6 million people), having well-regarded public options like this is essential. They keep pretty consistent hours during the week, usually opening at noon and closing at 6 PM, with Fridays being an exception since they're closed that day. So if you're planning a Friday swim, you'll need to look elsewhere. Otherwise, it's a popular choice for a reason, and you can usually count on it to be open.",
+   "note": "Added 2026-11-17 (second round of the clause-guard check). 'It's a public pool, run by the city, and from what I've seen, community pools usually offer a pretty straightforward swimming experience.' says the pool is public and city-run: the ', and ...' clause is a joined second clause, so the sentence is kept and the description is unchanged.",
+   "pool_page": true
+  },
+  {
+   "rule": "R2",
+   "ref": "live pool page /public-pools/iowa/cedar-rapids/marion-pool-cedar-rapids/ (ai_description)",
+   "source": "live page fetched 2026-11-16T19:44:31Z (2026-11-17 second-round clause-guard regression case)",
+   "names": [
+    "Marion Pool",
+    "Cedar Rapids",
+    "Iowa"
+   ],
+   "before": "It's an outdoor pool, so that means you're looking at summer-only swimming, pretty typical for Iowa. Folks in Cedar Rapids, IA, know it as the Marion Pool. When I'm checking places out, I'm always thinking about who's going to use it. An outdoor spot like this usually gets a good mix of families and people just wanting to cool off. It's a city pool, from what I gather, so the vibe is generally pretty community-focused. You won't find a lot of bells and whistles, but you can count on clean water and a good way to beat the heat. Knowing it's in Cedar Rapids means it's probably serving a decent-sized area, so it could get busy on hot days. I always recommend checking their schedule before you head over, especially if you're looking for open swim times.",
+   "after": "It's an outdoor pool, so that means you're looking at summer-only swimming, pretty typical for Iowa. Folks in Cedar Rapids, IA, know it as the Marion Pool. When I'm checking places out, I'm always thinking about who's going to use it. An outdoor spot like this usually gets a good mix of families and people just wanting to cool off. It's a city pool, from what I gather, so the vibe is generally pretty community-focused. You won't find a lot of bells and whistles, but you can count on clean water and a good way to beat the heat. Knowing it's in Cedar Rapids means it's probably serving a decent-sized area, so it could get busy on hot days. I always recommend checking their schedule before you head over, especially if you're looking for open swim times.",
+   "note": "Added 2026-11-17 (second round of the clause-guard check). 'It's a city pool, from what I gather, so the vibe is generally pretty community-focused.' says it is a city pool: the ', so ...' clause is a joined second clause, so the sentence is kept. Two other narrator sentences of the field are still deletable, but a field in which the joined-clause guard keeps a sentence is left as it is (ALL:joined_clause_kept): the description is unchanged.",
+   "pool_page": true,
+   "expect_skip": "joined_clause_kept"
+  },
+  {
+   "rule": "R3",
+   "ref": "live pool page /public-pools/texas/fort-worth/sigma-swimming/ (ai_faqs[2].a)",
+   "source": "live page fetched 2026-11-16T19:49:44Z (2026-11-17 second-round clause-guard regression case)",
+   "names": [
+    "Sigma Swimming",
+    "Fort Worth",
+    "Texas"
+   ],
+   "before": "Fort Worth is a big city, so there are usually other public pool options. I'd suggest checking the Fort Worth Parks and Recreation website, or you can use our site to look for more pools in the area.",
+   "after": "Fort Worth is a big city, so there are usually other public pool options. I'd suggest checking the Fort Worth Parks and Recreation website, or you can use our site to look for more pools in the area.",
+   "note": "Added 2026-11-17 (second round of the clause-guard check). 'I'd suggest checking the Fort Worth Parks and Recreation website, or you can use our site to look for more pools in the area.' also points the reader to the site's own listings: the ', or you can ...' clause is a joined second clause, so the sentence is kept and the answer is unchanged.",
+   "pool_page": true
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/texas/spring/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:38:00Z (2026-11-17 second-round clause-guard regression case)",
+   "names": [
+    null,
+    "Spring",
+    "Texas"
+   ],
+   "before": "Around here, when the humidity starts to climb in May and stays high through September, a pool isn't just nice to have, it's a necessity. We get long, hot summers, so pool season pretty much runs from late spring right into early fall. The swim scene is a mix, really. You'll definitely see plenty of families cooling off and letting the kids burn some energy. But there are also folks looking for a good lap swim to beat the heat. If you're new in town and trying to find your go-to spot, you'll want to think about what you're primarily looking for. Is it serious swimming, or more of a place for the kids to splash around? That'll help you narrow down the options for public spots and even some of the private rental pools.",
+   "after": "Around here, when the humidity starts to climb in May and stays high through September, a pool isn't just nice to have, it's a necessity. We get long, hot summers, so pool season pretty much runs from late spring right into early fall. The swim scene is a mix, really. You'll definitely see plenty of families cooling off and letting the kids burn some energy. But there are also folks looking for a good lap swim to beat the heat. If you're new in town and trying to find your go-to spot, you'll want to think about what you're primarily looking for. Is it serious swimming, or more of a place for the kids to splash around? That'll help you narrow down the options for public spots and even some of the private rental pools.",
+   "note": "Added 2026-11-17 (second round of the clause-guard check). 'We get long, hot summers, so pool season pretty much runs from late spring right into early fall.' states the pool season: the ', so pool season ...' clause is a joined second clause, so the sentence is kept and the intro is unchanged.",
+   "pool_page": false,
+   "actual": 3
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/maryland/columbia/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:36:53Z (2026-11-17 second-round clause-guard regression case)",
+   "names": [
+    null,
+    "Columbia",
+    "Maryland"
+   ],
+   "before": "When the summer sun really kicks in here, typically from Memorial Day to Labor Day, folks in Columbia are looking for a cool-down. It's a pretty active community. You'll find a mix of serious lap swimmers and families just wanting to enjoy the water. Most people here are used to the community association way of doing things, so a lot of the pools are tied into that. If you're new to Columbia, finding a pool often means looking at the larger community centers or understanding the local association access. We don't have a huge number of public options, so getting acquainted with what's available early is a good idea, especially if you have a family.",
+   "after": "When the summer sun really kicks in here, typically from Memorial Day to Labor Day, folks in Columbia are looking for a cool-down. It's a pretty active community. You'll find a mix of serious lap swimmers and families just wanting to enjoy the water. Most people here are used to the community association way of doing things, so a lot of the pools are tied into that. If you're new to Columbia, finding a pool often means looking at the larger community centers or understanding the local association access. We don't have a huge number of public options, so getting acquainted with what's available early is a good idea, especially if you have a family.",
+   "note": "Added 2026-11-17 (second round of the clause-guard check). 'Most people here are used to the community association way of doing things, so a lot of the pools are tied into that.' says many pools are tied to community associations; 'We don't have a huge number of public options, so getting acquainted with what's available early is a good idea, especially if you have a family.' has a joined clause too. Both are kept and the intro is unchanged.",
+   "pool_page": false,
+   "actual": 1
+  },
+  {
+   "rule": "R4",
+   "ref": "live city page /public-pools/texas/allen/ (ai_intro)",
+   "source": "live page fetched 2026-11-16T19:39:52Z (2026-11-17 second-round clause-guard regression case)",
+   "names": [
+    null,
+    "Allen",
+    "Texas"
+   ],
+   "before": "It gets hot here in North Texas, so a good pool is a necessity for a big chunk of the year. Our swimming season usually kicks off around late May and can run all the way through September, sometimes even into October if we get a warm fall. Most of the pools here in Allen cater to families looking to cool off and have some fun. We've got a decent amount of aquatic centers that are pretty well-maintained. If you're new to town and looking for a place to swim, don't expect a lot of dedicated lap lanes during peak hours. It's more about splashing around. But there are options if you scout around a bit.",
+   "after": "It gets hot here in North Texas, so a good pool is a necessity for a big chunk of the year. Our swimming season usually kicks off around late May and can run all the way through September, sometimes even into October if we get a warm fall. Most of the pools here in Allen cater to families looking to cool off and have some fun. We've got a decent amount of aquatic centers that are pretty well-maintained. If you're new to town and looking for a place to swim, don't expect a lot of dedicated lap lanes during peak hours. It's more about splashing around. But there are options if you scout around a bit.",
+   "note": "Added 2026-11-17 (second round of the clause-guard check). 'It gets hot here in North Texas, so a good pool is a necessity for a big chunk of the year.' (names North Texas) was deletable and made the whole field skip (deleted_sentence_names_an_entity). It now has a joined second clause and is kept; without the field-level freeze, the skip would go away and 'Most of the pools here in Allen cater to families looking to cool off and have some fun.' and 'We've got a decent amount of aquatic centers that are pretty well-maintained.' would be deleted for the first time. The freeze (ALL:joined_clause_kept) leaves the intro unchanged.",
+   "pool_page": false,
+   "actual": 5,
+   "expect_skip": "joined_clause_kept"
   }
  ]
 }

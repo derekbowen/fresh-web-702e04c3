@@ -7,14 +7,16 @@
 --   n_del_entries, old_md5, new_md5
 -- Rules (rules.json, text-defects/text_defect_rules.py): R1 reformat ai_best_for; R5 delete wholly
 -- non-informative FAQ entries; R6 delete contradicted pool-count sentences (cities); R2/R3/R4 delete
--- deletable narrator sentences. Plus the apply addendum A1-A5 (RUNBOOK.md section 3). Scope: published rows.
+-- deletable narrator sentences. Plus the apply addendum A1-A5 (RUNBOOK.md section 3) and the joined-clause
+-- freeze of the rules (ALL:joined_clause_kept, 2026-11-17). Scope: published rows.
 -- No pattern uses \s: whitespace is the explicit class WS (= Python's \s), so the plan does not depend on the server's ctype.
 -- ======================================================================================================
 rx as (
   select {SING}::text sing, {PLUR}::text plur, {LOCAL}::text loc, {SITE}::text site, {ROMAN_I}::text roman,
     {GAP}::text gap, {GAP_NEG}::text gapneg, {GAP_HARD}::text gaphard, {FOUNDER}::text founder, {ADVICE}::text advice,
     {GENERIC_ADVICE}::text gadv, {GENERIC_GAP}::text ggap, {NUM_MASK}::text nmask, {NUMERIC}::text num,
-    {URL}::text url, {CLAUSE}::text clause, {COMMA_SPLICE}::text splice, {SPLICE_OK}::text splice_ok,
+    {URL}::text url, {CLAUSE}::text clause, {CLAUSE_CORE}::text clause_core, {CLAUSE_JOIN}::text clause_join,
+    {COMMA_SPLICE}::text splice, {SPLICE_OK}::text splice_ok,
     {POLARITY}::text polar, {LEXICON}::text lex, {LEX_PRICE_SCHEDULE}::text lexps, {INSURANCE}::text ins,
     {DANGLING_OPENER}::text dangle, {ABBREV}::text abbrev, {SPLIT}::text split, {CAPWORD}::text cap,
     {ENTITY_EXEMPT_LAST}::text ent_exempt, {NOT_WS}::text not_ws,
@@ -86,6 +88,7 @@ f2 as (    -- per-sentence features (text_defect_rules.is_narrator / classify)
          when ms ~ rx.plur then 'plural' when ms ~ rx.loc then 'local' end kind,
     regexp_replace(s, rx.nmask, 'X', 'g') ~ rx.num has_num,
     s ~ rx.url has_url, s ~ rx.clause has_clause, (s ~ rx.splice and s !~ rx.splice_ok) has_splice,
+    s ~ rx.clause_core has_clause_core, s ~ rx.clause_join has_join,
     s ~ rx.polar is_polar, s ~ rx.lex has_lex, s ~ rx.lexps has_lexps, s ~ rx.ins has_ins,
     (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.gaphard is_gaphard, s ~ rx.advice is_adv, s ~ rx.founder is_founder,
     (s ~ rx.gadv or s ~ rx.ggap) is_generic,
@@ -108,7 +111,18 @@ f3 as (
          when not is_gap and not is_adv and has_lexps then false
          when is_gap and not is_gaphard and (has_lex or has_lexps) then false   -- "I only have data on X being free"
          else true end narr_del,
-    (kind is null and is_generic and not has_num and not has_url and not has_clause) gen_ok
+    (kind is null and is_generic and not has_num and not has_url and not has_clause) gen_ok,
+    -- the same two decisions with CLAUSE_CORE (text_defect_rules.joined_keep): they differ only when has_join
+    case when kind is null then false
+         when has_ins then false
+         when kind = 'singular' and is_founder then not (has_lex or has_lexps or is_polar)
+         when kind = 'local' and tbl = 'pp_pools' then false
+         when has_num or has_url or has_clause_core or has_splice or is_polar then false
+         when not is_gap and has_lex then false
+         when not is_gap and not is_adv and has_lexps then false
+         when is_gap and not is_gaphard and (has_lex or has_lexps) then false
+         else true end narr_del_core,
+    (kind is null and is_generic and not has_num and not has_url and not has_clause_core) gen_ok_core
   from f2),
 r6a as (   -- R6: first pool-count statement of a city sentence (text_defect_rules.count_hit / r6_classify)
   select f.tbl, f.rid, f.col, f.ent, f.k, f.s, f.actual, f.distinct_n,
@@ -163,8 +177,28 @@ r6 as (
               or regexp_replace(replace(g.s, g.phrase, ' '), rx.nmask, 'X', 'g') ~ rx.num
               or replace(g.s, g.phrase, ' ') ~ rx.clause then 'review_mixed'
          else 'auto' end r6cat,
+    -- the same category with CLAUSE_CORE in place of CLAUSE (text_defect_rules.r6_classify(..., CLAUSE_CORE))
+    case when g.form is null then (case when g.is_vague and g.in_dir then 'vague' end)
+         when g.stated = g.actual then 'consistent'
+         when not g.in_dir then (case when g.form = 'number+noun' and g.is_loose then 'review_scope' else 'not_inventory' end)
+         when g.has_ins6 then 'skip_insurance'
+         when g.distinct_n is not null and g.stated = g.distinct_n then 'hold_duplicate'
+         when g.between_ ~ rx.subtype then 'review_subtype'
+         when replace(g.s, g.phrase, ' ') ~ rx.lex or replace(g.s, g.phrase, ' ') ~ rx.lexps
+              or replace(g.s, g.phrase, ' ') ~ rx.url or replace(g.s, g.phrase, ' ') ~ rx.claim
+              or regexp_replace(replace(g.s, g.phrase, ' '), rx.nmask, 'X', 'g') ~ rx.num
+              or replace(g.s, g.phrase, ' ') ~ rx.clause_core then 'review_mixed'
+         else 'auto' end r6cat_core,
     g.stated, g.phrase
   from r6g g cross join rx),
+jkc as (   -- joined-clause freeze (text_defect_rules.column_joined_keep, 2026-11-17): a column in which CLAUSE_JOIN
+           -- changes the decision for any sentence is left unchanged whenever the plan would change it (see plan1)
+  select f3.tbl, f3.rid, f3.col,
+    bool_or(f3.narr_del <> f3.narr_del_core or f3.gen_ok <> f3.gen_ok_core
+            or coalesce(r6.r6cat = 'auto', false) <> coalesce(r6.r6cat_core = 'auto', false)) jk
+  from f3
+  left join r6 on r6.tbl = f3.tbl and r6.rid = f3.rid and r6.col = f3.col and r6.ent = f3.ent and r6.k = f3.k
+  group by 1, 2, 3),
 noninf as ( -- R5: an answer whose every sentence is deletable narrator or generic non-informative text
   select tbl, rid, col, ent, bool_and(narr_del or gen_ok) and bool_or(kind is not null) noninf
     from f3 where col = 'ai_faqs' group by 1, 2, 3, 4),
@@ -375,6 +409,15 @@ plan0 as (
     left join colsum cs on cs.tbl = fn.tbl and cs.rid = fn.rid and cs.col = fn.col
     left join pools p on fn.tbl = 'pp_pools' and p.id = fn.rid
     left join cities c on fn.tbl = 'pp_cities' and c.id = fn.rid),
+plan1 as ( -- the joined-clause freeze replaces a planned change by the skip ALL:joined_clause_kept
+  select p.tbl, p.row_id, p.ref, p.col, p.old_text,
+         case when p.fz then null else p.new_text end new_text,
+         case when p.fz then null else p.rules end rules,
+         case when p.fz then 'ALL:joined_clause_kept' else p.skips end skips,
+         case when p.fz then 0 else p.n_del_sentences end n_del_sentences,
+         case when p.fz then 0 else p.n_del_entries end n_del_entries
+    from (select plan0.*, (plan0.new_text is not null and coalesce(j.jk, false)) fz
+            from plan0 left join jkc j on j.tbl = plan0.tbl and j.rid = plan0.row_id and j.col = plan0.col) p),
 plan as (
-  select plan0.*, md5(old_text) old_md5, md5(new_text) new_md5
-    from plan0 where new_text is not null or skips is not null)
+  select plan1.*, md5(old_text) old_md5, md5(new_text) new_md5
+    from plan1 where new_text is not null or skips is not null)

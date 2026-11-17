@@ -47,6 +47,9 @@ A5_BACKREF = (r"(?i)^(([a-z0-9'’-]+ ){0,3}(these|those)(?![a-z'’])|([a-z0-9'
 MIN_ANSWER_CHARS = 40   # a FAQ answer that a pass changes
 
 FIELD_MIN = {"desc": MIN_PROSE_CHARS, "intro": MIN_PROSE_CHARS, "answer": MIN_ANSWER_CHARS}
+# The joined-clause freeze of the rules (text_defect_rules.column_joined_keep, 2026-11-17) is set only when the
+# rules would change the column, so unlike the freezes below it is always reported.
+JOINED = "joined_clause_kept"
 
 
 def split_with_seps(text):
@@ -130,6 +133,8 @@ def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_ru
         elif dels:
             cur = new
             res["deleted"] += dels
+    if res["deleted"] and T.column_joined_keep([text], pool_page, actual, distinct):   # rules 2026-11-17
+        return {"after": None, "deleted": [], "skips": {"ALL": "joined_clause_kept"}}
     if res["deleted"]:
         res["after"] = cur
     return res
@@ -180,6 +185,9 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None, addendum
                     e["a"] = r[0]
                     rep["sent_deleted"] += r[1]
     changed = bool(rep["r5_deleted"]) or bool(rep["sent_deleted"])
+    if changed and T.column_joined_keep([e["a"] for e in faqs if T._plain_entry(e)], pool_page, actual, distinct):
+        rep.update(r5_deleted=[], r5_skip=None, sent_deleted=[], skips={"ALL": "joined_clause_kept"})
+        return None, rep
     return (cur if changed else None), rep
 
 
@@ -208,14 +216,14 @@ def plan_pool(row, addendum=True):
     d = row.get("ai_description")
     if d is not None:
         p = plan_field(d, names, True, addendum=addendum)
-        if "ALL" in p["skips"] and not would_touch(d, True):
+        if p["skips"].get("ALL", JOINED) != JOINED and not would_touch(d, True):
             del p["skips"]["ALL"]
         out["ai_description"] = {"new": p["after"], "rules": sorted({r for r, _ in p["deleted"]}),
                                  "skips": p["skips"]}
     f = row.get("ai_faqs")
     if isinstance(f, list):
         new, rep = plan_faqs(f, names, True, addendum=addendum)
-        if "ALL" in rep["skips"] and not rep["would_touch"]:
+        if rep["skips"].get("ALL", JOINED) != JOINED and not rep["would_touch"]:
             del rep["skips"]["ALL"]
         rules = (["R5"] if rep["r5_deleted"] else []) + sorted({r for r, _ in rep["sent_deleted"]})
         sk = dict(rep["skips"])
@@ -231,14 +239,14 @@ def plan_city(row, actual, distinct=None, addendum=True):
     t = row.get("ai_intro")
     if t is not None:
         p = plan_field(t, names, False, actual, distinct, addendum=addendum)
-        if "ALL" in p["skips"] and not would_touch(t, False, actual, distinct):
+        if p["skips"].get("ALL", JOINED) != JOINED and not would_touch(t, False, actual, distinct):
             del p["skips"]["ALL"]
         out["ai_intro"] = {"new": p["after"], "rules": sorted({r for r, _ in p["deleted"]}, key="R6R4".index),
                            "skips": p["skips"]}
     f = row.get("ai_faqs")
     if isinstance(f, list):
         new, rep = plan_faqs(f, names, False, actual, distinct, addendum=addendum)
-        if "ALL" in rep["skips"] and not rep["would_touch"]:
+        if rep["skips"].get("ALL", JOINED) != JOINED and not rep["would_touch"]:
             del rep["skips"]["ALL"]
         rules = (["R5"] if rep["r5_deleted"] else []) + sorted({r for r, _ in rep["sent_deleted"]},
                                                                key="R6R4".index)

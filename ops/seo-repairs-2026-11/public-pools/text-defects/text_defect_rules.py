@@ -131,10 +131,33 @@ URL = r"(?i)(www\.|https?://|@|\.(com|org|gov|net|edu|us)(?![a-z]))"
 # admission is per person). Comma, whitespace, optional and/so/but/then, then "you" not followed by a letter:
 # that covers you, you'd, you'll, you're, you've (straight or curly apostrophe) and you will / would / can /
 # should / may / might. Matching only ever keeps a sentence, so it errs on the side of matching.
-CLAUSE = (r"(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|"
-          r"unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|"
-          r"they’re|their|the pool|there|this|that)(?![a-z])|," + WS + r"+((and|so|but|then)" + WS +
-          r"+)?you(?![a-z])")
+CLAUSE_CORE = (r"(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|"
+               r"unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it's|it’s|they|they're|"
+               r"they’re|their|the pool|there|this|that)(?![a-z])|," + WS + r"+((and|so|but|then)" + WS +
+               r"+)?you(?![a-z])")
+# Joined second clauses (added 2026-11-17, independent check of the clause guard): a joined second clause keeps
+# the sentence whatever its subject. (a) A comma, optional whitespace, then so / and / or / plus / but / then /
+# yet as a whole word ("and so" starts with "and"): "We get long, hot summers, so pool season pretty much runs
+# from late spring right into early fall.", "..., or you can use our site ...". A lead-in comma with no join
+# word ("Honestly, I don't have that.", "From what I can tell, I ...") does not match and is still judged by
+# COMMA_SPLICE / SPLICE_OK as before. (b) The word "so" followed by a subject pronoun, with no comma: "so you'd",
+# "and so you'll", "so they", "so it's", "so that", "so this", "so there", "so we", "so I" (the contractions
+# follow from "not followed by a letter"; "so your" is not matched). Like the rest of CLAUSE, they only ever
+# keep a sentence. A list comma before "and" / "or" ("ramps, lifts, or other accommodations") matches too:
+# the pattern does not try to tell a list from a joined clause, and errs on the side of keeping.
+CLAUSE_JOIN_BODY = (r"," + WS + r"*(so|and|or|plus|but|then|yet)(?![a-z])|(?<![a-z])so" + WS +
+                    r"+(you|they|it|that|this|there|we|i)(?![a-z])")
+CLAUSE_JOIN = r"(?i)" + CLAUSE_JOIN_BODY
+CLAUSE = CLAUSE_CORE + "|" + CLAUSE_JOIN_BODY
+# Keeping a joined-clause sentence must never unlock a deletion elsewhere in its field: a field-level skip
+# that a deletable sentence used to trigger ("the next sentence refers back", "names an entity") goes away once
+# that sentence is kept, and the other sentences of the field would then be deleted for the first time. So a
+# column (a description, an intro, or a whole ai_faqs array) in which CLAUSE_JOIN changes the decision for any
+# sentence (narrator sentence deletable, generic referral non-informative, R6 count sentence 'auto' under
+# CLAUSE_CORE but not under CLAUSE) is left exactly as it is whenever the rules would otherwise change it:
+# skip reason ALL:joined_clause_kept (see joined_keep / column_joined_keep). Every other column is planned
+# with decisions identical to CLAUSE_CORE, so the 2026-11-17 joined-clause change can only make the cleaner
+# change less.
 # A narrator clause spliced onto another clause with a comma ("It's not too far from Decatur, I'd say ...")
 # hides an assertion. Allowed only when everything before the comma is a non-assertive lead-in.
 COMMA_SPLICE = (r"," + WS + r"+(and |so |but |then |plus )?(I|I'd|I’d|I'm|I’m|I've|I’ve|I'll|I’ll|[Mm]y|[Ww]e|[Ww]e're|[Ww]e’re|"
@@ -289,12 +312,14 @@ def has_entity(s, names, last=False):
     return re.search(CAPWORD, rest) is not None
 
 
-def classify(s, pool_page=False):
-    """Return (narrator_kind, sentence_class, deletable_if_context_allows, reason)."""
+def classify(s, pool_page=False, clause=None):
+    """Return (narrator_kind, sentence_class, deletable_if_context_allows, reason).
+    clause: the second-clause pattern (default CLAUSE; joined_keep also asks with CLAUSE_CORE)."""
+    clause = clause or CLAUSE
     kind = is_narrator(s)
     if kind is None:
         if re.search(GENERIC_ADVICE, s) or re.search(GENERIC_GAP, s):
-            ok = not (has_number(s) or re.search(URL, s) or re.search(CLAUSE, s))
+            ok = not (has_number(s) or re.search(URL, s) or re.search(clause, s))
             return None, "generic_noninformative" if ok else "generic_with_fact", False, None
         return None, "other_text", False, None
     if re.search(INSURANCE, s):
@@ -314,7 +339,7 @@ def classify(s, pool_page=False):
         return kind, cls, False, "number"
     if re.search(URL, s):
         return kind, cls, False, "url_or_contact"
-    if re.search(CLAUSE, s) or (re.search(COMMA_SPLICE, s) and not re.search(SPLICE_OK, s)):
+    if re.search(clause, s) or (re.search(COMMA_SPLICE, s) and not re.search(SPLICE_OK, s)):
         return kind, cls, False, "second_clause"
     if re.search(POLARITY, s):
         return kind, cls, False, "answer_polarity"
@@ -357,7 +382,7 @@ def count_hit(s):
     return None
 
 
-def r6_classify(s, actual, distinct_after_duplicates=None):
+def r6_classify(s, actual, distinct_after_duplicates=None, clause=None):
     """Category of a sentence for R6 given the page's published-pool count.
 
     auto            states a different count for the directory and nothing else that could be a fact:
@@ -390,9 +415,34 @@ def r6_classify(s, actual, distinct_after_duplicates=None):
         return "review_subtype", h
     rest = s.replace(h["phrase"], " ")
     if (re.search(LEXICON, rest) or re.search(LEX_PRICE_SCHEDULE, rest) or re.search(URL, rest)
-            or re.search(COUNT_CLAIM, rest) or has_number(rest) or re.search(CLAUSE, rest)):
+            or re.search(COUNT_CLAIM, rest) or has_number(rest) or re.search(clause or CLAUSE, rest)):
         return "review_mixed", h
     return "auto", h
+
+
+# --------------------------------------------------------------------------- joined-clause freeze (2026-11-17)
+def joined_keep(s, pool_page=False, actual=None, distinct=None):
+    """True if the joined-clause alternatives (CLAUSE_JOIN) change the decision for sentence s: a narrator
+    sentence deletable under CLAUSE_CORE but kept under CLAUSE, a generic referral non-informative under
+    CLAUSE_CORE but not under CLAUSE, or (cities: actual given) an R6 count sentence 'auto' under CLAUSE_CORE
+    but not under CLAUSE."""
+    if not re.search(CLAUSE_JOIN, s):
+        return False   # CLAUSE matches s exactly when CLAUSE_CORE does: every decision is the same
+    k1, c1, ok1, _ = classify(s, pool_page)
+    k0, c0, ok0, _ = classify(s, pool_page, CLAUSE_CORE)
+    if (k1 is not None and ok1) != (k0 is not None and ok0) or c1 != c0:
+        return True
+    if actual is not None:
+        return (r6_classify(s, actual, distinct)[0] == "auto") != \
+            (r6_classify(s, actual, distinct, CLAUSE_CORE)[0] == "auto")
+    return False
+
+
+def column_joined_keep(texts, pool_page=False, actual=None, distinct=None):
+    """True if any sentence of the column's prose units (a description / intro, or every plain FAQ answer of
+    an ai_faqs array) is a joined_keep sentence. Such a column is left unchanged (ALL:joined_clause_kept)
+    whenever the rules would otherwise change it."""
+    return any(joined_keep(s, pool_page, actual, distinct) for x in texts for s in split_sentences(x))
 
 
 # --------------------------------------------------------------------------- field planner (R2/R3/R4/R6)
@@ -466,6 +516,8 @@ def plan_field(text, names, pool_page=False, actual=None, distinct=None, narr_ru
         elif dels:
             cur = new
             res["deleted"] += dels
+    if res["deleted"] and column_joined_keep([text], pool_page, actual, distinct):
+        return {"after": None, "deleted": [], "skips": {"ALL": "joined_clause_kept"}, "r6": r6}
     if res["deleted"]:
         res["after"] = cur
     return res
@@ -565,6 +617,9 @@ def plan_faqs(faqs, names, pool_page=False, actual=None, distinct=None):
                     e["a"] = r[0]
                     rep["sent_deleted"] += r[1]
     changed = bool(rep["r5_deleted"]) or bool(rep["sent_deleted"])
+    if changed and column_joined_keep([e["a"] for e in faqs if _plain_entry(e)], pool_page, actual, distinct):
+        rep.update(r5_deleted=[], r5_skip=None, sent_deleted=[], skips={"ALL": "joined_clause_kept"})
+        return None, rep
     return (cur if changed else None), rep
 
 
@@ -598,7 +653,9 @@ def rules():
          "skip": "sentence is kept (not deletable) if it contains a digit, $, % or number word"},
         {"id": "url_or_contact", "pattern": URL, "skip": "sentence is kept"},
         {"id": "second_clause", "pattern": CLAUSE, "also": {"comma_splice": COMMA_SPLICE, "splice_ok": SPLICE_OK},
-         "skip": "sentence is kept: a second clause usually carries an assertion"},
+         "core_pattern": CLAUSE_CORE, "joined_clause_pattern": CLAUSE_JOIN,
+         "skip": "sentence is kept: a second clause usually carries an assertion (pattern = core_pattern | "
+                 "joined_clause_pattern; the joined-clause part was added 2026-11-17)"},
         {"id": "answer_polarity", "pattern": POLARITY,
          "skip": "sentence is kept: it opens with the answer itself (\"Yes, I think so.\")"},
         {"id": "fact_vocabulary", "pattern": LEXICON, "price_schedule_pattern": LEX_PRICE_SCHEDULE,
@@ -615,6 +672,15 @@ def rules():
                  "city name or the state name"},
         {"id": "field_would_be_empty",
          "skip": "row (for this column) is skipped and reported if every sentence of a field would be deleted"},
+        {"id": "joined_clause_kept", "pattern": CLAUSE_JOIN, "core_pattern": CLAUSE_CORE,
+         "skip": "the whole column (a description, an intro, or the whole ai_faqs array, R5 included) is left "
+                 "unchanged and reported as ALL:joined_clause_kept if the rules would change it and any of its "
+                 "sentences is decided differently because of joined_clause_pattern: a narrator sentence "
+                 "deletable with core_pattern but kept with the full pattern, a generic referral non-informative "
+                 "with core_pattern but not with the full pattern, or an R6 count sentence 'auto' with "
+                 "core_pattern but not with the full pattern. Keeping a joined-clause sentence must never "
+                 "unlock another deletion in its field, so every other column is planned exactly as with "
+                 "core_pattern (added 2026-11-17)"},
     ]
     narrator = {"split": {"protect_abbrev": ABBREV, "mark": ABBREV_MARK, "split": SPLIT},
                 "roman_numeral_mask": ROMAN_I, "singular": SING, "plural": PLUR, "local_insider": LOCAL,
@@ -671,7 +737,8 @@ def rules():
                        "their keys unchanged",
              "skip": [{"id": "insurance", "pattern": INSURANCE,
                        "skip": "entry kept if its question or answer matches"},
-                      {"id": "array_would_be_empty", "skip": "no entry of the row is deleted; reported"}],
+                      {"id": "array_would_be_empty", "skip": "no entry of the row is deleted; reported"},
+                      common_skip[10]],
              "side_effect": "pp-ssr also prints ai_faqs as FAQPage JSON-LD; deleting an entry removes it there "
                             "too (observed on live pages 2026-11-16)"},
             {"id": "R6", "column": "pp_cities.ai_intro, pp_cities.ai_faqs[*].a", "kind": "delete_sentence",
@@ -694,7 +761,7 @@ def rules():
                                                         "duplicates (duplicate-mapping.csv SAME_FACILITY / "
                                                         "LIKELY_SAME) are merged",
                                       "vague": COUNT_VAGUE},
-             "skip": [common_skip[0], common_skip[7], common_skip[8], common_skip[9]]},
+             "skip": [common_skip[0], common_skip[7], common_skip[8], common_skip[9], common_skip[10]]},
         ],
         "not_rendered": {"pp_pools.ai_tips": "not printed on live pool pages or their JSON-LD (checked "
                                              "2026-11-16); no rule"},
@@ -725,10 +792,24 @@ def run_tests(path=None):
         if got != after or (e.get("expect_skip") and e["expect_skip"] != why):
             fails += 1
             print("FAIL", rid, e.get("ref"), "\n  want:", after, "\n  got: ", got, "\n  skip:", why)
+    # Shape checks for CLAUSE_JOIN (2026-11-17): bare fragments, not page text. Each shape the clause-guard
+    # check listed must match; a lead-in comma with no join word must not.
+    shapes = ((". so you'd .", True), (". and so you'll .", True), (".,  plus you'd .", True),
+              ("., and so you'd .", True), ("., or you can .", True), ("., or you’re .", True),
+              ("., so pool season .", True), (".,so a .", True), ("., yet the .", True),
+              ("., then the .", True), ("., but the .", True), (". so it’s .", True), (". so I'd .", True),
+              (". so there .", True), (". So we .", True),
+              ("Honestly, I don't have that.", False), ("From what I can tell, I don't have that.", False),
+              (". so your .", False), ("., also the .", False), ("., orange .", False), (". also .", False),
+              ("., sometimes .", False), (". soon you .", False))
+    for frag, want in shapes:
+        if (re.search(CLAUSE_JOIN, frag) is not None) != want:
+            fails += 1
+            print("FAIL CLAUSE_JOIN shape", repr(frag), "want match" if want else "want no match")
     counts = {}
     for e in ex:
         counts[e["rule"]] = counts.get(e["rule"], 0) + 1
-    print(f"{len(ex)} examples {counts}, {fails} failures")
+    print(f"{len(ex)} examples {counts}, {len(shapes)} CLAUSE_JOIN shape checks, {fails} failures")
     return fails == 0
 
 
