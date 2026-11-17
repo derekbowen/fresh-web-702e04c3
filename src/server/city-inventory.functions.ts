@@ -18,6 +18,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { allInCents } from "@/lib/pricing";
 import { poolAmenityLabels } from "@/lib/amenity-claims";
+import { CITY_SEARCH_RADIUS_MI } from "@/lib/search-links";
 
 export type InventoryListing = {
   id: string;
@@ -64,6 +65,14 @@ export type CityInventory = {
    * implying the counts are live.
    */
   syncedAt: string | null;
+  /**
+   * The point the radius is measured from (the city's coordinates), or null
+   * when the city has none. The page's "Search pools near {City}" link is the
+   * marketplace search in a box around this same point
+   * (src/lib/search-links.ts searchHrefNearPlace), so the link and the counts
+   * describe the same area.
+   */
+  centre: { lat: number; lng: number } | null;
 };
 
 export const EMPTY_INVENTORY: CityInventory = {
@@ -76,6 +85,7 @@ export const EMPTY_INVENTORY: CityInventory = {
   readFailed: false,
   nearbyChecked: false,
   syncedAt: null,
+  centre: null,
 };
 
 /** What a page gets when the inventory lookup itself failed. */
@@ -85,7 +95,8 @@ export const FAILED_INVENTORY: CityInventory = { ...EMPTY_INVENTORY, readFailed:
 const MIN_EXACT = 3;
 /** Hard cap on the initial render so we never dump 40 images on a page. */
 const MAX_TOTAL = 8;
-const NEARBY_RADIUS_MI = 60;
+/** Same radius as the search box a city page links (search-links.ts). */
+const NEARBY_RADIUS_MI = CITY_SEARCH_RADIUS_MI;
 
 const SELECT_COLS =
   "sharetribe_id, slug, title, city, state_code, price_amount, price_currency, " +
@@ -181,6 +192,13 @@ export async function loadCityInventory(input: {
   lng: number | null;
 }): Promise<CityInventory> {
   const sb = supabaseAdmin as any;
+  const centre =
+    typeof input.lat === "number" &&
+    typeof input.lng === "number" &&
+    Number.isFinite(input.lat) &&
+    Number.isFinite(input.lng)
+      ? { lat: input.lat, lng: input.lng }
+      : null;
   const cityKey = normalizeCityKey(input.cityName);
   const st = input.stateCode ? input.stateCode.toUpperCase() : null;
 
@@ -210,6 +228,7 @@ export async function loadCityInventory(input: {
       readFailed: false,
       nearbyChecked: false,
       syncedAt: latest(exactRows),
+      centre,
     };
   }
 
@@ -226,6 +245,7 @@ export async function loadCityInventory(input: {
       readFailed: false,
       nearbyChecked: false,
       syncedAt: latest(exactRows),
+      centre,
     };
   }
 
@@ -273,6 +293,7 @@ export async function loadCityInventory(input: {
     readFailed: false,
     nearbyChecked: true,
     syncedAt: latest([...exactRows, ...nearRows]),
+    centre,
   };
 }
 

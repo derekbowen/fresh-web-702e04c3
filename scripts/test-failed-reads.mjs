@@ -1256,6 +1256,29 @@ const LISTING_NUMBERS = new Set([
 ]);
 const NEARBY_RADIUS_MI = 60;
 
+/**
+ * The marketplace search link WEST honours for a fixture city, built here
+ * independently of src/lib/search-links.ts: `address` plus `bounds`
+ * ("neLat,neLng,swLat,swLng", 5 decimals) covering NEARBY_RADIUS_MI around the
+ * inventory centre. WEST's SearchPage drops `address` and searches only by
+ * `bounds`; an address-only link shows every pool, unordered.
+ */
+function boundedSearchHref(label, centre) {
+  const dLat = NEARBY_RADIUS_MI / 69;
+  const dLng = NEARBY_RADIUS_MI / (69 * Math.abs(Math.cos((centre.latitude * Math.PI) / 180)));
+  const f = (n) => n.toFixed(5);
+  const bounds = [centre.latitude + dLat, centre.longitude + dLng, centre.latitude - dLat, centre.longitude - dLng]
+    .map(f)
+    .join(",");
+  return `/s?address=${encodeURIComponent(label)}&bounds=${encodeURIComponent(bounds)}`;
+}
+/** Every marketplace-search href on a page (attribute-decoded). */
+const searchHrefsOf = (html) =>
+  [...html.matchAll(/href="(\/s(?:\?[^"]*)?)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
+/** The href of the element carrying data-primary-cta="renter". */
+const primaryRenterHref = (html) =>
+  (/<a[^>]*href="([^"]*)"[^>]*data-primary-cta="renter"/.exec(html)?.[1] ?? "").replace(/&amp;/g, "&");
+
 async function intentChecks(phase) {
   stub.setMode("healthy");
   const pages = {};
@@ -1431,8 +1454,9 @@ async function intentChecks(phase) {
   );
   check(
     phase,
-    "RENTER Tempe: primary CTA searches pools, in the one /s?address form",
-    /<a[^>]*href="\/s\?address=Tempe%2C%20AZ"[^>]*data-primary-cta="renter"/.test(rT.body),
+    "RENTER Tempe: primary CTA searches the map around Tempe (address + bounds)",
+    primaryRenterHref(rT.body) === boundedSearchHref("Tempe, AZ", cityRow("tempe")),
+    primaryRenterHref(rT.body),
   );
   const invAt = rT.body.indexOf('data-inventory="renter"');
   const hostAt = rT.body.indexOf('id="own-a-pool"');
@@ -1451,10 +1475,11 @@ async function intentChecks(phase) {
   );
   check(
     phase,
-    "RENTER Tempe: the body's +-spelled search link renders in the one form",
+    "RENTER Tempe: the body's +-spelled search link for Tempe renders as the bounded search",
     // (the raw markdown also travels in the dehydrated loader data; only hrefs count)
     !/href="[^"]*Tempe%2C\+AZ/.test(rT.body) &&
-      (rT.body.match(/href="\/s\?address=Tempe%2C%20AZ"/g) ?? []).length >= 2,
+      searchHrefsOf(rT.body).filter((h) => h === boundedSearchHref("Tempe, AZ", cityRow("tempe"))).length >= 3,
+    searchHrefsOf(rT.body).join(" "),
   );
   const rTNums = numbersOk(rT, new Set([tempeHits.length, ...LISTING_NUMBERS]));
   check(phase, "RENTER Tempe: every number in intro + inventory is a fixture fact", rTNums.ok, rTNums.detail);
@@ -1509,8 +1534,9 @@ async function intentChecks(phase) {
   check(phase, "RENTER Mesa: every number in intro + inventory is a fixture fact", rMNums.ok, rMNums.detail);
   check(
     phase,
-    "RENTER Mesa: primary CTA searches pools near Mesa",
-    /<a[^>]*href="\/s\?address=Mesa%2C%20AZ"[^>]*data-primary-cta="renter"/.test(rM.body),
+    "RENTER Mesa: primary CTA searches the map around the \"mesa\" centre (address + bounds)",
+    primaryRenterHref(rM.body) === boundedSearchHref("Mesa, AZ", cityRow("mesa")),
+    primaryRenterHref(rM.body),
   );
 
   // ── RENTER with no coordinates: nearby not checked ───────────────────────
@@ -1519,10 +1545,12 @@ async function intentChecks(phase) {
   const vIntro = decode(elementWith(rV.body, "data-renter-intro"));
   check(
     phase,
-    "RENTER Chevy Chase (no centroid): says only that none has it as their city, and searches near it",
-    vIntro ===
-      "No pools are listed with Chevy Chase, MD as their city on Pool Rental Near Me yet. Search the map to see the pools listed near Chevy Chase." &&
-      /<a[^>]*href="\/s\?address=Chevy%20Chase%2C%20MD"[^>]*data-primary-cta="renter"/.test(rV.body) &&
+    "RENTER Chevy Chase (no centroid): says only that none has it as their city; browse all, no promise of a map near it",
+    vIntro === "No pools are listed with Chevy Chase, MD as their city on Pool Rental Near Me yet." &&
+      primaryRenterHref(rV.body) === "/s" &&
+      hasText(rV, "Browse all pools") &&
+      !hasText(rV, "Search the map") &&
+      !hasText(rV, "Search pools near Chevy Chase") &&
       has(rV, "data-nearby-unchecked") &&
       !has(rV, "data-empty-inventory") &&
       !hasText(rV, "There are no pools listed in"),
@@ -1550,6 +1578,41 @@ async function intentChecks(phase) {
     metaDescriptionOf(rC.body).startsWith("No pools are listed in Chapel Hill, NC yet."),
     metaDescriptionOf(rC.body),
   );
+  // ── every renter search link: bounded when the city has coordinates ──────
+  // Fixture centre per renter page (p.$slug.tsx: the bare same-state cities row
+  // with coordinates, else the resolved row): tempe-az -> "tempe", mesa-az ->
+  // "mesa", chapel-hill -> "chapel-hill", chevy-chase-md -> none.
+  for (const [slug, label, centre, hasPools] of [
+    ["tempe-az", "Tempe, AZ", cityRow("tempe"), true],
+    ["mesa-az", "Mesa, AZ", cityRow("mesa"), true],
+    ["chapel-hill", "Chapel Hill, NC", cityRow("chapel-hill"), false],
+    ["chevy-chase-md", "Chevy Chase, MD", null, false],
+  ]) {
+    const hrefs = searchHrefsOf(pages[slug].body);
+    const bounded = centre ? boundedSearchHref(label, centre) : null;
+    const stray = hrefs.filter((h) => h !== "/s" && h !== bounded);
+    check(
+      phase,
+      centre
+        ? `RENTER ${slug}: every /s link is the bounded search around its centre or the bare /s; none is address-only`
+        : `RENTER ${slug} (no coordinates): every /s link is the bare /s`,
+      hrefs.length > 0 && stray.length === 0,
+      stray.join(" ") || `${hrefs.length} links`,
+    );
+    check(
+      phase,
+      `RENTER ${slug}: the primary CTA is ${hasPools ? "the bounded search" : "the bare /s (browse all)"}`,
+      primaryRenterHref(pages[slug].body) === (hasPools ? bounded : "/s"),
+      primaryRenterHref(pages[slug].body),
+    );
+    if (hasPools)
+      check(
+        phase,
+        `RENTER ${slug}: hero, sticky mobile and body search links all carry bounds`,
+        hrefs.filter((h) => h === bounded).length >= 2,
+        hrefs.join(" "),
+      );
+  }
   check(
     phase,
     "No two intent fixture pages share an H1 or a <title>",

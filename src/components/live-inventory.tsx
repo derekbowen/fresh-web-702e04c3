@@ -138,9 +138,12 @@ export function LiveInventory({
  *   "renter" (default) — a page for someone looking for a pool. With no pool to
  *            show it says so plainly ("There are no pools listed in {City} yet.")
  *            and links to browse all pools — but only when the radius lookup
- *            ran. A city with no coordinates (nearby not checked) gets a search
- *            around the city instead, with no claim that nothing is near. After
- *            a failed read it says nothing about how many pools there are.
+ *            ran. A city with no coordinates (nearby not checked) says only that
+ *            no pool has it as its city, with no claim that nothing is near and
+ *            no promise of a search around it (without coordinates there is no
+ *            bounded search, and WEST ignores an address on its own): browse
+ *            all pools. After a failed read it says nothing about how many
+ *            pools there are.
  *   "host"   — a page recruiting pool owners. Renders ONLY when real pools exist
  *            ("Pools already listed near {City}"); otherwise nothing at all, so a
  *            host page never opens on an empty-marketplace notice.
@@ -149,14 +152,11 @@ export function CityInventorySection({
   inventory,
   cityName,
   browseAllHref = "/s",
-  searchHref = "/s",
   framing = "renter",
 }: {
   inventory: CityInventory;
   cityName: string;
   browseAllHref?: string;
-  /** /s?address=… for this city (the map search around it). */
-  searchHref?: string;
   framing?: "renter" | "host";
 }) {
   const { exact, nearby } = inventory;
@@ -233,11 +233,10 @@ export function CityInventorySection({
             ) : !inventory.nearbyChecked ? (
               <>
                 <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-                  Search pools near {cityName}
+                  Browse private pools
                 </h2>
                 <p className="mt-2 max-w-2xl text-muted-foreground" data-nearby-unchecked="">
-                  No pools are listed with {cityName} as their city yet. Search the map to see the
-                  pools listed near {cityName}.
+                  No pools are listed with {cityName} as their city yet.
                 </p>
               </>
             ) : (
@@ -251,21 +250,9 @@ export function CityInventorySection({
               </>
             )}
             <div className="mt-6 flex flex-wrap gap-3">
-              {!inventory.readFailed && !inventory.nearbyChecked ? (
-                <a
-                  href={searchHref}
-                  className="rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition hover:opacity-90"
-                >
-                  Search pools near {cityName}
-                </a>
-              ) : null}
               <a
                 href={browseAllHref}
-                className={
-                  !inventory.readFailed && !inventory.nearbyChecked
-                    ? "rounded-lg border border-border px-5 py-2.5 font-semibold text-foreground transition hover:bg-muted"
-                    : "rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition hover:opacity-90"
-                }
+                className="rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition hover:opacity-90"
               >
                 Browse all pools
               </a>

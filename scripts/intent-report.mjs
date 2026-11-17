@@ -5,7 +5,8 @@
  * rows, never the database itself, and runs the SAME modules the pages run:
  *
  *   src/lib/city-intent.ts       classification, place, <title>, H1
- *   src/lib/search-links.ts      the one /s?address= form
+ *   src/lib/search-links.ts      the one /s?address= form, and the bounded
+ *                                renter search (/s?address=…&bounds=…)
  *   src/lib/host-acq-variants.ts the A/B/C/D title_variant copy (unchanged)
  *   src/lib/city-slug.ts         the old place parsing (for "before")
  *
@@ -51,7 +52,12 @@ import {
   placeForPage,
   cityPageCopy,
 } from "../src/lib/city-intent.ts";
-import { normalizeSearchHref, searchHrefForPlace, searchHrefForState } from "../src/lib/search-links.ts";
+import {
+  normalizeSearchHref,
+  searchHrefForPlace,
+  searchHrefForState,
+  searchHrefNearPlace,
+} from "../src/lib/search-links.ts";
 import { getVariantCopy, normalizeTitleVariant } from "../src/lib/host-acq-variants.ts";
 import { cityForContentPage, parseCitySlug } from "../src/lib/city-slug.ts";
 import { titlePlace, inventorySummaryOf, renterInventoryState } from "../src/lib/city-intent.ts";
@@ -204,8 +210,10 @@ function before(p) {
 }
 
 // ── after (this change) ──────────────────────────────────────────────────────
-// The renter primary CTA links the map search for the city whenever the page
-// has pools in or near it, or could not check nearby (no coordinates).
+// The renter primary CTA links the bounded map search around the inventory
+// centre whenever the page has pools in or near it AND the centre has
+// coordinates; otherwise it is "Browse all pools" -> /s (not a /s? link). A
+// stored body link to the page's own city becomes that same link (or /s).
 function after(p) {
   const id = slugIdentity(p);
   const row = resolveCityRow(id.lookupSlug);
@@ -220,9 +228,23 @@ function after(p) {
       : row;
   const inv = inventoryFor(place, centre);
   const state = stateOf(inv);
-  const links = [...p.links.map(normalizeSearchHref), "/p/pool-pros"];
-  if (copy.intent === "renter" && (state === "exact" || state === "nearby" || state === "unchecked"))
-    links.push(searchHrefForPlace(place.cityName, place.stateCode));
+  const near =
+    centre && centre.latitude != null && centre.longitude != null
+      ? searchHrefNearPlace(place.cityName, place.stateCode, {
+          lat: Number(centre.latitude),
+          lng: Number(centre.longitude),
+        })
+      : "/s";
+  const renterSearch = copy.intent === "renter" && (state === "exact" || state === "nearby") && near !== "/s";
+  const own = searchHrefForPlace(place.cityName, place.stateCode);
+  const links = [
+    ...p.links
+      .map(normalizeSearchHref)
+      .map((h) => (copy.intent === "renter" && own !== "/s" && h === own ? (renterSearch ? near : "/s") : h))
+      .filter((h) => h !== "/s"),
+    "/p/pool-pros",
+  ];
+  if (renterSearch) links.push(near);
   return {
     h1: copy.h1.text,
     title: copy.title,
@@ -298,7 +320,9 @@ function linkStatsOf(all) {
   for (const h of search) {
     const k = placeKey(h);
     if (!byPlace.has(k)) byPlace.set(k, new Set());
-    byPlace.get(k).add(h);
+    // The spelling is the raw address value; `&bounds=` (the bounded renter
+    // search) does not make a second spelling of the same place.
+    byPlace.get(k).add(/[?&]address=([^&#]*)/.exec(h)?.[1] ?? h);
   }
   const multi = [...byPlace.values()].filter((x) => x.size > 1);
   return {

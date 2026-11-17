@@ -6,13 +6,23 @@
  * linked under several spellings (`Akron%2C%20OH`, `Akron%2C+OH`, `akron%2C%20oh`,
  * `Akron%2C%20` with an empty state), each one a separate URL to a crawler.
  *
- * The form is `/s?address=<encodeURIComponent("City, ST")>`:
+ * The address form is `/s?address=<encodeURIComponent("City, ST")>`:
  *   - one parameter, `address`, nothing else
  *   - city words single-spaced, periods dropped ("St. Louis" -> "St Louis"),
  *     an all-lowercase name title-cased ("buffalo" -> "Buffalo")
  *   - a two-letter state code upper-cased; a full state name title-cased
  *   - a state repeated inside the city name dropped ("New Haven CT, CT" -> "New Haven, CT")
  *   - no state known: the city alone, never a dangling ", "
+ *
+ * BUT the marketplace search ignores `address` on its own. WEST's SearchPage
+ * (poolrentalnearme-web SearchPage.duck.js) drops `address` from the query and
+ * searches by `bounds` only, and SearchPageWithMap skips its nearest-to-visitor
+ * default whenever `address` is present. So `/s?address=Tempe%2C%20AZ` shows
+ * every pool on the site, unordered (129 on 2026-11-17), which is worse than the
+ * bare `/s`. A link that promises pools near a place must carry bounds:
+ * searchHrefNearPlace() below. The address-only searchHrefForPlace() /
+ * searchHrefForState() are kept for the templates that already linked that way
+ * before seo/05-intent (comparison pages, state hubs, advocacy, activity_city).
  *
  * Pure and dependency-free so the link-variant measurement script
  * (scripts/intent-report.mjs) runs the same code the pages do.
@@ -55,6 +65,64 @@ export function searchHrefForPlace(
 ): string {
   const address = searchAddressForPlace(city, state);
   return address ? `/s?address=${encodeURIComponent(address)}` : "/s";
+}
+
+/**
+ * Radius, in miles, of a city page's "near {City}" inventory
+ * (src/server/city-inventory.functions.ts reads it). The search box around a
+ * city covers the same radius, so the map a "Search pools near {City}" link
+ * opens holds every pool the page counted as near.
+ */
+export const CITY_SEARCH_RADIUS_MI = 60;
+
+/**
+ * `bounds` for the marketplace search: "neLat,neLng,swLat,swLng" (the order
+ * WEST parses as latlngBounds and the homepage city cards use), 5 decimals,
+ * for a box `radiusMi` around a point. It is the same box the inventory query
+ * reads (lat ± r/69, lng ± r/(69·cos lat)), so it contains the whole radius.
+ * Null when the point is not a usable coordinate.
+ */
+export function searchBoundsAround(
+  lat: number | null | undefined,
+  lng: number | null | undefined,
+  radiusMi: number = CITY_SEARCH_RADIUS_MI,
+): string | null {
+  if (typeof lat !== "number" || typeof lng !== "number") return null;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+  const dLat = radiusMi / 69;
+  const cos = Math.abs(Math.cos((lat * Math.PI) / 180));
+  const dLng = radiusMi / (69 * (cos < 0.01 ? 0.01 : cos));
+  const clamp = (v: number, lim: number) => Math.max(-lim, Math.min(lim, v));
+  return [
+    clamp(lat + dLat, 90),
+    clamp(lng + dLng, 180),
+    clamp(lat - dLat, 90),
+    clamp(lng - dLng, 180),
+  ]
+    .map((v) => v.toFixed(5))
+    .join(",");
+}
+
+/**
+ * The marketplace search around a place, in the form WEST honours:
+ * `/s?address=<City, ST>&bounds=<neLat,neLng,swLat,swLng>` (both values
+ * encodeURIComponent'd, as the homepage city cards build them), the box
+ * CITY_SEARCH_RADIUS_MI around `centre` (the page's inventory centre).
+ *
+ * No usable coordinates, or no place: the bare `/s`, never an address-only
+ * link (WEST would ignore the address and show every pool unordered, and lose
+ * its nearest-to-visitor default).
+ */
+export function searchHrefNearPlace(
+  city: string | null | undefined,
+  state: string | null | undefined,
+  centre: { lat: number | null | undefined; lng: number | null | undefined } | null | undefined,
+): string {
+  const address = searchAddressForPlace(city, state);
+  const bounds = centre ? searchBoundsAround(centre.lat, centre.lng) : null;
+  if (!address || !bounds) return "/s";
+  return `/s?address=${encodeURIComponent(address)}&bounds=${encodeURIComponent(bounds)}`;
 }
 
 /** `/s?address=…` for a whole state ("Ohio"), or `/s`. */

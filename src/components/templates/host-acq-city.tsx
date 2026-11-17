@@ -29,7 +29,7 @@ import {
   hostValueSentence,
   isNonEnglishPage,
 } from "@/lib/city-intent";
-import { normalizeSearchHref, searchHrefForPlace } from "@/lib/search-links";
+import { normalizeSearchHref, searchHrefForPlace, searchHrefNearPlace } from "@/lib/search-links";
 import type { ContentPage } from "@/server/content-pages.functions";
 import type { NearbyCity } from "@/server/nearby-cities.functions";
 import type { CityRow } from "@/server/cities.functions";
@@ -101,8 +101,22 @@ export function HostAcqCityTemplate({
   const hourlyRate = isRenter ? 75 : (guide?.defaultHourlyRate ?? 75);
   const inventorySummary = inventorySummaryOf(cityInventory);
   const renterState = renterInventoryState(inventorySummary);
-  const renterSearch = renterSearchesNearby(renterState);
-  const searchHref = searchHrefForPlace(cityName, place.stateCode);
+  // The marketplace search around the city: address + bounds around the same
+  // centre the inventory was measured from. WEST ignores an address without
+  // bounds (it shows every pool, unordered), so with no coordinates there is no
+  // "near {City}" search at all: the renter CTAs browse all pools (bare /s).
+  const searchHref = searchHrefNearPlace(cityName, place.stateCode, cityInventory.centre);
+  const renterSearch = renterSearchesNearby(renterState) && searchHref !== "/s";
+  const renterHasPools = renterState === "exact" || renterState === "nearby";
+  // A stored body link to this page's own city search (address-only, which
+  // WEST ignores) becomes the page's renter search link: bounded when there is
+  // one, else the bare /s. Links to other places are only normalised.
+  const ownPlaceSearch = searchHrefForPlace(cityName, place.stateCode);
+  const bodyHref = (href: string) => {
+    const n = normalizeSearchHref(href);
+    if (isRenter && ownPlaceSearch !== "/s" && n === ownPlaceSearch) return renterSearch ? searchHref : "/s";
+    return n;
+  };
   // The direct listing-wizard URL. /l/draft/0000…/new/details is a 302 to it.
   const LIST_POOL_HREF = "/wizard/";
   // RENTER topic and non-English pages keep their stored description as the
@@ -257,21 +271,13 @@ export function HostAcqCityTemplate({
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   {renterSearch ? (
-                    <>
-                      <a
-                        href={searchHref}
-                        data-primary-cta="renter"
-                        className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
-                      >
-                        Search pools near {cityName}
-                      </a>
-                      <a
-                        href={renterState === "unchecked" ? "/s" : "#pools-available"}
-                        className="inline-flex items-center justify-center rounded-full border border-border bg-background/80 px-7 py-3.5 text-base font-semibold text-foreground backdrop-blur transition hover:bg-muted"
-                      >
-                        {renterState === "unchecked" ? "Browse all pools" : "See the pools listed"}
-                      </a>
-                    </>
+                    <a
+                      href={searchHref}
+                      data-primary-cta="renter"
+                      className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg transition hover:opacity-90"
+                    >
+                      Search pools near {cityName}
+                    </a>
                   ) : (
                     <a
                       href="/s"
@@ -281,6 +287,14 @@ export function HostAcqCityTemplate({
                       Browse all pools
                     </a>
                   )}
+                  {renterHasPools ? (
+                    <a
+                      href="#pools-available"
+                      className="inline-flex items-center justify-center rounded-full border border-border bg-background/80 px-7 py-3.5 text-base font-semibold text-foreground backdrop-blur transition hover:bg-muted"
+                    >
+                      See the pools listed
+                    </a>
+                  ) : null}
                   <a
                     href="#own-a-pool"
                     className="inline-flex items-center justify-center rounded-full px-4 py-3.5 text-sm font-semibold text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline"
@@ -393,7 +407,6 @@ export function HostAcqCityTemplate({
               inventory={cityInventory}
               cityName={cityName}
               browseAllHref="/s"
-              searchHref={searchHref}
               framing="renter"
             />
             {/* HOST SECTION — the stored body was written for pool owners. */}
@@ -596,7 +609,6 @@ export function HostAcqCityTemplate({
             inventory={cityInventory}
             cityName={cityName}
             browseAllHref="/s"
-            searchHref={searchHref}
             framing="host"
           />
         ) : null}
@@ -619,9 +631,10 @@ export function HostAcqCityTemplate({
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     h1: ({ children, node: _node, ...props }) => <h2 {...props}>{children}</h2>,
                     // Stored bodies spell the same search link several ways
-                    // (%2C+ vs %2C%20, casing). Render one form per place.
+                    // (%2C+ vs %2C%20, casing). Render one form per place; on a
+                    // RENTER page the city's own search is the bounded one.
                     a: ({ children, node: _node, href, ...props }) => (
-                      <a href={typeof href === "string" ? normalizeSearchHref(href) : href} {...props}>
+                      <a href={typeof href === "string" ? bodyHref(href) : href} {...props}>
                         {children}
                       </a>
                     ),

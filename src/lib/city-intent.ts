@@ -458,9 +458,15 @@ export function renterInventoryState(s: InventorySummary): RenterInventoryState 
   return "none";
 }
 
-/** States whose primary renter CTA is a search around the city. */
+/**
+ * States whose primary renter CTA is a search around the city: there are pools
+ * in or near it. The link itself needs the city's coordinates (a bounded
+ * search, src/lib/search-links.ts searchHrefNearPlace); without them the CTA is
+ * "Browse all pools" -> /s. "unchecked" means exactly that the city has no
+ * coordinates, so it never searches around the city.
+ */
 export function renterSearchesNearby(state: RenterInventoryState): boolean {
-  return state === "exact" || state === "nearby" || state === "unchecked";
+  return state === "exact" || state === "nearby";
 }
 
 /**
@@ -493,7 +499,9 @@ export function renterIntro(place: CityPlace, s: InventorySummary): string {
       return `${m} private ${plural(m, "pool is", "pools are")} listed ${where} on Pool Rental Near Me.${nearest}`;
     }
     case "unchecked":
-      return `No pools are listed with ${place.label} as their city on Pool Rental Near Me yet. Search the map to see the pools listed near ${place.cityName}.`;
+      // No coordinates: no bounded search exists for this city, so nothing here
+      // promises a map of the pools near it; the CTA is "Browse all pools".
+      return `No pools are listed with ${place.label} as their city on Pool Rental Near Me yet.`;
     case "none":
       return `No pools are listed in ${place.label} yet. You can browse every pool listed on Pool Rental Near Me.`;
     default:

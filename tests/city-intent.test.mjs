@@ -25,6 +25,9 @@ import {
   searchHrefForPlace,
   searchHrefForState,
   normalizeSearchHref,
+  searchBoundsAround,
+  searchHrefNearPlace,
+  CITY_SEARCH_RADIUS_MI,
 } from "../src/lib/search-links.ts";
 
 const copyFor = (slug, title, row = null, extra = {}) => {
@@ -306,9 +309,11 @@ test("renter wording states only the counts and distances it is given", () => {
   assert.equal(renterInventoryState(unchecked), "unchecked");
   assert.equal(
     renterIntro(place, unchecked),
-    "No pools are listed with Tempe, AZ as their city on Pool Rental Near Me yet. Search the map to see the pools listed near Tempe.",
+    "No pools are listed with Tempe, AZ as their city on Pool Rental Near Me yet.",
   );
-  assert.doesNotMatch(renterIntro(place, unchecked), /browse every pool|no pools near/i);
+  // No coordinates means no bounded search, so nothing promises a map of the
+  // pools near the city (WEST ignores an address without bounds).
+  assert.doesNotMatch(renterIntro(place, unchecked), /browse every pool|no pools near|search the map|near Tempe/i);
   assert.equal(
     renterIntro(place, base),
     "No pools are listed in Tempe, AZ yet. You can browse every pool listed on Pool Rental Near Me.",
@@ -373,6 +378,49 @@ test("search links: one form per place", () => {
   assert.equal(normalizeSearchHref("/s?address=X&bounds=1,2,3,4"), "/s?address=X&bounds=1,2,3,4");
   assert.equal(normalizeSearchHref("/p/hosting"), "/p/hosting");
   assert.equal(normalizeSearchHref("/s?address=%E0%A4%A"), "/s?address=%E0%A4%A");
+});
+
+test("search near a place: coordinates -> address + bounds in WEST's format, none -> bare /s", () => {
+  // WEST (SearchPage.duck.js) parses `bounds` as latlngBounds "neLat,neLng,swLat,swLng"
+  // and drops `address`; without bounds it searches everything, unordered.
+  assert.equal(CITY_SEARCH_RADIUS_MI, 60);
+  assert.equal(searchBoundsAround(33.4255, -111.94), "34.29507,-110.89811,32.55593,-112.98189");
+  assert.equal(
+    searchHrefNearPlace("Tempe", "AZ", { lat: 33.4255, lng: -111.94 }),
+    "/s?address=Tempe%2C%20AZ&bounds=34.29507%2C-110.89811%2C32.55593%2C-112.98189",
+  );
+  // Same address spelling as searchHrefForPlace (one form per place), commas in
+  // the bounds encoded exactly as the homepage city cards encode them.
+  assert.equal(
+    searchHrefNearPlace("st. louis", "mo", { lat: 38.627, lng: -90.1994 }).split("&")[0],
+    searchHrefForPlace("St. Louis", "MO"),
+  );
+  assert.match(
+    searchHrefNearPlace("Chapel Hill", "NC", { lat: 35.9132, lng: -79.0558 }),
+    /^\/s\?address=Chapel%20Hill%2C%20NC&bounds=-?\d+\.\d{5}%2C-?\d+\.\d{5}%2C-?\d+\.\d{5}%2C-?\d+\.\d{5}$/,
+  );
+  // The box holds the whole radius the page counts pools in: every point 60 miles
+  // from the centre (any bearing) is inside it, NE corner north-east of SW.
+  for (const [lat, lng] of [[33.4255, -111.94], [47.6062, -122.3321], [25.7617, -80.1918], [61.2181, -149.9003]]) {
+    const [neLat, neLng, swLat, swLng] = searchBoundsAround(lat, lng).split(",").map(Number);
+    assert.ok(neLat > swLat && neLng > swLng);
+    for (let b = 0; b < 360; b += 5) {
+      const R = 3958.8, d = CITY_SEARCH_RADIUS_MI / R, br = (b * Math.PI) / 180, p1 = (lat * Math.PI) / 180;
+      const p2 = Math.asin(Math.sin(p1) * Math.cos(d) + Math.cos(p1) * Math.sin(d) * Math.cos(br));
+      const l2 = lng + (Math.atan2(Math.sin(br) * Math.sin(d) * Math.cos(p1), Math.cos(d) - Math.sin(p1) * Math.sin(p2)) * 180) / Math.PI;
+      const pLat = (p2 * 180) / Math.PI;
+      assert.ok(pLat <= neLat && pLat >= swLat && l2 <= neLng && l2 >= swLng, `${lat},${lng} bearing ${b}`);
+    }
+  }
+  // No coordinates (or no place): the bare /s, never an address-only link.
+  for (const centre of [null, undefined, { lat: null, lng: null }, { lat: 33.4, lng: null }, { lat: Number.NaN, lng: 1 }, { lat: 91, lng: 0 }]) {
+    assert.equal(searchHrefNearPlace("Chevy Chase", "MD", centre), "/s", JSON.stringify(centre));
+  }
+  assert.equal(searchHrefNearPlace(null, null, { lat: 33.4255, lng: -111.94 }), "/s");
+  assert.equal(searchBoundsAround(null, -111.94), null);
+  // Never outside the valid range.
+  const [neLat, , swLat] = searchBoundsAround(89.9, 0).split(",").map(Number);
+  assert.ok(neLat <= 90 && swLat >= -90);
 });
 
 test("RENTER topic and non-English pages keep their stored meta description", () => {

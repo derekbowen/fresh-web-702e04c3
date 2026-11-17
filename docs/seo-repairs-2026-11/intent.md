@@ -117,9 +117,10 @@ No schema change. No data change in this branch (§6 lists the proposed ones, no
     can sit inside the city (`/p/queens`: nearest pool 0.8 mi, city "Jamaica";
     a second at the same point has no city).
   - nearby not checked (the city has no coordinates, 85 pages): "No pools are
-    listed with {City}, {ST} as their city on Pool Rental Near Me yet. Search the
-    map to see the pools listed near {City}." — with the map search as the CTA,
-    and no claim that nothing is near. Before, these pages said "No pools are
+    listed with {City}, {ST} as their city on Pool Rental Near Me yet." — with
+    "Browse all pools" (`/s`) as the CTA, no claim that nothing is near, and no
+    promise of a map search near the city (without coordinates there is no
+    bounded search; see "Primary CTA" below). Before, these pages said "No pools are
     listed … browse every pool" although the radius search never ran
     (`/p/chevy-chase-md`, a Silver Spring pool ~5 miles away). A failed cities
     read lands here too, never on "none".
@@ -135,12 +136,34 @@ No schema change. No data change in this branch (§6 lists the proposed ones, no
   locale `es`) keep their stored meta description and show it as the hero's
   first paragraph, followed by the inventory sentence; the four Austin pages no
   longer share one meta description.
-- Primary CTA: "Search pools near {City}" → `/s?address={City}%2C%20{ST}` when
-  pools are listed in or near the city or nearby was not checked; otherwise
-  "Browse all pools" → `/s`.
+- Primary CTA: "Search pools near {City}" → the bounded marketplace search
+  `/s?address={City}%2C%20{ST}&bounds={neLat}%2C{neLng}%2C{swLat}%2C{swLng}`
+  when pools are listed in or near the city **and** the inventory centre has
+  coordinates; otherwise "Browse all pools" → `/s`. The same rule drives the
+  sticky mobile CTA ("Search pools" / "Browse pools"), and a stored body link to
+  the page's own city search is rendered as that same link (or `/s`).
+  **Why bounds (release-verifier defect, fixed after 0116e9f):** WEST's search
+  page drops `address` and searches by `bounds` only
+  (poolrentalnearme-web `SearchPage.duck.js` `loadData`), and skips its
+  nearest-to-visitor default whenever `address` is present
+  (`SearchPageWithMap.js`). So the address-only link the branch first shipped
+  showed every pool, unordered (live 2026-11-17: `/s?address=Tempe%2C%20AZ` →
+  129), worse than the bare `/s` these pages linked on 7702845. The box is
+  `searchBoundsAround()` in `src/lib/search-links.ts`: lat ± 60/69°, lng ±
+  60/(69·cos lat)°, 5 decimals, in the `neLat,neLng,swLat,swLng` order and
+  `encodeURIComponent` form of the homepage city cards — i.e. exactly the box
+  `loadCityInventory` queries for the page's "within 60 miles" counts, around
+  the same centre, so the map holds every pool the page counted as near
+  (`CITY_SEARCH_RADIUS_MI`, shared by both). The homepage's only point-based box
+  (the "near me" button, ±0.45° ≈ 31 mi) was not used: it would cut off pools
+  the page itself lists at 31–60 miles. Live 2026-11-17 with fixture centres:
+  Tempe AZ (33.4255, −111.94) → 3 pools, Mesa AZ (33.4152, −111.8315) → 3,
+  Chapel Hill NC (35.9132, −79.0558) → 2 (address-only: 129). Chevy Chase MD
+  has no coordinates, so its CTAs are the bare `/s`.
 - The inventory section comes directly under the hero
   (`framing="renter"`: "Private pools listed in {City}" / "Pools near {City}" /
-  "Search pools near {City}" (not checked) / "No pools listed in {City} yet —
+  "Browse private pools — No pools are listed with {City} as their city yet." +
+  Browse all pools (not checked) / "No pools listed in {City} yet —
   There are no pools listed in {City} yet." + Browse all pools), with "Listing
   data as of {date}" — the newest `updated_at` among the listings shown
   (September 25, 2026 on the current mirror). The hero no longer shows a
@@ -199,7 +222,7 @@ the strings.
 | `become-a-swimming-pool-host-newport-ky` | HOST, stored earnings description | hero + meta: "Host a pool in Newport, KY and earn $40-$150/hour. … earn up to $10,000/month." | hero: "List your Newport pool on Pool Rental Near Me and rent it out by the hour. 0% host fees: …"; title "Become a swimming pool host in Newport" unchanged |
 | `chapel-hill` | RENTER, 2 pools nearby | Rent your Chapel Hill pool by the hour. … / Pool Rental in Chapel Hill, NC \| Hourly Backyard Pools — "We're still adding pools in Chapel Hill" | Private pool rentals in Chapel Hill, NC / Private Pool Rentals in Chapel Hill, NC \| Pool Rental Near Me — "2 private pools are listed within 60 miles of Chapel Hill, NC on Pool Rental Near Me. The nearest is 26 miles from Chapel Hill." |
 | `houston` | RENTER, 2 exact + 4 nearby | Rent your Houston pool by the hour. … | Private pool rentals in Houston, TX — "2 private pools are listed in Houston, TX … 4 more are listed within 60 miles."; nearby distances from downtown (nearest 21 mi, was "2 miles" from the off-centre row in the committed draft) |
-| `chevy-chase-md` | RENTER, no coordinates | Rent your Chevy Chase pool by the hour. … — "We're still adding pools" | Private pool rentals in Chevy Chase, MD — "No pools are listed with Chevy Chase, MD as their city … Search the map to see the pools listed near Chevy Chase." + map-search CTA |
+| `chevy-chase-md` | RENTER, no coordinates | Rent your Chevy Chase pool by the hour. … — "We're still adding pools" | Private pool rentals in Chevy Chase, MD — "No pools are listed with Chevy Chase, MD as their city on Pool Rental Near Me yet." + "Browse all pools" (`/s`; no coordinates, so no bounded search) |
 | `birthday-pool-party-austin-tx` | RENTER topic | Rent your Birthday Pool Party Austin pool by the hour. … / Birthday Pool Party Rental Austin, TX \| Private Hourly Pools | Birthday Pool Party Rental in Austin, TX / Birthday Pool Party Rental in Austin, TX \| Pool Rental Near Me; stored meta description kept |
 
 Note on the brief: `/p/san-diego-ca` is `template_type = 'resource'`, not
@@ -281,6 +304,17 @@ that generates their links (published `cities` rows for the comparison routes,
   `/s?address=` link in a stored body is rewritten to that form at render. The
   host_acq_city link count rises by 206 only because RENTER pages now carry a
   search CTA for their city; the distinct-URL total across templates falls.
+  **Superseded for RENTER CTAs (after 0116e9f):** they are now the bounded form
+  (§2 "Primary CTA"), and pages without coordinates link the bare `/s`, so the
+  "after" row above (measured with the address-only CTA on the 2026-11-15
+  export) is not current: renter CTA links now exist only on RENTER pages with
+  pools in or near the city and a centre with coordinates (at most the 121
+  exact + nearby pages, not 206). `scripts/intent-report.mjs` now builds them
+  with `searchHrefNearPlace()` and counts spellings on the `address` value only;
+  re-run it on a fresh export for the new numbers. Still address-only (they
+  predate this branch, and WEST ignores them the same way): the comparison
+  routes, state hubs, advocacy pages, activity_city, and stored body links on
+  HOST pages and to other cities.
 - HOST pages: the primary CTA is listing a pool; they generate no search CTA.
 
 ## 6. Proposed data changes — need Derek's GO (not applied)
