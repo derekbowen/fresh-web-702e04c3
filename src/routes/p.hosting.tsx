@@ -43,7 +43,7 @@ const TITLE =
 const DESCRIPTION =
   "Rent your pool by the hour on Pool Rental Near Me. 0% host fees — you keep 100% of your listed price.";
 
-const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
+const LIST_HREF = "/wizard/";
 const ACADEMY_HREF = "/p/learningacademy";
 const CONNECT_HREF =
   "https://connect.poolrentalnearme.com/community/welcome";

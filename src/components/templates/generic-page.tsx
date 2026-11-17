@@ -72,7 +72,7 @@ export function GenericPageTemplate({
                 Find a pool near you
               </a>
               <a
-                href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                href="/wizard/"
                 aria-label="List your pool — keep 100%, zero host fees"
                 className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-white/90 px-6 text-sm font-semibold text-white"
               >

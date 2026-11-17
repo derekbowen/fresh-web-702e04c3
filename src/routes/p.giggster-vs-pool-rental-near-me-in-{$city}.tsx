@@ -16,7 +16,7 @@ import {
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
-import { searchHrefForPlace } from "@/lib/search-links";
+import { searchHrefNearPlace } from "@/lib/search-links";
 
 /**
  * Programmatic city variant of the Giggster pillar comparison.
@@ -153,6 +153,10 @@ function GiggsterCityPage() {
   const tier = cityTier(city);
   const isHub = tier === "hub";
   const faqs = buildFaqs(city);
+  const citySearchHref = searchHrefNearPlace(city.name, city.state_code, {
+    lat: city.latitude,
+    lng: city.longitude,
+  });
 
   const tableRows = [
     {
@@ -409,16 +413,24 @@ function GiggsterCityPage() {
       )}
 
       <h2 id="local-demand">Live {city.name} pool-rental demand</h2>
-      <p>
-        See current {city.name} pool inventory on the{" "}
-        <a
-          href={searchHrefForPlace(city.name, city.state_code)}
-          className="text-primary underline"
-        >
-          {city.name} pool search
-        </a>
-        . Browse what locals are renting and how hosts price their hours.
-      </p>
+      {/* WEST searches by `bounds` only: a city search link needs the box
+          around the cities row's coordinates. Without them there is no
+          city-filtered search to promise, so the link is the bare /s. */}
+      {citySearchHref !== "/s" ? (
+        <p>
+          See current {city.name} pool inventory on the{" "}
+          <a href={citySearchHref} className="text-primary underline">
+            {city.name} pool search
+          </a>
+          . Browse what locals are renting and how hosts price their hours.
+        </p>
+      ) : (
+        <p>
+          <a href="/s" className="text-primary underline">
+            Browse all pools
+          </a>
+        </p>
+      )}
 
       <CTAMid />
 

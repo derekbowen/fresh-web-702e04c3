@@ -312,9 +312,31 @@ that generates their links (published `cities` rows for the comparison routes,
   exact + nearby pages, not 206). `scripts/intent-report.mjs` now builds them
   with `searchHrefNearPlace()` and counts spellings on the `address` value only;
   re-run it on a fresh export for the new numbers. Still address-only (they
-  predate this branch, and WEST ignores them the same way): the comparison
-  routes, state hubs, advocacy pages, activity_city, and stored body links on
-  HOST pages and to other cities.
+  predate this branch, and WEST ignores them the same way): activity_city (no
+  published rows, and its template has no coordinates) and stored body links
+  on HOST pages and to other cities.
+- **Hand-offs after df808bb (release verifier):**
+  - Giggster/Peerspace `-in-{city}` comparisons now link
+    `searchHrefNearPlace(city.name, city.state_code, {lat, lng})` from the
+    resolved `cities` row: the same 60-mile box as the RENTER CTAs. A row
+    without coordinates links the bare `/s` as "Browse all pools" (7702845
+    wording), because "{City} pool search" / "See live {City} pool-rental
+    demand" would promise a city search WEST cannot run without bounds.
+  - State hubs (`p.pool-rentals-{$state}`) and advocacy state pages: no single
+    point, and no state boxes were invented, so their search links are the bare
+    `/s` ("Browse all pools" on the hub hero, "See all →" kept; "Find pools →",
+    the template's own no-state wording, on advocacy). Chosen over leaving them
+    because it does not degrade the page vs 7702845: the address-only link
+    showed every pool unordered **and** switched off WEST's nearest-to-visitor
+    default (`SearchPageWithMap.js`: it returns early on `address`); the bare
+    `/s` shows every pool at worst and the visitor's nearest pools at best.
+  - The WebSite `SearchAction` (`websiteJsonLd()` in `src/lib/seo.ts`, emitted by
+    `__root.tsx`, which is not edited) now targets
+    `/s?keywords={search_term_string}`. `keywords` is what WEST honours:
+    `SearchPage.shared.js` `validURLParamForExtendedData` keeps it,
+    `SearchPage.duck.js` passes it to `sdk.listings.query` (full-text keyword
+    search), and `SearchPageWithMap.js` treats it as an explicit search. `q` is
+    validated nowhere.
 - HOST pages: the primary CTA is listing a pool; they generate no search CTA.
 
 ## 6. Proposed data changes — need Derek's GO (not applied)
@@ -488,9 +510,18 @@ the non-canonical URL is the one Google ranks, swap keeper and dup for that pair
   the visible FAQ sits inside the host section.
 - HOST pages keep a render-date "Last updated" line (no inventory claim next to
   it unless pools are listed, and then the section carries its own as-of date).
-- Other templates still link the 302 URL `/l/draft/0000…/new/details`
-  (generic-page, advocacy, pool-maintenance, `p.pool-rentals-{$state}`,
-  `p.hosting`, …). Internal links — F5 (task 19).
+- Host CTAs that linked the 302 URL `/l/draft/0000…/new/details` now link
+  `/wizard/` (site-layout's `LIST_SPACE_HREF`) in every rendered template and
+  route in `src`: generic-page, advocacy, pool-maintenance,
+  `p.pool-rentals-{$state}`, `p.pool-rentals`, `p.hosting`, `p.start-hosting`,
+  `p.blog`, `p.author.derek-bowen`, `p.pool-pros.$slug`, `p.pool-party-rentals`,
+  `p.pool-rental-app`, `p.private-pool-rental`. None was in an EAST-only file.
+  Still `/l/draft/…`: the content-generator prompts
+  (`admin-quick-page.functions.ts`, `admin-tools.functions.ts`,
+  `backfill-content-pages.server.ts`, `content-404-log.functions.ts`,
+  `api/public/hooks/gen-host-pages.ts`; not edited, as for the `/s?address=`
+  prompt below) and any stored page body that contains it (not rewritten at
+  render; a data question).
 - Future bodies: the content generator prompt in
   `src/server/backfill-content-pages.server.ts` still tells the model to write
   `/s?address={City%2C+ST}`. Pages render those in the one form anyway
@@ -539,3 +570,15 @@ eligible listing pair; 125 eligible listings, mirror max `updated_at`
   count, price, capacity, radius, distance or the mirror date.
   Run against the committed draft (46aa05e's src with these harness changes),
   34 of these checks fail; against this change all pass.
+- Hand-off checks (`handoffChecks`, after the intent checks): the Akron
+  comparisons (cities row with coordinates) link the bounded search around that
+  row and no other `/s` form; two Youngstown comparisons (a published cities
+  row without coordinates) link only the bare `/s` and do not promise a
+  Youngstown search; `/p/pool-rentals-ohio` and an advocacy fixture
+  (`host-advocacy-ohio`) link only the bare `/s`; none of 27 rendered fixture
+  pages (every page in `PAGES`, the intent fixtures, the Youngstown
+  comparisons, and advocacy / pool-maintenance / generic-with-hero fixtures)
+  contains `/l/draft/`, and those template fixtures and the state hub render
+  `href="/wizard/"`; the WebSite JSON-LD `urlTemplate` ends
+  `/s?keywords={search_term_string}`. Against a df808bb build these 10 checks
+  fail (every other check passes); against this change all pass.

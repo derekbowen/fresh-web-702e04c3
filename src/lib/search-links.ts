@@ -20,9 +20,11 @@
  * default whenever `address` is present. So `/s?address=Tempe%2C%20AZ` shows
  * every pool on the site, unordered (129 on 2026-11-17), which is worse than the
  * bare `/s`. A link that promises pools near a place must carry bounds:
- * searchHrefNearPlace() below. The address-only searchHrefForPlace() /
- * searchHrefForState() are kept for the templates that already linked that way
- * before seo/05-intent (comparison pages, state hubs, advocacy, activity_city).
+ * searchHrefNearPlace() below (city renter pages and the Giggster/Peerspace
+ * city comparisons). A state has no single centre to box, so state hubs and
+ * advocacy state pages link the bare `/s`. The address-only
+ * searchHrefForPlace() / searchHrefForState() remain for activity_city (which
+ * has no coordinates) and for normalizing stored body links.
  *
  * Pure and dependency-free so the link-variant measurement script
  * (scripts/intent-report.mjs) runs the same code the pages do.

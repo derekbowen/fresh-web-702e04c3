@@ -257,6 +257,36 @@ const FIXTURES = {
       template_type: "host_acq_city",
       body_markdown: "## Fixture host body Chapel Hill\n\nFixture paragraph.",
     }),
+    // ── hand-off fixtures (search + host CTAs) ───────────────────────────────
+    // Off the sitemaps so the per-group sitemap checks are unchanged.
+    // An advocacy state page: its "Find pools" and host CTAs.
+    contentPage({
+      id: "00000000-0000-4000-8000-0000000000a1",
+      slug: "host-advocacy-ohio",
+      url_path: "/p/host-advocacy-ohio",
+      title: "Fixture advocacy page Ohio",
+      template_type: "host_advocacy_state",
+      in_sitemap: false,
+    }),
+    // A pool-maintenance article: its two "List your pool" CTAs.
+    contentPage({
+      id: "00000000-0000-4000-8000-0000000000a2",
+      slug: "fixture-pool-maintenance",
+      url_path: "/p/fixture-pool-maintenance",
+      title: "Fixture pool maintenance page",
+      template_type: "pool_maintenance",
+      in_sitemap: false,
+    }),
+    // A generic page with a hero image: the hero's host CTA renders only then.
+    contentPage({
+      id: "00000000-0000-4000-8000-0000000000a3",
+      slug: "fixture-generic-hero",
+      url_path: "/p/fixture-generic-hero",
+      title: "Fixture generic page with hero",
+      template_type: null,
+      hero_image_url: "https://img.example.invalid/generic-hero.jpg",
+      in_sitemap: false,
+    }),
     contentPage({
       id: "00000000-0000-4000-8000-000000000006",
       slug: "rent-out-your-pool-uk",
@@ -324,6 +354,20 @@ const FIXTURES = {
       description: null,
       latitude: 41.08,
       longitude: -81.51,
+      hero_image_url: null,
+      is_published: true,
+      updated_at: NOW,
+    },
+    // A published cities row with no coordinates: its comparison pages have
+    // no box to search, so their search link must be the bare /s.
+    {
+      slug: "youngstown",
+      name: "Youngstown",
+      state: "Ohio",
+      state_code: "OH",
+      description: null,
+      latitude: null,
+      longitude: null,
       hero_image_url: null,
       is_published: true,
       updated_at: NOW,
@@ -1621,11 +1665,128 @@ async function intentChecks(phase) {
   );
 }
 
+/**
+ * Hand-offs from EAST pages to the marketplace (WEST): city search links on the
+ * comparison pages, state-level search links, host CTAs and the WebSite
+ * SearchAction. WEST's SearchPage searches by `bounds` only (an address-only
+ * /s?address= shows every pool unordered and switches off its
+ * nearest-to-visitor default), honours `keywords` for full-text search and
+ * ignores `q`; /l/draft/0000…/new/details is a 302 to /wizard/.
+ */
+async function handoffChecks(phase) {
+  stub.setMode("healthy");
+  // ── comparison city pages: bounded around the cities row, else bare /s ────
+  for (const [path, centre, label] of [
+    [PAGES.comparison, cityRow("akron"), "Akron, OH"],
+    [PAGES.comparison2, cityRow("akron"), "Akron, OH"],
+    ["/p/peerspace-vs-pool-rental-near-me-in-youngstown", null, "Youngstown, OH"],
+    ["/p/giggster-vs-pool-rental-near-me-in-youngstown", null, "Youngstown, OH"],
+  ]) {
+    const r = await get(path);
+    check(phase, `${path} -> 200`, r.status === 200, describe(r));
+    const hrefs = searchHrefsOf(r.body);
+    if (centre) {
+      const bounded = boundedSearchHref(label, centre);
+      check(
+        phase,
+        `${path}: the city search link is the bounded search around the cities row (${label}); no other /s link but the bare /s`,
+        hrefs.includes(bounded) && hrefs.every((h) => h === "/s" || h === bounded),
+        hrefs.join(" ") || "no /s link",
+      );
+    } else {
+      check(
+        phase,
+        `${path} (cities row without coordinates): every /s link is the bare /s, none address-only`,
+        hrefs.length > 0 && hrefs.every((h) => h === "/s"),
+        hrefs.join(" ") || "no /s link",
+      );
+      check(
+        phase,
+        `${path} (no coordinates): the link does not promise a ${label} search`,
+        !decode(r.body).includes(`${label.split(",")[0]} pool search`) &&
+          !decode(r.body).includes(`See live ${label.split(",")[0]} pool-rental demand`) &&
+          decode(r.body).includes("Browse all pools"),
+      );
+    }
+  }
+  // ── state-level pages: no single centre, so the bare /s, never address-only
+  const stateHub = await get(PAGES.stateHub);
+  const advocacy = await get("/p/host-advocacy-ohio");
+  check(phase, "/p/host-advocacy-ohio -> 200", advocacy.status === 200, describe(advocacy));
+  for (const [label, r] of [
+    [PAGES.stateHub, stateHub],
+    ["/p/host-advocacy-ohio", advocacy],
+  ]) {
+    const hrefs = searchHrefsOf(r.body);
+    check(
+      phase,
+      `${label}: every /s link is the bare /s (no address-only /s?address=<State>)`,
+      hrefs.length > 0 && hrefs.every((h) => h === "/s"),
+      hrefs.join(" ") || "no /s link",
+    );
+  }
+  // ── host CTAs: /wizard/ directly on every rendered fixture page ──────────
+  const templatePages = ["/p/host-advocacy-ohio", "/p/fixture-pool-maintenance", "/p/fixture-generic-hero"];
+  const rendered = [
+    ...Object.values(PAGES),
+    ...templatePages,
+    "/p/peerspace-vs-pool-rental-near-me-in-youngstown",
+    "/p/giggster-vs-pool-rental-near-me-in-youngstown",
+    ...[
+      "become-a-swimming-pool-host-tempe-az",
+      "become-a-swimming-pool-host-mesa-az",
+      "become-a-swimming-pool-host-dayton-oh",
+      "tempe-az",
+      "mesa-az",
+      "chevy-chase-md",
+      "chapel-hill",
+    ].map((slug) => `/p/${slug}`),
+  ];
+  const drafts = [];
+  for (const path of rendered) {
+    const r = path === PAGES.stateHub ? stateHub : path === "/p/host-advocacy-ohio" ? advocacy : await get(path);
+    if (r.status !== 200) drafts.push(`${path} (${r.status})`);
+    else if (r.body.includes("/l/draft/")) drafts.push(path);
+    if (templatePages.includes(path) || path === PAGES.stateHub)
+      check(
+        phase,
+        `${path}: renders its host CTA as href="/wizard/"`,
+        r.status === 200 && r.body.includes('href="/wizard/"'),
+        describe(r),
+      );
+  }
+  check(
+    phase,
+    `no rendered fixture page (${rendered.length}) links the 302 /l/draft/ URL`,
+    drafts.length === 0,
+    drafts.join(" "),
+  );
+  // ── WebSite SearchAction: the parameter WEST's search honours ────────────
+  const live = await get(PAGES.live);
+  const websites = [...live.body.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .map((m) => {
+      try {
+        return JSON.parse(m[1]);
+      } catch {
+        return null;
+      }
+    })
+    .filter((o) => o && o["@type"] === "WebSite");
+  const templates = websites.map((w) => w.potentialAction?.target?.urlTemplate ?? "");
+  check(
+    phase,
+    "WebSite SearchAction targets /s?keywords={search_term_string} (not the ignored ?q=)",
+    templates.length === 1 && /\/s\?keywords=\{search_term_string\}$/.test(templates[0]),
+    templates.join(" ") || "no WebSite JSON-LD",
+  );
+}
+
 let crashed = null;
 try {
   await failurePhase("hang", { cold: true });
   await healthyPhase("healthy");
   await intentChecks("intent (healthy)");
+  await handoffChecks("hand-offs (healthy)");
   await failurePhase("http-500");
   await failurePhase("connection-reset");
   await failurePhase("hang");
