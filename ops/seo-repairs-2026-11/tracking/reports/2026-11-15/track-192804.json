@@ -1,0 +1,104 @@
+{
+ "base": "https://www.poolrentalnearme.com",
+ "started_utc": "2026-11-15T19:28:04.456369Z",
+ "results": [
+  {
+   "group": "F4",
+   "check": "no URL listed in two sitemaps (target 0)",
+   "ok": false,
+   "detail": "107; e.g. ['https://www.poolrentalnearme.com/p/hosting', 'https://www.poolrentalnearme.com/p/about', 'https://www.poolrentalnearme.com/p/all-locations']",
+   "kind": "check"
+  },
+  {
+   "group": "F4",
+   "check": "config/test listing absent",
+   "ok": false,
+   "detail": "",
+   "kind": "check"
+  },
+  {
+   "group": "F4",
+   "check": "noindex /p/pool-pros absent",
+   "ok": false,
+   "detail": "",
+   "kind": "check"
+  },
+  {
+   "group": "F4",
+   "check": "/sitemap-directory.xml no longer advertises noindex URLs (410 or no <loc>)",
+   "ok": false,
+   "detail": "200",
+   "kind": "check"
+  },
+  {
+   "group": "F4",
+   "check": "sampled sitemap URLs are 200, indexable and self-canonical (~150 sampled of 10181)",
+   "ok": false,
+   "detail": "1 bad; e.g. [('/p/pool-maintenance-uk', 200, 'https://poolrentalnearme.co.uk/p/pool-maintenance-uk')]",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.co.uk/p/hosting canonical -> www.poolrentalnearme.com",
+   "ok": true,
+   "detail": "(200, 'https://www.poolrentalnearme.com/p/hosting')",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.co.uk/p/become-a-swimming-pool-host-aberdeen-sd canonical -> www.poolrentalnearme.com",
+   "ok": false,
+   "detail": "(200, 'https://www.poolrentalnearme.co.uk/p/become-a-swimming-pool-host-aberdeen-sd')",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.co.uk robots.txt allows its own /sitemap-country.xml",
+   "ok": false,
+   "detail": "200",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.ca/p/hosting canonical -> www.poolrentalnearme.com",
+   "ok": true,
+   "detail": "(200, 'https://www.poolrentalnearme.com/p/hosting')",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.ca/p/become-a-swimming-pool-host-aberdeen-sd canonical -> www.poolrentalnearme.com",
+   "ok": false,
+   "detail": "(200, 'https://www.poolrentalnearme.ca/p/become-a-swimming-pool-host-aberdeen-sd')",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.ca robots.txt allows its own /sitemap-country.xml",
+   "ok": false,
+   "detail": "200",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.com.au/p/hosting canonical -> www.poolrentalnearme.com",
+   "ok": true,
+   "detail": "(200, 'https://www.poolrentalnearme.com/p/hosting')",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.com.au/p/become-a-swimming-pool-host-aberdeen-sd canonical -> www.poolrentalnearme.com",
+   "ok": false,
+   "detail": "(200, 'https://www.poolrentalnearme.com.au/p/become-a-swimming-pool-host-aberdeen-sd')",
+   "kind": "check"
+  },
+  {
+   "group": "F10",
+   "check": "www.poolrentalnearme.com.au robots.txt allows its own /sitemap-country.xml",
+   "ok": false,
+   "detail": "200",
+   "kind": "check"
+  }
+ ]
+}
