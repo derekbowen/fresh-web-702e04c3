@@ -15,10 +15,14 @@
  * env: BASE_URL (default https://www.poolrentalnearme.com)
  *      EXPECTED_SHA (optional; full 40-char sha)
  *      ALLOW_DIRTY=1 (escape hatch for a deliberate hot-patch; recorded loudly)
+ *      TOLERATED_DIRTY_FILES=a,b,c (set by ops/deploy-east.sh to the EAST-only files it
+ *        has just verified against their pinned sha256): the build must then list
+ *        EXACTLY these as dirty, no more and no fewer. Unset = the old rule.
  */
 const BASE = (process.env.BASE_URL || "https://www.poolrentalnearme.com").replace(/\/$/, "");
 const EXPECTED = (process.env.EXPECTED_SHA || "").trim();
 const ALLOW_DIRTY = process.env.ALLOW_DIRTY === "1";
+const TOLERATED = (process.env.TOLERATED_DIRTY_FILES || "").split(",").map((s) => s.trim()).filter(Boolean).sort();
 const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 20000);
 
 const fail = (msg) => {
@@ -64,7 +68,14 @@ if (!info.sha || info.sha === "unknown") {
 }
 if (!/^[0-9a-f]{40}$/.test(info.sha)) fail(`live sha is not a 40-char sha: ${info.sha}`);
 
-if (info.dirty > 0) {
+if (TOLERATED.length) {
+  const listed = [...(info.dirtyFiles || [])].sort();
+  if (info.dirty !== TOLERATED.length || listed.join("\n") !== TOLERATED.join("\n")) {
+    fail(`production reports dirty=${info.dirty} [${listed.join(", ")}] but exactly the ` +
+         `${TOLERATED.length} pinned EAST-only file(s) [${TOLERATED.join(", ")}] were expected`);
+  }
+  console.log(`  dirty files: exactly the ${TOLERATED.length} pinned EAST-only file(s) — tolerated`);
+} else if (info.dirty > 0) {
   const detail = (info.dirtyFiles || []).map((p) => `    ${p}`).join("\n");
   if (!ALLOW_DIRTY) {
     fail(`production was built from ${info.dirty} uncommitted source change(s), so its ` +
@@ -84,4 +95,6 @@ if (EXPECTED) {
   console.log(`  expected   : (EXPECTED_SHA unset — identity checked, equality not asserted)`);
 }
 
-console.log("PASS — production reports a clean, traceable build SHA.");
+console.log(TOLERATED.length
+  ? "PASS — production reports a traceable build SHA; its only dirty files are the pinned EAST-only set."
+  : "PASS — production reports a clean, traceable build SHA.");

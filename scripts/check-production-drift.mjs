@@ -22,6 +22,9 @@
  * env: REPO_DIR   (default /home/ubuntu/fresh-web)
  *      BASE_URL   (default https://www.poolrentalnearme.com)
  *      SKIP_REMOTE=1  skip leg 3's network fetch (local-only invocation)
+ *      TOLERATED_DIRTY_FILES=a,b,c  set by ops/deploy-east.sh to the EAST-only files it has
+ *                     verified against their pinned sha256. The build stamp and the
+ *                     working tree must then show EXACTLY these as dirty. Unset = the old rule.
  */
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
@@ -32,6 +35,9 @@ const BASE = (process.env.BASE_URL || "https://www.poolrentalnearme.com").replac
 const SHA_FILE = process.env.DEPLOYED_SHA_FILE || join(REPO, ".deployed-sha");
 const LOCAL_STAMP = join(REPO, "dist", "client", "fw-assets", "__build.json");
 const SKIP_REMOTE = process.env.SKIP_REMOTE === "1";
+const TOLERATED = (process.env.TOLERATED_DIRTY_FILES || "").split(",").map((s) => s.trim()).filter(Boolean).sort();
+const isTolerated = (files, n) =>
+  TOLERATED.length > 0 && n === TOLERATED.length && [...files].sort().join("\n") === TOLERATED.join("\n");
 
 const IGNORE = [
   /^dist\//, /^\.output\//, /^node_modules\//, /^\.vinxi\//, /^\.nitro\//, /^\.tanstack\//,
@@ -78,7 +84,9 @@ if (!local) {
   problems.push(`no build stamp at ${LOCAL_STAMP} — this dist/ was built before stamp-build, or by a raw "vite build"`);
 } else if (!/^[0-9a-f]{40}$/.test(local.sha || "")) {
   problems.push(`build stamp reports sha "${local.sha}" — built outside a git checkout`);
-} else if (local.dirty > 0) {
+} else if (TOLERATED.length && !isTolerated(local.dirtyFiles || [], local.dirty)) {
+  problems.push(`the running build lists dirty=${local.dirty} [${(local.dirtyFiles || []).join(", ")}], not exactly the pinned EAST-only file(s) [${TOLERATED.join(", ")}]`);
+} else if (!TOLERATED.length && local.dirty > 0) {
   problems.push(`the running build was made from ${local.dirty} uncommitted source change(s): ${(local.dirtyFiles || []).slice(0, 5).join(", ")}`);
 }
 
@@ -94,6 +102,13 @@ try {
   }
 } catch {
   problems.push(`cannot read git HEAD at ${REPO}`);
+}
+if (TOLERATED.length) {
+  const all = [...dirty, ...untracked];
+  if (!isTolerated(all, all.length)) {
+    problems.push(`working tree has ${all.length} dirty source file(s) [${all.slice(0, 8).join(", ")}], not exactly the pinned EAST-only file(s) [${TOLERATED.join(", ")}]`);
+  }
+  dirty = []; untracked = [];
 }
 if (dirty.length) problems.push(`${dirty.length} tracked source file(s) modified on the production host: ${dirty.slice(0, 5).join(", ")}`);
 if (untracked.length) problems.push(`${untracked.length} untracked source file(s) on the production host: ${untracked.slice(0, 5).join(", ")}`);
