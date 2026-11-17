@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { slugSchema, listSchema, COURSE_FIELDS } from "./courses.server";
+import { readOrFailRequest } from "@/server/request-unavailable.server";
 
 
 
@@ -118,13 +119,15 @@ export const listFeaturedCourses = createServerFn({ method: "GET" })
 export const getCourse = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => z.object({ slug: slugSchema }).parse(d))
   .handler(async ({ data }) => {
-    const { data: course, error } = await supabaseAdmin
+    // null is "no such course" and /p/course/$slug 404s on it, so a read that
+    // failed must not come back as null (it used to: error was only logged).
+    const course = await readOrFailRequest("courses by slug", (signal) => supabaseAdmin
       .from("courses")
       .select("*")
       .eq("slug", data.slug)
       .eq("is_published", true)
-      .maybeSingle();
-    if (error) console.error("getCourse:", error);
+      .abortSignal(signal)
+      .maybeSingle());
     return { course: course ?? null };
   });
 

@@ -4,9 +4,11 @@ import { SITE_URL } from "@/lib/seo";
 import {
   buildUrlsetXml,
   sitemapResponse,
+  sitemapUnavailableResponse,
   SITEMAP_PAGE_SIZE,
   type SitemapUrl,
 } from "@/lib/sitemap";
+import { guardedRead } from "@/lib/failed-read";
 
 /**
  * Sitemap of Sharetribe listings mirrored into `synced_listings`.
@@ -25,22 +27,23 @@ export const Route = createFileRoute("/sitemap-listings.xml")({
         const from = (page - 1) * SITEMAP_PAGE_SIZE;
         const to = from + SITEMAP_PAGE_SIZE - 1;
 
-        const { data, error } = await (supabaseAdmin as any)
-          .from("synced_listings")
-          .select("slug, sharetribe_id, primary_image_url, title, updated_at")
-          .eq("state", "published")
-          .eq("is_deleted", false)
-          .not("slug", "is", null)
-          .not("sharetribe_id", "is", null)
-          .order("updated_at", { ascending: false })
-          .range(from, to);
+        const read = await guardedRead<any[]>("sitemap synced_listings", (signal) =>
+          (supabaseAdmin as any)
+            .from("synced_listings")
+            .select("slug, sharetribe_id, primary_image_url, title, updated_at")
+            .eq("state", "published")
+            .eq("is_deleted", false)
+            .not("slug", "is", null)
+            .not("sharetribe_id", "is", null)
+            .order("updated_at", { ascending: false })
+            .range(from, to)
+            .abortSignal(signal),
+        );
 
-        if (error) {
-          console.error("[sitemap-listings] query error", error);
-          return sitemapResponse(buildUrlsetXml([]));
-        }
+        // Failed read: 503, not a 200 with an empty <urlset>.
+        if (!read.ok) return sitemapUnavailableResponse();
 
-        const urls: SitemapUrl[] = (data ?? [])
+        const urls: SitemapUrl[] = (read.data ?? [])
           .filter((r: { slug: string | null; sharetribe_id: string | null }) =>
             !!r?.slug && !!r?.sharetribe_id,
           )

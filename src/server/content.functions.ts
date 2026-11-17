@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { readOrFailRequest } from "@/server/request-unavailable.server";
 
 export const getCity = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
@@ -53,13 +54,15 @@ export const getProvider = createServerFn({ method: "GET" })
     z.object({ slug: z.string().min(1).max(120).regex(/^[a-z0-9-]+$/) }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { data: provider, error } = await supabaseAdmin
+    // null is "no such provider" and /p/pool-pros/$slug 404s on it, so a read
+    // that failed must not come back as null (it used to: error was only logged).
+    const provider = await readOrFailRequest("providers by slug", (signal) => supabaseAdmin
       .from("providers")
       .select("id, slug, name, city, city_slug, state_code, phone, website_url, address, description, long_description, faq, gallery_urls, logo_url, hero_image_url, rating, rating_count, primary_category, secondary_categories, google_category, is_featured, is_published, plan, claim_status, services, seo_title, seo_description, google_cid, business_type, source_type, source_url, gsc_impressions, gsc_clicks, gsc_position, latitude, longitude, ai_content_generated_at, ai_enriched_at, scraped_at, featured_until, listing_paid_until, created_at, updated_at")
       .eq("slug", data.slug)
       .eq("is_published", true)
-      .maybeSingle();
-    if (error) console.error("getProvider:", error);
+      .abortSignal(signal)
+      .maybeSingle());
     return { provider: provider ?? null };
   });
 

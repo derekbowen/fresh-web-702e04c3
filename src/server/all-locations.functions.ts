@@ -7,6 +7,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { readOrFailRequest } from "@/server/request-unavailable.server";
 
 export interface DirectoryLink {
   href: string;
@@ -123,18 +124,20 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
       const pageSize = 1000;
       let from = 0;
       while (true) {
-        const { data, error } = await supabaseAdmin
-          .from("content_pages")
-          .select("slug, title, seo_title")
-          .in("template_type", tg.templateTypes)
-          .eq("in_sitemap", true)
-          .not("slug", "is", null)
-          .order("slug", { ascending: true })
-          .range(from, from + pageSize - 1);
-        if (error) {
-          console.error(`[all-locations] ${tg.id}`, error.message);
-          break;
-        }
+        // Fails closed. A failed page used to be logged and `break`, so the
+        // group came back short or missing in a 200 the edge then cached for
+        // 600 s. Now the request is flagged and answered 503 (src/start.ts).
+        const data = await readOrFailRequest(`all-locations ${tg.id}`, (signal) =>
+          supabaseAdmin
+            .from("content_pages")
+            .select("slug, title, seo_title")
+            .in("template_type", tg.templateTypes)
+            .eq("in_sitemap", true)
+            .not("slug", "is", null)
+            .order("slug", { ascending: true })
+            .range(from, from + pageSize - 1)
+            .abortSignal(signal),
+        );
         if (!data || data.length === 0) break;
         for (const row of data) {
           if (!row.slug) continue;
@@ -165,13 +168,17 @@ export const getAllLocations = createServerFn({ method: "GET" }).handler(
 
     // 4. live listings (synced)
     {
-      const { data } = await supabaseAdmin
-        .from("synced_listings")
-        .select("slug, sharetribe_id, title, city, state_code")
-        .eq("state", "published")
-        .eq("is_deleted", false)
-        .order("title", { ascending: true })
-        .limit(1000);
+      // Fails closed too: its error used to be ignored, dropping the group.
+      const data = await readOrFailRequest("all-locations synced_listings", (signal) =>
+        supabaseAdmin
+          .from("synced_listings")
+          .select("slug, sharetribe_id, title, city, state_code")
+          .eq("state", "published")
+          .eq("is_deleted", false)
+          .order("title", { ascending: true })
+          .limit(1000)
+          .abortSignal(signal),
+      );
       if (data && data.length > 0) {
         const links = data
           .filter((l) => l.slug && l.sharetribe_id)

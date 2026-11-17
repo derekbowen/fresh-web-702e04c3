@@ -34,7 +34,9 @@
     "lifecycle": "node --env-file=.env ops/host-lifecycle/dist/run.mjs",
     "check:homepage-shape": "node scripts/check-homepage-shape.mjs",
     "check:insurance-claims": "node scripts/check-insurance-claims.mjs",
-    "check:amenity-and-price-truth": "node scripts/check-amenity-and-price-truth.mjs"
+    "check:amenity-and-price-truth": "node scripts/check-amenity-and-price-truth.mjs",
+    "test:unit": "node --test \"tests/*.test.mjs\"",
+    "test:failed-reads": "node scripts/test-failed-reads.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

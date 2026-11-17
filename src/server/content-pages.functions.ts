@@ -17,6 +17,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { guardedRead } from "@/lib/failed-read";
+import {
+  pgTextArrayLiteral,
+  resolveContentPageLookup,
+  type BlogPostRow,
+  type ContentPageLookupReads,
+} from "@/lib/content-page-lookup";
+import { markRequestUnavailable } from "@/server/request-unavailable.server";
 
 // Fire-and-forget: log a 301 redirect from a legacy slug to the canonical
 // slug. Failures are swallowed so logging never blocks the user-visible
@@ -102,192 +110,88 @@ export interface ContentPage {
 export type ContentPageLookupResult =
   | { kind: "found"; page: ContentPage }
   | { kind: "redirect"; canonicalSlug: string; redirectPath?: string }
-  | { kind: "not_found" };
+  | { kind: "not_found" }
+  /**
+   * A read needed to answer failed (returned error, thrown, or timed out), so
+   * it is NOT known whether the page exists. Callers answer 503: no 404, no
+   * redirect, no content_404_log row.
+   */
+  | { kind: "unavailable" };
 
-function redirectLookup(fromSlug: string, rawTarget: string): ContentPageLookupResult {
-  const target = rawTarget.trim();
-  const redirectPath = target.startsWith("http") || target.startsWith("/")
-    ? target
-    : `/p/${target.replace(/^p\//, "")}`;
-  const canonicalSlug = redirectPath.startsWith("/p/")
-    ? redirectPath.slice(3).replace(/^\/+|\/+$/g, "")
-    : target;
-  if (canonicalSlug && canonicalSlug !== fromSlug) logRedirect(fromSlug, canonicalSlug);
-  return { kind: "redirect", canonicalSlug: canonicalSlug || target, redirectPath };
-}
+// Every read the lookup can make, each bounded by the read timeout and each
+// reporting failure separately from "no rows" (src/lib/failed-read.ts).
+const lookupReads: ContentPageLookupReads = {
+  pagesBySlug: (slug) =>
+    guardedRead<ContentPage[]>("content_pages by slug", (signal) =>
+      (supabaseAdmin as any)
+        .from("content_pages")
+        .select("*")
+        .eq("slug", slug)
+        .in("status", ["published", "redirect"])
+        .order("priority", { ascending: false })
+        .limit(5)
+        .abortSignal(signal),
+    ),
+  aliasForSlug: (slug) =>
+    guardedRead<Array<{ slug: string | null }>>("content_pages by legacy slug", (signal) =>
+      (supabaseAdmin as any)
+        .from("content_pages")
+        .select("slug")
+        // Quoted literal, not `[slug]`: see pgTextArrayLiteral.
+        .contains("legacy_slugs", pgTextArrayLiteral([slug]))
+        .in("status", ["published", "redirect"])
+        .limit(1)
+        .abortSignal(signal),
+    ),
+  cityBySlug: (citySlug) =>
+    guardedRead<Array<{ slug: string; state_code: string }>>("cities by slug", (signal) =>
+      (supabaseAdmin as any)
+        .from("cities")
+        .select("slug, state_code")
+        .eq("slug", citySlug)
+        .eq("is_published", true)
+        .limit(1)
+        .abortSignal(signal),
+    ),
+  pageSlugExists: (slug) =>
+    guardedRead<Array<{ slug: string | null }>>("content_pages state-suffixed slug", (signal) =>
+      (supabaseAdmin as any)
+        .from("content_pages")
+        .select("slug")
+        .eq("slug", slug)
+        .in("status", ["published", "redirect"])
+        .limit(1)
+        .abortSignal(signal),
+    ),
+  blogPostBySlug: (slug) =>
+    guardedRead<BlogPostRow[]>("blog_posts by slug", (signal) =>
+      (supabaseAdmin as any)
+        .from("blog_posts")
+        .select(
+          "id, slug, title, excerpt, content, cover_image_url, author, seo_title, seo_description, is_published, published_at, updated_at, topic, tldr_bullets, related_slugs",
+        )
+        .eq("slug", slug)
+        .eq("is_published", true)
+        .limit(1)
+        .abortSignal(signal),
+    ),
+};
 
 /**
  * Looks up a content page by slug. If the slug is in another row's
  * `legacy_slugs[]` array, returns a redirect descriptor pointing at the
  * canonical slug. Caller is responsible for issuing the 301.
+ *
+ * The decision itself lives in src/lib/content-page-lookup.ts. `not_found` is
+ * returned only when every read consulted succeeded; a failed read returns
+ * `unavailable` and flags the request so the HTTP answer is a 503.
  */
 export const lookupContentPage = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ slug: z.string().min(1) }).parse(data))
   .handler(async ({ data }): Promise<ContentPageLookupResult> => {
-    const { slug } = data;
-
-    // Prefer canonical /p/{slug} url_path; multiple rows may share a slug
-    // (e.g. nested legacy paths like /p/foo/become-a-pool-host-...). Include
-    // redirect rows, otherwise admin-created 404 repairs keep returning 404.
-    const canonicalPath = `/p/${slug}`;
-    const { data: rows } = await (supabaseAdmin as any)
-      .from("content_pages")
-      .select("*")
-      .eq("slug", slug)
-      .in("status", ["published", "redirect"])
-      .order("priority", { ascending: false })
-      .limit(5);
-
-    const list = (rows ?? []) as ContentPage[];
-    const exactRedirect = list.find((r) => {
-      const redirectTo = (r as unknown as { redirect_to?: string | null }).redirect_to;
-      return r.url_path === canonicalPath && r.status === "redirect" && typeof redirectTo === "string" && redirectTo.trim();
-    });
-    if (exactRedirect) {
-      return redirectLookup(
-        slug,
-        (exactRedirect as unknown as { redirect_to: string }).redirect_to,
-      );
-    }
-
-    const page =
-      list.find((r) => r.url_path === canonicalPath && r.status === "published") ??
-      list.find((r) => r.status === "published") ??
-      null;
-
-    if (page) {
-      // Honor an explicit redirect_to on the canonical row.
-      const redirectTo = (page as unknown as { redirect_to?: string | null }).redirect_to;
-      if (redirectTo && typeof redirectTo === "string") {
-        const target = redirectTo.startsWith("/p/")
-          ? redirectTo.slice(3)
-          : redirectTo;
-        if (target && target !== slug) return redirectLookup(slug, target);
-      }
-      return { kind: "found", page };
-    }
-
-    // Alias lookup: any published page that lists this slug in legacy_slugs[]
-    // becomes the canonical destination for a 301 redirect.
-    const { data: aliasRows } = await (supabaseAdmin as any)
-      .from("content_pages")
-      .select("slug")
-      .contains("legacy_slugs", [slug])
-      .in("status", ["published", "redirect"])
-      .limit(1);
-    const alias = (aliasRows ?? [])[0] as { slug: string | null } | undefined;
-    if (alias?.slug && alias.slug !== slug) {
-      return redirectLookup(slug, alias.slug);
-    }
-
-    // Fallback: many host-acq / swim-instructor slugs are stored with a
-    // `-{state_code}` suffix (e.g. `become-a-swimming-pool-host-cleveland-oh`).
-    // If a visitor hits the bare-city variant (`...-cleveland`), look up the
-    // city's state and 301 to the canonical state-suffixed slug if it exists.
-    const KNOWN_PREFIXES = [
-      "become-a-swimming-pool-host-",
-      "swim-instructor-pool-rental-",
-      "rent-a-swimming-pool-",
-      "pool-rental-",
-      "host-acquisition-",
-    ];
-    const matchedPrefix = KNOWN_PREFIXES.find((p) => slug.startsWith(p));
-    if (matchedPrefix) {
-      const citySlug = slug.slice(matchedPrefix.length);
-      if (!/-[a-z]{2}$/.test(citySlug) && citySlug.length > 0) {
-        const { data: cityRows } = await (supabaseAdmin as any)
-          .from("cities")
-          .select("slug, state_code")
-          .eq("slug", citySlug)
-          .eq("is_published", true)
-          .limit(1);
-        const city = (cityRows ?? [])[0] as { slug: string; state_code: string } | undefined;
-        if (city?.state_code) {
-          const candidate = `${matchedPrefix}${citySlug}-${city.state_code.toLowerCase()}`;
-          const { data: candRows } = await (supabaseAdmin as any)
-            .from("content_pages")
-            .select("slug")
-            .eq("slug", candidate)
-            .in("status", ["published", "redirect"])
-            .limit(1);
-          if ((candRows ?? []).length > 0) {
-            return redirectLookup(slug, candidate);
-          }
-        }
-      }
-    }
-
-    // Fallback: published blog posts also live at /p/{slug} now (legacy
-    // /blog/{slug} URLs were retired). Render them through the dispatcher
-    // as a synthetic resource-article page so canonical, OG, and JSON-LD
-    // are all built from /p/{slug} via the existing head() pipeline.
-    const { data: blogRows } = await (supabaseAdmin as any)
-      .from("blog_posts")
-      .select(
-        "id, slug, title, excerpt, content, cover_image_url, author, seo_title, seo_description, is_published, published_at, updated_at, topic, tldr_bullets, related_slugs",
-      )
-      .eq("slug", slug)
-      .eq("is_published", true)
-      .limit(1);
-    const blog = (blogRows ?? [])[0] as
-      | {
-          id: string;
-          slug: string;
-          title: string | null;
-          excerpt: string | null;
-          content: string | null;
-          cover_image_url: string | null;
-          author: string | null;
-          seo_title: string | null;
-          seo_description: string | null;
-          published_at: string | null;
-          updated_at: string;
-          topic: string | null;
-          tldr_bullets: unknown;
-          related_slugs: unknown;
-        }
-      | undefined;
-    if (blog) {
-      const tldr = Array.isArray(blog.tldr_bullets)
-        ? (blog.tldr_bullets as unknown[]).filter((s): s is string => typeof s === "string")
-        : null;
-      const related = Array.isArray(blog.related_slugs)
-        ? (blog.related_slugs as unknown[]).filter((s): s is string => typeof s === "string")
-        : null;
-      const synthetic: ContentPage = {
-        id: blog.id,
-        slug: blog.slug,
-        url_path: `/p/${blog.slug}`,
-        source_url: `${"" /* no upstream */}`,
-        template_type: "resource",
-        category: blog.topic ?? "blog",
-        locale: "en",
-        title: blog.title,
-        seo_title: blog.seo_title,
-        seo_description: blog.seo_description,
-        hero_image_url: blog.cover_image_url,
-        body_markdown: blog.content,
-        raw_html: null,
-        status: "published",
-        scraped_at: null,
-        updated_at: blog.updated_at,
-        description: blog.excerpt,
-        content: blog.content,
-        cover_image_url: blog.cover_image_url,
-        language: "en",
-        author: blog.author,
-        published_at: blog.published_at,
-        is_published: true,
-        legacy_slugs: [],
-        hreflang_alt: null,
-        tldr_bullets: tldr,
-        related_slugs: related,
-        topic: blog.topic,
-      };
-      return { kind: "found", page: synthetic };
-    }
-
-    return { kind: "not_found" };
+    const result = await resolveContentPageLookup(data.slug, lookupReads, logRedirect);
+    if (result.kind === "unavailable") markRequestUnavailable();
+    return result;
   });
 
 export const getHreflangSibling = createServerFn({ method: "GET" })
