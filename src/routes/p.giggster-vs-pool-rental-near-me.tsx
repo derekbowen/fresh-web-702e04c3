@@ -85,7 +85,6 @@ export const Route = createFileRoute("/p/giggster-vs-pool-rental-near-me")({
       }),
       breadcrumbJsonLd([
         { name: "Home", url: absUrl("/") },
-        { name: "Compare", url: absUrl("/p/") },
         {
           name: "Giggster vs Pool Rental Near Me",
           url: absUrl(`/p/${SLUG}`),

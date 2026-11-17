@@ -542,12 +542,85 @@ async function fetchWithDeadline(request) {
   }
 }
 
+/** Every 200 text/html page rendered in the current healthy phase: path -> body. */
+let renderedPages = null;
+
 async function get(path, { host = "localhost" } = {}) {
   const started = Date.now();
   const res = await fetchWithDeadline(
     new Request(`http://${host}${path}`, { headers: { accept: "text/html,*/*" } }),
   );
+  if (
+    renderedPages &&
+    res.status === 200 &&
+    /text\/html/.test(res.headers.get("content-type") || "")
+  ) {
+    renderedPages.set(`${host}${path}`, res.body);
+  }
   return { ...res, ms: Date.now() - started, path };
+}
+
+/**
+ * F11 follow-up: /p and /p/ answer 404, so no rendered page may point at them,
+ * neither as an <a href> (or any href attribute, e.g. a canonical) nor as a
+ * URL anywhere in its JSON-LD (a BreadcrumbList "item", "url", "@id", ...).
+ * Returns the offending values found in one HTML body.
+ */
+const decodeEntities = (v) =>
+  v
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+function isBarePTarget(value) {
+  if (typeof value !== "string") return false;
+  const v = value.trim();
+  let path;
+  if (/^https?:\/\//i.test(v)) {
+    try {
+      path = new URL(v).pathname;
+    } catch {
+      return false;
+    }
+  } else if (v.startsWith("/") && !v.startsWith("//")) {
+    path = v.split(/[?#]/)[0];
+  } else {
+    return false;
+  }
+  return path === "/p" || path === "/p/";
+}
+function barePTargets(html) {
+  const found = [];
+  for (const m of html.matchAll(/\shref\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)) {
+    const v = decodeEntities(m[1] ?? m[2] ?? "");
+    if (isBarePTarget(v)) found.push(`href="${v}"`);
+  }
+  const walk = (node, where) => {
+    if (typeof node === "string") {
+      if (isBarePTarget(node)) found.push(`JSON-LD ${where} = ${node}`);
+    } else if (Array.isArray(node)) {
+      node.forEach((n, i) => walk(n, `${where}[${i}]`));
+    } else if (node && typeof node === "object") {
+      for (const [k, n] of Object.entries(node)) walk(n, where ? `${where}.${k}` : k);
+    }
+  };
+  const ldRe = /<script[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  for (const m of html.matchAll(ldRe)) {
+    let data;
+    try {
+      data = JSON.parse(m[1]);
+    } catch {
+      try {
+        data = JSON.parse(decodeEntities(m[1]));
+      } catch {
+        found.push("unparseable JSON-LD block");
+        continue;
+      }
+    }
+    walk(data, "");
+  }
+  return found;
 }
 
 /**
@@ -636,6 +709,15 @@ const PAGES = {
   blogHub: "/p/blog",
   poolPros: "/p/pool-pros",
 };
+
+// Static comparison pillar pages: no database read of their own, so they are
+// only rendered in the healthy phases, where the /p-target scan covers them
+// (the Giggster one's BreadcrumbList once named /p/, a 404 since F11).
+const STATIC_PAGES = [
+  "/p/giggster-vs-pool-rental-near-me",
+  "/p/peerspace-vs-pool-rental-near-me",
+  "/p/swimply-alternative-vs-pool-rental-near-me",
+];
 
 // Every sitemap route that reads the database. `host` matters for the ccTLD one.
 const SITEMAPS = [
@@ -780,6 +862,7 @@ async function failurePhase(mode, { cold = false } = {}) {
 
 async function healthyPhase(phase) {
   stub.setMode("healthy");
+  renderedPages = new Map();
 
   const live = await get(PAGES.live);
   check(
@@ -839,6 +922,11 @@ async function healthyPhase(phase) {
   ]) {
     const r = await get(PAGES[key]);
     check(phase, `${r.path} -> 200`, r.status === 200, describe(r));
+  }
+
+  for (const path of STATIC_PAGES) {
+    const r = await get(path);
+    check(phase, `${path} (static) -> 200`, r.status === 200, describe(r));
   }
 
   // The hubs answer 200 with their rows, not merely 200.
@@ -1024,6 +1112,41 @@ async function healthyPhase(phase) {
     "/sitemap.xml -> 200 with at least one <loc>",
     index.status === 200 && countLocs(index.body) > 0,
     `${describe(index)}, ${countLocs(index.body)} <loc>`,
+  );
+
+  // No sitemap <loc> may name /p or /p/ either.
+  const sitemapBare = [];
+  for (const s of [...SITEMAPS, { path: "/sitemap.xml" }]) {
+    const r = await get(s.path, s);
+    for (const m of r.body.matchAll(/<loc>\s*([^<]*?)\s*<\/loc>/g)) {
+      if (isBarePTarget(decodeEntities(m[1]))) sitemapBare.push(`${s.path}: ${m[1]}`);
+    }
+  }
+  check(phase, "no sitemap <loc> is /p or /p/", sitemapBare.length === 0, sitemapBare.join("; "));
+
+  // F11 follow-up: no rendered fixture page links to, or names in JSON-LD, /p or /p/.
+  const pages = renderedPages;
+  renderedPages = null;
+  const selfTest = barePTargets(
+    '<a href="/p/">x</a><script type="application/ld+json">' +
+      '{"itemListElement":[{"item":"https://www.poolrentalnearme.com/p/"}]}</script>',
+  );
+  check(
+    phase,
+    "the /p-target detector flags a synthetic href and JSON-LD crumb",
+    selfTest.length === 2,
+    selfTest.join("; "),
+  );
+  const offenders = [];
+  for (const [path, body] of pages) {
+    const hits = barePTargets(body);
+    if (hits.length) offenders.push(`${path}: ${hits.join(", ")}`);
+  }
+  check(
+    phase,
+    `no rendered page (${pages.size}) has an href or JSON-LD URL targeting /p or /p/`,
+    pages.size > 0 && offenders.length === 0,
+    offenders.join(" | ") || `${pages.size} page(s) scanned`,
   );
 }
 
