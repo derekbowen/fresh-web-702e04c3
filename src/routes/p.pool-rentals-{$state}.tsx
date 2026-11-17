@@ -116,14 +116,18 @@ function StateHubPage() {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
+            {/* Bare /s, not /s?address=<State>: WEST searches by `bounds`
+                only, so an address-only link shows every pool unordered and
+                switches off the nearest-to-visitor default. A state has no
+                single centre to box, so this is the honest "all pools". */}
             <a
-              href={`/s?address=${encodeURIComponent(stateName)}`}
+              href="/s"
               className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
             >
-              Find a pool in {stateName}
+              Browse all pools
             </a>
             <a
-              href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+              href="/wizard/"
               className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition hover:border-primary"
             >
               List your pool
@@ -139,7 +143,7 @@ function StateHubPage() {
                 Available pools in {stateName}
               </h2>
               <a
-                href={`/s?address=${encodeURIComponent(stateName)}`}
+                href="/s"
                 className="text-sm font-semibold text-primary hover:underline"
               >
                 See all →
@@ -200,7 +204,7 @@ function StateHubPage() {
             and keep 100% of their listed price — 0% host fees.
           </p>
           <a
-            href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+            href="/wizard/"
             className="mt-5 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
           >
             Get started in {stateName}

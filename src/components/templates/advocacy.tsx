@@ -87,9 +87,10 @@ function StatStrip() {
 }
 
 function SidebarCTA({ stateName }: { stateName?: string | null }) {
-  const findHref = stateName
-    ? `/s?address=${encodeURIComponent(stateName)}`
-    : "/s";
+  // Bare /s, not /s?address=<State>: WEST searches by `bounds` only, so an
+  // address-only link shows every pool unordered and switches off the
+  // nearest-to-visitor default. A state has no single centre to box.
+  const findHref = "/s";
   return (
     <div className="space-y-4">
       <div className="rounded-3xl bg-gradient-to-br from-primary to-primary-glow p-6 text-primary-foreground shadow-xl">
@@ -100,7 +101,7 @@ function SidebarCTA({ stateName }: { stateName?: string | null }) {
           Free to list. 0% host fees.
         </p>
         <a
-          href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+          href="/wizard/"
           className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-primary shadow transition-transform hover:scale-[1.02]"
         >
           List your pool →
@@ -109,7 +110,7 @@ function SidebarCTA({ stateName }: { stateName?: string | null }) {
           href={findHref}
           className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
         >
-          Find pools{stateName ? ` in ${stateName}` : ""} →
+          Find pools →
         </a>
       </div>
 
@@ -355,16 +356,16 @@ export function AdvocacyTemplate({ page }: { page: ContentPage }) {
                 </p>
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                   <a
-                    href="/l/draft/00000000-0000-0000-0000-000000000000/new/details"
+                    href="/wizard/"
                     className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                   >
                     List your pool →
                   </a>
                   <a
-                    href={state?.name ? `/s?address=${encodeURIComponent(state.name)}` : "/s"}
+                    href="/s"
                     className="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
                   >
-                    Find pools{state?.name ? ` in ${state.name}` : ""} →
+                    Find pools →
                   </a>
                 </div>
               </div>

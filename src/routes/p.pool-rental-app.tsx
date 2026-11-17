@@ -7,7 +7,7 @@ const PATH = "/p/pool-rental-app";
 const TITLE = "Pool Rental App: Book a Private Pool From Your Phone | Pool Rental Near Me";
 const DESCRIPTION =
   "Download the Pool Rental Near Me app. Find and book private pools by the hour.";
-const LIST_HREF = "/l/draft/00000000-0000-0000-0000-000000000000/new/details";
+const LIST_HREF = "/wizard/";
 
 const APP_STORE_URL = "https://apps.apple.com/us/app/pool-rental-near-me-swim-fun/id6737762373";
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.poolrentalnearme.app.prod";

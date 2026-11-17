@@ -16,6 +16,7 @@ import {
   breadcrumbJsonLd,
 } from "@/components/comparison-page";
 import { absUrl } from "@/lib/site-origin";
+import { searchHrefNearPlace } from "@/lib/search-links";
 
 /**
  * Programmatic city variant of the Peerspace pillar page.
@@ -104,6 +105,10 @@ function buildFaqs(city: CityRow) {
 function PeerspaceCityPage() {
   const { city } = Route.useLoaderData() as { city: CityRow };
   const faqs = buildFaqs(city);
+  const citySearchHref = searchHrefNearPlace(city.name, city.state_code, {
+    lat: city.latitude,
+    lng: city.longitude,
+  });
 
   const tableRows = [
     { label: "Host service fee", prnm: <strong>0%</strong>, competitor: "20%" },
@@ -171,11 +176,24 @@ function PeerspaceCityPage() {
         people who specifically searched for a pool to rent, so listings
         convert at a higher rate per impression.
       </p>
+      {/* WEST searches by `bounds` only: a city search link needs the box
+          around the cities row's coordinates. Without them there is no
+          city-filtered search to promise, so the link is the bare /s. */}
       <p>
-        See live {city.name} pool-rental demand in{" "}
-        <a href={`/s?address=${encodeURIComponent(`${city.name}, ${city.state_code}`)}`} className="text-primary underline">
-          marketplace search
-        </a>{" "}
+        {citySearchHref !== "/s" ? (
+          <>
+            See live {city.name} pool-rental demand in{" "}
+            <a href={citySearchHref} className="text-primary underline">
+              marketplace search
+            </a>{" "}
+          </>
+        ) : (
+          <>
+            <a href="/s" className="text-primary underline">
+              Browse all pools
+            </a>{" "}
+          </>
+        )}
         and review the{" "}
         <a href="/p/elearning-academy-permit-licensing-requirements-pool-hosts" className="text-primary underline">
           permit and licensing guide
