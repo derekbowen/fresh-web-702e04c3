@@ -1,0 +1,248 @@
+[
+{
+"r": "00dd49",
+"col": "p.desc",
+"ent": 0,
+"t": "If you're looking for a clothing-optional spot in Land O' Lakes, Nautical Nudists, Inc. is one you'll want to check out. | [K:number] From what I've seen, it's pretty well-regarded, holding a 4.4 out of 5 stars from 11 reviews. | They keep consistent hours, staying open from 9 AM to 5 PM every day of the week. | That makes it easy to plan a visit. | [K:number] I'd definitely recommend checking out their website or giving them a call first, just to get the latest info before you head over. | It's a specific kind of place, so knowing what to expect is always a good idea. | They've been around for a bit, connecting people with this lifestyle, so they know their stuff. | Definitely call them at (813) 235-7360 if you have any questions."
+},
+{
+"r": "00dd49",
+"col": "p.faq",
+"ent": 1,
+"t": "Nautical Nudists, Inc. is open every day of the week, Monday through Sunday, from 9:00 AM to 5:00 PM. | Their hours are pretty consistent, which makes planning a visit straightforward."
+},
+{
+"r": "00dd49",
+"col": "p.faq",
+"ent": 2,
+"t": "Nautical Nudists, Inc. is a clothing-optional facility, which means it might not be suitable for all families or children, depending on personal comfort levels. | [K:number] I'd suggest contacting them directly at (813) 235-7360 to discuss their specific policies regarding minors."
+},
+{
+"r": "00dd49",
+"col": "p.faq",
+"ent": 3,
+"t": "Yes, there are other swimming options in the Land O' Lakes area, though they probably aren't clothing-optional. | You could check the local Land O' Lakes parks and recreation department's website or call them for a list of public pools and aquatic centers nearby."
+},
+{
+"r": "12bc08",
+"col": "p.desc",
+"ent": 0,
+"t": "Helen P. Brown Natatorium is located in Fort Wayne, Indiana. | The facility maintains posted hours throughout the week and has earned a 4.5-star rating based on 171 reviews."
+},
+{
+"r": "16ecb6",
+"col": "p.desc",
+"ent": 0,
+"t": "It looks like the Greenpoint YMCA stays open pretty late, 'til 11 most nights. | That's good for people with unusual schedules. | They're open seven days a week over on Meserole Ave in Brooklyn. | It's a public pool, so you probably need a membership or a day pass to get in. | With a 3.3 star rating from 134 reviews, it's not the top rated place, but it's not bad either. | For a city like New York, with over eight million people, having a pool like this is a real benefit for the community. | [K:second_clause] I always tell people, even if a pool has mixed reviews, it's worth checking out if it's close to you. | Sometimes what one person dislikes, another person doesn't even notice. | Give 'em a call before you head over, just in case."
+},
+{
+"r": "16ecb6",
+"col": "p.faq",
+"ent": 1,
+"t": "They're open Monday through Friday from 6 AM to 11 PM. | On Saturday and Sunday, they open at 6 AM and close at 9 PM. | Call (212) 912-2260 to double check the hours."
+},
+{
+"r": "16ecb6",
+"col": "p.faq",
+"ent": 2,
+"t": "[D] The data I have doesn't list the exact cost for pool access or day passes. | Your best bet is to call the Greenpoint YMCA directly at (212) 912-2260 for current pricing information."
+},
+{
+"r": "16ecb6",
+"col": "p.faq",
+"ent": 3,
+"t": "Since it's a YMCA, it's generally set up to be family-friendly and good for kids. | They often have programs or dedicated swim times. | Call them at (212) 912-2260 to ask about specific family offerings."
+},
+{
+"r": "16ecb6",
+"col": "p.faq",
+"ent": 4,
+"t": "Yes, New York City has a bunch of public pools, especially through the NYC Parks Department. | You can check their website or call city services to find other options near you."
+},
+{
+"r": "336adb",
+"col": "p.desc",
+"ent": 0,
+"t": "Hawkins Indoor Pool is located in El Paso, Texas. | The facility maintains posted hours seven days a week. | With a rating of 4.2 stars based on 147 reviews, the pool serves the local community."
+},
+{
+"r": "34eb81",
+"col": "p.desc",
+"ent": 0,
+"t": "Roxbury Swim & Tennis Club is located in Stamford, Connecticut. | The facility has received a 4.7-star rating based on 31 reviews."
+},
+{
+"r": "40bd17",
+"col": "p.desc",
+"ent": 0,
+"t": "It looks like the Virginia Beach Aquatic Center has a lot going on. | [K:fact_vocabulary] I've heard it mentioned a few times when people are looking for more than just a lap pool. | From the ratings, it seems like most folks have a good time, hitting a 4 out of 5 stars from close to 300 reviews. | That's a good sign. | It's set up more like a waterpark, so you're getting things like water slides, a lazy river, and a wave pool. | They even have cabanas, which is a nice touch if you want some shade or a spot to kick back. | Admission is pretty reasonable, too. | Adults are $7, and kids get in for $3. | [D] With the population of Virginia Beach, I bet this place gets pretty busy, especially on hot days. | It sounds like a solid option if you're looking for an active day in the water versus just getting some laps in."
+},
+{
+"r": "40bd17",
+"col": "p.faq",
+"ent": 1,
+"t": "Admission for adults is $7. | For children, it's $3. | [K:second_clause] This is based on the info I have, so it's a pretty affordable outing."
+},
+{
+"r": "40bd17",
+"col": "p.faq",
+"ent": 2,
+"t": "Definitely. | With a splash pad, lazy river, and water slides, it sounds like there are plenty of options for different age groups, including younger kids."
+},
+{
+"r": "40bd17",
+"col": "p.faq",
+"ent": 3,
+"t": "Virginia Beach has a lot going on, so there are probably other pools, maybe even some dedicated lap pools. | [D] I'd look at the city's parks and recreation website for a full list of their facilities."
+},
+{
+"r": "4c055e",
+"col": "p.desc",
+"ent": 0,
+"t": "Finding an outdoor pool in a city the size of Hialeah, with over 200,000 people, definitely makes sense. | The West End Park Pool fits that bill for anyone looking to cool off. | It's an outdoor spot, which means you're at the mercy of the weather, but also means you get that fresh air feeling. | [D] When I scout these places, I always try to imagine who'd use it most. | [K:fact_vocabulary] For an outdoor pool in a city like Hialeah, I'd bet it sees a lot of families and folks just wanting to escape the heat. | It's not a year-round thing, of course, being outdoors. | So for people in Hialeah, this is a definite summer option. | [K:fact_vocabulary] Parking can sometimes be a headache at city parks, so I'd keep that in mind if you're planning a visit here."
+},
+{
+"r": "4c055e",
+"col": "p.faq",
+"ent": 1,
+"t": "As an outdoor pool, it's likely a popular spot for families, especially in nice weather. | Most city pools are designed with different age groups in mind, often having shallower sections for kids. | You'll want to confirm any specific amenities with the park directly."
+},
+{
+"r": "4c055e",
+"col": "p.faq",
+"ent": 2,
+"t": "Being a city park, there's usually some parking provided. | [K:second_clause] However, I can't guarantee how much there is or if it fills up quickly. | For busy days, it's always smart to have a backup plan or arrive early."
+},
+{
+"r": "4c055e",
+"col": "p.faq",
+"ent": 3,
+"t": "Yes, for a city of Hialeah's size, there are usually several public pool options. | [K:second_clause] I'd check the City of Hialeah Parks and Recreation website, they usually list all their aquatic facilities there."
+},
+{
+"r": "58324b",
+"col": "p.desc",
+"ent": 0,
+"t": "If you're looking for a good public pool in the San Antonio area, the Cibolo Family YMCA could be a solid option. | It's got pretty good hours during the week, opening at 5 AM Monday through Friday and staying open until 9 PM. | Weekends are a bit different, but they're still open on Saturday and Sunday. | The Google reviews are strong, about 4.5 stars from over 200 people, which usually points to a well-run place. | It's in Cibolo, sort of on the eastern side of the metro area. | For a city with over 1.4 million people in San Antonio, it's good to have regional options like this. | [K:second_clause] I always tell people to check YMCAs because they tend to be reliable for swimming, and this one looks like it fits the bill."
+},
+{
+"r": "58324b",
+"col": "p.faq",
+"ent": 1,
+"t": "The Cibolo Family YMCA pool is open Monday through Friday from 5 AM to 9 PM. | On Saturdays, they're open 7 AM to 4 PM, and Sundays from 1 PM to 5 PM."
+},
+{
+"r": "58324b",
+"col": "p.faq",
+"ent": 2,
+"t": "San Antonio is a large city, so there are definitely other public pool options. | Your best bet would be to check the City of San Antonio Parks and Recreation department website for a list of municipal pools."
+},
+{
+"r": "712946",
+"col": "p.desc",
+"ent": 0,
+"t": "Holiday Park Pool Association is located in Stockton, California. | The facility has posted hours available seven days a week. | The pool holds a 3.5-star rating based on 23 reviews."
+},
+{
+"r": "9336b2",
+"col": "p.desc",
+"ent": 0,
+"t": "If you're looking for a clothing-optional spot, Wildwood Naturist's Resort out in Decatur, TX, gets a lot of love. | It's got a strong 4.8 out of 5 stars from 85 reviews, which is pretty solid. | They aren't open every day, so remember to check your calendar before you head out. | [K:number] From what I see, Fridays and Saturdays are 9 AM to 5 PM. | Sundays they open a bit later, 10 AM, and close at 3 PM. | They are closed Monday, Tuesday, and Wednesday. | That's a good chunk of time you can spend without a swimsuit, if that's your thing. | [D] It's not too far from Decatur, I'd say it's worth checking out if you're in the area and just want to relax. | You can find them at 241 Private Rd 1179. | Give them a call if you have questions, their number is (940) 627-2280."
+},
+{
+"r": "9336b2",
+"col": "p.faq",
+"ent": 1,
+"t": "They're open Friday and Saturday from 9 AM to 5 PM, and Sunday from 10 AM to 3 PM. | They are closed Monday through Wednesday. | Call (940) 627-2280 to confirm if you're unsure."
+},
+{
+"r": "9336b2",
+"col": "p.faq",
+"ent": 2,
+"t": "Wildwood Naturist's Resort is a clothing-optional facility, so whether it's suitable for families with kids really depends on your comfort level with that environment. | You might want to call them directly to discuss their family policies."
+},
+{
+"r": "9336b2",
+"col": "p.faq",
+"ent": 3,
+"t": "[D] I'd suggest checking the City of Decatur's Parks and Recreation website. | They usually list public pools and community swimming options in the area."
+},
+{
+"r": "a23e59",
+"col": "p.desc",
+"ent": 0,
+"t": "UTC Aquatic and Recreation Center is located in Chattanooga, Tennessee. | The facility maintains posted hours seven days a week. | With a rating of 4.6 stars based on 167 reviews, it is well-regarded by visitors."
+},
+{
+"r": "ad3fd1",
+"col": "p.desc",
+"ent": 0,
+"t": "It looks like the Thornton Municipal Pool is a good bet for an outdoor swim in Thornton, Colorado. | With a city population over 140,000, there's definitely a need for places like this. | [K:number] The 3.9 star rating from over 350 Google reviews tells me it's generally well-regarded, which is always a good sign. | They've got shade structures, which is key for an outdoor spot, and a separate kiddie pool, which is great for parents. | Lap lanes mean you can actually get some exercise, and a picnic area is nice if you want to make an afternoon of it. | [K:number] It's seven bucks for adults, three for kids, which seems pretty reasonable to me for a municipal pool."
+},
+{
+"r": "ad3fd1",
+"col": "p.faq",
+"ent": 1,
+"t": "Admission is pretty straightforward at this pool. | It's $7 for adults if you're over a certain age. | For kids, it's cheaper, just $3 per child to get in for the day."
+},
+{
+"r": "ad3fd1",
+"col": "p.faq",
+"ent": 2,
+"t": "Yes, it seems like a solid choice for families. | They have a dedicated kiddie pool, which is always a plus for the little ones. | Plus, the shade structures can help keep everyone comfortable."
+},
+{
+"r": "ad3fd1",
+"col": "p.faq",
+"ent": 3,
+"t": "Thornton has a decent population, so there are likely other public and private pools, maybe even community centers with aquatic facilities. | [D] I'd check the City of Thornton's recreation listings or do a quick search for 'pools near Thornton, CO' to find more options."
+},
+{
+"r": "b477cb",
+"col": "p.desc",
+"ent": 0,
+"t": "The Pool at Grand Sierra Resort is located in Reno, Nevada. | This facility has earned a 4.2-star rating based on 313 reviews. | The pool is open seven days a week."
+},
+{
+"r": "c3ec2b",
+"col": "p.desc",
+"ent": 0,
+"t": "If you're looking for an outdoor pool in Berkeley, King Pool is a solid choice. | [K:number] I actually dug into the reviews for this one, and it's holding strong at a 4.2 out of 5 from 76 people. | [D] That's pretty good for a public pool, tells me most folks are happy with it. | They've got lap lanes, which is a big plus for serious swimmers. | [K:second_clause] I also noticed they offer swim lessons, so it's not just a free-for-all. | [K:second_clause] What really stands out to me is that it's heated; an outdoor heated pool in Berkeley means you can probably get in a good swim even when the weather isn't perfect. | Plus, they've got locker rooms, so you can change comfortably. | Just remember, it's $4 for adults if you're not from Berkeley, with discounts for residents."
+},
+{
+"r": "c3ec2b",
+"col": "p.faq",
+"ent": 1,
+"t": "It's $4 for adults to swim. | Kids and seniors pay $3. | If you live in Berkeley, you might get a better rate, so it's worth checking with them or on their site."
+},
+{
+"r": "c3ec2b",
+"col": "p.faq",
+"ent": 2,
+"t": "[D] Yes, I think so. | They offer swim lessons, which is usually a good sign that they cater to younger swimmers. | Being an outdoor pool means it's probably pretty family-friendly, too."
+},
+{
+"r": "e9f381",
+"col": "p.desc",
+"ent": 0,
+"t": "It's an outdoor spot, which means it's really about summer in Madison. | With a population of over 260,000, Madison has a lot of people looking to cool off when it gets hot. | The Monona Community Pool gets a solid 4 out of 5 stars based on over 300 reviews, so it seems like most people have a good experience there. | They've got the basics covered, like restrooms, parking, and a picnic area. | [K:fact_vocabulary] And I always appreciate some shade structures when I'm at an outdoor pool. | [D] I usually look for that myself. | [D] It tells me they're thinking about comfort, not just the water. | If you're in Madison and want to swim outside, this looks like a decent option."
+},
+{
+"r": "e9f381",
+"col": "p.faq",
+"ent": 1,
+"t": "It's an outdoor pool with restrooms, a picnic area, and shade, which are all good signs for families. | [K:second_clause] I'd lean towards yes, it's a family-friendly spot. | Call them about shallow water areas for toddlers."
+},
+{
+"r": "e9f381",
+"col": "p.faq",
+"ent": 2,
+"t": "Yes, parking is listed as an amenity. | So, you should be able to find a spot when you visit the pool."
+},
+{
+"r": "e9f381",
+"col": "p.faq",
+"ent": 3,
+"t": "Given Madison's size, there are likely other outdoor pools. | You could check the city's parks department listings for more options if this one doesn't quite fit what you're looking for."
+}
+]

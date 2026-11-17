@@ -1,0 +1,252 @@
+[
+{
+"city": "alabama/homewood",
+"f": "intro",
+"ent": 0,
+"k": 3,
+"stated": 69,
+"actual": 2,
+"phrase": "69 reviews and The Pool",
+"s": "Each facility has earned a 4.2-star rating from visitors, with Shades Valley YMCA receiving 69 reviews and The Pool @ Patriot Park receiving 22 reviews."
+},
+{
+"city": "arizona/mesa",
+"f": "intro",
+"ent": 0,
+"k": 7,
+"stated": 1,
+"actual": 13,
+"phrase": "one public spot",
+"s": "We've got just one public spot listed for Mesa so far (Skyline Aquatic Center)."
+},
+{
+"city": "arizona/peoria",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"stated": 1,
+"actual": 7,
+"phrase": "one or two options",
+"s": "Most neighborhoods have at least one or two options, and they're usually well-maintained."
+},
+{
+"city": "california/apple-valley",
+"f": "intro",
+"ent": 0,
+"k": 3,
+"stated": 1,
+"actual": 2,
+"phrase": "one public pool",
+"s": "We've got just one public pool we track in Apple Valley, the Civic Center Park Aquatic Center."
+},
+{
+"city": "california/fremont",
+"f": "intro",
+"ent": 0,
+"k": 4,
+"stated": 1,
+"actual": 12,
+"phrase": "one public pool",
+"s": "We've got one public pool listed, Aqua Adventure, which is more of a waterpark vibe, perfect for families and less about grinding out laps."
+},
+{
+"city": "california/huntington-beach",
+"f": "intro",
+"ent": 0,
+"k": 6,
+"stated": 1,
+"actual": 3,
+"phrase": "one city pool",
+"s": "There's one city pool, which can get busy."
+},
+{
+"city": "california/irvine",
+"f": "faq",
+"ent": 1,
+"k": 2,
+"stated": 1,
+"actual": 16,
+"phrase": "one pool",
+"s": "Some of the public aquatics centers keep at least one pool heated year-round for lap swimming, but the more open, recreational swim times are definitely in the warmer months."
+},
+{
+"city": "california/oceanside",
+"f": "faq",
+"ent": 4,
+"k": 2,
+"stated": 1,
+"actual": 9,
+"phrase": "one listed public pool",
+"s": "Our one listed public pool, El Corazon Aquatic Center, has multiple pools, including an indoor competition pool and outdoor recreational pools."
+},
+{
+"city": "california/rancho-cucamonga",
+"f": "faq",
+"ent": 1,
+"k": 2,
+"stated": 1,
+"actual": 4,
+"phrase": "one pool",
+"s": "Some spots might have limited hours or even keep one pool open year-round for lap swimming, depending on local weather and demand."
+},
+{
+"city": "california/sacramento",
+"f": "faq",
+"ent": 4,
+"k": 1,
+"stated": 5,
+"actual": 22,
+"phrase": "five pools",
+"s": "The five pools listed in our directory for Sacramento (Clunie, Pannell Meadowview, Tahoe, Southside, Oki) are all outdoor pools."
+},
+{
+"city": "california/sacramento",
+"f": "intro",
+"ent": 0,
+"k": 8,
+"stated": 5,
+"actual": 22,
+"phrase": "five public pools",
+"s": "We've got five public pools on our site for Sacramento, so there are options across the city."
+},
+{
+"city": "california/san-jose",
+"f": "faq",
+"ent": 1,
+"k": 2,
+"stated": 1,
+"actual": 35,
+"phrase": "one pool",
+"s": "Many public and private facilities keep at least one pool heated and open year-round, especially for lap swimming and lessons."
+},
+{
+"city": "california/torrance",
+"f": "faq",
+"ent": 4,
+"k": 2,
+"stated": 1,
+"actual": 2,
+"phrase": "one is an indoor facility",
+"s": "That one is an indoor facility, so it gives you a good option regardless of the weather."
+},
+{
+"city": "california/torrance",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"stated": 1,
+"actual": 2,
+"phrase": "one main spot",
+"s": "We don't have a huge public pool scene, just one main spot for everyone."
+},
+{
+"city": "california/torrance",
+"f": "intro",
+"ent": 0,
+"k": 8,
+"stated": 1,
+"actual": 2,
+"phrase": "one public pool",
+"s": "Finding a spot often means going to that one public pool or looking into something more private."
+},
+{
+"city": "california/walnut-creek",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"stated": 1,
+"actual": 4,
+"phrase": "one big public spot",
+"s": "Public pools are good, but there's only one big public spot we list in town."
+},
+{
+"city": "colorado/aurora",
+"f": "intro",
+"ent": 0,
+"k": 9,
+"stated": 5,
+"actual": 44,
+"phrase": "five public pools",
+"s": "We've got five public pools listed in our directory, so you've got options."
+},
+{
+"city": "colorado/fort-collins",
+"f": "faq",
+"ent": 4,
+"k": 2,
+"stated": 1,
+"actual": 12,
+"phrase": "one public outdoor pool",
+"s": "We only list one public outdoor pool."
+},
+{
+"city": "colorado/fort-collins",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"stated": 1,
+"actual": 12,
+"phrase": "one public outdoor pool",
+"s": "We really only have one public outdoor pool in our directory for Fort Collins right now."
+},
+{
+"city": "colorado/lakewood",
+"f": "faq",
+"ent": 4,
+"k": 1,
+"stated": 4,
+"actual": 10,
+"phrase": "four public pools",
+"s": "Our directory lists four public pools in Lakewood."
+},
+{
+"city": "delaware/wilmington",
+"f": "intro",
+"ent": 0,
+"k": 8,
+"stated": 5,
+"actual": 7,
+"phrase": "five public pools",
+"s": "Our site lists five public pools in Wilmington, but there are always private options too if you want something different."
+},
+{
+"city": "florida/clearwater",
+"f": "faq",
+"ent": 2,
+"k": 1,
+"stated": 4,
+"actual": 6,
+"phrase": "four public pools",
+"s": "Our directory lists four public pools: Clearwater Family Aquatic Center, Clearwater Municipal Pool, Clearwater Aquatic Center, and Clearwater Community Pool."
+},
+{
+"city": "florida/port-st-lucie",
+"f": "faq",
+"ent": 3,
+"k": 1,
+"stated": 3,
+"actual": 7,
+"phrase": "three public pools",
+"s": "All three public pools, the Port St. Lucie Community Pool, Aquatic Center, and Municipal Pool, are known to be kid-friendly."
+},
+{
+"city": "georgia/canton",
+"f": "faq",
+"ent": 4,
+"k": 1,
+"stated": 1,
+"actual": 3,
+"phrase": "one indoor pool",
+"s": "Canton does have at least one indoor pool."
+},
+{
+"city": "georgia/decatur",
+"f": "faq",
+"ent": 4,
+"k": 2,
+"stated": 1,
+"actual": 3,
+"phrase": "one good indoor facility",
+"s": "There's at least one good indoor facility, the Decatur Aquatic Center, that gives you a place to swim year-round, which is important for dedicated swimmers when it gets cold."
+}
+]

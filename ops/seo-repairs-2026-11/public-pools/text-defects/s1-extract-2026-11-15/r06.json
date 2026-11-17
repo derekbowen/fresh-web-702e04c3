@@ -1,0 +1,127 @@
+[
+{
+"t": "pool",
+"slug": "william-woollett-jr-aquatics-center",
+"e": "{\"a\": \"Lap swimming is $5 per session. They also offer various passes, so if you plan on going often, it might be worth looking into those options. You can find more pricing details on their website.\", \"q\": \"How much does it cost to use the pools?\", \"keyword\": \"cost\"}"
+},
+{
+"t": "pool",
+"slug": "william-woollett-jr-aquatics-center",
+"e": "{\"a\": \"They do offer swim lessons, which is great for kids. Since it has a Competition Pool and a 50-Meter Pool, it's really geared towards serious swimming, not usually casual play. Call them at (949) 724-6710 to ask about specific family-friendly areas or programs.\", \"q\": \"Is this a good pool for families with young kids?\", \"keyword\": \"kids\"}"
+},
+{
+"t": "pool",
+"slug": "william-woollett-jr-aquatics-center",
+"e": "{\"a\": \"Yes, their website lists parking as one of their amenities. So, you should be able to find a spot when you visit. It's always a good idea to arrive a little early during peak times just in case.\", \"q\": \"Is there ample parking available?\", \"keyword\": \"parking\"}"
+},
+{
+"t": "pool",
+"slug": "william-woollett-jr-aquatics-center",
+"e": "{\"a\": \"Irvine is a big city with over 300,000 people, so it's likely there are other public pools. I'd check the City of Irvine's Parks and Recreation website to see what other aquatic facilities they have.\", \"q\": \"Are there other public pools in Irvine I should consider?\", \"keyword\": \"alternatives\"}"
+},
+{
+"t": "pool",
+"slug": "virginia-beach-municipal-pool",
+"e": "{\"a\": \"Adult admission to the Virginia Beach Municipal Pool is $10. For kids, it's pretty affordable at just $3. I always recommend checking their official website for any changes to these prices though.\", \"b\": \"\", \"q\": \"How much does it cost to swim at Virginia Beach Municipal Pool?\"}"
+},
+{
+"t": "pool",
+"slug": "virginia-beach-municipal-pool",
+"e": "{\"a\": \"Yes, the pool does offer kid admission for $3. While it's primarily a competition pool with lap lanes and a diving well, families can certainly enjoy swimming here. Just know it's not a splash park.\", \"b\": \"\", \"q\": \"Are there options for kids and families at this pool?\"}"
+},
+{
+"t": "pool",
+"slug": "virginia-beach-municipal-pool",
+"e": "{\"a\": \"They've got a timing system, a diving well, and Olympic lanes. You'll also find spectator seating and regular lap lanes. It's built for serious swimming, clearly, not a ton of water toys or anything.\", \"b\": \"\", \"q\": \"What kind of amenities does the Virginia Beach Municipal Pool have?\"}"
+},
+{
+"t": "pool",
+"slug": "virginia-beach-municipal-pool",
+"e": "{\"a\": \"The information I have doesn't explicitly mention parking. For a municipal pool of this size, I'd expect on-site parking or a dedicated lot. Your best bet is to check the city's parks and recreation website or call the pool directly.\", \"b\": \"\", \"q\": \"Is there parking available at the pool?\"}"
+},
+{
+"t": "pool",
+"slug": "virginia-beach-municipal-pool",
+"e": "{\"a\": \"Virginia Beach is a big city, so there are likely other public pools or even private clubs. If you're looking for something different, I'd check the Virginia Beach Parks and Recreation department site or search for community centers with pools.\", \"b\": \"\", \"q\": \"Are there other swimming options if this pool doesn't fit my needs?\"}"
+},
+{
+"t": "pool",
+"slug": "community-pool-at-clu",
+"e": "{\"a\": \"Drop-in rates are $6 for adults and $4 for youth. They also offer various passes if you plan on going regularly, which might save you some money in the long run. Check their site for pass details.\", \"q\": \"How much does it cost to use the pool?\", \"keywords\": [\"cost\", \"price\", \"admission\", \"fee\"]}"
+},
+{
+"t": "pool",
+"slug": "community-pool-at-clu",
+"e": "{\"a\": \"It's an Olympic pool with lap lanes and swim lessons. While it's great for fitness, it might not have shallow play areas or specific kid-friendly features like splash pads. It's probably better for kids learning to swim or doing laps.\", \"q\": \"Is this pool good for young children or families?\", \"keywords\": [\"kids\", \"children\", \"family\", \"toddler\"]}"
+},
+{
+"t": "pool",
+"slug": "community-pool-at-clu",
+"e": "{\"a\": \"Yes, it's located at California Lutheran University (CLU). Parking is generally available on the campus. I'd suggest checking the university's map or asking when you call to ensure you know the closest lot.\", \"q\": \"Is there parking available at the Community Pool?\", \"keywords\": [\"parking\", \"accessible\", \"transportation\"]}"
+},
+{
+"t": "pool",
+"slug": "st-petersburg-aquatic-center",
+"e": "{\"a\": \"Adult admission is $6 per person. For children, it's a bit cheaper at $3 per child. I think that's pretty standard for a public outdoor pool.\", \"q\": \"How much does it cost to get into the St. Petersburg Aquatic Center?\", \"q_raw\": \"How much does it cost to get into the St. Petersburg Aquatic Center?\"}"
+},
+{
+"t": "pool",
+"slug": "st-petersburg-aquatic-center",
+"e": "{\"a\": \"They definitely have a kiddie pool, which is usually a big hit with the little ones. Plus, there's a picnic area, so you can make a day of it with the family.\", \"q\": \"Is the St. Petersburg Aquatic Center good for families with young kids?\", \"q_raw\": \"Is the St. Petersburg Aquatic Center good for families with young kids?\"}"
+},
+{
+"t": "pool",
+"slug": "st-petersburg-aquatic-center",
+"e": "{\"a\": \"St. Petersburg is a pretty big city, so there are usually other options available. I'd suggest checking the City of St. Petersburg's parks and recreation website for a list of other public pools or aquatic facilities in the area.\", \"q\": \"Are there other public pools nearby if the St. Petersburg Aquatic Center doesn't work out?\", \"q_raw\": \"Are there other public pools nearby if the St. Peter"
+},
+{
+"t": "pool",
+"slug": "novi-municipal-pool",
+"e": "{\"a\": \"Novi is a decent sized city, so there are probably other public or private pools around if this one doesn't fit your needs. I'd check out the Novi Parks and Recreation department's official site for other options.\", \"q\": \"Are there other pools in Novi, MI?\", \"alternative_options_available\": true}"
+},
+{
+"t": "city",
+"slug": "ohio/cleveland",
+"e": "{\"a\": \"Public pool season generally runs from late June through mid-August in Cleveland. Opening and closing dates can shift slightly each year based on school schedules and weather, so it's always good to check the city's recreation department website for the most current information.\", \"c\": \"Pool season\", \"q\": \"When is pool season in Cleveland, Ohio?\"}"
+},
+{
+"t": "city",
+"slug": "ohio/cleveland",
+"e": "{\"a\": \"Yes, the city of Cleveland operates several public pools, offering very affordable or sometimes free entry, especially for residents. Places like Loew Pool and Lincoln Pool are part of this system. Daily rates are usually low, and seasonal passes might also be available.\", \"c\": \"Free/low cost\", \"q\": \"Are there free or low-cost public swimming options in Cleveland?\"}"
+},
+{
+"t": "city",
+"slug": "ohio/cleveland",
+"e": "{\"a\": \"Most of Cleveland's public pools are designed with families in mind. Wading Pool is specifically geared towards younger children, as its name suggests. Foster Pool and Cumberland Pool also have areas suitable for kids, often with lifeguards on duty.\", \"c\": \"Kid-friendly\", \"q\": \"Which Cleveland pools are good for families and kids?\"}"
+},
+{
+"t": "city",
+"slug": "ohio/cleveland",
+"e": "{\"a\": \"The five pools listed in our directory for Cleveland (Loew, Lincoln, Wading, Foster, Cumberland) are all outdoor facilities. Their operating season is limited to the summer months. For indoor options, you'd typically need to look into recreation centers or private gyms.\", \"c\": \"Indoor/Outdoor\", \"q\": \"Does Cleveland have indoor or outdoor public swimming pools?\"}"
+},
+{
+"t": "city",
+"slug": "ohio/cleveland",
+"e": "{\"a\": \"If you're looking for a private swimming experience without a membership, you can check out PoolRentalNearMe.com. We list backyard pools that owners rent out by the hour. It's a great option for parties, family gatherings, or just a quiet swim when public pools are crowded.\", \"c\": \"Private rentals\", \"q\": \"What if I want to rent a private pool by the hour in or near Cleveland?\"}"
+},
+{
+"t": "city",
+"slug": "florida/clearwater",
+"e": "{\"a\": \"You can swim outdoors in Clearwater for most of the year. While temperatures might dip a bit in winter, many pools remain open and heated. Peak season for crowded pools is definitely during the summer and spring break, but locals use pools year-round to stay active and cool.\", \"b\": \"\", \"q\": \"How long is pool season in Clearwater?\"}"
+},
+{
+"t": "city",
+"slug": "florida/clearwater",
+"e": "{\"a\": \"Our directory lists four public pools: Clearwater Family Aquatic Center, Clearwater Municipal Pool, Clearwater Aquatic Center, and Clearwater Community Pool. They typically have daily entry fees or offer season passes. You'd need to check with each facility directly for current pricing and any free swim times they might offer.\", \"b\": \"\", \"q\": \"Are there any free or low-cost public pools in "
+},
+{
+"t": "city",
+"slug": "florida/clearwater",
+"e": "{\"a\": \"The Clearwater Family Aquatic Center is usually a good bet for families. It's designed with features that cater to kids and often has dedicated areas for family fun. Other community pools also welcome families, but the 'Family Aquatic Center' usually means more kid-focused amenities.\", \"b\": \"\", \"q\": \"What are the best pools for kids and families in Clearwater?\"}"
+},
+{
+"t": "city",
+"slug": "florida/clearwater",
+"e": "{\"a\": \"Given the climate, most of the pools in Clearwater are outdoor. It’s warm enough for most of the year that an indoor option isn't as critical. While we don't have indoor pools listed currently, public facilities will often heat their outdoor pools during cooler months to extend usability.\", \"b\": \"\", \"q\": \"Does Clearwater have any indoor pools, or are they all outdoors?\"}"
+}
+]

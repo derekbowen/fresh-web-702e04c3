@@ -1,0 +1,152 @@
+[
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "I'd still check their official website for any last-minute changes before you head out."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "gap",
+"s": "Information on parking and specific accessibility features isn't something I have on hand."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "I'd check the entire Indianapolis Parks and Recreation website, or look up other city-run pools for their hours and locations."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"s": "People often ask me about what's available, and something like Fortuna Pool is exactly what a lot of people need for a casual dip."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"s": "When I scout these places, I always try to imagine who'd use it most."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"s": "I can tell you it's nice to just be able to get outside and swim instead of being stuck indoors."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "I'd check the official Los Gatos city website or search for 'Los Gatos public pools' to see what else is around."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"s": "I'd say it's a solid option for families looking to swim."
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "I would check the Wackford Aquatic Complex directly for their current daily rates or membership options."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "gap",
+"s": "I only have details for the Casa Grande Municipal Pool right now."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"s": "That's a solid score for a public pool, tells me most people leave happy."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "I'd check the City of Columbus Recreation and Parks website or generally search for 'public pools Columbus OH' to see more choices."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"s": "Based on it being a 'Family YMCA,' I'd say it's a good spot for kids and families."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "If Harrah's isn't what you're looking for, I'd suggest checking out other hotel pools if you're a guest elsewhere."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "If you're looking for other options, I'd suggest checking the parks and recreation departments of neighboring towns or counties."
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "gap",
+"s": "I'm not aware of any completely free public swimming spots."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"s": "I'd keep checking the city's parks and recreation sites for other public options if you're local to North Las Vegas."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"s": "For other options, especially if you're looking for something more family-friendly, I'd check the City of Las Vegas parks and recreation website or just search for 'pools in Las Vegas' to see what else is available near you."
+},
+{
+"col": "c.faq",
+"kind": "plural",
+"cls": "opinion",
+"s": "All our public pools in Canton are pretty family-friendly."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"s": "I'd consider other options if you're looking for a more family-oriented swim spot."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"s": "I've heard Rumble Bay is one of those places."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"s": "I'd suggest looking at the Indy Parks and Recreation website for a full list of their facilities."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "advice",
+"s": "I always tell people, if a pool has a kiddie section and a diving board, it's usually trying to hit that sweet spot for a lot of different people."
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "gap",
+"s": "The data I have doesn't list specific operating hours."
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"s": "I always appreciate a pool that keeps things simple and focuses on the swimming."
+}
+]

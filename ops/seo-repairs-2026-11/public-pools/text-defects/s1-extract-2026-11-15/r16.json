@@ -1,0 +1,642 @@
+[
+{
+"col": "c.faq",
+"kind": "plural",
+"cls": "opinion",
+"why": "second_clause",
+"n": 70,
+"rows_": 61
+},
+{
+"col": "c.faq",
+"kind": "plural",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 48,
+"rows_": 44
+},
+{
+"col": "c.faq",
+"kind": "plural",
+"cls": "opinion",
+"why": "deletable",
+"n": 40,
+"rows_": 40
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "gap",
+"why": "deletable",
+"n": 25,
+"rows_": 21
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "gap",
+"why": "second_clause",
+"n": 10,
+"rows_": 10
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "url_or_contact",
+"n": 10,
+"rows_": 10
+},
+{
+"col": "c.faq",
+"kind": "local",
+"cls": "opinion",
+"why": "second_clause",
+"n": 9,
+"rows_": 9
+},
+{
+"col": "c.faq",
+"kind": "local",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 9,
+"rows_": 9
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 7,
+"rows_": 7
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "advice",
+"why": "deletable",
+"n": 6,
+"rows_": 6
+},
+{
+"col": "c.faq",
+"kind": "plural",
+"cls": "opinion",
+"why": "number",
+"n": 5,
+"rows_": 5
+},
+{
+"col": "c.faq",
+"kind": "local",
+"cls": "opinion",
+"why": "deletable",
+"n": 4,
+"rows_": 4
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "second_clause",
+"n": 4,
+"rows_": 4
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "deletable",
+"n": 2,
+"rows_": 2
+},
+{
+"col": "c.faq",
+"kind": "plural",
+"cls": "insurance",
+"why": "insurance",
+"n": 2,
+"rows_": 2
+},
+{
+"col": "c.faq",
+"kind": "plural",
+"cls": "gap",
+"why": "deletable",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "c.faq",
+"kind": "singular",
+"cls": "gap",
+"why": "number",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "c.intro",
+"kind": "plural",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 186,
+"rows_": 174
+},
+{
+"col": "c.intro",
+"kind": "local",
+"cls": "opinion",
+"why": "deletable",
+"n": 130,
+"rows_": 122
+},
+{
+"col": "c.intro",
+"kind": "plural",
+"cls": "opinion",
+"why": "deletable",
+"n": 123,
+"rows_": 111
+},
+{
+"col": "c.intro",
+"kind": "plural",
+"cls": "opinion",
+"why": "second_clause",
+"n": 57,
+"rows_": 56
+},
+{
+"col": "c.intro",
+"kind": "local",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 56,
+"rows_": 56
+},
+{
+"col": "c.intro",
+"kind": "plural",
+"cls": "opinion",
+"why": "number",
+"n": 38,
+"rows_": 38
+},
+{
+"col": "c.intro",
+"kind": "singular",
+"cls": "opinion",
+"why": "deletable",
+"n": 17,
+"rows_": 16
+},
+{
+"col": "c.intro",
+"kind": "local",
+"cls": "opinion",
+"why": "second_clause",
+"n": 16,
+"rows_": 16
+},
+{
+"col": "c.intro",
+"kind": "local",
+"cls": "opinion",
+"why": "number",
+"n": 9,
+"rows_": 9
+},
+{
+"col": "c.intro",
+"kind": "singular",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 8,
+"rows_": 8
+},
+{
+"col": "c.intro",
+"kind": "singular",
+"cls": "advice",
+"why": "number",
+"n": 7,
+"rows_": 7
+},
+{
+"col": "c.intro",
+"kind": "singular",
+"cls": "opinion",
+"why": "url_or_contact",
+"n": 7,
+"rows_": 7
+},
+{
+"col": "c.intro",
+"kind": "singular",
+"cls": "opinion",
+"why": "number",
+"n": 7,
+"rows_": 7
+},
+{
+"col": "c.intro",
+"kind": "singular",
+"cls": "advice",
+"why": "deletable",
+"n": 5,
+"rows_": 5
+},
+{
+"col": "c.intro",
+"kind": "singular",
+"cls": "opinion",
+"why": "second_clause",
+"n": 4,
+"rows_": 4
+},
+{
+"col": "c.intro",
+"kind": "plural",
+"cls": "insurance",
+"why": "insurance",
+"n": 2,
+"rows_": 2
+},
+{
+"col": "c.intro",
+"kind": "plural",
+"cls": "gap",
+"why": "number",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"why": "number",
+"n": 945,
+"rows_": 806
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"why": "deletable",
+"n": 616,
+"rows_": 546
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 427,
+"rows_": 393
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"why": "second_clause",
+"n": 360,
+"rows_": 339
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "advice",
+"why": "number",
+"n": 145,
+"rows_": 145
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "advice",
+"why": "deletable",
+"n": 131,
+"rows_": 130
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "advice",
+"why": "second_clause",
+"n": 41,
+"rows_": 41
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "gap",
+"why": "second_clause",
+"n": 35,
+"rows_": 35
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "insurance",
+"why": "insurance",
+"n": 15,
+"rows_": 15
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "advice",
+"why": "url_or_contact",
+"n": 14,
+"rows_": 14
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "opinion",
+"why": "url_or_contact",
+"n": 13,
+"rows_": 13
+},
+{
+"col": "p.desc",
+"kind": "plural",
+"cls": "opinion",
+"why": "second_clause",
+"n": 12,
+"rows_": 12
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "gap",
+"why": "number",
+"n": 11,
+"rows_": 11
+},
+{
+"col": "p.desc",
+"kind": "singular",
+"cls": "gap",
+"why": "deletable",
+"n": 10,
+"rows_": 10
+},
+{
+"col": "p.desc",
+"kind": "plural",
+"cls": "opinion",
+"why": "number",
+"n": 9,
+"rows_": 9
+},
+{
+"col": "p.desc",
+"kind": "plural",
+"cls": "opinion",
+"why": "deletable",
+"n": 7,
+"rows_": 7
+},
+{
+"col": "p.desc",
+"kind": "plural",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 6,
+"rows_": 6
+},
+{
+"col": "p.desc",
+"kind": "local",
+"cls": "opinion",
+"why": "number",
+"n": 2,
+"rows_": 2
+},
+{
+"col": "p.desc",
+"kind": "local",
+"cls": "opinion",
+"why": "second_clause",
+"n": 2,
+"rows_": 2
+},
+{
+"col": "p.desc",
+"kind": "plural",
+"cls": "gap",
+"why": "number",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"why": "deletable",
+"n": 826,
+"rows_": 717
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "gap",
+"why": "deletable",
+"n": 610,
+"rows_": 547
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"why": "number",
+"n": 347,
+"rows_": 315
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "gap",
+"why": "second_clause",
+"n": 262,
+"rows_": 248
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "deletable",
+"n": 252,
+"rows_": 232
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 210,
+"rows_": 200
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "second_clause",
+"n": 188,
+"rows_": 182
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "number",
+"n": 175,
+"rows_": 168
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "gap",
+"why": "number",
+"n": 35,
+"rows_": 35
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"why": "url_or_contact",
+"n": 24,
+"rows_": 24
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "advice",
+"why": "second_clause",
+"n": 24,
+"rows_": 24
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "insurance",
+"why": "insurance",
+"n": 13,
+"rows_": 13
+},
+{
+"col": "p.faq",
+"kind": "plural",
+"cls": "gap",
+"why": "deletable",
+"n": 5,
+"rows_": 4
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "gap",
+"why": "url_or_contact",
+"n": 2,
+"rows_": 2
+},
+{
+"col": "p.faq",
+"kind": "singular",
+"cls": "opinion",
+"why": "url_or_contact",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "p.faq",
+"kind": "plural",
+"cls": "opinion",
+"why": "number",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "p.faq",
+"kind": "plural",
+"cls": "gap",
+"why": "second_clause",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "p.faq",
+"kind": "plural",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "p.tip",
+"kind": "singular",
+"cls": "opinion",
+"why": "second_clause",
+"n": 14,
+"rows_": 14
+},
+{
+"col": "p.tip",
+"kind": "singular",
+"cls": "gap",
+"why": "second_clause",
+"n": 12,
+"rows_": 12
+},
+{
+"col": "p.tip",
+"kind": "singular",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 7,
+"rows_": 7
+},
+{
+"col": "p.tip",
+"kind": "singular",
+"cls": "gap",
+"why": "deletable",
+"n": 7,
+"rows_": 7
+},
+{
+"col": "p.tip",
+"kind": "singular",
+"cls": "opinion",
+"why": "deletable",
+"n": 6,
+"rows_": 6
+},
+{
+"col": "p.tip",
+"kind": "singular",
+"cls": "advice",
+"why": "deletable",
+"n": 5,
+"rows_": 5
+},
+{
+"col": "p.tip",
+"kind": "local",
+"cls": "opinion",
+"why": "fact_vocabulary",
+"n": 1,
+"rows_": 1
+},
+{
+"col": "p.tip",
+"kind": "singular",
+"cls": "opinion",
+"why": "number",
+"n": 1,
+"rows_": 1
+}
+]

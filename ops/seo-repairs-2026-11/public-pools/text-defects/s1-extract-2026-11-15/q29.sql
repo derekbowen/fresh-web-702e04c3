@@ -1,0 +1,8 @@
+-- run at 2026-11-15T23:34:30.252Z
+set transaction read only;
+select c.state_slug||'/'||c.city_slug city, c.pool_count pool_count_col, count(p.id) actual,
+  count(distinct lower(regexp_replace(p.name,'[^A-Za-z0-9]','','g'))) distinct_names,
+  count(distinct p.google_place_id) filter (where p.google_place_id is not null) + count(*) filter (where p.google_place_id is null) distinct_place_or_null
+from pp_cities c left join pp_pools p on p.city_id=c.id and p.is_published
+where (c.state_slug, c.city_slug) in (('arizona','mesa'),('california','apple-valley'),('california','fremont'),('california','oceanside'),('california','sacramento'),('california','torrance'),('colorado','aurora'),('colorado','lakewood'),('delaware','wilmington'),('florida','clearwater'),('florida','port-st-lucie'),('georgia','savannah'),('illinois','chicago'),('kentucky','louisville'),('minnesota','edina'),('nebraska','omaha'),('new-york','brooklyn'),('north-carolina','charlotte'),('north-carolina','greensboro'),('north-carolina','wake-forest'),('ohio','cleveland'),('south-carolina','mount-pleasant'),('tennessee','franklin'),('tennessee','murfreesboro'),('texas','austin'),('texas','houston'),('texas','plano'),('washington','bellevue'),('wisconsin','milwaukee'),('alabama','montgomery'),('colorado','centennial'),('california','huntington-beach'),('california','walnut-creek'),('colorado','fort-collins'))
+group by 1,2 order by 1;

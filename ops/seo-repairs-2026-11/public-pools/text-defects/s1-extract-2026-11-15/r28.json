@@ -1,0 +1,86 @@
+[
+{
+"city": "california/apple-valley",
+"pool_type": "(null)",
+"n": 1,
+"names": "Civic Center Park Aquatic Center"
+},
+{
+"city": "california/apple-valley",
+"pool_type": "Outdoor",
+"n": 1,
+"names": "Civic Center Park Aquatic Center"
+},
+{
+"city": "california/huntington-beach",
+"pool_type": "(null)",
+"n": 2,
+"names": "Big Blue Swim School | Huntington Beach Family YMCA"
+},
+{
+"city": "california/huntington-beach",
+"pool_type": "Outdoor",
+"n": 1,
+"names": "City of Huntington Beach Pool"
+},
+{
+"city": "california/torrance",
+"pool_type": "(null)",
+"n": 1,
+"names": "Torrance Aquatic Center"
+},
+{
+"city": "california/torrance",
+"pool_type": "Olympic Pool",
+"n": 1,
+"names": "Victor E. Benstead Plunge"
+},
+{
+"city": "california/walnut-creek",
+"pool_type": "(null)",
+"n": 3,
+"names": "Castle Rock Pool | Clarke Memorial Swim Center | Larkey Park Swim Center"
+},
+{
+"city": "california/walnut-creek",
+"pool_type": "Outdoor Pool",
+"n": 1,
+"names": "Clarke Memorial Swim Center"
+},
+{
+"city": "colorado/fort-collins",
+"pool_type": "(null)",
+"n": 11,
+"names": "City Park Pool | Collindale Pool | Edora Pool Ice Center (EPIC) | Landings Community Pool | Mulberry Pool | Observatory Village Pool | Registry Ridge Pool | Ridgewood Hills Community Pool | Sunrise Swim Area at Horsetooth Reservoi | Village Green Pool & Tennis Courts | Westfield Pool"
+},
+{
+"city": "colorado/fort-collins",
+"pool_type": "Outdoor Pool",
+"n": 1,
+"names": "City Park Pool"
+},
+{
+"city": "minnesota/edina",
+"pool_type": "(null)",
+"n": 1,
+"names": "Edina Aquatic Center"
+},
+{
+"city": "minnesota/edina",
+"pool_type": "Indoor",
+"n": 1,
+"names": "Edinborough Park Pool"
+},
+{
+"city": "south-carolina/mount-pleasant",
+"pool_type": "(null)",
+"n": 1,
+"names": "Mt Pleasant Swimming Pool"
+},
+{
+"city": "south-carolina/mount-pleasant",
+"pool_type": "Outdoor",
+"n": 1,
+"names": "R.L. Jones Recreation Center Pool"
+}
+]

@@ -1,0 +1,86 @@
+[
+{
+"col": "c.faq",
+"rid": "b41809e4",
+"ent": 1,
+"marked": "You can swim year-round here if the pool is heated. Most public and private pools keep their water warm enough for comfortable swimming even in cooler months. Summer is when you'll see the most activity, but dedicated swimmers are in the water all year. [[DEL: We don't really shut down for winter.]]"
+},
+{
+"col": "c.intro",
+"rid": "d5a0cd47",
+"ent": 0,
+"marked": "Down here in Florida, especially in Fort Myers, swimming's pretty much a year round thing. [[DEL: We don't really have an \"off season\" for pools like they do up north.]] Most folks are looking for a good outdoor pool to cool off in. It gets hot, so you'll see a lot of families just trying to beat the heat, and plenty of people getting their laps in early before the sun really bakes everything. If you're new to the area, the main thing to remember is that most public pools are set up for both. You'll find lap lanes and open swim areas. Sometimes it just comes down to checking their schedules online to see when it's freest up for what you want to do. It's not usually hard to find a spot to swim."
+},
+{
+"col": "c.intro",
+"rid": "da4afae5",
+"ent": 0,
+"marked": "[[DEL: Look, summers here in Denver can get pretty hot and dry.]] When the sun's really beating down, there's nothing better than cooling off with a swim. Our pool season typically kicks off in late May, usually around Memorial Day, and runs through Labor Day in early September. You'll see a mix of swimmers. Lots of families hitting the public pools, especially on weekends, but you also have your lap swimmers getting their workouts in during cooler morning hours. Anyone new to town, or even if you've been here a while, should know that public pool access can vary. Some spots get crowded fast, so timing your visit is key if you want some dedicated swim time. Sometimes private rentals are an easier way to go."
+},
+{
+"col": "p.desc",
+"rid": "4792a27a",
+"ent": 0,
+"marked": "With a 4.5 star rating from over 450 reviews, the Roxborough YMCA seems like a solid choice for a swim in Philly. It's a public pool up on Ridge Ave, and it's open pretty early during the week, 5 AM, which is great if you like to get your laps in before work. They stay open until 9 PM most nights too. Weekends are a bit shorter, 7 AM to 6 PM, but that's still a good chunk of time. In a city the size of Philadelphia, with well over a million people, having reliable public options like this is really important. [[DEL: My guess is it gets pretty busy sometimes, considering the population.]] If you're looking for a place to swim, I'd definitely check out their website or give them a call first, just to make sure it fits what you're looking for."
+},
+{
+"col": "p.desc",
+"rid": "a9445d6d",
+"ent": 0,
+"marked": "It's an outdoor pool, so it's a good spot to cool off when it's warm out. [[DEL: I mean that's pretty obvious, I guess.]] Alpharetta Aquatic Center in Alpharetta, GA, is a decent option, especially if you're looking for simple recreation. It's got a dedicated kiddie pool, which is always a plus for families with little ones. And for the slightly older crowd, there's a diving board. Honestly, a 3.7 out of 5 from 180 reviews is okay, not amazing. Most people seem to like it enough for a casual swim. Adult admission is $5, and for kids, it's $3 which is pretty standard. They also have concessions, so you can grab a snack or drink without having to leave."
+},
+{
+"col": "p.desc",
+"rid": "e993db93",
+"ent": 0,
+"marked": "It's always nice to find an outdoor pool, especially in a city like Atlanta where the summers get pretty hot. Milam Pool is a good spot for when you just need to cool off or get some laps in outside. I've seen a lot of these community pools over the years, and they usually offer a decent setup for everyday swimming. What I like about outdoor spots is that natural sunlight. It just feels different than being indoors, you know? For Atlanta, having an outdoor option like Milam Pool is a real plus for the warmer months. It's the kind of place you can probably count on for a straightforward swim without too much fuss. Just a solid community pool. [[DEL: That's my read on it, anyway.]]"
+},
+{
+"col": "p.desc",
+"rid": "fa9953f4",
+"ent": 0,
+"marked": "San Pedro Springs Pool in San Antonio is one of those spots that just draws people in. It's not every day you find a spring-fed pool, especially one with free admission right in the city. The fact that it's historical adds to it, makes you feel like you're swimming in a place with some real roots. With a 4.5-star rating from over 1800 reviews, you know a lot of folks like it there. They've got lifeguards, which is always good, and plenty of shade trees around. Parking is usually available too, from what I've heard. It's a nice option for cooling off when you're in San Antonio and don't want to spend a lot. [[DEL: I always appreciate a pool that keeps things simple and focuses on the swimming.]]"
+},
+{
+"col": "p.faq",
+"rid": "06416710",
+"ent": 2,
+"marked": "They do have restrooms, heated water, and concessions, which helps with families. With a 4.1-star rating, it suggests most people have a good experience. [[DEL: I can’t say if there are specific kid-friendly features like zero-depth entry, so call them if that’s important.]]"
+},
+{
+"col": "p.faq",
+"rid": "4919a261",
+"ent": 5,
+"marked": "Riverside is a decent-sized city; with a population of over 314,000, there are likely other public or private pool options. [[DEL: I'd check the city's parks and recreation website or do a local search for more choices if this one doesn't work out.]]"
+},
+{
+"col": "p.faq",
+"rid": "4af6ba4a",
+"ent": 4,
+"marked": "Canton is a decent-sized city, so there are likely a few other places to swim, maybe some private clubs or other public facilities. [[DEL: I'd check the local parks and recreation website for a full list beyond this community pool.]]"
+},
+{
+"col": "p.faq",
+"rid": "93ed55c0",
+"ent": 1,
+"marked": "[[DEL: Membership fees or day pass costs aren't in my data.]] I'd recommend calling (210) 532-0932 or checking their website directly for current pricing."
+},
+{
+"col": "p.faq",
+"rid": "9726a557",
+"ent": 4,
+"marked": "Dallas is a big city, over 1.3 million people. There are usually many options for public pools and private waterparks. [[DEL: I'd suggest checking the Dallas Parks and Recreation website or searching online for other water-based recreation in the area.]]"
+},
+{
+"col": "p.faq",
+"rid": "b9f99662",
+"ent": 4,
+"marked": "Shreveport has other pools, but the Community Pool is the main waterpark listed. [[DEL: For other options, I'd check the City of Shreveport's Parks and Recreation department online.]]"
+},
+{
+"col": "p.faq",
+"rid": "d4bb264e",
+"ent": 1,
+"marked": "Given its location in the Bronx (1,472,654 people live there), parking could be limited. I also don't have information on specific accessibility features. [[DEL: I'd call ahead to ask about both.]]"
+}
+]

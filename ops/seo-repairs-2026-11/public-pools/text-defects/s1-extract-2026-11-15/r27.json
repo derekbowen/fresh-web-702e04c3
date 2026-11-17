@@ -1,0 +1,227 @@
+[
+{
+"city": "alabama/montgomery",
+"f": "faq",
+"ent": 2,
+"k": 2,
+"w": "four",
+"actual": 10,
+"s": "We've got four listed in our directory: Montgomery Community Pool, Montgomery Municipal Pool, Montgomery Family Aquatic Center, and Montgomery Aquatic Center."
+},
+{
+"city": "california/whittier",
+"f": "faq",
+"ent": 2,
+"k": 2,
+"w": "one",
+"actual": 1,
+"s": "La Mirada Aquatics Center is currently the main one listed in our directory serving the area, and they have admission fees."
+},
+{
+"city": "colorado/centennial",
+"f": "intro",
+"ent": 0,
+"k": 6,
+"w": "four",
+"actual": 6,
+"s": "We've got a decent number of public pools, four listed in our directory, covering everything from basic swim to full-blown aquatic centers."
+},
+{
+"city": "connecticut/woodstock",
+"f": "intro",
+"ent": 0,
+"k": 3,
+"w": "one",
+"actual": 1,
+"s": "We don't have a huge public pool scene, just one listed in our directory, but that doesn't stop folks from finding water."
+},
+{
+"city": "illinois/northbrook",
+"f": "intro",
+"ent": 0,
+"k": 6,
+"w": "three",
+"actual": 3,
+"s": "We've got three listed in our directory, and they're all solid choices for a public swim."
+},
+{
+"city": "maryland/silver-spring",
+"f": "intro",
+"ent": 0,
+"k": 7,
+"w": "one",
+"actual": 1,
+"s": "We've got one listed in our directory, the Martin Luther King Jr. Swim Center."
+},
+{
+"city": "north-carolina/concord",
+"f": "intro",
+"ent": 0,
+"k": 6,
+"w": "five",
+"actual": 5,
+"s": "We've got five listed in our directory, and they're generally well-maintained and pretty easy to get to."
+},
+{
+"city": "pennsylvania/darlington",
+"f": "intro",
+"ent": 0,
+"k": 7,
+"w": "one",
+"actual": 1,
+"s": "If you're new to the area, start with the public options; we do have one listed right here."
+},
+{
+"city": "alabama/birmingham",
+"f": "intro",
+"ent": 0,
+"k": 6,
+"w": "a few",
+"actual": 11,
+"s": "If you're new to town and looking for a place to swim, you've got a few solid public spots."
+},
+{
+"city": "arizona/goodyear",
+"f": "faq",
+"ent": 2,
+"k": 1,
+"w": "several",
+"actual": 4,
+"s": "Goodyear operates several public pools, and while they aren't free, they are definitely low-cost."
+},
+{
+"city": "arizona/maricopa",
+"f": "intro",
+"ent": 0,
+"k": 6,
+"w": "a couple",
+"actual": 3,
+"s": "There are also a couple of other public spots, but they might have more limited hours or be older facilities, so just check their schedules before you head out."
+},
+{
+"city": "arizona/phoenix",
+"f": "faq",
+"ent": 3,
+"k": 1,
+"w": "Several",
+"actual": 29,
+"s": "Several public pools, like Maryvale Pool, often have features like zero-depth entry, splash pads, or dedicated shallow areas that are great for kids."
+},
+{
+"city": "arizona/scottsdale",
+"f": "faq",
+"ent": 4,
+"k": 3,
+"w": "a few",
+"actual": 11,
+"s": "You'll find a few indoor options primarily at private gyms or community centers, but the vast majority of public and private pools are outside."
+},
+{
+"city": "arizona/surprise",
+"f": "faq",
+"ent": 4,
+"k": 2,
+"w": "a few",
+"actual": 10,
+"s": "You'll find a few indoor pools, usually at private health clubs or certain community facilities, but the large public aquatic centers are generally open-air."
+},
+{
+"city": "california/corona",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"w": "a couple",
+"actual": 5,
+"s": "If you're new in Corona and looking for a place to splash or swim, you've got a couple of public options."
+},
+{
+"city": "california/coronado",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"w": "a few",
+"actual": 3,
+"s": "If you're new in town and looking for a place to get wet, you've got a few solid public options."
+},
+{
+"city": "california/lodi",
+"f": "faq",
+"ent": 5,
+"k": 4,
+"w": "a few",
+"actual": 1,
+"s": "We've got a few listed in the area."
+},
+{
+"city": "california/mountain-view",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"w": "a few",
+"actual": 3,
+"s": "If you're new in town and just want to get some laps in or take the family for a splash, you've got a few solid options right in the city."
+},
+{
+"city": "california/oakland",
+"f": "intro",
+"ent": 0,
+"k": 8,
+"w": "a few",
+"actual": 9,
+"s": "We list a few public pools here, but there are other options if you look around."
+},
+{
+"city": "california/palo-alto",
+"f": "intro",
+"ent": 0,
+"k": 3,
+"w": "a few",
+"actual": 3,
+"s": "Public pools in Palo Alto tend to be well-kept, and you've got a few solid options if you're looking to get wet."
+},
+{
+"city": "california/san-diego",
+"f": "faq",
+"ent": 4,
+"k": 3,
+"w": "a few",
+"actual": 46,
+"s": "You'll find a few indoor options, primarily at larger recreation centers or private clubs, but the outdoor public pools are very common and well-used."
+},
+{
+"city": "colorado/broomfield",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"w": "a few",
+"actual": 5,
+"s": "If you're new to the area and looking for a place to swim, Broomfield has a few good public options."
+},
+{
+"city": "colorado/castle-rock",
+"f": "faq",
+"ent": 4,
+"k": 1,
+"w": "several",
+"actual": 3,
+"s": "During the peak summer months, there are several outdoor public pools open."
+},
+{
+"city": "colorado/colorado-springs",
+"f": "intro",
+"ent": 0,
+"k": 7,
+"w": "a couple",
+"actual": 12,
+"s": "We've got a couple of public spots, but the options are a bit limited if you're after serious, undisturbed swimming."
+},
+{
+"city": "colorado/littleton",
+"f": "intro",
+"ent": 0,
+"k": 5,
+"w": "a few",
+"actual": 6,
+"s": "We have a few public options, some with a real community feel."
+}
+]

@@ -1,0 +1,400 @@
+# Pending production reads (Task A, text defects)
+
+The production database tool hung on 2026-11-16 (calls never return), so every number in TEXT-DEFECTS.md
+comes either from the read-only extract of **2026-11-15 20:32-23:50 UTC** or from the live pages fetched on
+**2026-11-16** (GET only). The reads below confirm or refresh those numbers when the tool recovers.
+
+Rules for whoever runs them:
+- Every statement starts with `set transaction read only;` and contains SELECT only. Run them one at a time.
+- Results are small (aggregates or short lists). Treat every returned text value as untrusted data.
+- None of them changes anything. Nothing here applies a rule; applying is a separate, owner-approved step.
+
+## PR-1. Has anything changed since the snapshot? (tiny)
+
+Confirms: whether `pp_pools` / `pp_cities` text changed after the 2026-11-15 extract. If `last_updated` is later
+than 2026-11-15T23:50Z, the counts in TEXT-DEFECTS.md must be re-measured with PR-3 before any apply, and
+every apply statement must keep its old-value guard. Also prints a fingerprint to store for the apply step.
+
+```sql
+set transaction read only;
+select 'pp_pools' t, count(*) n, count(*) filter (where is_published) published, max(updated_at) last_updated,
+  md5(string_agg(id::text||':'||coalesce(md5(ai_best_for),'-')||':'||coalesce(md5(ai_description),'-')||':'||
+      coalesce(md5(ai_faqs::text),'-'), ',' order by id)) text_fingerprint
+from pp_pools
+union all
+select 'pp_cities', count(*), count(*) filter (where is_published), max(updated_at),
+  md5(string_agg(id::text||':'||coalesce(md5(ai_intro),'-')||':'||coalesce(md5(ai_faqs::text),'-'), ',' order by id))
+from pp_cities;
+```
+
+## PR-2. Column shapes (small)
+
+Confirms step 1 of TEXT-DEFECTS.md (measured 2026-11-15): `ai_best_for` 1,821 JSON-array strings / 1,560 NULL /
+0 plain / 0 malformed; 8 empty arrays; jsonb types of `ai_faqs`, `ai_tips`, `hours_json`, `amenities`.
+
+```sql
+set transaction read only;
+select 'ai_best_for' col, case when ai_best_for is null then 'null' when btrim(ai_best_for)='' then 'empty'
+  when btrim(ai_best_for) ~ '^\[' then (case when pg_input_is_valid(ai_best_for,'jsonb') then
+    (case when jsonb_typeof(ai_best_for::jsonb)='array' then (case when jsonb_array_length(ai_best_for::jsonb)=0
+     then 'json_array_empty' else 'json_array' end) else 'json_other' end) else 'malformed_bracket' end)
+  else 'plain_text' end shape, count(*) n from pp_pools group by 1,2
+union all select 'pp_pools.ai_faqs', coalesce(jsonb_typeof(ai_faqs),'null'), count(*) from pp_pools group by 1,2
+union all select 'pp_pools.ai_tips', coalesce(jsonb_typeof(ai_tips),'null'), count(*) from pp_pools group by 1,2
+union all select 'pp_pools.hours_json', coalesce(jsonb_typeof(hours_json),'null'), count(*) from pp_pools group by 1,2
+union all select 'pp_pools.amenities', coalesce(jsonb_typeof(amenities),'null'), count(*) from pp_pools group by 1,2
+union all select 'pp_cities.ai_faqs', coalesce(jsonb_typeof(ai_faqs),'null'), count(*) from pp_cities group by 1,2
+union all select 'pp_cities.ai_intro', case when ai_intro is null then 'null' when btrim(ai_intro)='' then 'empty' else 'text' end, count(*) from pp_cities group by 1,2
+order by 1,2;
+```
+
+## PR-3. Final narrator counts with the final patterns (aggregates, 2 statements)
+
+Confirms the live-page counts of R2-R5 on the whole tables (including rows whose pages are not in the sitemap).
+The SQL is generated from `text-defects/text_defect_rules.py` (`python3 -I text_defect_rules.py sql`) and
+saved as `text-defects/text-defects-measure.sql`; it is reproduced here. `[by_class]` gives sentence counts per
+narrator class and keep-reason (the out-of-scope table); `[by_row]` gives rows changed / skipped per column and
+the R5 entry count. Both return fewer than 100 rows. These final patterns have not yet run in PostgreSQL; the
+same construction (all patterns except the 2026-11-16 additions COUNT_CLAIM / site-voice "through us")
+ran successfully on 2026-11-15 (queries 31-38 of the extract). If PostgreSQL rejects a pattern, nothing is
+lost: the statement is read-only.
+
+**Revised 2026-11-16 (content review).** The SQL below is regenerated from the revised patterns (explicit whitespace class instead of `\s`, larger fact vocabulary and opener list, `the only one` no longer masked). It does NOT model three review additions that live in the decision procedure, not in a pattern: the limiter-only gap guard (`GAP_HARD`), the entity guard on the last sentence (with its agency exemption) and the R6 second-clause guard. Its counts are therefore an upper bound. (2026-11-17: the `CLAUSE` literal in both
+statements was replaced by the current one, which also treats ", so you'd / you'll / you should ..." as a second
+clause; TEXT-DEFECTS.md section 10. Second 2026-11-17 round: replaced again by the one that also treats a joined
+clause as a second clause, i.e. a comma, optional whitespace and so / and / or / plus / but / then / yet, or "so" +
+a subject pronoun without a comma. The field-level `joined_clause_kept` freeze of that round is not modelled here,
+which keeps these counts an upper bound. Third 2026-11-17 round: replaced again by the one that also treats ", as" +
+a subject and a comma-less "so" / "and" + a pronoun or article as a joined clause; its two keep reasons
+`answers_question` (needs the FAQ question) and `fact_claim`, and the `fact_guard_kept` freeze, are not modelled
+here either: still an upper bound.) **PR-6 (the production dry run) runs the exact cleaner and is the authoritative count; run PR-3 only if PR-6 cannot be run.**
+
+```sql
+-- GENERATED by `python3 -I text_defect_rules.py sql` from the patterns in text_defect_rules.py.
+-- READ ONLY. Each statement is a separate read; run one at a time. Results are small (aggregates).
+-- The SQL side measures R2-R5 (narrator sentences, FAQ entries). R6 uses count-statements SQL in
+-- PENDING-READS.md and is decided in Python, because the categories need the hand-checked lists.
+
+-- [by_class]
+set transaction read only;
+with rx as (select '(?<![A-Za-z''’-])(I|I''m|I’m|I''d|I’d|I''ve|I’ve|I''ll|I’ll|[Mm]y|[Mm]e|[Mm]ine|[Mm]yself)(?![A-Za-z]|[''’][A-Za-z]|-[0-9])' sing, '(?<![A-Za-z''’])([Ww]e|[Ww]e''re|[Ww]e’re|[Ww]e''ve|[Ww]e’ve|[Ww]e''d|[Ww]e’d|[Ww]e''ll|[Ww]e’ll|[Oo]ur|[Oo]urs|[Uu]s|[Oo]urselves)(?![A-Za-z''’])' plur, '(?<![A-Za-z])(([Aa]round|[Dd]own|[Uu]p|[Oo]ut) here(?![A-Za-z])|[Hh]ere in [A-Z]|([Ff]olks|[Pp]eople|[Ee]veryone|[Ee]verybody|[Ll]ocals) (here|around here)(?![A-Za-z])|[Ff]olks in (this|these|our)(?![A-Za-z])|in this (town|neck of the woods)(?![A-Za-z]))' loc, '(PoolRentalNearMe|Pool Rental Near Me|(?<![A-Za-z])[Oo]ur (one |only |online |current |public |own )?(directory|site|website|listings?|listed|database|map|platform|records|pages?|list)(?![A-Za-z])|(?<![A-Za-z])[Ww]e( have|''ve|’ve)( got)?( [a-z]+){0,4} listed(?![A-Za-z])|(?<![A-Za-z])[Ww]e (try|aim|work|want) to (list|track|include|show|cover)(?![A-Za-z])|(?<![A-Za-z])like ours(?![A-Za-z])|(?<![A-Za-z])[Ww]e (currently |only |also |do |just )?(list|track|show|feature|include|cover|help|connect|offer|built|started|let|make)(?![A-Za-z])|[Ww]e(''|’)ve listed|where we come in|(?<![A-Za-z])(through|with|from|via) us(?![A-Za-z])|[Ww]e (don''t|don’t|do not) (currently )?(have|list|show|track)[^.]{0,60}(listed|directory|site|track)|[Ww]e(''|’)re (working|adding|building|growing|still adding))' site, '(Phase|Pool|Building|Area|Section|Level|Unit|Part|Title|War|Class|Type|Lot|Zone|Tier|Stage|Chapter|Team|Division|Field|Park|Gate|Court) I(?![A-Za-z''’])' roman, '(?i)((my|our) (information|info|data|records|details|sources|system|notes)|(^|[^a-z])i (also |just |really |still |simply |currently |unfortunately )?(don''t|don’t|do not|can''t|can’t|cannot|couldn''t|couldn’t|didn''t|didn’t|haven''t|haven’t|have no|wasn''t able|wasn’t able|was unable|am unable|only have|have only|could not|did not)(?![a-z])|i(''m|’m) (not (sure|aware|certain|able)|unable)|the (information|info|data|details) i (have|found|see|could find)|(isn''t|isn’t|aren''t|aren’t|is not|are not|not) something i|not in my)' gap, '(?i)(poolrentalnearme|pool rental near me|(?<![a-z])my (company|site|website|business|platform|team)(?![a-z])|(?<![a-z])our (members|customers|hosts|guests|users|company|team|platform)(?![a-z])|(?<![a-z])i(''ve|’ve)? (started|built|founded|created|launched)(?![a-z])|in (this|the pool) business|connecting (people|folks|swimmers) with|i(''ve|’ve) sent (a lot of )?(people|folks))' founder,
+  '(?i)^((yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for (details|specifics|more|the most|current|up-to-date|accurate|exact|other|specific|anything)[^,.]{0,80}|(if|when|before|to)[^,.]{0,100}),?[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)?(i(''d|’d| would)( definitely| still| probably| also| personally| always| really| strongly| just| highly| first)?[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(suggest|recommend|call|check|give|reach|contact|look|lean|ask|confirm|verify|double-check|visit|plan|try|head|arrive|go|bring|pack|start|scout|stick|search|email|phone|stop by|swing by|get in touch|say give|say call|say check)|i (always |usually |generally |strongly |personally |highly |would |also |just )?(recommend|suggest|advise|encourage|tell (people|folks|everyone|you|visitors|families|anyone) to)|my (advice|suggestion|recommendation|tip|go-to)|if i were you)(?![a-z])' advice, '(?i)(n''t|n’t|(?<![a-z])(not|no|only|limited|unable|never|nothing|without|none)(?![a-z]))' gapneg, '(?i)^((yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for (details|specifics|more|the most|current|up-to-date|accurate|exact|other|specific|anything)[^,.]{0,80}|(if|when|before|to)[^,.]{0,100}),?[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)?(your best bet is|it(''s|’s| is) (always |probably |usually |generally )?(best|a good idea|smart|wise|worth|safest|good) to|it never hurts to|you(''ll|’ll)? (should|can|could|might|may|would|will)? ?(want to |need to |also |always |definitely )?(call|check|contact|visit|confirm|ask|refer|look|reach|verify|find|search|try)|(call|check|contact|visit|confirm|ask|look|reach|verify|search|try|give them)(?![a-z])|a quick (call|search|look|check)|calling (ahead|them|the)|checking (their|the|with))' gadv, '(?i)^(the |their )?(listing|information|info|data|details|website|site|source|page)s? (doesn''t|doesn’t|does not|don''t|don’t|didn''t|didn’t|isn''t|isn’t|aren''t|aren’t) (specify|mention|list|include|show|say|have|provide|give)(?![a-z])' ggap, '(?i)((this|that|the|which|each|any|no|every|some|another|other|a good|a great|a solid|a nice|a popular|a fun|a decent) one(?![a-z])|(?<![a-z])one of|someone|anyone|everyone|no one|one-stop)' nmask, '(?i)[0-9$%]|(?<![a-z])(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|dozen|dozens|half|single|couple|pair|once|twice|first|second|third)(?![a-z])' num, '(?i)(www\.|https?://|@|\.(com|org|gov|net|edu|us)(?![a-z]))' url,
+  '(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it''s|it’s|they|they''re|they’re|their|the pool|there|this|that)(?![a-z])|,[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+((and|so|but|then)[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)?you(?![a-z])|,[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|,[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]*as[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(?!(well|soon|of)([^a-z]|$))[a-z]|(?<![a-z])(so|and)[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(you|they|it|that|this|these|those|there|we|i|he|she|the|a|an)(?![a-z])' clause, ',[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(and |so |but |then |plus )?(I|I''d|I’d|I''m|I’m|I''ve|I’ve|I''ll|I’ll|[Mm]y|[Ww]e|[Ww]e''re|[Ww]e’re|[Ww]e''ve|[Ww]e’ve)(?![A-Za-z])' splice, '(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(i|i''d|i’d|i''m|i’m|i''ve|i’ve|i''ll|my|we)(?![a-z])[^,]*$' splice_ok, '(?i)^(yes|no|nope|yep|yeah|absolutely|definitely|unfortunately|sadly|sure|certainly)(?![a-z])' polar, '(?i)(?<![a-z])(ratings?|rated|stars?|reviews?|reviewers?|reviewed|score|slides?|waterslides?|diving|dive|boards?|laps?|lanes?|splash|lazy river|wading|kiddie|toddlers?|shallow|deep end|heated|indoors?|outdoors?|open-air|olympic|competition|hot tub|spa|sauna|jacuzzi|lockers?|locker rooms?|showers?|changing rooms?|restrooms?|concessions?|snack bar|picnic|shade|shaded|cabanas?|lifeguards?|parking|accessible|accessibility|ada|wheelchair|lift|lessons?|aerobics|water polo|fountains?|playground|zero-entry|zero-depth|beach entry|wave pool|grills?|bbq|diving well|water ?park|fitness|gym|tennis|timing( system)?|touchpads?|scoreboards?|seating|seats?|spectators?|bleachers|grandstands?|enclosed|warm-up|warmup|therapy|therapeutic|whirlpool|steam room|climbing wall|rope swing|deck|sun ?deck|splash ?pads?|spray ?grounds?|water features?|play structures?|(kids|kids''|kids’|kid|children''s|children’s|toddler|play|baby|family|shallow) (area|section|zone|pool)s?|(like|as|which|that) this one (does|has|offers|is)|(they|it) even (has|have|offer|offers|got)|(they|they''ve|they’ve) (even )?got)(?![a-z])' lex, '(?i)(?<![a-z])(free|no charge|no cost|cheap|inexpensive|affordable|pricey|expensive|bucks?|dollars?|admission|fees?|prices?|pricing|costs?|rates?|open|opens|opened|closed|closes|closing|hours|daily|weekdays?|weekends?|mondays?|tuesdays?|wednesdays?|thursdays?|fridays?|saturdays?|sundays?|year-round|year round|all year|seasonal|memorial day|labor day|january|february|march|april|june|july|august|september|october|november|december|mornings?|evenings?|night|noon|midnight|residents?|members?|membership|passes|day pass|season pass|(late|early|mid|in|by|from|through|until|of)[ -]may|may (through|to|until|and))(?![a-z])' lexps, '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])' ins, '^((So|Plus|Also|But|And|Or|Still|However|Though|Although|Otherwise|Then|Yet|Even|That|That''s|That’s|This|These|Those|Which|It|It''s|It’s|Its|They|They''re|They’re|They''ve|They’ve|They''ll|They’ll|Their|Them|There|There''s|There’s|He|She|Both|Either|Neither|Anyway|Besides|Again|Instead|Thus|Hence|Therefore|Because|Since|Too|Such|Same|Other|Another|Others|Lots|Plenty|Think|Just|Things|Not|Nothing|Mostly|Mainly|Usually|Especially|Whether|Like|Kind|Sort|Great|Good|Perfect|Tons|Loads)(?![A-Za-z''’])|(Some|Many|Most|Few|All|Each|Several|A few|A lot) (are|is|have|has|of|offer|offers|seem|tend|will|can|do|does|lean|focus|cater|get|come|run|stay|open|close)(?![A-Za-z''’])|[a-z]|[A-Z][^,.]{0,40}, (that|this|these|those|it|it''s|it’s|they|they''re|they’re|there|so|then)(?![A-Za-z''’]))' dangle, '(?<![A-Za-z])(St|Dr|Mt|Ft|Ave|Blvd|Rd|Jr|Sr|Mr|Mrs|Ms|No|vs|approx|Hwy|Pkwy|Ln|Ct|Co|Inc|Dept|Univ|U\.S|a\.m|p\.m|A\.M|P\.M|e\.g|i\.e|[A-HJ-Z])\.' abbrev, '(?<=[.!?])[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(?=[A-Z0-9\"“‘''$(])' split,
+  '[A-Z][a-z]' cap),
+src as (
+  select 'p.desc' col, p.id rid, 0 ent, p.ai_description x, p.name n1, p.city n2,
+         initcap(replace(c.state_slug,'-',' ')) n3, p.ai_description ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])' insx
+    from pp_pools p left join pp_cities c on c.id = p.city_id where p.ai_description is not null
+  union all
+  select 'p.faq', p.id, o::int, e->>'a', p.name, p.city, initcap(replace(c.state_slug,'-',' ')), e::text ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_pools p left join pp_cities c on c.id = p.city_id, jsonb_array_elements(p.ai_faqs) with ordinality a(e,o)
+   where jsonb_typeof(p.ai_faqs) = 'array'
+  union all
+  select 'p.tip', p.id, o::int, e, p.name, p.city, initcap(replace(c.state_slug,'-',' ')), e ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_pools p left join pp_cities c on c.id = p.city_id, jsonb_array_elements_text(p.ai_tips) with ordinality a(e,o)
+   where jsonb_typeof(p.ai_tips) = 'array'
+  union all
+  select 'c.intro', c.id, 0, c.ai_intro, null, c.city_name, initcap(replace(c.state_slug,'-',' ')), c.ai_intro ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_cities c where c.ai_intro is not null
+  union all
+  select 'c.faq', c.id, o::int, e->>'a', null, c.city_name, initcap(replace(c.state_slug,'-',' ')), e::text ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_cities c, jsonb_array_elements(c.ai_faqs) with ordinality a(e,o) where jsonb_typeof(c.ai_faqs) = 'array'),
+sp as (
+  select src.col, src.rid, src.ent, src.n1, src.n2, src.n3, src.insx, t.k::int k, replace(t.z, '§', '.') s
+    from src, rx, regexp_split_to_table(regexp_replace(src.x, rx.abbrev, '\1' || '§', 'g'), rx.split) with ordinality t(z, k)
+   where t.z <> ''),
+m as (
+  select sp.*, regexp_replace(sp.s, rx.roman, '\1 _', 'g') ms from sp, rx),
+k as (
+  select m.*,
+    case when ms ~ rx.sing then 'singular'
+         when (ms ~ rx.plur or ms ~ rx.loc) and ms ~ rx.site then null
+         when ms ~ rx.plur then 'plural' when ms ~ rx.loc then 'local' end kind,
+    regexp_replace(s, rx.nmask, 'X', 'g') ~ rx.num has_num,
+    s ~ rx.url has_url, (s ~ rx.clause or (s ~ rx.splice and s !~ rx.splice_ok)) has_clause, s ~ rx.polar is_polar, s ~ rx.lex has_lex, s ~ rx.lexps has_lexps, s ~ rx.ins has_ins,
+    (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.advice is_adv, s ~ rx.founder is_founder, (s ~ rx.gadv or s ~ rx.ggap) is_generic,
+    regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, '\u0001'), ' '),
+      coalesce(n2, '\u0001'), ' '), coalesce(n3, '\u0001'), ' '), rx.sing, ' ', 'g') ~ rx.cap has_entity,
+    s ~ rx.dangle dangles
+  from m, rx),
+c as (
+  select k.*,
+    case when kind is null then null when has_ins then 'insurance'
+         when kind = 'singular' and is_founder then 'founder' when is_gap then 'gap'
+         when is_adv then 'advice' else 'opinion' end cls,
+    case when kind is null then null when has_ins then 'insurance'
+         when kind = 'singular' and is_founder then (case when has_lex or has_lexps then 'fact_vocabulary'
+                                                          when is_polar then 'answer_polarity' end)
+         when kind = 'local' and col like 'p.%' then 'local_marker_on_pool_page'
+         when has_num then 'number'
+         when has_url then 'url_or_contact' when has_clause then 'second_clause'
+         when is_polar then 'answer_polarity'
+         when not is_gap and has_lex then 'fact_vocabulary'
+         when not is_gap and not is_adv and has_lexps then 'fact_vocabulary' end why
+  from k),
+d as (
+  select c.*, (kind is not null and why is null) del,
+    (kind is null and is_generic and not has_num and not has_url and not has_clause) gen_ok
+  from c),
+nx as (  -- for every sentence: position of the next KEPT sentence in the same unit, and its opener
+  select d.*, min(case when not d.del then d.k end) over (partition by d.col, d.rid, d.ent order by d.k
+           rows between 1 following and unbounded following) next_kept
+  from d),
+nx2 as (
+  select nx.*, d2.dangles next_dangles
+  from nx left join d d2 on d2.col = nx.col and d2.rid = nx.rid and d2.ent = nx.ent and d2.k = nx.next_kept),
+ux as (  -- one row per field unit (a description, an intro, one FAQ answer, one tip)
+  select col, rid, ent,
+    count(*) n_sent, count(*) filter (where kind is not null) n_narr, count(*) filter (where del) n_del,
+    bool_or(kind is not null and has_ins) any_ins, bool_or(insx) unit_ins,
+    bool_and(del or gen_ok) and bool_or(kind is not null) answer_noninf,
+    bool_and(del) all_del,
+    coalesce(bool_or(del and next_dangles), false) bad_next,
+    coalesce(bool_or(del and has_entity and next_kept is not null), false) bad_entity
+  from nx2 group by 1,2,3)
+select col, coalesce(kind,'-') kind, coalesce(cls,'-') cls, coalesce(why,'deletable') why,
+       count(*) n, count(distinct rid) rows_
+from d where kind is not null group by 1,2,3,4 order by 1,5 desc;
+
+-- [by_row]
+set transaction read only;
+with rx as (select '(?<![A-Za-z''’-])(I|I''m|I’m|I''d|I’d|I''ve|I’ve|I''ll|I’ll|[Mm]y|[Mm]e|[Mm]ine|[Mm]yself)(?![A-Za-z]|[''’][A-Za-z]|-[0-9])' sing, '(?<![A-Za-z''’])([Ww]e|[Ww]e''re|[Ww]e’re|[Ww]e''ve|[Ww]e’ve|[Ww]e''d|[Ww]e’d|[Ww]e''ll|[Ww]e’ll|[Oo]ur|[Oo]urs|[Uu]s|[Oo]urselves)(?![A-Za-z''’])' plur, '(?<![A-Za-z])(([Aa]round|[Dd]own|[Uu]p|[Oo]ut) here(?![A-Za-z])|[Hh]ere in [A-Z]|([Ff]olks|[Pp]eople|[Ee]veryone|[Ee]verybody|[Ll]ocals) (here|around here)(?![A-Za-z])|[Ff]olks in (this|these|our)(?![A-Za-z])|in this (town|neck of the woods)(?![A-Za-z]))' loc, '(PoolRentalNearMe|Pool Rental Near Me|(?<![A-Za-z])[Oo]ur (one |only |online |current |public |own )?(directory|site|website|listings?|listed|database|map|platform|records|pages?|list)(?![A-Za-z])|(?<![A-Za-z])[Ww]e( have|''ve|’ve)( got)?( [a-z]+){0,4} listed(?![A-Za-z])|(?<![A-Za-z])[Ww]e (try|aim|work|want) to (list|track|include|show|cover)(?![A-Za-z])|(?<![A-Za-z])like ours(?![A-Za-z])|(?<![A-Za-z])[Ww]e (currently |only |also |do |just )?(list|track|show|feature|include|cover|help|connect|offer|built|started|let|make)(?![A-Za-z])|[Ww]e(''|’)ve listed|where we come in|(?<![A-Za-z])(through|with|from|via) us(?![A-Za-z])|[Ww]e (don''t|don’t|do not) (currently )?(have|list|show|track)[^.]{0,60}(listed|directory|site|track)|[Ww]e(''|’)re (working|adding|building|growing|still adding))' site, '(Phase|Pool|Building|Area|Section|Level|Unit|Part|Title|War|Class|Type|Lot|Zone|Tier|Stage|Chapter|Team|Division|Field|Park|Gate|Court) I(?![A-Za-z''’])' roman, '(?i)((my|our) (information|info|data|records|details|sources|system|notes)|(^|[^a-z])i (also |just |really |still |simply |currently |unfortunately )?(don''t|don’t|do not|can''t|can’t|cannot|couldn''t|couldn’t|didn''t|didn’t|haven''t|haven’t|have no|wasn''t able|wasn’t able|was unable|am unable|only have|have only|could not|did not)(?![a-z])|i(''m|’m) (not (sure|aware|certain|able)|unable)|the (information|info|data|details) i (have|found|see|could find)|(isn''t|isn’t|aren''t|aren’t|is not|are not|not) something i|not in my)' gap, '(?i)(poolrentalnearme|pool rental near me|(?<![a-z])my (company|site|website|business|platform|team)(?![a-z])|(?<![a-z])our (members|customers|hosts|guests|users|company|team|platform)(?![a-z])|(?<![a-z])i(''ve|’ve)? (started|built|founded|created|launched)(?![a-z])|in (this|the pool) business|connecting (people|folks|swimmers) with|i(''ve|’ve) sent (a lot of )?(people|folks))' founder,
+  '(?i)^((yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for (details|specifics|more|the most|current|up-to-date|accurate|exact|other|specific|anything)[^,.]{0,80}|(if|when|before|to)[^,.]{0,100}),?[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)?(i(''d|’d| would)( definitely| still| probably| also| personally| always| really| strongly| just| highly| first)?[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(suggest|recommend|call|check|give|reach|contact|look|lean|ask|confirm|verify|double-check|visit|plan|try|head|arrive|go|bring|pack|start|scout|stick|search|email|phone|stop by|swing by|get in touch|say give|say call|say check)|i (always |usually |generally |strongly |personally |highly |would |also |just )?(recommend|suggest|advise|encourage|tell (people|folks|everyone|you|visitors|families|anyone) to)|my (advice|suggestion|recommendation|tip|go-to)|if i were you)(?![a-z])' advice, '(?i)(n''t|n’t|(?<![a-z])(not|no|only|limited|unable|never|nothing|without|none)(?![a-z]))' gapneg, '(?i)^((yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for (details|specifics|more|the most|current|up-to-date|accurate|exact|other|specific|anything)[^,.]{0,80}|(if|when|before|to)[^,.]{0,100}),?[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)?(your best bet is|it(''s|’s| is) (always |probably |usually |generally )?(best|a good idea|smart|wise|worth|safest|good) to|it never hurts to|you(''ll|’ll)? (should|can|could|might|may|would|will)? ?(want to |need to |also |always |definitely )?(call|check|contact|visit|confirm|ask|refer|look|reach|verify|find|search|try)|(call|check|contact|visit|confirm|ask|look|reach|verify|search|try|give them)(?![a-z])|a quick (call|search|look|check)|calling (ahead|them|the)|checking (their|the|with))' gadv, '(?i)^(the |their )?(listing|information|info|data|details|website|site|source|page)s? (doesn''t|doesn’t|does not|don''t|don’t|didn''t|didn’t|isn''t|isn’t|aren''t|aren’t) (specify|mention|list|include|show|say|have|provide|give)(?![a-z])' ggap, '(?i)((this|that|the|which|each|any|no|every|some|another|other|a good|a great|a solid|a nice|a popular|a fun|a decent) one(?![a-z])|(?<![a-z])one of|someone|anyone|everyone|no one|one-stop)' nmask, '(?i)[0-9$%]|(?<![a-z])(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|dozen|dozens|half|single|couple|pair|once|twice|first|second|third)(?![a-z])' num, '(?i)(www\.|https?://|@|\.(com|org|gov|net|edu|us)(?![a-z]))' url,
+  '(?i)(?<![a-z])(but|however|although|though|while|whereas|yet|except|since|because|given|which|unless|so that)(?![a-z])|;|:|—|–| - |, (and |so )?(it|its|it''s|it’s|they|they''re|they’re|their|the pool|there|this|that)(?![a-z])|,[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+((and|so|but|then)[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+)?you(?![a-z])|,[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]*(so|and|or|plus|but|then|yet)(?![a-z])|,[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]*as[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(?!(well|soon|of)([^a-z]|$))[a-z]|(?<![a-z])(so|and)[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(you|they|it|that|this|these|those|there|we|i|he|she|the|a|an)(?![a-z])' clause, ',[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(and |so |but |then |plus )?(I|I''d|I’d|I''m|I’m|I''ve|I’ve|I''ll|I’ll|[Mm]y|[Ww]e|[Ww]e''re|[Ww]e’re|[Ww]e''ve|[Ww]e’ve)(?![A-Za-z])' splice, '(?i)^(yes|no|honestly|personally|again|also|still|so|otherwise|either way|in any case|just|overall|that said|for [^,.]{0,80}|(if|when|before|to|from what)[^,.]{0,100}),[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(i|i''d|i’d|i''m|i’m|i''ve|i’ve|i''ll|my|we)(?![a-z])[^,]*$' splice_ok, '(?i)^(yes|no|nope|yep|yeah|absolutely|definitely|unfortunately|sadly|sure|certainly)(?![a-z])' polar, '(?i)(?<![a-z])(ratings?|rated|stars?|reviews?|reviewers?|reviewed|score|slides?|waterslides?|diving|dive|boards?|laps?|lanes?|splash|lazy river|wading|kiddie|toddlers?|shallow|deep end|heated|indoors?|outdoors?|open-air|olympic|competition|hot tub|spa|sauna|jacuzzi|lockers?|locker rooms?|showers?|changing rooms?|restrooms?|concessions?|snack bar|picnic|shade|shaded|cabanas?|lifeguards?|parking|accessible|accessibility|ada|wheelchair|lift|lessons?|aerobics|water polo|fountains?|playground|zero-entry|zero-depth|beach entry|wave pool|grills?|bbq|diving well|water ?park|fitness|gym|tennis|timing( system)?|touchpads?|scoreboards?|seating|seats?|spectators?|bleachers|grandstands?|enclosed|warm-up|warmup|therapy|therapeutic|whirlpool|steam room|climbing wall|rope swing|deck|sun ?deck|splash ?pads?|spray ?grounds?|water features?|play structures?|(kids|kids''|kids’|kid|children''s|children’s|toddler|play|baby|family|shallow) (area|section|zone|pool)s?|(like|as|which|that) this one (does|has|offers|is)|(they|it) even (has|have|offer|offers|got)|(they|they''ve|they’ve) (even )?got)(?![a-z])' lex, '(?i)(?<![a-z])(free|no charge|no cost|cheap|inexpensive|affordable|pricey|expensive|bucks?|dollars?|admission|fees?|prices?|pricing|costs?|rates?|open|opens|opened|closed|closes|closing|hours|daily|weekdays?|weekends?|mondays?|tuesdays?|wednesdays?|thursdays?|fridays?|saturdays?|sundays?|year-round|year round|all year|seasonal|memorial day|labor day|january|february|march|april|june|july|august|september|october|november|december|mornings?|evenings?|night|noon|midnight|residents?|members?|membership|passes|day pass|season pass|(late|early|mid|in|by|from|through|until|of)[ -]may|may (through|to|until|and))(?![a-z])' lexps, '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])' ins, '^((So|Plus|Also|But|And|Or|Still|However|Though|Although|Otherwise|Then|Yet|Even|That|That''s|That’s|This|These|Those|Which|It|It''s|It’s|Its|They|They''re|They’re|They''ve|They’ve|They''ll|They’ll|Their|Them|There|There''s|There’s|He|She|Both|Either|Neither|Anyway|Besides|Again|Instead|Thus|Hence|Therefore|Because|Since|Too|Such|Same|Other|Another|Others|Lots|Plenty|Think|Just|Things|Not|Nothing|Mostly|Mainly|Usually|Especially|Whether|Like|Kind|Sort|Great|Good|Perfect|Tons|Loads)(?![A-Za-z''’])|(Some|Many|Most|Few|All|Each|Several|A few|A lot) (are|is|have|has|of|offer|offers|seem|tend|will|can|do|does|lean|focus|cater|get|come|run|stay|open|close)(?![A-Za-z''’])|[a-z]|[A-Z][^,.]{0,40}, (that|this|these|those|it|it''s|it’s|they|they''re|they’re|there|so|then)(?![A-Za-z''’]))' dangle, '(?<![A-Za-z])(St|Dr|Mt|Ft|Ave|Blvd|Rd|Jr|Sr|Mr|Mrs|Ms|No|vs|approx|Hwy|Pkwy|Ln|Ct|Co|Inc|Dept|Univ|U\.S|a\.m|p\.m|A\.M|P\.M|e\.g|i\.e|[A-HJ-Z])\.' abbrev, '(?<=[.!?])[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(?=[A-Z0-9\"“‘''$(])' split,
+  '[A-Z][a-z]' cap),
+src as (
+  select 'p.desc' col, p.id rid, 0 ent, p.ai_description x, p.name n1, p.city n2,
+         initcap(replace(c.state_slug,'-',' ')) n3, p.ai_description ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])' insx
+    from pp_pools p left join pp_cities c on c.id = p.city_id where p.ai_description is not null
+  union all
+  select 'p.faq', p.id, o::int, e->>'a', p.name, p.city, initcap(replace(c.state_slug,'-',' ')), e::text ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_pools p left join pp_cities c on c.id = p.city_id, jsonb_array_elements(p.ai_faqs) with ordinality a(e,o)
+   where jsonb_typeof(p.ai_faqs) = 'array'
+  union all
+  select 'p.tip', p.id, o::int, e, p.name, p.city, initcap(replace(c.state_slug,'-',' ')), e ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_pools p left join pp_cities c on c.id = p.city_id, jsonb_array_elements_text(p.ai_tips) with ordinality a(e,o)
+   where jsonb_typeof(p.ai_tips) = 'array'
+  union all
+  select 'c.intro', c.id, 0, c.ai_intro, null, c.city_name, initcap(replace(c.state_slug,'-',' ')), c.ai_intro ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_cities c where c.ai_intro is not null
+  union all
+  select 'c.faq', c.id, o::int, e->>'a', null, c.city_name, initcap(replace(c.state_slug,'-',' ')), e::text ~ '(?i)(?<![a-z])(insur[a-z]*|liabilit[a-z]*|liable|coverage|covered|covers?|claims?|claimed|damag[a-z]*)(?![a-z])'
+    from pp_cities c, jsonb_array_elements(c.ai_faqs) with ordinality a(e,o) where jsonb_typeof(c.ai_faqs) = 'array'),
+sp as (
+  select src.col, src.rid, src.ent, src.n1, src.n2, src.n3, src.insx, t.k::int k, replace(t.z, '§', '.') s
+    from src, rx, regexp_split_to_table(regexp_replace(src.x, rx.abbrev, '\1' || '§', 'g'), rx.split) with ordinality t(z, k)
+   where t.z <> ''),
+m as (
+  select sp.*, regexp_replace(sp.s, rx.roman, '\1 _', 'g') ms from sp, rx),
+k as (
+  select m.*,
+    case when ms ~ rx.sing then 'singular'
+         when (ms ~ rx.plur or ms ~ rx.loc) and ms ~ rx.site then null
+         when ms ~ rx.plur then 'plural' when ms ~ rx.loc then 'local' end kind,
+    regexp_replace(s, rx.nmask, 'X', 'g') ~ rx.num has_num,
+    s ~ rx.url has_url, (s ~ rx.clause or (s ~ rx.splice and s !~ rx.splice_ok)) has_clause, s ~ rx.polar is_polar, s ~ rx.lex has_lex, s ~ rx.lexps has_lexps, s ~ rx.ins has_ins,
+    (s ~ rx.gap and s ~ rx.gapneg) is_gap, s ~ rx.advice is_adv, s ~ rx.founder is_founder, (s ~ rx.gadv or s ~ rx.ggap) is_generic,
+    regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, '\u0001'), ' '),
+      coalesce(n2, '\u0001'), ' '), coalesce(n3, '\u0001'), ' '), rx.sing, ' ', 'g') ~ rx.cap has_entity,
+    s ~ rx.dangle dangles
+  from m, rx),
+c as (
+  select k.*,
+    case when kind is null then null when has_ins then 'insurance'
+         when kind = 'singular' and is_founder then 'founder' when is_gap then 'gap'
+         when is_adv then 'advice' else 'opinion' end cls,
+    case when kind is null then null when has_ins then 'insurance'
+         when kind = 'singular' and is_founder then (case when has_lex or has_lexps then 'fact_vocabulary'
+                                                          when is_polar then 'answer_polarity' end)
+         when kind = 'local' and col like 'p.%' then 'local_marker_on_pool_page'
+         when has_num then 'number'
+         when has_url then 'url_or_contact' when has_clause then 'second_clause'
+         when is_polar then 'answer_polarity'
+         when not is_gap and has_lex then 'fact_vocabulary'
+         when not is_gap and not is_adv and has_lexps then 'fact_vocabulary' end why
+  from k),
+d as (
+  select c.*, (kind is not null and why is null) del,
+    (kind is null and is_generic and not has_num and not has_url and not has_clause) gen_ok
+  from c),
+nx as (  -- for every sentence: position of the next KEPT sentence in the same unit, and its opener
+  select d.*, min(case when not d.del then d.k end) over (partition by d.col, d.rid, d.ent order by d.k
+           rows between 1 following and unbounded following) next_kept
+  from d),
+nx2 as (
+  select nx.*, d2.dangles next_dangles
+  from nx left join d d2 on d2.col = nx.col and d2.rid = nx.rid and d2.ent = nx.ent and d2.k = nx.next_kept),
+ux as (  -- one row per field unit (a description, an intro, one FAQ answer, one tip)
+  select col, rid, ent,
+    count(*) n_sent, count(*) filter (where kind is not null) n_narr, count(*) filter (where del) n_del,
+    bool_or(kind is not null and has_ins) any_ins, bool_or(insx) unit_ins,
+    bool_and(del or gen_ok) and bool_or(kind is not null) answer_noninf,
+    bool_and(del) all_del,
+    coalesce(bool_or(del and next_dangles), false) bad_next,
+    coalesce(bool_or(del and has_entity and next_kept is not null), false) bad_entity
+  from nx2 group by 1,2,3)
+, ue as (select ux.*, (col in ('p.faq','c.faq') and answer_noninf) noninf from ux),
+rowagg as (
+ select col, rid, count(*) n_units, count(*) filter (where noninf) n_noninf,
+   bool_or(noninf and unit_ins) noninf_ins, bool_and(noninf) all_noninf,
+   coalesce(sum(n_del) filter (where not noninf), 0) del_sents, sum(n_narr) narr_sents,
+   bool_or(not noninf and any_ins) s_ins, bool_or(not noninf and n_del > 0 and all_del) s_empty,
+   bool_or(not noninf and n_del > 0 and bad_next) s_next, bool_or(not noninf and n_del > 0 and bad_entity) s_entity,
+   bool_or(n_narr > 0) has_narr
+ from ue group by 1,2)
+select col, count(*) rows_, count(*) filter (where has_narr) rows_narr, sum(narr_sents) narr_sents,
+ count(*) filter (where n_noninf > 0 and not all_noninf and not noninf_ins) r5_rows,
+ sum(n_noninf) filter (where not all_noninf and not noninf_ins) r5_entries,
+ count(*) filter (where n_noninf > 0 and all_noninf) r5_skip_empty, count(*) filter (where noninf_ins) r5_skip_ins,
+ count(*) filter (where del_sents > 0) del_rows,
+ count(*) filter (where del_sents > 0 and not (s_ins or s_empty or s_next or s_entity)) ok_rows,
+ sum(del_sents) filter (where del_sents > 0 and not (s_ins or s_empty or s_next or s_entity)) ok_sents,
+ count(*) filter (where del_sents > 0 and s_ins) skip_ins, count(*) filter (where del_sents > 0 and s_empty) skip_empty,
+ count(*) filter (where del_sents > 0 and s_next) skip_next, count(*) filter (where del_sents > 0 and s_entity) skip_entity
+from rowagg group by 1 order by 1;
+```
+
+## PR-4. Every pool-count statement in pp_cities (list, about 250-600 short rows)
+
+Confirms step 3 on ALL 647 cities (the live listing covered the 476 sitemap city pages). Uses the count pattern
+that ran in PostgreSQL on 2026-11-15 plus a prefilter for the zero / "the one" / "listed" / vague forms; the
+final category (auto / review_* / hold_duplicate / vague) is assigned afterwards in Python by `r6_classify`
+with the same `actual` column. If the tool truncates, add `offset N limit 150` and page through.
+
+```sql
+set transaction read only;
+with rx as (select '(?<![A-Za-z])(St|Dr|Mt|Ft|Ave|Blvd|Rd|Jr|Sr|Mr|Mrs|Ms|No|vs|approx|Hwy|Pkwy|Ln|Ct|Co|Inc|Dept|Univ|U\.S|a\.m|p\.m|A\.M|P\.M|e\.g|i\.e|[A-HJ-Z])\.' abbrev, '(?<=[.!?])[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+(?=[A-Z0-9\"“‘''$(])' split,
+  '(?i)(?<![a-z0-9.,$])([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|a single|a pair of)(?![a-z0-9])(( (?!of )[a-z-]+){0,3}?) (pools|pool|options|option|facilities|facility|spots|spot|locations|location|aquatic centers|aquatic center|swimming spots)(?![a-z])' cnt, '(?i)(director(y|ies)|listed|we (list|track)|on our (site|website)|in our system|we(''ve|’ve| have) got|(just|only) (the|that) one|(the|our) (single|only|sole|lone)|(don''t|don’t|do not) (currently |yet |really )?(have|list|track|show) any|there are no|a few|a couple|several|a handful|decent number|good number|plenty)' extra),
+src as (
+  select c.id, c.state_slug, c.city_slug, c.is_published cpub, 'intro' f, 0 ent, c.ai_intro x from pp_cities c where c.ai_intro is not null
+  union all select c.id, c.state_slug, c.city_slug, c.is_published, 'faq', o::int, e->>'a' from pp_cities c,
+    jsonb_array_elements(c.ai_faqs) with ordinality a(e,o) where jsonb_typeof(c.ai_faqs)='array'),
+sp as (select src.*, t.k, replace(t.z,'§','.') s from src, rx,
+  regexp_split_to_table(regexp_replace(src.x, rx.abbrev, '\1' || '§', 'g'), rx.split) with ordinality t(z,k))
+select sp.state_slug||'/'||sp.city_slug city, sp.cpub, sp.f, sp.ent, sp.k,
+  (select count(*) from pp_pools p where p.city_id=sp.id and p.is_published) actual, sp.s
+from sp, rx where sp.s ~ rx.cnt or (sp.s ~ rx.extra and sp.s ~* '(pool|option|spot|facilit|location)')
+order by 1, 3, 4, 5;
+```
+
+## PR-5. Live page = this database? (small)
+
+Confirms that the text measured on the live pages on 2026-11-16 is byte-identical to the rows (UNVERIFIED
+today; one row matched on 2026-11-15). Each row returns `same = true` when the database field's md5 equals the
+md5 of the live text used in examples.json. A `false` is not an error by itself (whitespace or HTML-entity
+differences are possible) but must be explained before applying any rule to that row.
+
+```sql
+set transaction read only;
+with live(state_slug, city_slug, live_md5) as (values
+  ('florida','miami','aba4ff35f90e0ebaf901cc9ff074fc39'),
+  ('california','sacramento','fa4e06bffe20508607d7a0f41a20d293'),
+  ('colorado','aurora','676185423e8d08f89d2b665090409dd1'),
+  ('illinois','chicago','ab11251b13e9f16f177337b04c865bcf'),
+  ('kentucky','louisville','340e86ba89b5ad6745018efa295e0216'),
+  ('south-carolina','mount-pleasant','7d24da58241485ba07a443b0d49b3ca8'),
+  ('new-york','brooklyn','05e43cfd3180688d00ae69829fe44fb7'),
+  ('arizona','mesa','d9e64241354b3c80105a8afb9e496c84'),
+  ('delaware','wilmington','e2e75468dca583da7d71eb4d909bf599'),
+  ('california','apple-valley','32f8627b05cec4123e6885146d6523d3'),
+  ('texas','austin','7f0a617b883a1f1b88fb8c9580994185'))
+select l.state_slug, l.city_slug, md5(c.ai_intro) db_md5, l.live_md5, md5(c.ai_intro) = l.live_md5 same
+from live l left join pp_cities c on c.state_slug = l.state_slug and c.city_slug = l.city_slug order by 1, 2;
+```
+
+```sql
+set transaction read only;
+with live(slug, live_md5) as (values
+  ('apex-aquatic-center','4a12abdfe9bb86538a9e22afc355d8fd'),
+  ('kwame-ture-recreation-center','a225e2ac30c302162aa50d788b3f27bc'),
+  ('north-park-recreation-center','673bcffd88af68ed8f31bedff7183c03'),
+  ('city-heights-swim-center','052226ae2b6f3b9b60680de7c3b377bb'),
+  ('ymca-childcare-resource-service','335ad6b11d0489fef694c4ba9e2c620e'),
+  ('garrison-municipal-pool','7b717fce232cbb53bbb20b047d3d9cea'),
+  ('chicago-park-district-whitney-young-pool-indoor','8567797c6dcb453562485cb945813e42'),
+  ('bryan-place-swimming-pool-association','843b677547ba6028e6c39cfc409ce04a'),
+  ('hampton-community-pool','82bf0383344e4687084afb8c667a4b32'),
+  ('ymca-of-metropolitan-los-angeles-corporate-office','d751713988987e9331980363e24189ce'))
+select l.slug, md5(p.ai_best_for) db_md5, l.live_md5, md5(p.ai_best_for) = l.live_md5 same
+from live l left join pp_pools p on p.slug = l.slug order by 1;
+```
+
+## PR-6. The production dry run of the cleaner (read-only; added 2026-11-16 with the cleaner)
+
+Confirms, on the whole production tables (published rows), what the surrogate dry run of 2026-11-16
+(`dry-run-SURROGATE-live-2026-11-16.txt`, built from the 2,476 live pages only) can only estimate: the fields each
+rule would change (surrogate after the third 2026-11-17 revision: 2,510 fields; 2,568 after the second, 2,640 after
+the first 2026-11-17 revision, 2,661 after the 2026-11-16 review revision), every skipped field with its
+PRODUCTION row id and reason (surrogate: 646), a random server-side sample of 15 fields per rule with exact old
+and new text, the `expected_changes` / `manifest_md5` that apply.sql requires (section 6), and (section 7) every
+invented founder / company-voice sentence the plan leaves in place, for the owner to decide by hand (surrogate:
+28). It also writes `approved-manifest.csv` (one line per field change: table, row id, column, old md5, new md5,
+rules) and, for the offline cross-check below, `dry-run-pools.jsonl`, `dry-run-cities.jsonl` and
+`dry-run-plan.jsonl` (the text the plan read and what it decided). Nothing here applies anything.
+
+`dry-run.sql` starts with `set transaction read only;`, contains SELECT statements only (plus psql display
+commands), and aborts before reading anything if the transaction is not read-only. It needs psql (it uses `\g`,
+`\x`, `\if`), so it cannot be pasted whole into the MCP SQL tool; there, section 1 alone (one statement) can be
+copied out of the file to get the counts. Output size: about 3,500 short lines in section 3, about 90 full-text
+records in section 4, a manifest of about 2,800-3,000 lines. Expected run time: about 100 s on the surrogate
+(6 statements, ~16 s each); with the rules of the second 2026-11-17 round about 340 s, since the third round about 120 s (test-output.txt; the second round had pushed the plan past PostgreSQL's 32-entry regex cache, RUNBOOK.md section 4; each statement stays far below the 20-minute `statement_timeout`); production has about 1.5-2x the text.
+
+```sh
+cd ops/seo-repairs-2026-11/public-pools
+psql "$DATABASE_URL" -X --single-transaction -v ON_ERROR_STOP=1 -v seed=2026-11-15 -f dry-run.sql \
+  > dry-run-$(date -u +%F).txt; echo "dry run exit $?"          # must print 0
+python3 -I cleaner/check_dry_run.py .; echo "cross-check exit $?" # must print 0: Python reference = SQL plan
+```
+
+The cross-check re-plans every published row with the Python reference (the code the 87 hand examples and the
+validation rounds were run against) and compares field by field with what PostgreSQL planned. It is how a
+difference between the two regex engines on production text (the surrogate covered only the 2,476 sitemap pages)
+would show up before approval; any difference is a stop. Keep `dry-run-<date>.txt` and `approved-manifest.csv`
+together; the owner approves exactly that pair (RUNBOOK.md section 5).
+
+## PR-7. Preconditions for the cleaner (tiny)
+
+Confirms the assumptions the local test could not: the server version (the SQL needs PostgreSQL 16+ for
+`pg_input_is_valid`; 15+ for `regexp_substr` / `regexp_instr`; the 2026-11-15 extract already used
+`pg_input_is_valid`, so 16+ is likely), the collation/ctype (the local test ran on C.UTF-8), any trigger on the
+two tables (one that touches `updated_at` or copies rows elsewhere changes what apply/rollback do), the
+column types the cleaner reads, that the backup / change-log tables do not exist yet, that the splitter's mark
+character `§` is still absent (A4), which API roles exist (apply.sql revokes their privileges on the backup and
+log tables), and how many fields contain a non-ASCII or control whitespace character ANYWHERE (revised
+2026-11-16: the earlier version looked only after `.!?`, which missed a NO-BREAK SPACE after a comma).
+PostgreSQL's `\s` misses U+001C-U+001F, U+0085, U+00A0, U+2007 and U+202F under C.UTF-8; since the review
+revision no cleaner pattern uses `\s` (they use the explicit class `WS`, equal to Python's `\s`), so a non-zero
+count is no longer a stop by itself, but it says how much rides on the PR-6 cross-check.
+
+```sql
+set transaction read only;
+select current_setting('server_version') server_version,
+  (select datcollate || ' / ' || datctype from pg_database where datname = current_database()) collate_ctype,
+  (select coalesce(string_agg(c.relname || ': ' || pg_get_triggerdef(t.oid), E'\n'), 'none') from pg_trigger t
+     join pg_class c on c.oid = t.tgrelid join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public' and c.relname in ('pp_pools', 'pp_cities') and not t.tgisinternal) triggers,
+  (select string_agg(table_name || '.' || column_name || ':' || data_type, ', ' order by table_name, column_name)
+     from information_schema.columns where table_schema = 'public'
+      and ((table_name = 'pp_pools' and column_name in ('id', 'slug', 'name', 'city', 'city_id', 'ai_best_for',
+            'ai_description', 'ai_faqs', 'is_published'))
+        or (table_name = 'pp_cities' and column_name in ('id', 'city_name', 'city_slug', 'state_slug', 'ai_intro',
+            'ai_faqs', 'is_published')))) cols,
+  to_regclass('public.seo_repair_pp_backup_20261115') is not null backup_table_exists,
+  to_regclass('public.seo_repair_pp_change_log') is not null change_log_exists,
+  (select count(*) from public.pp_pools where concat_ws(' ', ai_best_for, ai_description, ai_faqs::text) like '%§%') pools_with_mark,
+  (select count(*) from public.pp_cities where concat_ws(' ', ai_intro, ai_faqs::text) like '%§%') cities_with_mark,
+  (select string_agg(rolname, ', ' order by rolname) from pg_roles where rolname in ('anon', 'authenticated', 'service_role')) api_roles,
+  (select count(*) from public.pp_pools p where p.is_published is true and (p.ai_description ~ '[\u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]' or p.ai_best_for ~ '[\u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]'
+     or exists (select 1 from jsonb_array_elements(case when jsonb_typeof(p.ai_faqs) = 'array' then p.ai_faqs end) e
+                 where (e ->> 'a') ~ '[\u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]' or (e ->> 'q') ~ '[\u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]'))) pools_with_unusual_whitespace,
+  (select count(*) from public.pp_cities c where c.is_published is true and (c.ai_intro ~ '[\u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]'
+     or exists (select 1 from jsonb_array_elements(case when jsonb_typeof(c.ai_faqs) = 'array' then c.ai_faqs end) e
+                 where (e ->> 'a') ~ '[\u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]' or (e ->> 'q') ~ '[\u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]'))) cities_with_unusual_whitespace;
+```
+
+Expected: server 16+, `triggers` = none (apply.sql and rollback.sql now refuse to run while any non-internal
+trigger exists, unless the owner approves and the run passes `-v allow_triggers=` with the exact list; see
+RUNBOOK section 5 item 3), the column types of `cleaner/schema.sql`, both tables absent, 0 marks, `api_roles` =
+`anon, authenticated, service_role` on Supabase (any of them may be missing elsewhere; apply revokes whatever
+exists). `*_with_unusual_whitespace`: report the number; the PR-6 cross-check must still show 0 differences.
+Anything else: stop and update the cleaner first.

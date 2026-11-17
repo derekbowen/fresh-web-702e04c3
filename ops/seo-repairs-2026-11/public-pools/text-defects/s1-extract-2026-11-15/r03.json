@@ -1,0 +1,17 @@
+[
+{
+"rows_": 1821,
+"empty_arr": 8,
+"minlen": 0,
+"maxlen": 6,
+"nonstring_el": 0,
+"blank_el": 0,
+"el_with_comma": 0,
+"el_with_markup": 0,
+"el_pronoun": 0,
+"el_insurance": 0,
+"raw_differs_from_canonical": 0,
+"dup_el": 0,
+"max_el_len": 26
+}
+]

@@ -1,0 +1,467 @@
+-- ======================================================================================================
+-- PUBLIC-POOLS TEXT CLEANER: the plan (pure SQL; one WITH-list, no extension, no procedural language).
+-- The SAME text is pasted (by cleaner/build.py) into dry-run.sql (read-only SELECT) and apply.sql (UPDATE).
+-- It reads public.pp_pools and public.pp_cities and returns, in the relation `plan`, one row per field that
+-- a rule would change or had to skip:
+--   tbl, row_id, ref, col, old_text, new_text (NULL = unchanged), rules ('R5+R3' ...), skips, n_del_sentences,
+--   n_del_entries, old_md5, new_md5
+-- Rules (rules.json, text-defects/text_defect_rules.py): R1 reformat ai_best_for; R5 delete wholly
+-- non-informative FAQ entries; R6 delete contradicted pool-count sentences (cities); R2/R3/R4 delete
+-- deletable narrator sentences. Plus the apply addendum A1-A5 (RUNBOOK.md section 3) and the column freezes of
+-- the rules (ALL:joined_clause_kept, ALL:fact_guard_kept, 2026-11-17). Scope: published rows.
+-- Each heavy pattern runs once per sentence: the second-clause test is clause_core OR clause_join (= CLAUSE).
+-- No pattern uses \s: whitespace is the explicit class WS (= Python's \s), so the plan does not depend on the server's ctype.
+-- ======================================================================================================
+rx as (
+  select {SING}::text sing, {PLUR}::text plur, {LOCAL}::text loc, {SITE}::text site, {ROMAN_I}::text roman,
+    {GAP}::text gap, {GAP_NEG}::text gapneg, {GAP_HARD}::text gaphard, {FOUNDER}::text founder, {ADVICE}::text advice,
+    {GENERIC_ADVICE}::text gadv, {GENERIC_GAP}::text ggap, {NUM_MASK}::text nmask, {NUMERIC}::text num,
+    {URL}::text url, {CLAUSE_CORE}::text clause_core, {CLAUSE_JOIN}::text clause_join,
+    {YESNO_Q}::text yesno, {EXISTENCE}::text exist, {FACT_CLAIM}::text primacy,
+    {COMMA_SPLICE}::text splice, {SPLICE_OK}::text splice_ok,
+    {POLARITY}::text polar, {LEXICON}::text lex, {LEX_PRICE_SCHEDULE}::text lexps, {INSURANCE}::text ins,
+    {DANGLING_OPENER}::text dangle, {ABBREV}::text abbrev, {SPLIT}::text split, {CAPWORD}::text cap,
+    {ENTITY_EXEMPT_LAST}::text ent_exempt, {NOT_WS}::text not_ws,
+    {MARK}::text mark,
+    {COUNT_V0}::text cnt0, {COUNT_V1}::text cnt1, {COUNT_V2}::text cnt2, {COUNT_V3}::text cnt3,
+    {COUNT2}::text cntl, {COUNT_ZERO}::text cntz, {COUNT_THE_ONE}::text cnt_one, {COUNT_THE_ONLY}::text cnt_only,
+    {DIRECTORY_SCOPE}::text dirscope, {COUNT_VAGUE}::text vague, {COUNT_SUBTYPE}::text subtype,
+    {COUNT_CLAIM}::text claim, {COUNT_LOOSE_SCOPE}::text loose, {BEST_FOR_BAD}::text bf_bad, {A5_BACKREF}::text a5,
+    {MIN_PROSE}::int min_prose, {MIN_ANSWER}::int min_answer),
+numwords(w, v) as (values {NUMBER_WORDS_VALUES}),
+-- records that disappear per city once the mapped same-facility duplicates are merged
+-- (duplicate-mapping.csv of 2026-11-15, SAME_FACILITY / LIKELY_SAME, both pages live). Only used to HOLD an R6 deletion.
+dupm(state_slug, city_slug, merges) as (values {DUP_MERGES_VALUES}),
+pools as (
+  select p.id, p.slug, p.name, p.city, p.ai_best_for, p.ai_description, p.ai_faqs,
+         initcap(replace(c.state_slug, '-', ' ')) state_name
+    from public.pp_pools p left join public.pp_cities c on c.id = p.city_id
+   where p.is_published is true),
+cities as (
+  select c.id, c.state_slug, c.city_slug, c.city_name, c.ai_intro, c.ai_faqs,
+         initcap(replace(c.state_slug, '-', ' ')) state_name,
+         (select count(*) from public.pp_pools p where p.city_id = c.id and p.is_published is true) actual,
+         d.merges
+    from public.pp_cities c left join dupm d on d.state_slug = c.state_slug and d.city_slug = c.city_slug
+   where c.is_published is true),
+faq as (   -- every FAQ entry; only "plain" entries ({q?, a: string, no a2..a5}) are ever edited
+  select 'pp_pools'::text tbl, p.id rid, 'ai_faqs'::text col, a.o::int ent, a.e,
+         (jsonb_typeof(a.e) = 'object' and jsonb_typeof(a.e -> 'a') = 'string'
+          and not (a.e ?| array['a2', 'a3', 'a4', 'a5'])) plain,
+         p.name n1, p.city n2, p.state_name n3, null::bigint actual, null::bigint distinct_n
+    from pools p, jsonb_array_elements(p.ai_faqs) with ordinality a(e, o)
+   where jsonb_typeof(p.ai_faqs) = 'array'
+  union all
+  select 'pp_cities', c.id, 'ai_faqs', a.o::int, a.e,
+         (jsonb_typeof(a.e) = 'object' and jsonb_typeof(a.e -> 'a') = 'string'
+          and not (a.e ?| array['a2', 'a3', 'a4', 'a5'])),
+         null, c.city_name, c.state_name, c.actual, c.actual - c.merges
+    from cities c, jsonb_array_elements(c.ai_faqs) with ordinality a(e, o)
+   where jsonb_typeof(c.ai_faqs) = 'array'),
+unit as (  -- one prose unit = a description, an intro, or one plain FAQ answer
+  select 'pp_pools'::text tbl, p.id rid, 'ai_description'::text col, 0 ent, p.ai_description x,
+         null::text q, p.name n1, p.city n2, p.state_name n3, null::bigint actual, null::bigint distinct_n
+    from pools p where p.ai_description is not null
+  union all
+  select 'pp_cities', c.id, 'ai_intro', 0, c.ai_intro, null, null, c.city_name, c.state_name, c.actual,
+         c.actual - c.merges
+    from cities c where c.ai_intro is not null
+  union all
+  select f.tbl, f.rid, f.col, f.ent, f.e ->> 'a', case when jsonb_typeof(f.e -> 'q') = 'string' then f.e ->> 'q' end,
+         f.n1, f.n2, f.n3, f.actual, f.distinct_n
+    from faq f where f.plain),
+prot as (  -- abbreviation periods protected with the mark (restored after splitting)
+  select u.*, regexp_replace(u.x, rx.abbrev, '\1' || rx.mark, 'g') px from unit u cross join rx),
+sp as (    -- sentences; pieces are never empty (a split needs [.!?] before and a letter/digit/quote after),
+           -- so k runs 1..n without gaps and can index the per-unit arrays below
+  select u.tbl, u.rid, u.col, u.ent, u.q, u.n1, u.n2, u.n3, u.actual, u.distinct_n, t.k::int k,
+         replace(t.z, rx.mark, '.') s
+    from prot u cross join rx, regexp_split_to_table(u.px, rx.split) with ordinality t(z, k)
+   where t.z <> ''),
+sep as (   -- the whitespace that preceded sentence k in the original field
+  select u.tbl, u.rid, u.col, u.ent, m.j::int + 1 k, m.v[1] sep_before
+    from prot u cross join rx, regexp_matches(u.px, rx.split, 'g') with ordinality m(v, j)),
+f1 as (
+  select sp.*, regexp_replace(sp.s, rx.roman, '\1 _', 'g') ms from sp cross join rx),
+-- Per-sentence features in two stages. PostgreSQL keeps only 32 compiled regular expressions per session (regexp.c,
+-- MAX_CACHED_RES); a row that tests more than 32 distinct patterns in turn recompiles every one of them on every row
+-- (measured on the surrogate: 32 patterns per row 9 s, 33 patterns 482 s). Stage 1 (narrator kind, generic referral,
+-- openers: 11 patterns with the splitter's) is sorted, so it runs to completion before stage 2 starts; stage 2 (23
+-- patterns) tests the narrator features only where they can matter: narrator sentences, and the number / URL /
+-- clause tests also for generic referrals (gen_ok). A feature that is not tested is false; no decision reads it.
+f2 as materialized (   -- stage 1 (text_defect_rules.is_narrator; GENERIC_ADVICE / GENERIC_GAP; DANGLING_OPENER, A5)
+  select f1.*,
+    case when ms ~ rx.sing then 'singular'
+         when (ms ~ rx.plur or ms ~ rx.loc) and ms ~ rx.site then null
+         when ms ~ rx.plur then 'plural' when ms ~ rx.loc then 'local' end kind,
+    (s ~ rx.gadv or s ~ rx.ggap) is_generic,
+    s ~ rx.dangle dangles, s ~ rx.a5 dangles5
+  from f1 cross join rx
+  order by tbl, rid, col, ent, k),
+f2x as (   -- stage 2 (text_defect_rules.classify). CLAUSE = CLAUSE_CORE | CLAUSE_JOIN: each runs once and has_clause
+           -- is derived in f2y; answers_q / has_claim are the two keep guards of 2026-11-17's third round (_new_guard)
+  select f2.*,
+    case when kind is not null or is_generic then regexp_replace(s, rx.nmask, 'X', 'g') ~ rx.num else false end has_num,
+    case when kind is not null or is_generic then s ~ rx.url else false end has_url,
+    case when kind is not null or is_generic then s ~ rx.clause_core else false end has_clause_core,
+    case when kind is not null or is_generic then s ~ rx.clause_join else false end has_join,
+    case when kind is not null then (s ~ rx.splice and s !~ rx.splice_ok) else false end has_splice,
+    case when kind is not null then s ~ rx.polar else false end is_polar,
+    case when kind is not null then s ~ rx.lex else false end has_lex,
+    case when kind is not null then s ~ rx.lexps else false end has_lexps,
+    case when kind is not null then s ~ rx.ins else false end has_ins,
+    case when kind is not null then (s ~ rx.gap and s ~ rx.gapneg) else false end is_gap,
+    case when kind is not null then s ~ rx.gaphard else false end is_gaphard,
+    case when kind is not null then s ~ rx.advice else false end is_adv,
+    case when kind is not null then s ~ rx.founder else false end is_founder,
+    case when kind is not null and q is not null and q ~ rx.yesno then s ~ rx.exist else false end answers_q,
+    case when kind is not null then s ~ rx.primacy else false end has_claim,
+    regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, ''), ' '),
+      coalesce(n2, ''), ' '), coalesce(n3, ''), ' '), rx.sing, ' ', 'g') ~ rx.cap has_entity,
+    -- the same test for a deleted sentence that is the last kept context: the site's name and generic agency words
+    -- ("City of X Parks and Recreation") do not count (text_defect_rules.has_entity(last=True))
+    regexp_replace(regexp_replace(replace(replace(replace(coalesce(substring(s from ' (.*)$'), ''), coalesce(n1, ''), ' '),
+      coalesce(n2, ''), ' '), coalesce(n3, ''), ' '), rx.sing, ' ', 'g'), rx.ent_exempt, ' ', 'g') ~ rx.cap has_entity_last
+  from f2 cross join rx),
+f2y as (   -- has_clause = s ~ CLAUSE, derived from the two tests
+  select f2x.*, (has_clause_core or has_join) has_clause from f2x),
+f3 as (
+  select f2y.*,
+    case when kind is null then false
+         when has_ins then false
+         when kind = 'singular' and is_founder then not (has_lex or has_lexps or is_polar or answers_q or has_claim)
+         when kind = 'local' and tbl = 'pp_pools' then false
+         when has_num or has_url or has_clause or has_splice or is_polar then false
+         when not is_gap and has_lex then false
+         when not is_gap and not is_adv and has_lexps then false
+         when is_gap and not is_gaphard and (has_lex or has_lexps) then false   -- "I only have data on X being free"
+         when answers_q or has_claim then false   -- answers_question / fact_claim (2026-11-17, checked last)
+         else true end narr_del,
+    (kind is null and is_generic and not has_num and not has_url and not has_clause) gen_ok,
+    -- the narrator decision without the two guards (text_defect_rules.joined_keep, level JOINED) ...
+    case when kind is null then false
+         when has_ins then false
+         when kind = 'singular' and is_founder then not (has_lex or has_lexps or is_polar)
+         when kind = 'local' and tbl = 'pp_pools' then false
+         when has_num or has_url or has_clause or has_splice or is_polar then false
+         when not is_gap and has_lex then false
+         when not is_gap and not is_adv and has_lexps then false
+         when is_gap and not is_gaphard and (has_lex or has_lexps) then false
+         else true end narr_del_joined,
+    -- ... and without the guards and with CLAUSE_CORE (level BASE): they differ from JOINED only when has_join
+    case when kind is null then false
+         when has_ins then false
+         when kind = 'singular' and is_founder then not (has_lex or has_lexps or is_polar)
+         when kind = 'local' and tbl = 'pp_pools' then false
+         when has_num or has_url or has_clause_core or has_splice or is_polar then false
+         when not is_gap and has_lex then false
+         when not is_gap and not is_adv and has_lexps then false
+         when is_gap and not is_gaphard and (has_lex or has_lexps) then false
+         else true end narr_del_core,
+    (kind is null and is_generic and not has_num and not has_url and not has_clause_core) gen_ok_core
+  from f2y),
+r6a as (   -- R6: first pool-count statement of a city sentence (text_defect_rules.count_hit / r6_classify)
+  select f.tbl, f.rid, f.col, f.ent, f.k, f.s, f.actual, f.distinct_n,
+         regexp_instr(f.s, rx.cnt0) p0, regexp_instr(f.s, rx.cnt1) p1, regexp_instr(f.s, rx.cnt2) p2,
+         regexp_instr(f.s, rx.cnt3) p3
+    from f1 f cross join rx where f.actual is not null),
+r6b as (   -- the lazy {0,3}? of COUNT: leftmost start first, then the fewest words between number and noun
+  select r6a.*, least(nullif(p0, 0), nullif(p1, 0), nullif(p2, 0), nullif(p3, 0)) pmin from r6a),
+r6c as materialized (   -- sorted: the R6 chain runs in three stages of at most 12 patterns each (see f2)
+  select r6b.*, case when pmin is null then null when p0 = pmin then 0 when p1 = pmin then 1
+                     when p2 = pmin then 2 else 3 end kk from r6b
+  order by tbl, rid, col, ent, k),
+r6d as (
+  select r6c.*,
+    case kk when 0 then regexp_substr(s, rx.cnt0) when 1 then regexp_substr(s, rx.cnt1)
+            when 2 then regexp_substr(s, rx.cnt2) when 3 then regexp_substr(s, rx.cnt3) end ph1,
+    case kk when 0 then regexp_substr(s, rx.cnt0, 1, 1, '', 1) when 1 then regexp_substr(s, rx.cnt1, 1, 1, '', 1)
+            when 2 then regexp_substr(s, rx.cnt2, 1, 1, '', 1) when 3 then regexp_substr(s, rx.cnt3, 1, 1, '', 1) end w1,
+    case kk when 0 then '' when 1 then regexp_substr(s, rx.cnt1, 1, 1, '', 2)
+            when 2 then regexp_substr(s, rx.cnt2, 1, 1, '', 2) when 3 then regexp_substr(s, rx.cnt3, 1, 1, '', 2) end betw,
+    regexp_substr(s, rx.cntl) ph2, regexp_substr(s, rx.cntl, 1, 1, '', 1) w2,
+    regexp_substr(s, rx.cntz) phz,
+    coalesce(regexp_substr(s, rx.cnt_one), regexp_substr(s, rx.cnt_only)) pho,
+    s ~ rx.dirscope in_dir, s ~ rx.vague is_vague, s ~ rx.ins has_ins6, s ~ rx.loose is_loose
+  from r6c cross join rx),
+r6e as (
+  select r6d.*,
+    case when ph1 is not null then 'number+noun' when ph2 is not null then 'number+listed'
+         when phz is not null then 'zero' when pho is not null and in_dir then 'the_one' end form
+  from r6d),
+r6f as (
+  select r6e.*,
+    case form when 'number+noun' then ph1 when 'number+listed' then ph2 when 'zero' then phz when 'the_one' then pho end phrase,
+    case form when 'number+noun' then lower(w1) when 'number+listed' then lower(w2) end w,
+    case when form = 'number+noun' then btrim(betw) else '' end between_
+  from r6e),
+r6g as materialized (   -- sorted: second stage ends here
+  select r6f.*,
+    case when form = 'zero' then 0 when form = 'the_one' then 1
+         when w ~ '^[0-9]+$' then w::numeric when w = 'single' then 1
+         else (select nw.v from numwords nw where nw.w = r6f.w) end stated
+  from r6f
+  order by tbl, rid, col, ent, k),
+r6h as (   -- the rest of a count sentence once its count phrase is removed: other claims, and the two clause tests once each
+  select r6g.*,
+    (form is not null and (replace(s, phrase, ' ') ~ rx.lex or replace(s, phrase, ' ') ~ rx.lexps
+                           or replace(s, phrase, ' ') ~ rx.url or replace(s, phrase, ' ') ~ rx.claim
+                           or regexp_replace(replace(s, phrase, ' '), rx.nmask, 'X', 'g') ~ rx.num)) rest_other,
+    (form is not null and replace(s, phrase, ' ') ~ rx.clause_core) rest_core,
+    (form is not null and replace(s, phrase, ' ') ~ rx.clause_join) rest_join
+  from r6g cross join rx),
+r6 as (
+  select g.tbl, g.rid, g.col, g.ent, g.k,
+    case when g.form is null then (case when g.is_vague and g.in_dir then 'vague' end)
+         when g.stated = g.actual then 'consistent'
+         when not g.in_dir then (case when g.form = 'number+noun' and g.is_loose then 'review_scope' else 'not_inventory' end)
+         when g.has_ins6 then 'skip_insurance'
+         when g.distinct_n is not null and g.stated = g.distinct_n then 'hold_duplicate'
+         when g.between_ ~ rx.subtype then 'review_subtype'
+         when g.rest_other or g.rest_core or g.rest_join then 'review_mixed'   -- rest ~ CLAUSE
+         else 'auto' end r6cat,
+    -- the same category with CLAUSE_CORE in place of CLAUSE (text_defect_rules.r6_classify(..., CLAUSE_CORE))
+    case when g.form is null then (case when g.is_vague and g.in_dir then 'vague' end)
+         when g.stated = g.actual then 'consistent'
+         when not g.in_dir then (case when g.form = 'number+noun' and g.is_loose then 'review_scope' else 'not_inventory' end)
+         when g.has_ins6 then 'skip_insurance'
+         when g.distinct_n is not null and g.stated = g.distinct_n then 'hold_duplicate'
+         when g.between_ ~ rx.subtype then 'review_subtype'
+         when g.rest_other or g.rest_core then 'review_mixed'
+         else 'auto' end r6cat_core,
+    g.stated, g.phrase
+  from r6h g cross join rx),
+jkc as (   -- column freezes (text_defect_rules.column_joined_keep, 2026-11-17): a column in which CLAUSE_JOIN (jk) or
+           -- one of the guards answers_question / fact_claim (jg) changes the decision for any sentence is left
+           -- unchanged whenever the plan would change it (see plan1)
+  select f3.tbl, f3.rid, f3.col,
+    bool_or(f3.narr_del_joined <> f3.narr_del_core or f3.gen_ok <> f3.gen_ok_core
+            or coalesce(r6.r6cat = 'auto', false) <> coalesce(r6.r6cat_core = 'auto', false)) jk,
+    bool_or(f3.narr_del <> f3.narr_del_joined) jg
+  from f3
+  left join r6 on r6.tbl = f3.tbl and r6.rid = f3.rid and r6.col = f3.col and r6.ent = f3.ent and r6.k = f3.k
+  group by 1, 2, 3),
+noninf as ( -- R5: an answer whose every sentence is deletable narrator or generic non-informative text
+  select tbl, rid, col, ent, bool_and(narr_del or gen_ok) and bool_or(kind is not null) noninf
+    from f3 where col = 'ai_faqs' group by 1, 2, 3, 4),
+r5a as (
+  select f.tbl, f.rid, f.col, f.ent, f.e, f.plain,
+    (f.plain and coalesce(n.noninf, false)) noninf,
+    (f.plain and coalesce(n.noninf, false)
+     and ((f.e ->> 'a') ~ rx.ins or (jsonb_typeof(f.e -> 'q') = 'string' and (f.e ->> 'q') ~ rx.ins))) r5_ins
+  from faq f cross join rx
+  left join noninf n on n.tbl = f.tbl and n.rid = f.rid and n.col = f.col and n.ent = f.ent),
+r5g as (
+  select tbl, rid, col, bool_or(noninf and not r5_ins) any_del, bool_or(plain and not (noninf and not r5_ins)) plain_left,
+         bool_or(r5_ins) any_ins, count(*) n_entries
+    from r5a group by 1, 2, 3),
+r5 as (
+  select a.*, (a.noninf and not a.r5_ins and not (g.any_del and not g.plain_left)) del5,
+         case when g.any_del and not g.plain_left then 'array_would_be_empty' when g.any_ins then 'insurance' end r5_skip
+    from r5a a join r5g g using (tbl, rid, col)),
+grp as (   -- freeze checks per column (insurance; addendum A3 insurance anywhere; A4 mark character present)
+  select u.tbl, u.rid, u.col,
+    bool_or(u.x ~ rx.ins or coalesce(u.q ~ rx.ins, false)) ins_any,
+    bool_or(strpos(u.x, rx.mark) > 0) has_mark
+  from unit u cross join rx
+  left join r5 on r5.tbl = u.tbl and r5.rid = u.rid and r5.col = u.col and r5.ent = u.ent
+  where not coalesce(r5.del5, false)
+  group by 1, 2, 3),
+g0 as (
+  select f3.tbl, f3.rid, f3.col, f3.ent, f3.k, f3.s, f3.kind, f3.narr_del, f3.has_ins, f3.has_entity, f3.has_entity_last,
+    f3.dangles, f3.dangles5,
+    not coalesce(r5.del5, false) present0,
+    r6.r6cat, coalesce(sep.sep_before, '') sep_before,
+    case when f3.col = 'ai_faqs' then rx.min_answer else rx.min_prose end minlen
+  from f3 cross join rx
+  left join r5 on r5.tbl = f3.tbl and r5.rid = f3.rid and r5.col = f3.col and r5.ent = f3.ent
+  left join r6 on r6.tbl = f3.tbl and r6.rid = f3.rid and r6.col = f3.col and r6.ent = f3.ent and r6.k = f3.k
+  left join sep on sep.tbl = f3.tbl and sep.rid = f3.rid and sep.col = f3.col and sep.ent = f3.ent and sep.k = f3.k),
+frz as (
+  select g0.tbl, g0.rid, g0.col,
+    case when bool_or(present0 and ((kind is not null and has_ins) or r6cat = 'skip_insurance')) then 'insurance'
+         when bool_or(grp.ins_any) then 'insurance_anywhere'
+         when bool_or(grp.has_mark) then 'contains_mark' end frozen,
+    -- a freeze is reported only where a sentence rule would otherwise have deleted something
+    coalesce(bool_or(present0 and (narr_del or r6cat = 'auto')), false) would_touch
+  from g0 join grp using (tbl, rid, col) group by 1, 2, 3),
+g as (
+  select g0.*, frz.frozen from g0 join frz using (tbl, rid, col)),
+-- ---------------------------------------------------------------- pass 1: R6 (cities only)
+p1 as (
+  select g.*, (present0 and frozen is null and r6cat is not distinct from 'auto') m1 from g),
+p1w as (  -- nk: next kept sentence, np: next present sentence (arrays are indexed by k)
+  select p1.*,
+    min(k) filter (where present0) over u fp,
+    min(k) filter (where present0 and not m1) over u fk,
+    min(case when present0 and not m1 then k end) over nxt nk,
+    min(case when present0 then k end) over nxt np,
+    array_agg(dangles) over u dang_arr,
+    array_agg(dangles5) over u dang5_arr,
+    array_agg(sep_before) over u sep_arr
+  from p1
+  window u as (partition by tbl, rid, col, ent order by k rows between unbounded preceding and unbounded following),
+         nxt as (partition by tbl, rid, col, ent order by k rows between 1 following and unbounded following)),
+p1x as (
+  select p1w.*,
+    (m1 and dang_arr[nk]) bad_next, (m1 and dang5_arr[nk]) bad_next5,
+    (m1 and ((nk is not null and has_entity) or (nk is null and has_entity_last))) bad_ent,
+    (m1 and ((k <> fp and strpos(sep_before, chr(10)) > 0) or coalesce(strpos(sep_arr[np], chr(10)) > 0, false))) bad_para
+  from p1w),
+u1 as (
+  select tbl, rid, col, ent, count(*) filter (where present0) n_pres, count(*) filter (where m1) n_m,
+    min(k) filter (where bad_next) kn, min(k) filter (where bad_next5) kn5, min(k) filter (where bad_ent) ke,
+    bool_or(bad_para) para,
+    coalesce(sum(length(s)) filter (where present0 and not m1), 0)
+      + coalesce(sum(length(sep_before)) filter (where present0 and not m1 and k <> fk), 0) len_after,
+    min(minlen) minlen
+  from p1x group by 1, 2, 3, 4),
+u1r as (
+  select u1.*, case when n_m = 0 then null when n_m = n_pres then 'field_would_be_empty'
+                    when kn = least(kn, kn5, ke) then 'next_sentence_refers_back'
+                    when kn5 = least(kn, kn5, ke) then 'next_sentence_refers_back_a5'
+                    when ke is not null then 'deleted_sentence_names_an_entity'
+                    when para then 'paragraph_break' when len_after < minlen then 'below_min_length' end why
+  from u1),
+c1 as (
+  select tbl, rid, col, (array_agg(why order by ent) filter (where why is not null))[1] why1, bool_or(n_m > 0) any_m1
+  from u1r group by 1, 2, 3),
+-- ---------------------------------------------------------------- pass 2: narrator (R2 descriptions, R3 pool FAQ, R4 cities)
+p2 as (
+  select p1.tbl, p1.rid, p1.col, p1.ent, p1.k, p1.s, p1.narr_del, p1.has_entity, p1.has_entity_last, p1.dangles, p1.dangles5,
+    p1.sep_before,
+    p1.minlen, p1.frozen, p1.m1, p1.present0,
+    (p1.present0 and not (p1.m1 and c1.any_m1 and c1.why1 is null)) present1
+  from p1 join c1 using (tbl, rid, col)),
+p2m as (
+  select p2.*, (present1 and frozen is null and narr_del) m2 from p2),
+p2w as (  -- nk: next kept sentence, np: next present sentence (arrays are indexed by k)
+  select p2m.*,
+    min(k) filter (where present1) over u fp,
+    min(k) filter (where present1 and not m2) over u fk,
+    min(case when present1 and not m2 then k end) over nxt nk,
+    min(case when present1 then k end) over nxt np,
+    array_agg(dangles) over u dang_arr,
+    array_agg(dangles5) over u dang5_arr,
+    array_agg(sep_before) over u sep_arr
+  from p2m
+  window u as (partition by tbl, rid, col, ent order by k rows between unbounded preceding and unbounded following),
+         nxt as (partition by tbl, rid, col, ent order by k rows between 1 following and unbounded following)),
+p2x as (
+  select p2w.*,
+    (m2 and dang_arr[nk]) bad_next, (m2 and dang5_arr[nk]) bad_next5,
+    (m2 and ((nk is not null and has_entity) or (nk is null and has_entity_last))) bad_ent,
+    (m2 and ((k <> fp and strpos(sep_before, chr(10)) > 0) or coalesce(strpos(sep_arr[np], chr(10)) > 0, false))) bad_para
+  from p2w),
+u2 as (
+  select tbl, rid, col, ent, count(*) filter (where present1) n_pres, count(*) filter (where m2) n_m,
+    min(k) filter (where bad_next) kn, min(k) filter (where bad_next5) kn5, min(k) filter (where bad_ent) ke,
+    bool_or(bad_para) para,
+    coalesce(sum(length(s)) filter (where present1 and not m2), 0)
+      + coalesce(sum(length(sep_before)) filter (where present1 and not m2 and k <> fk), 0) len_after,
+    min(minlen) minlen
+  from p2x group by 1, 2, 3, 4),
+u2r as (
+  select u2.*, case when n_m = 0 then null when n_m = n_pres then 'field_would_be_empty'
+                    when kn = least(kn, kn5, ke) then 'next_sentence_refers_back'
+                    when kn5 = least(kn, kn5, ke) then 'next_sentence_refers_back_a5'
+                    when ke is not null then 'deleted_sentence_names_an_entity'
+                    when para then 'paragraph_break' when len_after < minlen then 'below_min_length' end why
+  from u2),
+c2 as (
+  select tbl, rid, col, (array_agg(why order by ent) filter (where why is not null))[1] why2, bool_or(n_m > 0) any_m2
+  from u2r group by 1, 2, 3),
+-- ---------------------------------------------------------------- rebuild every unit from its kept sentences
+fin as (
+  select p2m.tbl, p2m.rid, p2m.col, p2m.ent, p2m.k, p2m.s, p2m.sep_before, p2m.present0, p2m.present1,
+    (p2m.present1 and not (p2m.m2 and c2.any_m2 and c2.why2 is null)) keep
+  from p2m join c2 using (tbl, rid, col)),
+fin2 as (
+  select fin.*, min(k) filter (where keep) over (partition by tbl, rid, col, ent) first_keep from fin),
+newu as (
+  select f.tbl, f.rid, f.col, f.ent,
+    string_agg(case when f.k = f.first_keep then '' else f.sep_before end || f.s, '' order by f.k) filter (where f.keep) new_x,
+    count(*) filter (where f.present0 and not f.keep) n_del
+  from fin2 f group by 1, 2, 3, 4),
+colsum as (  -- one row per column that has prose units
+  select c1.tbl, c1.rid, c1.col, c1.why1, c1.any_m1, c2.why2, c2.any_m2,
+    case when frz.would_touch then frz.frozen end frozen,
+    (c1.any_m1 and c1.why1 is null) r6_done, (c2.any_m2 and c2.why2 is null) narr_done
+  from c1 join c2 using (tbl, rid, col) join frz using (tbl, rid, col)),
+faq_new as (
+  select r5.tbl, r5.rid, r5.col,
+    jsonb_agg(case when nu.n_del > 0 then jsonb_set(r5.e, '{a}', to_jsonb(nu.new_x)) else r5.e end order by r5.ent)
+      filter (where not r5.del5) new_j,
+    count(*) filter (where r5.del5) n_del_entries,
+    coalesce(sum(nu.n_del) filter (where not r5.del5), 0) n_del_sent,
+    max(r5.r5_skip) r5_skip
+  from r5 left join newu nu on nu.tbl = r5.tbl and nu.rid = r5.rid and nu.col = r5.col and nu.ent = r5.ent
+  group by 1, 2, 3),
+-- ---------------------------------------------------------------- R1 (ai_best_for)
+bf0 as (
+  select p.id rid, p.slug, p.ai_best_for raw,
+    case when pg_input_is_valid(p.ai_best_for, 'jsonb') then p.ai_best_for::jsonb end j
+  from pools p where p.ai_best_for is not null),
+bf as (
+  select bf0.*,
+    case when j is null then 'not_json'
+         when jsonb_typeof(j) <> 'array' then 'not_a_list'
+         when jsonb_array_length(j) = 0 then 'empty_list'
+         when exists (select 1 from jsonb_array_elements(j) e
+                       where jsonb_typeof(e) <> 'string' or (e #>> '{}') !~ rx.not_ws or (e #>> '{}') ~ rx.bf_bad)
+              then 'element_not_plain_text'
+         when raw ~ rx.ins then 'insurance' end why
+  from bf0 cross join rx),
+bf2 as (
+  select bf.*, case when why is null then (select string_agg(t.v, ', ' order by t.o)
+                                             from jsonb_array_elements_text(bf.j) with ordinality t(v, o)) end new_text
+  from bf),
+-- ---------------------------------------------------------------- the plan
+plan0 as (
+  select 'pp_pools'::text tbl, b.rid row_id, b.slug ref, 'ai_best_for'::text col, b.raw old_text, b.new_text,
+         case when b.new_text is not null then 'R1' end rules, case when b.why is not null then 'R1:' || b.why end skips,
+         0 n_del_sentences, 0 n_del_entries
+    from bf2 b
+  union all
+  select 'pp_pools', p.id, p.slug, 'ai_description', p.ai_description,
+         case when cs.narr_done then nu.new_x end,
+         case when cs.narr_done then 'R2' end,
+         nullif(concat_ws('; ', 'ALL:' || cs.frozen, 'R2:' || cs.why2), ''),
+         case when cs.narr_done then nu.n_del else 0 end, 0
+    from pools p join colsum cs on cs.tbl = 'pp_pools' and cs.rid = p.id and cs.col = 'ai_description'
+    join newu nu on nu.tbl = 'pp_pools' and nu.rid = p.id and nu.col = 'ai_description' and nu.ent = 0
+  union all
+  select 'pp_cities', c.id, c.state_slug || '/' || c.city_slug, 'ai_intro', c.ai_intro,
+         case when cs.r6_done or cs.narr_done then nu.new_x end,
+         nullif(concat_ws('+', case when cs.r6_done then 'R6' end, case when cs.narr_done then 'R4' end), ''),
+         nullif(concat_ws('; ', 'ALL:' || cs.frozen, 'R6:' || cs.why1, 'R4:' || cs.why2), ''),
+         case when cs.r6_done or cs.narr_done then nu.n_del else 0 end, 0
+    from cities c join colsum cs on cs.tbl = 'pp_cities' and cs.rid = c.id and cs.col = 'ai_intro'
+    join newu nu on nu.tbl = 'pp_cities' and nu.rid = c.id and nu.col = 'ai_intro' and nu.ent = 0
+  union all
+  select fn.tbl, fn.rid, coalesce(p.slug, c.state_slug || '/' || c.city_slug), 'ai_faqs',
+         coalesce(p.ai_faqs, c.ai_faqs)::text,
+         case when fn.n_del_entries > 0 or cs.r6_done or cs.narr_done then fn.new_j::text end,
+         nullif(concat_ws('+', case when fn.n_del_entries > 0 then 'R5' end, case when cs.r6_done then 'R6' end,
+                          case when cs.narr_done then (case fn.tbl when 'pp_pools' then 'R3' else 'R4' end) end), ''),
+         nullif(concat_ws('; ', 'ALL:' || cs.frozen, 'R5:' || fn.r5_skip, 'R6:' || cs.why1,
+                          (case fn.tbl when 'pp_pools' then 'R3:' else 'R4:' end) || cs.why2), ''),
+         case when cs.r6_done or cs.narr_done then fn.n_del_sent else 0 end, fn.n_del_entries::int
+    from faq_new fn
+    left join colsum cs on cs.tbl = fn.tbl and cs.rid = fn.rid and cs.col = fn.col
+    left join pools p on fn.tbl = 'pp_pools' and p.id = fn.rid
+    left join cities c on fn.tbl = 'pp_cities' and c.id = fn.rid),
+plan1 as ( -- a column freeze replaces a planned change by the skip ALL:joined_clause_kept or ALL:fact_guard_kept
+  select p.tbl, p.row_id, p.ref, p.col, p.old_text,
+         case when p.fz is not null then null else p.new_text end new_text,
+         case when p.fz is not null then null else p.rules end rules,
+         coalesce(p.fz, p.skips) skips,
+         case when p.fz is not null then 0 else p.n_del_sentences end n_del_sentences,
+         case when p.fz is not null then 0 else p.n_del_entries end n_del_entries
+    from (select plan0.*,
+                 case when plan0.new_text is null then null when coalesce(j.jk, false) then 'ALL:joined_clause_kept'
+                      when coalesce(j.jg, false) then 'ALL:fact_guard_kept' end fz
+            from plan0 left join jkc j on j.tbl = plan0.tbl and j.rid = plan0.row_id and j.col = plan0.col) p),
+plan as (
+  select plan1.*, md5(old_text) old_md5, md5(new_text) new_md5
+    from plan1 where new_text is not null or skips is not null)
