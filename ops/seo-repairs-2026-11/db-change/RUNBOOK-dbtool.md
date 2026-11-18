@@ -39,7 +39,12 @@ usage on the schema and no privilege on its tables or functions (checked by the 
    real text corrections; the main sitemaps use `content_refreshed_at` (not touched); the old value is kept in the
    backup's `old_updated_at`.
 3. **Fee rows:** only `verified = YES` rows (`dbtool.py --verified-only`). The `PENDING` rows were verified first with
-   this mode's own check (Q1, step 3a below), and the CSV records the result.
+   this mode's own check (Q1, step 2 below). **Result, 2026-11-18 03:46 UTC:** the full FIX set (bundle
+   `dbtool-q1/bundle.json`, sha256 `7d55c01f…`, fetched at commit `37824b7`) staged on production;
+   `dry_fees_summary` without pins returned one status for all **2,724 rules on 2,334 fields: old text present exactly
+   once, row found, literal intact**. The 995 `PENDING` FIX rows are now `YES 2026-11-18 03:46 UTC (...)` in
+   `fees/fee-corrections.csv` (nothing else in the CSV changed), so `--verified-only` now selects all 2,724.
+   `dbtool-q1/` is kept unchanged as the record of the bundle that was fetched for that check.
 4. **Page writers (RUNBOOK.md §3 step 0):** P2 on 2026-11-18 showed one `pg_cron` job (`refresh-related-slugs-monthly`,
    03:00 UTC on the 1st; not a text writer for these columns). No `content_pages` row had been updated since
    2026-11-15 19:05 UTC and no `blog_posts` row since 2026-10-17, so no writer was active. The HTTP hooks on EAST/WEST

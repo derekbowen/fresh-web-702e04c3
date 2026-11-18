@@ -114,7 +114,7 @@ ALL 94 CHECKS PASSED
 
 ######## variant: all fee rules
    link rules 514 (REWRITE 393, UNLINK 121), excluded link targets 655; fee rules 2724 on 2334 fields, excluded fee rows 767; pins no
-ok   dbtool.py built the bundle: bundle /tmp/seo_repair_pg.XXXXXX/work-dbtool/all/dbtool/bundle.json: 1905094 bytes, sha256 216836343601f701f8286fd7ade5d9c49ebb6ead6e5dd82071e0230f6e34f3c2; link rules 514, fee rules 2724 on 2334 fields (verified_only=False)
+ok   dbtool.py built the bundle: bundle /tmp/seo_repair_pg.XXXXXX/work-dbtool/all/dbtool/bundle.json: 1905094 bytes, sha256 98782056bd24909a2bfee8dbc51fd8ab72e1d2f6211539a0c2178712b599d2e1; link rules 514, fee rules 2724 on 2334 fields (verified_only=False)
 ok   bundle.json is ASCII (no encoding step between GitHub and the database)
 == load identical fixtures into A (psql package) and B (database-tool mode)
 ok   A and B hold the same 14491 fixture fields
@@ -182,8 +182,8 @@ ok   re-apply: A and B identical
 ok   re-apply: backups identical, not duplicated
 
 ######## variant: verified-only fee rules
-   link rules 514 (REWRITE 393, UNLINK 121), excluded link targets 655; fee rules 1729 on 1404 fields, excluded fee rows 1762; pins no
-ok   dbtool.py built the bundle: bundle /tmp/seo_repair_pg.XXXXXX/work-dbtool/verified-only/dbtool/bundle.json: 1492735 bytes, sha256 c710ebe828513ac16eaf95b0d825b9e21925805c38963aef97ddc31909852a80; link rules 514, fee rules 1729 on 1404 fields (verified_only=True)
+   link rules 514 (REWRITE 393, UNLINK 121), excluded link targets 655; fee rules 2724 on 2334 fields, excluded fee rows 767; pins no
+ok   dbtool.py built the bundle: bundle /tmp/seo_repair_pg.XXXXXX/work-dbtool/verified-only/dbtool/bundle.json: 1905093 bytes, sha256 1d1bca051fb9147ac7bd61ca2adf968bb2e37ab05367f67a8c23af54ab654d2f; link rules 514, fee rules 2724 on 2334 fields (verified_only=True)
 ok   bundle.json is ASCII (no encoding step between GitHub and the database)
 == load identical fixtures into A (psql package) and B (database-tool mode)
 ok   A and B hold the same 14491 fixture fields
@@ -192,19 +192,19 @@ ok   call 2 refused a bundle whose sha256 differs from the one in call 1
 ok   nothing but stage_meta exists after the refused load
 == bootstrap + unpack (B)
 ok   call 1 queued the fetch and recorded the expected sha256
-ok   call 2 staged 514 link and 1729 fee rules (= the manifest)
+ok   call 2 staged 514 link and 2724 fee rules (= the manifest)
 ok   staged rules digest equals the generator's (field-by-field, recomputed in SQL)
 ok   anon: no usage of schema seo_repair, no table or function privilege
 ok   authenticated: no usage of schema seo_repair, no table or function privilege
 ok   service_role: no usage of schema seo_repair, no table or function privilege
 == P1 pins: A reads the 13 psql pin files, B runs pins.sql
-ok   pin set sha256 identical: psql P1 files c2e997ca2e4e = in-database pin read c2e997ca2e4e (1927 pins)
+ok   pin set sha256 identical: psql P1 files b65d576d909d = in-database pin read b65d576d909d (2857 pins)
 ok   a second pin read is refused
 ok   loading a bundle again while pins exist is refused
 == the same three edits after the pin read, in both
 ok   A and B identical before apply
 == dry run: every section, A (psql -A) against B (seo_repair.q)
-ok   dry run dry_preflight_columns: 10 rows, identical in A and B
+ok   dry run dry_preflight_columns: 11 rows, identical in A and B
 ok   dry run dry_preflight_triggers: 2 rows, identical in A and B
 ok   dry run dry_links: 514 rows, identical in A and B
 ok   dry run dry_links_insurance: 2 rows, identical in A and B
@@ -224,18 +224,18 @@ ok     stage tables restored for the next step
 ok   a modified staged script is refused
 == apply: A (psql apply.sql) and B (seo_repair.run('apply.sql'))
 ok   after apply, A and B hold byte-identical values in all 14498 fields
-ok   B changed only fields the fixtures expect to change (1923 of 2853)
-ok   only verified fee rules changed text (1727 applied, 2 skipped, 0 unverified)
-ok   change logs identical (2251 rows)
-ok   backups identical (1923 rows, same old values)
+ok   B changed only fields the fixtures expect to change (2853 of 2853)
+ok   only verified fee rules changed text (2722 applied, 2 skipped, 0 unverified)
+ok   change logs identical (3246 rows)
+ok   backups identical (2853 rows, same old values)
 ok   skip logs identical (7 rows)
 ok   B created no seo_repair table in public (backups live in the private schema)
 ok   anon holds no privilege on any seo_repair table after apply (backup and logs included)
 ok   authenticated holds no privilege on any seo_repair table after apply (backup and logs included)
 ok   service_role holds no privilege on any seo_repair table after apply (backup and logs included)
-ok   apply_totals: 1923 fields changed, 1923 backups
-ok   verify right after apply: 1923 repaired fields, 0 changed since
-ok   apply_rules lists every rule (2243)
+ok   apply_totals: 2853 fields changed, 2853 backups
+ok   verify right after apply: 2853 repaired fields, 0 changed since
+ok   apply_rules lists every rule (3238)
 == second apply: nothing changes in either
 ok   second apply changed nothing
 ok   second apply wrote no change-log or backup row
@@ -245,7 +245,7 @@ ok   verify_changed reports the one edited field
 ok   rollback limited to a run that does not exist restores nothing
 ok   after rollback, A and B identical
 ok   rollback restored every field except the person's edit
-ok   rollback_summary: {'restored': 1922, 'skipped': 1}
+ok   rollback_summary: {'restored': 2852, 'skipped': 1}
 ok   change logs identical after rollback (rolled_back_at set alike)
 == apply again after the rollback
 ok   re-apply: A and B identical
