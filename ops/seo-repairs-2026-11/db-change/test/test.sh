@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Local test of the SEO content repair on a throwaway PostgreSQL 16 cluster.
 # Starts a private cluster (unprivileged user "postgres", data under /tmp, port 55439, unix socket only), runs
-# test_repair.py, then stops the cluster and deletes its directory whatever happened. Exits non-zero on any failure.
+# test_repair.py and then test_dbtool.py (the database-tool mode against the psql package), then stops the cluster and deletes its directory whatever happened. Exits non-zero on any failure.
 # Usage (as root or as the postgres user):  bash ops/seo-repairs-2026-11/db-change/test/test.sh
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -27,5 +27,9 @@ echo "PostgreSQL: $(psql -X -At -d postgres -c 'select version()')"
 echo "cluster: $BASE (port $PORT, unix socket only)"
 python3 "$HERE/test_repair.py"
 rc=$?
+if [ $rc -eq 0 ]; then
+  python3 "$HERE/test_dbtool.py"
+  rc=$?
+fi
 echo "test exit code: $rc"
 exit $rc
