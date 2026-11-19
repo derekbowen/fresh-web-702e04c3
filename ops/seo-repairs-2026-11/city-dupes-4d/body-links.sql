@@ -64,6 +64,8 @@ create temp table _hits on commit drop as
          (select coalesce(sum(length(d.keeper) - length(d.dup)), 0) from _dups d
             cross join lateral regexp_matches(cand.md || E'\n' || cand.html, '/p/' || d.dup || '(?![a-z0-9-])', 'g') m) as growth
   from cand;
+-- Statistics for the temp table, so nothing below plans around a guessed row count.
+analyze _hits;
 
 create table seo_repair.content_pages_body_links_20261119 as
   select c.id, c.slug, c.template_type, c.body_markdown, c.content, c.updated_at,
@@ -89,13 +91,15 @@ begin
     raise exception '4d body: found % links on % pages, expected % on %', links, pages, want_links, want_pages;
   end if;
 
-  for r in select dup, keeper from _dups order by dup loop
+  -- One page and one dup at a time, by primary key: the regex only ever runs on the ~27 found pages,
+  -- whatever plan the database would pick for a set-based update (a review measured ~40 s for that).
+  for r in select h.id, d.dup, d.keeper from _hits h cross join _dups d order by h.id, d.dup loop
     update public.content_pages c
        set body_markdown = regexp_replace(c.body_markdown, '/p/' || r.dup || '(?![a-z0-9-])', '/p/' || r.keeper, 'g')
-     where c.id in (select id from _hits) and c.body_markdown ~ ('/p/' || r.dup || '(?![a-z0-9-])');
+     where c.id = r.id and c.body_markdown ~ ('/p/' || r.dup || '(?![a-z0-9-])');
     update public.content_pages c
        set content = regexp_replace(c.content, '/p/' || r.dup || '(?![a-z0-9-])', '/p/' || r.keeper, 'g')
-     where c.id in (select id from _hits) and c.content ~ ('/p/' || r.dup || '(?![a-z0-9-])');
+     where c.id = r.id and c.content ~ ('/p/' || r.dup || '(?![a-z0-9-])');
   end loop;
 
   -- Nothing left to rewrite on any published page.

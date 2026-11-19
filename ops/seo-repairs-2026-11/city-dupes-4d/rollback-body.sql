@@ -10,6 +10,12 @@ set local session_replication_role = replica;
 do $$
 declare n int; total int;
 begin
+  -- Order: this file first, then rollback.sql. If rollback.sql already ran, pages changed by both the
+  -- refresh and the text rewrite would get the wrong updated_at back, so refuse.
+  select count(*) into n from seo_repair.content_pages_city_dupes_20261119 b
+    join public.content_pages c on c.id = b.id where c.status = 'redirect';
+  if n <> 29 then raise exception '4d body rollback: only % of 29 dups are still redirects; run this before rollback.sql', n; end if;
+
   select count(*) into total from seo_repair.content_pages_body_links_20261119;
   select count(*) into n
     from seo_repair.content_pages_body_links_20261119 b join public.content_pages c on c.id = b.id

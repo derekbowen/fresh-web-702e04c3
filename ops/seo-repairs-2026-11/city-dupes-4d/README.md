@@ -25,7 +25,7 @@ the last no upper bound), so they cover every row whatever the boundaries.
 
 ## Undo
 
-`rollback-body.sql`, then `rollback.sql`. Together they put back status, redirect, sitemap flag, page text,
+`rollback-body.sql`, then `rollback.sql` (`rollback-body.sql` refuses if run second). Together they put back status, redirect, sitemap flag, page text,
 `related_slugs` and `updated_at` exactly (tested). `rollback-body.sql` refuses if a page's text was edited
 after step 4, so a later edit is never overwritten silently.
 
@@ -37,13 +37,18 @@ triggers) and check with `noop-1..4.sql`.
 ## Known after this step
 
 - 7 state-hub links still name a dup until fresh-web ships the state-hub filter (`fetchAllHostAcqSlugs`
-  reads every host slug with no status filter): `/p/pool-rentals-california` (redbluff-ca, northbridge-ca,
+  reads every host slug with no status filter; fix on branch `seo/08-state-hub-live`, 4230121, not in
+  `seo/release-2026-11`): `/p/pool-rentals-california` (redbluff-ca, northbridge-ca,
   liguna-niguel-ca, los-alamintos-ca, moore-park-ca), `/p/pool-rentals-pennsylvania` (eastion-pa),
   `/p/pool-rentals-missouri` (--ofallon-mo). Each answers one 301 to its keeper.
 - The `all-locations` resource row's `raw_html` names 8 dups; `/p/all-locations` is served by its own route
   from sitemap rows, so that HTML is never shown. Not touched.
 
 ## Test
+
+Timing of `body-links.sql` on a 11,508-page synthetic copy (208 MB of page text, ICU en-US): 2.7 s to find the
+pages, 1.9 s to rewrite them. Before it updated by page id, the same file took ~42 s there (two reviews, 2026-11-19).
+
 
 `bash test/run_test.sh` (PostgreSQL 16, throwaway cluster): runs the literal production files against a
 synthetic seed and compares with the ordinary path (all triggers on), checks the text rewrite against an

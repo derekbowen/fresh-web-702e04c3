@@ -7,14 +7,16 @@
 # independent Python rewrite, then rolls TEST back with rollback-body.sql + rollback.sql and compares it
 # with the seeded state, page text and updated_at included. Guards are each exercised on a copy.
 set -u
+export PYTHONDONTWRITEBYTECODE=1
 HERE="$(cd "$(dirname "$0")" && pwd)"; PKG="$(dirname "$HERE")"
 PGBIN=/usr/lib/postgresql/16/bin; BASE=$(mktemp -d); PORT=55433
 as_pg() { if [ "$(id -u)" = 0 ]; then su postgres -s /bin/bash -c "$(printf '%q ' "$@")"; else "$@"; fi; }
 chown postgres "$BASE" 2>/dev/null || true
 cleanup() { as_pg "$PGBIN/pg_ctl" -D "$BASE/data" -m fast -w stop >/dev/null 2>&1 || true; rm -rf "$BASE"; }
 trap cleanup EXIT
-as_pg "$PGBIN/initdb" -D "$BASE/data" -E UTF8 --locale=en_US.UTF-8 -U postgres -A trust >/dev/null 2>&1 \
-  || as_pg "$PGBIN/initdb" -D "$BASE/data" -E UTF8 --locale=C.UTF-8 -U postgres -A trust >/dev/null || exit 1
+# Production collates with ICU en-US: use that, and say so if it falls back.
+as_pg "$PGBIN/initdb" -D "$BASE/data" -E UTF8 --locale=C.UTF-8 --locale-provider=icu --icu-locale=en-US -U postgres -A trust >/dev/null 2>&1 \
+  || { echo "NOTE: ICU initdb failed, falling back to C.UTF-8"; as_pg "$PGBIN/initdb" -D "$BASE/data" -E UTF8 --locale=C.UTF-8 -U postgres -A trust >/dev/null; } || exit 1
 as_pg "$PGBIN/pg_ctl" -D "$BASE/data" -o "-p $PORT -k $BASE -c listen_addresses=''" -l "$BASE/server.log" -w start >/dev/null || exit 1
 export PGHOST="$BASE" PGPORT="$PORT" PGUSER=postgres
 PSQL="psql -X -q -v ON_ERROR_STOP=1"
@@ -23,7 +25,7 @@ python3 "$HERE/seed.py" "$PKG/pairs.sql" "$BASE/seed.json" > "$BASE/seed.sql" ||
 $PSQL -d postgres -c "create database seed" || exit 1
 $PSQL -d seed -f "$HERE/schema.sql" -f "$BASE/seed.sql" >/dev/null || exit 1
 $PSQL -d postgres -c "create database ref template seed" -c "create database test template seed" -c "create database test2 template seed" || exit 1
-echo "collation: $($PSQL -d seed -At -c "select datcollate from pg_database where datname='seed'")"
+echo "collation: $($PSQL -d seed -At -c "select datlocprovider::text || ' ' || coalesce(daticulocale, datcollate) from pg_database where datname='seed'")"
 
 # REF: intent.md §6a APPLY, triggers on (the path that timed out on production)
 PAIRS="$(cat "$PKG/pairs.sql")"
@@ -104,6 +106,8 @@ if diff <(bodies test) <(python3 "$HERE/expect_bodies.py" "$BASE/seed.json" dump
 moved_b=$(diff <(echo "$ts_before") <(ts test) | grep '^>' | awk '{print $2}' | LC_ALL=C sort)
 [ "$moved_b" = "$(python3 "$HERE/expect_bodies.py" "$BASE/seed.json" changed | LC_ALL=C sort)" ] && ok "updated_at moved on exactly the $EP rewritten pages" || { bad "updated_at moved on other rows"; echo "$moved_b"; }
 [ "$(dump test | md5sum)" = "$related_before" ] && ok "body-links.sql changed no status, redirect, sitemap flag or related_slugs" || bad "body-links.sql changed another column"
+both=$($PSQL -d test -At -c "select count(*) from seo_repair.content_pages_body_links_20261119 b join seo_repair.content_pages_related_20261119 r on r.id = b.id join content_pages c on c.id = b.id where c.related_slugs is distinct from r.related_slugs")
+[ "$both" -ge 2 ] && ok "$both rewritten pages were also changed by the refresh (the undo covers both)" || bad "no page is changed by both steps ($both)"
 [ "$($PSQL -d test -At -c "select count(*) from seo_repair.content_pages_body_links_20261119 where new_body_markdown is not distinct from body_markdown and new_content is not distinct from content")" = 0 ] && ok "the backup records the text before and after for every rewritten page" || bad "backup after-text missing"
 for r in anon authenticated service_role; do
   [ "$($PSQL -d test -At -c "select has_table_privilege('$r','seo_repair.content_pages_body_links_20261119','select')")" = f ] || bad "$r can read the body backup"
@@ -138,6 +142,11 @@ $PSQL -d rbguard -c "update content_pages set body_markdown = body_markdown || '
 before=$(bodies rbguard | md5sum)
 if $PSQL -d rbguard -f "$PKG/rollback-body.sql" > "$BASE/rbg.out" 2>&1; then bad "rollback-body overwrote a later edit"; else grep -q 'edited after body-links.sql' "$BASE/rbg.out" && ok "rollback-body refuses when a page was edited after body-links.sql" || { bad "unexpected rollback-body error"; cat "$BASE/rbg.out"; }; fi
 [ "$(bodies rbguard | md5sum)" = "$before" ] && ok "  ...and changes nothing" || bad "refused rollback-body changed text"
+
+# rollback-body.sql refuses once rollback.sql has run (wrong order), on a copy
+$PSQL -d postgres -c "create database order_guard template test" >/dev/null
+$PSQL -d order_guard -f "$PKG/rollback.sql" >/dev/null || exit 1
+if $PSQL -d order_guard -f "$PKG/rollback-body.sql" > "$BASE/og.out" 2>&1; then bad "rollback-body ran after rollback.sql"; else grep -q 'run this before rollback.sql' "$BASE/og.out" && ok "rollback-body refuses after rollback.sql (wrong order)" || { bad "unexpected order-guard error"; cat "$BASE/og.out"; }; fi
 
 # Rollback: rollback-body.sql then rollback.sql; TEST must equal the seed exactly, page text and updated_at included
 $PSQL -d test -f "$PKG/rollback-body.sql" > "$BASE/rbb.out" || { cat "$BASE/rbb.out"; exit 1; }

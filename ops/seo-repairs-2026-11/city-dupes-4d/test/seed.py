@@ -34,6 +34,9 @@ bodies = {
   'become-a-swimming-pool-host-town004-pa': ('[x](' + H + '-ofallon-mo) [y](' + H + 'ofallon-mo) [z](' + H + 'plano?ref=1) [w](' + H + 'plano-tx)', None),
   'become-a-swimming-pool-host-town005-ct': ('[h](' + H + 'hartford) twice [h2](' + H + 'hartford) and [nh](' + H + 'new-haven-ct) [nh2](' + H + 'new-haven)', None),
   'become-a-swimming-pool-host-town006-al': ('Only other host pages: [t](' + H + 'town007-nm) [e](' + H + 'erie-pa)', None),
+  # Pages the related-slugs refresh also changes (both steps touch them; the undo must still be exact).
+  'become-a-swimming-pool-host-town036-ca': ('Both steps: [lc](' + H + 'liguna-niguel-ca)', None),
+  'become-a-swimming-pool-host-town030-pa': ('Both steps: [e](' + H + 'eastion-pa) and [e2](' + H + 'eastion-pa)', None),
   'pool-rentals-city0-ca': (None, '<p><a href="' + H + 'pasadena">Pasadena hosts</a> <a href="' + H + 'pasadena-ca">ok</a></p>'),
   'become-a-swimming-pool-host-cambridge': ('A dup row links another dup: ' + H + 'erie', None),
   'become-a-swimming-pool-host-draft0-ca': ('A draft links a dup: ' + H + 'mesquite', None),
