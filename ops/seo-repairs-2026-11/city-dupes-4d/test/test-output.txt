@@ -1,0 +1,50 @@
+collation: C.UTF-8
+PASS apply.sql holds the 29 pairs of pairs.sql
+PASS body-links.sql holds the 29 pairs of pairs.sql
+PASS refresh-1..4.sql and noop-1..4.sql match make-chunks.py
+PASS no psql variables in any file that runs on production
+  refresh-1.sql: range_no computed changed = 1 17 12
+  refresh-2.sql: range_no computed changed = 2 10 2
+  refresh-3.sql: range_no computed changed = 3 12 3
+  refresh-4.sql: range_no computed changed = 4 261 34
+PASS the 4 literal ranges computed every eligible row once (300)
+PASS noop-1..4.sql: 0 stale rows in every range
+PASS running the 4 refresh files again changes nothing
+  TEST2 refresh-1: 1 75 19
+  TEST2 refresh-2: 2 75 13
+  TEST2 refresh-3: 3 75 10
+  TEST2 refresh-4: 4 75 9
+PASS TEST equals REF on every column but updated_at (345 rows)
+PASS TEST2 (quartile split) equals REF too
+PASS same rows have a new updated_at in REF and TEST (80 rows: 29 dups + 51 related refreshes)
+  apply.sql summary (backup_rows, related_backup_rows, redirect_rows_now, dups_redirected):  backup_rows | related_backup_rows | redirect_rows_now | dups_redirected -------------+---------------------+-------------------+----------------- 29 | 340 | 35 | 29 (1 row) 
+PASS backup holds 29 rows
+PASS no published page lists a dup in related_slugs
+PASS a full refresh now changes nothing
+PASS anon has no access to the backups
+PASS authenticated has no access to the backups
+PASS service_role has no access to the backups
+PASS test copy of body-links.sql differs only in the expected counts (6 pages, 10 links)
+PASS body-links refuses before apply.sql
+PASS   ...and leaves no change and no backup table
+PASS body-links refuses when the counts differ from what it expects
+PASS   ...and leaves no change and no backup table
+  body-links.sql summary:  pages_rewritten | links_rewritten | in_body_markdown | in_content -----------------+-----------------+------------------+------------ 6 | 10 | 9 | 1 (1 row) 
+PASS page text after body-links.sql equals the independent Python rewrite (incl. santa-fe vs santa-fe-nm/-new-mexico, full URLs, ?query, #anchor, trailing slash, end of text, HTML)
+PASS updated_at moved on exactly the 6 rewritten pages
+PASS body-links.sql changed no status, redirect, sitemap flag or related_slugs
+PASS the backup records the text before and after for every rewritten page
+PASS no API role can read the body backup
+PASS second body-links run refuses
+PASS   ...and changes nothing
+  verify.sql (backup, redirects, redirected, related links, text links, text pages, keepers): 29 35 29 0 0 6 28
+PASS verify.sql: 29 backed up, 0 related links and 0 text links to a dup, 6 text pages
+PASS apply refuses when a row already redirects to /p/<dup>
+PASS second apply.sql run refuses
+PASS refused run changed nothing
+PASS apply refuses when a keeper is not live (28 of 29)
+PASS refused apply left no change and no backup table
+PASS rollback-body refuses when a page was edited after body-links.sql
+PASS   ...and changes nothing
+PASS rollback-body.sql + rollback.sql restore the seeded state exactly (text, related_slugs, updated_at)
+ALL PASS
