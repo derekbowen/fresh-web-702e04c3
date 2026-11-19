@@ -7,8 +7,14 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const src = readFileSync(new URL("../src/server/state-hub.functions.ts", import.meta.url), "utf8");
-const fn = src.slice(src.indexOf("async function fetchAllHostAcqSlugs"), src.indexOf("interface ParsedRow"));
-const code = fn.split("\n").filter((l) => !l.trim().startsWith("//")).join("\n");
+const fn = src.slice(
+  src.indexOf("async function fetchAllHostAcqSlugs"),
+  src.indexOf("interface ParsedRow"),
+);
+const code = fn
+  .split("\n")
+  .filter((l) => !l.trim().startsWith("//"))
+  .join("\n");
 
 test("state hub slug read exists", () => {
   assert.ok(code.includes('.from("content_pages")'), "fetchAllHostAcqSlugs not found");
