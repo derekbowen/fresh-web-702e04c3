@@ -74,6 +74,12 @@ async function fetchAllHostAcqSlugs(): Promise<string[]> {
         // Adding .eq("is_published", true) here on 2026-07-31 silently emptied
         // every state hub: zero slugs -> zero cities -> the /p/pool-rentals-
         // {state} route threw notFound() for all 50 states for 19 days.
+        // Live pages only: status="published" and no redirect_to. Without this a
+        // hub listed drafts and second copies that 301 to another city page
+        // (step 4d turned 29 of them into redirects; 7 sat on state hubs).
+        .eq("status", "published")
+        .is("redirect_to", null)
+        .order("slug", { ascending: true })
         .range(from, from + PAGE - 1)
         .abortSignal(signal),
     );
