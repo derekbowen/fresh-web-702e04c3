@@ -1,0 +1,21 @@
+# P3 (db-change/pending/p3_f13_exact_lines.sql), production, 2026-11-18 10:31 UTC. 18 lines on 11 pages.
+# Excerpts ([...] = text omitted here); the byte-exact anchors must be re-read when FIX rows are built.
+row_id	slug	column	line	excerpt
+caeced45-be3a-4aad-aaa6-61ec2a61ca0d	become-a-swimming-pool-host-carlsbad-nm	body_markdown	53	The 0% fee on our platform is the lowest in the industry, meaning $90 out of every $100 earned stays in your pocket. [...]
+caeced45-be3a-4aad-aaa6-61ec2a61ca0d	become-a-swimming-pool-host-carlsbad-nm	content	53	The 0% fee on our platform is the lowest in the industry, meaning $90 out of every $100 earned stays in your pocket. [...]
+1bde2d51-267a-4e76-ad75-f298ac552cef	become-a-swimming-pool-host-grand-prairie-tx	body_markdown	34	* 0% host fee: [...] we take 0% from hosts. This means $100 of every $100 earned stays in your pocket.  (already correct)
+de4d28e0-ba0d-43c3-bed8-a9ff8227f670	become-a-swimming-pool-host-kearney-ne	body_markdown	36	*   **0% host fee:** [...] we charge a 0%. This means for every $100 you earn, $90 goes straight to your pocket.
+c083a8fa-6559-4317-957f-8c71fbab0cd6	become-a-swimming-pool-host-knightsen-ca	body_markdown	12	[...] Even after the platform takes its small cut, you are left with several thousand dollars [...]
+77c33cdb-364a-4360-8fa3-4bcba07a31ae	become-a-swimming-pool-host-opelousas-la	body_markdown	58	[...] Pool Rental Near Me charges hosts nothing. This means when you book a $100 session, $90 goes directly into your bank account. [...]
+77c33cdb-364a-4360-8fa3-4bcba07a31ae	become-a-swimming-pool-host-opelousas-la	content	58	[...] Pool Rental Near Me charges hosts nothings. This means when you book a $100 session, $90 goes directly into your bank account. [...]
+66c2d6fb-c5d8-4c29-88aa-7bb0c1bb6894	become-a-swimming-pool-host-owensboro	body_markdown	26	We charge a 0% host fee on bookings [...] That small fee covers platform operations, secure payment handling, and host support [...]
+3723cd27-6631-46c7-b204-c438372f5215	become-a-swimming-pool-host-pataskala-oh	body_markdown	28	4. **Get paid:** [...] We only take a 0% fee, so $90 of every $100 stays with you.
+a40f2c1b-04e0-430d-a7a0-dca27106a818	become-a-swimming-pool-host-riverview-fl	body_markdown	32	*   **0% host fee.** [...] we charge a 0%. This means for every $100 you earn, $90 goes directly into your pocket.
+1cdaabd9-1b30-40ab-9019-529352d9f5fe	become-a-swimming-pool-host-saratoga-springs-ny	body_markdown	65	* **Profit:** $1,500+  (still true at $10,800; optional)
+1cdaabd9-1b30-40ab-9019-529352d9f5fe	become-a-swimming-pool-host-saratoga-springs-ny	content	65	* **Profit:** $1,500+  (still true at $10,800; optional)
+68fe049d-6da8-4cd2-b999-348ed1661f4e	become-a-swimming-pool-host-wilkinsburg-pa	body_markdown	65	On Pool Rental Near Me, we take a 0% fee. [...] When you book a $60/hour session, $54 goes directly into your bank account. [...]
+68fe049d-6da8-4cd2-b999-348ed1661f4e	become-a-swimming-pool-host-wilkinsburg-pa	content	65	On Pool Rental Near Me, we take a 0% fee. [...] When you book a $60/hour session, $54 goes directly into your bank account. [...]
+08350df1-d16a-4a61-84f5-7dca5e5f2db0	conviertete-en-anfitrion-de-alberca-allentown-pa	body_markdown	15	[...] comisión del 0% para anfitriones [...] estarías generando $1,200 brutos, de los cuales $1,080 son netos para ti. [...]
+2c4a32a3-75f4-44d1-aeac-d861da532850	conviertete-en-anfitrion-de-alberca-kennewick-wa	body_markdown	12	[...] Nuestra comisión del 0% para anfitriones [...] si rentas tu alberca por $60 la hora [...] tú te llevas $54 directos a tu bolsillo. [...]
+e5f73173-4dac-4a27-96bb-c28f033b5a1c	huntingtown-md	body_markdown	42	[...] 0% host fee. [...] With a minimal fee, that money goes directly toward your mortgage [...]
+e5f73173-4dac-4a27-96bb-c28f033b5a1c	huntingtown-md	content	42	[...] 0% host fees. [...] With a minimal fee, that money goes directly toward your mortgage [...]
